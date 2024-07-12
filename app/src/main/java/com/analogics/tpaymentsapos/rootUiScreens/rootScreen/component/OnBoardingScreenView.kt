@@ -18,12 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonColors
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 
@@ -31,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -229,14 +231,25 @@ fun ShowCardView(
 
                         )
                     } else {
-                        Button(modifier = Modifier.wrapContentSize(),
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = Color.Black,
-                                containerColor =colorResource(R.color.purple_200)
-                            ),
-                            onClick = { /*TODO*/ }) {
-                            Text(text = "Get Started",
+                        Box(
+                            contentAlignment = Alignment.BottomCenter,
+                            modifier = Modifier
+                                .width(248.dp)
+                                .padding(bottom = 20.dp)
+                                .background(colorResource(R.color.purple_200),shape = RoundedCornerShape(10.dp))
+
+                        )
+                        {
+                            Button(modifier = Modifier.wrapContentSize(),
+                                colors = ButtonDefaults.buttonColors(
+                                    contentColor = Color.Black,
+                                    containerColor = colorResource(R.color.purple_200)
+                                ),
+                                onClick = { /*TODO*/ }) {
+                                Text(
+                                    text = "Get Started",
                                 )
+                            }
                         }
                     }
 
