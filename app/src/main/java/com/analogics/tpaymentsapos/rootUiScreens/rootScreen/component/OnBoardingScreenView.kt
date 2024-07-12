@@ -24,7 +24,6 @@ import androidx.compose.material3.ButtonDefaults
 
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 
@@ -32,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -40,8 +38,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.model.ObjOnboardingListItem
+import com.analogics.tpaymentsapos.model.OnBoardingContentList
+
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -53,18 +56,18 @@ import kotlinx.coroutines.yield
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun OnBoardSlideView() {
+fun OnBoardSlideView(navHostController: NavHostController) {
     val pagerState = rememberPagerState(initialPage = 0)
-    val imageSlider = listOf<ObjOnboardingListItem>(
-        ObjOnboardingListItem(
+    val imageSlider = listOf<OnBoardingContentList>(
+        OnBoardingContentList(
             headNote = "Safe and fast transaction",
             subNote = "Single use password that won’t work twice, keeping your details safe even if they get exposed"
         ),
-        ObjOnboardingListItem(
+        OnBoardingContentList(
             headNote = "Analysis of data",
             subNote = "Improving customer retention through data analytics, there are several takeaways to keep in mind"
         ),
-        ObjOnboardingListItem(
+        OnBoardingContentList(
             headNote = "Quick and easy payments",
             subNote = "Creating a seamless payment experience is crucial for user satisfaction and conversion",
             isIndicatorShow = false
@@ -99,7 +102,7 @@ fun OnBoardSlideView() {
                         .padding(12.dp)
                         .fillMaxSize()
                 ) {
-                    ShowCardView(pagerState, page, imageSlider)
+                    ShowCardView(pagerState, page, imageSlider,navHostController)
                     /* HorizontalPagerIndicator(
                          pagerState = pagerState,
                          modifier = Modifier
@@ -117,7 +120,8 @@ fun OnBoardSlideView() {
 fun ShowCardView(
     pagerState: PagerState,
     pageIndex: Int,
-    imageSlider: List<ObjOnboardingListItem>
+    imageSlider: List<OnBoardingContentList>,
+    navHostController: NavHostController
 ) {
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -231,26 +235,10 @@ fun ShowCardView(
 
                         )
                     } else {
-                        Box(
-                            contentAlignment = Alignment.BottomCenter,
-                            modifier = Modifier
-                                .width(248.dp)
-                                .padding(bottom = 20.dp)
-                                .background(colorResource(R.color.purple_200),shape = RoundedCornerShape(10.dp))
 
-                        )
-                        {
-                            Button(modifier = Modifier.wrapContentSize(),
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.Black,
-                                    containerColor = colorResource(R.color.purple_200)
-                                ),
-                                onClick = { /*TODO*/ }) {
-                                Text(
-                                    text = "Get Started",
-                                )
-                            }
-                        }
+                        AppButton(onClick = {
+                            navHostController.navigate(AppNavigationItems.LoginScreen.route)
+                        }, title = "Get Started")
                     }
 
                 }

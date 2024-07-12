@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.DashboardScreenView
+import com.analogics.tpaymentsapos.rootUiScreens.login.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.OnBoardSlideView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
@@ -72,7 +73,11 @@ fun AppNavigationGraph(modifier: Modifier=Modifier,
         }
         composable(AppNavigationItems.OnBoardingScreen.route)
         {
-            OnBoardSlideView()
+            OnBoardSlideView(navHostController)
+        }
+        composable(AppNavigationItems.LoginScreen.route)
+        {
+            LoginScreenView(navHostController)
         }
     }
 }
