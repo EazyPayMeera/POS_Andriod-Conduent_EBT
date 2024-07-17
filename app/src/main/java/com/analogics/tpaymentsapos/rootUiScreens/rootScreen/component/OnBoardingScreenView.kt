@@ -44,6 +44,7 @@ import com.analogics.tpaymentsapos.model.OnBoardingContentList
 
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -99,7 +100,7 @@ fun OnBoardSlideView(navHostController: NavHostController) {
 
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
-                        .padding(12.dp)
+                        .padding(MaterialTheme.dimens.DP_12_CompactMedium)
                         .fillMaxSize()
                 ) {
                     ShowCardView(pagerState, page, imageSlider,navHostController)
@@ -145,22 +146,22 @@ fun ShowCardView(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(MaterialTheme.dimens.DP_200_CompactMedium)
             ) {
                 Image(
                     painter = painterResource(id = imageSlider[pageIndex].image),
                     contentDescription = "group 360",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .height(180.dp)
-                        .width(230.dp)
+                        .height(MaterialTheme.dimens.DP_180_CompactMedium)
+                        .width(MaterialTheme.dimens.DP_200_CompactMedium)
                 )
                 Box(
                     contentAlignment = Alignment.BottomStart,
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxSize()
-                        .padding(start = 40.dp)
+                        .padding(start = MaterialTheme.dimens.DP_40_CompactMedium)
 
                 ) {
                     Image(
@@ -168,7 +169,7 @@ fun ShowCardView(
                         contentDescription = "group 360",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(60.dp, 120.dp)
+                            .size(MaterialTheme.dimens.DP_60_CompactMedium, MaterialTheme.dimens.DP_120_CompactMedium)
 
                     )
                 }
@@ -184,7 +185,7 @@ fun ShowCardView(
                 Column(
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(15.dp),
+                        .padding(MaterialTheme.dimens.DP_15_CompactMedium),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 )
@@ -205,17 +206,17 @@ fun ShowCardView(
                         {
                             Text(
                                 text = imageSlider[pageIndex].headNote,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.titleLarge,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(bottom = 20.dp, top = 20.dp)
+                                modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_20_CompactMedium),
                             )
                             Text(
                                 text = imageSlider[pageIndex].subNote,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.titleLarge,
                                 color = Color("#B3B3B3".toColorInt()),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(bottom = 60.dp)
+                                modifier = Modifier.padding(bottom =MaterialTheme.dimens.DP_60_CompactMedium)
                             )
                         }
                     }
@@ -226,12 +227,13 @@ fun ShowCardView(
                         modifier = Modifier
                             .wrapContentSize()
                             .align(Alignment.CenterHorizontally)
-                            .padding(15.dp)
+                            .padding(MaterialTheme.dimens.DP_15_CompactMedium),
+                        style = MaterialTheme.typography.titleLarge
                     )
 
                         HorizontalPagerIndicator(
                             pagerState = pagerState,
-                            modifier = Modifier.padding(bottom = 20.dp)
+                            modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium,)
 
                         )
                     } else {
