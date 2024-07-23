@@ -25,21 +25,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 
 @Composable
 
 fun InputTextField(
-    inputValue:String,
-    onChange:(String)->Unit,
-    modifier: Modifier=Modifier,
-    label:String="Username",
-    placeHolder:String="Username",
-    icon: ImageVector =Icons.Default.Person
-              )
+    inputValue: String,
+    onChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    label: String = "Username",
+    placeHolder: String = "Username",
+    icon: ImageVector = Icons.Default.Person,
+    keyboardType: KeyboardType
+)
 {
     val focusManager = LocalFocusManager.current
     val leadingIcon = @Composable {

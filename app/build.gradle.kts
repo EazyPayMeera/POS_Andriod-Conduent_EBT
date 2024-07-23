@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,4 +76,10 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.2.1")
     implementation ("androidx.compose.material3:material3-window-size-class:1.2.1")
     implementation ("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta04")
+    implementation ("androidx.compose.ui:ui:1.4.0")
+    implementation ("androidx.compose.material:material:1.4.0")
+
+
+
+
 }

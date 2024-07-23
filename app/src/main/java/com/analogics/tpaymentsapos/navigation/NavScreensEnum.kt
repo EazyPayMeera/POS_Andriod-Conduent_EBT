@@ -1,5 +1,5 @@
 package com.analogics.tpaymentsapos.navigation
 
 enum class NavScreensEnum {
-    SplashScreen,DashBoardView,OnBoardingView,LoginScreen
+    SplashScreen,DashBoardView,OnBoardingView,LoginScreen,ForgetPasswordView,PleaseWaitView,TrainingView,AmountView,InvoiceView,ConfirmationView,TipView,CardView,CardDetectView,PinView,ApprovedView
 }
