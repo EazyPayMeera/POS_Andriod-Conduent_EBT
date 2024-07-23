@@ -17,6 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import java.text.DecimalFormat
 
 @Composable
@@ -230,25 +234,4 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         }
     }
-}
-
-
-fun calculateTax(amount: Double): Double {
-    return amount * 0.15
-}
-
-
-fun calculateTip(amount: Double, tipPercentage: Int): Double {
-    return amount * (tipPercentage / 100.0)
-}
-
-
-fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmount: Double, igstAmount: Double): Double {
-    return transactionAmount + tipAmount + sgstAmount + igstAmount
-}
-
-
-fun formatAmount(amount: Double): String {
-    val decimalFormat = DecimalFormat("#.00")
-    return decimalFormat.format(amount)
 }
