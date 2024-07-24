@@ -119,6 +119,7 @@ fun TrainingView(navHostController: NavHostController) {
                     Button(
                         onClick = {
                             selectedButton.value = "Pre-Auth"
+                            navHostController.navigate(AppNavigationItems.EmailScreen.route)
                         },
                         modifier = Modifier
                             .size(120.dp)

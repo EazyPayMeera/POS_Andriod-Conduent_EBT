@@ -278,7 +278,31 @@ fun CommonLayout(
     }
 }
 
+@Composable
+fun OkButton(onClick:()->Unit,
+              title:String)
+{
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = Modifier
+            .width(248.dp)
+            .padding( bottom = 20.dp)
+            .background(colorResource(R.color.grey),shape = RoundedCornerShape(10.dp))
 
+    )
+    {
+        Button(modifier = Modifier.wrapContentSize(),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Black,
+                containerColor = colorResource(R.color.grey)
+            ),
+            onClick = onClick) {
+            Text(
+                text = title,
+            )
+        }
+    }
+}
 
 
 

@@ -22,6 +22,7 @@ sealed class AppNavigationItems(val route: String) {
  }
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
+ object EmailScreen : AppNavigationItems(NavScreensEnum.EmailView.name)
 
  object ApprovedScreen : AppNavigationItems("approved_screen/{totalAmount}") {
   fun createRoute(totalAmount: String) = "approved_screen/$totalAmount"

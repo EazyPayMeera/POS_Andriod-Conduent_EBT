@@ -32,6 +32,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TrainingView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
+import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 
@@ -118,6 +119,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.TipScreen.route) {
             TipView(navHostController)
+        }
+        composable(AppNavigationItems.EmailScreen.route) {
+            EmailView(navHostController)
         }
         composable(
             route = AppNavigationItems.CardScreen.route,
