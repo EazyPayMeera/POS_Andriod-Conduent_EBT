@@ -1,31 +1,22 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import kotlinx.coroutines.delay
-import androidx.navigation.compose.navigation
-import java.text.DecimalFormat
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 
 @Composable
 fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
@@ -36,18 +27,9 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
     }
 
     Column {
-        TopAppBar(
-            title = { Text("Purchase") },
-            backgroundColor = Color(0xFFF8F8F7),
-            navigationIcon = {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clickable { navHostController.popBackStack() }
-                )
-            }
+        CommonTopAppBar(
+            title = "Purchase",
+            onBackButtonClick = { navHostController.popBackStack() }
         )
 
         Surface(

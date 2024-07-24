@@ -25,6 +25,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.OnBoardSlideView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ForgetPasswordView
+import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigationGraph(navHostController = rememberNavController() )
+                    AppNavigationGraph(navHostController = rememberNavController())
                 }
             }
         }
@@ -67,12 +68,12 @@ fun GreetingPreview() {
     }
 }
 
-
 @Composable
-fun AppNavigationGraph(modifier: Modifier=Modifier,
-                       navHostController: NavHostController,
-                       startDestination:String=AppNavigationItems.SplashScreen.route)
-{
+fun AppNavigationGraph(
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController,
+    startDestination: String = AppNavigationItems.SplashScreen.route
+) {
     NavHost(
         modifier = modifier,
         navController = navHostController,
@@ -84,33 +85,29 @@ fun AppNavigationGraph(modifier: Modifier=Modifier,
         composable(AppNavigationItems.DashBoardScreen.route) {
             DashboardScreenView(navHostController)
         }
-        composable(AppNavigationItems.OnBoardingScreen.route)
-        {
+        composable(AppNavigationItems.OnBoardingScreen.route) {
             OnBoardSlideView(navHostController)
         }
-        composable(AppNavigationItems.LoginScreen.route)
-        {
+        composable(AppNavigationItems.LoginScreen.route) {
             LoginScreenView(navHostController)
         }
-        composable(AppNavigationItems.ForgetPasswordScreen.route)
-        {
+        composable(AppNavigationItems.ForgetPasswordScreen.route) {
             ForgetPasswordView(navHostController)
         }
-        composable(AppNavigationItems.PleaseWaitScreen.route)
-        {
+        composable(AppNavigationItems.PleaseWaitScreen.route) {
             PleaseWaitView(navHostController)
         }
-        composable(AppNavigationItems.TrainingScreen.route)
-        {
+        composable(AppNavigationItems.TrainingScreen.route) {
             TrainingView(navHostController)
         }
-        composable(AppNavigationItems.AmountScreen.route)
-        {
+        composable(AppNavigationItems.AmountScreen.route) {
             AmountView(navHostController)
         }
-        composable(AppNavigationItems.InvoiceScreen.route)
-        {
+        composable(AppNavigationItems.InvoiceScreen.route) {
             InvoiceView(navHostController)
+        }
+        composable(AppNavigationItems.PasswordScreen.route) {
+            PasswordView(navHostController)
         }
         composable(
             route = AppNavigationItems.ConfirmationScreen.route,
@@ -119,35 +116,32 @@ fun AppNavigationGraph(modifier: Modifier=Modifier,
             val amount = backStackEntry.arguments?.getString("amount") ?: "0.00"
             ConfirmationView(navHostController, amount)
         }
-        composable(AppNavigationItems.TipScreen.route)
-        {
+        composable(AppNavigationItems.TipScreen.route) {
             TipView(navHostController)
         }
         composable(
-            AppNavigationItems.CardScreen.route,
+            route = AppNavigationItems.CardScreen.route,
             arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             CardView(navHostController, totalAmount)
         }
         composable(
-            AppNavigationItems.CardDetectScreen.route,
+            route = AppNavigationItems.CardDetectScreen.route,
             arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             CardDetectView(navHostController, totalAmount)
         }
-        composable(AppNavigationItems.PinScreen.route)
-        {
+        composable(AppNavigationItems.PinScreen.route) {
             PinView(navHostController)
         }
         composable(
-            AppNavigationItems.ApprovedScreen.route,
+            route = AppNavigationItems.ApprovedScreen.route,
             arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             ApprovedView(navHostController, totalAmount)
         }
-
     }
 }

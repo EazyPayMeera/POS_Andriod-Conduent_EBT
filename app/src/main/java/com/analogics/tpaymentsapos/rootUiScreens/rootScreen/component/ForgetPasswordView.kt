@@ -20,22 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 
 @Composable
 fun ForgetPasswordView(navHostController: NavHostController) {
     Column {
-        TopAppBar(
-            title = { Text("Forgot Password") },
-            backgroundColor = Color(0xFFF8F8F7),
-            navigationIcon = {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clickable { navHostController.popBackStack() }
-                )
-            }
+        CommonTopAppBar(
+            title = "Forget Password",
+            onBackButtonClick = { navHostController.popBackStack() }
         )
 
         Surface(

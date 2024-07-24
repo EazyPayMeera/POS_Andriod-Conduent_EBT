@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 
 val OrangeColor = Color(0xFFF7931E)
 
@@ -30,18 +31,9 @@ fun TrainingView(navHostController: NavHostController) {
     val selectedButton = remember { mutableStateOf<String?>(null) }
 
     Column {
-        TopAppBar(
-            title = { Text("Training View") },
-            backgroundColor = Color(0xFFF8F8F7),
-            navigationIcon = {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clickable { navHostController.popBackStack() }
-                )
-            }
+        CommonTopAppBar(
+            title = "Purchase",
+            onBackButtonClick = { navHostController.popBackStack() }
         )
 
         Surface(
@@ -99,6 +91,7 @@ fun TrainingView(navHostController: NavHostController) {
                     Button(
                         onClick = {
                             selectedButton.value = "Refund"
+                            navHostController.navigate(AppNavigationItems.PasswordScreen.route)
                         },
                         modifier = Modifier
                             .size(120.dp)

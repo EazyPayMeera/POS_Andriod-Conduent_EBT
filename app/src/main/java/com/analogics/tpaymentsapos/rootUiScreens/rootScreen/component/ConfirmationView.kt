@@ -2,12 +2,9 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,11 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
-import java.text.DecimalFormat
 
 @Composable
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
@@ -39,18 +36,9 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             .padding(25.dp)
             .fillMaxSize()
     ) {
-        TopAppBar(
-            title = { Text("Purchase") },
-            backgroundColor = Color(0xFFF8F8F7),
-            navigationIcon = {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clickable { navHostController.popBackStack() }
-                )
-            }
+        CommonTopAppBar(
+            title = "Purchase",
+            onBackButtonClick = { navHostController.popBackStack() }
         )
 
         Spacer(modifier = Modifier.height(20.dp))
