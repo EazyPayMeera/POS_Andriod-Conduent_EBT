@@ -3,8 +3,13 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -15,7 +20,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 
 
 @Composable
-fun AmountView(navHostController: NavHostController) {
+fun RefundAmtView(navHostController: NavHostController) {
     var rawInput by remember { mutableStateOf("") }
     var formattedAmount by remember { mutableStateOf("0.00") }
 
@@ -27,9 +32,9 @@ fun AmountView(navHostController: NavHostController) {
 
         CustomSurface(
             imageResourceId = R.drawable.card,
-            titleText = "Enter the Transaction Amount",
+            titleText = "Enter the Refund Amount",
             label = "Amount",
-            placeholder = "Enter amount",
+            placeholder = "Enter Refund Amount",
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {
@@ -42,6 +47,7 @@ fun AmountView(navHostController: NavHostController) {
             },
             keyboardType = KeyboardType.Number,
             visualTransformation = createAmountTransformation() // Use the imported function
+
         )
     }
 }

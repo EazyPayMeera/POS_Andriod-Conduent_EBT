@@ -12,6 +12,10 @@ sealed class AppNavigationItems(val route: String) {
  object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
  object TipScreen : AppNavigationItems(NavScreensEnum.TipView.name)
  object PasswordScreen : AppNavigationItems(NavScreensEnum.PasswordView.name)
+ object RefundAmtScreen : AppNavigationItems(NavScreensEnum.RefundAmtView.name)
+ object SettingsScreen : AppNavigationItems(NavScreensEnum.SettingsView.name)
+ object LanguageScreen : AppNavigationItems(NavScreensEnum.LanguageView.name)
+ object ConfigurationScreen : AppNavigationItems(NavScreensEnum.ConfigurationView.name)
 
  object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
   fun createRoute(totalAmount: String) = "card_screen/$totalAmount"

@@ -26,7 +26,7 @@ fun PasswordView(navHostController: NavHostController) {
             placeholder = "Password",
             value = invoiceno,
             onValueChange = { invoiceno = it },
-            onDoneAction = { navHostController.navigate(AppNavigationItems.AmountScreen.route) },
+            onDoneAction = { navHostController.navigate(AppNavigationItems.RefundAmtScreen.route) },
             keyboardType = KeyboardType.Text // Default text keyboard
         )
     }

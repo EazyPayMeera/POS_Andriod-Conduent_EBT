@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
 
+import LanguageView
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,8 +33,11 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TrainingView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
+import com.analogics.tpaymentsapos.rootUiScreens.login.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
+import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
+import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 
 class MainActivity : ComponentActivity() {
@@ -146,6 +150,18 @@ fun AppNavigationGraph(
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             ApprovedView(navHostController, totalAmount)
+        }
+        composable(AppNavigationItems.RefundAmtScreen.route) {
+            RefundAmtView(navHostController)
+        }
+        composable(AppNavigationItems.SettingsScreen.route) {
+            SettingsView(navHostController)
+        }
+        composable(AppNavigationItems.LanguageScreen.route) {
+            LanguageView(navHostController)
+        }
+        composable(AppNavigationItems.ConfigurationScreen.route) {
+            ConfigurationView(navHostController)
         }
     }
 }

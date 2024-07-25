@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.analogics.tpaymentsapos.R
@@ -303,6 +302,79 @@ fun OkButton(onClick:()->Unit,
         }
     }
 }
+
+@Composable
+fun SettingsUpperSurface(
+    modifier: Modifier = Modifier,
+    elevation: Dp = 0.dp,
+    color: Color = MaterialTheme.colorScheme.background,
+    height: Dp, // Added customizable height parameter
+    content: @Composable () -> Unit
+) {
+    Surface(
+        modifier = modifier
+            .height(height) // Applying customizable height
+            .shadow(
+                elevation = elevation,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            ),
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        color = color
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun SettingsMiddleSurface(
+    modifier: Modifier = Modifier,
+    elevation: Dp = 0.dp,
+    color: Color = MaterialTheme.colorScheme.background,
+    height: Dp, // Added customizable height parameter
+    content: @Composable () -> Unit
+) {
+    Surface(
+        modifier = modifier
+            .height(height) // Applying customizable height
+            .shadow(
+                elevation = elevation,
+            ),
+        color = color
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun SettingsLowerSurface(
+    modifier: Modifier = Modifier,
+    elevation: Dp = 0.dp,
+    color: Color = MaterialTheme.colorScheme.background,
+    height: Dp, // Customizable height parameter
+    bottomStartRadius: Dp = 16.dp,
+    bottomEndRadius: Dp = 16.dp,
+    content: @Composable () -> Unit
+) {
+    Surface(
+        modifier = modifier
+            .height(height) // Applying customizable height
+            .shadow(
+                elevation = elevation,
+                shape = RoundedCornerShape(
+                    bottomStart = bottomStartRadius,
+                    bottomEnd = bottomEndRadius
+                )
+            ),
+        shape = RoundedCornerShape(
+            bottomStart = bottomStartRadius,
+            bottomEnd = bottomEndRadius
+        ),
+        color = color
+    ) {
+        content()
+    }
+}
+
 
 
 
