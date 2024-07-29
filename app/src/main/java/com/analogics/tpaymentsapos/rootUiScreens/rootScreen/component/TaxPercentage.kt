@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.*
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -16,32 +15,30 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 
 
 @Composable
-fun AmountView(navHostController: NavHostController) {
+fun TaxPercentageView(navHostController: NavHostController) {
     var rawInput by remember { mutableStateOf("") }
-    val backStackEntry = navHostController.currentBackStackEntryAsState().value
-    val isRefund = backStackEntry?.arguments?.getBoolean("isRefund") ?: false
-    var formattedAmount by remember { mutableStateOf("0.00") }
+    var taxpercentage by remember { mutableStateOf("0.00") }
 
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = "Adjust",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card,
-            titleText = "Enter the ${if (isRefund) "Refund" else "Purchase"} Transaction Amount",
-            label = "Amount",
-            placeholder = "Enter amount",
+            titleText = "Enter the Percentage",
+            label = "Percentage",
+            placeholder = "Enter Percentage",
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {
                     rawInput = newValue
-                    formattedAmount = formatAmount(newValue)
+                    taxpercentage = formatAmount(newValue)
                 }
             },
             onDoneAction = {
-                navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(formattedAmount))
+                navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(taxpercentage))
             },
             keyboardType = KeyboardType.Number,
             visualTransformation = createAmountTransformation() // Use the imported function

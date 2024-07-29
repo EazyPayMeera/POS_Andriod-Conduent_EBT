@@ -34,10 +34,12 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.TrainingView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfigurationView
+import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
+import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 
 class MainActivity : ComponentActivity() {
@@ -162,6 +164,12 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.ConfigurationScreen.route) {
             ConfigurationView(navHostController)
+        }
+        composable(AppNavigationItems.ConfirmShiftScreen.route) {
+            ConfirmShiftView(navHostController)
+        }
+        composable(AppNavigationItems.TaxPercentageScreen.route) {
+            TaxPercentageView(navHostController)
         }
     }
 }

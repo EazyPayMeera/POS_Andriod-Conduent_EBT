@@ -34,7 +34,7 @@ fun ConfigurationView(navHostController: NavHostController) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp) // Horizontal padding
                 .padding(top = 14.dp, bottom = 0.dp) // Top and bottom padding
-                .clickable { navHostController.navigate(AppNavigationItems.LanguageScreen.route) },
+                .clickable { },
             elevation = 20.dp, // Elevation for shadow effect
             color = MaterialTheme.colorScheme.background, // Background color for Surface
             height = 60.dp // Customizable height parameter
@@ -63,15 +63,15 @@ fun ConfigurationView(navHostController: NavHostController) {
                     modifier = Modifier.padding(horizontal = 8.dp) // Space between text and images
                 )
                 // Spacer between Upper and Middle Surface
-                Spacer(modifier = Modifier.width(120.dp)) // Adjust the height as needed
+                Spacer(modifier = Modifier.width(128.dp)) // Adjust the height as needed
                 // Toggle switch
                 // Toggle switch
                 Switch(
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.Blue, // Customize colors as needed
-                        uncheckedThumbColor = Color.Gray
+                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
+                        uncheckedThumbColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -116,14 +116,173 @@ fun ConfigurationView(navHostController: NavHostController) {
                 )
 
                 // Spacer between Upper and Middle Surface
-                Spacer(modifier = Modifier.width(10.dp)) // Adjust the height as needed
+                Spacer(modifier = Modifier.width(15.dp)) // Adjust the height as needed
                 // Toggle switch
                 Switch(
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.Blue, // Customize colors as needed
-                        uncheckedThumbColor = Color.Gray
+                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
+                        uncheckedThumbColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .scale(0.75f) // Scale down the switch
+                        .padding(4.dp) // Padding around the switch
+                )
+            }
+        }
+
+        // Middle Surface with top and bottom padding, and clickable
+        SettingsMiddleSurface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp) // Horizontal padding
+                .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
+                .clickable { /* Handle click for SettingsMiddleSurface */ },
+            elevation = 20.dp, // Elevation for shadow effect
+            color = MaterialTheme.colorScheme.background, // Background color for Surface
+            height = 60.dp // Customizable height parameter
+        ) {
+            // State to manage the toggle switch
+            var isSwitchedOn by remember { mutableStateOf(false) }
+            // Use Row to place text and images horizontally
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp), // Adjust padding as needed
+                horizontalArrangement = Arrangement.Start, // Space between elements
+                verticalAlignment = Alignment.CenterVertically // Center vertically
+            ) {
+                // Leading image
+                Image(
+                    painter = painterResource(id = R.drawable.password), // Replace with your image resource
+                    contentDescription = "Language Icon",
+                    modifier = Modifier.size(24.dp) // Adjust size as needed
+                )
+
+                // Change Password text
+                Text(
+                    text = "Prompt Invoice Number",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 8.dp) // Space between text and images
+                )
+
+                // Spacer between Upper and Middle Surface
+                Spacer(modifier = Modifier.width(55.dp)) // Adjust the height as needed
+                // Toggle switch
+                Switch(
+                    checked = isSwitchedOn,
+                    onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
+                        uncheckedThumbColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .scale(0.75f) // Scale down the switch
+                        .padding(4.dp) // Padding around the switch
+                )
+            }
+        }
+
+        // Middle Surface with top and bottom padding, and clickable
+        SettingsMiddleSurface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp) // Horizontal padding
+                .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
+                .clickable { /* Handle click for SettingsMiddleSurface */ },
+            elevation = 20.dp, // Elevation for shadow effect
+            color = MaterialTheme.colorScheme.background, // Background color for Surface
+            height = 60.dp // Customizable height parameter
+        ) {
+            // State to manage the toggle switch
+            var isSwitchedOn by remember { mutableStateOf(false) }
+            // Use Row to place text and images horizontally
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp), // Adjust padding as needed
+                horizontalArrangement = Arrangement.Start, // Space between elements
+                verticalAlignment = Alignment.CenterVertically // Center vertically
+            ) {
+                // Leading image
+                Image(
+                    painter = painterResource(id = R.drawable.password), // Replace with your image resource
+                    contentDescription = "Language Icon",
+                    modifier = Modifier.size(24.dp) // Adjust size as needed
+                )
+
+                // Change Password text
+                Text(
+                    text = "Auto Print Merchant Receipt",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 8.dp) // Space between text and images
+                )
+
+                // Spacer between Upper and Middle Surface
+                Spacer(modifier = Modifier.width(22.dp)) // Adjust the height as needed
+                // Toggle switch
+                Switch(
+                    checked = isSwitchedOn,
+                    onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
+                        uncheckedThumbColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .scale(0.75f) // Scale down the switch
+                        .padding(4.dp) // Padding around the switch
+                )
+            }
+        }
+
+        // Middle Surface with top and bottom padding, and clickable
+        SettingsMiddleSurface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp) // Horizontal padding
+                .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
+                .clickable { /* Handle click for SettingsMiddleSurface */ },
+            elevation = 20.dp, // Elevation for shadow effect
+            color = MaterialTheme.colorScheme.background, // Background color for Surface
+            height = 60.dp // Customizable height parameter
+        ) {
+            // State to manage the toggle switch
+            var isSwitchedOn by remember { mutableStateOf(false) }
+            // Use Row to place text and images horizontally
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp), // Adjust padding as needed
+                horizontalArrangement = Arrangement.Start, // Space between elements
+                verticalAlignment = Alignment.CenterVertically // Center vertically
+            ) {
+                // Leading image
+                Image(
+                    painter = painterResource(id = R.drawable.password), // Replace with your image resource
+                    contentDescription = "Language Icon",
+                    modifier = Modifier.size(24.dp) // Adjust size as needed
+                )
+
+                // Change Password text
+                Text(
+                    text = "Enable Tipping",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 8.dp) // Space between text and images
+                )
+
+                // Spacer between Upper and Middle Surface
+                Spacer(modifier = Modifier.width(123.dp)) // Adjust the height as needed
+                // Toggle switch
+                Switch(
+                    checked = isSwitchedOn,
+                    onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
+                    colors = SwitchDefaults.colors(
+                        checkedBorderColor = Color.White,
+                        uncheckedTrackColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
+                        checkedIconColor = Color.White,
+                        uncheckedThumbColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -168,15 +327,15 @@ fun ConfigurationView(navHostController: NavHostController) {
                 )
 
                 // Spacer between Upper and Middle Surface
-                Spacer(modifier = Modifier.width(130.dp)) // Adjust the height as needed
+                Spacer(modifier = Modifier.width(190.dp)) // Adjust the height as needed
 
                 // Toggle switch
                 Switch(
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.Blue, // Customize colors as needed
-                        uncheckedThumbColor = Color.Gray
+                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
+                        uncheckedThumbColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch

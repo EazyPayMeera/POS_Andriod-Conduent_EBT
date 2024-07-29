@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,10 @@ val OrangeColor = Color(0xFFF7931E)
 fun TrainingView(navHostController: NavHostController) {
     // State to track which button is selected
     val selectedButton = remember { mutableStateOf<String?>(null) }
+    var ispurchase = remember { mutableStateOf(false) }   // Flag to track if Purchase Transaction
+    var isRefund by remember { mutableStateOf(false) }
+    var isvoid = remember { mutableStateOf(false) }       // Flag to track if Void Transaction
+    var ispreauth = remember { mutableStateOf(false) }    // Flag to track if Pre-Auth Transaction
 
     Column {
         CommonTopAppBar(
@@ -85,6 +91,7 @@ fun TrainingView(navHostController: NavHostController) {
                     Button(
                         onClick = {
                             selectedButton.value = "Refund"
+                            isRefund = true
                             navHostController.navigate(AppNavigationItems.PasswordScreen.route)
                         },
                         modifier = Modifier
@@ -132,7 +139,7 @@ fun TrainingView(navHostController: NavHostController) {
                     Button(
                         onClick = {
                             selectedButton.value = "Void"
-                            navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                            navHostController.navigate(AppNavigationItems.PasswordScreen.route)
                         },
                         modifier = Modifier
                             .size(120.dp)
@@ -160,6 +167,7 @@ fun TrainingView(navHostController: NavHostController) {
                     Button(
                         onClick = {
                             selectedButton.value = "Transactions"
+                            navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
                         },
                         modifier = Modifier
                             .size(120.dp)

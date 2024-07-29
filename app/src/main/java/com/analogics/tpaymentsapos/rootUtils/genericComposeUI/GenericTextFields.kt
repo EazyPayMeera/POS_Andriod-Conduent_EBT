@@ -375,6 +375,51 @@ fun SettingsLowerSurface(
     }
 }
 
+@Composable
+fun ConfirmationButton(
+    onClick: () -> Unit,
+    title: String
+) {
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = Modifier
+            .width(126.dp) // Set the width of the Box
+            .padding(bottom = 20.dp) // Bottom padding
+            .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Add shadow with rounded corners
+            .background(
+                color = colorResource(R.color.white),
+                shape = RoundedCornerShape(10.dp)
+            )
+    ) {
+        Button(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth() // Make the button fill the width of the Box
+                .height(48.dp), // Set a fixed height for the button
+            shape = RoundedCornerShape(10.dp), // Rounded corners for the button
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Black, // Text color
+                containerColor = colorResource(R.color.grey) // Background color
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp, // Default elevation
+                pressedElevation = 12.dp, // Elevation when the button is pressed
+                hoveredElevation = 6.dp, // Elevation when the button is hovered
+                focusedElevation = 10.dp // Elevation when the button is focused
+            )
+        ) {
+            Text(
+                text = title,
+                color = Color.Black, // Text color
+                style = MaterialTheme.typography.bodyMedium // Use a common typography style
+            )
+        }
+    }
+}
+
+
+
+
 
 
 

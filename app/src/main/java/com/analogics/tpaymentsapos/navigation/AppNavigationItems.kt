@@ -8,14 +8,22 @@ sealed class AppNavigationItems(val route: String) {
  object ForgetPasswordScreen : AppNavigationItems(NavScreensEnum.ForgetPasswordView.name)
  object PleaseWaitScreen : AppNavigationItems(NavScreensEnum.PleaseWaitView.name)
  object TrainingScreen : AppNavigationItems(NavScreensEnum.TrainingView.name)
- object AmountScreen : AppNavigationItems(NavScreensEnum.AmountView.name)
- object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
+ object InvoiceScreen : AppNavigationItems("invoice/{isRefund}") {
+  fun createRoute(isRefund: Boolean) = "invoice/$isRefund"
+ }
+ object AmountScreen : AppNavigationItems("amount/{isRefund}") {
+  fun createRoute(isRefund: Boolean) = "amount/$isRefund"
+ }
  object TipScreen : AppNavigationItems(NavScreensEnum.TipView.name)
- object PasswordScreen : AppNavigationItems(NavScreensEnum.PasswordView.name)
+ object PasswordScreen : AppNavigationItems("password_screen/{isRefund}") {
+  fun createRoute(isRefund: Boolean) = "password_screen/$isRefund"
+ }
  object RefundAmtScreen : AppNavigationItems(NavScreensEnum.RefundAmtView.name)
  object SettingsScreen : AppNavigationItems(NavScreensEnum.SettingsView.name)
  object LanguageScreen : AppNavigationItems(NavScreensEnum.LanguageView.name)
  object ConfigurationScreen : AppNavigationItems(NavScreensEnum.ConfigurationView.name)
+ object ConfirmShiftScreen : AppNavigationItems(NavScreensEnum.ConfirmShiftView.name)
+ object TaxPercentageScreen : AppNavigationItems(NavScreensEnum.TaxPercentageView.name)
 
  object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
   fun createRoute(totalAmount: String) = "card_screen/$totalAmount"
