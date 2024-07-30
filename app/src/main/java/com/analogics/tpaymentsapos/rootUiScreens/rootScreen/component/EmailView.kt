@@ -16,8 +16,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 
 @Composable
-fun EmailView(navHostController: NavHostController) {
-
+fun EmailView(navHostController: NavHostController, email: String) {
     CommonLayout(
         title = "Purchase",
         imageResId = R.drawable.close
@@ -25,7 +24,7 @@ fun EmailView(navHostController: NavHostController) {
         Spacer(modifier = Modifier.height(40.dp)) // Blank space added here
 
         Text(
-            text = "Sucess",
+            text = "Success",
             fontSize = 24.sp,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
@@ -49,7 +48,17 @@ fun EmailView(navHostController: NavHostController) {
         Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
 
         Text(
-            text = "e-Receipt was sucessfully sent",
+            text = "e-Receipt was successfully sent",
+            fontSize = 12.sp,
+            color = Color.LightGray,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .align(Alignment.CenterHorizontally) // Center the subheader text
+        )
+
+        Text(
+            text = "on $email",
             fontSize = 12.sp,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold,
@@ -64,7 +73,7 @@ fun EmailView(navHostController: NavHostController) {
         ) {
             OkButton(
                 onClick = {
-                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                    navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                 },
                 title = "OK"
             )

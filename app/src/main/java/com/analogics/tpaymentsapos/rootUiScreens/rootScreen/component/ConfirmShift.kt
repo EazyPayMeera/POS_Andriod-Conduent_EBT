@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ConfirmShiftView(navHostController: NavHostController) {
+    val OrangeColor = Color(0xFFFFA500)
     CommonLayout(
         title = "NAMEHERE",
         imageResId = R.drawable.close

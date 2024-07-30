@@ -16,12 +16,18 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import kotlinx.coroutines.delay
 
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
+    val isVoid = TransactionState.isVoid
+
     LaunchedEffect(Unit) {
         delay(2000) // Delay for 2 seconds (2000 milliseconds)
+        if(isVoid)
+            navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
+        else
         navHostController.navigate(AppNavigationItems.PinScreen.route) // Navigate to the desired screen
     }
 

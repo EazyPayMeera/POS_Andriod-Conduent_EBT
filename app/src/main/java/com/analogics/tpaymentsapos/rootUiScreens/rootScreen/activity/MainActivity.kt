@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
 
 import LanguageView
+import TrainingView
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,13 +31,14 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
-import com.analogics.tpaymentsapos.rootUiScreens.login.TrainingView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
+import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
+import com.analogics.tpaymentsapos.rootUiScreens.login.PreauthView
 import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
@@ -126,8 +128,12 @@ fun AppNavigationGraph(
         composable(AppNavigationItems.TipScreen.route) {
             TipView(navHostController)
         }
-        composable(AppNavigationItems.EmailScreen.route) {
-            EmailView(navHostController)
+        composable(
+            route = AppNavigationItems.EmailScreen.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            EmailView(navHostController, email)
         }
         composable(
             route = AppNavigationItems.CardScreen.route,
@@ -170,6 +176,12 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.TaxPercentageScreen.route) {
             TaxPercentageView(navHostController)
+        }
+        composable(AppNavigationItems.PreauthScreen.route) {
+            PreauthView(navHostController)
+        }
+        composable(AppNavigationItems.EnterEmailScreen.route) {
+            EnterEmailView(navHostController)
         }
     }
 }

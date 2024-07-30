@@ -62,7 +62,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
             ConfirmationButton(
                 onClick = {
-                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                    navHostController?.navigate(AppNavigationItems.EnterEmailScreen.route)
                 },
                 title = "E-RECEIPT"
             )

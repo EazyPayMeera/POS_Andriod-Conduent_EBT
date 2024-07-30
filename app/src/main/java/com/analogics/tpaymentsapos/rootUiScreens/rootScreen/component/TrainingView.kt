@@ -1,23 +1,23 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
-
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.IconButtonWithText
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 
 val OrangeColor = Color(0xFFF7931E)
 
@@ -25,14 +25,10 @@ val OrangeColor = Color(0xFFF7931E)
 fun TrainingView(navHostController: NavHostController) {
     // State to track which button is selected
     val selectedButton = remember { mutableStateOf<String?>(null) }
-    var ispurchase = remember { mutableStateOf(false) }   // Flag to track if Purchase Transaction
-    var isRefund by remember { mutableStateOf(false) }
-    var isvoid = remember { mutableStateOf(false) }       // Flag to track if Void Transaction
-    var ispreauth = remember { mutableStateOf(false) }    // Flag to track if Pre-Auth Transaction
 
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = "Training",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -68,45 +64,27 @@ fun TrainingView(navHostController: NavHostController) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // First set of buttons
-                    Button(
+                    // First set of buttons with images
+                    IconButtonWithText(
+                        text = "Purchase",
+                        icon = painterResource(id = R.drawable.card),
+                        isSelected = selectedButton.value == "Purchase",
                         onClick = {
                             selectedButton.value = "Purchase"
                             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
-                        },
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(8.dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (selectedButton.value == "Purchase") OrangeColor else Color.Transparent,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "Purchase", color = Color.Black)
-                    }
+                        }
+                    )
 
-                    Button(
+                    IconButtonWithText(
+                        text = "Refund",
+                        icon = painterResource(id = R.drawable.card),
+                        isSelected = selectedButton.value == "Refund",
                         onClick = {
                             selectedButton.value = "Refund"
-                            isRefund = true
+                            TransactionState.isRefund = true
                             navHostController.navigate(AppNavigationItems.PasswordScreen.route)
-                        },
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(8.dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (selectedButton.value == "Refund") OrangeColor else Color.Transparent,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "Refund", color = Color.Black)
-                    }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -116,44 +94,27 @@ fun TrainingView(navHostController: NavHostController) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Second set of buttons
-                    Button(
+                    // Second set of buttons with images
+                    IconButtonWithText(
+                        text = "Pre-Auth",
+                        icon = painterResource(id = R.drawable.card),
+                        isSelected = selectedButton.value == "Pre-Auth",
                         onClick = {
                             selectedButton.value = "Pre-Auth"
-                            navHostController.navigate(AppNavigationItems.EmailScreen.route)
-                        },
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(8.dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (selectedButton.value == "Pre-Auth") OrangeColor else Color.Transparent,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "Pre-Auth", color = Color.Black)
-                    }
+                            navHostController.navigate(AppNavigationItems.PreauthScreen.route)
+                        }
+                    )
 
-                    Button(
+                    IconButtonWithText(
+                        text = "Void",
+                        icon = painterResource(id = R.drawable.card),
+                        isSelected = selectedButton.value == "Void",
                         onClick = {
                             selectedButton.value = "Void"
+                            TransactionState.isVoid = true
                             navHostController.navigate(AppNavigationItems.PasswordScreen.route)
-                        },
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(8.dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (selectedButton.value == "Void") OrangeColor else Color.Transparent,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "Void", color = Color.Black)
-                    }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -163,25 +124,16 @@ fun TrainingView(navHostController: NavHostController) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Third set of buttons
-                    Button(
+                    // Third set of buttons with images
+                    IconButtonWithText(
+                        text = "Transactions",
+                        icon = painterResource(id = R.drawable.card),
+                        isSelected = selectedButton.value == "Transactions",
                         onClick = {
                             selectedButton.value = "Transactions"
                             navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
-                        },
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(8.dp)
-                            .border(
-                                width = 2.dp,
-                                color = if (selectedButton.value == "Transactions") OrangeColor else Color.Transparent,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "Transactions", color = Color.Black)
-                    }
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -191,7 +143,7 @@ fun TrainingView(navHostController: NavHostController) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Fourth set of buttons
+                    // Fourth set of buttons with images
                     Button(
                         onClick = { /* Handle print receipt click */ },
                         modifier = Modifier
@@ -207,3 +159,5 @@ fun TrainingView(navHostController: NavHostController) {
         }
     }
 }
+
+

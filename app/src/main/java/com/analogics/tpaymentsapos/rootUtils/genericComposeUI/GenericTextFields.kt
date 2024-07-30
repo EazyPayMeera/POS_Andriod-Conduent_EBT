@@ -1,12 +1,15 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
+import OrangeColor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -35,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -49,6 +54,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.analogics.tpaymentsapos.R
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 @Composable
@@ -125,17 +133,24 @@ fun CustomSurface(
     onValueChange: (String) -> Unit,
     onDoneAction: () -> Unit,
     isPassword: Boolean = false,
+    isRefund: Boolean = false,
+    isVoid: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable (ColumnScope.() -> Unit)? = null // New parameter for custom content
 ) {
+    // Define height and width based on the isRefund flag
+    val surfaceHeight = if (isRefund) 380.dp else if (isVoid) 540.dp else 250.dp
+    val surfaceWidth = if (isRefund) 430.dp else if (isVoid) 430.dp else 430.dp
+
     Surface(
         color = Color.White,
         modifier = modifier
             .padding(25.dp)
             .fillMaxWidth()
-            .height(250.dp)
-            .width(430.dp),
+            .height(surfaceHeight)
+            .width(surfaceWidth),
         shape = RoundedCornerShape(18.dp)
     ) {
         Column(
@@ -177,8 +192,14 @@ fun CustomSurface(
                     onDone = { onDoneAction() }
                 ),
                 visualTransformation = visualTransformation,
-                modifier = Modifier.fillMaxWidth()
+                modifier = modifier
+                    .padding(2.dp)
+                    .width(280.dp)
+                    .height(70.dp)
             )
+
+            // Custom content
+            content?.invoke(this)
         }
     }
 }
@@ -418,8 +439,165 @@ fun ConfirmationButton(
 }
 
 
+object TransactionState {
+    var isRefund: Boolean = false
+    var isVoid: Boolean = false
+    var isPurchase: Boolean = false
+    var isPreauth: Boolean = false
+    var isTransaction: Boolean = false
+}
+
+@Composable
+fun ScannerButton(
+    text: String,
+    onClick: () -> Unit,
+    backgroundColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = Color.White,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        colors = buttonColors(
+            containerColor = backgroundColor,
+            contentColor = contentColor
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier
+            .padding(2.dp)
+            .width(280.dp)
+            .height(70.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+fun getFormattedDateTime(): String {
+    val calendar = Calendar.getInstance()
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy @ HH:mm:ss", Locale.getDefault())
+    return dateFormat.format(calendar.time)
+}
 
 
+@Composable
+fun PreauthTypeSelectionSurface(
+    title: String,
+    imageResourceId: Int,
+    firstButtonText: String,
+    secondButtonText: String,
+    onFirstButtonClick: () -> Unit,
+    onSecondButtonClick: () -> Unit
+) {
+    Surface(
+        color = Color.White,
+        modifier = Modifier
+            .padding(25.dp)
+            .width(430.dp)
+            .height(400.dp),
+        shape = RoundedCornerShape(18.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
+                fontSize = 14.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Image(
+                painter = painterResource(id = imageResourceId),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(bottom = 16.dp)
+            )
+
+            ScannerButton(
+                text = firstButtonText,
+                onClick = onFirstButtonClick,
+                backgroundColor = Color(0xFFEDEDED),
+                contentColor = Color.Black,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "---------------or----------------",
+                fontSize = 14.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            ScannerButton(
+                text = secondButtonText,
+                onClick = onSecondButtonClick,
+                backgroundColor = Color(0xFFEDEDED),
+                contentColor = Color.Black,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    }
+}
+
+
+@Composable
+fun IconButtonWithText(
+    text: String,
+    icon: Painter,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    androidx.compose.material.Button(
+        onClick = onClick,
+        modifier = Modifier
+            .size(120.dp)
+            .padding(8.dp)
+            .border(
+                width = 2.dp,
+                color = if (isSelected) OrangeColor else Color.Transparent,
+                shape = RoundedCornerShape(10.dp)
+            ),
+        colors = androidx.compose.material.ButtonDefaults.buttonColors(
+            backgroundColor = Color.White // Use backgroundColor parameter for compatibility
+        ),
+        shape = RoundedCornerShape(10.dp),
+        contentPadding = PaddingValues(0.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            androidx.compose.material.Icon(
+                painter = icon,
+                contentDescription = text,
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(bottom = 4.dp),
+                tint = Color.Black
+            )
+            androidx.compose.material.Text(text = text, color = Color.Black, fontSize = 14.sp)
+        }
+    }
+}
 
 
 
