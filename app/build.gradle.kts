@@ -78,6 +78,9 @@ dependencies {
     implementation ("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta04")
     implementation ("androidx.compose.ui:ui:1.4.0")
     implementation ("androidx.compose.material:material:1.4.0")
+    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("io.coil-kt:coil-gif:2.1.0")
+    implementation ("androidx.compose.animation:animation:1.5.0") // Use the latest version available
 
 
 

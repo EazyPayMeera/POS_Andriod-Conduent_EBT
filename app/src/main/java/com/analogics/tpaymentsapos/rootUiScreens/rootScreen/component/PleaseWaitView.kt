@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GifImage
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import kotlinx.coroutines.delay
 
@@ -49,13 +50,12 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
         Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
 
-        Image(
-            painter = painterResource(id = R.drawable.loading), // Replace with your image resource
-            contentDescription = null, // Decorative image
+        GifImage(
+            gifResId = R.drawable.wait, // Use your GIF resource here
             modifier = Modifier
                 .size(110.dp)
                 .padding(bottom = 16.dp)
-                .align(Alignment.CenterHorizontally) // Center the image
+                .align(Alignment.CenterHorizontally) // Center the GIF
         )
     }
 }

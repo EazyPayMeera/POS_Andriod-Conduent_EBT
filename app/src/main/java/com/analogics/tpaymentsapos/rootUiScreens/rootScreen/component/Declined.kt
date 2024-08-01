@@ -13,18 +13,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 
 @Composable
-fun DeclinedView(navHostController: NavHostController, totalAmount: String) {
+fun DeclineView(navHostController: NavHostController, totalAmount: String) {
     CommonLayout(
-        title = "Approved",
+        title = "Decline",
         imageResId = R.drawable.close
     ) {
         Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
 
         Text(
-            text = "DECLINED",
+            text = "DECLINE",
             fontSize = 24.sp,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
@@ -43,5 +45,33 @@ fun DeclinedView(navHostController: NavHostController, totalAmount: String) {
                 .padding(bottom = 16.dp)
                 .align(Alignment.CenterHorizontally) // Center the image
         )
+        Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularMenu(
+                onPrintClick = {
+                    // Do something on Print click
+                },
+                onMenuOptionClick = { option ->
+                    // Handle circular menu option clicks
+                    // For demonstration, navigate to EnterEmailScreen
+                    navHostController?.navigate(AppNavigationItems.EnterEmailScreen.route)
+                }
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            modifier = Modifier.padding(top = 10.dp)
+        ) {
+            OkButton(
+                onClick = {
+                    navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                },
+                title = "Done"
+            )
+        }
     }
 }

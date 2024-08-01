@@ -35,6 +35,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
+import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
@@ -182,6 +183,13 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.EnterEmailScreen.route) {
             EnterEmailView(navHostController)
+        }
+        composable(
+            route = AppNavigationItems.DeclineScreen.route,
+            arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
+            DeclineView(navHostController, totalAmount)
         }
     }
 }
