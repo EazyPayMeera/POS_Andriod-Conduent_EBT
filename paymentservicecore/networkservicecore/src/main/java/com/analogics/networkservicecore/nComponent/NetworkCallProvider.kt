@@ -50,7 +50,7 @@ object NetworkCallProvider {
             val response = apiCall.invoke()
             if (response.isSuccessful) {
                 // getDeserializeResponse(response.body()!!.toString(),T)
-                ResultProviderString.Success(response.body().toString()!!)
+                ResultProviderString.Success(response.body().toString())
                 /* var userType = object: TypeToken<T>(){}.type
                  var response=Gson().fromJson<T>(response.body().toString(), userType)
                  ResultProvider.Success(response)*/
