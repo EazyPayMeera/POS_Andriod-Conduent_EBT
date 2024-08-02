@@ -1,7 +1,7 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -13,15 +13,16 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
-
 
 @Composable
 fun AmountView(navHostController: NavHostController) {
@@ -31,6 +32,10 @@ fun AmountView(navHostController: NavHostController) {
 
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = Authorisation.isAuthcap
+
+    Log.d("InvoiceView", "isAuthcap: $isAuthcap")
 
     Column {
         CommonTopAppBar(
@@ -39,10 +44,10 @@ fun AmountView(navHostController: NavHostController) {
         )
 
         CustomSurface(
-            imageResourceId = R.drawable.card,
-            titleText = if (isRefund) "Enter the Refund Amount" else "Enter the Transaction Amount",
-            label = if (isRefund) "Refund Amount" else "Amount",
-            placeholder = if (isRefund) "Enter refund amount" else "Enter amount",
+            imageResourceId = R.drawable.card, // Pass the SVG resource ID
+            titleText = if (isRefund) "Enter the Refund Amount" else if(isPreauth) "Enter the authorisation amount" else "Enter the Transaction Amount",
+            label = if (isRefund) "Refund Amount" else if(isPreauth) "Authorisation amount" else "Amount",
+            placeholder = if (isRefund) "Enter refund amount" else if(isPreauth) "Enter authorisation amount" else "Enter amount",
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {
@@ -51,10 +56,10 @@ fun AmountView(navHostController: NavHostController) {
                 }
             },
             onDoneAction = {
-                if(isRefund) {
+                if(isRefund || isPreauth) {
                     navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formattedAmount))
                 }
-                else if (isVoid)
+                else if (isVoid || isAuthcap)
                 {
                     navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                 }
@@ -65,16 +70,16 @@ fun AmountView(navHostController: NavHostController) {
             },
             isRefund = isRefund,
             isVoid = isVoid,
+            isAuthcap = isAuthcap,
             keyboardType = KeyboardType.Number,
-            visualTransformation = createAmountTransformation() // Use the imported function
-        )
-        {
+            visualTransformation = createAmountTransformation()
+        ) {
             if (isRefund) {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = "Original Amount : $formattedAmount",
-                    fontSize = 20.sp,
+                    fontSize = 15.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -84,7 +89,7 @@ fun AmountView(navHostController: NavHostController) {
 
                 Text(
                     text = "Txn Date: $transactionDateTime",
-                    fontSize = 20.sp,
+                    fontSize = 15.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -93,13 +98,13 @@ fun AmountView(navHostController: NavHostController) {
                 )
             }
 
-            if(isVoid)
-            {
+            if (isVoid || isAuthcap) {
+                Log.d("InvoiceView", "Inside if condition, showing All the text")
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = "Txn Date: $transactionDateTime",
-                    fontSize = 20.sp,
+                    fontSize = 15.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -157,9 +162,7 @@ fun AmountView(navHostController: NavHostController) {
                         .padding(bottom = 10.dp)
                         .align(Alignment.Start)
                 )
-
             }
-
         }
     }
 }

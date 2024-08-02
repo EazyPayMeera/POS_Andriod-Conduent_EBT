@@ -101,6 +101,7 @@ fun TrainingView(navHostController: NavHostController) {
                         isSelected = selectedButton.value == "Pre-Auth",
                         onClick = {
                             selectedButton.value = "Pre-Auth"
+                            TransactionState.isPreauth = true
                             navHostController.navigate(AppNavigationItems.PreauthScreen.route)
                         }
                     )

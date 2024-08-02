@@ -1,10 +1,7 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import OrangeColor
-import android.graphics.Paint
 import android.os.Build.VERSION.SDK_INT
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +27,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,12 +37,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -164,14 +153,15 @@ fun CustomSurface(
     isPassword: Boolean = false,
     isRefund: Boolean = false,
     isVoid: Boolean = false,
+    isAuthcap:Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     modifier: Modifier = Modifier,
     content: @Composable (ColumnScope.() -> Unit)? = null // New parameter for custom content
 ) {
     // Define height and width based on the isRefund flag
-    val surfaceHeight = if (isRefund) 380.dp else if (isVoid) 540.dp else 250.dp
-    val surfaceWidth = if (isRefund) 430.dp else if (isVoid) 430.dp else 430.dp
+    val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
+    val surfaceWidth = if (isRefund) 430.dp else if (isVoid || isAuthcap) 430.dp else 430.dp
 
     Surface(
         color = Color.White,
@@ -474,6 +464,11 @@ object TransactionState {
     var isPurchase: Boolean = false
     var isPreauth: Boolean = false
     var isTransaction: Boolean = false
+}
+
+object Authorisation {
+    var isNewauth: Boolean = false
+    var isAuthcap: Boolean = false
 }
 
 @Composable

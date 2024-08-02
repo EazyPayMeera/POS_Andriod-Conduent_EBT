@@ -3,14 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -28,6 +21,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerButton
@@ -42,6 +36,11 @@ fun InvoiceView(navHostController: NavHostController) {
     var showMenu by remember { mutableStateOf(false) }
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
+    val isPreauth = Authorisation.isNewauth
+    val isAuthcap = Authorisation.isAuthcap
+
+    // Print the value of isAuthcap to logcat
+    Log.d("InvoiceView", "isAuthcap: $isAuthcap")
 
     Column {
         CommonTopAppBar(
@@ -59,9 +58,14 @@ fun InvoiceView(navHostController: NavHostController) {
             onDoneAction = { navHostController.navigate(AppNavigationItems.AmountScreen.route) },
             isRefund = isRefund,
             isVoid = isVoid,
+            isAuthcap = isAuthcap,
             keyboardType = KeyboardType.Text
         ) {
-            if (isRefund || isVoid) {
+            // Log values of all relevant variables
+            Log.d("InvoiceView", "isRefund: $isRefund, isVoid: $isVoid, isPreauth: $isPreauth, isAuthcap: $isAuthcap")
+
+            if (isRefund || isVoid || isAuthcap) {
+                Log.d("InvoiceView", "Inside if condition, showing ScannerButton")
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "-----------or-----------",
@@ -79,14 +83,6 @@ fun InvoiceView(navHostController: NavHostController) {
                     backgroundColor = Color(0xFFEDEDED),
                     contentColor = Color.Black,
                     modifier = Modifier.padding(top = 8.dp)
-                )
-
-                CircularMenu(
-                    isVisible = showMenu,
-                    onOptionClick = { option ->
-                        // Handle menu option click
-                        showMenu = false // Hide menu after an option is clicked
-                    }
                 )
             }
         }
