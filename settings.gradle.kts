@@ -24,6 +24,6 @@ include(":app")
 include("paymentservicecore:securityframework")
 include(":paymentservicecore")
 include(":paymentservicecore:networkservicecore")
-include(":paymentservicecore:abstractconnectioncore")
+include(":paymentservicecore:builder-core")
 include(":paymentservicecore:tpaymentcore")
  

@@ -1,4 +1,4 @@
-package com.analogics.abstractconnectioncore
+package com.analogics.buildercore
 
 import org.junit.Test
 
