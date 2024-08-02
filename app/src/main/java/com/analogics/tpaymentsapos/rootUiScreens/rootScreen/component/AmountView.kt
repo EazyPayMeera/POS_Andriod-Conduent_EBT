@@ -152,7 +152,6 @@ fun AmountView(navHostController: NavHostController) {
                         .padding(bottom = 10.dp)
                         .align(Alignment.Start)
                 )
-
                 Text(
                     text = "POS Entry:",
                     fontSize = 20.sp,
