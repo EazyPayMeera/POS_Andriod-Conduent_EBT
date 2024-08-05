@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
@@ -29,6 +31,11 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
     val igstAmount = calculateTax(amountDouble)
     val tipAmount = calculateTip(amountDouble, selectedTipPercentage)
 
+    val isRefund = TransactionState.isRefund
+    val isVoid = TransactionState.isVoid
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = Authorisation.isAuthcap
+
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
 
     Column(
@@ -37,7 +44,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             .fillMaxSize()
     ) {
         CommonTopAppBar(
-            title = "Purchase",
+            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

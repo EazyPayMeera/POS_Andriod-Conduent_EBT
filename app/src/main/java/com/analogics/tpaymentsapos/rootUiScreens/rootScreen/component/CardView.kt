@@ -18,14 +18,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 
 @Composable
 fun CardView(navHostController: NavHostController, totalAmount: String) {
 
+    val isRefund = TransactionState.isRefund
+    val isVoid = TransactionState.isVoid
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = Authorisation.isAuthcap
+
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -65,7 +72,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
-                            text = "Total Amount:",
+                            text = if (isRefund) "Refund Amount:" else "Total Amount:",
                             fontSize = 20.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
@@ -131,34 +138,40 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
 
-                Text(
-                    text = "---------------or---------------",
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(3.dp))
-
-                Button(
-                    onClick = { /* Handle button click */ },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    shape = RoundedCornerShape(18),
-                    modifier = Modifier
-                        .width(200.dp)
-                        .padding(horizontal = 16.dp) // Optional padding for spacing
-                ) {
-                    // Icon inside the button
-                    Icon(
-                        painter = painterResource(id = R.drawable.upi), // Replace with your image resource
-                        contentDescription = null, // Decorative image
-                        modifier = Modifier.size(34.dp) // Adjust size as needed
+                if (!isRefund) {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "---------------or---------------",
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(bottom = 20.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
+
+                    Spacer(modifier = Modifier.height(3.dp))
+
+                    Button(
+                        onClick = { /* Handle button click */ },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                        shape = RoundedCornerShape(18),
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(horizontal = 16.dp) // Optional padding for spacing
+                    ) {
+                        // Icon inside the button
+                        Icon(
+                            painter = painterResource(id = R.drawable.upi), // Replace with your image resource
+                            contentDescription = null, // Decorative image
+                            modifier = Modifier.size(34.dp) // Adjust size as needed
+                        )
+                    }
+                }
+                else
+                {
+                    Spacer(modifier = Modifier.height(100.dp))
                 }
 
                 Spacer(modifier = Modifier.height(10.dp)) // Space before the CANCEL button

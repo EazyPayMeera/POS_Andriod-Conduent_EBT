@@ -12,13 +12,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 
 @Composable
 fun EmailView(navHostController: NavHostController, email: String) {
+
+    val isRefund = TransactionState.isRefund
+    val isVoid = TransactionState.isVoid
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = Authorisation.isAuthcap
+
     CommonLayout(
-        title = "Purchase",
+        title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
         imageResId = R.drawable.close
     ) {
         Spacer(modifier = Modifier.height(40.dp)) // Blank space added here

@@ -15,20 +15,28 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import kotlinx.coroutines.delay
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 
 @Composable
 fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
+
+    val isRefund = TransactionState.isRefund
+    val isVoid = TransactionState.isVoid
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = Authorisation.isAuthcap
+
     // Use LaunchedEffect to handle the delay and navigation
     LaunchedEffect(Unit) {
         delay(2000) // Delay for 2 seconds (2000 milliseconds)
-        navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route) // Navigate to the desired screen
+        navHostController.navigate(AppNavigationItems.PinScreen.route) // Navigate to the desired screen
     }
 
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -68,7 +76,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
-                            text = "Total Amount:",
+                            text = if (isRefund) "Refund Amount:" else "Total Amount:",
                             fontSize = 20.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,

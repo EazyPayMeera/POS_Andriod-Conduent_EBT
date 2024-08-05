@@ -44,7 +44,7 @@ fun InvoiceView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else "Purchase",
+            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

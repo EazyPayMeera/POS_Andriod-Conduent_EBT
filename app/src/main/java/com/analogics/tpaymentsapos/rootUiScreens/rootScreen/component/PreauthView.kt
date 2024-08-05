@@ -18,7 +18,7 @@ fun PreauthView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else "Purchase",
+            title = "Pre-Auth",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

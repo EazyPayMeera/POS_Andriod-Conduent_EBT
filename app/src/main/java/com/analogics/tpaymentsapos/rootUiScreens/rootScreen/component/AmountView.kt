@@ -39,7 +39,7 @@ fun AmountView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else "Purchase",
+            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -55,7 +55,11 @@ fun AmountView(navHostController: NavHostController) {
                     formattedAmount = formatAmount(newValue)
                 }
             },
+
             onDoneAction = {
+                // Log values of all relevant variables
+                Log.d("InvoiceView", "isRefund: $isRefund, isVoid: $isVoid, isPreauth: $isPreauth, isAuthcap: $isAuthcap")
+
                 if(isRefund || isPreauth) {
                     navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formattedAmount))
                 }

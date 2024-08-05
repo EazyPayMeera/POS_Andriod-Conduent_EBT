@@ -22,6 +22,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.SettingsUpperSurfa
 
 @Composable
 fun ConfigurationView(navHostController: NavHostController) {
+    var isEnableTipping by remember { mutableStateOf(false) }
     Column {
         CommonTopAppBar(
             title = "Configuration",
@@ -70,8 +71,10 @@ fun ConfigurationView(navHostController: NavHostController) {
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
-                        uncheckedThumbColor = Color.White
+                        checkedBorderColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E),
+                        uncheckedBorderColor = Color.Gray,
+                        checkedTrackColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -122,8 +125,10 @@ fun ConfigurationView(navHostController: NavHostController) {
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
-                        uncheckedThumbColor = Color.White
+                        checkedBorderColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E),
+                        uncheckedBorderColor = Color.Gray,
+                        checkedTrackColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -174,8 +179,10 @@ fun ConfigurationView(navHostController: NavHostController) {
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
-                        uncheckedThumbColor = Color.White
+                        checkedBorderColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E),
+                        uncheckedBorderColor = Color.Gray,
+                        checkedTrackColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -226,8 +233,10 @@ fun ConfigurationView(navHostController: NavHostController) {
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
-                        uncheckedThumbColor = Color.White
+                        checkedBorderColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E),
+                        uncheckedBorderColor = Color.Gray,
+                        checkedTrackColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -245,18 +254,20 @@ fun ConfigurationView(navHostController: NavHostController) {
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
             color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = 60.dp // Customizable height parameter
+            height = if (isEnableTipping) 100.dp else 60.dp //stomizable height parameter
         ) {
             // State to manage the toggle switch
             var isSwitchedOn by remember { mutableStateOf(false) }
+
             // Use Row to place text and images horizontally
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp), // Adjust padding as needed
                 horizontalArrangement = Arrangement.Start, // Space between elements
-                verticalAlignment = Alignment.CenterVertically // Center vertically
+                verticalAlignment = Alignment.CenterVertically// Center vertically
             ) {
+
                 // Leading image
                 Image(
                     painter = painterResource(id = R.drawable.password), // Replace with your image resource
@@ -275,14 +286,13 @@ fun ConfigurationView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.width(123.dp)) // Adjust the height as needed
                 // Toggle switch
                 Switch(
-                    checked = isSwitchedOn,
-                    onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
+                    checked = isEnableTipping,
+                    onCheckedChange = { isEnableTipping = it },
                     colors = SwitchDefaults.colors(
-                        checkedBorderColor = Color.White,
-                        uncheckedTrackColor = Color(0xFFF7931E),
-                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
-                        checkedIconColor = Color.White,
-                        uncheckedThumbColor = Color.White
+                        checkedBorderColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E),
+                        uncheckedBorderColor = Color.Gray,
+                        checkedTrackColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch
@@ -334,8 +344,10 @@ fun ConfigurationView(navHostController: NavHostController) {
                     checked = isSwitchedOn,
                     onCheckedChange = { isSwitchedOn = it }, // Update state on toggle
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFFF7931E), // Customize colors as needed
-                        uncheckedThumbColor = Color.White
+                        checkedBorderColor = Color(0xFFF7931E),
+                        checkedThumbColor = Color(0xFFF7931E),
+                        uncheckedBorderColor = Color.Gray,
+                        checkedTrackColor = Color.White
                     ),
                     modifier = Modifier
                         .scale(0.75f) // Scale down the switch

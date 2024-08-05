@@ -95,5 +95,8 @@ dependencies {
 
     // Coil SVG decoder
     implementation ("io.coil-kt:coil-svg:2.2.2")
+    implementation ("androidx.compose.material:material:1.5.0") // Use the latest version
+
+
 
 }

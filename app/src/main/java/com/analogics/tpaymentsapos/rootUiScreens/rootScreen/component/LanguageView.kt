@@ -14,6 +14,8 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 
+
+
 @Composable
 fun LanguageView(navHostController: NavHostController) {
     // State to manage the selected language
@@ -81,7 +83,11 @@ fun LanguageView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.width(190.dp))
                     RadioButton(
                         selected = selectedLanguage == "Hindi",
-                        onClick = { selectedLanguage = "Hindi" }
+                        onClick = { selectedLanguage = "Hindi" },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = OrangeColor,
+                            unselectedColor = Color.Gray
+                        )
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
@@ -114,7 +120,11 @@ fun LanguageView(navHostController: NavHostController) {
 
                     RadioButton(
                         selected = selectedLanguage == "English",
-                        onClick = { selectedLanguage = "English" }
+                        onClick = { selectedLanguage = "English" },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = OrangeColor,
+                            unselectedColor = Color.Gray
+                        )
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))

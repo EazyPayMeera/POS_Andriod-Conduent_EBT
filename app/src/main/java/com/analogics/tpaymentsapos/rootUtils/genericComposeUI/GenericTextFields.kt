@@ -23,10 +23,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +40,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -203,6 +210,7 @@ fun CustomSurface(
                 onValueChange = onValueChange,
                 label = { Text(label) },
                 placeholder = { Text(placeholder) },
+                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = keyboardType,
                     imeAction = ImeAction.Done
@@ -651,7 +659,42 @@ fun GifImage(
 
 
 
+@Composable
+fun MenuTopAppBar(
+    title: String,
+    onMenuItemClick: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
 
+    TopAppBar(
+        title = {
+            Text(text = title, color = Color.Black)
+        },
+        navigationIcon = {
+            IconButton(onClick = { expanded = true }) {
+                Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onMenuItemClick("Settings")
+                }) {
+                    Text("Settings")
+                }
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onMenuItemClick("Option 2")
+                }) {
+                    Text("Option 2")
+                }
+            }
+        },
+        backgroundColor = Color.White
+    )
+}
 
 
 

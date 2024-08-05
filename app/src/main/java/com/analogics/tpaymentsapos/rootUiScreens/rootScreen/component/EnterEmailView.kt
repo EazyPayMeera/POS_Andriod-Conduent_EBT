@@ -6,6 +6,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
@@ -16,10 +17,12 @@ fun EnterEmailView(navHostController: NavHostController) {
     var email by remember { mutableStateOf("") }
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = Authorisation.isAuthcap
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else "Purchase",
+            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

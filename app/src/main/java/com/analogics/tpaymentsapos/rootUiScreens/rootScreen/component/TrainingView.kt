@@ -17,6 +17,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.IconButtonWithText
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 
 val OrangeColor = Color(0xFFF7931E)
@@ -27,9 +28,19 @@ fun TrainingView(navHostController: NavHostController) {
     val selectedButton = remember { mutableStateOf<String?>(null) }
 
     Column {
-        CommonTopAppBar(
+        MenuTopAppBar(
             title = "Training",
-            onBackButtonClick = { navHostController.popBackStack() }
+            onMenuItemClick = { option ->
+                // Handle menu item click
+                when (option) {
+                    "Settings" -> {
+                        navHostController?.navigate(AppNavigationItems.SettingsScreen.route)
+                    }
+                    "Option 2" -> {
+                        // Handle Option 2 click
+                    }
+                }
+            }
         )
 
         Surface(
@@ -71,6 +82,7 @@ fun TrainingView(navHostController: NavHostController) {
                         isSelected = selectedButton.value == "Purchase",
                         onClick = {
                             selectedButton.value = "Purchase"
+                            TransactionState.isPurchase = true
                             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
                         }
                     )
