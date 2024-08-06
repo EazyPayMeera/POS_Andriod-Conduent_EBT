@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Accompanist libraries (latest versions)
+	implementation (libs.accompanist.pager)
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
 
@@ -96,7 +97,6 @@ dependencies {
     // Coil SVG decoder
     implementation ("io.coil-kt:coil-svg:2.2.2")
     implementation ("androidx.compose.material:material:1.5.0") // Use the latest version
-
-
-
+	api(project(":paymentservicecore"))
 }
+

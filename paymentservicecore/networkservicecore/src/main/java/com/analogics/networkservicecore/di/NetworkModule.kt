@@ -1,0 +1,35 @@
+package com.analogics.networkservicecore.di
+
+
+import com.analogics.networkservicecore.nComponent.IAPIService
+import com.analogics.networkservicecore.serviceutils.FrameworkUtils
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+class NetworkModule {
+
+    @Provides
+    @Singleton
+    fun provideRetrofitAPIService(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(FrameworkUtils.baseurl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): IAPIService {
+        return retrofit.create(IAPIService::class.java)
+    }
+}

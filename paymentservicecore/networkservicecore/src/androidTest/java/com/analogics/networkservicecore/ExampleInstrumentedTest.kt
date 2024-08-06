@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.analogics.networkservicecore", appContext.packageName)
+        assertEquals("com.analogics.networkservicecore.test", appContext.packageName)
     }
 }
