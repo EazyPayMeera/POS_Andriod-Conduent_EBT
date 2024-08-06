@@ -1,21 +1,25 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Appbarheader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
@@ -35,17 +39,28 @@ fun AmountView(navHostController: NavHostController) {
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = Authorisation.isAuthcap
 
-    Log.d("InvoiceView", "isAuthcap: $isAuthcap")
 
     Column {
-        CommonTopAppBar(
-            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
-            onBackButtonClick = { navHostController.popBackStack() }
+        Appbarheader(
+            title = when {
+                isRefund -> stringResource(R.string.refund)
+                isVoid -> stringResource(R.string.void_trans)
+                isPreauth -> stringResource(R.string.pre_auth)
+                else -> stringResource(R.string.purchase)
+            },
+            onBackButtonClick = { navHostController.popBackStack() },
+            onIcon1Click = { navHostController.popBackStack() },
+            icon2 = Icons.Default.Close,
+            onIcon2Click = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card, // Pass the SVG resource ID
-            titleText = if (isRefund) "Enter the Refund Amount" else if(isPreauth) "Enter the authorisation amount" else "Enter the Transaction Amount",
+            titleText = when {
+                isRefund -> stringResource(R.string.refund_amt)
+                isPreauth -> stringResource(R.string.auth_amt)
+                else -> stringResource(R.string.purchase_amt)
+            },
             label = if (isRefund) "Refund Amount" else if(isPreauth) "Authorisation amount" else "Amount",
             placeholder = if (isRefund) "Enter refund amount" else if(isPreauth) "Enter authorisation amount" else "Enter amount",
             value = rawInput,
@@ -57,9 +72,6 @@ fun AmountView(navHostController: NavHostController) {
             },
 
             onDoneAction = {
-                // Log values of all relevant variables
-                Log.d("InvoiceView", "isRefund: $isRefund, isVoid: $isVoid, isPreauth: $isPreauth, isAuthcap: $isAuthcap")
-
                 if(isRefund || isPreauth) {
                     navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formattedAmount))
                 }
@@ -103,7 +115,6 @@ fun AmountView(navHostController: NavHostController) {
             }
 
             if (isVoid || isAuthcap) {
-                Log.d("InvoiceView", "Inside if condition, showing All the text")
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(

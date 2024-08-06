@@ -232,6 +232,8 @@ fun CustomSurface(
 }
 
 
+
+
 @Composable
 fun CommonTopAppBar(
     title: String,
@@ -263,8 +265,6 @@ fun CommonTopAppBar(
         modifier = modifier
     )
 }
-
-
 @Composable
 fun CommonLayout(
     title: String,
@@ -696,6 +696,61 @@ fun MenuTopAppBar(
     )
 }
 
+
+
+@Composable
+fun Appbarheader(
+    title: String,
+    onBackButtonClick: () -> Unit,
+    backgroundColor: Color = Color(0xFFF8F8F7),
+    icon1: ImageVector = Icons.Default.ArrowBack,
+    icon2: ImageVector? = null,
+    onIcon1Click: (() -> Unit)? = null,
+    onIcon2Click: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 20.sp, // Fixed font size
+                    fontWeight = FontWeight.Bold // Fixed font weight
+                )
+            )
+        },
+        backgroundColor = backgroundColor,
+        navigationIcon = {
+            if (onIcon1Click != null) {
+                Icon(
+                    imageVector = icon1,
+                    contentDescription = "icon1",
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .clickable { onIcon1Click() }
+                )
+            } else {
+                Icon(
+                    imageVector = icon1,
+                    contentDescription = "icon1",
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                )
+            }
+        },
+        actions = {
+            if (icon2 != null) {
+                Icon(
+                    imageVector = icon2,
+                    contentDescription = "icon2",
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .clickable { onIcon2Click?.invoke() }
+                )
+            }
+        },
+        modifier = modifier
+    )
+}
 
 
 

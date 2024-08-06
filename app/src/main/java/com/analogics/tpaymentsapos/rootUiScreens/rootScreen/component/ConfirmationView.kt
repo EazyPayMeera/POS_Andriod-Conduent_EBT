@@ -40,7 +40,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     Column(
         modifier = Modifier
-            .padding(25.dp)
+            .padding(12.dp)
             .fillMaxSize()
     ) {
         CommonTopAppBar(
