@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HeaderImage
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
 
 
 @Composable
@@ -33,7 +34,7 @@ fun LanguageView(navHostController: NavHostController) {
             modifier = Modifier
                 .padding(25.dp) // Padding around the surface
                 .fillMaxWidth() // Fills the available width
-                .height(250.dp) // Set a fixed height
+                .height(300.dp) // Set a fixed height
                 .clip(RoundedCornerShape(18.dp)), // Apply rounded corners with a radius of 18.dp
             shape = RoundedCornerShape(18.dp), // Ensure shape is consistent with clip
             elevation = 8.dp // Adds shadow effect with specified elevation
@@ -46,25 +47,15 @@ fun LanguageView(navHostController: NavHostController) {
                 verticalArrangement = Arrangement.Top, // Aligns children at the top
                 horizontalAlignment = Alignment.CenterHorizontally // Centers children horizontally
             ) {
-                // Centered text at the top
-                Text(
-                    text = "Select Your Language:",
-                    style = MaterialTheme.typography.body1.copy(
-                        fontSize = 18.sp // Increase font size if needed
-                    ),
-                    color = Color.Black
+                TopBoldText(
+                    text = "Select Your Language",
+                    fontSize = 16.sp // Custom font size
                 )
 
-                // Image at the center
-                Image(
-                    painter = painterResource(id = R.drawable.language), // Replace with your image resource
-                    contentDescription = null, // Decorative image
-                    modifier = Modifier
-                        .size(55.dp)
-                        .padding(bottom = 16.dp)
-                        .align(Alignment.CenterHorizontally) // Center the image
+                HeaderImage(
+                    imageName = "language" // Name of the drawable resource (without the file extension)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                //Spacer(modifier = Modifier.height(20.dp))
 
                 // Row for "Hindi" with RadioButton
                 Row(

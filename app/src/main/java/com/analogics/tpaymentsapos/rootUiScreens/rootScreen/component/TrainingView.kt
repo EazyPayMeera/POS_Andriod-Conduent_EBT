@@ -15,9 +15,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.IconButtonWithText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 
 val OrangeColor = Color(0xFFF7931E)
@@ -46,28 +48,23 @@ fun TrainingView(navHostController: NavHostController) {
         Surface(
             color = Color.White,
             modifier = Modifier
-                .padding(25.dp)
+                .padding(12.dp)
                 .fillMaxWidth()
-                .height(540.dp)
-                .width(430.dp),
+                .height(580.dp)
+                .width(470.dp),
             shape = RoundedCornerShape(18.dp),
             elevation = 8.dp
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(6.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                TopBoldText(
                     text = "Training",
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .align(Alignment.CenterHorizontally)
+                    fontSize = 20.sp // Custom font size
                 )
 
                 Row(
@@ -86,6 +83,7 @@ fun TrainingView(navHostController: NavHostController) {
                             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
                         }
                     )
+                    Spacer(modifier = Modifier.width(20.dp))
 
                     IconButtonWithText(
                         text = "Refund",
@@ -117,6 +115,7 @@ fun TrainingView(navHostController: NavHostController) {
                             navHostController.navigate(AppNavigationItems.PreauthScreen.route)
                         }
                     )
+                    Spacer(modifier = Modifier.width(20.dp))
 
                     IconButtonWithText(
                         text = "Void",
@@ -134,9 +133,10 @@ fun TrainingView(navHostController: NavHostController) {
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Spacer(modifier = Modifier.width(33.dp))
                     // Third set of buttons with images
                     IconButtonWithText(
                         text = "Transactions",
@@ -144,29 +144,22 @@ fun TrainingView(navHostController: NavHostController) {
                         isSelected = selectedButton.value == "Transactions",
                         onClick = {
                             selectedButton.value = "Transactions"
-                            navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+                            navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
                         }
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier.padding(top = 10.dp)
                 ) {
-                    // Fourth set of buttons with images
-                    Button(
-                        onClick = { /* Handle print receipt click */ },
-                        modifier = Modifier
-                            .size(260.dp)
-                            .padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = OrangeColor),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "Print Last Receipt", color = Color.Black)
-                    }
+                    AppButton(
+                        onClick = {
+                            navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                        },
+                        title = "Print Last Receipt",
+                        image = painterResource(id = R.drawable.print)
+                    )
                 }
             }
         }

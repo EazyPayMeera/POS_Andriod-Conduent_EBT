@@ -127,55 +127,67 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
         title = "Approved",
         imageResId = R.drawable.close
     ) {
-        Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
-
-        Text(
-            text = "APPROVED",
-            fontSize = 24.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally, // Center align items horizontally
+            verticalArrangement = Arrangement.Center, // Center align items vertically
             modifier = Modifier
-                .padding(bottom = 20.dp)
-                .align(Alignment.CenterHorizontally) // Center the subheader text
-        )
-
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
-
-        Image(
-            painter = painterResource(id = R.drawable.approve), // Replace with your image resource
-            contentDescription = null, // Decorative image
-            modifier = Modifier
-                .size(110.dp)
-                .padding(bottom = 16.dp)
-                .align(Alignment.CenterHorizontally) // Center the image
-        )
-        Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+                .fillMaxSize() // Fill the available size
+                .padding(horizontal = 16.dp) // Optional padding for horizontal spacing
         ) {
-            CircularMenu(
-                onPrintClick = {
-                    // Do something on Print click
-                },
-                onMenuOptionClick = { option ->
-                    // Handle circular menu option clicks
-                    // For demonstration, navigate to EnterEmailScreen
-                    navHostController?.navigate(AppNavigationItems.EnterEmailScreen.route)
-                }
+            Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
+
+            Text(
+                text = "APPROVED",
+                fontSize = 24.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
             )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Box(
-            modifier = Modifier.padding(top = 10.dp)
-        ) {
-            OkButton(
-                onClick = {
-                    navHostController.navigate(AppNavigationItems.TrainingScreen.route)
-                },
-                title = "Done"
+
+            Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
+
+            Image(
+                painter = painterResource(id = R.drawable.approve), // Replace with your image resource
+                contentDescription = null, // Decorative image
+                modifier = Modifier
+                    .size(110.dp)
+                    .padding(bottom = 16.dp)
             )
+
+            Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp), // Optional padding for horizontal spacing
+                contentAlignment = Alignment.Center
+            ) {
+                CircularMenu(
+                    onPrintClick = {
+                        // Do something on Print click
+                    },
+                    onMenuOptionClick = { option ->
+                        // Handle circular menu option clicks
+                        // For demonstration, navigate to EnterEmailScreen
+                        navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
+
+            Box(
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                OkButton(
+                    onClick = {
+                        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                    },
+                    title = "Done"
+                )
+            }
         }
     }
 }
+

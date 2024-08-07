@@ -18,9 +18,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ConfirmationButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HeaderImage
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
 import kotlinx.coroutines.delay
 
 @Composable
@@ -30,77 +33,65 @@ fun ConfirmShiftView(navHostController: NavHostController) {
         title = "NAMEHERE",
         imageResId = R.drawable.close
     ) {
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
-
-        Text(
-            text = "Confirm",
-            fontSize = 24.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .align(Alignment.CenterHorizontally) // Center the subheader text
-        )
-
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
-
-        Image(
-            painter = painterResource(id = R.drawable.logout), // Replace with your image resource
-            contentDescription = null, // Decorative image
-            modifier = Modifier
-                .size(50.dp)
-                .padding(bottom = 16.dp)
-                .align(Alignment.CenterHorizontally) // Center the image
-        )
-
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
-
-        Text(
-            text = "Are you sure you want to end your shift",
-            fontSize = 16.sp,
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(bottom = 20.dp)
-                .align(Alignment.CenterHorizontally) // Center the subheader text
-        )
-
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 20.dp)
-        ){
-            ConfirmationButton(
-                onClick = {
-                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
-                },
-                title = "CANCEL"
-            )
-
-            Spacer(modifier = Modifier.width(20.dp)) // Blank space added here
-
-            ConfirmationButton(
-                onClick = {
-                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
-                },
-                title = "YES"
-            )
-        }
-
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
-
-        // Fourth set of buttons
-        Button(
-            onClick = { /* Handle print receipt click */ },
-            modifier = Modifier
-                .size(260.dp)
-                .padding(8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = OrangeColor),
-            shape = RoundedCornerShape(10.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally, // Center align items horizontally
+            verticalArrangement = Arrangement.Center, // Center align items vertically
+            modifier = Modifier.fillMaxSize() // Fill the available size
         ) {
-            Text(text = "Print Shift Report", color = Color.Black)
-        }
+            TopBoldText("Confirm")
 
+            HeaderImage(
+                imageName = "logout" // Name of the drawable resource (without the file extension)
+            )
+
+            Text(
+                text = "Are you sure you want to end your shift",
+                fontSize = 16.sp,
+                color = Color.LightGray,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .padding(top = 20.dp)
+            )
+
+            Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
+
+            Row(
+                horizontalArrangement = Arrangement.Center, // Center align buttons horizontally
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 20.dp)
+            ) {
+                ConfirmationButton(
+                    onClick = {
+                        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                    },
+                    title = "CANCEL"
+                )
+
+                Spacer(modifier = Modifier.width(30.dp)) // Blank space added here
+
+                ConfirmationButton(
+                    onClick = {
+                        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                    },
+                    title = "YES"
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
+
+            Box(
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                AppButton(
+                    onClick = {
+                        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                    },
+                    title = "Print Shift Report",
+                    image = painterResource(id = R.drawable.print)
+                )
+            }
+        }
     }
 }
+

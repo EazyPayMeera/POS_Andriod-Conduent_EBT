@@ -43,7 +43,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
         Surface(
             color = Color.White,
             modifier = Modifier
-                .padding(25.dp)
+                .padding(12.dp)
                 .fillMaxWidth()
                 .height(500.dp)
                 .width(430.dp),

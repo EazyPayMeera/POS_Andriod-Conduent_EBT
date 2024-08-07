@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,8 +38,10 @@ import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +49,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -66,6 +71,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.ImageLoader
@@ -84,66 +90,93 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-@Composable
 
+@Composable
 fun InputTextField(
     inputValue: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Username",
-    placeHolder: String = "Username",
+    label: String = "",
+    placeHolder: String = "",
     icon: ImageVector = Icons.Default.Person,
     keyboardType: KeyboardType
-)
-{
+) {
+    var isFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
-    val leadingIcon = @Composable {
-        Icon(
-            Icons.Default.Person,
-            contentDescription = "",
-            tint = MaterialTheme.colorScheme.primary
-        )
-    }
 
     OutlinedTextField(
         value = inputValue,
-         onValueChange = onChange,
-        modifier = modifier,
-        leadingIcon = leadingIcon,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        onValueChange = onChange,
+        modifier = modifier.onFocusChanged { focusState -> isFocused = focusState.isFocused },
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.Black // Set icon color to black
+            )
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Next
+        ),
         keyboardActions = KeyboardActions(
             onNext = { focusManager.moveFocus(FocusDirection.Down) }
         ),
         placeholder = { Text(placeHolder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = VisualTransformation.None,
+        shape = RoundedCornerShape(12.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+            unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
+            focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+            unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+        )
     )
 }
 
 
+
 @Composable
-fun AppButton(onClick:()->Unit,
-              title:String)
-{
+fun AppButton(
+    onClick: () -> Unit,
+    title: String,
+    image: Painter? = null // Optional parameter for the image
+) {
     Box(
-        contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
             .width(248.dp)
-            .padding( bottom = 20.dp)
-            .background(colorResource(R.color.purple_200),shape = RoundedCornerShape(10.dp))
-
-    )
-    {
-        Button(modifier = Modifier.wrapContentSize(),
+            .padding(bottom = 20.dp)
+            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
+    ) {
+        Button(
+            onClick = onClick,
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
             ),
-            onClick = onClick) {
-            Text(
-                text = title,
-            )
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(horizontal = 8.dp) // Add padding around the button content
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                image?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(28.dp) // Adjust size as needed
+                            .clip(CircleShape) // Make the image round
+                            .padding(end = 12.dp) // Space between image and text
+                    )
+                }
+                Text(text = title)
+            }
         }
     }
 }
@@ -173,11 +206,12 @@ fun CustomSurface(
     Surface(
         color = Color.White,
         modifier = modifier
-            .padding(25.dp)
+            .padding(12.dp)
             .fillMaxWidth()
             .height(surfaceHeight)
             .width(surfaceWidth),
-        shape = RoundedCornerShape(18.dp)
+        shape = RoundedCornerShape(18.dp),
+        shadowElevation = 8.dp
     ) {
         Column(
             modifier = Modifier
@@ -281,7 +315,7 @@ fun CommonLayout(
         Surface(
             color = Color(0xFFF7931E), // Orange color for the outer Surface
             modifier = Modifier
-                .padding(25.dp) // Padding for the outer Surface
+                .padding(12.dp) // Padding for the outer Surface
                 .height(540.dp) // Adjust the height as per your requirement
                 .width(430.dp), // Adjust the width as per your requirement
             shape = RoundedCornerShape(18.dp) // Rounded corners for the outer Surface
@@ -378,12 +412,10 @@ fun SettingsMiddleSurface(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
     color: Color = MaterialTheme.colorScheme.background,
-    height: Dp, // Added customizable height parameter
     content: @Composable () -> Unit
 ) {
     Surface(
         modifier = modifier
-            .height(height) // Applying customizable height
             .shadow(
                 elevation = elevation,
             ),
@@ -442,7 +474,7 @@ fun ConfirmationButton(
         Button(
             onClick = onClick,
             modifier = Modifier
-                .fillMaxWidth() // Make the button fill the width of the Box
+                .width(130.dp) // Make the button fill the width of the Box
                 .height(48.dp), // Set a fixed height for the button
             shape = RoundedCornerShape(10.dp), // Rounded corners for the button
             colors = ButtonDefaults.buttonColors(
@@ -605,7 +637,7 @@ fun IconButtonWithText(
             .border(
                 width = 2.dp,
                 color = if (isSelected) OrangeColor else Color.Transparent,
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(15.dp)
             ),
         colors = androidx.compose.material.ButtonDefaults.buttonColors(
             backgroundColor = Color.White // Use backgroundColor parameter for compatibility
@@ -753,7 +785,51 @@ fun Appbarheader(
 }
 
 
+// Added this function to add Bold Top text for UI In logout screen Amount Screen
+@Composable
+fun TopBoldText(
+    text: String,
+    fontSize: TextUnit = 24.sp // Default size if not provided
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
+        modifier = Modifier
+            .fillMaxWidth() // Ensures the Column takes the full width
+            .padding(top = 20.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize, // Use the provided fontSize
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
+    }
+}
 
+
+// Added function for Header Image
+@Composable
+fun HeaderImage(
+    imageName: String
+) {
+    val context = LocalContext.current
+    val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
+        modifier = Modifier.fillMaxWidth() // Ensures the Column takes the full width
+                           .padding(top = 20.dp)
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = null, // Decorative image
+            modifier = Modifier
+                .size(50.dp) // Default size
+
+        )
+    }
+}
 
 
 

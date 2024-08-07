@@ -90,7 +90,7 @@ fun OnBoardSlideView(navHostController: NavHostController) {
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                .padding(bottom = MaterialTheme.dimens.DP_80_CompactMedium) // Adjust the padding as needed
         ) {
             HorizontalPagerIndicator(
                 pagerState = pagerState,
@@ -101,11 +101,10 @@ fun OnBoardSlideView(navHostController: NavHostController) {
 
         // "Get Started" button only on the third page
         if (pagerState.currentPage == 2) {
-
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium) // Adjust the padding as needed
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust the padding as needed
             ) {
                 AppButton(
                     onClick = {
@@ -127,7 +126,6 @@ fun ShowCardView(
     navHostController: NavHostController
 ) {
     Card(
-        shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
         ),
