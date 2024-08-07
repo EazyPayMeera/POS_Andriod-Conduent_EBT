@@ -1,8 +1,52 @@
 package com.analogics.tpaymentsapos.navigation
 
-sealed class AppNavigationItems(val route:String) {
-   data  object  SplashScreen:AppNavigationItems(NavScreensEnum.SplashScreen.name)
-    object  DashBoardScreen:AppNavigationItems(NavScreensEnum.DashBoardView.name)
-    object  OnBoardingScreen:AppNavigationItems(NavScreensEnum.OnBoardingView.name)
-object  LoginScreen:AppNavigationItems(NavScreensEnum.LoginScreen.name)
+sealed class AppNavigationItems(val route: String) {
+ object SplashScreen : AppNavigationItems(NavScreensEnum.SplashScreen.name)
+ object DashBoardScreen : AppNavigationItems(NavScreensEnum.DashBoardView.name)
+ object OnBoardingScreen : AppNavigationItems(NavScreensEnum.OnBoardingView.name)
+ object LoginScreen : AppNavigationItems(NavScreensEnum.LoginScreen.name)
+ object ForgetPasswordScreen : AppNavigationItems(NavScreensEnum.ForgetPasswordView.name)
+ object PleaseWaitScreen : AppNavigationItems(NavScreensEnum.PleaseWaitView.name)
+ object TrainingScreen : AppNavigationItems(NavScreensEnum.TrainingView.name)
+ object AmountScreen : AppNavigationItems(NavScreensEnum.AmountView.name)
+
+ object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
+ object TipScreen : AppNavigationItems(NavScreensEnum.TipView.name)
+ object PasswordScreen : AppNavigationItems(NavScreensEnum.PasswordView.name)
+ object RefundAmtScreen : AppNavigationItems(NavScreensEnum.RefundAmtView.name)
+ object SettingsScreen : AppNavigationItems(NavScreensEnum.SettingsView.name)
+ object LanguageScreen : AppNavigationItems(NavScreensEnum.LanguageView.name)
+ object ConfigurationScreen : AppNavigationItems(NavScreensEnum.ConfigurationView.name)
+ object ConfirmShiftScreen : AppNavigationItems(NavScreensEnum.ConfirmShiftView.name)
+ object TaxPercentageScreen : AppNavigationItems(NavScreensEnum.TaxPercentageView.name)
+ object PreauthScreen : AppNavigationItems(NavScreensEnum.PreauthView.name)
+ object EnterEmailScreen : AppNavigationItems(NavScreensEnum.EnterEmailView.name)
+ //object DeclineScreen : AppNavigationItems(NavScreensEnum.DeclineView.name)
+
+ object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
+  fun createRoute(totalAmount: String) = "card_screen/$totalAmount"
+ }
+
+ object CardDetectScreen : AppNavigationItems("card_detect_screen/{totalAmount}") {
+  fun createRoute(totalAmount: String) = "card_detect_screen/$totalAmount"
+ }
+
+ object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
+ //object EmailScreen : AppNavigationItems(NavScreensEnum.EmailView.name)
+
+ object EmailScreen : AppNavigationItems("email_screen/{email}") {
+  fun createRoute(email: String) = "email_screen/$email"
+ }
+
+ object ApprovedScreen : AppNavigationItems("approved_screen/{totalAmount}") {
+  fun createRoute(totalAmount: String) = "approved_screen/$totalAmount"
+ }
+
+ object DeclineScreen : AppNavigationItems("decline_screen/{totalAmount}") {
+  fun createRoute(totalAmount: String) = "decline_screen/$totalAmount"
+ }
+
+ object ConfirmationScreen : AppNavigationItems("confirmation_screen/{amount}") {
+  fun createRoute(amount: String) = "confirmation_screen/$amount"
+ }
 }

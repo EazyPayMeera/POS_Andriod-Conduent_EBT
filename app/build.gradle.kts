@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    // Core libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -58,6 +59,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,12 +69,34 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
-    implementation (libs.accompanist.pager)
-    implementation ("com.google.accompanist:accompanist-pager-indicators:0.28.0")
-    implementation ("androidx.compose.material3:material3:1.2.1")
-    implementation ("androidx.compose.material3:material3-window-size-class:1.2.1")
-    implementation ("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta05")
-    api(project(":paymentservicecore"))
+
+    // Accompanist libraries (latest versions)
+	implementation (libs.accompanist.pager)
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-svg:2.4.0") // or the latest version
+
+    // Compose UI libraries
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta04")
+    implementation("androidx.compose.ui:ui:1.4.0")
+    implementation("androidx.compose.material:material:1.4.0")
+    implementation("androidx.compose.animation:animation:1.5.0")
+
+
+    implementation ("io.coil-kt:coil:2.2.2") // or the latest version
+    implementation ("io.coil-kt:coil-gif:2.2.2") // or the latest version
+    implementation ("io.coil-kt:coil-compose:2.2.2")
+
+    // Coil SVG decoder
+    implementation ("io.coil-kt:coil-svg:2.2.2")
+    implementation ("androidx.compose.material:material:1.5.0") // Use the latest version
+	api(project(":paymentservicecore"))
 }
+

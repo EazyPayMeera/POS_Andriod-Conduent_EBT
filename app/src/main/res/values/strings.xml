@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">TPaymentsAPOS</string>
+    <string name="top_back">Back</string>
+    <string name="refund">Refund</string>
+    <string name="refund_amt">Enter the Refund Amount</string>
+    <string name="auth_amt">Enter the Authorisation Amount</string>
+    <string name="purchase_amt">Enter the Transaction Amount</string>
+    <string name="purchase">Purchase</string>
+    <string name="pre_auth">Pre-Auth</string>
+    <string name="transactions">Transactions</string>
+    <string name="void_trans">Void</string>
+    <string name="enter_Pin">Please Enter The Pin</string>
+    <string name="pin">Pin</string>
+
 </resources>

@@ -1,14 +1,10 @@
 package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-
-
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,22 +14,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,11 +31,9 @@ import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.model.OnBoardingContentList
-
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.ui.theme.dimens
-
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -54,12 +42,11 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnBoardSlideView(navHostController: NavHostController) {
     val pagerState = rememberPagerState(initialPage = 0)
-    val imageSlider = listOf<OnBoardingContentList>(
+    val imageSlider = listOf(
         OnBoardingContentList(
             headNote = "Safe and fast transaction",
             subNote = "Single use password that won’t work twice, keeping your details safe even if they get exposed"
@@ -80,37 +67,52 @@ fun OnBoardSlideView(navHostController: NavHostController) {
             yield()
             delay(3000)
             pagerState.animateScrollToPage(
-                page = (pagerState.currentPage + 1) % (pagerState.pageCount)
+                page = (pagerState.currentPage + 1) % pagerState.pageCount
             )
         }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color("#D9D9D9".toColorInt()))
-    )
-    {
-        Column {
-            HorizontalPager(
-                count = imageSlider.size,
-                state = pagerState,
-                contentPadding = PaddingValues(horizontal = 2.dp),
+    ) {
+        // HorizontalPager
+        HorizontalPager(
+            count = imageSlider.size,
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            ShowCardView(pagerState, page, imageSlider, navHostController)
+        }
+
+        // Static HorizontalPagerIndicator
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+        ) {
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
                 modifier = Modifier
-            ) { page ->
+                    .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium)
+            )
+        }
 
-                Box(
-                    contentAlignment = Alignment.Center, modifier = Modifier
-                        .padding(MaterialTheme.dimens.DP_12_CompactMedium)
-                        .fillMaxSize()
-                ) {
-                    ShowCardView(pagerState, page, imageSlider,navHostController)
-                    /* HorizontalPagerIndicator(
-                         pagerState = pagerState,
-                         modifier = Modifier
+        // "Get Started" button only on the third page
+        if (pagerState.currentPage == 2) {
 
-                     )*/
-                }
-
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium) // Adjust the padding as needed
+            ) {
+                AppButton(
+                    onClick = {
+                        navHostController.navigate(AppNavigationItems.LoginScreen.route)
+                    },
+                    title = "Get Started"
+                )
             }
         }
     }
@@ -127,21 +129,22 @@ fun ShowCardView(
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 0.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White, //Card background color
-            contentColor = Color.Black  //Card content color,e.g.text
+            containerColor = Color.White, // Card background color
+            contentColor = Color.Black  // Card content color, e.g., text
         ),
         modifier = Modifier.fillMaxHeight()
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
+        Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .fillMaxWidth()
-        )
-        {
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Image section
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -162,7 +165,6 @@ fun ShowCardView(
                         .fillMaxWidth()
                         .fillMaxSize()
                         .padding(start = MaterialTheme.dimens.DP_40_CompactMedium)
-
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.men_frame),
@@ -170,83 +172,36 @@ fun ShowCardView(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_60_CompactMedium, MaterialTheme.dimens.DP_120_CompactMedium)
-
                     )
                 }
-
             }
 
-
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier.fillMaxHeight()
-            )
-            {
-                Column(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(MaterialTheme.dimens.DP_15_CompactMedium),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+            // Text section
+            Column(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(MaterialTheme.dimens.DP_15_CompactMedium),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = imageSlider[pageIndex].headNote,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(
+                        bottom = MaterialTheme.dimens.DP_20_CompactMedium,
+                        top = MaterialTheme.dimens.DP_20_CompactMedium
+                    ),
                 )
-                {
-
-                    Box(
-                        contentAlignment = Alignment.TopStart,
-                        modifier = Modifier
-                            .fillMaxWidth()
-
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .wrapContentSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        )
-                        {
-                            Text(
-                                text = imageSlider[pageIndex].headNote,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_20_CompactMedium),
-                            )
-                            Text(
-                                text = imageSlider[pageIndex].subNote,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = Color("#B3B3B3".toColorInt()),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(bottom =MaterialTheme.dimens.DP_60_CompactMedium)
-                            )
-                        }
-                    }
-                    if (imageSlider[pageIndex].isIndicatorShow) {
-                    Text(
-                        text = "Skip",
-                        color = Color("#B3B3B3".toColorInt()),
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .align(Alignment.CenterHorizontally)
-                            .padding(MaterialTheme.dimens.DP_15_CompactMedium),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                        HorizontalPagerIndicator(
-                            pagerState = pagerState,
-                            modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium,)
-
-                        )
-                    } else {
-
-                        AppButton(onClick = {
-                            navHostController.navigate(AppNavigationItems.LoginScreen.route)
-                        }, title = "Get Started")
-                    }
-
-                }
+                Text(
+                    text = imageSlider[pageIndex].subNote,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color("#B3B3B3".toColorInt()),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium)
+                )
             }
         }
-
-
     }
 }
