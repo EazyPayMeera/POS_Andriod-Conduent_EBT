@@ -15,11 +15,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
+import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
@@ -38,7 +41,7 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
             Surface(modifier = Modifier.fillMaxSize().padding(it)) {
                 var emailCredentials by remember { mutableStateOf("") }
                 var pwdCredentials by remember { mutableStateOf("") }
-
+                val context = LocalContext.current
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,7 +103,15 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     ) {
                         AppButton(
                             onClick = {
-                                navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+
+                                var iPaymentCoreHandlerListener =
+                                    object : IPaymentCoreHandlerListener {
+                                        override fun onPMTRespHandler(uiData: String) {
+                                            navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                                        }
+                                    }
+                                PaymentConfigurationHandler.initPayment(iPaymentCoreHandlerListener, context)
+
                             },
                             title = "Login →"
                         )
