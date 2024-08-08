@@ -32,6 +32,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
@@ -92,21 +94,35 @@ fun InputTextField(
     label: String = "",
     placeHolder: String = "",
     icon: ImageVector = Icons.Default.Person,
-    keyboardType: KeyboardType
+    keyboardType: KeyboardType = KeyboardType.Text,
+    isPasswordField: Boolean = false // Parameter to indicate if it's a password field
 ) {
-    var isFocused by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember { mutableStateOf(!isPasswordField) } // Default visibility
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
         value = inputValue,
         onValueChange = onChange,
-        modifier = modifier.onFocusChanged { focusState -> isFocused = focusState.isFocused },
+        modifier = modifier,
         leadingIcon = {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
+                modifier = Modifier.size(24.dp), // Set fixed size for leading icon
                 tint = Color.Black // Set icon color to black
             )
+        },
+        trailingIcon = {
+            if (isPasswordField) {
+                val visibilityIcon = if (isPasswordVisible) {
+                    Icons.Default.Visibility // Show password
+                } else {
+                    Icons.Default.VisibilityOff // Hide password
+                }
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    Icon(imageVector = visibilityIcon, contentDescription = null)
+                }
+            }
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = keyboardType,
@@ -118,7 +134,11 @@ fun InputTextField(
         placeholder = { Text(placeHolder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None,
+        visualTransformation = if (isPasswordField && !isPasswordVisible) {
+            PasswordVisualTransformation() // Hide password
+        } else {
+            VisualTransformation.None // Show password
+        },
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
@@ -362,8 +382,8 @@ fun OkButton(onClick:()->Unit,
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
             .width(248.dp)
-            .padding( bottom = 20.dp)
-            .background(colorResource(R.color.grey),shape = RoundedCornerShape(10.dp))
+            .padding(bottom = 20.dp)
+            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp))
 
     )
     {
@@ -504,7 +524,7 @@ fun ConfirmationButton(
     LaunchedEffect(isPressed) {
         if (isPressed) {
             // Reset the pressed state after a short delay
-            kotlinx.coroutines.delay(200)
+            kotlinx.coroutines.delay(100)
             isPressed = false
         }
     }
@@ -715,6 +735,7 @@ fun MenuTopAppBar(
         title = {
             Text(text = title, color = Color.Black)
         },
+
         navigationIcon = {
             IconButton(onClick = { expanded = true }) {
                 Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
@@ -831,8 +852,9 @@ fun HeaderImage(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
-        modifier = Modifier.fillMaxWidth() // Ensures the Column takes the full width
-                           .padding(top = 20.dp)
+        modifier = Modifier
+            .fillMaxWidth() // Ensures the Column takes the full width
+            .padding(top = 20.dp)
     ) {
         Image(
             painter = painterResource(id = imageResId),

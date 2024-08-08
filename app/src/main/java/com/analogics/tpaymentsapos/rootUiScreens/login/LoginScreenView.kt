@@ -83,7 +83,8 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                         label = "",
                         placeHolder = "Password",
                         icon = Icons.Default.Lock,
-                        keyboardType = KeyboardType.Text
+                        keyboardType = KeyboardType.Text,
+                        isPasswordField = true
                     )
 
                     // "Forgot Password?" clickable text
