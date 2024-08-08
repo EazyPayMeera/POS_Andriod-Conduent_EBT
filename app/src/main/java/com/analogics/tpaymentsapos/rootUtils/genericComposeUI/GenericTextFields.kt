@@ -41,8 +41,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,10 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -81,13 +78,9 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.analogics.tpaymentsapos.R
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 
@@ -302,7 +295,7 @@ fun CommonTopAppBar(
 @Composable
 fun CommonLayout(
     title: String,
-    imageResId: Int,
+    imageResId: Int? = null,
     contentDescription: String? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -343,14 +336,16 @@ fun CommonLayout(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start // Align content to the start
                     ) {
-                        Image(
-                            painter = painterResource(id = imageResId),
-                            contentDescription = contentDescription,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(bottom = 16.dp)
-                                .align(Alignment.End) // Align the image to the end
-                        )
+                        imageResId?.let {
+                            Image(
+                                painter = painterResource(id = it),
+                                contentDescription = contentDescription,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(bottom = 16.dp)
+                                    .align(Alignment.End) // Align the image to the end
+                            )
+                        }
                         content()
                     }
                 }
@@ -460,6 +455,8 @@ fun ConfirmationButton(
     onClick: () -> Unit,
     title: String
 ) {
+    var isPressed by remember { mutableStateOf(false) }
+
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
@@ -472,10 +469,18 @@ fun ConfirmationButton(
             )
     ) {
         Button(
-            onClick = onClick,
+            onClick = {
+                isPressed = true
+                onClick()
+            },
             modifier = Modifier
                 .width(130.dp) // Make the button fill the width of the Box
-                .height(48.dp), // Set a fixed height for the button
+                .height(48.dp) // Set a fixed height for the button
+                .border(
+                    width = if (isPressed) 2.dp else 0.dp,
+                    color = if (isPressed) Color(0xFFFFA500) else Color.Transparent,
+                    shape = RoundedCornerShape(10.dp)
+                ), // Conditionally add border
             shape = RoundedCornerShape(10.dp), // Rounded corners for the button
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black, // Text color
@@ -493,6 +498,14 @@ fun ConfirmationButton(
                 color = Color.Black, // Text color
                 style = MaterialTheme.typography.bodyMedium // Use a common typography style
             )
+        }
+    }
+
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            // Reset the pressed state after a short delay
+            kotlinx.coroutines.delay(200)
+            isPressed = false
         }
     }
 }

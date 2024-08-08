@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -28,10 +29,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ConfirmShiftView(navHostController: NavHostController) {
-    val OrangeColor = Color(0xFFFFA500)
     CommonLayout(
         title = "NAMEHERE",
-        imageResId = R.drawable.close
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally, // Center align items horizontally
@@ -45,13 +44,15 @@ fun ConfirmShiftView(navHostController: NavHostController) {
             )
 
             Text(
-                text = "Are you sure you want to end your shift",
+                text = "Are you sure you want to\n end your shift?",
                 fontSize = 16.sp,
                 color = Color.LightGray,
                 fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center, // Center align the text within the Text composable
                 modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .padding(top = 20.dp)
+                    .fillMaxWidth() // Ensure the Text composable takes up the full width of the parent
+                    .padding(top = 20.dp, bottom = 20.dp)
+                    .align(Alignment.CenterHorizontally) // Center align the Text composable within its parent
             )
 
             Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
@@ -88,7 +89,6 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                         navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                     },
                     title = "Print Shift Report",
-                    image = painterResource(id = R.drawable.print)
                 )
             }
         }
