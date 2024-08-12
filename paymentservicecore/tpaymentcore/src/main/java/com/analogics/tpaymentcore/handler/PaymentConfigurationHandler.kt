@@ -8,11 +8,11 @@ import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 object PaymentConfigurationHandler : IPaymentConfigListener{
     override fun initPayment(iPaymentCoreHandlerListener: IPaymentCoreHandlerListener, context : Context) {
         EMV.initialize(context);
-        iPaymentCoreHandlerListener.onPMTRespHandler("Hello this is the UI data")
     }
 
-    override fun startPayment() {
-        TODO("Not yet implemented")
+    override fun startPayment(iPaymentCoreHandlerListener: IPaymentCoreHandlerListener, context : Context) {
+        EMV.startPayment(context);
+        iPaymentCoreHandlerListener.onPMTRespHandler("Hello this is the UI data")
     }
 
     override fun handlePaymentEvent() {
