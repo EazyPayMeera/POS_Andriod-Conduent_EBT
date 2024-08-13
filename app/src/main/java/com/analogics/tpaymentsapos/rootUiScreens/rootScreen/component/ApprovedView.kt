@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
+import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
@@ -50,8 +53,8 @@ fun CircularMenu(
 
     Box(
         modifier = Modifier
-            .size(110.dp)
-            .padding(16.dp),
+            .size(MaterialTheme.dimens.DP_110_CompactMedium)
+            .padding(MaterialTheme.dimens.DP_21_CompactMedium),
         contentAlignment = Alignment.Center
     ) {
         menuOptions.forEachIndexed { index, option ->
@@ -69,8 +72,8 @@ fun CircularMenu(
                         x = (distance.value * cos(Math.toRadians(angle.toDouble()))).dp,
                         y = (distance.value * sin(Math.toRadians(angle.toDouble()))).dp
                     )
-                    .size(60.dp)
-                    .shadow(4.dp, shape = CircleShape)
+                    .size(MaterialTheme.dimens.DP_60_CompactMedium)
+                    .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape)
                     .background(colorResource(id = R.color.purple_200), shape = CircleShape)
                     .clickable {
                         onMenuOptionClick(option)
@@ -83,7 +86,7 @@ fun CircularMenu(
                 Text(
                     text = option,
                     color = Color.Black,
-                    fontSize = 8.sp,
+                    fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -93,8 +96,8 @@ fun CircularMenu(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(80.dp)
-                .shadow(4.dp, shape = CircleShape) // Add shadow with circular shape
+                .size(MaterialTheme.dimens.DP_80_CompactMedium)
+                .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape) // Add shadow with circular shape
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
                     scope.launch {
@@ -109,9 +112,9 @@ fun CircularMenu(
                 }
         ) {
             Text(
-                text = "PRINT",
+                text = stringResource(id = R.string.print),
                 color = Color.Black,
-                fontSize = 12.sp,
+                fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -124,7 +127,7 @@ fun CircularMenu(
 @Composable
 fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
     CommonLayout(
-        title = "Approved",
+        title = stringResource(id = R.string.approved),
         imageResId = R.drawable.close
     ) {
         Column(
@@ -132,35 +135,35 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
             verticalArrangement = Arrangement.Center, // Center align items vertically
             modifier = Modifier
                 .fillMaxSize() // Fill the available size
-                .padding(horizontal = 16.dp) // Optional padding for horizontal spacing
+                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium) // Optional padding for horizontal spacing
         ) {
-            Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space added here
 
             Text(
-                text = "APPROVED",
-                fontSize = 24.sp,
+                text = stringResource(id = R.string.approved),
+                fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
             )
 
-            Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space added here
 
             Image(
                 painter = painterResource(id = R.drawable.approve), // Replace with your image resource
                 contentDescription = null, // Decorative image
                 modifier = Modifier
-                    .size(110.dp)
-                    .padding(bottom = 16.dp)
+                    .size(MaterialTheme.dimens.DP_110_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
             )
 
-            Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space added here
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp), // Optional padding for horizontal spacing
+                    .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Optional padding for horizontal spacing
                 contentAlignment = Alignment.Center
             ) {
                 CircularMenu(
@@ -175,16 +178,16 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space added here
 
             Box(
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium)
             ) {
                 OkButton(
                     onClick = {
                         navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                     },
-                    title = "Done"
+                    title = stringResource(id = R.string.done),
                 )
             }
         }

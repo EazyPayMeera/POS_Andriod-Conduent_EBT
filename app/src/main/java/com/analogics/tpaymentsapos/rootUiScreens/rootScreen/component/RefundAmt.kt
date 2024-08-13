@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,15 +27,15 @@ fun RefundAmtView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = stringResource(id = R.string.purchase),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card,
-            titleText = "Enter the Refund Amount",
-            label = "Amount",
-            placeholder = "Enter Refund Amount",
+            titleText = stringResource(id = R.string.refund_amt),
+            label = "",
+            placeholder = stringResource(id = R.string.refund_amt),
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {
@@ -46,7 +47,7 @@ fun RefundAmtView(navHostController: NavHostController) {
                 navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(formattedAmount))
             },
             keyboardType = KeyboardType.Number,
-            visualTransformation = createAmountTransformation() // Use the imported function
+            //visualTransformation = createAmountTransformation() // Use the imported function
 
         )
     }

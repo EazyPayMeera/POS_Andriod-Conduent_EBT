@@ -3,11 +3,13 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,36 +18,37 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun DeclineView(navHostController: NavHostController, totalAmount: String) {
     CommonLayout(
-        title = "Decline",
+        title = stringResource(id = R.string.decline),
         imageResId = R.drawable.close
     ) {
-        Spacer(modifier = Modifier.height(10.dp)) // Blank space added here
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space added here
 
         Text(
-            text = "DECLINE",
-            fontSize = 24.sp,
+            text = stringResource(id = R.string.decline_u),
+            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(bottom = 20.dp)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                 .align(Alignment.CenterHorizontally) // Center the subheader text
         )
 
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
 
         Image(
             painter = painterResource(id = R.drawable.approve), // Replace with your image resource
             contentDescription = null, // Decorative image
             modifier = Modifier
-                .size(110.dp)
-                .padding(bottom = 16.dp)
+                .size(MaterialTheme.dimens.DP_110_CompactMedium)
+                .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
                 .align(Alignment.CenterHorizontally) // Center the image
         )
-        Spacer(modifier = Modifier.height(30.dp)) // Blank space added here
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space added here
 
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -62,15 +65,15 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                 }
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium))
         Box(
-            modifier = Modifier.padding(top = 10.dp)
+            modifier = Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium)
         ) {
             OkButton(
                 onClick = {
                     navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                 },
-                title = "Done"
+                title = stringResource(id = R.string.done)
             )
         }
     }

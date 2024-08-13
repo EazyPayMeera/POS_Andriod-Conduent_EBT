@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun AmountView(navHostController: NavHostController) {
@@ -61,8 +63,12 @@ fun AmountView(navHostController: NavHostController) {
                 isPreauth -> stringResource(R.string.auth_amt)
                 else -> stringResource(R.string.purchase_amt)
             },
-            label = if (isRefund) "Refund Amount" else if(isPreauth) "Authorisation amount" else "Amount",
-            placeholder = if (isRefund) "Enter refund amount" else if(isPreauth) "Enter authorisation amount" else "Enter amount",
+            label = "",
+            placeholder = when {
+                isRefund -> stringResource(R.string.refund_amt)
+                isPreauth -> stringResource(R.string.auth_amt)
+                else -> stringResource(R.string.purchase_amt)
+            },
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {
@@ -91,89 +97,89 @@ fun AmountView(navHostController: NavHostController) {
             visualTransformation = createAmountTransformation()
         ) {
             if (isRefund) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium))
 
                 Text(
-                    text = "Original Amount : $formattedAmount",
-                    fontSize = 15.sp,
+                    text = "${stringResource(id = R.string.original_amount)} $formattedAmount",
+                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
 
                 Text(
-                    text = "Txn Date: $transactionDateTime",
-                    fontSize = 15.sp,
+                    text = "${stringResource(id = R.string.date)} $transactionDateTime",
+                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
             }
 
             if (isVoid || isAuthcap) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium))
 
                 Text(
-                    text = "Txn Date: $transactionDateTime",
-                    fontSize = 15.sp,
+                    text = "${stringResource(id = R.string.date)} $transactionDateTime",
+                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_50_CompactMedium))
                 Text(
-                    text = "Card:",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.card),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.Start)
                 )
 
                 Text(
-                    text = "Auth Code:",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.auth_code),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.Start)
                 )
 
                 Text(
-                    text = "No.:",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.no),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.Start)
                 )
 
                 Text(
-                    text = "Invoice Number:",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.inc_no),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.Start)
                 )
                 Text(
-                    text = "POS Entry:",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.pos_entry),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.Start)
                 )
             }

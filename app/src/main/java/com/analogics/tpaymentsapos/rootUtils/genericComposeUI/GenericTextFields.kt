@@ -214,12 +214,12 @@ fun CustomSurface(
 ) {
     // Define height and width based on the isRefund flag
     val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
-    val surfaceWidth = if (isRefund) 430.dp else if (isVoid || isAuthcap) 430.dp else 430.dp
+    val surfaceWidth = if (isRefund) 410.dp else if (isVoid || isAuthcap) 410.dp else 410.dp
 
     Surface(
         color = Color.White,
         modifier = modifier
-            .padding(12.dp)
+            .padding(16.dp)
             .fillMaxWidth()
             .height(surfaceHeight)
             .width(surfaceWidth),
@@ -328,9 +328,9 @@ fun CommonLayout(
         Surface(
             color = Color(0xFFF7931E), // Orange color for the outer Surface
             modifier = Modifier
-                .padding(12.dp) // Padding for the outer Surface
+                .padding(16.dp) // Padding for the outer Surface
                 .height(540.dp) // Adjust the height as per your requirement
-                .width(430.dp), // Adjust the width as per your requirement
+                .width(410.dp), // Adjust the width as per your requirement
             shape = RoundedCornerShape(18.dp) // Rounded corners for the outer Surface
         ) {
             Box( // Use Box to apply shadow before Surface

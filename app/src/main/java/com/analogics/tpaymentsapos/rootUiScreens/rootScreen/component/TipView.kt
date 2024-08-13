@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -18,15 +19,15 @@ fun TipView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = stringResource(id = R.string.purchase),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card,
-            titleText = "Enter the Tip Amount",
-            label = "Amount",
-            placeholder = "Enter Tip amount",
+            titleText = stringResource(id = R.string.enter_tip_amount),
+            label = "",
+            placeholder = stringResource(id = R.string.enter_tip_amount),
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {

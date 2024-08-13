@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -18,16 +19,16 @@ fun PreauthView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = "Pre-Auth",
+            title = stringResource(id = R.string.pre_auth),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         // Call the new composable function
         PreauthTypeSelectionSurface(
-            title = "Enter the Pre-Auth Type",
+            title = stringResource(id = R.string.sel_pre_auth),
             imageResourceId = R.drawable.card,
-            firstButtonText = "New-Authorisation",
-            secondButtonText = "Auth-Capture",
+            firstButtonText = stringResource(id = R.string.new_auth),
+            secondButtonText = stringResource(id = R.string.auth_cap),
             onFirstButtonClick = {
                 Authorisation.isNewauth = true
                 navHostController.navigate(AppNavigationItems.InvoiceScreen.route)

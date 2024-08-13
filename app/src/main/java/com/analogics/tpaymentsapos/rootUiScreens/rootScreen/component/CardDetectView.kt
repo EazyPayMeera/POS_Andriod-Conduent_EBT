@@ -4,11 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,6 +22,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import kotlinx.coroutines.delay
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
@@ -36,138 +40,143 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
+            title = when {
+                isRefund -> stringResource(R.string.refund)
+                isVoid -> stringResource(R.string.void_trans)
+                isPreauth -> stringResource(R.string.pre_auth)
+                else -> stringResource(R.string.purchase)
+            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         Surface(
             color = Color.White,
             modifier = Modifier
-                .padding(12.dp)
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                 .fillMaxWidth()
-                .height(500.dp)
-                .width(430.dp),
-            shape = RoundedCornerShape(18.dp),
-            elevation = 8.dp
+                .height(MaterialTheme.dimens.DP_500_CompactMedium)
+                .width(MaterialTheme.dimens.DP_430_CompactMedium),
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+            elevation = MaterialTheme.dimens.DP_20_CompactMedium
         ) {
             Column(
                 modifier = Modifier
-                    .padding(0.dp)
+                    .padding(MaterialTheme.dimens.extraSmall)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Inner Surface with orange color
                 Surface(
-                    color = Color(0xFFF7931E), // Orange color
+                    color = colorResource(id = R.color.Orange), // Orange color
                     modifier = Modifier
-                        .padding(0.dp)
-                        .width(450.dp)
-                        .height(110.dp), // Adjust size as needed
-                    shape = RoundedCornerShape(18.dp),
-                    elevation = 8.dp
+                        .padding(MaterialTheme.dimens.extraSmall)
+                        .width(MaterialTheme.dimens.DP_450_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_120_CompactMedium), // Adjust size as needed
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    elevation = MaterialTheme.dimens.DP_20_CompactMedium
                 ) {
                     // Content inside the inner Surface
                     Column(
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                             .fillMaxSize(),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
-                            text = if (isRefund) "Refund Amount:" else "Total Amount:",
-                            fontSize = 20.sp,
+                            text = if (isRefund) stringResource(id = R.string.refund_amt) else stringResource(id = R.string.total_amt),
+                            fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
-                                .padding(bottom = 10.dp) // Bottom padding
+                                .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium) // Bottom padding
                         )
                         // Display the totalAmount here
                         Text(
                             text = "₹$totalAmount",
-                            fontSize = 24.sp,
+                            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(5.dp)) // Space between surfaces
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_5_CompactMedium)) // Space between surfaces
 
                 Image(
                     painter = painterResource(id = R.drawable.card), // Replace with your image resource
                     contentDescription = null, // Decorative image
                     modifier = Modifier
-                        .size(70.dp) // Set the size of the image
-                        .padding(bottom = 16.dp) // Adds bottom padding to the image
+                        .size(MaterialTheme.dimens.DP_70_CompactMedium) // Set the size of the image
+                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium) // Adds bottom padding to the image
                 )
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_5_CompactMedium))
 
                 Text(
-                    text = "Tap/Swipe/Insert",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.tap_swipe_insert),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 20.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_5_CompactMedium))
 
                 // Row to hold images horizontally
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.master), // Replace with your image resource
                         contentDescription = null,
-                        modifier = Modifier.size(50.dp) // Adjust size as needed
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium) // Adjust size as needed
                     )
                     Image(
                         painter = painterResource(id = R.drawable.visa), // Replace with your image resource
                         contentDescription = null,
-                        modifier = Modifier.size(50.dp) // Adjust size as needed
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium) // Adjust size as needed
                     )
                     Image(
                         painter = painterResource(id = R.drawable.rupay), // Replace with your image resource
                         contentDescription = null,
-                        modifier = Modifier.size(50.dp) // Adjust size as needed
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium) // Adjust size as needed
                     )
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_5_CompactMedium))
 
                 Text(
-                    text = "Chip Detected",
-                    fontSize = 20.sp,
+                    text = stringResource(id = R.string.chip_detected),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color(0xFFF7931E),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 20.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_30_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(10.dp)) // Space before the CANCEL button
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium)) // Space before the CANCEL button
 
                 // CANCEL Button
                 Button(
                     onClick = { /* Handle CANCEL button click */ },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White), // Red button color for emphasis
-                    shape = RoundedCornerShape(18), // Adjust the shape as needed
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium), // Adjust the shape as needed
                     modifier = Modifier
-                        .width(200.dp) // Set the fixed width here
-                        .height(50.dp)
-                        .padding(horizontal = 16.dp) // Optional padding for spacing
+                        .width(MaterialTheme.dimens.DP_200_CompactMedium) // Set the fixed width here
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium) // Optional padding for spacing
                 ) {
                     Text(
-                        text = "CANCEL",
-                        fontSize = 16.sp,
+                        text = stringResource(id = R.string.cancel_btn),
+                        fontSize = MaterialTheme.dimens.SP_19_CompactMedium,
                         color = Color.Black // Text color for contrast
                     )
                 }

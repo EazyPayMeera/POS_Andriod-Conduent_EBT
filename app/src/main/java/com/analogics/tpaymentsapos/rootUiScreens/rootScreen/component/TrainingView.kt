@@ -3,12 +3,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,6 +23,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.IconButtonWithText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 val OrangeColor = Color(0xFFF7931E)
 
@@ -31,7 +34,7 @@ fun TrainingView(navHostController: NavHostController) {
 
     Column {
         MenuTopAppBar(
-            title = "Training",
+            title = stringResource(id = R.string.training),
             onMenuItemClick = { option ->
                 // Handle menu item click
                 when (option) {
@@ -48,23 +51,22 @@ fun TrainingView(navHostController: NavHostController) {
         Surface(
             color = Color.White,
             modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-                .height(580.dp)
-                .width(470.dp),
-            shape = RoundedCornerShape(18.dp),
-            elevation = 8.dp
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                .height(MaterialTheme.dimens.DP_580_CompactMedium)
+                .width(MaterialTheme.dimens.DP_420_CompactMedium),
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+            elevation = MaterialTheme.dimens.DP_20_CompactMedium
         ) {
             Column(
                 modifier = Modifier
-                    .padding(6.dp)
+                    .padding(MaterialTheme.dimens.DP_10_CompactMedium)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopBoldText(
-                    text = "Training",
-                    fontSize = 20.sp // Custom font size
+                    text = stringResource(id = R.string.training),
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium // Custom font size
                 )
 
                 Row(
@@ -74,21 +76,21 @@ fun TrainingView(navHostController: NavHostController) {
                 ) {
                     // First set of buttons with images
                     IconButtonWithText(
-                        text = "Purchase",
+                        text = stringResource(id = R.string.purchase),
                         icon = painterResource(id = R.drawable.card),
-                        isSelected = selectedButton.value == "Purchase",
+                        isSelected = selectedButton.value == stringResource(id = R.string.purchase),
                         onClick = {
                             selectedButton.value = "Purchase"
                             TransactionState.isPurchase = true
                             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
                         }
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium))
 
                     IconButtonWithText(
-                        text = "Refund",
+                        text = stringResource(id = R.string.refund),
                         icon = painterResource(id = R.drawable.card),
-                        isSelected = selectedButton.value == "Refund",
+                        isSelected = selectedButton.value == stringResource(id = R.string.refund),
                         onClick = {
                             selectedButton.value = "Refund"
                             TransactionState.isRefund = true
@@ -97,7 +99,7 @@ fun TrainingView(navHostController: NavHostController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -106,9 +108,9 @@ fun TrainingView(navHostController: NavHostController) {
                 ) {
                     // Second set of buttons with images
                     IconButtonWithText(
-                        text = "Pre-Auth",
+                        text = stringResource(id = R.string.pre_auth),
                         icon = painterResource(id = R.drawable.card),
-                        isSelected = selectedButton.value == "Pre-Auth",
+                        isSelected = selectedButton.value == stringResource(id = R.string.pre_auth),
                         onClick = {
                             selectedButton.value = "Pre-Auth"
                             TransactionState.isPreauth = true
@@ -118,9 +120,9 @@ fun TrainingView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.width(20.dp))
 
                     IconButtonWithText(
-                        text = "Void",
+                        text = stringResource(id = R.string.void_trans),
                         icon = painterResource(id = R.drawable.card),
-                        isSelected = selectedButton.value == "Void",
+                        isSelected = selectedButton.value == stringResource(id = R.string.void_trans),
                         onClick = {
                             selectedButton.value = "Void"
                             TransactionState.isVoid = true
@@ -129,19 +131,19 @@ fun TrainingView(navHostController: NavHostController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Spacer(modifier = Modifier.width(33.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_33_CompactMedium))
                     // Third set of buttons with images
                     IconButtonWithText(
-                        text = "Transactions",
+                        text = stringResource(id = R.string.transactions),
                         icon = painterResource(id = R.drawable.card),
-                        isSelected = selectedButton.value == "Transactions",
+                        isSelected = selectedButton.value == stringResource(id = R.string.transactions),
                         onClick = {
                             selectedButton.value = "Transactions"
                             navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
@@ -151,13 +153,13 @@ fun TrainingView(navHostController: NavHostController) {
 
 
                 Box(
-                    modifier = Modifier.padding(top = 10.dp)
+                    modifier = Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium)
                 ) {
                     AppButton(
                         onClick = {
                             navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
                         },
-                        title = "Print Last Receipt",
+                        title = stringResource(id = R.string.print_last_receipt),
                         image = painterResource(id = R.drawable.print)
                     )
                 }
