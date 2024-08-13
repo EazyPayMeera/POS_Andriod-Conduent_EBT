@@ -6,6 +6,9 @@ import android.util.Log
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
+import com.urovo.sdk.pinpad.PinPadProviderImpl
+import com.urovo.sdk.pinpad.listener.PinInputListener
+import com.urovo.sdk.utils.BytesUtil
 import java.util.Hashtable
 
 class EMV {
@@ -56,52 +59,57 @@ class EMV {
         }
 
         override fun onRequestSetAmount() {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Request Amount:")
         }
 
         override fun onReturnCheckCardResult(
             p0: ContantPara.CheckCardResult?,
             p1: Hashtable<String, String>?
         ) {
-            //TODO("Not yet implemented")
-            Log.d("EMV_APP", "Check Card Result:" +p0.toString())
-            Log.d("EMV_APP", "Check Card List:" +p1.toString())
+            Log.d("EMV_APP", "Check Card Result:" + p0.toString())
+            Log.d("EMV_APP", "Check Card List:" + p1.toString())
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Select Applications:" + p0.toString())
         }
 
         override fun onRequestPinEntry(p0: ContantPara.PinEntrySource?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Online PIN Prompt:" + p0.toString())
+            //EmvNfcKernelApi.getInstance().sendPinEntry()
+            //EmvNfcKernelApi.getInstance().bypassPinEntry()
+            if (p0 == ContantPara.PinEntrySource.KEYPAD)
+                promptPin(null, true, 3, null, false);
         }
 
         override fun onRequestOfflinePinEntry(p0: ContantPara.PinEntrySource?, p1: Int) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Offline PIN Prompt:" + p0.toString())
         }
 
         override fun onRequestConfirmCardno() {
-            TODO("Not yet implemented")
+            EmvNfcKernelApi.getInstance().sendConfirmCardnoResult(true)
         }
 
         override fun onRequestFinalConfirm() {
-            TODO("Not yet implemented")
+            EmvNfcKernelApi.getInstance().sendFinalConfirmResult(true)
         }
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
+            EmvNfcKernelApi.getInstance().sendOnlineProcessResult(true, "8A023030")
         }
 
         override fun onReturnBatchData(p0: String?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Batch Data:" + p0.toString())
         }
 
         override fun onReturnTransactionResult(p0: ContantPara.TransactionResult?) {
-            Log.d("EMV_APP", "Transaction Result:" +p0.toString())
+            Log.d("EMV_APP", "Transaction Result:" + p0.toString())
+            Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "***** DISPLAY *****\n" + p0.toString() + "*******************")
         }
 
         override fun onRequestOfflinePINVerify(
@@ -109,41 +117,43 @@ class EMV {
             p1: Int,
             p2: Bundle?
         ) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Offline PIN Verify:" + p0.toString())
         }
 
         override fun onReturnIssuerScriptResult(p0: ContantPara.IssuerScriptResult?, p1: String?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "Issuer Script Result:" + p0.toString())
         }
 
         override fun onNFCrequestTipsConfirm(p0: ContantPara.NfcTipMessageID?, p1: String?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "NFC Request Tip:" + p0.toString())
         }
 
         override fun onReturnNfcCardData(p0: Hashtable<String, String>?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "NFC Card Data:" + p0.toString())
         }
 
         override fun onNFCrequestOnline() {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "NFC Process Online:")
         }
 
         override fun onNFCrequestImportPin(p0: Int, p1: Int, p2: String?) {
-            TODO("Not yet implemented")
+            Log.d("EMV_APP", "NFC Import PIN:" + p2.toString())
         }
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
-            Log.d("EMV_APP", "NFC Trans Result:" +p0.toString())
+            Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
-            Log.d("EMV_APP", "NFC Trans Error:" +p0.toString())
+            Log.d("EMV_APP", "NFC Trans Error:" + p0.toString())
         }
+
 
         fun initEMV_AID_CAPK() {
             addCAPK_visa()
             addCAPK_master()
             addCAPK_rupay()
+            addEMV_AID_Paramters()
         }
 
         private fun addCAPK_visa() {
@@ -579,7 +589,78 @@ class EMV {
             Log.d("applog", "DinnerCard updateAID $bret")
 
         }
+
+        fun promptPin(
+            pinpadBundle: Bundle?,
+            isOnlinePin: Boolean,
+            keyIndex: Int,
+            plainKey: String?,
+            randomLocation: Boolean
+        ) {
+            var pinpadBundle = pinpadBundle
+            if (pinpadBundle == null || pinpadBundle.isEmpty) {
+                pinpadBundle = Bundle()
+                if (!isOnlinePin) {
+                    pinpadBundle.putInt("inputType", 3) //Offline PlainPin
+                    pinpadBundle.putInt("CardSlot", 0)
+                }
+                pinpadBundle.putString("cardNo", "1122334455667788")
+                pinpadBundle.putBoolean("sound", true)
+                pinpadBundle.putBoolean("bypass", false)
+                pinpadBundle.putInt("soundVolume", 1)
+                pinpadBundle.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12")
+                pinpadBundle.putBoolean("onlinePin", isOnlinePin)
+                pinpadBundle.putInt("PINKeyNo", keyIndex)
+                pinpadBundle.putLong("timeOutMS", (30 * 1000).toLong())
+                pinpadBundle.putBoolean("randomKeyboard", true)
+
+                pinpadBundle.putBoolean("FullScreen", true)
+                pinpadBundle.putInt("customKeyboardDialog", 5)
+
+                pinpadBundle.putString("title", "Security Keyboard")
+                pinpadBundle.putString("message", "Enter Your Pin")
+            }
+            try {
+                PinPadProviderImpl.getInstance()
+                    .GetDukptPinBlock(pinpadBundle, object : PinInputListener {
+                        override fun onInput(p0: Int, p1: Int) {
+                            Log.d("EMV_LOG", "On Input: $p0, $p1")
+                        }
+
+                        override fun onConfirm(p0: ByteArray?, p1: Boolean) {
+                            if (p1) {
+                                EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
+                            } else {
+                                Log.d("EMV_APP", "PinBlock:" + p0.contentToString())
+                                EmvNfcKernelApi.getInstance().sendPinEntry()
+                            }
+                        }
+
+                        override fun onConfirm_dukpt(p0: ByteArray?, p1: ByteArray?) {
+                            if (p0 == null) {
+                                EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
+                            } else {
+                                Log.d("EMV_APP", "PinBlock:" + p0.decodeToString())
+                                Log.d("EMV_APP", "KSN     :" + p1?.decodeToString())
+                                EmvNfcKernelApi.getInstance().sendPinEntry()
+                            }
+                        }
+
+                        override fun onCancel() {
+                            EmvNfcKernelApi.getInstance().cancelPinEntry()
+                        }
+
+                        override fun onTimeOut() {
+                            EmvNfcKernelApi.getInstance().cancelPinEntry()
+                        }
+
+                        override fun onError(p0: Int) {
+                            EmvNfcKernelApi.getInstance().cancelPinEntry()
+                        }
+                    })
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        }
     }
-
-
 }
