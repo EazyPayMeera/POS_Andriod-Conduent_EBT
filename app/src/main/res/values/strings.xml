@@ -85,5 +85,16 @@
     <string name="igst_amt">IGST Amount:</string>
 
 
+    <string name="auth_capture">Auth-Capture</string>
+    <string name="settings">Settings</string>
+
+    <string name="Configuration">Configuration</string>
+    <string name="training_mode">Training Mode</string>
+    <string name="auto_report_print">Auto Print Report on Sign Out</string>
+    <string name="prompt_invoice_no">Prompt Invoice Number</string>
+    <string name="auto_print_merchant">Auto Print Merchant Receipt</string>
+    <string name="enable_tipping">Enable Tipping</string>
+    <string name="taxes">Taxes</string>
+    <string name="adjust_per">Adjust %</string>
 
 </resources>

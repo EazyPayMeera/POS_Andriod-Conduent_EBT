@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
@@ -69,6 +72,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -80,6 +84,8 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -165,6 +171,12 @@ fun AppButton(
     ) {
         Button(
             onClick = onClick,
+            .padding(bottom = 20.dp)
+            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
+
+    )
+    {
+        Button(modifier = Modifier.wrapContentSize(),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
@@ -653,6 +665,47 @@ fun PreauthTypeSelectionSurface(
         }
     }
 }
+@Composable
+fun CardWithImageText(
+    text: String,
+    imageResId: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .padding(start = 15.dp, top = 10.dp)
+            .clickable(onClick = onClick)
+            .border(
+                width = 2.dp, // Adjust the border width as needed
+                color = if (isSelected) Color(0xFFFFA500) else Color.Transparent, // Orange color if selected, otherwise transparent
+                shape = RoundedCornerShape(8.dp)
+            ),
+        backgroundColor = Color(0xFFF8F7F3),
+        elevation = 5.dp,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth() // Fills the width available
+                .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+        ) {
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(64.dp) // Adjust the size as needed
+                    .align(Alignment.CenterHorizontally) // Center the image
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = text)
+        }
+    }
+}
+
 
 
 @Composable
@@ -866,6 +919,73 @@ fun HeaderImage(
     }
 }
 
+
+
+
+
+
+
+
+
+//Common  Switch button
+@Composable
+fun CustomSwitch(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    checkedImage: Int,
+    uncheckedImage: Int,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            // Background color for the switch container
+            .clickable { onCheckedChange(!checked) }
+            .padding(2.dp) // Padding around the switch
+    ) {
+        Image(
+            painter = painterResource(id = if (checked) checkedImage else uncheckedImage),
+            contentDescription = null,
+            modifier = Modifier
+                .size(40.dp) // Size of the switch thumb
+                .background(Color.White) // Background for the thumb
+                .clip(RoundedCornerShape(20.dp)) // Optional: Rounded corners for the thumb
+        )
+    }
+}
+
+
+@Composable
+fun BackgroundScreen(componentView :@Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(MaterialTheme.dimens.DP_30_CompactMedium)
+            .shadow(
+                elevation = MaterialTheme.dimens.DP_5_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
+            )
+            .background(
+                Color(0xFFFC7519),
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
+            )
+    ) {
+        Card(
+            elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
+            backgroundColor= Color.White,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = MaterialTheme.dimens.DP_50_CompactMedium,
+                    start = MaterialTheme.dimens.DP_20_CompactMedium,
+                    end = 20.dp,
+                    bottom = 50.dp
+                )
+                .align(Alignment.Center)
+        ) {
+            componentView()
+        }
+    }
+}
 
 
 
