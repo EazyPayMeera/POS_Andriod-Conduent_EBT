@@ -35,7 +35,7 @@ fun PinView(navHostController: NavHostController) {
         CustomSurface(
             imageResourceId = R.drawable.card, // Ensure this resource ID exists
             titleText = stringResource(id = R.string.enter_Pin), // Fetch title from strings.xml
-            label = stringResource(id = R.string.pin), // Fetch title from strings.xml
+            label = "", // Fetch title from strings.xml
             placeholder = stringResource(id = R.string.pin), // Fetch title from strings.xml
             value = invoiceno,
             onValueChange = {

@@ -219,11 +219,18 @@ fun CustomSurface(
     modifier: Modifier = Modifier,
     content: @Composable (ColumnScope.() -> Unit)? = null // New parameter for custom content
 ) {
+
+    // Create a FocusRequester instance
+    val focusRequester = remember { FocusRequester() }
+
     // Define height and width based on the isRefund flag
     val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
     val surfaceWidth = if (isRefund) 410.dp else if (isVoid || isAuthcap) 410.dp else 410.dp
-    var isFocused by remember { mutableStateOf(true) }
-    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     Surface(
         color = Color.White,
         modifier = modifier
@@ -275,19 +282,18 @@ fun CustomSurface(
                 ),
                 visualTransformation = visualTransformation,
                 modifier = modifier
+                    .focusRequester(focusRequester)
                     .padding(2.dp)
                     .width(280.dp)
-                    .height(70.dp)
-                    .focusRequester(focusRequester)
-                    .onFocusChanged { focusState ->
-                        isFocused = focusState.isFocused
-                    }
-                    .focusable(true)
-
+                    .height(70.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+                    unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
+                    focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+                    unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+                )
             )
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-            }
+
             // Custom content
             content?.invoke(this)
         }
@@ -991,5 +997,22 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     }
 }
 
+
+@Composable
+fun TextField(
+    text: String,
+    fontSize: TextUnit,
+    color: Color = Color.Black, // Default color
+    fontWeight: FontWeight = FontWeight.Normal, // Default font weight
+    modifier: Modifier = Modifier // Default modifier
+) {
+    Text(
+        text = text,
+        fontSize = fontSize,
+        color = color,
+        fontWeight = fontWeight,
+        modifier = modifier
+    )
+}
 
 

@@ -71,7 +71,7 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
 
                     Text(
                         text = stringResource(id = R.string.plz_login),
-                        fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
+                        fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = Color.LightGray,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
@@ -101,7 +101,7 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     Text(
                         text = stringResource(id = R.string.forget_pswd),
                         color = Color(0xFFFFA500),
-                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                        fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(top = MaterialTheme.dimens.DP_24_CompactMedium)
