@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -163,37 +166,40 @@ fun AppButton(
     title: String,
     image: Painter? = null // Optional parameter for the image
 ) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = Color.Black,
-            containerColor = colorResource(R.color.purple_200)
-        ),
-        shape = RoundedCornerShape(10.dp),
+    Box(
         modifier = Modifier
             .width(248.dp)
             .padding(bottom = 20.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            image?.let {
-                Image(
-                    painter = it,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(28.dp) // Adjust size as needed
-                        .clip(CircleShape) // Make the image round
-                        .padding(end = 12.dp) // Space between image and text
-                )
+            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
+    )
+    {
+        Button(onClick = onClick,
+            modifier = Modifier.wrapContentSize().padding(horizontal = 8.dp),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Black,
+                containerColor = colorResource(R.color.purple_200)
+            ),
+            ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                image?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(28.dp) // Adjust size as needed
+                            .clip(CircleShape) // Make the image round
+                            .padding(end = 12.dp) // Space between image and text
+                    )
+                }
+                Text(text = title)
             }
-            Text(text = title)
         }
     }
 }
-
 
 @Composable
 fun CustomSurface(
@@ -216,7 +222,8 @@ fun CustomSurface(
     // Define height and width based on the isRefund flag
     val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
     val surfaceWidth = if (isRefund) 410.dp else if (isVoid || isAuthcap) 410.dp else 410.dp
-
+    var isFocused by remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
     Surface(
         color = Color.White,
         modifier = modifier
@@ -271,8 +278,16 @@ fun CustomSurface(
                     .padding(2.dp)
                     .width(280.dp)
                     .height(70.dp)
-            )
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { focusState ->
+                        isFocused = focusState.isFocused
+                    }
+                    .focusable(true)
 
+            )
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
             // Custom content
             content?.invoke(this)
         }
@@ -664,7 +679,7 @@ fun CardWithImageText(
 ) {
     Card(
         modifier = modifier
-            .padding(start = 15.dp, top = 10.dp)
+            .padding(start = 15.dp, top = 5.dp)
             .clickable(onClick = onClick)
             .border(
                 width = 2.dp, // Adjust the border width as needed
@@ -680,17 +695,17 @@ fun CardWithImageText(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth() // Fills the width available
-                .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+                .padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 10.dp)
         ) {
             Image(
                 painter = painterResource(id = imageResId),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(64.dp) // Adjust the size as needed
+                    .size(40.dp) // Adjust the size as needed
                     .align(Alignment.CenterHorizontally) // Center the image
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = text)
+            Text(text = text, fontSize = 15.sp)
         }
     }
 }

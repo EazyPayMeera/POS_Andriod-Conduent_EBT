@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
 
-import ButtonConfig
 import DashboardView
 import LanguageView
 import TrainingView
@@ -37,8 +36,8 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.DashboardScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.login.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
-import com.analogics.tpaymentsapos.rootUiScreens.login.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView

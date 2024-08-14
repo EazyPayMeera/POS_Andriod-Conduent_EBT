@@ -146,7 +146,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             modifier = Modifier
                 .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium, vertical = MaterialTheme.dimens.DP_20_CompactMedium)
                 .fillMaxWidth()
-                .height(MaterialTheme.dimens.DP_110_CompactMedium),
+                .height(MaterialTheme.dimens.DP_120_CompactMedium),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
             elevation = MaterialTheme.dimens.DP_20_CompactMedium
         ) {

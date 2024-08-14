@@ -176,7 +176,8 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     Text(
                         text = stringResource(id = R.string.cancel_btn),
-                        fontSize = MaterialTheme.dimens.SP_19_CompactMedium,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        fontWeight = FontWeight.Bold,
                         color = Color.Black // Text color for contrast
                     )
                 }
