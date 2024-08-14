@@ -28,6 +28,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.analogics.networkservicecore.nComponent.ResultProvider
+import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.paymentservicecore.repository.gatewayPayment.UIPaymentInfoProviderRepository
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 import com.analogics.tpaymentsapos.R
@@ -117,14 +120,20 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                         AppButton(
                             onClick = {
                                 navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
-                                /*var iPaymentCoreHandlerListener =
-                                    object : IPaymentCoreHandlerListener {
-                                        override fun onPMTRespHandler(uiData: String) {
-                                            navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                                /*
+                                var iResultProviderListener =
+                                    object : IResultProviderListener {
+
+                                        override fun getResultSuccess(apiResultProvider: ResultProvider<String>) {
+
+                                        }
+
+                                        override fun getResultFailed(apiResultProvider: ResultProvider<Error>) {
+
                                         }
                                     }
-                                //PaymentConfigurationHandler.initPayment(iPaymentCoreHandlerListener, context)*/
-
+                                    UIPaymentInfoProviderRepository.initPayment(context,iResultProviderListener)
+                                    */
                             },
                             title = stringResource(id = R.string.login)
                         )
