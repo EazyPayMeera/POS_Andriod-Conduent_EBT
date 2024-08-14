@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
+import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -39,20 +41,23 @@ fun InvoiceView(navHostController: NavHostController) {
     val isPreauth = Authorisation.isNewauth
     val isAuthcap = Authorisation.isAuthcap
 
-    // Print the value of isAuthcap to logcat
-    Log.d("InvoiceView", "isAuthcap: $isAuthcap")
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
+            title = when {
+                isRefund -> stringResource(R.string.refund)
+                isVoid -> stringResource(R.string.void_trans)
+                isPreauth -> stringResource(R.string.pre_auth)
+                else -> stringResource(R.string.purchase)
+            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card,
-            titleText = "Enter the Invoice Number",
-            label = "Invoice Number",
-            placeholder = "Invoice Number",
+            titleText = stringResource(id = R.string.enter_invoice),
+            label = "",
+            placeholder = stringResource(id = R.string.invoice_no),
             value = invoiceno,
             onValueChange = { invoiceno = it },
             onDoneAction = { navHostController.navigate(AppNavigationItems.AmountScreen.route) },
@@ -61,28 +66,25 @@ fun InvoiceView(navHostController: NavHostController) {
             isAuthcap = isAuthcap,
             keyboardType = KeyboardType.Text
         ) {
-            // Log values of all relevant variables
-            Log.d("InvoiceView", "isRefund: $isRefund, isVoid: $isVoid, isPreauth: $isPreauth, isAuthcap: $isAuthcap")
 
             if (isRefund || isVoid || isAuthcap) {
-                Log.d("InvoiceView", "Inside if condition, showing ScannerButton")
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                 Text(
                     text = "-----------or-----------",
-                    fontSize = 20.sp,
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
 
                 ScannerButton(
-                    text = "Scan QR/Barcode",
+                    text = stringResource(id = R.string.scan_qr),
                     onClick = { showMenu = !showMenu },
                     backgroundColor = Color(0xFFEDEDED),
                     contentColor = Color.Black,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
                 )
             }
         }
@@ -91,58 +93,4 @@ fun InvoiceView(navHostController: NavHostController) {
 
 
 
-@Composable
-fun CircularMenu(
-    isVisible: Boolean,
-    onOptionClick: (String) -> Unit
-) {
-    val menuItems = listOf("Option 1", "Option 2", "Option 3")
-    val itemCount = menuItems.size
-    val angleIncrement = (2 * Math.PI) / itemCount
 
-    val alpha by animateFloatAsState(
-        targetValue = if (isVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 300)
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .size(200.dp)
-                .background(Color.White, shape = CircleShape)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                menuItems.forEachIndexed { index, item ->
-                    val angle = angleIncrement * index
-                    val x = (100 * cos(angle)).toFloat()
-                    val y = (100 * sin(angle)).toFloat()
-
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .offset(x.dp, y.dp)
-                            .alpha(alpha)
-                            .background(Color.LightGray, shape = CircleShape)
-                            .align(Alignment.Center)
-                    ) {
-                        Button(
-                            onClick = { onOptionClick(item) },
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text(text = item, fontSize = 16.sp)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}

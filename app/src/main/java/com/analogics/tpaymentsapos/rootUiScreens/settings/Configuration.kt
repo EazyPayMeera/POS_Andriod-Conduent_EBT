@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -91,8 +92,7 @@ fun ConfigurationView(navHostController: NavHostController) {
                 .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = 60.dp // Customizable height parameter
+            color = MaterialTheme.colorScheme.background
         ) {
             // State to manage the toggle switch
             var isSwitchedOn by remember { mutableStateOf(false) }
@@ -145,8 +145,7 @@ fun ConfigurationView(navHostController: NavHostController) {
                 .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = 60.dp // Customizable height parameter
+            color = MaterialTheme.colorScheme.background
         ) {
             // State to manage the toggle switch
             var isSwitchedOn by remember { mutableStateOf(false) }
@@ -199,8 +198,7 @@ fun ConfigurationView(navHostController: NavHostController) {
                 .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = 60.dp // Customizable height parameter
+            color = MaterialTheme.colorScheme.background
         ) {
             // State to manage the toggle switch
             var isSwitchedOn by remember { mutableStateOf(false) }
@@ -253,8 +251,7 @@ fun ConfigurationView(navHostController: NavHostController) {
                 .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = if (isEnableTipping) 100.dp else 60.dp //stomizable height parameter
+            color = MaterialTheme.colorScheme.background
         ) {
             // State to manage the toggle switch
             var isSwitchedOn by remember { mutableStateOf(false) }
@@ -299,8 +296,15 @@ fun ConfigurationView(navHostController: NavHostController) {
                         .padding(4.dp) // Padding around the switch
                 )
             }
-        }
 
+        }
+        if(isEnableTipping)
+        {
+            Box(modifier = Modifier.fillMaxWidth().background(color = Color.White))
+            {
+                Text ("ABCD")
+            }
+        }
         // Lower Surface with top and bottom padding, and clickable
         SettingsLowerSurface(
             modifier = Modifier

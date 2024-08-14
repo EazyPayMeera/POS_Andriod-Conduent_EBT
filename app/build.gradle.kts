@@ -89,10 +89,15 @@ dependencies {
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.compose.animation:animation:1.5.0")
 
+    implementation ("androidx.compose.material3:material3:1.0.0")
+    implementation ("androidx.compose.material:material-icons-extended:1.0.0")
 
     implementation ("io.coil-kt:coil:2.2.2") // or the latest version
     implementation ("io.coil-kt:coil-gif:2.2.2") // or the latest version
     implementation ("io.coil-kt:coil-compose:2.2.2")
+
+
+
 
     // Coil SVG decoder
     implementation ("io.coil-kt:coil-svg:2.2.2")

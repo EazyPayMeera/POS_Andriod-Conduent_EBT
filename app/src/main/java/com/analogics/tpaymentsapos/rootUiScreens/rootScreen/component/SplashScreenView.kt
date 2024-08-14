@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.delay
 
 
@@ -61,10 +63,10 @@ fun SplashScreenView(navController: NavController)
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize())
         {
             Text(
-                text = "T Payment",
+                text = stringResource(id = R.string.application_name),
                 modifier = Modifier.wrapContentSize(),
                 color = Color.White,
-                fontSize = 50.sp,
+                fontSize = MaterialTheme.dimens.SP_50_CompactMedium,
                 style = MaterialTheme.typography.bodyLarge
             )
         }

@@ -4,6 +4,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.*
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -21,15 +22,15 @@ fun TaxPercentageView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = "Adjust",
+            title = stringResource(id = R.string.adjust),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card,
-            titleText = "Enter the Percentage",
-            label = "Percentage",
-            placeholder = "Enter Percentage",
+            titleText = stringResource(id = R.string.enter_the_percentage),
+            label = "",
+            placeholder = stringResource(id = R.string.enter_the_percentage),
             value = rawInput,
             onValueChange = { newValue ->
                 if (newValue.all { char -> char.isDigit() }) {
@@ -41,7 +42,7 @@ fun TaxPercentageView(navHostController: NavHostController) {
                 navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(taxpercentage))
             },
             keyboardType = KeyboardType.Number,
-            visualTransformation = createAmountTransformation() // Use the imported function
+            //visualTransformation = createAmountTransformation() // Use the imported function
         )
     }
 }

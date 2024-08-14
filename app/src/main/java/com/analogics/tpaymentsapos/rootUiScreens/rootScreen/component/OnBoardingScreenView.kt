@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
@@ -111,7 +112,7 @@ fun OnBoardSlideView(navHostController: NavHostController) {
                     onClick = {
                         navHostController.navigate(AppNavigationItems.LoginScreen.route)
                     },
-                    title = "Get Started"
+                    title = stringResource(R.string.get_start)
                 )
             }
         }
@@ -127,9 +128,9 @@ fun ShowCardView(
     navHostController: NavHostController
 ) {
     Card(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
+            defaultElevation = MaterialTheme.dimens.extraSmall
         ),
         colors = CardDefaults.cardColors(
             containerColor = Color.White, // Card background color
