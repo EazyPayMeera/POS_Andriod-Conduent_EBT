@@ -41,8 +41,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    api(project(":paymentservicecore:networkservicecore"))
+api(project(":paymentservicecore:tpaymentcore"))
     api(project(":paymentservicecore:networkservicecore"))
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:adapter-rxjava2:2.6.2")

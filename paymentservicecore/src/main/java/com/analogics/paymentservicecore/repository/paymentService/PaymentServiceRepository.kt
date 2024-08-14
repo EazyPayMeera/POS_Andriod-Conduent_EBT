@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository
+package com.analogics.paymentservicecore.repository.paymentService
 
 
 import com.analogics.paymentservicecore.listeners.requestListener.IMakeReqeustListener
