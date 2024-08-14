@@ -7,13 +7,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HeaderImage
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
 @Composable
@@ -21,9 +25,10 @@ fun LanguageView(navHostController: NavHostController) {
     // State to manage the selected language
     var selectedLanguage by remember { mutableStateOf("Hindi") }
 
+
     Column {
         CommonTopAppBar(
-            title = "Set Language",
+            title = stringResource(id = R.string.set_lang),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -31,95 +36,85 @@ fun LanguageView(navHostController: NavHostController) {
         Surface(
             color = Color.White,
             modifier = Modifier
-                .padding(25.dp) // Padding around the surface
+                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium) // Padding around the surface
                 .fillMaxWidth() // Fills the available width
-                .height(250.dp) // Set a fixed height
-                .clip(RoundedCornerShape(18.dp)), // Apply rounded corners with a radius of 18.dp
-            shape = RoundedCornerShape(18.dp), // Ensure shape is consistent with clip
-            elevation = 8.dp // Adds shadow effect with specified elevation
+                .height(androidx.compose.material3.MaterialTheme.dimens.DP_300_CompactMedium) // Set a fixed height
+                .clip(RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium)), // Apply rounded corners with a radius of 18.dp
+            shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium), // Ensure shape is consistent with clip
+            elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium // Adds shadow effect with specified elevation
         ) {
             // Column for top-centered text
             Column(
                 modifier = Modifier
                     .fillMaxSize() // Fills the available space
-                    .padding(top = 16.dp), // Padding at the top for spacing
+                    .padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium), // Padding at the top for spacing
                 verticalArrangement = Arrangement.Top, // Aligns children at the top
                 horizontalAlignment = Alignment.CenterHorizontally // Centers children horizontally
             ) {
-                // Centered text at the top
-                Text(
-                    text = "Select Your Language:",
-                    style = MaterialTheme.typography.body1.copy(
-                        fontSize = 18.sp // Increase font size if needed
-                    ),
-                    color = Color.Black
+                TopBoldText(
+                    text = stringResource(id = R.string.select_lang),
+                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_19_CompactMedium // Custom font size
                 )
 
-                // Image at the center
-                Image(
-                    painter = painterResource(id = R.drawable.language), // Replace with your image resource
-                    contentDescription = null, // Decorative image
-                    modifier = Modifier
-                        .size(55.dp)
-                        .padding(bottom = 16.dp)
-                        .align(Alignment.CenterHorizontally) // Center the image
+                HeaderImage(
+                    imageName = "language" // Name of the drawable resource (without the file extension)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                //Spacer(modifier = Modifier.height(20.dp))
 
                 // Row for "Hindi" with RadioButton
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 ) {
                     Text(
-                        text = "Hindi",
+                        text = stringResource(id = R.string.hindi),
                         style = MaterialTheme.typography.body1.copy(
-                            fontSize = 18.sp
+                            fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_21_CompactMedium
                         ),
                         color = Color.Black
                     )
-                    Spacer(modifier = Modifier.width(190.dp))
+                    Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_190_CompactMedium))
                     RadioButton(
-                        selected = selectedLanguage == "Hindi",
+                        selected = selectedLanguage == stringResource(id = R.string.hindi),
                         onClick = { selectedLanguage = "Hindi" },
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = OrangeColor,
+                            selectedColor = colorResource(id = R.color.Orange),
                             unselectedColor = Color.Gray
                         )
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium))
                 // Divider after "Hindi"
                 Divider(
                     color = Color.Black,
-                    thickness = 1.dp,
+                    thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium))
 
                 // Row for "English" with RadioButton
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 ) {
 
                     Text(
-                        text = "English",
+                        text = stringResource(id = R.string.english),
                         style = MaterialTheme.typography.body1.copy(
-                            fontSize = 18.sp
+                            fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_21_CompactMedium
                         ),
                         color = Color.Black
                     )
-                    Spacer(modifier = Modifier.width(170.dp))
+                    Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_170_CompactMedium))
 
                     RadioButton(
-                        selected = selectedLanguage == "English",
+                        selected = selectedLanguage == stringResource(id = R.string.english),
                         onClick = { selectedLanguage = "English" },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = OrangeColor,
@@ -127,14 +122,14 @@ fun LanguageView(navHostController: NavHostController) {
                         )
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium))
                 // Divider after "English"
                 Divider(
                     color = Color.Black,
-                    thickness = 1.dp,
+                    thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 )
             }
         }

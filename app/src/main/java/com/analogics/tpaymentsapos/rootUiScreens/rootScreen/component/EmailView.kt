@@ -2,10 +2,12 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,6 +18,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun EmailView(navHostController: NavHostController, email: String) {
@@ -26,64 +29,69 @@ fun EmailView(navHostController: NavHostController, email: String) {
     val isAuthcap = Authorisation.isAuthcap
 
     CommonLayout(
-        title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
+        title = when {
+            isRefund -> stringResource(R.string.refund)
+            isVoid -> stringResource(R.string.void_trans)
+            isPreauth -> stringResource(R.string.pre_auth)
+            else -> stringResource(R.string.purchase)
+        },
         imageResId = R.drawable.close
     ) {
-        Spacer(modifier = Modifier.height(40.dp)) // Blank space added here
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space added here
 
         Text(
-            text = "Success",
-            fontSize = 24.sp,
+            text = stringResource(id = R.string.sucess),
+            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(bottom = 20.dp)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                 .align(Alignment.CenterHorizontally) // Center the subheader text
         )
 
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
 
         Text(
-            text = "Email Sent",
-            fontSize = 24.sp,
+            text = stringResource(id = R.string.sent_email),
+            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
             color = Color.Black,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(bottom = 20.dp)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                 .align(Alignment.CenterHorizontally) // Center the subheader text
         )
 
-        Spacer(modifier = Modifier.height(20.dp)) // Blank space added here
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
 
         Text(
-            text = "e-Receipt was successfully sent",
-            fontSize = 12.sp,
+            text = stringResource(id = R.string.ereceipt_sent),
+            fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(bottom = 20.dp)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                 .align(Alignment.CenterHorizontally) // Center the subheader text
         )
 
         Text(
             text = "on $email",
-            fontSize = 12.sp,
+            fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
             color = Color.LightGray,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(bottom = 20.dp)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                 .align(Alignment.CenterHorizontally) // Center the subheader text
         )
 
 
         Box(
-            modifier = Modifier.padding(top = 30.dp)
+            modifier = Modifier.padding(top = MaterialTheme.dimens.DP_30_CompactMedium)
         ) {
             OkButton(
                 onClick = {
                     navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                 },
-                title = "OK"
+                title = stringResource(id = R.string.ok)
             )
         }
     }

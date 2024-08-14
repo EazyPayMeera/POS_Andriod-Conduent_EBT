@@ -6,7 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.PermIdentity
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,71 +34,77 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHostController
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Login") },
-                backgroundColor = Color(0xFFF8F8F7)
+                title = { Text(stringResource(id = R.string.login)) },
+                backgroundColor = Color(0xFFFFFFFF)
             )
         },
         content = {
-            Surface(modifier = Modifier.fillMaxSize().padding(it)) {
+            Surface(modifier = Modifier
+                .fillMaxSize()
+                .padding(it)) {
                 var emailCredentials by remember { mutableStateOf("") }
                 var pwdCredentials by remember { mutableStateOf("") }
                 val context = LocalContext.current
                 Column(
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 30.dp)
+                        .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
                 ) {
                     // Image above the "Please Login to continue" text
                     Image(
-                        painter = painterResource(id = R.drawable.unlock), // Replace with your image resource
+                        painter = painterResource(id = R.drawable.card_img), // Replace with your image resource
                         contentDescription = null, // Decorative image
                         modifier = Modifier
-                            .size(70.dp) // Set the size of the image
-                            .padding(bottom = 16.dp) // Adds bottom padding to the image
+                            .size(MaterialTheme.dimens.DP_55_CompactMedium) // Set the size of the image
+                            .padding(bottom = MaterialTheme.dimens.DP_160_CompactMedium) // Adds bottom padding to the image
                     )
 
                     Text(
-                        text = "Please login to continue",
-                        fontSize = 20.sp,
+                        text = stringResource(id = R.string.plz_login),
+                        fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
                         color = Color.LightGray,
-                        modifier = Modifier.padding(bottom = 20.dp)
+                        modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
 
                     InputTextField(
                         inputValue = emailCredentials,
                         onChange = { emailCredentials = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = "Username",
-                        placeHolder = "Username",
-                        icon = Icons.Default.Person,
-                        keyboardType = KeyboardType.Number
+                        label = "",
+                        placeHolder = stringResource(id = R.string.username),
+                        icon = Icons.Outlined.Person,
+                        keyboardType = KeyboardType.Text
                     )
 
                     InputTextField(
                         inputValue = pwdCredentials,
                         onChange = { pwdCredentials = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = "Password",
-                        placeHolder = "Password",
-                        icon = Icons.Default.Lock,
-                        keyboardType = KeyboardType.Number
+                        label = "",
+                        placeHolder = stringResource(id = R.string.password),
+                        icon = Icons.Outlined.Lock,
+                        keyboardType = KeyboardType.Text,
+                        isPasswordField = true
                     )
 
                     // "Forgot Password?" clickable text
                     Text(
-                        text = "Forgot Password?",
-                        color = Color.LightGray,
-                        fontSize = 16.sp,
+                        text = stringResource(id = R.string.forget_pswd),
+                        color = Color(0xFFFFA500),
+                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(top = 16.dp)
+                            .padding(top = MaterialTheme.dimens.DP_24_CompactMedium)
                             .clickable {
                                 navHostController?.navigate(AppNavigationItems.ForgetPasswordScreen.route)
                                 // Use safe navigation with ?. to avoid crashes if navHostController is null
@@ -99,7 +112,7 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     )
 
                     Box(
-                        modifier = Modifier.padding(top = 30.dp)
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
                     ) {
                         AppButton(
                             onClick = {
@@ -113,7 +126,7 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                                 PaymentConfigurationHandler.initPayment(iPaymentCoreHandlerListener, context)
 
                             },
-                            title = "Login →"
+                            title = stringResource(id = R.string.login)
                         )
                     }
                 }

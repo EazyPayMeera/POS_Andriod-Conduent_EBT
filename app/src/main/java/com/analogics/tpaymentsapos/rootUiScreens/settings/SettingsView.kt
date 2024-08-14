@@ -77,8 +77,7 @@ fun SettingsView(navHostController: NavHostController) {
                 .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = 60.dp // Customizable height parameter
+            color = MaterialTheme.colorScheme.background
         ) {
             // Use Row to place text and images horizontally
             Row(

@@ -4,6 +4,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -25,15 +26,20 @@ fun PasswordView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
+            title = when {
+                isRefund -> stringResource(R.string.refund)
+                isVoid -> stringResource(R.string.void_trans)
+                isPreauth -> stringResource(R.string.pre_auth)
+                else -> stringResource(R.string.purchase)
+            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
         CustomSurface(
             imageResourceId = R.drawable.card, // Ensure this resource ID exists
-            titleText = "Enter Your Password",
-            label = "Password",
-            placeholder = "Password",
+            titleText = stringResource(id = R.string.enter_password),
+            label = "",
+            placeholder = stringResource(id = R.string.password),
             value = invoiceno,
             onValueChange = { invoiceno = it },
             onDoneAction = { navHostController.navigate(AppNavigationItems.InvoiceScreen.route) },

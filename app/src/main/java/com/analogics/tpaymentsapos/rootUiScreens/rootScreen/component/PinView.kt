@@ -23,7 +23,12 @@ fun PinView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = if (isRefund) "Refund" else if (isVoid) "Void" else if (isPreauth) "Pre-Auth" else "Purchase",
+            title = when {
+                isRefund -> stringResource(R.string.refund)
+                isVoid -> stringResource(R.string.void_trans)
+                isPreauth -> stringResource(R.string.pre_auth)
+                else -> stringResource(R.string.purchase)
+            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

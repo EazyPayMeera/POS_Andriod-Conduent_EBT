@@ -1,5 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
 
+import ButtonConfig
+import DashboardView
 import LanguageView
 import TrainingView
 import android.Manifest
@@ -186,7 +188,7 @@ fun AppNavigationGraph(
             PleaseWaitView(navHostController)
         }
         composable(AppNavigationItems.TrainingScreen.route) {
-            TrainingView(navHostController)
+            DashboardView(navHostController)
         }
         composable(AppNavigationItems.AmountScreen.route) {
             AmountView(navHostController)
