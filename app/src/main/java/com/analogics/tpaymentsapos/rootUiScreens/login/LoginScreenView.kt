@@ -116,14 +116,14 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     ) {
                         AppButton(
                             onClick = {
-
-                                var iPaymentCoreHandlerListener =
+                                navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                                /*var iPaymentCoreHandlerListener =
                                     object : IPaymentCoreHandlerListener {
                                         override fun onPMTRespHandler(uiData: String) {
                                             navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
                                         }
                                     }
-                                PaymentConfigurationHandler.initPayment(iPaymentCoreHandlerListener, context)
+                                //PaymentConfigurationHandler.initPayment(iPaymentCoreHandlerListener, context)*/
 
                             },
                             title = stringResource(id = R.string.login)

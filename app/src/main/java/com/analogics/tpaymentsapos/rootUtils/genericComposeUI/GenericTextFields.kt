@@ -163,48 +163,37 @@ fun AppButton(
     title: String,
     image: Painter? = null // Optional parameter for the image
 ) {
-    Box(
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = Color.Black,
+            containerColor = colorResource(R.color.purple_200)
+        ),
+        shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .width(248.dp)
             .padding(bottom = 20.dp)
-            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
     ) {
-        Button(
-            onClick = onClick,
-            .padding(bottom = 20.dp)
-            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
-
-    )
-    {
-        Button(modifier = Modifier.wrapContentSize(),
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color.Black,
-                containerColor = colorResource(R.color.purple_200)
-            ),
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(horizontal = 8.dp) // Add padding around the button content
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                image?.let {
-                    Image(
-                        painter = it,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(28.dp) // Adjust size as needed
-                            .clip(CircleShape) // Make the image round
-                            .padding(end = 12.dp) // Space between image and text
-                    )
-                }
-                Text(text = title)
+            image?.let {
+                Image(
+                    painter = it,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(28.dp) // Adjust size as needed
+                        .clip(CircleShape) // Make the image round
+                        .padding(end = 12.dp) // Space between image and text
+                )
             }
+            Text(text = title)
         }
     }
 }
+
 
 @Composable
 fun CustomSurface(
