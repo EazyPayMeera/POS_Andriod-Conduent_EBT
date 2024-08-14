@@ -3,6 +3,6 @@ package com.analogics.paymentservicecore.listeners.requestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
 
 
-interface IMakeReqeustListener {
+interface IMakeRequestListener {
     suspend fun getUserListAPI(iResultProviderListener: IResultProviderListener)
 }

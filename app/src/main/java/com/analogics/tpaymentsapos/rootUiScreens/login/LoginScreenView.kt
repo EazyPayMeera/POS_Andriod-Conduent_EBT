@@ -5,10 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.PermIdentity
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
@@ -25,14 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.analogics.networkservicecore.nComponent.ResultProvider
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.paymentservicecore.listeners.responseListener.ITransactionResultListener
+import com.analogics.paymentservicecore.models.TransactionData
+import com.analogics.paymentservicecore.models.TransactionStatus.APPROVED
 import com.analogics.paymentservicecore.repository.gatewayPayment.UIPaymentInfoProviderRepository
-import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
@@ -49,9 +42,11 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
             )
         },
         content = {
-            Surface(modifier = Modifier
-                .fillMaxSize()
-                .padding(it)) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
                 var emailCredentials by remember { mutableStateOf("") }
                 var pwdCredentials by remember { mutableStateOf("") }
                 val context = LocalContext.current
@@ -121,19 +116,25 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                             onClick = {
                                 navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
                                 /*
-                                var iResultProviderListener =
-                                    object : IResultProviderListener {
+                                var iTransactionResult =
+                                    object : ITransactionResultListener {
+                                        override fun onSuccess(transactionData: TransactionData) {
+                                            when (transactionData.status) {
+                                                APPROVED -> navHostController?.navigate(AppNavigationItems.ApprovedScreen.route)
+                                                else -> navHostController?.navigate(AppNavigationItems.DeclineScreen.route)
+                                            }
+                                        }
 
-                                        override fun getResultSuccess(apiResultProvider: ResultProvider<String>) {
+                                        override fun onFailure(exception: Exception) {
 
                                         }
 
-                                        override fun getResultFailed(apiResultProvider: ResultProvider<Error>) {
-
-                                        }
                                     }
-                                    UIPaymentInfoProviderRepository.initPayment(context,iResultProviderListener)
-                                    */
+                                UIPaymentInfoProviderRepository.initPayment(
+                                    context,
+                                    iTransactionResult
+                                )
+                                 */
                             },
                             title = stringResource(id = R.string.login)
                         )

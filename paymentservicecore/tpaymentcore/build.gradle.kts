@@ -41,6 +41,7 @@ dependencies {
     implementation(files("libs/urovo_sdk_v1.0.5.aar"))
     implementation(project(":paymentservicecore:networkservicecore"))
     implementation(project(":paymentservicecore:networkservicecore"))
+    implementation(project(":paymentservicecore"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

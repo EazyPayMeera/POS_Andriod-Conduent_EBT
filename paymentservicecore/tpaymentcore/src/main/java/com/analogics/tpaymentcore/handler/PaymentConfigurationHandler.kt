@@ -2,19 +2,27 @@ package com.analogics.tpaymentcore.handler
 
 import android.content.Context
 import com.analogics.networkservicecore.nComponent.ResultProvider
+import com.analogics.paymentservicecore.models.TransactionData
+import com.analogics.paymentservicecore.models.TransactionStatus
 import com.analogics.tpaymentcore.EMV.EMV
 import com.analogics.tpaymentcore.listener.IPaymentConfigListener
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 
-object PaymentConfigurationHandler : IPaymentConfigListener{
+object PaymentConfigurationHandler : IPaymentConfigListener {
     override fun <T> initPayment(
         context: Context
     ): ResultProvider<T> {
         EMV.initialize(context);
-        return ResultProvider.Success("true" as T)
+        return TransactionData()
+            .copy(
+                status = TransactionStatus.APPROVED
+            ) as ResultProvider<T>
     }
 
-    override fun startPayment(iPaymentCoreHandlerListener: IPaymentCoreHandlerListener, context : Context) {
+    override fun startPayment(
+        iPaymentCoreHandlerListener: IPaymentCoreHandlerListener,
+        context: Context
+    ) {
         EMV.startPayment(context);
         iPaymentCoreHandlerListener.onPMTRespHandler("Hello this is the UI data")
     }
