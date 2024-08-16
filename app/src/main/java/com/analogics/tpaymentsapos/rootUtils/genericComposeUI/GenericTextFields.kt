@@ -62,6 +62,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -225,7 +227,7 @@ fun CustomSurface(
 
     // Define height and width based on the isRefund flag
     val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
-    val surfaceWidth = if (isRefund) 410.dp else if (isVoid || isAuthcap) 410.dp else 410.dp
+    val surfaceWidth = 410.dp
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -1015,4 +1017,108 @@ fun TextField(
     )
 }
 
+@Composable
+fun SmallSurface(
+    modifier: Modifier = Modifier,
+    isRefund: Boolean = false,
+    isVoid: Boolean = false,
+    isAuthcap:Boolean = false,
+    content: (@Composable (ColumnScope.() -> Unit))? = null
+) {
+    val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
+    val surfaceWidth = 410.dp
 
+    Surface(
+        color = Color.White,
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .height(surfaceHeight)
+            .width(surfaceWidth),
+        shape = RoundedCornerShape(18.dp),
+        shadowElevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Custom content, if available
+            content?.invoke(this)
+        }
+    }
+}
+
+
+@Composable
+fun Image(
+    imageId: Int,
+    size: Dp = 70.dp,
+    shape: Shape = RectangleShape,
+    alignment: Alignment = Alignment.Center, // Alignment parameter for usage within a Box
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .then(modifier), // Apply any additional modifiers passed in
+        contentAlignment = alignment // Set the alignment within the Box
+    ) {
+        Image(
+            painter = painterResource(id = imageId),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape) // Apply the shape clipping to the image
+        )
+    }
+}
+
+@Composable
+fun OutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+    keyboardType: KeyboardType = KeyboardType.Text,
+    onDoneAction: () -> Unit = {},
+    isPassword: Boolean = false, // New parameter to indicate if it's a password field
+    visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+    modifier: Modifier = Modifier,
+) {
+    // Create a FocusRequester instance
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text("") }, // Label is always empty
+        placeholder = { Text(placeholder) },
+        textStyle = textStyle,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDoneAction() }
+        ),
+        visualTransformation = visualTransformation, // Use passed visualTransformation
+        modifier = modifier
+            .focusRequester(focusRequester)
+            .padding(2.dp)
+            .width(280.dp)
+            .height(70.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+            unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
+            focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+            unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+        )
+    )
+}
