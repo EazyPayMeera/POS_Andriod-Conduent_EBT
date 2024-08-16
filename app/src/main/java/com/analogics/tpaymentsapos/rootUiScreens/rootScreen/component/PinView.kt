@@ -75,12 +75,11 @@ fun PinView(navHostController: NavHostController) {
                 onValueChange = { newValue -> textValue = newValue },
                 placeholder = stringResource(id = R.string.enter_Pin),
                 textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                keyboardType = KeyboardType.Number,
+                keyboardType = KeyboardType.NumberPassword,
                 onDoneAction = {
                     // Define what happens when "Done" is pressed
                     // For example, you can move to the next field or submit the form
                 },
-                visualTransformation = VisualTransformation.None, // Set this based on your need
                 isPassword = true, // Set this to true for password fields
                 modifier = Modifier.padding(16.dp)
             )

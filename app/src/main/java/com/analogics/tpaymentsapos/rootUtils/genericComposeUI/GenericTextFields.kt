@@ -1025,7 +1025,7 @@ fun SmallSurface(
     isAuthcap:Boolean = false,
     content: (@Composable (ColumnScope.() -> Unit))? = null
 ) {
-    val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
+    val surfaceHeight = if (isRefund) 350.dp else if (isVoid || isAuthcap) 440.dp else 250.dp
     val surfaceWidth = 410.dp
 
     Surface(
