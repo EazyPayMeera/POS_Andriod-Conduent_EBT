@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -89,6 +90,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -1006,14 +1008,21 @@ fun TextField(
     fontSize: TextUnit,
     color: Color = Color.Black, // Default color
     fontWeight: FontWeight = FontWeight.Normal, // Default font weight
-    modifier: Modifier = Modifier // Default modifier
+    maxLines: Int = Int.MAX_VALUE,
+    modifier: Modifier = Modifier, // Default modifie
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    textAlign: TextAlign = TextAlign.Start,
+    fontFamily: FontFamily = Roboto
 ) {
     Text(
         text = text,
         fontSize = fontSize,
         color = color,
         fontWeight = fontWeight,
-        modifier = modifier
+        maxLines = maxLines,
+        modifier = modifier,
+        style = style,
+        textAlign = textAlign
     )
 }
 
@@ -1121,4 +1130,24 @@ fun OutlinedTextField(
             unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
         )
     )
+}
+
+
+@Composable
+fun GenericCard(
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
+    elevation: Dp = 4.dp,
+    backgroundColor: Color = Color.White,
+    contentPadding: PaddingValues = PaddingValues(16.dp),
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = modifier,
+        shape = shape,
+        elevation = elevation,
+        backgroundColor = backgroundColor,
+    ) {
+        content()
+    }
 }
