@@ -2,7 +2,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
 
 import DashboardView
 import LanguageView
-import TrainingView
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -50,7 +49,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PreauthView
-import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
+import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView

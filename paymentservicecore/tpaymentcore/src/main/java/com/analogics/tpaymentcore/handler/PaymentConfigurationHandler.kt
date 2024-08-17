@@ -5,13 +5,15 @@ import com.analogics.networkservicecore.nComponent.ResultProvider
 import com.analogics.tpaymentcore.EMV.EMV
 import com.analogics.tpaymentcore.listener.IPaymentConfigListener
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.tpaymentcore.model.TError
 
 object PaymentConfigurationHandler : IPaymentConfigListener{
-    override fun <T> initPayment(
+    lateinit var iPaymentCoreHandlerListener:IPaymentCoreHandlerListener
+    override fun  initPayment(iPaymentCoreHandlerListener:IPaymentCoreHandlerListener,
         context: Context
-    ): ResultProvider<T> {
+    ) {
+        this.iPaymentCoreHandlerListener=iPaymentCoreHandlerListener
         EMV.initialize(context);
-        return ResultProvider.Success("true" as T)
     }
 
     override fun startPayment(iPaymentCoreHandlerListener: IPaymentCoreHandlerListener, context : Context) {
@@ -24,7 +26,7 @@ object PaymentConfigurationHandler : IPaymentConfigListener{
     }
 
     override fun onConfigPMTRes() {
-        TODO("Not yet implemented")
+        iPaymentCoreHandlerListener.onPMTRespHandler(TError("Network Error"))
     }
 
 }

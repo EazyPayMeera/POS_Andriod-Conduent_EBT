@@ -4,7 +4,7 @@ import android.content.Context
 import com.analogics.networkservicecore.nComponent.ResultProvider
 
 interface IPaymentConfigListener {
-    fun<T> initPayment(context: Context) : ResultProvider<T>
+    fun initPayment(iPaymentCoreHandlerListener: IPaymentCoreHandlerListener,context: Context)
     fun startPayment(iPaymentCoreHandlerListener: IPaymentCoreHandlerListener, context: Context)
 
     fun handlePaymentEvent()
