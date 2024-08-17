@@ -6,7 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,11 +13,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -60,7 +57,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -78,7 +74,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -92,7 +87,6 @@ import coil.size.Size
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -497,64 +491,125 @@ fun SettingsLowerSurface(
 }
 
 @Composable
-fun ConfirmationButton(
-    onClick: () -> Unit,
-    title: String
+fun FooterButtons(
+    firstButtonTitle: String,
+    firstButtonOnClick: () -> Unit,
+    secondButtonTitle: String,
+    secondButtonOnClick: () -> Unit
 ) {
-    var isPressed by remember { mutableStateOf(false) }
-
-    Box(
-        contentAlignment = Alignment.BottomCenter,
+    Row(
         modifier = Modifier
-            .width(126.dp) // Set the width of the Box
-            .padding(bottom = 20.dp) // Bottom padding
-            .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Add shadow with rounded corners
-            .background(
-                color = colorResource(R.color.white),
-                shape = RoundedCornerShape(10.dp)
-            )
+            .fillMaxWidth()
+            .padding(vertical = MaterialTheme.dimens.DP_24_CompactMedium),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Button(
-            onClick = {
-                isPressed = true
-                onClick()
-            },
-            modifier = Modifier
-                .width(130.dp) // Make the button fill the width of the Box
-                .height(48.dp) // Set a fixed height for the button
-                .border(
-                    width = if (isPressed) 2.dp else 0.dp,
-                    color = if (isPressed) Color(0xFFFFA500) else Color.Transparent,
-                    shape = RoundedCornerShape(10.dp)
-                ), // Conditionally add border
-            shape = RoundedCornerShape(10.dp), // Rounded corners for the button
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color.Black, // Text color
-                containerColor = colorResource(R.color.grey) // Background color
-            ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 8.dp, // Default elevation
-                pressedElevation = 12.dp, // Elevation when the button is pressed
-                hoveredElevation = 6.dp, // Elevation when the button is hovered
-                focusedElevation = 10.dp // Elevation when the button is focused
-            )
-        ) {
-            Text(
-                text = title,
-                color = Color.Black, // Text color
-                style = MaterialTheme.typography.bodyMedium // Use a common typography style
-            )
-        }
-    }
+        var isFirstButtonPressed by remember { mutableStateOf(false) }
+        var isSecondButtonPressed by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isPressed) {
-        if (isPressed) {
-            // Reset the pressed state after a short delay
-            kotlinx.coroutines.delay(100)
-            isPressed = false
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .width(126.dp)
+                .padding(bottom = 20.dp)
+                .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                .background(
+                    color = colorResource(R.color.white),
+                    shape = RoundedCornerShape(10.dp)
+                )
+        ) {
+            Button(
+                onClick = {
+                    isFirstButtonPressed = true
+                    firstButtonOnClick()
+                },
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(48.dp)
+                    .border(
+                        width = if (isFirstButtonPressed) 2.dp else 0.dp,
+                        color = if (isFirstButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.Black,
+                    containerColor = colorResource(R.color.grey)
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp,
+                    hoveredElevation = 6.dp,
+                    focusedElevation = 10.dp
+                )
+            ) {
+                Text(
+                    text = firstButtonTitle,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        LaunchedEffect(isFirstButtonPressed) {
+            if (isFirstButtonPressed) {
+                kotlinx.coroutines.delay(100)
+                isFirstButtonPressed = false
+            }
+        }
+
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .width(126.dp)
+                .padding(bottom = 20.dp)
+                .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                .background(
+                    color = colorResource(R.color.white),
+                    shape = RoundedCornerShape(10.dp)
+                )
+        ) {
+            Button(
+                onClick = {
+                    isSecondButtonPressed = true
+                    secondButtonOnClick()
+                },
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(48.dp)
+                    .border(
+                        width = if (isSecondButtonPressed) 2.dp else 0.dp,
+                        color = if (isSecondButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.Black,
+                    containerColor = colorResource(R.color.grey)
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp,
+                    hoveredElevation = 6.dp,
+                    focusedElevation = 10.dp
+                )
+            ) {
+                Text(
+                    text = secondButtonTitle,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        LaunchedEffect(isSecondButtonPressed) {
+            if (isSecondButtonPressed) {
+                kotlinx.coroutines.delay(100)
+                isSecondButtonPressed = false
+            }
         }
     }
 }
+
 
 
 object TransactionState {
@@ -1003,7 +1058,7 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
 
 
 @Composable
-fun TextField(
+fun TextView(
     text: String,
     fontSize: TextUnit,
     color: Color = Color.Black, // Default color

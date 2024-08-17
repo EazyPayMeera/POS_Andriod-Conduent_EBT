@@ -2,18 +2,17 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -21,11 +20,11 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ConfirmationButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Image
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.SmallSurface
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextField
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -49,58 +48,51 @@ fun PinView(navHostController: NavHostController) {
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        SmallSurface(
-            modifier = Modifier
+        GenericCard(
+            modifier = Modifier.padding(20.dp)
         ) {
-            // Your custom content goes here
-            TextField(
-                text = stringResource(id = R.string.enter_Pin),
-                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(14.dp)
+            ) {
+                TextView(
+                    text = stringResource(id = R.string.enter_Pin),
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    1,
+                    Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+                Image(
+                    imageId = R.drawable.card, size = 60.dp,
+                    shape = RectangleShape, // Example shape, can be any Shape
+                    alignment = Alignment.Center,
+                )
 
-            Image(
-                imageId = R.drawable.card,
-                size = 70.dp,
-                shape = CircleShape, // Example shape, can be any Shape
-                alignment = Alignment.Center, // Example alignment
-                modifier = Modifier.padding(bottom = 10.dp) // Add bottom padding here
-            )
+                OutlinedTextField(
+                    value = invoiceno,
+                    onValueChange = { newValue -> invoiceno = newValue },
+                    placeholder = stringResource(id = R.string.enter_Pin),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                    keyboardType = KeyboardType.NumberPassword,
+                    onDoneAction = {
 
-            // Call the CustomOutlinedTextField
-            OutlinedTextField(
-                value = textValue,
-                onValueChange = { newValue -> textValue = newValue },
-                placeholder = stringResource(id = R.string.enter_Pin),
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                keyboardType = KeyboardType.NumberPassword,
-                onDoneAction = {
-                    // Define what happens when "Done" is pressed
-                    // For example, you can move to the next field or submit the form
-                },
-                isPassword = true, // Set this to true for password fields
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(160.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_24_CompactMedium), // Adjust padding as needed
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            ConfirmationButton(
-                onClick = { navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route) },
-                title = stringResource(id = R.string.confirm_btn)
-            )
-            ConfirmationButton(
-                onClick = { navHostController?.navigate(AppNavigationItems.TrainingScreen.route) },
-                title = stringResource(id = R.string.cancel_btn)
-            )
+                    },
+                    isPassword = true
+                ) // Set this to true for password fields)
+
+            }
+
         }
 
+        FooterButtons(
+            firstButtonTitle = stringResource(id = R.string.confirm_btn),
+            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route) },
+            secondButtonTitle = stringResource(id = R.string.cancel_btn),
+            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+        )
 
     }
 }

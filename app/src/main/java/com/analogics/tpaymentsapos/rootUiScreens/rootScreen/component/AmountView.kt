@@ -2,12 +2,8 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -25,13 +22,11 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Appbarheader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ConfirmationButton
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Image
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.SmallSurface
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextField
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
@@ -64,166 +59,68 @@ fun AmountView(navHostController: NavHostController) {
             onIcon2Click = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
         )
 
-        SmallSurface(
-            modifier = Modifier,
-            isRefund = isRefund,
-            isVoid = isVoid,
-            isAuthcap = isAuthcap,
+        GenericCard(
+            modifier = Modifier.padding(20.dp)
         ) {
-            // Your custom content goes here
-            TextField(
-                text = stringResource(id = R.string.auth_amt),
-                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Image(
-                imageId = R.drawable.card,
-                size = 60.dp,
-                shape = RectangleShape, // Example shape, can be any Shape
-                alignment = Alignment.Center, // Example alignment
-                modifier = Modifier.padding(bottom = 5.dp) // Add bottom padding here
-            )
-
-            OutlinedTextField(
-                value = rawInput,
-                onValueChange = { newValue ->
-                    // Update rawInput and formattedAmount only if the new value is valid
-                    if (newValue.all { char -> char.isDigit() || char == '.' }) {
-                        rawInput = newValue
-                        formattedAmount = formatAmount(newValue)
-                    }
-                },
-                placeholder = "Enter amount",
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-                keyboardType = KeyboardType.Number, // Use number keyboard for numeric inputs
-                onDoneAction = {
-                    // Handle the done action, e.g., hide the keyboard
-                },
-                visualTransformation = createAmountTransformation(), // Apply custom visual transformation
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth() // Adjust width as needed
-            )
-
-            if (isRefund) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium))
-                // Your custom content goes here
-                TextField(
-                    text = "${stringResource(id = R.string.original_amount)} $formattedAmount",
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(14.dp)
+            ) {
+                TextView(
+                    text = stringResource(id = R.string.auth_amt),
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
+                    1,
+                    Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+                Image(
+                    imageId = R.drawable.card, size = 60.dp,
+                    shape = RectangleShape, // Example shape, can be any Shape
+                    alignment = Alignment.Center,
                 )
 
-                TextField(
-                    text = "${stringResource(id = R.string.date)} $transactionDateTime",
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
-                )
+                OutlinedTextField(
+                    value = rawInput,
+                    onValueChange = { newValue ->
+                        // Update rawInput and formattedAmount only if the new value is valid
+                        if (newValue.all { char -> char.isDigit() || char == '.' }) {
+                            rawInput = newValue
+                            formattedAmount = formatAmount(newValue)
+                        }
+                    },
+                    placeholder = stringResource(id = R.string.auth_amt),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                    keyboardType = KeyboardType.Number,
+                    onDoneAction = {
 
-            }
-            if (isVoid || isAuthcap) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium))
-                TextField(
-                    text = "${stringResource(id = R.string.date)} $transactionDateTime",
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_25_CompactMedium))
-
-                TextField(
-                    text = stringResource(id = R.string.card),
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.Start)
-                )
-                TextField(
-                    text = stringResource(id = R.string.auth_code),
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.Start)
-                )
-
-                TextField(
-                    text = stringResource(id = R.string.no),
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.Start)
-                )
-
-                TextField(
-                    text = stringResource(id = R.string.inc_no),
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.Start)
-                )
-
-                TextField(
-                    text = stringResource(id = R.string.pos_entry),
-                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                        .align(Alignment.Start)
-                )
+                    },
+                    visualTransformation = createAmountTransformation(),
+                    isPassword = true
+                ) // Set this to true for password fields)
 
             }
 
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_20_CompactMedium), // Adjust padding as needed
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            ConfirmationButton(
-                onClick = { if(isRefund || isPreauth) {
-                    navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formattedAmount))
-                }
-                else if (isVoid || isAuthcap)
-                {
-                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
-                }
-                else
-                {
-                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(formattedAmount))
-                } },
-                title = stringResource(id = R.string.confirm_btn)
-            )
-            ConfirmationButton(
-                onClick = { navHostController?.navigate(AppNavigationItems.TrainingScreen.route) },
-                title = stringResource(id = R.string.cancel_btn)
-            )
-        }
+        FooterButtons(
+            firstButtonTitle = stringResource(id = R.string.confirm_btn),
+            firstButtonOnClick = { if(isRefund || isPreauth) {
+                navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formattedAmount))
+            }
+            else if (isVoid || isAuthcap)
+            {
+                navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+            }
+            else
+            {
+                navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(formattedAmount))
+            } },
+            secondButtonTitle = stringResource(id = R.string.cancel_btn),
+            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+        )
 
     }
 }
