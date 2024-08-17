@@ -23,7 +23,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ConfirmationButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HeaderImage
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
@@ -60,27 +60,13 @@ fun ConfirmShiftView(navHostController: NavHostController) {
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space added here
 
-            Row(
-                horizontalArrangement = Arrangement.Center, // Center align buttons horizontally
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-            ) {
-                ConfirmationButton(
-                    onClick = {
-                        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
-                    },
-                    title = stringResource(id = R.string.cancel)
-                )
 
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space added here
-
-                ConfirmationButton(
-                    onClick = {
-                        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
-                    },
-                    title = stringResource(id = R.string.yes)
-                )
-            }
+            FooterButtons(
+                firstButtonTitle = stringResource(id = R.string.cancel),
+                firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
+                secondButtonTitle = stringResource(id = R.string.yes),
+                secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+            )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
 

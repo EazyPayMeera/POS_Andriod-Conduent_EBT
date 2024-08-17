@@ -21,158 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar
 
-//val OrangeColor = Color(0xFFF7931E)
 
-//@Composable
-//fun TrainingView(navHostController: NavHostController) {
-//    // State to track which button is selected
-//    val selectedButton = remember { mutableStateOf<String?>(null) }
-//
-//    Column {
-//        MenuTopAppBar(
-//            title = "Training",
-//            onMenuItemClick = { option ->
-//                // Handle menu item click
-//                when (option) {
-//                    "Settings" -> {
-//                        navHostController?.navigate(AppNavigationItems.SettingsScreen.route)
-//                    }
-//                    "Option 2" -> {
-//                        // Handle Option 2 click
-//                    }
-//                }
-//            }
-//        )
-//
-//        Surface(
-//            color = Color.White,
-//            modifier = Modifier
-//                .padding(25.dp)
-//                .fillMaxWidth()
-//                .height(540.dp)
-//                .width(430.dp),
-//            shape = RoundedCornerShape(18.dp),
-//            elevation = 8.dp
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .padding(16.dp)
-//                    .fillMaxSize(),
-//                verticalArrangement = Arrangement.Top,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(
-//                    text = "Training",
-//                    fontSize = 20.sp,
-//                    color = Color.Black,
-//                    fontWeight = FontWeight.Bold,
-//                    modifier = Modifier
-//                        .padding(bottom = 20.dp)
-//                        .align(Alignment.CenterHorizontally)
-//                )
-//
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    // First set of buttons with images
-//                    IconButtonWithText(
-//                        text = "Purchase",
-//                        icon = painterResource(id = R.drawable.card),
-//                        isSelected = selectedButton.value == "Purchase",
-//                        onClick = {
-//                            selectedButton.value = "Purchase"
-//                            TransactionState.isPurchase = true
-//                            navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
-//                        }
-//                    )
-//
-//                    IconButtonWithText(
-//                        text = "Refund",
-//                        icon = painterResource(id = R.drawable.card),
-//                        isSelected = selectedButton.value == "Refund",
-//                        onClick = {
-//                            selectedButton.value = "Refund"
-//                            TransactionState.isRefund = true
-//                            navHostController.navigate(AppNavigationItems.PasswordScreen.route)
-//                        }
-//                    )
-//                }
-//
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    // Second set of buttons with images
-//                    IconButtonWithText(
-//                        text = "Pre-Auth",
-//                        icon = painterResource(id = R.drawable.card),
-//                        isSelected = selectedButton.value == "Pre-Auth",
-//                        onClick = {
-//                            selectedButton.value = "Pre-Auth"
-//                            TransactionState.isPreauth = true
-//                            navHostController.navigate(AppNavigationItems.PreauthScreen.route)
-//                        }
-//                    )
-//
-//                    IconButtonWithText(
-//                        text = "Void",
-//                        icon = painterResource(id = R.drawable.card),
-//                        isSelected = selectedButton.value == "Void",
-//                        onClick = {
-//                            selectedButton.value = "Void"
-//                            TransactionState.isVoid = true
-//                            navHostController.navigate(AppNavigationItems.PasswordScreen.route)
-//                        }
-//                    )
-//                }
-//
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    // Third set of buttons with images
-//                    IconButtonWithText(
-//                        text = "Transactions",
-//                        icon = painterResource(id = R.drawable.card),
-//                        isSelected = selectedButton.value == "Transactions",
-//                        onClick = {
-//                            selectedButton.value = "Transactions"
-//                            navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
-//                        }
-//                    )
-//                }
-//
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    // Fourth set of buttons with images
-//                    Button(
-//                        onClick = { /* Handle print receipt click */ },
-//                        modifier = Modifier
-//                            .size(260.dp)
-//                            .padding(8.dp),
-//                        colors = ButtonDefaults.buttonColors(backgroundColor = OrangeColor),
-//                        shape = RoundedCornerShape(10.dp)
-//                    ) {
-//                        Text(text = "Print Last Receipt", color = Color.Black)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 
 
 import androidx.compose.foundation.layout.*
@@ -187,6 +36,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar1
 import kotlinx.coroutines.launch
@@ -211,13 +61,16 @@ fun ProvideButtonConfigs(navHostController: NavHostController): List<ButtonConfi
     return listOf(
         ButtonConfig(stringResource(id = R.string.purchase), R.drawable.dashboard_purchase, onClick = {
             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
+            TransactionState.isPurchase = true
 
         }),
         ButtonConfig(stringResource(id = R.string.refund), R.drawable.dashboard_refund,onClick = {
             navHostController.navigate(AppNavigationItems.PasswordScreen.route)
+            TransactionState.isRefund = true
         }),
         ButtonConfig(stringResource(id = R.string.pre_auth), R.drawable.dashboard_preauth,onClick = {
             navHostController.navigate(AppNavigationItems.PreauthScreen.route)
+            TransactionState.isPreauth = true
 
         }),
         ButtonConfig(stringResource(id = R.string.auth_capture), R.drawable.dashboard_auth_capture,onClick = {
@@ -226,9 +79,11 @@ fun ProvideButtonConfigs(navHostController: NavHostController): List<ButtonConfi
         }),
         ButtonConfig(stringResource(id = R.string.void_trans), R.drawable.dashboard_void,onClick = {
             navHostController.navigate(AppNavigationItems.PasswordScreen.route)
+            TransactionState.isVoid = true
         }),
         ButtonConfig(stringResource(id = R.string.transactions), R.drawable.dashboard_transaction,onClick= {
             navHostController.navigate(AppNavigationItems.PasswordScreen.route)
+            TransactionState.isTransaction = true
 
         }))
 }
