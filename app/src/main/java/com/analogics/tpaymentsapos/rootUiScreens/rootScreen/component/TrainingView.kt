@@ -1,5 +1,6 @@
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -177,12 +178,18 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DrawerContent
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.MenuTopAppBar1
+import kotlinx.coroutines.launch
 
 
 data class ButtonConfig(
@@ -233,95 +240,127 @@ fun TrainingView(
 ) {
     // State to track which button is selected
     val selectedButton = remember { mutableStateOf<String?>(null) }
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
+    // Function to handle drawer open and close
+    fun toggleDrawer(open: Boolean) {
+        coroutineScope.launch {
+            if (open) drawerState.open() else drawerState.close()
+        }
+    }
+
+    ModalDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerContent(
+                navHostController = navHostController,
+                onMenuItemClick = onMenuItemClick
+            )
+        }
     ) {
-        MenuTopAppBar(
-            title = stringResource(id = R.string.training),
-            onMenuItemClick = { option ->
-                // Handle menu item click
-                when (option) {
-                    "Settings" -> {
-                        navHostController.navigate(AppNavigationItems.SettingsScreen.route)
-                    }
-                    "Option 2" -> {
-                        // Handle Option 2 click
-                    }
-                }
-            }, // Ensure no padding
-        )
-
-        Surface(
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            shape = RoundedCornerShape(18.dp),
-            elevation = 8.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp), // Minimal padding for overall alignment
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(id = R.string.training),
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-
-                buttonConfigs.chunked(2).forEachIndexed { index, rowConfigs ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 15.dp), // More space after the first row
-                        horizontalArrangement = Arrangement.SpaceEvenly, // Equal spacing between items
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        rowConfigs.forEach { config ->
-                            CardWithImageText(
-                                text = config.text,
-                                imageResId = config.iconResId,
-                                isSelected = selectedButton.value == config.text,
-                                onClick = {
-                                    selectedButton.value = config.text
-                                    config.onClick()
-                                       },
-                                modifier = Modifier
-                                    .weight(1f) // Equal width for each card
-                                    .padding(4.dp) // Minimal padding between cards
-                            )
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(id = R.string.training), color = Color.Black)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { toggleDrawer(true) }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
                         }
-                    }
-                }
-
-                Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
-
-                Row(
+                    },
+                    backgroundColor = Color.White
+                )
+            },
+            content = { innerPadding ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .padding(innerPadding)
                 ) {
-                    AppButton(
-                        onClick = { /* Handle print receipt click */ },
-                        title = stringResource(id = R.string.print_last_receipt),
+                    ContentSurface(
+                        buttonConfigs = buttonConfigs,
+                        selectedButton = selectedButton.value,
+                        onButtonClick = { text, onClick ->
+                            selectedButton.value = text
+                            onClick()
+                        }
                     )
                 }
             }
-        }
+        )
     }
 }
 
 
+@Composable
+fun ContentSurface(
+    buttonConfigs: List<ButtonConfig>,
+    selectedButton: String?,
+    onButtonClick: (String, () -> Unit) -> Unit
+) {
+    Surface(
+        color = Color.White,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        shape = RoundedCornerShape(18.dp),
+        elevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.training),
+                fontSize = 20.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
 
+            buttonConfigs.chunked(2).forEach { rowConfigs ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 15.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    rowConfigs.forEach { config ->
+                        CardWithImageText(
+                            text = config.text,
+                            imageResId = config.iconResId,
+                            isSelected = selectedButton == config.text,
+                            onClick = { onButtonClick(config.text, config.onClick) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                    }
+                }
+            }
 
+            Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AppButton(
+                    onClick = { /* Handle print receipt click */ },
+                    title = stringResource(id = R.string.print_last_receipt),
+                )
+            }
+        }
+    }
+}

@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import OrangeColor
+import android.annotation.SuppressLint
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,9 +29,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.DrawerValue
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
+import androidx.compose.material.ModalDrawer
+import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -38,10 +42,12 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -52,6 +58,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -824,6 +831,79 @@ fun MenuTopAppBar(
         backgroundColor = Color.White
     )
 }
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun MenuTopAppBar1(
+    title: String,
+    onMenuItemClick: (String) -> Unit,
+    content: @Composable () -> Unit
+) {
+    // State to control the drawer
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+
+    // Function to open the drawer
+    fun openDrawer() {
+        coroutineScope.launch { drawerState.open() }
+    }
+
+    // Function to close the drawer
+    fun closeDrawer() {
+        coroutineScope.launch { drawerState.close() }
+    }
+
+    ModalDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            Column {
+                // Drawer items
+                DrawerItem("Settings") {
+                    closeDrawer()
+                    onMenuItemClick("Settings")
+                }
+                DrawerItem("Option 2") {
+                    closeDrawer()
+                    onMenuItemClick("Option 2")
+                }
+            }
+        }
+    ) {
+        // Scaffold to handle layout
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = title, color = Color.Black)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { openDrawer() }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
+                        }
+                    },
+                    backgroundColor = Color.White
+                )
+            },
+            content = {
+                // Simply place the content below the TopAppBar
+                Box(modifier = Modifier.fillMaxSize()) {
+                    content()
+                }
+            }
+        )
+    }
+}
+
+
+
+@Composable
+fun DrawerItem1(label: String, onClick: () -> Unit) {
+    ListItem(
+        modifier = Modifier.clickable(onClick = onClick),
+        headlineContent = { Text(text = label) }
+    )
+}
+
 
 
 

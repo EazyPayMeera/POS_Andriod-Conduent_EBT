@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component
+package com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,7 +27,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
