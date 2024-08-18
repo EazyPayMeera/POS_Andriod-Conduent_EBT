@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
-import OrangeColor
-import android.annotation.SuppressLint
+
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,15 +22,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
-import androidx.compose.material.DrawerValue
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
-import androidx.compose.material.ModalDrawer
-import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -39,12 +36,10 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -55,7 +50,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,18 +63,19 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -92,12 +87,11 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.ui.theme.Roboto
+import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
 
 
 @Composable
@@ -109,6 +103,7 @@ fun InputTextField(
     placeHolder: String = "",
     icon: ImageVector = Icons.Default.Person,
     keyboardType: KeyboardType = KeyboardType.Text,
+    keyboardActions: (KeyboardActionScope.() -> Unit)? = KeyboardActions.Default.onNext,
     isPasswordField: Boolean = false // Parameter to indicate if it's a password field
 ) {
     var isPasswordVisible by remember { mutableStateOf(!isPasswordField) } // Default visibility
@@ -179,7 +174,9 @@ fun AppButton(
     )
     {
         Button(onClick = onClick,
-            modifier = Modifier.wrapContentSize().padding(horizontal = 8.dp),
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(horizontal = 8.dp),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
@@ -749,9 +746,9 @@ fun CardWithImageText(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    GenericCard(
         modifier = modifier
-            .padding(start = 15.dp, top = 5.dp)
+            .padding(start = 5.dp,)
             .clickable(onClick = onClick)
             .border(
                 width = 2.dp, // Adjust the border width as needed
@@ -769,61 +766,17 @@ fun CardWithImageText(
                 .fillMaxWidth() // Fills the width available
                 .padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 10.dp)
         ) {
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = null,
+            Image(imageId = imageResId,
                 modifier = Modifier
                     .size(40.dp) // Adjust the size as needed
                     .align(Alignment.CenterHorizontally) // Center the image
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = text, fontSize = 15.sp)
+            TextView(text = text, fontSize = 15.sp)
         }
     }
 }
 
-
-
-@Composable
-fun IconButtonWithText(
-    text: String,
-    icon: Painter,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    androidx.compose.material.Button(
-        onClick = onClick,
-        modifier = Modifier
-            .size(120.dp)
-            .padding(8.dp)
-            .border(
-                width = 2.dp,
-                color = if (isSelected) OrangeColor else Color.Transparent,
-                shape = RoundedCornerShape(15.dp)
-            ),
-        colors = androidx.compose.material.ButtonDefaults.buttonColors(
-            backgroundColor = Color.White // Use backgroundColor parameter for compatibility
-        ),
-        shape = RoundedCornerShape(10.dp),
-        contentPadding = PaddingValues(0.dp)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            androidx.compose.material.Icon(
-                painter = icon,
-                contentDescription = text,
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(bottom = 4.dp),
-                tint = Color.Black
-            )
-            androidx.compose.material.Text(text = text, color = Color.Black, fontSize = 14.sp)
-        }
-    }
-}
 
 @Composable
 fun GifImage(
@@ -852,163 +805,48 @@ fun GifImage(
 }
 
 
-
 @Composable
-fun MenuTopAppBar(
-    title: String,
-    onMenuItemClick: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    TopAppBar(
-        title = {
-            Text(text = title, color = Color.Black)
-        },
-
-        navigationIcon = {
-            IconButton(onClick = { expanded = true }) {
-                Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onMenuItemClick("Settings")
-                }) {
-                    Text("Settings")
-                }
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onMenuItemClick("Option 2")
-                }) {
-                    Text("Option 2")
-                }
-            }
-        },
-        backgroundColor = Color.White
-    )
-}
-
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Composable
-fun MenuTopAppBar1(
-    title: String,
-    onMenuItemClick: (String) -> Unit,
-    content: @Composable () -> Unit
-) {
-    // State to control the drawer
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val coroutineScope = rememberCoroutineScope()
-
-    // Function to open the drawer
-    fun openDrawer() {
-        coroutineScope.launch { drawerState.open() }
-    }
-
-    // Function to close the drawer
-    fun closeDrawer() {
-        coroutineScope.launch { drawerState.close() }
-    }
-
-    ModalDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            Column {
-                // Drawer items
-                DrawerItem("Settings") {
-                    closeDrawer()
-                    onMenuItemClick("Settings")
-                }
-                DrawerItem("Option 2") {
-                    closeDrawer()
-                    onMenuItemClick("Option 2")
-                }
-            }
-        }
-    ) {
-        // Scaffold to handle layout
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = title, color = Color.Black)
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { openDrawer() }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
-                        }
-                    },
-                    backgroundColor = Color.White
-                )
-            },
-            content = {
-                // Simply place the content below the TopAppBar
-                Box(modifier = Modifier.fillMaxSize()) {
-                    content()
-                }
-            }
-        )
-    }
-}
-
-
-
-@Composable
-fun DrawerItem1(label: String, onClick: () -> Unit) {
-    ListItem(
-        modifier = Modifier.clickable(onClick = onClick),
-        headlineContent = { Text(text = label) }
-    )
-}
-
-
-
-
-@Composable
-fun Appbarheader(
+fun AppHeader(
     title: String,
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
-    icon1: ImageVector = Icons.Default.ArrowBack,
-    icon2: ImageVector? = null,
+    icon1: Int? = null,
+    icon2: Int? = null,
     onIcon1Click: (() -> Unit)? = null,
     onIcon2Click: (() -> Unit)? = null,
+    isIcon1Visible: Boolean = true,
+    isIcon2Visible: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = {
             Text(
                 text = title,
+                color = Color.Black, // Ensure text color contrasts with the background
                 style = TextStyle(
-                    fontSize = 20.sp, // Fixed font size
-                    fontWeight = FontWeight.Bold // Fixed font weight
+                    fontSize = 20.sp, // Ensure font size is large enough
+                    fontWeight = FontWeight.Bold
                 )
             )
         },
         backgroundColor = backgroundColor,
         navigationIcon = {
-            if (onIcon1Click != null) {
-                Icon(
-                    imageVector = icon1,
-                    contentDescription = "icon1",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clickable { onIcon1Click() }
-                )
-            } else {
-                Icon(
-                    imageVector = icon1,
-                    contentDescription = "icon1",
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
+            if (isIcon1Visible) {
+                if (icon1 != null) {
+                    Image(
+                        painter = painterResource(id = icon1),
+                        contentDescription = "icon1",
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .clickable { onIcon1Click?.invoke() }
+                    )
+                }
             }
         },
         actions = {
-            if (icon2 != null) {
-                Icon(
-                    imageVector = icon2,
+            if (isIcon2Visible && icon2 != null) {
+                Image(
+                    painter = painterResource(id = icon2),
                     contentDescription = "icon2",
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
@@ -1019,6 +857,8 @@ fun Appbarheader(
         modifier = modifier
     )
 }
+
+
 
 
 // Added this function to add Bold Top text for UI In logout screen Amount Screen
@@ -1071,44 +911,12 @@ fun HeaderImage(
 
 
 
-
-
-
-
-
-//Common  Switch button
-@Composable
-fun CustomSwitch(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    checkedImage: Int,
-    uncheckedImage: Int,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            // Background color for the switch container
-            .clickable { onCheckedChange(!checked) }
-            .padding(2.dp) // Padding around the switch
-    ) {
-        Image(
-            painter = painterResource(id = if (checked) checkedImage else uncheckedImage),
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp) // Size of the switch thumb
-                .background(Color.White) // Background for the thumb
-                .clip(RoundedCornerShape(20.dp)) // Optional: Rounded corners for the thumb
-        )
-    }
-}
-
-
 @Composable
 fun BackgroundScreen(componentView :@Composable () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(MaterialTheme.dimens.DP_30_CompactMedium)
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
             .shadow(
                 elevation = MaterialTheme.dimens.DP_5_CompactMedium,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
@@ -1125,9 +933,9 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
                 .fillMaxSize()
                 .padding(
                     top = MaterialTheme.dimens.DP_50_CompactMedium,
-                    start = MaterialTheme.dimens.DP_20_CompactMedium,
-                    end = 20.dp,
-                    bottom = 50.dp
+                    start = MaterialTheme.dimens.DP_30_CompactMedium,
+                    end = MaterialTheme.dimens.DP_30_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_50_CompactMedium,
                 )
                 .align(Alignment.Center)
         ) {
@@ -1137,29 +945,7 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
 }
 
 
-@Composable
-fun TextView(
-    text: String,
-    fontSize: TextUnit,
-    color: Color = Color.Black, // Default color
-    fontWeight: FontWeight = FontWeight.Normal, // Default font weight
-    maxLines: Int = Int.MAX_VALUE,
-    modifier: Modifier = Modifier, // Default modifie
-    style: TextStyle = MaterialTheme.typography.bodyMedium,
-    textAlign: TextAlign = TextAlign.Start,
-    fontFamily: FontFamily = Roboto
-) {
-    Text(
-        text = text,
-        fontSize = fontSize,
-        color = color,
-        fontWeight = fontWeight,
-        maxLines = maxLines,
-        modifier = modifier,
-        style = style,
-        textAlign = textAlign
-    )
-}
+
 
 @Composable
 fun SmallSurface(
@@ -1202,7 +988,9 @@ fun Image(
     size: Dp = 70.dp,
     shape: Shape = RectangleShape,
     alignment: Alignment = Alignment.Center, // Alignment parameter for usage within a Box
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentDescription: String = "group 360",
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
     Box(
         modifier = Modifier
@@ -1269,20 +1057,8 @@ fun OutlinedTextField(
 
 
 @Composable
-fun GenericCard(
-    modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
-    elevation: Dp = 4.dp,
-    backgroundColor: Color = Color.White,
-    contentPadding: PaddingValues = PaddingValues(16.dp),
-    content: @Composable () -> Unit
-) {
-    Card(
-        modifier = modifier,
-        shape = shape,
-        elevation = elevation,
-        backgroundColor = backgroundColor,
-    ) {
-        content()
-    }
+@Preview
+fun abc()
+{
+
 }

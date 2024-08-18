@@ -1,48 +1,32 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login.viewModel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.State
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.showToast
 
 class LoginViewModel : ViewModel() {
-    private val _email = mutableStateOf("")
-    val email: State<String> = _email
+    var emailCredentials = mutableStateOf("")
+    var pwdCredentials = mutableStateOf("")
 
-    private val _password = mutableStateOf("")
-    val password: State<String> = _password
+    val isFormValid: Boolean
+        get() = emailCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank()
 
-    private val _loginState = mutableStateOf<LoginState>(LoginState.Success)
-    val loginState: State<LoginState> = _loginState
-
-    fun onEmailChanged(newEmail: String) {
-        _email.value = newEmail
+    fun onEmailChange(newEmail: String) {
+        emailCredentials.value = newEmail
     }
 
-    fun onPasswordChanged(newPassword: String) {
-        _password.value = newPassword
+    fun onPasswordChange(newPassword: String) {
+        pwdCredentials.value = newPassword
     }
 
-    fun login() {
-        viewModelScope.launch {
-            _loginState.value = LoginState.Loading
-            // Simulate network request or authentication process
-            try {
-                // Replace this with actual authentication logic
-                // Simulating a delay for demonstration
-                kotlinx.coroutines.delay(2000)
-                _loginState.value = LoginState.Success
-            } catch (e: Exception) {
-                _loginState.value = LoginState.Error(e.message ?: "An error occurred")
-            }
+    fun onLoginClick(navHostController: NavHostController?,context: Context) {
+        if (isFormValid) {
+            navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
         }
-    }
-
-    sealed class LoginState {
-        object Idle : LoginState()
-        object Loading : LoginState()
-        object Success : LoginState()
-        data class Error(val message: String) : LoginState()
     }
 }

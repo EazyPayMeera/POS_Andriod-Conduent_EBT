@@ -13,7 +13,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity.MainActivity
+import com.analogics.tpaymentsapos.rootUiScreens.activity.MainActivity
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,

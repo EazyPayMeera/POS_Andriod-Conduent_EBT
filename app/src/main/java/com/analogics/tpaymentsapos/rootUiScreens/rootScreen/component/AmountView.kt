@@ -2,8 +2,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Appbarheader
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -46,7 +44,7 @@ fun AmountView(navHostController: NavHostController) {
 
 
     Column {
-        Appbarheader(
+        AppHeader(
             title = when {
                 isRefund -> stringResource(R.string.refund)
                 isVoid -> stringResource(R.string.void_trans)
@@ -55,7 +53,7 @@ fun AmountView(navHostController: NavHostController) {
             },
             onBackButtonClick = { navHostController.popBackStack() },
             onIcon1Click = { navHostController.popBackStack() },
-            icon2 = Icons.Default.Close,
+            icon2 = R.drawable.cross,
             onIcon2Click = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
         )
 

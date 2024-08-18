@@ -6,8 +6,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreenViewModel: ViewModel() {
-
-
     fun onSplashScreenFinished(onNavigate: () -> Unit) {
         viewModelScope.launch {
             delay(3000L) //  delay for splash screen

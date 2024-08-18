@@ -1,6 +1,6 @@
-package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
+package com.analogics.tpaymentsapos.rootUiScreens.activity
 
-import DashboardView
+
 import LanguageView
 import android.Manifest
 import android.app.Activity
@@ -31,7 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.dashboard.DashboardScreenView
+import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
@@ -42,7 +42,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
-import com.analogics.tpaymentsapos.rootUiScreens.login.ForgetPasswordView
+import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
@@ -171,7 +171,7 @@ fun AppNavigationGraph(
             SplashScreenView(navHostController)
         }
         composable(AppNavigationItems.DashBoardScreen.route) {
-            DashboardScreenView(navHostController)
+            DashboardView(navHostController)
         }
         composable(AppNavigationItems.OnBoardingScreen.route) {
             OnBoardSlideView(navHostController)

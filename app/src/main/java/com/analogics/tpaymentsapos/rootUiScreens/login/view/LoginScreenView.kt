@@ -1,60 +1,67 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login.view
 
-import androidx.compose.foundation.Image
+import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.PermIdentity
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.analogics.networkservicecore.nComponent.ResultProvider
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
-import com.analogics.paymentservicecore.repository.gatewayPayment.UIPaymentInfoProviderRepository
-import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Image
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+
 @Composable
-fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHostController
+fun LoginScreenView(navHostController: NavHostController?) {
+    val viewModel: LoginViewModel = viewModel()
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(id = R.string.login)) },
-                backgroundColor = Color(0xFFFFFFFF)
+            AppHeader(
+                title = stringResource(id = R.string.login),
+                onBackButtonClick = { /* Handle back button click if needed */ },
+                icon1 = R.drawable.baseline_menu_24, // Use a default icon for the menu
+                onIcon1Click = {},
+                isIcon1Visible = false,
+                backgroundColor = Color.White,
+                isIcon2Visible = false // No second icon needed for this screen
             )
         },
-        content = {
+        content = { padding ->
             Surface(modifier = Modifier
                 .fillMaxSize()
-                .padding(it)) {
-                var emailCredentials by remember { mutableStateOf("") }
-                var pwdCredentials by remember { mutableStateOf("") }
-                val context = LocalContext.current
+                .padding(padding)) {
                 Column(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -63,16 +70,11 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                         .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
                         .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
                 ) {
-                    // Image above the "Please Login to continue" text
                     Image(
-                        painter = painterResource(id = R.drawable.card_img), // Replace with your image resource
-                        contentDescription = null, // Decorative image
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.DP_55_CompactMedium) // Set the size of the image
-                            .padding(bottom = MaterialTheme.dimens.DP_160_CompactMedium) // Adds bottom padding to the image
-                    )
+                        imageId =  R.drawable.unlock, // Decorative image
+                        size = MaterialTheme.dimens.DP_40_CompactMedium     )
 
-                    Text(
+                    TextView(
                         text = stringResource(id = R.string.plz_login),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = Color.LightGray,
@@ -80,8 +82,8 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     )
 
                     InputTextField(
-                        inputValue = emailCredentials,
-                        onChange = { emailCredentials = it },
+                        inputValue = viewModel.emailCredentials.value,
+                        onChange = { viewModel.onEmailChange(it) },
                         modifier = Modifier.fillMaxWidth(),
                         label = "",
                         placeHolder = stringResource(id = R.string.username),
@@ -90,18 +92,19 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     )
 
                     InputTextField(
-                        inputValue = pwdCredentials,
-                        onChange = { pwdCredentials = it },
+                        inputValue = viewModel.pwdCredentials.value,
+                        onChange = { viewModel.onPasswordChange(it) },
                         modifier = Modifier.fillMaxWidth(),
                         label = "",
                         placeHolder = stringResource(id = R.string.password),
                         icon = Icons.Outlined.Lock,
                         keyboardType = KeyboardType.Text,
-                        isPasswordField = true
+                        isPasswordField = true,
+                        keyboardActions = KeyboardActions.Default.onDone
                     )
 
                     // "Forgot Password?" clickable text
-                    Text(
+                    TextView(
                         text = stringResource(id = R.string.forget_pswd),
                         color = Color(0xFFFFA500),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
@@ -110,7 +113,6 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                             .padding(top = MaterialTheme.dimens.DP_24_CompactMedium)
                             .clickable {
                                 navHostController?.navigate(AppNavigationItems.ForgetPasswordScreen.route)
-                                // Use safe navigation with ?. to avoid crashes if navHostController is null
                             }
                     )
 
@@ -119,21 +121,11 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                     ) {
                         AppButton(
                             onClick = {
-                                navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
-                                /*
-                                var iResultProviderListener =
-                                    object : IResultProviderListener {
-
-                                        override fun getResultSuccess(apiResultProvider: ResultProvider<String>) {
-
-                                        }
-
-                                        override fun getResultFailed(apiResultProvider: ResultProvider<Error>) {
-
-                                        }
-                                    }
-                                    UIPaymentInfoProviderRepository.initPayment(context,iResultProviderListener)
-                                    */
+                                if (viewModel.isFormValid) {
+                                    viewModel.onLoginClick(navHostController,context)
+                                } else {
+                                    Toast.makeText(context, "Email And password not empty", Toast.LENGTH_SHORT).show()
+                                }
                             },
                             title = stringResource(id = R.string.login)
                         )
