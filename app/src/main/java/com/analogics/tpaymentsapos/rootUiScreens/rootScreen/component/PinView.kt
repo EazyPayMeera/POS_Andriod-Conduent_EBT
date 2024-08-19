@@ -2,16 +2,31 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSurface
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Image
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun PinView(navHostController: NavHostController) {
@@ -20,6 +35,7 @@ fun PinView(navHostController: NavHostController) {
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = Authorisation.isAuthcap
+    var textValue by remember { mutableStateOf("") }
 
     Column {
         CommonTopAppBar(
@@ -32,21 +48,52 @@ fun PinView(navHostController: NavHostController) {
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        CustomSurface(
-            imageResourceId = R.drawable.card, // Ensure this resource ID exists
-            titleText = stringResource(id = R.string.enter_Pin), // Fetch title from strings.xml
-            label = stringResource(id = R.string.pin), // Fetch title from strings.xml
-            placeholder = stringResource(id = R.string.pin), // Fetch title from strings.xml
-            value = invoiceno,
-            onValueChange = {
-                if (it.length <= 4 && it.all { char -> char.isDigit() }) {
-                    invoiceno = it
-                }
-            },
-            onDoneAction = { navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route) },
-            isPassword = true, // Use password input for PinView
-            keyboardType = KeyboardType.Number // Numeric keyboard
+        GenericCard(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(14.dp)
+            ) {
+                TextView(
+                    text = stringResource(id = R.string.enter_Pin),
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    1,
+                    Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+                Image(
+                    imageId = R.drawable.card, size = 60.dp,
+                    shape = RectangleShape, // Example shape, can be any Shape
+                    alignment = Alignment.Center,
+                )
+
+                OutlinedTextField(
+                    value = invoiceno,
+                    onValueChange = { newValue -> invoiceno = newValue },
+                    placeholder = stringResource(id = R.string.enter_Pin),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                    keyboardType = KeyboardType.NumberPassword,
+                    onDoneAction = {
+
+                    },
+                    isPassword = true
+                ) // Set this to true for password fields)
+
+            }
+
+        }
+
+        FooterButtons(
+            firstButtonTitle = stringResource(id = R.string.confirm_btn),
+            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route) },
+            secondButtonTitle = stringResource(id = R.string.cancel_btn),
+            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
         )
+
     }
 }
 

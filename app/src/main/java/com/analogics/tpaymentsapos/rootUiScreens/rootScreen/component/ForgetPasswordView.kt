@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -28,22 +29,15 @@ fun ForgetPasswordView(navHostController: NavHostController) {
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        Surface(
-            color = Color(0xFFF7931E), // Orange color for the outer Surface
-            modifier = Modifier
-                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
+        BackgroundScreen(
+//            color = Color(0xFFF7931E), // Orange color for the outer Surface
+//            modifier = Modifier
+//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
+//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
+//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
+//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
         ) {
-            Surface(
-                color = Color.White, // White color for the inner Surface
-                modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_10_CompactMedium) // Padding for the inner Surface
-                    .height(MaterialTheme.dimens.DP_440_CompactMedium) // Adjust the height as per your requirement
-                    .width(MaterialTheme.dimens.DP_390_CompactMedium), // Adjust the width as per your requirement
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium) // Rounded corners for the inner Surface
-            ) {
+
                 Column(
                     modifier = Modifier
                         .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
@@ -161,7 +155,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         )
                     }
                 }
-            }
+            
         }
     }
 }

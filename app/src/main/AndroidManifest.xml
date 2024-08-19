@@ -25,7 +25,7 @@
         android:theme="@style/Theme.TPaymentsAPOS"
         tools:targetApi="31">
         <activity
-            android:name=".rootUiScreens.rootScreen.activity.MainActivity"
+            android:name=".rootUiScreens.activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.TPaymentsAPOS">
             <intent-filter>

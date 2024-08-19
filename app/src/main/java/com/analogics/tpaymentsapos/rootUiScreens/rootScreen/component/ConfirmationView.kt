@@ -19,7 +19,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ConfirmationButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
@@ -208,21 +208,14 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_24_CompactMedium), // Adjust padding as needed
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            ConfirmationButton(
-                onClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(totalAmount.toString())) },
-                title = stringResource(id = R.string.confirm_btn)
-            )
-            ConfirmationButton(
-                onClick = { /* Your second button action */ },
-                title = stringResource(id = R.string.cancel_btn)
-            )
-        }
+
+        FooterButtons(
+            firstButtonTitle = stringResource(id = R.string.confirm_btn),
+            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(totalAmount.toString())) },
+            secondButtonTitle = stringResource(id = R.string.cancel_btn),
+            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+        )
+
 
     }
 

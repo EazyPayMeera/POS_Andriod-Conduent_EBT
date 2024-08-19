@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component
+package com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,14 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -27,13 +23,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.model.OnBoardingContentList
+import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.model.OnBoardingContentList
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.viewModel.OnBoardingScreenViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -43,22 +42,25 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun OnBoardSlideView(navHostController: NavHostController) {
+fun OnBoardSlideView(navHostController: NavHostController,viewModel: OnBoardingScreenViewModel= viewModel()) {
     val pagerState = rememberPagerState(initialPage = 0)
     val imageSlider = listOf(
         OnBoardingContentList(
-            headNote = "Safe and fast transaction",
-            subNote = "Single use password that won’t work twice, keeping your details safe even if they get exposed"
+            headNote = stringResource(id = R.string.safe_fast_txn),
+            subNote = stringResource(id = R.string.single_use_pass)
         ),
         OnBoardingContentList(
-            headNote = "Analysis of data",
-            subNote = "Improving customer retention through data analytics, there are several takeaways to keep in mind"
+            image = R.drawable.onboarding2,
+            headNote = stringResource(id = R.string.analysis_data),
+            subNote = stringResource(id = R.string.improving_customer)
         ),
         OnBoardingContentList(
-            headNote = "Quick and easy payments",
-            subNote = "Creating a seamless payment experience is crucial for user satisfaction and conversion",
+            image = R.drawable.onboarding3,
+            headNote = stringResource(id = R.string.quick_and_easy_payments),
+            subNote = stringResource(id = R.string.creating_pay),
             isIndicatorShow = false
         )
     )
@@ -78,7 +80,6 @@ fun OnBoardSlideView(navHostController: NavHostController) {
             .fillMaxSize()
             .background(Color("#D9D9D9".toColorInt()))
     ) {
-        // HorizontalPager
         HorizontalPager(
             count = imageSlider.size,
             state = pagerState,
@@ -91,7 +92,7 @@ fun OnBoardSlideView(navHostController: NavHostController) {
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                .padding(bottom = MaterialTheme.dimens.DP_120_CompactMedium)
         ) {
             HorizontalPagerIndicator(
                 pagerState = pagerState,
@@ -106,13 +107,13 @@ fun OnBoardSlideView(navHostController: NavHostController) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium) // Adjust the padding as needed
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust the padding as needed
             ) {
                 AppButton(
                     onClick = {
                         navHostController.navigate(AppNavigationItems.LoginScreen.route)
                     },
-                    title = stringResource(R.string.get_start)
+                    title = stringResource(R.string.get_started)
                 )
             }
         }
@@ -127,16 +128,12 @@ fun ShowCardView(
     imageSlider: List<OnBoardingContentList>,
     navHostController: NavHostController
 ) {
-    Card(
+    GenericCard(
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = MaterialTheme.dimens.extraSmall
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White, // Card background color
-            contentColor = Color.Black  // Card content color, e.g., text
-        ),
+        elevation = MaterialTheme.dimens.DP_4_CompactMedium,
+        backgroundColor = Color.White, // Card background color
         modifier = Modifier.fillMaxHeight()
+        .padding(MaterialTheme.dimens.DP_15_CompactMedium)
     ) {
         Column(
             modifier = Modifier
@@ -160,21 +157,6 @@ fun ShowCardView(
                         .height(MaterialTheme.dimens.DP_180_CompactMedium)
                         .width(MaterialTheme.dimens.DP_200_CompactMedium)
                 )
-                Box(
-                    contentAlignment = Alignment.BottomStart,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxSize()
-                        .padding(start = MaterialTheme.dimens.DP_40_CompactMedium)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.men_frame),
-                        contentDescription = "group 360",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.DP_60_CompactMedium, MaterialTheme.dimens.DP_120_CompactMedium)
-                    )
-                }
             }
 
             // Text section
@@ -185,22 +167,23 @@ fun ShowCardView(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                TextView(
                     text = imageSlider[pageIndex].headNote,
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(
-                        bottom = MaterialTheme.dimens.DP_20_CompactMedium,
-                        top = MaterialTheme.dimens.DP_20_CompactMedium
+                        vertical = MaterialTheme.dimens.DP_20_CompactMedium
                     ),
+                    fontSize = MaterialTheme.dimens.SP_16_CompactMedium
                 )
-                Text(
+                TextView(
                     text = imageSlider[pageIndex].subNote,
                     style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium),
                     color = Color("#B3B3B3".toColorInt()),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium)
+                    fontSize = MaterialTheme.dimens.SP_14_CompactMedium
                 )
             }
         }

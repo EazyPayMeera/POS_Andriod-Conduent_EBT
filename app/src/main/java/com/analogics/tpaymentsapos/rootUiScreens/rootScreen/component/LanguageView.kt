@@ -17,6 +17,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HeaderImage
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
+import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -117,7 +118,7 @@ fun LanguageView(navHostController: NavHostController) {
                         selected = selectedLanguage == stringResource(id = R.string.english),
                         onClick = { selectedLanguage = "English" },
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = OrangeColor,
+                            selectedColor = dashboardOrangeColor,
                             unselectedColor = Color.Gray
                         )
                     )

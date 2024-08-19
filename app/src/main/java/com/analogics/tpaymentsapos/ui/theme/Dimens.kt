@@ -86,9 +86,11 @@ data class Dimens(
     val SP_28_CompactMedium: TextUnit = 0.sp,
     val SP_30_CompactMedium: TextUnit = 0.sp,
     val SP_50_CompactMedium: TextUnit = 0.sp,
+    val sp_44_CompactMedium: TextUnit = 44.sp,
+    val SP_44_CompactMedium: TextUnit
 
 
-    )
+)
 
 val CompactSmallDimens = Dimens(
     DP_1_CompactMedium = 1.dp,
@@ -100,19 +102,19 @@ val CompactSmallDimens = Dimens(
     DP_20_CompactMedium = 8.dp,
     DP_21_CompactMedium = 20.dp,
     DP_25_CompactMedium = 15.dp,
-    DP_18_CompactMedium = 18.dp,
     DP_30_CompactMedium = 20.dp,
+    DP_33_CompactMedium = 30.dp,
     DP_31_CompactMedium = 31.dp,
+    DP_34_CompactMedium = 34.dp,
     DP_35_CompactMedium = 25.dp,
     DP_65_CompactMedium = 49.dp,
     DP_45_CompactMedium = 30.dp,
-    DP_33_CompactMedium = 30.dp,
-    DP_34_CompactMedium = 34.dp,
     DP_55_CompactMedium = 45.dp,
-
     DP_2_CompactMedium = 1.dp,
+
     DP_5_CompactMedium = 5.dp,
     DP_15_CompactMedium = 10.dp,
+    DP_18_CompactMedium = 18.dp,
     DP_17_CompactMedium = 11.dp,
     DP_22_CompactMedium = 14.dp,
     DP_24_CompactMedium = 16.dp,
@@ -167,6 +169,8 @@ val CompactSmallDimens = Dimens(
     SP_28_CompactMedium = 25.sp,
     SP_30_CompactMedium = 27.sp,
     SP_50_CompactMedium = 27.sp,
+    sp_44_CompactMedium  =40.sp,
+    SP_44_CompactMedium = 44.sp
 )
 
 val CompactMediumDimens = Dimens(
@@ -227,6 +231,7 @@ val CompactMediumDimens = Dimens(
     SP_27_CompactMedium = 27.sp,
     SP_28_CompactMedium = 28.sp,
     SP_30_CompactMedium = 30.sp,
+    SP_44_CompactMedium = 44.sp
 
 )
 
@@ -288,6 +293,7 @@ val CompactDimens = Dimens(
     SP_27_CompactMedium = 29.sp,
     SP_28_CompactMedium = 30.sp,
     SP_30_CompactMedium = 32.sp,
+    SP_44_CompactMedium = 44.sp,
 )
 
 val MediumDimens = Dimens(
@@ -348,6 +354,7 @@ val MediumDimens = Dimens(
     SP_27_CompactMedium = 31.sp,
     SP_28_CompactMedium = 32.sp,
     SP_30_CompactMedium = 34.sp,
+    SP_44_CompactMedium = 44.sp,
 )
 
 val ExpandedDimens = Dimens(
@@ -408,4 +415,5 @@ val ExpandedDimens = Dimens(
     SP_27_CompactMedium = 35.sp,
     SP_28_CompactMedium = 36.sp,
     SP_30_CompactMedium = 38.sp,
+    SP_44_CompactMedium = 50.sp,
 )

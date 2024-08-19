@@ -1,8 +1,7 @@
-package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.activity
+package com.analogics.tpaymentsapos.rootUiScreens.activity
 
-import DashboardView
+
 import LanguageView
-import TrainingView
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -32,7 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.dashboard.DashboardScreenView
+import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
@@ -43,9 +42,9 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
-import com.analogics.tpaymentsapos.rootUiScreens.login.ForgetPasswordView
+import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
-import com.analogics.tpaymentsapos.rootUiScreens.login.LoginScreenView
+import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
@@ -54,8 +53,8 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
-import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.OnBoardSlideView
-import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.SplashScreenView
+import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view.OnBoardSlideView
+import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 
 
@@ -172,7 +171,7 @@ fun AppNavigationGraph(
             SplashScreenView(navHostController)
         }
         composable(AppNavigationItems.DashBoardScreen.route) {
-            DashboardScreenView(navHostController)
+            DashboardView(navHostController)
         }
         composable(AppNavigationItems.OnBoardingScreen.route) {
             OnBoardSlideView(navHostController)
@@ -244,6 +243,7 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.SettingsScreen.route) {
             SettingsView(navHostController)
+
         }
         composable(AppNavigationItems.LanguageScreen.route) {
             LanguageView(navHostController)
