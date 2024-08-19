@@ -65,7 +65,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
                 ImageView(
                     imageId = R.drawable.card,
-                    size = 60.dp,
+                    size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
                 )

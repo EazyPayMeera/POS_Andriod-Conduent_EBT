@@ -54,7 +54,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
 
                     Image(
-                        painter = painterResource(id = R.drawable.unlock), // Replace with your image resource
+                        painter = painterResource(id = R.drawable.open_lock), // Replace with your image resource
                         contentDescription = null, // Decorative image
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_70_CompactMedium)

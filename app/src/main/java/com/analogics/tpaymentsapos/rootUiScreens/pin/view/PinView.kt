@@ -50,6 +50,13 @@ fun PinView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
+                ImageView(
+                    imageId = R.drawable.lock,
+                    size = MaterialTheme.dimens.DP_33_CompactMedium,
+                    shape = RectangleShape,
+                    alignment = Alignment.Center,
+                )
+
                 TextView(
                     text = stringResource(id = R.string.enter_Pin),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
@@ -58,12 +65,6 @@ fun PinView(navHostController: NavHostController) {
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
                     textAlign = TextAlign.Center
-                )
-                ImageView(
-                    imageId = R.drawable.card,
-                    size = MaterialTheme.dimens.DP_60_CompactMedium,
-                    shape = RectangleShape,
-                    alignment = Alignment.Center,
                 )
 
                 OutlinedTextField(

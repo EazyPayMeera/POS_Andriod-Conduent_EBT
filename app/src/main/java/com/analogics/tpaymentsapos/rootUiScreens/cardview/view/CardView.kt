@@ -96,13 +96,13 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_5_CompactMedium))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                 Image(
-                    painter = painterResource(id = R.drawable.card),
+                    painter = painterResource(id = R.drawable.swip_card),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_33_CompactMedium)
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
                 )
 

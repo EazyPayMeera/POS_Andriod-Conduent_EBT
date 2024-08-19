@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -23,6 +24,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -70,7 +72,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     textAlign = TextAlign.Center
                 )
                 ImageView(
-                    imageId = R.drawable.card, size = MaterialTheme.dimens.DP_60_CompactMedium,
+                    imageId = R.drawable.invoice, size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape, // Example shape, can be any Shape
                     alignment = Alignment.Center,
                 )
@@ -86,6 +88,28 @@ fun InvoiceView(navHostController: NavHostController) {
                     },
                     isPassword = false
                 )
+
+                if(isRefund || isVoid)
+                {
+                    TextView(
+                        text = "------------------or------------------",
+                        fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                        textAlign = TextAlign.Center
+                    )
+
+                    ScannerButton(
+                        text = stringResource(id = R.string.scan_qr),
+                        onClick = {Authorisation.isNewauth = true
+                            navHostController.navigate(AppNavigationItems.InvoiceScreen.route)},
+                        backgroundColor = Color(0xFFEDEDED),
+                        contentColor = Color.Black,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
 
             }
 

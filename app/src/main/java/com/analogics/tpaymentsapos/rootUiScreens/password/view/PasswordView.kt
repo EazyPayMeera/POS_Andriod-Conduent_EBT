@@ -69,7 +69,7 @@ fun PasswordView(navHostController: NavHostController) {
                     textAlign = TextAlign.Center
                 )
                 ImageView(
-                    imageId = R.drawable.card, size = MaterialTheme.dimens.DP_60_CompactMedium,
+                    imageId = R.drawable.open_lock, size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape, // Example shape, can be any Shape
                     alignment = Alignment.Center,
                 )
