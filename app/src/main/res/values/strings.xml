@@ -12,6 +12,7 @@
     <string name="quick_and_easy_payments">Quick and easy payments</string>
     <string name="creating_pay">Creating a seamless payment experience is crucial for user satisfaction and conversio</string>
     <string name="get_started">Get Started</string>
+    <string name="skip">Skip</string>
 
     //Login
     <string name="plz_login">Please login to continue</string>
@@ -19,8 +20,8 @@
     <string name="forget_pswd">Forgot Password?</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="placehldr_username">Please enter Username</string>
-    <string name="placehldr_password">Please enter Password</string>
+    <string name="placehldr_username">Please Enter Username</string>
+    <string name="placehldr_password">Please Enter Password</string>
 
     //Dashboard
 

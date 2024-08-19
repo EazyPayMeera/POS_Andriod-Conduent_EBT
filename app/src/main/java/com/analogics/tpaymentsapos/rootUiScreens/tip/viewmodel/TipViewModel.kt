@@ -1,0 +1,37 @@
+package com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+
+class TipViewModel : ViewModel() {
+    // State for raw input and formatted tip amount
+    var rawInput by mutableStateOf("")
+        private set
+
+    var tipAmount by mutableStateOf("0.00")
+        private set
+
+    // Function to handle changes to the raw input
+    fun onRawInputChange(newValue: String) {
+        if (newValue.all { char -> char.isDigit() || char == '.' }) {
+            rawInput = newValue
+            tipAmount = formatAmount(newValue)
+        }
+    }
+
+    // Function to handle the Done action
+    fun onDoneAction(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(tipAmount))
+    }
+
+    // Utility function to format amount (if not already defined elsewhere)
+    private fun formatAmount(amount: String): String {
+        // Implement the formatting logic or use an existing method
+        // Example: "1234" -> "1,234.00"
+        return amount
+    }
+}

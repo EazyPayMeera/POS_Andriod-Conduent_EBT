@@ -48,7 +48,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Leading image
                 Image(
                     painter = painterResource(id = R.drawable.language), // Replace with your image resource
-                    contentDescription = "Language Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(24.dp) // Adjust size as needed
                 )
 
@@ -63,7 +63,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Trailing image
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "Arrow Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(24.dp) // Adjust size as needed
                 )
             }
@@ -106,7 +106,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Trailing image
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "Arrow Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(24.dp), // Adjust size as needed
                 )
             }
