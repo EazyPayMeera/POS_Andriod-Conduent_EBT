@@ -18,15 +18,18 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GifImage
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.delay
 
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
-
+    // Define state and resources
     var invoiceno by remember { mutableStateOf("") }
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
@@ -39,45 +42,67 @@ fun PleaseWaitView(navHostController: NavHostController) {
     val preAuth = stringResource(id = R.string.pre_auth)
     val purchase = stringResource(id = R.string.purchase)
 
+    // Navigation with delay
     LaunchedEffect(Unit) {
         delay(2000) // Delay for 2 seconds (2000 milliseconds)
-        if(isVoid)
-            navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
-        else
-        navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
+        val destination = if (isVoid) {
+            AppNavigationItems.ApprovedScreen.route
+        } else {
+            AppNavigationItems.ApprovedScreen.route
+        }
+        navHostController.navigate(destination) // Navigate to the desired screen
     }
 
-    CommonLayout(
-        title = when {
-            isRefund -> stringResource(R.string.refund)
-            isVoid -> stringResource(R.string.void_trans)
-            isPreauth -> stringResource(R.string.pre_auth)
-            else -> stringResource(R.string.purchase)
-        },
-        imageResId = R.drawable.close
-    ) {
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space added here
-
-        Text(
-            text = stringResource(id = R.string.plz_wait),
-            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                .align(Alignment.CenterHorizontally) // Center the subheader text
+    Column {
+        // Top App Bar with back button
+        CommonTopAppBar(
+            title = stringResource(id = R.string.approved),
+            onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space added here
+        // Outer Surface with background color, padding, and rounded corners
+        BackgroundScreen(
+//            color = Color(0xFFF7931E), // Orange color for the outer Surface
+//            modifier = Modifier
+//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
+//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
+//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
+//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
+                    .fillMaxSize(), // Fill the entire available space
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start // Align content to the start
+            ) {
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space
 
-        GifImage(
-            gifResId = R.drawable.wait, // Use your GIF resource here
-            modifier = Modifier
-                .size(MaterialTheme.dimens.DP_120_CompactMedium)
-                .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                .align(Alignment.CenterHorizontally) // Center the GIF
-        )
+                // TextView for "Please Wait"
+                TextView(
+                    text = stringResource(id = R.string.plz_wait),
+                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
+
+                // GIF Image
+                GifImage(
+                    gifResId = R.drawable.wait, // Use your GIF resource here
+                    modifier = Modifier
+                        .size(MaterialTheme.dimens.DP_120_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the GIF horizontally within the Column
+                )
+            }
+        }
     }
 }
+
 
 

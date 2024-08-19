@@ -59,6 +59,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
+
                 TextView(
                     text = stringResource(id = R.string.enter_invoice),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
