@@ -97,4 +97,8 @@
     <string name="taxes">Taxes</string>
     <string name="adjust_per">Adjust %</string>
 
+    <!-- Payment SDK Strings -->
+    <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
+    <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
+
 </resources>

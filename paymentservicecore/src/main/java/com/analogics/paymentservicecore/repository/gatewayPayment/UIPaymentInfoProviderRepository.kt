@@ -1,28 +1,21 @@
 package com.analogics.paymentservicecore.repository.gatewayPayment
 
 import android.content.Context
-import com.analogics.networkservicecore.nComponent.ResultProvider
-import com.analogics.networkservicecore.nComponent.ResultProviderString
-import com.analogics.paymentservicecore.R
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
-import com.analogics.paymentservicecore.listeners.responseListener.ITransactionResultListener
-import com.analogics.paymentservicecore.models.TransactionData
-import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
-import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler.initPayment
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.paymentservicecore.listeners.responseListener.IPaymentServiceResultListener
+import com.analogics.tpaymentcore.components.ResultProvider
+import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler.initPaymentSDK
 import java.lang.Exception
 
-object UIPaymentInfoProviderRepository:IPaymentCoreHandlerListener {
-    override fun onPMTRespHandler(uiData: String) {
-    }
+object UIPaymentInfoProviderRepository {
 
-    fun initPayment(context: Context, iTransactionResultListener: ITransactionResultListener) {
-        when (val transactionData = initPayment<TransactionData>(context)) {
+    fun initPaymentSDK(context: Context, iTransactionResultListener: IPaymentServiceResultListener) {
+        when (val result =
+            initPaymentSDK<Boolean>(context)) {
             is ResultProvider.Success -> {
-                iTransactionResultListener.onSuccess(transactionData.data)
+                iTransactionResultListener.onSuccess(result.data)
             }
             is ResultProvider.Error -> {
-                iTransactionResultListener.onFailure(transactionData.exception)
+                iTransactionResultListener.onFailure(result.exception)
             }
             else -> {
                 iTransactionResultListener.onFailure(Exception("Oops!! Something went wrong"))

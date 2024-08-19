@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,9 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.ITransactionResultListener
-import com.analogics.paymentservicecore.models.TransactionData
-import com.analogics.paymentservicecore.models.TransactionStatus.APPROVED
+import com.analogics.paymentservicecore.listeners.responseListener.IPaymentServiceResultListener
 import com.analogics.paymentservicecore.repository.gatewayPayment.UIPaymentInfoProviderRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -116,12 +115,17 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                             onClick = {
                                 navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
                                 /*
-                                var iTransactionResult =
-                                    object : ITransactionResultListener {
-                                        override fun onSuccess(transactionData: TransactionData) {
-                                            when (transactionData.status) {
-                                                APPROVED -> navHostController?.navigate(AppNavigationItems.ApprovedScreen.route)
-                                                else -> navHostController?.navigate(AppNavigationItems.DeclineScreen.route)
+                                var iPaymentServiceResultListener =
+                                    object : IPaymentServiceResultListener {
+                                        override fun onSuccess(result: Any?) {
+                                            when (result is Boolean) {
+                                                true -> {
+                                                    Toast.makeText(context,R.string.emv_sdk_init_success,Toast.LENGTH_LONG).show()
+                                                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                                                }
+                                                else -> {
+                                                    Toast.makeText(context,R.string.emv_sdk_init_failure,Toast.LENGTH_LONG).show()
+                                                }
                                             }
                                         }
 
@@ -130,11 +134,11 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                                         }
 
                                     }
-                                UIPaymentInfoProviderRepository.initPayment(
+                                UIPaymentInfoProviderRepository.initPaymentSDK(
                                     context,
-                                    iTransactionResult
+                                    iPaymentServiceResultListener
                                 )
-                                 */
+                                */
                             },
                             title = stringResource(id = R.string.login)
                         )

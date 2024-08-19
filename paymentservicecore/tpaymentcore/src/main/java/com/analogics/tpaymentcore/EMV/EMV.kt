@@ -26,8 +26,6 @@ class EMV {
                         ContantPara.CardSlot.ICC,
                         "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
                     ) //DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
-
-                    startPayment(context)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

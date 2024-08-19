@@ -1,6 +1,5 @@
 package com.analogics.paymentservicecore.listeners.responseListener
 import com.analogics.networkservicecore.nComponent.ResultProvider
-import com.analogics.paymentservicecore.models.TransactionData
 
 
 interface IResultProviderListener {
@@ -8,7 +7,7 @@ interface IResultProviderListener {
     fun onFailure(apiResultProvider: ResultProvider<Error>)
 }
 
-interface ITransactionResultListener {
-    fun onSuccess(transactionData: TransactionData)
+interface IPaymentServiceResultListener {
+    fun onSuccess(result: Any?)
     fun onFailure(exception: Exception)
 }
