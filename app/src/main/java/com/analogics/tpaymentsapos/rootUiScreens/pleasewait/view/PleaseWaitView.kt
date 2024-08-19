@@ -80,6 +80,17 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
                 // TextView for "Please Wait"
                 TextView(
+                    text = stringResource(id = R.string.printing),
+                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
+                // TextView for "Please Wait"
+                TextView(
                     text = stringResource(id = R.string.plz_wait),
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                     color = Color.Black,
@@ -89,7 +100,18 @@ fun PleaseWaitView(navHostController: NavHostController) {
                         .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
+                // TextView for "Please Wait"
+                TextView(
+                    text = stringResource(id = R.string.merchant_recp),
+                    fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                )
+
+                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
 
                 // GIF Image
                 GifImage(

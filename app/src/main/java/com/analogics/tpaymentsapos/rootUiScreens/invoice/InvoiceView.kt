@@ -80,7 +80,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     onValueChange = { newValue -> viewModel.updateInvoiceNo(newValue) },
                     placeholder = stringResource(id = R.string.invoice_no),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Uri,
                     onDoneAction = {
                         viewModel.navigateToAmountScreen(navHostController)
                     },

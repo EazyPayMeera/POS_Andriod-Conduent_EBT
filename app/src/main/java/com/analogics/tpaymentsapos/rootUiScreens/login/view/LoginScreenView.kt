@@ -84,7 +84,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         label = stringResource(id = R.string.username),
                         placeHolder = stringResource(id = R.string.placehldr_username),
                         icon = Icons.Outlined.Person,
-                        keyboardType = KeyboardType.Text
+                        keyboardType = KeyboardType.Uri
                     )
 
                     InputTextField(
@@ -94,7 +94,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         label = stringResource(id = R.string.password),
                         placeHolder = stringResource(id = R.string.placehldr_password),
                         icon = Icons.Outlined.Lock,
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Uri,
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {

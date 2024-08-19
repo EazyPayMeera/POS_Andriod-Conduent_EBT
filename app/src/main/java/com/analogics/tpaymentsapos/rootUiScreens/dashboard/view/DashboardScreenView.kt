@@ -64,7 +64,7 @@ fun dashboardItemListData(navHostController: NavHostController,dashboardViewMode
             stringResource(id = R.string.pre_auth),
             R.drawable.dashboard_preauth,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.PreauthScreen.route)
+                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.InvoiceScreen.route)
                 TransactionState.isPreauth = true
 
             }),

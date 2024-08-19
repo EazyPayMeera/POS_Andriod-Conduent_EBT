@@ -63,6 +63,8 @@
     <string name="decline_u">DECLINE</string>
     <string name="done">Done</string>
     <string name="training">Training</string>
+    <string name="printing">Printing</string>
+    <string name="merchant_recp">Merchant Receipt</string>
     <string name="enter_tip_amount">Enter the Tip Amount</string>
     <string name="amount">Amount</string>
     <string name="adjust">Adjust</string>
