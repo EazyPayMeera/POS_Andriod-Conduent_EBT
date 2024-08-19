@@ -85,8 +85,8 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         inputValue = viewModel.emailCredentials.value,
                         onChange = { viewModel.onEmailChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = "",
-                        placeHolder = stringResource(id = R.string.username),
+                        label = stringResource(id = R.string.username),
+                        placeHolder = stringResource(id = R.string.placehldr_username),
                         icon = Icons.Outlined.Person,
                         keyboardType = KeyboardType.Text
                     )
@@ -95,8 +95,8 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         inputValue = viewModel.pwdCredentials.value,
                         onChange = { viewModel.onPasswordChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = "",
-                        placeHolder = stringResource(id = R.string.password),
+                        label = stringResource(id = R.string.password),
+                        placeHolder = stringResource(id = R.string.placehldr_password),
                         icon = Icons.Outlined.Lock,
                         keyboardType = KeyboardType.Text,
                         isPasswordField = true,

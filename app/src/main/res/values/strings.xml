@@ -19,6 +19,8 @@
     <string name="forget_pswd">Forgot Password?</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="placehldr_username">Please enter Username</string>
+    <string name="placehldr_password">Please enter Password</string>
 
     //Dashboard
 
