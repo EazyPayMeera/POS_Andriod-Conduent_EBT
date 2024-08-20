@@ -84,6 +84,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
                     keyboardType = KeyboardType.Uri,
                     onDoneAction = {
+
                         viewModel.navigateToAmountScreen(navHostController)
                     },
                     isPassword = false

@@ -118,4 +118,6 @@
     <string name="taxes">Taxes</string>
     <string name="adjust_per">Adjust %</string>
 
+    <string name="is_correct">Is this information correct?</string>
+
 </resources>

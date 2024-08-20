@@ -81,7 +81,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     visualTransformation = createAmountTransformation()
                 )
 
-                if (isVoid || isAuthcap) {
+                if (isVoid) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     TextView(
@@ -141,6 +141,29 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
                             .align(Alignment.Start)
+                    )
+                }
+                if(isAuthcap)
+                {
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    TextView(
+                        text = "Original Amount: ${viewModel.transactionDateTime}",
+                        fontSize = 15.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    TextView(
+                        text = "Txn Date: ${viewModel.transactionDateTime}",
+                        fontSize = 15.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
                 }
             }

@@ -42,6 +42,8 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
+import com.analogics.tpaymentsapos.rootUiScreens.login.InfoConfirmView
+import com.analogics.tpaymentsapos.rootUiScreens.login.InfoConfirmView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
@@ -262,6 +264,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.EnterEmailScreen.route) {
             EnterEmailView(navHostController)
+        }
+        composable(AppNavigationItems.InfoConfirmScreen.route) {
+            InfoConfirmView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,
