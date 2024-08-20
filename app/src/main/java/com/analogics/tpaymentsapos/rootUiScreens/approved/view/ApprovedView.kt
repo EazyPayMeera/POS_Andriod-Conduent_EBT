@@ -40,7 +40,7 @@ fun CircularMenu(
     onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
-    val menuOptions = listOf("E-RECEIPT", "Merchant Receipt", "Print")
+    val menuOptions = listOf("Customer Receipt", "Merchant Receipt", "E-RECEIPT")
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -57,7 +57,7 @@ fun CircularMenu(
 
     Box(
         modifier = Modifier
-            .size(MaterialTheme.dimens.DP_110_CompactMedium)
+            .size(MaterialTheme.dimens.DP_120_CompactMedium)
             .padding(MaterialTheme.dimens.DP_21_CompactMedium),
         contentAlignment = Alignment.Center
     ) {
@@ -100,7 +100,7 @@ fun CircularMenu(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(MaterialTheme.dimens.DP_80_CompactMedium)
+                .size(MaterialTheme.dimens.DP_200_CompactMedium)
                 .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape) // Add shadow with circular shape
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
@@ -192,14 +192,25 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                             // Do something on Print click
                         },
                         onMenuOptionClick = { option ->
-                            // Handle circular menu option clicks
-                            // For demonstration, navigate to EnterEmailScreen
+                            when (option) {
+                                "Customer Receipt" -> {
+                                    // Handle E-RECEIPT click, e.g., navigate to a different screen
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                                "Merchant Receipt" -> {
+                                    // Handle Merchant Receipt click
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                                "E-RECEIPT" -> {
+
+                                }
+                            }
                             navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                         }
                     )
                 }
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space
+                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space
 
                 // Done button at the bottom
                 Box(
