@@ -47,7 +47,7 @@ fun dashboardItemListData(navHostController: NavHostController,dashboardViewMode
     return listOf(
         DashboardItemList(
             stringResource(id = R.string.purchase),
-            R.drawable.dashboard_purchase,
+            R.drawable.purchase,
             onClick = {
                 dashboardViewModel.navigateTo(navHostController,AppNavigationItems.InvoiceScreen.route)
                 TransactionState.isPurchase = true

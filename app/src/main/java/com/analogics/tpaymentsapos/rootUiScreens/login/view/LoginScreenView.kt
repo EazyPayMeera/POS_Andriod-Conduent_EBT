@@ -73,7 +73,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                     TextView(
                         text = stringResource(id = R.string.plz_login),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = Color.LightGray,
+                        color = Color.Black,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
 
