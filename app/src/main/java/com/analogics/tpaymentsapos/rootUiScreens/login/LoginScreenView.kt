@@ -5,10 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.PermIdentity
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
@@ -25,14 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.analogics.networkservicecore.nComponent.ResultProvider
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
-import com.analogics.paymentservicecore.repository.gatewayPayment.UIPaymentInfoProviderRepository
-import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppListener
+import com.analogics.paymentservicecore.model.error.PaymentServiceError
+import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
@@ -120,6 +112,19 @@ fun LoginScreenView(navHostController: NavHostController?) { // Nullable NavHost
                         AppButton(
                             onClick = {
                                 navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+
+                                PaymentServiceRepository(null).initPayment(object :IOnRootAppListener
+                            {
+                                override fun onSuccess(string: String) {
+
+                                }
+
+                                override fun onPaymentError(tError: PaymentServiceError) {
+
+                                }
+
+                            },context)
+
                                 /*
                                 var iResultProviderListener =
                                     object : IResultProviderListener {

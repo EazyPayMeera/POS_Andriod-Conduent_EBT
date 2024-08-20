@@ -8,5 +8,5 @@ import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppListene
 interface IMakeReqeustListener {
     suspend fun getUserListAPI(iResultProviderListener: IResultProviderListener)
 
-    suspend fun  initPayment(iOnRootAppListener: IOnRootAppListener, context: Context)
+     fun  initPayment(iOnRootAppListener: IOnRootAppListener, context: Context)
 }
