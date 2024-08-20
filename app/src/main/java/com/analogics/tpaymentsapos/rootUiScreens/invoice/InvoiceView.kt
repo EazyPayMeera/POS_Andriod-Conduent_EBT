@@ -39,8 +39,8 @@ fun InvoiceView(navHostController: NavHostController) {
 
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
-    val isPreauth = Authorisation.isNewauth
-    val isAuthcap = Authorisation.isAuthcap
+    val isPreauth = TransactionState.isPreauth
+    val isAuthcap = TransactionState.isAuthcap
 
     Column {
         CommonTopAppBar(
@@ -89,7 +89,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     isPassword = false
                 )
 
-                if(isRefund || isVoid)
+                if(isRefund || isVoid || isAuthcap)
                 {
                     TextView(
                         text = "------------------or------------------",
@@ -107,7 +107,7 @@ fun InvoiceView(navHostController: NavHostController) {
                             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)},
                         backgroundColor = Color(0xFFEDEDED),
                         contentColor = Color.Black,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
                     )
                 }
 

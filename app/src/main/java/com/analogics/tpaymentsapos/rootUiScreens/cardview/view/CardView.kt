@@ -102,7 +102,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                     painter = painterResource(id = R.drawable.swip_card),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_33_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_55_CompactMedium)
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
                 )
 

@@ -72,8 +72,8 @@ fun dashboardItemListData(navHostController: NavHostController,dashboardViewMode
             stringResource(id = R.string.auth_capture),
             R.drawable.dashboard_auth_capture,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.PasswordScreen.route)
-
+                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.InvoiceScreen.route)
+                TransactionState.isAuthcap = true
             }),
         DashboardItemList(
             stringResource(id = R.string.void_trans),

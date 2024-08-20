@@ -23,17 +23,12 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.AmountViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.TipViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun TipView(navHostController: NavHostController) {
-    // Get the ViewModel
-    val tipViewModel: TipViewModel = viewModel()
-
-    // States from the ViewModel
-    val rawInput by remember { mutableStateOf(tipViewModel.rawInput) }
-    val tipAmount by remember { mutableStateOf(tipViewModel.tipAmount) }
+fun TipView(navHostController: NavHostController, viewModel: TipViewModel = viewModel()) {
 
     Column {
         CommonTopAppBar(
@@ -64,18 +59,15 @@ fun TipView(navHostController: NavHostController) {
                 )
 
                 OutlinedTextField(
-                    value = rawInput,
-                    onValueChange = { newValue ->
-                        tipViewModel.onRawInputChange(newValue)
-                    },
+                    value = viewModel.amount,
+                    onValueChange = {viewModel.onTipChange(it)},
                     placeholder = stringResource(id = R.string.tip_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {
-                        tipViewModel.onDoneAction(navHostController)
+                        viewModel.onConfirm(navHostController)
                     },
-                    visualTransformation = createAmountTransformation(),
-                    isPassword = true
+                    visualTransformation = createAmountTransformation()
                 )
 
             }
@@ -83,9 +75,9 @@ fun TipView(navHostController: NavHostController) {
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { tipViewModel.onDoneAction(navHostController) },
+            firstButtonOnClick = { viewModel.onCancel(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController) }
         )
     }
 }

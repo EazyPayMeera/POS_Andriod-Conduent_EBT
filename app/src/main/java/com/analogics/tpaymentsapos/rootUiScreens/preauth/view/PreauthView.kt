@@ -80,7 +80,7 @@ fun PreauthView(navHostController: NavHostController) {
                         navHostController.navigate(AppNavigationItems.InvoiceScreen.route)},
                     backgroundColor = Color(0xFFEDEDED),
                     contentColor = Color.Black,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
                 )
             }
         }

@@ -69,7 +69,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
 
             ImageView(
-                imageId= R.drawable.logo,
+                imageId= R.drawable.logo_analogics,
                 contentDescription = "",
                 modifier = Modifier.size(MaterialTheme.dimens.DP_60_CompactMedium)
             )

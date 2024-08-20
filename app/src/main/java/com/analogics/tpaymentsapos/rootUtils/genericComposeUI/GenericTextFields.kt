@@ -623,6 +623,7 @@ object TransactionState {
     var isPurchase: Boolean = false
     var isPreauth: Boolean = false
     var isTransaction: Boolean = false
+    var isAuthcap: Boolean = false
 }
 
 object Authorisation {

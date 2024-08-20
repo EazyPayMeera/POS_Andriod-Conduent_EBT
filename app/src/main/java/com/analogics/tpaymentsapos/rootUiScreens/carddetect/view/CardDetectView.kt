@@ -109,7 +109,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                     painter = painterResource(id = R.drawable.swip_card), // Replace with your image resource
                     contentDescription = null, // Decorative image
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_33_CompactMedium) // Set the size of the image
+                        .size(MaterialTheme.dimens.DP_55_CompactMedium) // Set the size of the image
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium) // Adds bottom padding to the image
                 )
 

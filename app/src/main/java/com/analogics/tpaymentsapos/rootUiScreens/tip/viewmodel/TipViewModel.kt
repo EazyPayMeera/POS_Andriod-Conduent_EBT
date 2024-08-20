@@ -6,32 +6,37 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
 
 class TipViewModel : ViewModel() {
-    // State for raw input and formatted tip amount
-    var rawInput by mutableStateOf("")
+    var amount by mutableStateOf("")
         private set
 
-    var tipAmount by mutableStateOf("0.00")
+    var formattedAmount by mutableStateOf("0.00")
         private set
 
-    // Function to handle changes to the raw input
-    fun onRawInputChange(newValue: String) {
-        if (newValue.all { char -> char.isDigit() || char == '.' }) {
-            rawInput = newValue
-            tipAmount = formatAmount(newValue)
+    val transactionDateTime: String = getFormattedDateTime()
+
+    val isRefund: Boolean = TransactionState.isRefund
+    val isVoid: Boolean = TransactionState.isVoid
+    val isPreauth: Boolean = TransactionState.isPreauth
+    val isAuthcap: Boolean = Authorisation.isAuthcap
+
+    fun onTipChange(newValue: String) {
+        if (newValue.all { it.isDigit() || it == '.' }) {
+            amount = newValue
+            formattedAmount = formatAmount(newValue)
         }
     }
 
-    // Function to handle the Done action
-    fun onDoneAction(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(tipAmount))
+    fun onConfirm(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(formattedAmount))
     }
 
-    // Utility function to format amount (if not already defined elsewhere)
-    private fun formatAmount(amount: String): String {
-        // Implement the formatting logic or use an existing method
-        // Example: "1234" -> "1,234.00"
-        return amount
+    fun onCancel(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
     }
 }

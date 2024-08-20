@@ -24,7 +24,7 @@ class AmountViewModel : ViewModel() {
     val isRefund: Boolean = TransactionState.isRefund
     val isVoid: Boolean = TransactionState.isVoid
     val isPreauth: Boolean = TransactionState.isPreauth
-    val isAuthcap: Boolean = Authorisation.isAuthcap
+    val isAuthcap: Boolean = TransactionState.isAuthcap
 
     fun onAmountChange(newValue: String) {
         if (newValue.all { it.isDigit() || it == '.' }) {
