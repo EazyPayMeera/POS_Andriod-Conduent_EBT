@@ -502,114 +502,121 @@ fun FooterButtons(
     secondButtonTitle: String,
     secondButtonOnClick: () -> Unit
 ) {
-    Row(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = MaterialTheme.dimens.DP_24_CompactMedium),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .fillMaxSize()
+            .padding(bottom = 24.dp) // Adjust padding as needed
     ) {
-        var isFirstButtonPressed by remember { mutableStateOf(false) }
-        var isSecondButtonPressed by remember { mutableStateOf(false) }
-
-        Box(
-            contentAlignment = Alignment.BottomCenter,
+        Row(
             modifier = Modifier
-                .width(126.dp)
-                .padding(bottom = 20.dp)
-                .shadow(4.dp, shape = RoundedCornerShape(10.dp))
-                .background(
-                    color = colorResource(R.color.white),
-                    shape = RoundedCornerShape(10.dp)
-                )
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(vertical = 16.dp), // Adjust vertical padding if needed
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(
-                onClick = {
-                    isFirstButtonPressed = true
-                    firstButtonOnClick()
-                },
+            var isFirstButtonPressed by remember { mutableStateOf(false) }
+            var isSecondButtonPressed by remember { mutableStateOf(false) }
+
+            Box(
+                contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .width(130.dp)
-                    .height(48.dp)
-                    .border(
-                        width = if (isFirstButtonPressed) 2.dp else 0.dp,
-                        color = if (isFirstButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                    .width(126.dp)
+                    .padding(bottom = 20.dp)
+                    .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                    .background(
+                        color = colorResource(R.color.white),
                         shape = RoundedCornerShape(10.dp)
-                    ),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Color.Black,
-                    containerColor = colorResource(R.color.grey)
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 12.dp,
-                    hoveredElevation = 6.dp,
-                    focusedElevation = 10.dp
-                )
+                    )
             ) {
-                Text(
-                    text = firstButtonTitle,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Button(
+                    onClick = {
+                        isFirstButtonPressed = true
+                        firstButtonOnClick()
+                    },
+                    modifier = Modifier
+                        .width(130.dp)
+                        .height(48.dp)
+                        .border(
+                            width = if (isFirstButtonPressed) 2.dp else 0.dp,
+                            color = if (isFirstButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.Black,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 12.dp,
+                        hoveredElevation = 6.dp,
+                        focusedElevation = 10.dp
+                    )
+                ) {
+                    Text(
+                        text = firstButtonTitle,
+                        color = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-        }
 
-        LaunchedEffect(isFirstButtonPressed) {
-            if (isFirstButtonPressed) {
-                kotlinx.coroutines.delay(100)
-                isFirstButtonPressed = false
+            LaunchedEffect(isFirstButtonPressed) {
+                if (isFirstButtonPressed) {
+                    kotlinx.coroutines.delay(100)
+                    isFirstButtonPressed = false
+                }
             }
-        }
 
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                .width(126.dp)
-                .padding(bottom = 20.dp)
-                .shadow(4.dp, shape = RoundedCornerShape(10.dp))
-                .background(
-                    color = colorResource(R.color.white),
-                    shape = RoundedCornerShape(10.dp)
-                )
-        ) {
-            Button(
-                onClick = {
-                    isSecondButtonPressed = true
-                    secondButtonOnClick()
-                },
+            Box(
+                contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .width(130.dp)
-                    .height(48.dp)
-                    .border(
-                        width = if (isSecondButtonPressed) 2.dp else 0.dp,
-                        color = if (isSecondButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                    .width(126.dp)
+                    .padding(bottom = 20.dp)
+                    .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                    .background(
+                        color = colorResource(R.color.white),
                         shape = RoundedCornerShape(10.dp)
-                    ),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Color.Black,
-                    containerColor = colorResource(R.color.grey)
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 12.dp,
-                    hoveredElevation = 6.dp,
-                    focusedElevation = 10.dp
-                )
+                    )
             ) {
-                Text(
-                    text = secondButtonTitle,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Button(
+                    onClick = {
+                        isSecondButtonPressed = true
+                        secondButtonOnClick()
+                    },
+                    modifier = Modifier
+                        .width(130.dp)
+                        .height(48.dp)
+                        .border(
+                            width = if (isSecondButtonPressed) 2.dp else 0.dp,
+                            color = if (isSecondButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.Black,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 12.dp,
+                        hoveredElevation = 6.dp,
+                        focusedElevation = 10.dp
+                    )
+                ) {
+                    Text(
+                        text = secondButtonTitle,
+                        color = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-        }
 
-        LaunchedEffect(isSecondButtonPressed) {
-            if (isSecondButtonPressed) {
-                kotlinx.coroutines.delay(100)
-                isSecondButtonPressed = false
+            LaunchedEffect(isSecondButtonPressed) {
+                if (isSecondButtonPressed) {
+                    kotlinx.coroutines.delay(100)
+                    isSecondButtonPressed = false
+                }
             }
         }
     }

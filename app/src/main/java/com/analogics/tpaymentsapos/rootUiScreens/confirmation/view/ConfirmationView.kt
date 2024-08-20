@@ -5,6 +5,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,12 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurableViewType
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.SettingsItem
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.SettingsSurface
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TippingView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
@@ -41,6 +49,8 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
 
+    var isTaxesEnabled by remember { mutableStateOf(false) }
+
     Column {
         CommonTopAppBar(
             title = when {
@@ -51,171 +61,154 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             },
             onBackButtonClick = { navHostController.popBackStack() }
         )
-
-        Surface(
-            color = Color(0xFFFFA500),
+        GenericCard(
             modifier = Modifier
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                 .fillMaxWidth()
-                .height(MaterialTheme.dimens.DP_120_CompactMedium),
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
+            backgroundColor = Color(0xFFFFA500), // Replace with any color you want
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-            elevation = MaterialTheme.dimens.DP_20_CompactMedium
-        ) {
+        ){
             Column(
-                modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
-                Text(
+                TextView(
                     text = stringResource(id = R.string.total_amt),
                     fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                        .align(Alignment.Start)
                 )
-                Text(
+                TextView(
                     text = "₹${formatAmount(totalAmount)}",
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                     color = Color.Black,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Start)
                 )
             }
         }
 
-        Surface(
-            color = Color.White,
+        GenericCard(
             modifier = Modifier
-                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium, vertical = MaterialTheme.dimens.DP_20_CompactMedium)
                 .fillMaxWidth()
-                .height(MaterialTheme.dimens.DP_170_CompactMedium),
+                .padding(start = MaterialTheme.dimens.DP_24_CompactMedium,
+                    end = MaterialTheme.dimens.DP_24_CompactMedium,
+                    top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                    bottom = MaterialTheme.dimens.DP_24_CompactMedium),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-            elevation = MaterialTheme.dimens.DP_20_CompactMedium
         ) {
             Column(
-                modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(MaterialTheme.dimens.DP_11_CompactMedium)
             ) {
-                Text(
+
+                TextView(
                     text = stringResource(id = R.string.txn_sum),
-                    fontSize = MaterialTheme.dimens.SP_19_CompactMedium,
-                    color = Color.Black,
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    color = Color(0xFFFFA500),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                        .align(Alignment.Start)
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
+                TextView(
+                    text = "${stringResource(id = R.string.tnx_amount)} .........................₹${formatAmount(amountDouble)}",
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                        .align(Alignment.Start)
                 )
 
-                Text(
-                    text = "${stringResource(id = R.string.tnx_amount)} ₹${formatAmount(amountDouble)}",
+                TextView(
+                    text = "${stringResource(id = R.string.tip_amt)} ......................................₹${formatAmount(tipAmount)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
-                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                        .align(Alignment.Start)
                 )
-                Text(
-                    text = "${stringResource(id = R.string.tip_amt)} ₹${formatAmount(tipAmount)}",
+                TextView(
+                    text = "${stringResource(id = R.string.sgst_amt)} ......................................₹${formatAmount(sgstAmount)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
-                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                        .align(Alignment.Start)
                 )
-                Text(
-                    text = "${stringResource(id = R.string.sgst_amt)} ₹${formatAmount(sgstAmount)}",
+                TextView(
+                    text = "${stringResource(id = R.string.igst_amt)} .......................................₹${formatAmount(igstAmount)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
-                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                        .align(Alignment.Start)
                 )
-                Text(
-                    text = "${stringResource(id = R.string.igst_amt)} ₹${formatAmount(igstAmount)}",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                )
+
             }
         }
 
-
-
-        Surface(
-            color = Color.White,
-            modifier = Modifier
-                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium, vertical = MaterialTheme.dimens.DP_20_CompactMedium)
-                .fillMaxWidth()
-                .height(MaterialTheme.dimens.DP_120_CompactMedium),
-            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-            elevation = MaterialTheme.dimens.DP_20_CompactMedium
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = stringResource(id = R.string.add_tip),
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium) // Bottom padding
+            val settingsItems = listOf(
+                SettingsItem(
+                    imageRes = R.drawable.config_training_mode,
+                    text = stringResource(id = R.string.training_mode),
+                    isChecked = isTaxesEnabled,
+                    onCheckedChange = { isTaxesEnabled = it }
                 )
+            )
 
-
-                Row(
+            Column {
+                androidx.compose.material3.Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = MaterialTheme.dimens.DP_11_CompactMedium),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(start = MaterialTheme.dimens.DP_24_CompactMedium,
+                            end = MaterialTheme.dimens.DP_24_CompactMedium,
+                            top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                            bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    elevation = CardDefaults.elevatedCardElevation(10.dp),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                 ) {
-                    Button(
-                        onClick = { selectedTipPercentage = 10 },
-                        modifier = Modifier.width(MaterialTheme.dimens.DP_60_CompactMedium),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFe0e0e0)) // Light gray color
-                    ) {
-                        Text(text = stringResource(id = R.string.ten), color = Color.Black, fontSize = MaterialTheme.dimens.SP_13_CompactMedium)
-                    }
+                    Column {
+                        settingsItems.forEachIndexed { index, item ->
+                            SettingsSurface(
+                                modifier = Modifier.fillMaxWidth(),
+                                item = item
+                            )
 
-                    Button(
-                        onClick = { selectedTipPercentage = 15 },
-                        modifier = Modifier.width(MaterialTheme.dimens.DP_60_CompactMedium),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFe0e0e0)) // Light gray color
-                    ) {
-                        Text(text = stringResource(id = R.string.fifteen), color = Color.Black, fontSize = MaterialTheme.dimens.SP_13_CompactMedium)
-                    }
+                            if (index < settingsItems.size - 1) {
+                                androidx.compose.material3.Divider(
+                                    color = Color(0xFFB3B3B3),
+                                    thickness = 1.dp
+                                )
+                            }
 
-                    Button(
-                        onClick = { selectedTipPercentage = 20 },
-                        modifier = Modifier.width(MaterialTheme.dimens.DP_60_CompactMedium),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFe0e0e0)) // Light gray color
-                    ) {
-                        Text(text = stringResource(id = R.string.twenty), color = Color.Black, fontSize = MaterialTheme.dimens.SP_13_CompactMedium)
-                    }
-
-                    Button(
-                        onClick = { navHostController.navigate(AppNavigationItems.TipScreen.route) },
-                        modifier = Modifier.width(MaterialTheme.dimens.DP_100_CompactMedium),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFe0e0e0)) // Light gray color
-                    ) {
-                        Text(text = stringResource(id = R.string.custom), color = Color.Black, fontSize = MaterialTheme.dimens.SP_13_CompactMedium)
+                            if (index == 4 && item.isChecked) {
+                                TippingView(type = ConfigurableViewType.Percentage)
+                            }
+                            if (index == 5 && item.isChecked) {
+                                TippingView(type = ConfigurableViewType.Taxes)
+                            }
+                        }
                     }
                 }
             }
-        }
 
 
         FooterButtons(
-            firstButtonTitle = stringResource(id = R.string.confirm_btn),
-            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formatAmount(totalAmount))) },
-            secondButtonTitle = stringResource(id = R.string.cancel_btn),
-            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+            firstButtonTitle = stringResource(id = R.string.cancel_btn),
+            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
+            secondButtonTitle = stringResource(id = R.string.confirm_btn),
+            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formatAmount(totalAmount))) }
         )
-
-
     }
 
 
 }
+
+
