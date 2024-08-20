@@ -49,7 +49,7 @@ class EMV {
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
                     EmvNfcKernelApi.getInstance().startKernel(data)
-                    EmvNfcKernelApi.getInstance().getEMVLibVers(ContantPara.CardSlot.ICC)
+                    //EmvNfcKernelApi.getInstance().getEMVLibVers(ContantPara.CardSlot.ICC)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -116,6 +116,8 @@ class EMV {
             p2: Bundle?
         ) {
             Log.d("EMV_APP", "Offline PIN Verify:" + p0.toString())
+            if (p0 == ContantPara.PinEntrySource.KEYPAD)
+                promptPin(null, false, 3, null, false);
         }
 
         override fun onReturnIssuerScriptResult(p0: ContantPara.IssuerScriptResult?, p1: String?) {
@@ -620,7 +622,7 @@ class EMV {
             }
             try {
                 PinPadProviderImpl.getInstance()
-                    .GetDukptPinBlock(pinpadBundle, object : PinInputListener {
+                    .getPinBlockEx(pinpadBundle, object : PinInputListener {
                         override fun onInput(p0: Int, p1: Int) {
                             Log.d("EMV_LOG", "On Input: $p0, $p1")
                         }
@@ -630,7 +632,10 @@ class EMV {
                                 EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
                             } else {
                                 Log.d("EMV_APP", "PinBlock:" + p0.contentToString())
-                                EmvNfcKernelApi.getInstance().sendPinEntry()
+                                if(isOnlinePin)
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(0)
+                                else
+                                    EmvNfcKernelApi.getInstance().sendPinEntry()
                             }
                         }
 

@@ -27,6 +27,14 @@ class PaymentServiceRepository @Inject constructor():
         PaymentConfigurationHandler.initPaymentSDK(context,this)
     }
 
+    override suspend fun startPayment(
+        context: Context,
+        iResultProviderListener: IResultProviderListener
+    ) {
+        this.iResultProviderListener = iResultProviderListener
+        PaymentConfigurationHandler.startPayment(context,this)
+    }
+
     override fun onPMTRespHandler(uiData: String) {
         /* Just for testing comparing with uiData value */
         if(uiData=="SUCCESS")

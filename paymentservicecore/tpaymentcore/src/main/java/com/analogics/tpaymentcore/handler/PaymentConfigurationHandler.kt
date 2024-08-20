@@ -22,8 +22,12 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
         context: Context,
         iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
     ) {
-        EMV.startPayment(context);
-        iPaymentCoreHandlerListener.onPMTRespHandler("Hello this is the UI data")
+        try {
+            EMV.startPayment(context);
+            iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+        } catch (exception: Exception) {
+            iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
+        }
     }
 
     override fun handlePaymentEvent() {

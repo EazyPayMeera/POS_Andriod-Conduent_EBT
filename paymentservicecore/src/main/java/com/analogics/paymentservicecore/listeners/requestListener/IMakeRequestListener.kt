@@ -7,4 +7,5 @@ import com.analogics.paymentservicecore.listeners.responseListener.IResultProvid
 interface IMakeRequestListener {
     suspend fun getUserListAPI(iResultProviderListener: IResultProviderListener)
     suspend fun initPaymentSDK(context: Context, iResultProviderListener: IResultProviderListener)
+    suspend fun startPayment(context: Context, iResultProviderListener: IResultProviderListener)
 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,10 +24,13 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
@@ -34,6 +38,23 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = Authorisation.isAuthcap
+    val viewModel: CardDetectViewModel = viewModel()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    suspend fun startPayment()
+    {
+        viewModel.startPayment(context,object : IResultProviderListener{
+            override fun onSuccess(result: Any?) {
+
+            }
+
+            override fun onFailure(exception: Exception) {
+
+            }
+
+        })
+    }
 
     Column {
 
@@ -200,4 +221,9 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+           startPayment()
+    }
+
 }
