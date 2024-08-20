@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,10 +43,9 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun OnBoardSlideView(navHostController: NavHostController,viewModel: OnBoardingScreenViewModel= viewModel()) {
+fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoardingScreenViewModel = viewModel()) {
     val pagerState = rememberPagerState(initialPage = 0)
     val imageSlider = listOf(
         OnBoardingContentList(
@@ -88,22 +88,39 @@ fun OnBoardSlideView(navHostController: NavHostController,viewModel: OnBoardingS
             ShowCardView(pagerState, page, imageSlider, navHostController)
         }
 
-        // Static HorizontalPagerIndicator
+        // "Skip" text and HorizontalPagerIndicator
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = MaterialTheme.dimens.DP_120_CompactMedium)
+                .padding(bottom = MaterialTheme.dimens.DP_120_CompactMedium) // Adjust padding as needed
         ) {
-            HorizontalPagerIndicator(
-                pagerState = pagerState,
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium)
-            )
+                    .align(Alignment.BottomCenter),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextView(
+                    text = stringResource(id = R.string.skip),
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium), // Adjust padding
+                    textAlign = TextAlign.Center,
+                    onClick = { navHostController.navigate(AppNavigationItems.LoginScreen.route) }
+                )
+
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium)
+                )
+            }
         }
 
         // "Get Started" button only on the third page
         if (pagerState.currentPage == 2) {
-
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -132,8 +149,9 @@ fun ShowCardView(
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium),
         elevation = MaterialTheme.dimens.DP_4_CompactMedium,
         backgroundColor = Color.White, // Card background color
-        modifier = Modifier.fillMaxHeight()
-        .padding(MaterialTheme.dimens.DP_15_CompactMedium)
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(MaterialTheme.dimens.DP_15_CompactMedium)
     ) {
         Column(
             modifier = Modifier

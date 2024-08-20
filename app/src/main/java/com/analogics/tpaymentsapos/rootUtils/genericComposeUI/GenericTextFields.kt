@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,13 +25,10 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -68,7 +64,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -87,7 +82,6 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -103,10 +97,12 @@ fun InputTextField(
     placeHolder: String = "",
     icon: ImageVector = Icons.Default.Person,
     keyboardType: KeyboardType = KeyboardType.Text,
-    keyboardActions: (KeyboardActionScope.() -> Unit)? = KeyboardActions.Default.onNext,
-    isPasswordField: Boolean = false // Parameter to indicate if it's a password field
+    keyboardActions: (KeyboardActionScope.() -> Unit)? = null, // Changed to nullable
+    isPasswordField: Boolean = false,
+    placeholderColor: Color = Color.Gray,
+    onActionDone: (() -> Unit)? = null // Added onActionDone parameter
 ) {
-    var isPasswordVisible by remember { mutableStateOf(!isPasswordField) } // Default visibility
+    var isPasswordVisible by remember { mutableStateOf(!isPasswordField) }
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
@@ -117,16 +113,16 @@ fun InputTextField(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp), // Set fixed size for leading icon
-                tint = Color.Black // Set icon color to black
+                modifier = Modifier.size(24.dp),
+                tint = Color.Black
             )
         },
         trailingIcon = {
             if (isPasswordField) {
                 val visibilityIcon = if (isPasswordVisible) {
-                    Icons.Default.Visibility // Show password
+                    Icons.Default.Visibility
                 } else {
-                    Icons.Default.VisibilityOff // Hide password
+                    Icons.Default.VisibilityOff
                 }
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     Icon(imageVector = visibilityIcon, contentDescription = null)
@@ -135,28 +131,33 @@ fun InputTextField(
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = keyboardType,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Done // Set to Done action
         ),
         keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+            onDone = { onActionDone?.invoke() } // Call onActionDone when Done is pressed
         ),
-        placeholder = { Text(placeHolder) },
+        placeholder = {
+            Text(text = placeHolder, color = placeholderColor)
+        },
         label = { Text(label) },
         singleLine = true,
         visualTransformation = if (isPasswordField && !isPasswordVisible) {
-            PasswordVisualTransformation() // Hide password
+            PasswordVisualTransformation()
         } else {
-            VisualTransformation.None // Show password
+            VisualTransformation.None
         },
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
-            unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
-            focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
-            unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+            focusedBorderColor = Color(0xFFFFA500),
+            unfocusedBorderColor = Color.LightGray,
+            focusedLabelColor = Color(0xFFFFA500),
+            unfocusedLabelColor = Color.LightGray
         )
     )
 }
+
+
 
 
 
@@ -622,6 +623,7 @@ object TransactionState {
     var isPurchase: Boolean = false
     var isPreauth: Boolean = false
     var isTransaction: Boolean = false
+    var isAuthcap: Boolean = false
 }
 
 object Authorisation {
@@ -766,7 +768,7 @@ fun CardWithImageText(
                 .fillMaxWidth() // Fills the width available
                 .padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 10.dp)
         ) {
-            Image(imageId = imageResId,
+            ImageView(imageId = imageResId,
                 modifier = Modifier
                     .size(40.dp) // Adjust the size as needed
                     .align(Alignment.CenterHorizontally) // Center the image
@@ -983,7 +985,7 @@ fun SmallSurface(
 
 
 @Composable
-fun Image(
+fun ImageView(
     imageId: Int,
     size: Dp = 70.dp,
     shape: Shape = RectangleShape,

@@ -12,6 +12,7 @@
     <string name="quick_and_easy_payments">Quick and easy payments</string>
     <string name="creating_pay">Creating a seamless payment experience is crucial for user satisfaction and conversio</string>
     <string name="get_started">Get Started</string>
+    <string name="skip">Skip</string>
 
     //Login
     <string name="plz_login">Please login to continue</string>
@@ -19,8 +20,8 @@
     <string name="forget_pswd">Forgot Password?</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="placehldr_username">Please enter Username</string>
-    <string name="placehldr_password">Please enter Password</string>
+    <string name="placehldr_username">Please Enter Username</string>
+    <string name="placehldr_password">Please Enter Password</string>
 
     //Dashboard
 
@@ -62,6 +63,8 @@
     <string name="decline_u">DECLINE</string>
     <string name="done">Done</string>
     <string name="training">Training</string>
+    <string name="printing">Printing</string>
+    <string name="merchant_recp">Merchant Receipt</string>
     <string name="enter_tip_amount">Enter the Tip Amount</string>
     <string name="amount">Amount</string>
     <string name="adjust">Adjust</string>
@@ -114,8 +117,10 @@
     <string name="enable_tipping">Enable Tipping</string>
     <string name="taxes">Taxes</string>
     <string name="adjust_per">Adjust %</string>
-
-    <!-- Payment SDK Strings -->
+	
+    <string name="is_correct">Is this information correct?</string>
+	
+	<!-- Payment SDK Strings -->
     <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
     <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
 

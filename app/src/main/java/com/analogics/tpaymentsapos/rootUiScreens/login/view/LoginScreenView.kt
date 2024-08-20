@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
@@ -27,15 +25,13 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Image
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
@@ -70,7 +66,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
                         .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
                 ) {
-                    Image(
+                    ImageView(
                         imageId =  R.drawable.unlock, // Decorative image
                         size = MaterialTheme.dimens.DP_40_CompactMedium     )
 
@@ -88,7 +84,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         label = stringResource(id = R.string.username),
                         placeHolder = stringResource(id = R.string.placehldr_username),
                         icon = Icons.Outlined.Person,
-                        keyboardType = KeyboardType.Text
+                        keyboardType = KeyboardType.Uri
                     )
 
                     InputTextField(
@@ -98,9 +94,12 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         label = stringResource(id = R.string.password),
                         placeHolder = stringResource(id = R.string.placehldr_password),
                         icon = Icons.Outlined.Lock,
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Uri,
                         isPasswordField = true,
-                        keyboardActions = KeyboardActions.Default.onDone
+                        keyboardActions = KeyboardActions.Default.onDone,
+                        onActionDone = {
+                            viewModel.onLoginClick(navHostController,context)
+                        }
                     )
 
                     // "Forgot Password?" clickable text

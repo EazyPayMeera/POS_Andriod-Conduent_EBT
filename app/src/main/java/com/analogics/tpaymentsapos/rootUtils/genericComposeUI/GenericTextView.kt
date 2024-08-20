@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -27,22 +28,30 @@ fun TextView(
     color: Color = Color.Black, // Default color
     fontWeight: FontWeight = FontWeight.Normal, // Default font weight
     maxLines: Int = Int.MAX_VALUE,
-    modifier: Modifier = Modifier, // Default modifie
+    modifier: Modifier = Modifier, // Default modifier
     style: TextStyle = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
     textAlign: TextAlign = TextAlign.Start,
-    fontFamily: FontFamily = Roboto
+    fontFamily: FontFamily = Roboto,
+    onClick: (() -> Unit)? = null // Optional onClick
 ) {
+    val clickableModifier = if (onClick != null) {
+        modifier.clickable { onClick() }
+    } else {
+        modifier
+    }
+
     Text(
         text = text,
         fontSize = fontSize,
         color = color,
         fontWeight = fontWeight,
         maxLines = maxLines,
-        modifier = modifier,
+        modifier = clickableModifier,
         style = style,
         textAlign = textAlign
     )
 }
+
 
 @Composable
 fun GenericCard(
