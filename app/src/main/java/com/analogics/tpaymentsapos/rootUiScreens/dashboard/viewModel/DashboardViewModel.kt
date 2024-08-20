@@ -1,10 +1,12 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.compose.runtime.State
-
+import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 
 
 class DashboardViewModel : ViewModel() {
@@ -22,5 +24,10 @@ class DashboardViewModel : ViewModel() {
 
     fun resetSelection() {
         _selectedButton.value = null
+    }
+
+    suspend fun initPaymentSDK(context: Context, iResultProviderListener: IResultProviderListener)
+    {
+        PaymentServiceRepository().initPaymentSDK(context,iResultProviderListener)
     }
 }

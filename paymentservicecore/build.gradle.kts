@@ -50,7 +50,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51")
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     //   implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-    implementation(project(":paymentservicecore:tpaymentcore"))
-    implementation(project(":paymentservicecore:networkservicecore"))
+    api(project(":paymentservicecore:tpaymentcore"))
+    api(project(":paymentservicecore:networkservicecore"))
     kapt(libs.androidx.hilt.compiler)
 }

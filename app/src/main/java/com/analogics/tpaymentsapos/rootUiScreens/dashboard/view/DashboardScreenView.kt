@@ -1,6 +1,9 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -12,12 +15,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
@@ -30,6 +35,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 
 @Composable
@@ -101,15 +108,46 @@ fun TrainingView(
     onMenuItemClick: (String) -> Unit
 ) {
     val selectedButton = dashboardViewModel.selectedButton.value
-
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
+    val hasSDKInit = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     // Function to handle drawer open and close
     fun toggleDrawer(open: Boolean) {
         coroutineScope.launch {
             if (open) drawerState.open() else drawerState.close()
         }
+    }
+
+    fun initPaymentSDK(context : Context) {
+        Timer("initSDK").schedule(500) {
+            coroutineScope.launch {
+                dashboardViewModel.initPaymentSDK(context, object : IResultProviderListener {
+                    override fun onSuccess(result: Any?) {
+                        if (result?.equals(true) == true)
+                            Toast.makeText(
+                                context,
+                                R.string.emv_sdk_init_success,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        else
+                            Toast.makeText(
+                                context,
+                                R.string.emv_sdk_init_failure,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                    }
+
+                    override fun onFailure(exception: Exception) {
+                        Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
+                            .show()
+                        Log.e("EMV_APP", exception.message.toString())
+                    }
+                })
+            }
+        }
+        hasSDKInit.value = true
     }
 
     ModalDrawer(
@@ -149,6 +187,10 @@ fun TrainingView(
             }
         )
     }
+
+    /* Initialize Payment SDK */
+    if(!hasSDKInit.value)
+        initPaymentSDK(context)
 }
 
 
