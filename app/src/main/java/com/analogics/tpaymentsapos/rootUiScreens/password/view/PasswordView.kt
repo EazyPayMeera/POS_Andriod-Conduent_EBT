@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -52,7 +53,7 @@ fun PasswordView(navHostController: NavHostController) {
         )
 
         GenericCard(
-            modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,

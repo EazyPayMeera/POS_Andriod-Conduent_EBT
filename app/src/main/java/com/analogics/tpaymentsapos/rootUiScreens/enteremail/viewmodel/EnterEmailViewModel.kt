@@ -18,7 +18,7 @@ class EnterEmailViewModel : ViewModel() {
 
     fun navigateToAmountScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.AmountScreen.route)
+            navHostController.navigate(AppNavigationItems.EmailScreen.createRoute(_email.value))
         }
     }
 

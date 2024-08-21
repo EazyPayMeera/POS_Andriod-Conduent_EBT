@@ -48,7 +48,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         )
 
         GenericCard(
-            modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            modifier = Modifier.padding(19.dp)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
