@@ -132,7 +132,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                         ) {
                             // Icon inside the button
                             Icon(
-                                painter = painterResource(id = R.drawable.upi), // Replace with your image resource
+                                painter = painterResource(id = R.drawable.new_upi), // Replace with your image resource
                                 contentDescription = null, // Decorative image
                                 modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium) // Adjust size as needed
                             )

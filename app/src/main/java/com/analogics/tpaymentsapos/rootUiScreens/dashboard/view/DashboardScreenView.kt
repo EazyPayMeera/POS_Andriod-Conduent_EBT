@@ -25,6 +25,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardVi
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
@@ -115,9 +116,10 @@ fun TrainingView(
     ModalDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerContent(
+            CustomDrawerContent(
                 navHostController = navHostController,
-                onMenuItemClick = onMenuItemClick
+                onMenuItemClick = onMenuItemClick,
+                onCloseDrawer = { /* Code to close the drawer */ }
             )
         }
     ) {
