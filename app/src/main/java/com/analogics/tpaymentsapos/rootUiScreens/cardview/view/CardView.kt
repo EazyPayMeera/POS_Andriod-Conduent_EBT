@@ -14,12 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -36,6 +41,26 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = Authorisation.isAuthcap
+    val viewModel: CardViewModel = viewModel()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    suspend fun startPayment()
+    {
+        viewModel.startPayment(context,object : IResultProviderListener {
+
+            override fun onSuccess(result: Any?) {
+                if(result?.equals(true)==true)
+                    viewModel.navigateToApprovalScreen(navHostController)
+                else
+                    viewModel.navigateToDeclinedScreen(navHostController)
+            }
+
+            override fun onFailure(exception: Exception) {
+                viewModel.navigateToDeclinedScreen(navHostController)
+            }
+        })
+    }
 
     Column {
 
@@ -195,6 +220,9 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                 }
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        startPayment()
     }
 }
 

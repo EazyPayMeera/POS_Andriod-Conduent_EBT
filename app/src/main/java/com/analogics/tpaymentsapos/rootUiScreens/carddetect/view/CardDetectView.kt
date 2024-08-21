@@ -42,19 +42,6 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    suspend fun startPayment()
-    {
-        viewModel.startPayment(context,object : IResultProviderListener{
-            override fun onSuccess(result: Any?) {
-
-            }
-
-            override fun onFailure(exception: Exception) {
-
-            }
-
-        })
-    }
 
     // Use LaunchedEffect to handle the delay and navigation
     LaunchedEffect(Unit) {
@@ -191,11 +178,6 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
             }
         }
     }
-
-    LaunchedEffect(Unit) {
-           startPayment()
-    }
-
 }
 
 

@@ -19,9 +19,4 @@ class CardDetectViewModel : ViewModel() {
             navHostController.navigate(AppNavigationItems.PinScreen.route) // Navigate to the desired screen
         }
     }
-
-    suspend fun startPayment(context: Context, iResultProviderListener: IResultProviderListener)
-    {
-        PaymentServiceRepository().startPayment(context,iResultProviderListener)
-    }
 }

@@ -23,8 +23,7 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
         iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
     ) {
         try {
-            EMV.startPayment(context);
-            iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+            EMV.startPayment(context,iPaymentCoreHandlerListener);
         } catch (exception: Exception) {
             iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
         }
