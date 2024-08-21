@@ -42,6 +42,7 @@ fun InvoiceView(navHostController: NavHostController) {
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = TransactionState.isAuthcap
 
+
     Column {
         CommonTopAppBar(
             title = when {
@@ -54,7 +55,7 @@ fun InvoiceView(navHostController: NavHostController) {
         )
 
         GenericCard(
-            modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,

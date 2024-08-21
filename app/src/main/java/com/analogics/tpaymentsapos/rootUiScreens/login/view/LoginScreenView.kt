@@ -47,11 +47,10 @@ fun LoginScreenView(navHostController: NavHostController?) {
             AppHeader(
                 title = stringResource(id = R.string.login),
                 onBackButtonClick = { /* Handle back button click if needed */ },
-                icon1 = R.drawable.baseline_menu_24, // Use a default icon for the menu
-                onIcon1Click = {},
-                isIcon1Visible = false,
+                icon1 = R.drawable.baseline_arrow_back_24,
+                onIcon1Click = {  },
                 backgroundColor = Color.White,
-                isIcon2Visible = false // No second icon needed for this screen
+                isIcon2Visible = false
             )
         },
         content = { padding ->

@@ -31,6 +31,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -83,7 +84,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = "₹${formatAmount(totalAmount)}",
+                    text = "₹${formatAmountdouble(totalAmount)}",
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -118,7 +119,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                 TextView(
-                    text = "${stringResource(id = R.string.tnx_amount)} .........................₹${formatAmount(amountDouble)}",
+                    text = "${stringResource(id = R.string.tnx_amount)}₹${formatAmountdouble(amountDouble)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -127,7 +128,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 )
 
                 TextView(
-                    text = "${stringResource(id = R.string.tip_amt)} ......................................₹${formatAmount(tipAmount)}",
+                    text = "${stringResource(id = R.string.tip_amt)}₹${formatAmountdouble(tipAmount)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -135,7 +136,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = "${stringResource(id = R.string.sgst_amt)} ......................................₹${formatAmount(sgstAmount)}",
+                    text = "${stringResource(id = R.string.sgst_amt)}₹${formatAmountdouble(sgstAmount)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -143,7 +144,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = "${stringResource(id = R.string.igst_amt)} .......................................₹${formatAmount(igstAmount)}",
+                    text = "${stringResource(id = R.string.igst_amt)}₹${formatAmountdouble(igstAmount)}",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -204,7 +205,9 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(formatAmount(totalAmount))) }
+            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(
+                formatAmountdouble(totalAmount)
+            )) }
         )
     }
 
