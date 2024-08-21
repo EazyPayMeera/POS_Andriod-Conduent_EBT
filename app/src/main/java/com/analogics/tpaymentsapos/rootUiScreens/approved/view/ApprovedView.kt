@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentcore.Printer.MyPrinterListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
@@ -34,6 +35,17 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
+
+
+
+import com.analogics.tpaymentcore.Printer.Printer
+import com.analogics.tpaymentcore.Printer.PrinterImpl
+import com.analogics.tpaymentcore.Printer.PrinterInitListener
+
+import com.analogics.tpaymentcore.Printer.MyPrinterStatusListener
+import com.analogics.tpaymentcore.Printer.PrinterConstant
+import com.analogics.tpaymentcore.Printer.PrinterListener
+import com.analogics.tpaymentcore.Printer.PrinterStatusListener
 
 @Composable
 fun CircularMenu(
@@ -194,7 +206,8 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 "Customer Receipt" -> {
-                                    // Handle E-RECEIPT click, e.g., navigate to a different screen
+
+
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
                                 "Merchant Receipt" -> {

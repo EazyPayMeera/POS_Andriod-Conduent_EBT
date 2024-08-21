@@ -20,17 +20,31 @@ fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmoun
 }
 
 
-fun formatAmount(amount: Double): String {
+fun formatAmountdouble(amount: Double): String {
     val decimalFormat = DecimalFormat("#.00")
     return decimalFormat.format(amount)
 }
 
 fun formatAmount(input: String): String {
-    return if (input.isEmpty()) {
-        "0.00"
+
+    if (input.isEmpty()) {
+        return "0.00"
+    }
+    val numericValue = input.toDouble()
+
+    val doubleValue = numericValue / 100
+
+    val format = DecimalFormat("#0.00")
+    val formattedValue = format.format(doubleValue)
+
+    val maxDigits = 13
+    val totalDigits = formattedValue.replace(".", "").length
+
+    return if (totalDigits <= maxDigits) {
+        formattedValue
     } else {
-        val doubleValue = input.toDouble() / 100
-        DecimalFormat("#0.00").format(doubleValue)
+        val truncatedValue = formattedValue.substring(0, maxDigits - 3) + ".00" // Adjust according to decimal precision
+        truncatedValue
     }
 }
 
