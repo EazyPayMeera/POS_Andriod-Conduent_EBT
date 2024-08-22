@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+import android.content.SharedPreferences
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -22,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.analogics.tpaymentcore.Printer.MyPrinterListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
@@ -38,20 +38,13 @@ import kotlin.math.sin
 
 
 
-import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentcore.Printer.PrinterImpl
-import com.analogics.tpaymentcore.Printer.PrinterInitListener
-
-import com.analogics.tpaymentcore.Printer.MyPrinterStatusListener
-import com.analogics.tpaymentcore.Printer.PrinterConstant
-import com.analogics.tpaymentcore.Printer.PrinterListener
-import com.analogics.tpaymentcore.Printer.PrinterStatusListener
 
 @Composable
 fun CircularMenu(
     onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
+
     val menuOptions = listOf("Customer Receipt", "Merchant Receipt", "E-RECEIPT")
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
@@ -59,6 +52,9 @@ fun CircularMenu(
 
     val printButtonInitialColor = colorResource(id = R.color.purple_200)
     var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
+
+
+// Store values
 
     LaunchedEffect(expanded) {
         distance.animateTo(

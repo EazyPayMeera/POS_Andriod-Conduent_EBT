@@ -32,55 +32,6 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.ui.theme.dimens
-
-
-@Composable
-fun DrawerContent(
-    navHostController: NavHostController,
-    onMenuItemClick: (String) -> Unit
-) {
-    Column {
-        DrawerMenuItem(Icons.Default.ArrowForward,"Settings") {
-            onMenuItemClick("Settings")
-            navHostController.navigate(AppNavigationItems.SettingsScreen.route)
-        }
-        DrawerMenuItem(Icons.Default.ArrowForward,"Option") {
-            onMenuItemClick("Option")
-            navHostController.navigate(AppNavigationItems.SettingsScreen.route)
-        }
-    }
-}
-
-
-@Composable
-fun DrawerItem(label: String, onClick: () -> Unit) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.dimens.DP_15_CompactMedium),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ImageView(
-                imageId = R.drawable.config_tax,
-                size = MaterialTheme.dimens.DP_30_CompactMedium)
-
-
-            TextView(
-                text = label,
-                fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-        }
-
-     ImageView(imageId = R.drawable.rightarrow,size = MaterialTheme.dimens.DP_30_CompactMedium)
-    }
-}
 @Composable
 fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostController,
                         onMenuItemClick: (String) -> Unit) {

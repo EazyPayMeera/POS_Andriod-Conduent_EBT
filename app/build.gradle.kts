@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime.android)
     implementation(libs.androidx.core.animation)
+    implementation(project(":paymentservicecore:securityframework"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
