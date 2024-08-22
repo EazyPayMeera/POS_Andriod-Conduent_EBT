@@ -71,7 +71,7 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             label = "Set Language",
             function = {
                 onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                navHostController.navigate(AppNavigationItems.LanguageScreen.route)
             }
         )
         DrawerMenuItem(
@@ -79,7 +79,7 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             label = "Change Password",
             function = {
                 onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
             }
         )
         DrawerMenuItem(
@@ -87,7 +87,7 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             label = "Configuration",
             function = {
                 onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
             }
         )
     }
@@ -99,7 +99,7 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp)
-            .clickable { /* Handle item click */ },
+            .clickable { function() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
