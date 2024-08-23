@@ -32,7 +32,11 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
     }
 
     override fun handlePaymentEvent() {
-        TODO("Not yet implemented")
+
+    }
+
+    override fun onConfigPMTRes() {
+
     }
 
 }
