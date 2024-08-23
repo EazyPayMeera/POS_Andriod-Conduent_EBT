@@ -1,6 +1,6 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
-import OrangeColor
+
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,39 +21,45 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -64,8 +70,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.ImageLoader
@@ -75,75 +82,124 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.analogics.tpaymentsapos.R
-import kotlinx.coroutines.launch
+import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 @Composable
-
 fun InputTextField(
     inputValue: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Username",
-    placeHolder: String = "Username",
+    label: String = "",
+    placeHolder: String = "",
     icon: ImageVector = Icons.Default.Person,
-    keyboardType: KeyboardType
-)
-{
+    keyboardType: KeyboardType = KeyboardType.Text,
+    keyboardActions: (KeyboardActionScope.() -> Unit)? = null, // Changed to nullable
+    isPasswordField: Boolean = false,
+    placeholderColor: Color = Color.Gray,
+    onActionDone: (() -> Unit)? = null // Added onActionDone parameter
+) {
+    var isPasswordVisible by remember { mutableStateOf(!isPasswordField) }
     val focusManager = LocalFocusManager.current
-    val leadingIcon = @Composable {
-        Icon(
-            Icons.Default.Person,
-            contentDescription = "",
-            tint = MaterialTheme.colorScheme.primary
-        )
-    }
 
     OutlinedTextField(
         value = inputValue,
-         onValueChange = onChange,
+        onValueChange = onChange,
         modifier = modifier,
-        leadingIcon = leadingIcon,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = Color.Black
+            )
+        },
+        trailingIcon = {
+            if (isPasswordField) {
+                val visibilityIcon = if (isPasswordVisible) {
+                    Icons.Default.Visibility
+                } else {
+                    Icons.Default.VisibilityOff
+                }
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    Icon(imageVector = visibilityIcon, contentDescription = null)
+                }
+            }
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done // Set to Done action
         ),
-        placeholder = { Text(placeHolder) },
+        keyboardActions = KeyboardActions(
+            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+            onDone = { onActionDone?.invoke() } // Call onActionDone when Done is pressed
+        ),
+        placeholder = {
+            Text(text = placeHolder, color = placeholderColor)
+        },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = if (isPasswordField && !isPasswordVisible) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
+        shape = RoundedCornerShape(12.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0xFFFFA500),
+            unfocusedBorderColor = Color.LightGray,
+            focusedLabelColor = Color(0xFFFFA500),
+            unfocusedLabelColor = Color.LightGray
+        )
     )
 }
 
 
+
+
+
 @Composable
-fun AppButton(onClick:()->Unit,
-              title:String)
-{
+fun AppButton(
+    onClick: () -> Unit,
+    title: String,
+    image: Painter? = null // Optional parameter for the image
+) {
     Box(
-        contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
             .width(248.dp)
-            .padding( bottom = 20.dp)
-            .background(colorResource(R.color.purple_200),shape = RoundedCornerShape(10.dp))
-
+            .padding(bottom = 20.dp)
+            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
     )
     {
-        Button(modifier = Modifier.wrapContentSize(),
+        Button(onClick = onClick,
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(horizontal = 8.dp),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
             ),
-            onClick = onClick) {
-            Text(
-                text = title,
-            )
+            ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                image?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(28.dp) // Adjust size as needed
+                            .clip(CircleShape) // Make the image round
+                            .padding(end = 12.dp) // Space between image and text
+                    )
+                }
+                Text(text = title)
+            }
         }
     }
 }
@@ -166,18 +222,27 @@ fun CustomSurface(
     modifier: Modifier = Modifier,
     content: @Composable (ColumnScope.() -> Unit)? = null // New parameter for custom content
 ) {
+
+    // Create a FocusRequester instance
+    val focusRequester = remember { FocusRequester() }
+
     // Define height and width based on the isRefund flag
     val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
-    val surfaceWidth = if (isRefund) 430.dp else if (isVoid || isAuthcap) 430.dp else 430.dp
+    val surfaceWidth = 410.dp
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Surface(
         color = Color.White,
         modifier = modifier
-            .padding(25.dp)
+            .padding(16.dp)
             .fillMaxWidth()
             .height(surfaceHeight)
             .width(surfaceWidth),
-        shape = RoundedCornerShape(18.dp)
+        shape = RoundedCornerShape(18.dp),
+        shadowElevation = 8.dp
     ) {
         Column(
             modifier = Modifier
@@ -220,9 +285,16 @@ fun CustomSurface(
                 ),
                 visualTransformation = visualTransformation,
                 modifier = modifier
+                    .focusRequester(focusRequester)
                     .padding(2.dp)
                     .width(280.dp)
-                    .height(70.dp)
+                    .height(70.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+                    unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
+                    focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+                    unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+                )
             )
 
             // Custom content
@@ -268,7 +340,7 @@ fun CommonTopAppBar(
 @Composable
 fun CommonLayout(
     title: String,
-    imageResId: Int,
+    imageResId: Int? = null,
     contentDescription: String? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -281,9 +353,9 @@ fun CommonLayout(
         Surface(
             color = Color(0xFFF7931E), // Orange color for the outer Surface
             modifier = Modifier
-                .padding(25.dp) // Padding for the outer Surface
+                .padding(16.dp) // Padding for the outer Surface
                 .height(540.dp) // Adjust the height as per your requirement
-                .width(430.dp), // Adjust the width as per your requirement
+                .width(410.dp), // Adjust the width as per your requirement
             shape = RoundedCornerShape(18.dp) // Rounded corners for the outer Surface
         ) {
             Box( // Use Box to apply shadow before Surface
@@ -309,14 +381,16 @@ fun CommonLayout(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start // Align content to the start
                     ) {
-                        Image(
-                            painter = painterResource(id = imageResId),
-                            contentDescription = contentDescription,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(bottom = 16.dp)
-                                .align(Alignment.End) // Align the image to the end
-                        )
+                        imageResId?.let {
+                            Image(
+                                painter = painterResource(id = it),
+                                contentDescription = contentDescription,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(bottom = 16.dp)
+                                    .align(Alignment.End) // Align the image to the end
+                            )
+                        }
                         content()
                     }
                 }
@@ -333,8 +407,8 @@ fun OkButton(onClick:()->Unit,
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
             .width(248.dp)
-            .padding( bottom = 20.dp)
-            .background(colorResource(R.color.grey),shape = RoundedCornerShape(10.dp))
+            .padding(bottom = 20.dp)
+            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp))
 
     )
     {
@@ -378,12 +452,10 @@ fun SettingsMiddleSurface(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
     color: Color = MaterialTheme.colorScheme.background,
-    height: Dp, // Added customizable height parameter
     content: @Composable () -> Unit
 ) {
     Surface(
         modifier = modifier
-            .height(height) // Applying customizable height
             .shadow(
                 elevation = elevation,
             ),
@@ -424,46 +496,132 @@ fun SettingsLowerSurface(
 }
 
 @Composable
-fun ConfirmationButton(
-    onClick: () -> Unit,
-    title: String
+fun FooterButtons(
+    firstButtonTitle: String,
+    firstButtonOnClick: () -> Unit,
+    secondButtonTitle: String,
+    secondButtonOnClick: () -> Unit
 ) {
     Box(
-        contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
-            .width(126.dp) // Set the width of the Box
-            .padding(bottom = 20.dp) // Bottom padding
-            .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Add shadow with rounded corners
-            .background(
-                color = colorResource(R.color.white),
-                shape = RoundedCornerShape(10.dp)
-            )
+            .fillMaxSize()
+            .padding(bottom = 24.dp) // Adjust padding as needed
     ) {
-        Button(
-            onClick = onClick,
+        Row(
             modifier = Modifier
-                .fillMaxWidth() // Make the button fill the width of the Box
-                .height(48.dp), // Set a fixed height for the button
-            shape = RoundedCornerShape(10.dp), // Rounded corners for the button
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color.Black, // Text color
-                containerColor = colorResource(R.color.grey) // Background color
-            ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 8.dp, // Default elevation
-                pressedElevation = 12.dp, // Elevation when the button is pressed
-                hoveredElevation = 6.dp, // Elevation when the button is hovered
-                focusedElevation = 10.dp // Elevation when the button is focused
-            )
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(vertical = 16.dp), // Adjust vertical padding if needed
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(
-                text = title,
-                color = Color.Black, // Text color
-                style = MaterialTheme.typography.bodyMedium // Use a common typography style
-            )
+            var isFirstButtonPressed by remember { mutableStateOf(false) }
+            var isSecondButtonPressed by remember { mutableStateOf(false) }
+
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier
+                    .width(126.dp)
+                    .padding(bottom = 20.dp)
+                    .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                    .background(
+                        color = colorResource(R.color.white),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            ) {
+                Button(
+                    onClick = {
+                        isFirstButtonPressed = true
+                        firstButtonOnClick()
+                    },
+                    modifier = Modifier
+                        .width(130.dp)
+                        .height(48.dp)
+                        .border(
+                            width = if (isFirstButtonPressed) 2.dp else 0.dp,
+                            color = if (isFirstButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.Black,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 12.dp,
+                        hoveredElevation = 6.dp,
+                        focusedElevation = 10.dp
+                    )
+                ) {
+                    Text(
+                        text = firstButtonTitle,
+                        color = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            LaunchedEffect(isFirstButtonPressed) {
+                if (isFirstButtonPressed) {
+                    kotlinx.coroutines.delay(100)
+                    isFirstButtonPressed = false
+                }
+            }
+
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier
+                    .width(126.dp)
+                    .padding(bottom = 20.dp)
+                    .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                    .background(
+                        color = colorResource(R.color.white),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            ) {
+                Button(
+                    onClick = {
+                        isSecondButtonPressed = true
+                        secondButtonOnClick()
+                    },
+                    modifier = Modifier
+                        .width(130.dp)
+                        .height(48.dp)
+                        .border(
+                            width = if (isSecondButtonPressed) 2.dp else 0.dp,
+                            color = if (isSecondButtonPressed) Color(0xFFFFA500) else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = Color.Black,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 12.dp,
+                        hoveredElevation = 6.dp,
+                        focusedElevation = 10.dp
+                    )
+                ) {
+                    Text(
+                        text = secondButtonTitle,
+                        color = Color.Black,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            LaunchedEffect(isSecondButtonPressed) {
+                if (isSecondButtonPressed) {
+                    kotlinx.coroutines.delay(100)
+                    isSecondButtonPressed = false
+                }
+            }
         }
     }
 }
+
 
 
 object TransactionState {
@@ -472,6 +630,7 @@ object TransactionState {
     var isPurchase: Boolean = false
     var isPreauth: Boolean = false
     var isTransaction: Boolean = false
+    var isAuthcap: Boolean = false
 }
 
 object Authorisation {
@@ -588,48 +747,45 @@ fun PreauthTypeSelectionSurface(
         }
     }
 }
-
-
 @Composable
-fun IconButtonWithText(
+fun CardWithImageText(
     text: String,
-    icon: Painter,
+    imageResId: Int,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    androidx.compose.material.Button(
-        onClick = onClick,
-        modifier = Modifier
-            .size(120.dp)
-            .padding(8.dp)
+    GenericCard(
+        modifier = modifier
+            .padding(start = 5.dp,)
+            .clickable(onClick = onClick)
             .border(
-                width = 2.dp,
-                color = if (isSelected) OrangeColor else Color.Transparent,
-                shape = RoundedCornerShape(10.dp)
+                width = 2.dp, // Adjust the border width as needed
+                color = if (isSelected) Color(0xFFFFA500) else Color.Transparent, // Orange color if selected, otherwise transparent
+                shape = RoundedCornerShape(8.dp)
             ),
-        colors = androidx.compose.material.ButtonDefaults.buttonColors(
-            backgroundColor = Color.White // Use backgroundColor parameter for compatibility
-        ),
-        shape = RoundedCornerShape(10.dp),
-        contentPadding = PaddingValues(0.dp)
+        backgroundColor = Color(0xFFF8F7F3),
+        elevation = 5.dp,
+        shape = RoundedCornerShape(10.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth() // Fills the width available
+                .padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 10.dp)
         ) {
-            androidx.compose.material.Icon(
-                painter = icon,
-                contentDescription = text,
+            ImageView(imageId = imageResId,
                 modifier = Modifier
-                    .size(40.dp)
-                    .padding(bottom = 4.dp),
-                tint = Color.Black
+                    .size(40.dp) // Adjust the size as needed
+                    .align(Alignment.CenterHorizontally) // Center the image
             )
-            androidx.compose.material.Text(text = text, color = Color.Black, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            TextView(text = text, fontSize = 15.sp)
         }
     }
 }
+
 
 @Composable
 fun GifImage(
@@ -658,89 +814,48 @@ fun GifImage(
 }
 
 
-
 @Composable
-fun MenuTopAppBar(
-    title: String,
-    onMenuItemClick: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    TopAppBar(
-        title = {
-            Text(text = title, color = Color.Black)
-        },
-        navigationIcon = {
-            IconButton(onClick = { expanded = true }) {
-                Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.Black)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onMenuItemClick("Settings")
-                }) {
-                    Text("Settings")
-                }
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onMenuItemClick("Option 2")
-                }) {
-                    Text("Option 2")
-                }
-            }
-        },
-        backgroundColor = Color.White
-    )
-}
-
-
-
-@Composable
-fun Appbarheader(
+fun AppHeader(
     title: String,
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
-    icon1: ImageVector = Icons.Default.ArrowBack,
-    icon2: ImageVector? = null,
+    icon1: Int? = null,
+    icon2: Int? = null,
     onIcon1Click: (() -> Unit)? = null,
     onIcon2Click: (() -> Unit)? = null,
+    isIcon1Visible: Boolean = true,
+    isIcon2Visible: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = {
             Text(
                 text = title,
+                color = Color.Black, // Ensure text color contrasts with the background
                 style = TextStyle(
-                    fontSize = 20.sp, // Fixed font size
-                    fontWeight = FontWeight.Bold // Fixed font weight
+                    fontSize = 20.sp, // Ensure font size is large enough
+                    fontWeight = FontWeight.Bold
                 )
             )
         },
         backgroundColor = backgroundColor,
         navigationIcon = {
-            if (onIcon1Click != null) {
-                Icon(
-                    imageVector = icon1,
-                    contentDescription = "icon1",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clickable { onIcon1Click() }
-                )
-            } else {
-                Icon(
-                    imageVector = icon1,
-                    contentDescription = "icon1",
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
+            if (isIcon1Visible) {
+                if (icon1 != null) {
+                    Image(
+                        painter = painterResource(id = icon1),
+                        contentDescription = "icon1",
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .clickable { onIcon1Click?.invoke() }
+                    )
+                }
             }
         },
         actions = {
-            if (icon2 != null) {
-                Icon(
-                    imageVector = icon2,
+            if (isIcon2Visible && icon2 != null) {
+                Image(
+                    painter = painterResource(id = icon2),
                     contentDescription = "icon2",
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
@@ -755,6 +870,204 @@ fun Appbarheader(
 
 
 
+// Added this function to add Bold Top text for UI In logout screen Amount Screen
+@Composable
+fun TopBoldText(
+    text: String,
+    fontSize: TextUnit = 24.sp // Default size if not provided
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
+        modifier = Modifier
+            .fillMaxWidth() // Ensures the Column takes the full width
+            .padding(top = 20.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize, // Use the provided fontSize
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
+    }
+}
+
+
+// Added function for Header Image
+@Composable
+fun HeaderImage(
+    imageName: String
+) {
+    val context = LocalContext.current
+    val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
+        modifier = Modifier
+            .fillMaxWidth() // Ensures the Column takes the full width
+            .padding(top = 20.dp)
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = null, // Decorative image
+            modifier = Modifier
+                .size(50.dp) // Default size
+
+        )
+    }
+}
 
 
 
+
+@Composable
+fun BackgroundScreen(componentView :@Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+            .shadow(
+                elevation = MaterialTheme.dimens.DP_5_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
+            )
+            .background(
+                Color(0xFFFC7519),
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
+            )
+    ) {
+        Card(
+            elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
+            backgroundColor= Color.White,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = MaterialTheme.dimens.DP_50_CompactMedium,
+                    start = MaterialTheme.dimens.DP_30_CompactMedium,
+                    end = MaterialTheme.dimens.DP_30_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_50_CompactMedium,
+                )
+                .align(Alignment.Center)
+        ) {
+            componentView()
+        }
+    }
+}
+
+
+
+
+@Composable
+fun SmallSurface(
+    modifier: Modifier = Modifier,
+    isRefund: Boolean = false,
+    isVoid: Boolean = false,
+    isAuthcap:Boolean = false,
+    content: (@Composable (ColumnScope.() -> Unit))? = null
+) {
+    val surfaceHeight = if (isRefund) 350.dp else if (isVoid || isAuthcap) 440.dp else 250.dp
+    val surfaceWidth = 410.dp
+
+    Surface(
+        color = Color.White,
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .height(surfaceHeight)
+            .width(surfaceWidth),
+        shape = RoundedCornerShape(18.dp),
+        shadowElevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Custom content, if available
+            content?.invoke(this)
+        }
+    }
+}
+
+
+@Composable
+fun ImageView(
+    imageId: Int,
+    size: Dp = 70.dp,
+    shape: Shape = RectangleShape,
+    alignment: Alignment = Alignment.Center, // Alignment parameter for usage within a Box
+    modifier: Modifier = Modifier,
+    contentDescription: String = "group 360",
+    contentScale: ContentScale = ContentScale.Crop,
+) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .then(modifier), // Apply any additional modifiers passed in
+        contentAlignment = alignment // Set the alignment within the Box
+    ) {
+        Image(
+            painter = painterResource(id = imageId),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape) // Apply the shape clipping to the image
+        )
+    }
+}
+
+@Composable
+fun OutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+    keyboardType: KeyboardType = KeyboardType.Text,
+    onDoneAction: () -> Unit = {},
+    isPassword: Boolean = false, // New parameter to indicate if it's a password field
+    visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+    modifier: Modifier = Modifier,
+) {
+    // Create a FocusRequester instance
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text("") }, // Label is always empty
+        placeholder = { Text(placeholder) },
+        textStyle = textStyle,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDoneAction() }
+        ),
+        visualTransformation = visualTransformation, // Use passed visualTransformation
+        modifier = modifier
+            .focusRequester(focusRequester)
+            .padding(2.dp)
+            .width(280.dp)
+            .height(70.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+            unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
+            focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+            unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+        )
+    )
+}
+
+
+@Composable
+@Preview
+fun abc()
+{
+
+}

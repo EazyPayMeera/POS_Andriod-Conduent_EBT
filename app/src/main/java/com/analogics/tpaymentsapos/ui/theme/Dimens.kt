@@ -7,11 +7,20 @@ import androidx.compose.ui.unit.sp
 
 data class Dimens(
     val extraSmall: Dp = 0.dp,
+    val DP_1_CompactMedium: Dp = 0.dp,
+    val DP_3_CompactMedium: Dp = 0.dp,
+    val DP_4_CompactMedium: Dp = 0.dp,
     val DP_10_CompactMedium: Dp = 0.dp,
+    val DP_11_CompactMedium: Dp = 0.dp,
     val DP_12_CompactMedium: Dp = 0.dp,
+    val DP_19_CompactMedium: Dp = 0.dp,
     val DP_20_CompactMedium: Dp = 0.dp,
+    val DP_21_CompactMedium: Dp = 0.dp,
     val DP_25_CompactMedium: Dp = 0.dp,
     val DP_30_CompactMedium: Dp = 0.dp,
+    val DP_33_CompactMedium: Dp = 0.dp,
+    val DP_31_CompactMedium: Dp = 0.dp,
+    val DP_34_CompactMedium: Dp = 0.dp,
     val DP_35_CompactMedium: Dp = 0.dp,
     val DP_65_CompactMedium: Dp = 0.dp,
     val DP_45_CompactMedium: Dp = 40.dp,
@@ -20,6 +29,7 @@ data class Dimens(
     val DP_2_CompactMedium: Dp = 0.dp,
     val DP_5_CompactMedium: Dp = 0.dp,
     val DP_15_CompactMedium: Dp = 0.dp,
+    val DP_18_CompactMedium: Dp = 0.dp,
     val DP_17_CompactMedium: Dp = 0.dp,
     val DP_22_CompactMedium: Dp = 0.dp,
     val DP_24_CompactMedium: Dp = 0.dp,
@@ -46,7 +56,18 @@ data class Dimens(
     val DP_180_CompactMedium: Dp = 0.dp,
     val DP_190_CompactMedium: Dp = 0.dp,
     val DP_200_CompactMedium: Dp = 0.dp,
+    val DP_300_CompactMedium: Dp = 0.dp,
+    val DP_390_CompactMedium: Dp = 0.dp,
+    val DP_410_CompactMedium: Dp = 0.dp,
+    val DP_420_CompactMedium: Dp = 0.dp,
+    val DP_430_CompactMedium: Dp = 0.dp,
+    val DP_440_CompactMedium: Dp = 0.dp,
+    val DP_450_CompactMedium: Dp = 0.dp,
+    val DP_500_CompactMedium: Dp = 0.dp,
+    val DP_580_CompactMedium: Dp = 0.dp,
+    val DP_540_CompactMedium: Dp = 0.dp,
 
+    val SP_8_CompactMedium: TextUnit = 0.sp,
     val SP_10_CompactMedium: TextUnit = 0.sp,
     val SP_12_CompactMedium: TextUnit = 0.sp,
     val SP_13_CompactMedium: TextUnit = 0.sp,
@@ -65,31 +86,44 @@ data class Dimens(
     val SP_27_CompactMedium: TextUnit = 0.sp,
     val SP_28_CompactMedium: TextUnit = 0.sp,
     val SP_30_CompactMedium: TextUnit = 0.sp,
+    val SP_50_CompactMedium: TextUnit = 0.sp,
+    val sp_44_CompactMedium: TextUnit = 44.sp,
+    val SP_44_CompactMedium: TextUnit
 
 
-    )
+)
 
 val CompactSmallDimens = Dimens(
+    DP_1_CompactMedium = 1.dp,
+    DP_3_CompactMedium = 3.dp,
+    DP_4_CompactMedium = 4.dp,
     DP_10_CompactMedium = 6.dp,
+    DP_11_CompactMedium = 10.dp,
     DP_12_CompactMedium = 5.dp,
     DP_20_CompactMedium = 8.dp,
+    DP_19_CompactMedium = 19.dp,
+    DP_21_CompactMedium = 20.dp,
     DP_25_CompactMedium = 15.dp,
     DP_30_CompactMedium = 20.dp,
+    DP_33_CompactMedium = 30.dp,
+    DP_31_CompactMedium = 31.dp,
+    DP_34_CompactMedium = 34.dp,
     DP_35_CompactMedium = 25.dp,
     DP_65_CompactMedium = 49.dp,
     DP_45_CompactMedium = 30.dp,
     DP_55_CompactMedium = 45.dp,
-
     DP_2_CompactMedium = 1.dp,
-    DP_5_CompactMedium = 3.dp,
+
+    DP_5_CompactMedium = 5.dp,
     DP_15_CompactMedium = 10.dp,
+    DP_18_CompactMedium = 18.dp,
     DP_17_CompactMedium = 11.dp,
     DP_22_CompactMedium = 14.dp,
     DP_24_CompactMedium = 16.dp,
     DP_40_CompactMedium = 40.dp,
-    DP_50_CompactMedium = 35.dp,
+    DP_50_CompactMedium = 50.dp,
     DP_60_CompactMedium = 60.dp,
-    DP_70_CompactMedium = 55.dp,
+    DP_70_CompactMedium = 70.dp,
     DP_75_CompactMedium = 63.dp,
     DP_80_CompactMedium = 67.dp,
     DP_85_CompactMedium = 69.dp,
@@ -107,8 +141,19 @@ val CompactSmallDimens = Dimens(
     DP_160_CompactMedium = 150.dp,
     DP_170_CompactMedium= 160.dp,
     DP_180_CompactMedium = 170.dp,
-    DP_190_CompactMedium = 180.dp,
-    DP_200_CompactMedium = 190.dp,
+    DP_190_CompactMedium = 190.dp,
+    DP_200_CompactMedium = 200.dp,
+    DP_300_CompactMedium = 300.dp,
+    DP_390_CompactMedium = 390.dp,
+    DP_410_CompactMedium = 410.dp,
+    DP_420_CompactMedium = 420.dp,
+    DP_430_CompactMedium = 430.dp,
+    DP_440_CompactMedium = 440.dp,
+    DP_450_CompactMedium = 450.dp,
+    DP_500_CompactMedium = 500.dp,
+    DP_580_CompactMedium = 580.dp,
+    DP_540_CompactMedium = 540.dp,
+    SP_8_CompactMedium = 8.sp,
     SP_10_CompactMedium = 7.sp,
     SP_12_CompactMedium = 9.sp,
     SP_13_CompactMedium = 10.sp,
@@ -117,8 +162,6 @@ val CompactSmallDimens = Dimens(
     SP_16_CompactMedium = 13.sp,
     SP_17_CompactMedium = 14.sp,
     SP_18_CompactMedium = 15.sp,
-    SP_19_CompactMedium = 16.sp,
-    SP_20_CompactMedium = 17.sp,
     SP_21_CompactMedium = 18.sp,
     SP_22_CompactMedium = 19.sp,
     SP_23_CompactMedium = 20.sp,
@@ -127,6 +170,9 @@ val CompactSmallDimens = Dimens(
     SP_27_CompactMedium = 24.sp,
     SP_28_CompactMedium = 25.sp,
     SP_30_CompactMedium = 27.sp,
+    SP_50_CompactMedium = 27.sp,
+    sp_44_CompactMedium  =40.sp,
+    SP_44_CompactMedium = 44.sp
 )
 
 val CompactMediumDimens = Dimens(
@@ -164,11 +210,11 @@ val CompactMediumDimens = Dimens(
     DP_130_CompactMedium = 130.dp,
     DP_140_CompactMedium = 140.dp,
     DP_150_CompactMedium = 150.dp,
-     DP_160_CompactMedium = 160.dp,
-      DP_170_CompactMedium= 170.dp,
-     DP_180_CompactMedium = 180.dp,
+    DP_160_CompactMedium = 160.dp,
+    DP_170_CompactMedium= 170.dp,
+    DP_180_CompactMedium = 180.dp,
     DP_190_CompactMedium = 190.dp,
- DP_200_CompactMedium = 200.dp,
+    DP_200_CompactMedium = 200.dp,
     SP_10_CompactMedium = 10.sp,
     SP_12_CompactMedium = 12.sp,
     SP_13_CompactMedium = 13.sp,
@@ -187,6 +233,7 @@ val CompactMediumDimens = Dimens(
     SP_27_CompactMedium = 27.sp,
     SP_28_CompactMedium = 28.sp,
     SP_30_CompactMedium = 30.sp,
+    SP_44_CompactMedium = 44.sp
 
 )
 
@@ -248,6 +295,7 @@ val CompactDimens = Dimens(
     SP_27_CompactMedium = 29.sp,
     SP_28_CompactMedium = 30.sp,
     SP_30_CompactMedium = 32.sp,
+    SP_44_CompactMedium = 44.sp,
 )
 
 val MediumDimens = Dimens(
@@ -308,6 +356,7 @@ val MediumDimens = Dimens(
     SP_27_CompactMedium = 31.sp,
     SP_28_CompactMedium = 32.sp,
     SP_30_CompactMedium = 34.sp,
+    SP_44_CompactMedium = 44.sp,
 )
 
 val ExpandedDimens = Dimens(
@@ -368,4 +417,5 @@ val ExpandedDimens = Dimens(
     SP_27_CompactMedium = 35.sp,
     SP_28_CompactMedium = 36.sp,
     SP_30_CompactMedium = 38.sp,
+    SP_44_CompactMedium = 50.sp,
 )

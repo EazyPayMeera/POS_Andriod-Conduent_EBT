@@ -48,7 +48,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Leading image
                 Image(
                     painter = painterResource(id = R.drawable.language), // Replace with your image resource
-                    contentDescription = "Language Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(24.dp) // Adjust size as needed
                 )
 
@@ -63,7 +63,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Trailing image
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "Arrow Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(24.dp) // Adjust size as needed
                 )
             }
@@ -77,8 +77,7 @@ fun SettingsView(navHostController: NavHostController) {
                 .padding(top = 1.dp, bottom = 0.dp) // Top and bottom padding
                 .clickable { /* Handle click for SettingsMiddleSurface */ },
             elevation = 20.dp, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = 60.dp // Customizable height parameter
+            color = MaterialTheme.colorScheme.background
         ) {
             // Use Row to place text and images horizontally
             Row(
@@ -107,7 +106,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Trailing image
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "Arrow Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(24.dp), // Adjust size as needed
                 )
             }
