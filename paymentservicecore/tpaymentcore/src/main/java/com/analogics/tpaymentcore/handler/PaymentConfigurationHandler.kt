@@ -4,6 +4,7 @@ import android.content.Context
 import com.analogics.tpaymentcore.EMV.EMV
 import com.analogics.tpaymentcore.listener.IPaymentConfigListener
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.tpaymentcore.model.TError
 
 object PaymentConfigurationHandler : IPaymentConfigListener {
     override fun initPaymentSDK(
@@ -16,6 +17,7 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
         } catch (exception: Exception) {
             iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
         }
+
     }
 
     override fun startPayment(
@@ -30,10 +32,6 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
     }
 
     override fun handlePaymentEvent() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onConfigPMTRes() {
         TODO("Not yet implemented")
     }
 
