@@ -15,15 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -130,6 +133,16 @@ fun CircularMenu(
 
 @Composable
 fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
+
+    // Get the context
+    val context = LocalContext.current
+
+    // Create the ViewModel with the context
+    val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
+
+    val printStatus by viewModel.printStatus
+    val errorMessage by viewModel.errorMessage
+
     Column {
         // Top App Bar with back button
         CommonTopAppBar(
@@ -189,13 +202,14 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     CircularMenu(
                         onPrintClick = {
-                            // Do something on Print click
+                            viewModel.initPrint(context)
+                            viewModel.GetStatus()
                         },
                         onMenuOptionClick = { option ->
                             when (option) {
                                 "Customer Receipt" -> {
-                                    // Handle E-RECEIPT click, e.g., navigate to a different screen
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                    viewModel.addTextDetails("Hello World")
+                                    viewModel.printReceipt(context)
                                 }
                                 "Merchant Receipt" -> {
                                     // Handle Merchant Receipt click
@@ -205,7 +219,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
                                 }
                             }
-                            navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                         }
                     )
                 }
