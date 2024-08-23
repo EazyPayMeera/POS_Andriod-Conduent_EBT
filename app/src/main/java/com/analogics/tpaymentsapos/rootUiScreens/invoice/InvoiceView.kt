@@ -42,6 +42,7 @@ fun InvoiceView(navHostController: NavHostController) {
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = TransactionState.isAuthcap
 
+
     Column {
         CommonTopAppBar(
             title = when {

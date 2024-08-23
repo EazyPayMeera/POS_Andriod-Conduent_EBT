@@ -5,12 +5,21 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.ModalDrawer
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,8 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
@@ -30,7 +37,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardVi
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DrawerContent
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -45,18 +52,24 @@ fun DashboardView(navHostController: NavHostController) {
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
-        dashboardItemLists = dashboardItemListData(navHostController,dashboardViewModel)
+        dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel)
     ) {}
 }
 
 @Composable
-fun dashboardItemListData(navHostController: NavHostController,dashboardViewModel:DashboardViewModel): List<DashboardItemList> {
+fun dashboardItemListData(
+    navHostController: NavHostController,
+    dashboardViewModel: DashboardViewModel
+): List<DashboardItemList> {
     return listOf(
         DashboardItemList(
             stringResource(id = R.string.purchase),
             R.drawable.purchase,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.InvoiceScreen.route)
+                dashboardViewModel.navigateTo(
+                    navHostController,
+                    AppNavigationItems.InvoiceScreen.route
+                )
                 TransactionState.isPurchase = true
 
             }),
@@ -64,14 +77,20 @@ fun dashboardItemListData(navHostController: NavHostController,dashboardViewMode
             stringResource(id = R.string.refund),
             R.drawable.dashboard_refund,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.PasswordScreen.route)
+                dashboardViewModel.navigateTo(
+                    navHostController,
+                    AppNavigationItems.PasswordScreen.route
+                )
                 TransactionState.isRefund = true
             }),
         DashboardItemList(
             stringResource(id = R.string.pre_auth),
             R.drawable.dashboard_preauth,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.InvoiceScreen.route)
+                dashboardViewModel.navigateTo(
+                    navHostController,
+                    AppNavigationItems.InvoiceScreen.route
+                )
                 TransactionState.isPreauth = true
 
             }),
@@ -79,21 +98,30 @@ fun dashboardItemListData(navHostController: NavHostController,dashboardViewMode
             stringResource(id = R.string.auth_capture),
             R.drawable.dashboard_auth_capture,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.InvoiceScreen.route)
+                dashboardViewModel.navigateTo(
+                    navHostController,
+                    AppNavigationItems.InvoiceScreen.route
+                )
                 TransactionState.isAuthcap = true
             }),
         DashboardItemList(
             stringResource(id = R.string.void_trans),
             R.drawable.dashboard_void,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.PasswordScreen.route)
+                dashboardViewModel.navigateTo(
+                    navHostController,
+                    AppNavigationItems.PasswordScreen.route
+                )
                 TransactionState.isVoid = true
             }),
         DashboardItemList(
             stringResource(id = R.string.transactions),
             R.drawable.dashboard_transaction,
             onClick = {
-                dashboardViewModel.navigateTo(navHostController,AppNavigationItems.PasswordScreen.route)
+                dashboardViewModel.navigateTo(
+                    navHostController,
+                    AppNavigationItems.PasswordScreen.route
+                )
                 TransactionState.isTransaction = true
 
             })
@@ -153,9 +181,10 @@ fun TrainingView(
     ModalDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerContent(
+            CustomDrawerContent(
                 navHostController = navHostController,
-                onMenuItemClick = onMenuItemClick
+                onMenuItemClick = onMenuItemClick,
+                onCloseDrawer = { toggleDrawer(false) }
             )
         }
     ) {
@@ -206,7 +235,7 @@ fun DashboardContentSurface(
             .fillMaxSize()
             .padding(MaterialTheme.dimens.DP_15_CompactMedium),
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-        elevation =MaterialTheme.dimens.DP_10_CompactMedium
+        elevation = MaterialTheme.dimens.DP_10_CompactMedium
     ) {
         Column(
             modifier = Modifier

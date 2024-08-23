@@ -43,7 +43,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InfoConfirmView
-import com.analogics.tpaymentsapos.rootUiScreens.login.InfoConfirmView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
@@ -51,7 +50,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PreauthView
-import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
+import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView

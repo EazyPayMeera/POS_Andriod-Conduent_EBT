@@ -157,7 +157,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                         )
 
                         ImageView(
-                            imageId = R.drawable.rupay,
+                            imageId = R.drawable.visa,
                             shape = RectangleShape,
                             modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
                         )

@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+import android.content.SharedPreferences
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -35,11 +36,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
 
+
+
+
 @Composable
 fun CircularMenu(
     onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
+
     val menuOptions = listOf("Customer Receipt", "Merchant Receipt", "E-RECEIPT")
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
@@ -47,6 +52,9 @@ fun CircularMenu(
 
     val printButtonInitialColor = colorResource(id = R.color.purple_200)
     var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
+
+
+// Store values
 
     LaunchedEffect(expanded) {
         distance.animateTo(
@@ -194,7 +202,8 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 "Customer Receipt" -> {
-                                    // Handle E-RECEIPT click, e.g., navigate to a different screen
+
+
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
                                 "Merchant Receipt" -> {

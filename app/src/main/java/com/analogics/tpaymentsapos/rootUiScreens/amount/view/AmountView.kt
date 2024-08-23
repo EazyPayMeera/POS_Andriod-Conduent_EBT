@@ -48,7 +48,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         )
 
         GenericCard(
-            modifier = Modifier.padding(19.dp)
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -75,7 +75,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     value = viewModel.rawInput,
                     onValueChange = {viewModel.onAmountChange(it)},
                     placeholder = stringResource(id = R.string.auth_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.End),
+                     // Aligns the text to the right
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController)},
                     visualTransformation = createAmountTransformation()

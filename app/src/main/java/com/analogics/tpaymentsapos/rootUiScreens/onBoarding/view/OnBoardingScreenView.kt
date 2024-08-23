@@ -193,7 +193,7 @@ fun ShowCardView(
                     modifier = Modifier.padding(
                         vertical = MaterialTheme.dimens.DP_20_CompactMedium
                     ),
-                    fontSize = MaterialTheme.dimens.SP_16_CompactMedium
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium
                 )
                 TextView(
                     text = imageSlider[pageIndex].subNote,
@@ -201,7 +201,7 @@ fun ShowCardView(
                     modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_60_CompactMedium),
                     color = Color("#B3B3B3".toColorInt()),
                     textAlign = TextAlign.Center,
-                    fontSize = MaterialTheme.dimens.SP_14_CompactMedium
+                    fontSize = MaterialTheme.dimens.SP_16_CompactMedium
                 )
             }
         }
