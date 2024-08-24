@@ -120,9 +120,9 @@ class EMV {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
             if(p0==ContantPara.TransactionResult.ONLINE_APPROVAL || p0==ContantPara.TransactionResult.OFFLINE_APPROVAL)
-                iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+                iPaymentCoreHandlerListener.onTPaymentSDKHandler("SUCCESS")
             else
-                iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
+                iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -177,9 +177,9 @@ class EMV {
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
             if(p0==ContantPara.NfcTransResult.ONLINE_APPROVAL || p0==ContantPara.NfcTransResult.OFFLINE_APPROVAL)
-                iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+                iPaymentCoreHandlerListener.onTPaymentSDKHandler("SUCCESS")
             else
-                iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
+                iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {

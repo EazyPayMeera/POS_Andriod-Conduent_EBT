@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("org.jetbrains.kotlin.kapt")
-    id ("com.google.dagger.hilt.android")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -76,7 +76,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Accompanist libraries (latest versions)
-	implementation (libs.accompanist.pager)
+    implementation(libs.accompanist.pager)
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
 
@@ -91,22 +91,24 @@ dependencies {
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.compose.animation:animation:1.5.0")
 
-    implementation ("androidx.compose.material3:material3:1.0.0")
-    implementation ("androidx.compose.material:material-icons-extended:1.0.0")
+    implementation("androidx.compose.material3:material3:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.0.0")
 
-    implementation ("io.coil-kt:coil:2.2.2") // or the latest version
-    implementation ("io.coil-kt:coil-gif:2.2.2") // or the latest version
-    implementation ("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil:2.2.2") // or the latest version
+    implementation("io.coil-kt:coil-gif:2.2.2") // or the latest version
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
-    //   implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-    kapt(libs.androidx.hilt.compiler.v100)
+    implementation("com.google.dagger:hilt-android:2.51")
+    kapt("com.google.dagger:hilt-android-compiler:2.51")
+    //implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
 
     // Coil SVG decoder
-    implementation ("io.coil-kt:coil-svg:2.2.2")
-    implementation ("androidx.compose.material:material:1.5.0") // Use the latest version
-	api(project(":paymentservicecore"))
+    implementation("io.coil-kt:coil-svg:2.2.2")
+    implementation("androidx.compose.material:material:1.5.0") // Use the latest version
+    api(project(":paymentservicecore"))
 }
 

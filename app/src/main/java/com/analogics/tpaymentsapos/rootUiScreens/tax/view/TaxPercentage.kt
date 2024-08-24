@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -29,7 +30,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun TaxPercentageView(navHostController: NavHostController) {
     // Get the ViewModel
-    val taxPercentageViewModel: TaxPercentageViewModel = viewModel()
+    val taxPercentageViewModel: TaxPercentageViewModel = hiltViewModel()
 
     // States from the ViewModel
     val rawInput by remember { mutableStateOf(taxPercentageViewModel.rawInput) }

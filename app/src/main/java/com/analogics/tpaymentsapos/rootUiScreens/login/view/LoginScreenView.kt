@@ -30,18 +30,23 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreenView(navHostController: NavHostController?) {
-    val viewModel: LoginViewModel = viewModel()
+    val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
-
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             AppHeader(
@@ -97,7 +102,9 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {
-                            viewModel.onLoginClick(navHostController,context)
+                            coroutineScope.launch {
+                                viewModel.onLoginClick(navHostController,context)
+                            }
                         }
                     )
 
@@ -120,7 +127,10 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
-                                    viewModel.onLoginClick(navHostController,context)
+                                    coroutineScope.launch {
+                                        viewModel.onLoginClick(navHostController,context)
+                                    }
+
                                 } else {
                                     Toast.makeText(context, "Email And password not empty", Toast.LENGTH_SHORT).show()
                                 }

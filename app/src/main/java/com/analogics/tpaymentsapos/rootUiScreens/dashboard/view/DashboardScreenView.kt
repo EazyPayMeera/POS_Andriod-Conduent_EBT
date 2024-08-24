@@ -22,9 +22,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
@@ -43,7 +45,7 @@ import kotlin.concurrent.schedule
 
 @Composable
 fun DashboardView(navHostController: NavHostController) {
-    val dashboardViewModel: DashboardViewModel = viewModel()
+    val dashboardViewModel: DashboardViewModel = hiltViewModel()
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
@@ -146,8 +148,10 @@ fun TrainingView(
     fun initPaymentSDK(context : Context) {
         Timer("initSDK").schedule(500) {
             coroutineScope.launch {
-                dashboardViewModel.initPaymentSDK(context, object : IResultProviderListener {
-                    override fun onSuccess(result: Any?) {
+                dashboardViewModel.initPaymentSDK(context, object :
+                 IOnRootAppPaymentListener {
+
+                    override fun onPaymentSuccess(result: Any) {
                         if (result?.equals(true) == true)
                             Toast.makeText(
                                 context,
@@ -162,10 +166,10 @@ fun TrainingView(
                             ).show()
                     }
 
-                    override fun onFailure(exception: Exception) {
+                    override fun onPaymentError(tError: PaymentServiceError) {
                         Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
                             .show()
-                        Log.e("EMV_APP", exception.message.toString())
+                        Log.e("EMV_APP", tError.errorMessage)
                     }
                 })
             }

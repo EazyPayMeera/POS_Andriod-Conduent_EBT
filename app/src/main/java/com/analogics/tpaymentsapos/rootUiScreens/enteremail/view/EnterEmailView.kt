@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -30,7 +31,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun EnterEmailView(navHostController: NavHostController) {
     // Get ViewModel instance
-    val viewModel: EnterEmailViewModel = viewModel()
+    val viewModel: EnterEmailViewModel = hiltViewModel()
 
     // Collect the state from ViewModel
     val email by viewModel.email.collectAsState()

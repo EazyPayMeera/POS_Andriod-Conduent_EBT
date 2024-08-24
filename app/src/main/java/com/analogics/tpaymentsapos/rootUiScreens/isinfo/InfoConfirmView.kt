@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -33,7 +34,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransf
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirmViewModel = viewModel()){
+fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirmViewModel = hiltViewModel()){
 
     Column {
 

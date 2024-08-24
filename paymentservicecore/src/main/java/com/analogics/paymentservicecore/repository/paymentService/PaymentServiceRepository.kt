@@ -2,44 +2,58 @@ package com.analogics.paymentservicecore.repository.paymentService
 
 
 import android.content.Context
-import com.analogics.paymentservicecore.listeners.requestListener.IMakeRequestListener
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.builder_core.listener.responseListener.IBuilderCoreResponseListener
+import com.analogics.builder_core.repository.MakeRequestRepository
+
+import com.analogics.paymentservicecore.listeners.requestListener.IPaymentService
+import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 import javax.inject.Inject
 
-class PaymentServiceRepository @Inject constructor():
-    IMakeRequestListener, IPaymentCoreHandlerListener {
-    lateinit var iResultProviderListener: IResultProviderListener
-    lateinit var iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
-    override suspend fun getUserListAPI(iResultProviderListener: IResultProviderListener) {
-        this.iResultProviderListener = iResultProviderListener
-        /*iResultProviderListener.onSuccess(NetworkCallProvider.safeApiCall {
-            iApiService.getUserData()
-        })*/
-    }
+class PaymentServiceRepository @Inject constructor(private var makeRequestRepository: MakeRequestRepository) :
+    IPaymentService,
+    IPaymentCoreHandlerListener, IBuilderCoreResponseListener {
+    lateinit var iOnRootAppPaymentListener: IOnRootAppPaymentListener
 
-    override suspend fun initPaymentSDK(
-        context: Context,
-        iResultProviderListener: IResultProviderListener
-    ) {
-        this.iResultProviderListener = iResultProviderListener
-        PaymentConfigurationHandler.initPaymentSDK(context,this)
-    }
 
-    override suspend fun startPayment(
-        context: Context,
-        iResultProviderListener: IResultProviderListener
-    ) {
-        this.iResultProviderListener = iResultProviderListener
-        PaymentConfigurationHandler.startPayment(context,this)
-    }
-
-    override fun onPMTRespHandler(uiData: String) {
+    override fun onTPaymentSDKHandler(uiData: String) {
         /* Just for testing comparing with uiData value */
-        if(uiData=="SUCCESS")
-            iResultProviderListener.onSuccess(true)
+        if (uiData == "SUCCESS")
+            iOnRootAppPaymentListener.onPaymentSuccess(true)
         else
-            iResultProviderListener.onSuccess(false)
-	}
+            iOnRootAppPaymentListener.onPaymentError(PaymentServiceError("Error"))
+    }
+
+    override fun onApiSuccessRes(respone: Any) {
+        iOnRootAppPaymentListener.onPaymentSuccess(respone)
+    }
+
+    override fun onApiFailureRes(error: Any) {
+        iOnRootAppPaymentListener.onPaymentError(PaymentServiceError(error.toString()))
+    }
+
+    override suspend fun apiEmpDetails(  iOnRootAppPaymentListener: IOnRootAppPaymentListener) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        makeRequestRepository.apiEmployeeDetails(this)
+    }
+
+    override fun initPaymentSDK(
+        context: Context,
+        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+    ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        PaymentConfigurationHandler.initPaymentSDK(context, this)
+    }
+
+    override fun startPayment(
+        context: Context,
+        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+    ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        PaymentConfigurationHandler.startPayment(context, this)
+    }
+
+
 }

@@ -1,10 +1,9 @@
 package com.analogics.paymentservicecore.listeners.rootListener
 
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.tpaymentcore.model.TError
 
-interface IOnRootAppListener {
+interface IOnRootAppPaymentListener {
 
-    fun onSuccess(string: String)
+    fun onPaymentSuccess(response: Any)
     fun onPaymentError(tError: PaymentServiceError)
 }

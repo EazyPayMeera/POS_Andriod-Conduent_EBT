@@ -4,13 +4,15 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import kotlinx.coroutines.delay
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CardViewModel : ViewModel() {
+@HiltViewModel
+class CardViewModel @Inject constructor(private  var paymentServiceRepository: PaymentServiceRepository) : ViewModel() {
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -24,8 +26,8 @@ class CardViewModel : ViewModel() {
         }
     }
 
-    suspend fun startPayment(context: Context, iResultProviderListener: IResultProviderListener)
+    suspend fun startPayment(context: Context, iPaymentResultListener: IOnRootAppPaymentListener)
     {
-        PaymentServiceRepository().startPayment(context,iResultProviderListener)
+        paymentServiceRepository.startPayment(context,iPaymentResultListener)
     }
 }
