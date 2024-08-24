@@ -1,18 +1,26 @@
 package com.analogics.tpaymentcore.EMV
 
 import android.content.Context
+import android.device.SEManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.os.IInputActionListener
+import android.text.TextUtils
 import android.util.Log
+import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
+import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
-import com.urovo.sdk.utils.BytesUtil
 import java.util.Hashtable
+import java.util.Locale
 
 class EMV {
-    companion object : EmvListener {
+    companion object : EmvListener, PinInputListener {
+        lateinit var iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
         fun initialize(context: Context) {
             Thread {
                 try {
@@ -26,17 +34,16 @@ class EMV {
                         ContantPara.CardSlot.ICC,
                         "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
                     ) //DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
-
-                    startPayment(context)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }.start()
         }
 
-        fun startPayment(context: Context) {
+        fun startPayment(context: Context, iPaymentCoreHandlerListener: IPaymentCoreHandlerListener) {
             Thread {
                 try {
+                    this.iPaymentCoreHandlerListener = iPaymentCoreHandlerListener
                     val data = Hashtable<String, Any>()
                     data["checkCardMode"] = ContantPara.CheckCardMode.INSERT_OR_TAP //
                     data["currencyCode"] = "682" //682
@@ -51,7 +58,7 @@ class EMV {
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
                     EmvNfcKernelApi.getInstance().startKernel(data)
-                    EmvNfcKernelApi.getInstance().getEMVLibVers(ContantPara.CardSlot.ICC)
+                    //EmvNfcKernelApi.getInstance().getEMVLibVers(ContantPara.CardSlot.ICC)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -60,6 +67,9 @@ class EMV {
 
         override fun onRequestSetAmount() {
             Log.d("EMV_APP", "Request Amount:")
+
+//            Log.e(TAG, TAG + "===onRequestSetAmount");
+            EmvNfcKernelApi.getInstance().setAmountEx(1L, 0L)
         }
 
         override fun onReturnCheckCardResult(
@@ -78,8 +88,11 @@ class EMV {
             Log.d("EMV_APP", "Online PIN Prompt:" + p0.toString())
             //EmvNfcKernelApi.getInstance().sendPinEntry()
             //EmvNfcKernelApi.getInstance().bypassPinEntry()
-            if (p0 == ContantPara.PinEntrySource.KEYPAD)
-                promptPin(null, true, 3, null, false);
+
+            if (p0 == ContantPara.PinEntrySource.KEYPAD) {
+                emv_proc_onlinePin(true)
+                Log.i("EMV_APP", "MainActivity  emv_proc_onlinePin over")
+            }
         }
 
         override fun onRequestOfflinePinEntry(p0: ContantPara.PinEntrySource?, p1: Int) {
@@ -106,6 +119,10 @@ class EMV {
         override fun onReturnTransactionResult(p0: ContantPara.TransactionResult?) {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
+            if(p0==ContantPara.TransactionResult.ONLINE_APPROVAL || p0==ContantPara.TransactionResult.OFFLINE_APPROVAL)
+                iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+            else
+                iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -118,6 +135,20 @@ class EMV {
             p2: Bundle?
         ) {
             Log.d("EMV_APP", "Offline PIN Verify:" + p0.toString())
+            if (p0 == ContantPara.PinEntrySource.KEYPAD) { //use in os 8.0 or above
+                //pinEntryType 0-offline plain pin ,1-offline encrypt pin
+                val pinTryTimes: Int = EmvNfcKernelApi.getInstance().getOfflinePinTryTimes()
+                p2?.putInt("PinTryTimes", pinTryTimes)
+                p2?.putBoolean("isFirstTime", true)
+                if (pinTryTimes == 1) proc_offlinePin(p1, true, p2!!)
+                else {
+                    proc_offlinePin(p1, false, p2!!)
+                }
+            }
+/*
+            if (p0 == ContantPara.PinEntrySource.KEYPAD)
+                promptPin(null, false, 3, null, false);
+*/
         }
 
         override fun onReturnIssuerScriptResult(p0: ContantPara.IssuerScriptResult?, p1: String?) {
@@ -138,10 +169,17 @@ class EMV {
 
         override fun onNFCrequestImportPin(p0: Int, p1: Int, p2: String?) {
             Log.d("EMV_APP", "NFC Import PIN:" + p2.toString())
+
+//            Log.e(TAG, TAG + "===onNFCrequestImportPin, type:" + type + ", lasttimeFlag:" + lasttimeFlag + ", amt:" + amt);
+            EmvNfcKernelApi.getInstance().sendPinEntry()
         }
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
+            if(p0==ContantPara.NfcTransResult.ONLINE_APPROVAL || p0==ContantPara.NfcTransResult.OFFLINE_APPROVAL)
+                iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+            else
+                iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
@@ -590,6 +628,347 @@ class EMV {
 
         }
 
+        fun emv_proc_onlinePin(isDUKPT: Boolean) {
+            Log.i("applog", "emv_proc_onlinePin")
+
+            val param: Bundle = Bundle()
+
+            if (isDUKPT) param.putInt("PINKeyNo", 3)
+            else param.putInt("PINKeyNo", 10)
+            val cardno: String = "1122334455667788"
+
+
+            Log.i("applog", "emv_proc_onlinePin cardno $cardno")
+            param.putString("cardNo", cardno)
+            param.putBoolean("sound", true)
+            param.putInt("soundVolume", 1)
+            param.putBoolean("onlinePin", true)
+            param.putBoolean("FullScreen", true)
+            param.putLong("timeOutMS", 30000)
+            param.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12") // "4,4");   //
+            param.putString("title", "Security PINPAD")
+            param.putString(
+                "message", "Please Enter PIN, \n $0.01"
+            ) // use your real amount
+
+/*            param.putBoolean("ShowLine", false)
+            param.putShortArray("textSize", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
+            param.putShortArray("leftMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
+            param.putShortArray("topMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
+            param.putShortArray("rightMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
+            param.putShortArray("bottomMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
+            param.putStringArray(
+                "numberText",
+                arrayOf<String>(
+                    "zero",
+                    "one",
+                    "two",
+                    "three",
+                    "four",
+                    "five",
+                    "six",
+                    "seven",
+                    "eight",
+                    "nine"
+                )
+            )
+            param.putIntArray(
+                "backgroundColor",
+                intArrayOf(
+                    Color.BLUE,
+                    Color.YELLOW,
+                    Color.GREEN,
+                    Color.GRAY,
+                    Color.RED,
+                    Color.BLACK,
+                    Color.LTGRAY
+                )
+            )
+            param.putString("deleteText", "Delete1")
+            param.putString("cancelText", "Cancel")
+            param.putString("okText", "OK1")*/
+
+            param.putBoolean("randomKeyboard", true)
+
+            if (TextUtils.equals("I5000", Build.MODEL.uppercase(Locale.getDefault()))) {
+                val transparentWhite = Color.TRANSPARENT
+
+                val backgroundColor = intArrayOf(
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    transparentWhite,
+                    Color.BLUE
+                )
+                val textColor = intArrayOf(
+                    Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.YELLOW,
+                    Color.YELLOW, Color.YELLOW, Color.YELLOW,
+                    Color.YELLOW, Color.YELLOW, Color.YELLOW,
+                    Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.YELLOW
+                )
+                param.putIntArray("backgroundColor", backgroundColor)
+                param.putIntArray("textColor", textColor)
+
+                //    textSize, margin
+                //    each index(0-6):
+                //    public static final int SECURITY_KEYBOARD_TITLE = 0;
+                //    public static final int SECURITY_KEYBOARD_INFO = 1;
+                //    public static final int SECURITY_KEYBOARD_PASSWORD = 2;
+                //    public static final int SECURITY_KEYBOARD_KEY_NUMBER = 3;
+                //    public static final int SECURITY_KEYBOARD_KEY_CANCEL = 4;
+                //    public static final int SECURITY_KEYBOARD_KEY_DELETE = 5;
+                //    public static final int SECURITY_KEYBOARD_KEY_OK = 6;
+                val leftMargin = shortArrayOf(0, 0, 50, 0, 0, 0, 0)
+                val rightMargin = shortArrayOf(0, 0, 50, 0, 0, 0, 0)
+                val topMargin = shortArrayOf(0, 0, 10, 0, 0, 0, 0)
+                val bottomMargin = shortArrayOf(0, 0, 10, 0, 0, 0, 0)
+                param.putShortArray("leftMargin", leftMargin)
+                param.putShortArray("rightMargin", rightMargin)
+                param.putShortArray("topMargin", topMargin)
+                param.putShortArray("bottomMargin", bottomMargin)
+            }
+
+            Log.i("applog", "getPinBlockEx ")
+
+            if (isDUKPT)
+                PinPadProviderImpl.getInstance().GetDukptPinBlock(param, this)
+            else
+                PinPadProviderImpl.getInstance().getPinBlockEx(param, this)
+
+        }
+
+        fun proc_offlinePin(pinEntryType: Int, isLastPinTry: Boolean, bundle: Bundle): Int {
+            var iret = 0
+
+            // TODO Auto-generated method stub
+            val emvBundle = bundle
+
+
+            Log.d(
+                "applog",
+                "proc_offlinePin pinEntryType = $pinEntryType isLastPinTry=$isLastPinTry"
+            )
+
+            val paramVar = Bundle()
+            paramVar.putInt("inputType", 3) //Offline PlainPin
+            paramVar.putInt("CardSlot", 0)
+
+            paramVar.putBoolean("sound", true)
+            paramVar.putInt("soundVolume", 1)
+            paramVar.putBoolean("onlinePin", false)
+            paramVar.putBoolean("FullScreen", true)
+            paramVar.putLong("timeOutMS", 30000)
+            paramVar.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12")
+            paramVar.putString("title", "Security Keyboard")
+            paramVar.putBoolean("randomKeyboard", true)
+            val pinTryTimes = bundle.getInt("PinTryTimes")
+            val isFirst = bundle.getBoolean("isFirstTime", false)
+            Log.d("applog", "PinTryTimes:$pinTryTimes")
+            if (isLastPinTry) {
+                if (isFirst) paramVar.putString("message", "Please input PIN \nLast PIN Try")
+                else paramVar.putString("message", "Please input PIN \nWrong PIN \nLast Pin Try")
+            } else {
+                if (isFirst) paramVar.putString("message", "Please input PIN \n")
+                else {
+                    paramVar.putString(
+                        "message",
+                        "Please input PIN \nWrong PIN \nPin Try Times:$pinTryTimes"
+                    )
+                }
+            }
+
+
+            if (pinEntryType == 1) {
+                paramVar.putInt("inputType", 4) //Offline CipherPin
+
+                val pub = emvBundle.getByteArray("pub")
+                val publen = emvBundle.getIntArray("publen")
+                val exp = emvBundle.getByteArray("exp")
+                val explen = emvBundle.getIntArray("explen")
+
+                Log.d("applog", "ModuleLen = " + publen!![0] + ": " + Funs.bytesToHexString(pub))
+                Log.d("applog", "ExponentLen = " + explen!![0] + ": " + Funs.bytesToHexString(exp))
+
+
+                val ModuleLen = publen!![0]
+                val ExponentLen = explen!![0]
+                val Module = ByteArray(ModuleLen)
+                val Exponent = ByteArray(ExponentLen)
+
+                if (ModuleLen == 0 || ExponentLen == 0) {
+                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-198)
+                    return 0
+                }
+
+                System.arraycopy(pub, 0, Module, 0, ModuleLen)
+                System.arraycopy(exp, 0, Exponent, 0, ExponentLen)
+
+                paramVar.putInt("ModuleLen", ModuleLen) //Modulus length
+                paramVar.putString("Module", Funs.bytesToHexString(Module)) //Module
+                paramVar.putInt("ExponentLen", ExponentLen) //Exponent length
+                paramVar.putString("Exponent", Funs.bytesToHexString(Exponent)) //Exponent
+            }
+
+
+            Log.d("applog", "proc_offlinePin getPinBlockEx start")
+
+            /*
+        paramVar.putInt("PinTryMode", 1);
+        paramVar.putString("ErrorMessage", "Incorrect PIN, # More Retries");
+        paramVar.putString("ErrorMessageLast", "Incorrect PIN, Last Chance");
+        */
+            val se = SEManager()
+            iret = se.getPinBlockEx(paramVar, object : IInputActionListener.Stub() {
+                override fun onInputChanged(type: Int, result: Int, bundle: Bundle) {
+                    val resultBundle = bundle
+                    try {
+                        //    7101~7115 The number of remaining PIN tries(7101 PIN BLOCKED   7102 the last one chance  7103 two chances ....)
+                        //		7006 PIN length error
+                        //		7010 防穷举出错
+                        //		7016 Wrong PIN
+                        //		7071 The return code is wrong
+                        //		7072 IC command failed
+                        //		7073 Card data error
+                        //		7074 PIN BLOCKED
+                        //		7075 Encryption error
+                        //
+                        //The offline PIN verification result is sent to the kernel
+                        //   use api EmvApi.sendOfflinePINVerifyResult();
+                        //		    (-198)     //Return code error
+                        //		    (-202)     //IC command failed
+                        //		    (-192)     //PIN BLOCKED
+                        //          (-199)     //user cancel or Pinpad timeout
+                        //		    (1)        //bypass
+                        //		    (0)        //success
+
+                        Log.i(
+                            "applog",
+                            "proc_offlinePin：getPinBlockEx===onInputChanged：type=$type，result=$result"
+                        )
+
+                        if (type == 2) { // entering PIN
+                        } else if (type == 0) //bypass
+                        {
+                            if (result == 0) {
+                                Log.d("applog", "proc_offlinePin bypass")
+                                EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(1) //bypass
+                            } else {
+                                EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-198) //return code error
+                            }
+                        } else if (type == 3) //Offline plaintext
+                        {
+                            Log.d("applog", "proc_offlinePin Plaintext offline")
+                            if (result == 0) {
+                                EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(0) //Offline plaintext verify successfully
+                            } else { //Incorrect PIN, try again
+                                val arg1Str = result.toString() + ""
+                                if (arg1Str.length >= 4 && "71" == arg1Str.subSequence(0, 2)) {
+                                    if ("7101" == arg1Str) {
+                                        EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-192) //PIN BLOCKED
+                                    } else {
+                                        if ("7102" == arg1Str) {
+                                            emvBundle.putBoolean("isFirstTime", false)
+                                            emvBundle.putInt("PinTryTimes", 1)
+                                            proc_offlinePin(
+                                                pinEntryType,
+                                                true,
+                                                emvBundle
+                                            ) //try again the last pin try
+                                        } else {
+                                            emvBundle.putBoolean("isFirstTime", false)
+                                            emvBundle.putInt(
+                                                "PinTryTimes",
+                                                (arg1Str.substring(2, 4).toInt() - 1)
+                                            )
+                                            proc_offlinePin(
+                                                pinEntryType,
+                                                false,
+                                                emvBundle
+                                            ) //try again
+                                        }
+                                    }
+                                } else if ("7074" == arg1Str) {
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-192) //PIN BLOCKED
+                                } else if ("7072" == arg1Str || "7073" == arg1Str) {
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-202) //IC command failed
+                                } else {
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-198) //Return code error
+                                }
+                            }
+                        } else if (type == 4) //Offline encryption PIN
+                        {
+                            Log.d("applog", "proc_offlinePin Offline encryption")
+                            if (result == 0) {
+                                EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(0) //Offline encryption PIN verify successfully
+                            } else {
+                                val arg1Str = result.toString() + ""
+                                if (arg1Str.length >= 4 && "71" == arg1Str.subSequence(0, 2)) {
+                                    if ("7101" == arg1Str) {
+                                        EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-192) //PIN BLOCKED
+                                    } else {
+                                        Log.d(
+                                            "applog",
+                                            "proc_offlinePin Offline encryption entry pin again"
+                                        )
+                                        if ("7102" == arg1Str) {
+                                            emvBundle.putBoolean("isFirstTime", false)
+                                            emvBundle.putInt("PinTryTimes", 1)
+                                            proc_offlinePin(
+                                                pinEntryType,
+                                                true,
+                                                emvBundle
+                                            ) //try again the last pin try
+                                        } else {
+                                            emvBundle.putBoolean("isFirstTime", false)
+                                            emvBundle.putInt(
+                                                "PinTryTimes",
+                                                (arg1Str.substring(2, 4).toInt() - 1)
+                                            )
+                                            proc_offlinePin(
+                                                pinEntryType,
+                                                false,
+                                                emvBundle
+                                            ) //try again
+                                        }
+                                    }
+                                } else if ("7074" == arg1Str) {
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-192) //PIN BLOCKED
+                                } else if ("7072" == arg1Str || "7073" == arg1Str) {
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-202) //IC command failed(card removed)
+                                } else {
+                                    EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-198) //Return code error
+                                }
+                            }
+                        } else if (type == 0x10) // click Cancel button
+                        {
+                            EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-199) //cancel
+                        } else if (type == 0x11) // pinpad timed out
+                        {
+                            EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-199) //timeout
+                        } else {
+                            EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-198) //Return code error
+                        }
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
+                        Log.d("applog", "proc_offlinePin exception")
+                    }
+                }
+            })
+            if (iret == -3 || iret == -4) EmvNfcKernelApi.getInstance().sendOfflinePINVerifyResult(-198)
+            return iret
+        }
+
         fun promptPin(
             pinpadBundle: Bundle?,
             isOnlinePin: Boolean,
@@ -622,45 +1001,45 @@ class EMV {
             }
             try {
                 PinPadProviderImpl.getInstance()
-                    .GetDukptPinBlock(pinpadBundle, object : PinInputListener {
-                        override fun onInput(p0: Int, p1: Int) {
-                            Log.d("EMV_LOG", "On Input: $p0, $p1")
-                        }
-
-                        override fun onConfirm(p0: ByteArray?, p1: Boolean) {
-                            if (p1) {
-                                EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
-                            } else {
-                                Log.d("EMV_APP", "PinBlock:" + p0.contentToString())
-                                EmvNfcKernelApi.getInstance().sendPinEntry()
-                            }
-                        }
-
-                        override fun onConfirm_dukpt(p0: ByteArray?, p1: ByteArray?) {
-                            if (p0 == null) {
-                                EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
-                            } else {
-                                Log.d("EMV_APP", "PinBlock:" + p0.decodeToString())
-                                Log.d("EMV_APP", "KSN     :" + p1?.decodeToString())
-                                EmvNfcKernelApi.getInstance().sendPinEntry()
-                            }
-                        }
-
-                        override fun onCancel() {
-                            EmvNfcKernelApi.getInstance().cancelPinEntry()
-                        }
-
-                        override fun onTimeOut() {
-                            EmvNfcKernelApi.getInstance().cancelPinEntry()
-                        }
-
-                        override fun onError(p0: Int) {
-                            EmvNfcKernelApi.getInstance().cancelPinEntry()
-                        }
-                    })
+                    .getPinBlockEx(pinpadBundle, this)
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
+        }
+
+        override fun onInput(p0: Int, p1: Int) {
+            Log.d("EMV_LOG", "On Input: $p0, $p1")
+        }
+
+        override fun onConfirm(p0: ByteArray?, p1: Boolean) {
+            if (p1) {
+                EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
+            } else {
+                Log.d("EMV_APP", "PinBlock:" + p0.contentToString())
+                    EmvNfcKernelApi.getInstance().sendPinEntry()
+            }
+        }
+
+        override fun onConfirm_dukpt(p0: ByteArray?, p1: ByteArray?) {
+            if (p0 == null) {
+                EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
+            } else {
+                Log.d("EMV_APP", "PinBlock:" + p0.decodeToString())
+                Log.d("EMV_APP", "KSN     :" + p1?.decodeToString())
+                EmvNfcKernelApi.getInstance().sendPinEntry()
+            }
+        }
+
+        override fun onCancel() {
+            EmvNfcKernelApi.getInstance().cancelPinEntry()
+        }
+
+        override fun onTimeOut() {
+            EmvNfcKernelApi.getInstance().cancelPinEntry()
+        }
+
+        override fun onError(p0: Int) {
+            EmvNfcKernelApi.getInstance().cancelPinEntry()
         }
     }
 }

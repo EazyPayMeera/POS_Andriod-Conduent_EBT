@@ -21,6 +21,7 @@ sealed class AppNavigationItems(val route: String) {
  object TaxPercentageScreen : AppNavigationItems(NavScreensEnum.TaxPercentageView.name)
  object PreauthScreen : AppNavigationItems(NavScreensEnum.PreauthView.name)
  object EnterEmailScreen : AppNavigationItems(NavScreensEnum.EnterEmailView.name)
+ object InfoConfirmScreen : AppNavigationItems(NavScreensEnum.InfoConfirmView.name)
  //object DeclineScreen : AppNavigationItems(NavScreensEnum.DeclineView.name)
 
  object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
