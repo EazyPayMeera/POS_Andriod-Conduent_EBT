@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("org.jetbrains.kotlin.kapt")
+    id ("com.google.dagger.hilt.android")
 }
 
 android {
@@ -96,7 +98,10 @@ dependencies {
     implementation ("io.coil-kt:coil-gif:2.2.2") // or the latest version
     implementation ("io.coil-kt:coil-compose:2.2.2")
 
-
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    //   implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt(libs.androidx.hilt.compiler.v100)
 
 
     // Coil SVG decoder
