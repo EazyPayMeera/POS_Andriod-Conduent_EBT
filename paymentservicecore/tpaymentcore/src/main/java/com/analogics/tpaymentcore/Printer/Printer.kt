@@ -3,14 +3,14 @@ package com.analogics.tpaymentcore.Printer
 
 import android.content.Context
 import android.device.PrinterManager
-import android.graphics.Paint
 import android.os.Bundle
 import com.urovo.file.logfile
 import com.urovo.sdk.print.PrinterProviderImpl
 import com.urovo.sdk.print.PrinterProviderImpl.TAG
+import com.urovo.sdk.print.PrinterProviderImpl.fontName_default
 
 
-class Printer private constructor() {
+class Printer constructor() {
 
     companion object {
         @Volatile
@@ -26,16 +26,6 @@ class Printer private constructor() {
     private var mPrinter: PrinterProviderImpl? = null
     private var mPrinterMan:PrinterManager? = null
 
-
-    private var listener: PrinterListener? = null
-
-    fun setListener(listener: PrinterListener) {
-        this.listener = listener
-    }
-
-    fun initialize() {
-        // Initialization logic
-    }
 
     fun initPrint(context: Context) {
 
@@ -66,14 +56,22 @@ class Printer private constructor() {
 
     }
 
-    fun addText(text: String) {
+    fun addImage(format: Bundle,imageData: ByteArray)
+    {
+        mPrinter?.addImage(format,imageData)
+    }
+
+
+
+    fun addText(text: String)
+    {
         // Define default formatting options
         val defaultFont = 1
         val defaultAlign = 0
         val defaultFontName = ""
-        val defaultFontBold = false
+        val defaultFontBold = true
         val defaultNewline = true
-        val defaultLineHeight = 5
+        val defaultLineHeight = 0
         val defaultFontSize = 24
 
         // Create a Bundle with default values
@@ -90,14 +88,85 @@ class Printer private constructor() {
         try {
             mPrinter?.addText(format, text)
 
-            listener?.onPrintSuccess()
+
         } catch (e: Exception) {
-            listener?.onPrintError("Error: ${e.message}")
+
         }
+    }
+
+    // Overloaded method with String only
+    fun addTextOnlyLeft(text: String) {
+
+        // Create a Bundle with default values
+        val format = Bundle().apply {
+            putInt("font", 1)
+            putString("fontName", "Arial")
+            putBoolean("fontBold", false)
+            putInt("lineHeight", 5)
+            putInt("fontSize", 24)
+        }
+
+        mPrinter?.addTextOnlyLeft(format,text)
+    }
+
+    fun addTextLeft_Right(textLeft: String?, textRight: String?) {
+        // Create a default Bundle with predefined formatting
+        val defaultFormat = Bundle()
+        defaultFormat.putInt("font", 1) // Default font type
+        defaultFormat.putString("fontName", fontName_default) // Default font name
+        defaultFormat.putBoolean("fontBold", false) // Default to non-bold font
+        defaultFormat.putInt("lineHeight", 5) // Default line height
+
+
+        // Call the existing method with the default formatting Bundle
+        mPrinter?.addTextLeft_Right(defaultFormat, textLeft, textRight)
+    }
+
+    fun addTextLeft_Center_Right(textLeft: String?, textCenter: String?, textRight: String?) {
+        // Call the original method with default formatting
+        val defaultFormat = Bundle()
+        defaultFormat.putInt("font", 1) // Default font type
+        defaultFormat.putString("fontName", fontName_default) // Default font name
+        defaultFormat.putBoolean("fontBold", false) // Default font bold setting
+        defaultFormat.putInt("lineHeight", 5) // Default line height
+
+
+        // Invoke the original method with default settings
+        mPrinter?.addTextLeft_Center_Right(defaultFormat, textLeft, textCenter, textRight)
+    }
+
+    fun barCodePrinting(format: Bundle,barcode:String)
+    {
+        mPrinter?.addBarCode(format,barcode)
+    }
+
+    fun feedLine(lines:Int)
+    {
+        mPrinter?.feedLine(lines)
+    }
+
+    fun qrCodePrinting(format: Bundle,barcode:String)
+    {
+        mPrinter?.addQrCode(format,barcode)
     }
 
     fun startPrinting()
     {
         mPrinter?.startPrint()
     }
+
+    fun printMultipleTextsAndStartPrinting(texts: List<String>) {
+
+        try {
+            // Add each text to the printer
+            for (text in texts) {
+                addText(text)
+            }
+
+        } catch (e: Exception) {
+            // Handle the exception (e.g., log it or show an error message)
+            logfile.printLog("Error in printMultipleTextsAndStartPrinting: ${e.message}")
+        }
+    }
+
 }

@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime.android)
     implementation(libs.androidx.core.animation)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -97,7 +98,8 @@ dependencies {
     implementation ("io.coil-kt:coil-gif:2.2.2") // or the latest version
     implementation ("io.coil-kt:coil-compose:2.2.2")
 
-
+    // ZXing core
+    implementation("com.google.zxing:core:3.5.0")
 
 
     // Coil SVG decoder
