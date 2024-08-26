@@ -634,8 +634,8 @@ object TransactionState {
 }
 
 object Authorisation {
-    var isNewauth: Boolean = false
-    var isAuthcap: Boolean = false
+    var isprinting: Boolean = false
+    var isauthorisation: Boolean = false
 }
 
 @Composable
@@ -1022,12 +1022,13 @@ fun OutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 28.sp),
     keyboardType: KeyboardType = KeyboardType.Text,
     onDoneAction: () -> Unit = {},
     isPassword: Boolean = false, // New parameter to indicate if it's a password field
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     modifier: Modifier = Modifier,
+    amount: Boolean = false // New parameter to indicate if ₹ icon should be sh
 ) {
     // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
@@ -1055,6 +1056,15 @@ fun OutlinedTextField(
             .padding(2.dp)
             .width(280.dp)
             .height(70.dp),
+        leadingIcon = if (amount) {
+            {
+                Text(
+                    text = "\u20B9", // Unicode for ₹ symbol
+                    fontSize = 28.sp, // Adjust the size of the icon
+                    color = Color.Black // Set the color to black
+                )
+            }
+        } else null,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
             unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
@@ -1063,6 +1073,8 @@ fun OutlinedTextField(
         )
     )
 }
+
+
 
 
 @Composable

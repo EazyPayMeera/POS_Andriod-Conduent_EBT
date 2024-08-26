@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import android.os.Build
-import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -43,13 +42,13 @@ import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResul
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -163,7 +162,7 @@ fun CircularMenu(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
-
+    val isAuthcap = Authorisation.isprinting
     // Get the context
     val context = LocalContext.current
 
@@ -247,6 +246,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     CircularMenu(
                         onPrintClick = {
+                                Authorisation.isprinting = true
                                 viewModel.initPrint(context)
                                 viewModel.GetStatus()
 
@@ -254,60 +254,8 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 "Customer Receipt" -> {
-                                    //viewModel.feedLine(200)
-                                    val bitmap = viewModel.getLogoBitmap(context, R.drawable.master_mono)
-                                    val imageData: ByteArray = viewModel.getBitmapBytes(bitmap) ?: ByteArray(0) // Provide default empty ByteArray if null
-                                    var format = Bundle()
-                                    format.putInt("align", -1)
-                                    format.putInt("width", 300)
-                                    format.putInt("height", 100)
-                                    format.putInt("offset", 0)
-                                    viewModel.addImage(format, imageData)
-
-                                    val receipt = ApprovedViewModel.Receipt(
-                                        merchantName = "EazyPayTech Store",
-                                        address = "123 Main Street\nCity, State 12345",
-                                        phone = "(123) 456-7890",
-                                        transactionDetails = ApprovedViewModel.TransactionDetails(
-                                            dateTime = currentDateTime, // Use the current date and time here
-                                            receiptNumber = "000123",
-                                            terminalNumber = "001"
-                                        ),
-                                        items = listOf(
-                                            ApprovedViewModel.ReceiptItem("Item A", 10.00),
-                                            ApprovedViewModel.ReceiptItem("Item B", 15.00),
-                                            ApprovedViewModel.ReceiptItem("Item C", 7.50)
-                                        ),
-                                        subtotal = 32.50,
-                                        tax = 1.63,
-                                        total = 34.13,
-                                        paymentMethod = "Credit Card",
-                                        cardNumber = "**** **** **** 1234",
-                                        authCode = "123456",
-                                        customerService = ApprovedViewModel.CustomerService(
-                                            phone = "(123) 456-7890",
-                                            email = "support@eazypaytech.com"
-                                        )
-                                    )
-
-                                    viewModel.printReceiptDetails(receipt)
-                                    format = Bundle()
-                                    format.putInt("align", 1)
-                                    format.putInt("width", 300)
-                                    format.putInt("height", 100)
-                                    format.putSerializable(
-                                        "barcode_type",
-                                        BarcodeFormat.CODE_39
-                                    )
-                                    viewModel.addBarcode(format,"33333333333333")
-                                    viewModel.feedLine(3)
-                                    format = Bundle()
-                                    format.putInt("align", 1)
-                                    format.putInt("offset", 1)
-                                    format.putInt("expectedHeight", 300)
-                                    viewModel.addQRCode(format,"222222222222222222222")
-                                    viewModel.feedLine(3)
-                                    viewModel.printReceipt(context)
+                                    Authorisation.isprinting = true
+                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
 
                                 }
                                 "Merchant Receipt" -> {
@@ -322,7 +270,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                     )
                 }
 
-                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space
 
                 // Done button at the bottom
                 Box(

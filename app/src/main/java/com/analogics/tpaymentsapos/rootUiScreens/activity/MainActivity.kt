@@ -35,7 +35,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmationView
@@ -43,10 +42,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InfoConfirmView
-import com.analogics.tpaymentsapos.rootUiScreens.login.InfoConfirmView
-import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
-import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
@@ -55,7 +51,10 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
+import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view.OnBoardSlideView
+import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 
@@ -185,7 +184,9 @@ fun AppNavigationGraph(
             ForgetPasswordView(navHostController)
         }
         composable(AppNavigationItems.PleaseWaitScreen.route) {
-            PleaseWaitView(navHostController)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                PleaseWaitView(navHostController)
+            }
         }
         composable(AppNavigationItems.TrainingScreen.route) {
             DashboardView(navHostController)
@@ -238,7 +239,9 @@ fun AppNavigationGraph(
             arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
-            ApprovedView(navHostController, totalAmount)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ApprovedView(navHostController, totalAmount)
+            }
         }
         composable(AppNavigationItems.RefundAmtScreen.route) {
             RefundAmtView(navHostController)
