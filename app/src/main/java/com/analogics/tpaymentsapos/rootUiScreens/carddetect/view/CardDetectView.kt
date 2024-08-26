@@ -54,7 +54,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
         // Navigate to another screen after the delay without removing the current screen from the back stack
         navHostController.navigate(AppNavigationItems.PinScreen.route)
     }
-
+    viewModel.setTotalAmount(totalAmount)
     Column {
 
         CommonTopAppBar(

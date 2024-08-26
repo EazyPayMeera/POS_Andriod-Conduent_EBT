@@ -79,7 +79,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     value = viewModel.rawInput,
                     onValueChange = {viewModel.onAmountChange(it)},
                     placeholder = stringResource(id = R.string.auth_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 28.sp),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController)},
                     visualTransformation = createAmountTransformation(),

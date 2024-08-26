@@ -47,7 +47,8 @@ fun PleaseWaitView(navHostController: NavHostController) {
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
-    val isprinting = Authorisation.isprinting
+    val isMerchantReceipt = Authorisation.isMerchantReceipt
+    val isEreceipt = Authorisation.isEreceipt
 
     val context = LocalContext.current
 
@@ -64,7 +65,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
     // Navigation with delay
     LaunchedEffect(Unit) {
-        if(isprinting) {
+        if(isMerchantReceipt) {
             //viewModel.feedLine(200)
             val bitmap = viewModel.getLogoBitmap(context, R.drawable.master_mono)
             val imageData: ByteArray = viewModel.getBitmapBytes(bitmap)
@@ -119,17 +120,23 @@ fun PleaseWaitView(navHostController: NavHostController) {
             format.putInt("expectedHeight", 300)
             viewModel.addQRCode(format, "222222222222222222222")
             viewModel.feedLine(3)
+            delay(2000) // Delay for 2 seconds (2000 milliseconds)'
+            viewModel.printReceipt(context)
+            Authorisation.isMerchantReceipt = false
 
         }
-        delay(2000) // Delay for 2 seconds (2000 milliseconds)
-        val destination = if (isprinting) {
+        delay(2000) // Delay for 2 seconds (2000 milliseconds)'
+        val destination = if (isMerchantReceipt) {
             AppNavigationItems.TrainingScreen.route
-        } else {
+        }else if (isEreceipt)
+        {
+            AppNavigationItems.EmailScreen.route
+        }
+        else {
             AppNavigationItems.ApprovedScreen.route
         }
         navHostController.navigate(destination) // Navigate to the desired screen
-        viewModel.printReceipt(context)
-        Authorisation.isprinting = false
+
     }
 
     Column {
@@ -158,7 +165,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space
 
                 // TextView for "Please Wait"
-                if(isprinting) {
+                if(isMerchantReceipt) {
 
                     TextView(
                         text = stringResource(id = R.string.printing),
@@ -195,7 +202,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 )
 
                 // TextView for "Please Wait"
-                if(isprinting) {
+                if(isMerchantReceipt) {
                     TextView(
                         text = stringResource(id = R.string.merchant_recp),
                         fontSize = MaterialTheme.dimens.SP_15_CompactMedium,

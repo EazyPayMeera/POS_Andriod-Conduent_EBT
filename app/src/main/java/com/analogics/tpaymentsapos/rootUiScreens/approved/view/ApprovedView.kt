@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+//import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
@@ -36,12 +37,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -162,7 +165,7 @@ fun CircularMenu(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
-    val isAuthcap = Authorisation.isprinting
+    val isMerchantReceipt = Authorisation.isMerchantReceipt
     // Get the context
     val context = LocalContext.current
 
@@ -170,6 +173,8 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
 
     val printStatus by viewModel.printStatus
+
+    val updated_amt = updated_amt
 
 
     suspend fun initPrinter()
@@ -223,19 +228,28 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         .align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium)) // Blank space
 
+
+                Text(
+                    text = "₹$updated_amt",
+                    fontSize = 30.sp,
+                    color = colorResource(id = R.color.purple_200),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                )
                 // Image for approval
                 ImageView(
-                    imageId = R.drawable.approve, // Replace with your image resource
-                    size = MaterialTheme.dimens.DP_110_CompactMedium,
+                    imageId = R.drawable.aprrove_scr, // Replace with your image resource
+                    size = MaterialTheme.dimens.DP_120_CompactMedium,
                     alignment = Alignment.Center, // Align image horizontally within the Box
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Align the Box horizontally within the parent
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space
+                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium)) // Blank space
 
                 // Circular Menu with Print and menu option handling
                 Box(
@@ -246,7 +260,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     CircularMenu(
                         onPrintClick = {
-                                Authorisation.isprinting = true
+                                //Authorisation.isMerchantReceipt = true
                                 viewModel.initPrint(context)
                                 viewModel.GetStatus()
 
@@ -254,16 +268,17 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 "Customer Receipt" -> {
-                                    Authorisation.isprinting = true
+                                    Authorisation.isMerchantReceipt = true
                                     navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
 
                                 }
                                 "Merchant Receipt" -> {
-                                    // Handle Merchant Receipt click
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                    Authorisation.isMerchantReceipt = true
+                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                                 }
                                 "E-RECEIPT" -> {
-
+                                    Authorisation.isEreceipt = true
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
                             }
                         }
@@ -274,7 +289,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 // Done button at the bottom
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_55_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_33_CompactMedium)
                         .align(Alignment.CenterHorizontally), // Aligns the Box itself horizontally within the parent
                     contentAlignment = Alignment.Center // Centers the OkButton within the Box
                 ) {

@@ -634,8 +634,8 @@ object TransactionState {
 }
 
 object Authorisation {
-    var isprinting: Boolean = false
-    var isauthorisation: Boolean = false
+    var isMerchantReceipt: Boolean = false
+    var isEreceipt: Boolean = false
 }
 
 @Composable
@@ -1061,6 +1061,7 @@ fun OutlinedTextField(
                 Text(
                     text = "\u20B9", // Unicode for ₹ symbol
                     fontSize = 28.sp, // Adjust the size of the icon
+                    fontWeight = FontWeight.Bold,
                     color = Color.Black // Set the color to black
                 )
             }

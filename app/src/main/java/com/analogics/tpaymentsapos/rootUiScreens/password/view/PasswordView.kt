@@ -80,7 +80,7 @@ fun PasswordView(navHostController: NavHostController) {
                     value = password,
                     onValueChange = { newValue -> viewModel.updatePassword(newValue) },
                     placeholder = stringResource(id = R.string.enter_password),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.Password,
                     onDoneAction = {
                         viewModel.navigateToInvoiceScreen(navHostController)
