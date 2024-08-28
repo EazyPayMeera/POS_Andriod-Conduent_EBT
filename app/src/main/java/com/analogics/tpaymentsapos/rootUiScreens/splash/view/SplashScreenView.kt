@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.analogics.tpaymentsapos.R
@@ -35,7 +36,7 @@ import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewModel = viewModel()) {
+fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewModel = hiltViewModel()) {
     val scale = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {

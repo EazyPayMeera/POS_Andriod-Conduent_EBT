@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -32,7 +33,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun InvoiceView(navHostController: NavHostController) {
     // Get ViewModel instance
-    val viewModel: InvoiceViewModel = viewModel()
+    val viewModel: InvoiceViewModel = hiltViewModel()
 
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()

@@ -2,7 +2,7 @@ package com.analogics.networkservicecore.di
 
 
 import com.analogics.networkservicecore.nComponent.IAPIService
-import com.analogics.networkservicecore.serviceutils.FrameworkUtils
+import com.analogics.networkservicecore.serviceutils.NetworkConstants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -20,8 +21,14 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofitAPIService(): Retrofit {
+        val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)  // Set connection timeout
+            .readTimeout(30, TimeUnit.SECONDS)     // Set read timeout
+            .writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
+            .build()
         return Retrofit.Builder()
-            .baseUrl(FrameworkUtils.baseurl)
+            .baseUrl(NetworkConstants.baseurl)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .client(OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build())
             .build()

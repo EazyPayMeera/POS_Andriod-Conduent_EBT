@@ -2,8 +2,6 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,12 +16,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IResultProviderListener
+import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.model.error.PaymentServiceError
+
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -41,22 +41,22 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
     val isAuthcap = Authorisation.isAuthcap
-    val viewModel: CardViewModel = viewModel()
+    val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     suspend fun startPayment()
     {
-        viewModel.startPayment(context,object : IResultProviderListener {
-
-            override fun onSuccess(result: Any?) {
-                if(result?.equals(true)==true)
+        viewModel.startPayment(context,object :
+           IOnRootAppPaymentListener {
+            override fun onPaymentSuccess(response: Any) {
+                if(response?.equals(true)==true)
                     viewModel.navigateToApprovalScreen(navHostController)
                 else
                     viewModel.navigateToDeclinedScreen(navHostController)
             }
 
-            override fun onFailure(exception: Exception) {
+            override fun onPaymentError(tError: PaymentServiceError) {
                 viewModel.navigateToDeclinedScreen(navHostController)
             }
         })

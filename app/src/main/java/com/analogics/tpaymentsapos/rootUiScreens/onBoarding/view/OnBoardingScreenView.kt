@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.graphics.toColorInt
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -45,7 +46,7 @@ import kotlinx.coroutines.yield
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoardingScreenViewModel = viewModel()) {
+fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoardingScreenViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState(initialPage = 0)
     val imageSlider = listOf(
         OnBoardingContentList(

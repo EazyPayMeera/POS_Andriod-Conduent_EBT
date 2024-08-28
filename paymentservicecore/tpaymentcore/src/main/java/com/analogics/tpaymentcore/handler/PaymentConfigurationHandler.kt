@@ -4,7 +4,6 @@ import android.content.Context
 import com.analogics.tpaymentcore.EMV.EMV
 import com.analogics.tpaymentcore.listener.IPaymentConfigListener
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
-import com.analogics.tpaymentcore.model.TError
 
 object PaymentConfigurationHandler : IPaymentConfigListener {
     override fun initPaymentSDK(
@@ -13,9 +12,9 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
     ) {
         try {
             EMV.initialize(context);
-            iPaymentCoreHandlerListener.onPMTRespHandler("SUCCESS")
+            iPaymentCoreHandlerListener.onTPaymentSDKHandler("SUCCESS")
         } catch (exception: Exception) {
-            iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
+            iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
         }
 
     }
@@ -27,7 +26,7 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
         try {
             EMV.startPayment(context,iPaymentCoreHandlerListener);
         } catch (exception: Exception) {
-            iPaymentCoreHandlerListener.onPMTRespHandler("FAILURE")
+            iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
         }
     }
 

@@ -1,5 +1,7 @@
 package com.analogics.tpaymentcore.listener
 
+
+
 interface IPaymentCoreHandlerListener {
-      fun onPMTRespHandler(uiData: String)
+      fun onTPaymentSDKHandler(uiData: String)
 }
