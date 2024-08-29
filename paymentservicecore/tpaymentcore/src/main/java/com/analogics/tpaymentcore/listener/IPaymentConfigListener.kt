@@ -4,8 +4,8 @@ import android.content.Context
 
 interface IPaymentConfigListener {
 
-    fun initPaymentSDK(context: Context, iPaymentCoreHandlerListener: IPaymentCoreHandlerListener)
-    fun startPayment(context: Context, iPaymentCoreHandlerListener: IPaymentCoreHandlerListener)
+    fun initPaymentSDK(context: Context, iPaymentSDKListener: IPaymentSDKListener)
+    fun startPayment(context: Context, iPaymentSDKListener: IPaymentSDKListener)
 
     fun handlePaymentEvent()
 

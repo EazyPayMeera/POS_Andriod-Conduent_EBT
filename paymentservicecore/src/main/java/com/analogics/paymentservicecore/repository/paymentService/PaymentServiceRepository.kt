@@ -2,21 +2,21 @@ package com.analogics.paymentservicecore.repository.paymentService
 
 
 import android.content.Context
-import com.analogics.builder_core.listener.responseListener.IBuilderCoreResponseListener
-import com.analogics.builder_core.repository.MakeRequestRepository
+import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
+import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.paymentservicecore.constants.ConfigConst
 
-import com.analogics.paymentservicecore.listeners.requestListener.IPaymentService
+import com.analogics.paymentservicecore.listeners.requestListener.IPaymentServiceRequestListener
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.securityframework.handler.SharedPrefHandler
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 import javax.inject.Inject
 
-class PaymentServiceRepository @Inject constructor(private var makeRequestRepository: MakeRequestRepository) :
-    IPaymentService,
-    IPaymentCoreHandlerListener, IBuilderCoreResponseListener {
+class PaymentServiceRepository @Inject constructor(private var buildApiRepository: BuildApiRepository) :
+    IPaymentServiceRequestListener,
+    IPaymentSDKListener, IApiServiceResponseListener {
     lateinit var iOnRootAppPaymentListener: IOnRootAppPaymentListener
     lateinit var context: Context
     override fun onTPaymentSDKInit(uiData: String) {
@@ -49,7 +49,7 @@ class PaymentServiceRepository @Inject constructor(private var makeRequestReposi
 
     override suspend fun apiEmpDetails(iOnRootAppPaymentListener: IOnRootAppPaymentListener) {
         this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
-        makeRequestRepository.apiEmployeeDetails(this)
+        buildApiRepository.apiEmployeeDetails(this)
     }
 
     override fun initPaymentSDK(

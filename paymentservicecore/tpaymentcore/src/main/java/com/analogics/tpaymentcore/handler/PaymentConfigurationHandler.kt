@@ -3,30 +3,30 @@ package com.analogics.tpaymentcore.handler
 import android.content.Context
 import com.analogics.tpaymentcore.EMV.EMV
 import com.analogics.tpaymentcore.listener.IPaymentConfigListener
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 
 object PaymentConfigurationHandler : IPaymentConfigListener {
     override fun initPaymentSDK(
         context: Context,
-        iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
+        iPaymentSDKListener: IPaymentSDKListener
     ) {
         try {
             EMV.initialize(context);
-            iPaymentCoreHandlerListener.onTPaymentSDKInit("SUCCESS")
+            iPaymentSDKListener.onTPaymentSDKInit("SUCCESS")
         } catch (exception: Exception) {
-            iPaymentCoreHandlerListener.onTPaymentSDKInit("FAILURE")
+            iPaymentSDKListener.onTPaymentSDKInit("FAILURE")
         }
 
     }
 
     override fun startPayment(
         context: Context,
-        iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
+        iPaymentSDKListener: IPaymentSDKListener
     ) {
         try {
-            EMV.startPayment(context,iPaymentCoreHandlerListener);
+            EMV.startPayment(context,iPaymentSDKListener);
         } catch (exception: Exception) {
-            iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
+            iPaymentSDKListener.onTPaymentSDKHandler("FAILURE")
         }
     }
 

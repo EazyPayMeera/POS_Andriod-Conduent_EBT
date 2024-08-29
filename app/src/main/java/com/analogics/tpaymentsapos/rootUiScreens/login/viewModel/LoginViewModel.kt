@@ -14,8 +14,6 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
