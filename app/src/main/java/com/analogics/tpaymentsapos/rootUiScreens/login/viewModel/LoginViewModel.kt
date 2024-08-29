@@ -42,7 +42,8 @@ IOnRootAppPaymentListener {
         this.navHostController=navHost!!
         viewModelScope.launch {
             try {
-                    paymentServiceRepository.apiEmpDetails(iOnRootAppPaymentListener = this@LoginViewModel)
+                    //paymentServiceRepository.apiEmpDetails(iOnRootAppPaymentListener = this@LoginViewModel)
+                navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
             } catch (e: Exception) {
                e.printStackTrace()
             }

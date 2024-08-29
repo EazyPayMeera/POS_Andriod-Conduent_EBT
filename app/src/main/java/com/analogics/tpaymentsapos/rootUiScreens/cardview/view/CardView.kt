@@ -45,23 +45,6 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    suspend fun startPayment()
-    {
-        viewModel.startPayment(context,object :
-           IOnRootAppPaymentListener {
-            override fun onPaymentSuccess(response: Any) {
-                if(response?.equals(true)==true)
-                    viewModel.navigateToApprovalScreen(navHostController)
-                else
-                    viewModel.navigateToDeclinedScreen(navHostController)
-            }
-
-            override fun onPaymentError(tError: PaymentServiceError) {
-                viewModel.navigateToDeclinedScreen(navHostController)
-            }
-        })
-    }
-
     Column {
 
         CommonTopAppBar(
@@ -222,7 +205,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
         }
     }
     LaunchedEffect(Unit) {
-        startPayment()
+        viewModel.startPayment(context, navHostController)
     }
 }
 

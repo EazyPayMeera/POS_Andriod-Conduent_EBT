@@ -12,9 +12,9 @@ object PaymentConfigurationHandler : IPaymentConfigListener {
     ) {
         try {
             EMV.initialize(context);
-            iPaymentCoreHandlerListener.onTPaymentSDKHandler("SUCCESS")
+            iPaymentCoreHandlerListener.onTPaymentSDKInit("SUCCESS")
         } catch (exception: Exception) {
-            iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
+            iPaymentCoreHandlerListener.onTPaymentSDKInit("FAILURE")
         }
 
     }

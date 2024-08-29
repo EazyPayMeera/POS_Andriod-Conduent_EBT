@@ -9,4 +9,6 @@ interface IPaymentService {
     fun startPayment(
     context: Context,
     iOnRootAppPaymentListener:IOnRootAppPaymentListener)
+    fun isPaymentSDKInit(context: Context): Boolean
+    fun isPaymentSDKInit(context: Context, isInit : Boolean)
 }

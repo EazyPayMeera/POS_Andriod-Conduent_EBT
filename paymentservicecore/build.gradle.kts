@@ -52,5 +52,6 @@ dependencies {
     //   implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     api(project(":paymentservicecore:tpaymentcore"))
     api(project(":paymentservicecore:builder-core"))
+    api(project(":paymentservicecore:securityframework"))
     kapt(libs.androidx.hilt.compiler)
 }
