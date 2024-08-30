@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R // Import the R class for resource access
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.*
+import com.analogics.tpaymentsapos.ui.theme.tipBgColor
 
 
 @Composable
@@ -128,8 +129,9 @@ fun TippingView(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.White)
+            .background(color = tipBgColor)
             .padding(16.dp)
+
     ) {
         Column(
             modifier = Modifier
