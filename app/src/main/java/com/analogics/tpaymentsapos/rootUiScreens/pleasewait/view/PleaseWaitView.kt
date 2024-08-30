@@ -1,7 +1,9 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+import android.content.ContentValues.TAG
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,9 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.pleasewait.viewmodel.PleaseWaitViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
@@ -39,10 +41,10 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.delay
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
-    // Define state and resources
     var invoiceno by remember { mutableStateOf("") }
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
@@ -51,146 +53,91 @@ fun PleaseWaitView(navHostController: NavHostController) {
     val isEreceipt = Authorisation.isEreceipt
 
     val context = LocalContext.current
-
-    // Create the ViewModel with the context
     val viewModel: PleaseWaitViewModel = viewModel { PleaseWaitViewModel(context) }
 
-    val printStatus by viewModel.printStatus
-
-    // Access string resources
-    val refund = stringResource(id = R.string.refund)
-    val void = stringResource(id = R.string.void_trans)
-    val preAuth = stringResource(id = R.string.pre_auth)
-    val purchase = stringResource(id = R.string.purchase)
-
-    // Navigation with delay
     LaunchedEffect(Unit) {
-        if(isMerchantReceipt) {
-            //viewModel.feedLine(200)
+        if (isMerchantReceipt) {
             val bitmap = viewModel.getLogoBitmap(context, R.drawable.master_mono)
-            val imageData: ByteArray = viewModel.getBitmapBytes(bitmap)
-                ?: ByteArray(0) // Provide default empty ByteArray if null
-            var format = Bundle()
-            format.putInt("align", -1)
-            format.putInt("width", 300)
-            format.putInt("height", 100)
-            format.putInt("offset", 0)
+            val imageData: ByteArray = viewModel.getBitmapBytes(bitmap) ?: ByteArray(0)
+            var format = Bundle().apply {
+                putInt("align", -1)
+                putInt("width", 300)
+                putInt("height", 100)
+                putInt("offset", 0)
+            }
             viewModel.addImage(format, imageData)
 
-            val receipt = ApprovedViewModel.Receipt(
-                merchantName = "EazyPayTech Store",
-                address = "123 Main Street\nCity, State 12345",
-                phone = "(123) 456-7890",
-                transactionDetails = ApprovedViewModel.TransactionDetails(
-                    dateTime = currentDateTime, // Use the current date and time here
-                    receiptNumber = "000123",
-                    terminalNumber = "001"
-                ),
-                items = listOf(
-                    ApprovedViewModel.ReceiptItem("Item A", 10.00),
-                    ApprovedViewModel.ReceiptItem("Item B", 15.00),
-                    ApprovedViewModel.ReceiptItem("Item C", 7.50)
-                ),
-                subtotal = 32.50,
-                tax = 1.63,
-                total = 34.13,
-                paymentMethod = "Credit Card",
-                cardNumber = "**** **** **** 1234",
-                authCode = "123456",
-                customerService = ApprovedViewModel.CustomerService(
-                    phone = "(123) 456-7890",
-                    email = "support@eazypaytech.com"
-                )
-            )
+            format = Bundle().apply {
+                putInt("align", 1)
+                putInt("width", 300)
+                putInt("height", 100)
+                putSerializable("barcode_type", BarcodeFormat.CODE_39)
+            }
 
-            viewModel.printReceiptDetails(receipt)
-            format = Bundle()
-            format.putInt("align", 1)
-            format.putInt("width", 300)
-            format.putInt("height", 100)
-            format.putSerializable(
-                "barcode_type",
-                BarcodeFormat.CODE_39
-            )
-            viewModel.addBarcode(format, "33333333333333")
+            viewModel.addReceiptDetails(format,object : IPrinterResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                    if (result == true) {
+                        Log.d(TAG, "Receipt printed successfully")
+                    } else {
+                        Log.d(TAG, "Receipt print failed")
+                    }
+                }
+                override fun onFailure(exception: Exception) {
+                    Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
+                }
+            })
+
+/*            viewModel.feedLine(3)
+            format = Bundle().apply {
+                putInt("align", 1)
+                putInt("offset", 1)
+                putInt("expectedHeight", 300)
+            }
+            receipt.qrcode?.let { qrcode ->
+                viewModel.addQRCode(format, qrcode)
+            }
             viewModel.feedLine(3)
-            format = Bundle()
-            format.putInt("align", 1)
-            format.putInt("offset", 1)
-            format.putInt("expectedHeight", 300)
-            viewModel.addQRCode(format, "222222222222222222222")
-            viewModel.feedLine(3)
-            delay(2000) // Delay for 2 seconds (2000 milliseconds)'
-            viewModel.printReceipt(context)
-            Authorisation.isMerchantReceipt = false
+            viewModel.startPrint()
+            delay(2000) // Delay for 2 seconds
+            Authorisation.isMerchantReceipt = false*/
+        }
 
+        delay(2000) // Delay for 2 seconds
+        val destination = when {
+            isMerchantReceipt -> AppNavigationItems.TrainingScreen.route
+            isEreceipt -> AppNavigationItems.EmailScreen.route
+            else -> AppNavigationItems.ApprovedScreen.route
         }
-        delay(2000) // Delay for 2 seconds (2000 milliseconds)'
-        val destination = if (isMerchantReceipt) {
-            AppNavigationItems.TrainingScreen.route
-        }else if (isEreceipt)
-        {
-            AppNavigationItems.EmailScreen.route
-        }
-        else {
-            AppNavigationItems.ApprovedScreen.route
-        }
-        navHostController.navigate(destination) // Navigate to the desired screen
-
+        navHostController.navigate(destination)
     }
 
     Column {
-        // Top App Bar with back button
         CommonTopAppBar(
             title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        // Outer Surface with background color, padding, and rounded corners
-        BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
-        ) {
+        BackgroundScreen() {
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
-                    .fillMaxSize(), // Fill the entire available space
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // Align content to the start
+                horizontalAlignment = Alignment.Start
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
 
-                // TextView for "Please Wait"
-                if(isMerchantReceipt) {
+                TextView(
+                    text = if (isMerchantReceipt) stringResource(id = R.string.printing) else stringResource(id = R.string.processing),
+                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
 
-                    TextView(
-                        text = stringResource(id = R.string.printing),
-                        fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                            .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
-                    )
-                }
-                else
-                {
-                    TextView(
-                        text = stringResource(id = R.string.processing),
-                        fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                            .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
-                    )
-                }
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
-                // TextView for "Please Wait"
                 TextView(
                     text = stringResource(id = R.string.plz_wait),
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
@@ -198,11 +145,10 @@ fun PleaseWaitView(navHostController: NavHostController) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                        .align(Alignment.CenterHorizontally)
                 )
 
-                // TextView for "Please Wait"
-                if(isMerchantReceipt) {
+                if (isMerchantReceipt) {
                     TextView(
                         text = stringResource(id = R.string.merchant_recp),
                         fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
@@ -210,24 +156,18 @@ fun PleaseWaitView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                            .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                            .align(Alignment.CenterHorizontally)
                     )
                 }
 
-                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
-
-                // GIF Image
                 GifImage(
-                    gifResId = R.drawable.wait, // Use your GIF resource here
+                    gifResId = R.drawable.wait,
                     modifier = Modifier
                         .size(MaterialTheme.dimens.DP_120_CompactMedium)
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the GIF horizontally within the Column
+                        .align(Alignment.CenterHorizontally)
                 )
             }
         }
     }
 }
-
-
-

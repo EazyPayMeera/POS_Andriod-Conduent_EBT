@@ -1,15 +1,18 @@
 package com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel
 
-import PrinterServiceRepository
+
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import java.io.ByteArrayOutputStream
 
 class ApprovedViewModel(context: Context): ViewModel() {
@@ -21,6 +24,8 @@ class ApprovedViewModel(context: Context): ViewModel() {
 
 
     data class Receipt(
+        val receiptHeaader: String,
+        val merchantHead : String,
         val merchantName: String,
         val address: String,
         val phone: String,
@@ -51,7 +56,7 @@ class ApprovedViewModel(context: Context): ViewModel() {
         val email: String
     )
 
-    fun printReceiptDetails(receipt: Receipt) {
+/*    fun printReceiptDetails(receipt: Receipt) {
         val receiptDetails = listOf(
             "********** RECEIPT **********",
             "",
@@ -91,7 +96,7 @@ class ApprovedViewModel(context: Context): ViewModel() {
 
         //printer.addText(receiptDetails)
         addTextDetails(receiptDetails)
-    }
+    }*/
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
         var imageData: ByteArray? = null
@@ -115,14 +120,14 @@ class ApprovedViewModel(context: Context): ViewModel() {
 
 
 
-    fun initPrint(context: Context) {
+/*    fun initPrint(context: Context) {
         printer.initPrint(context) // Pass the context instance directly
-    }
+    }*/
 
 
-    fun addTextDetails(texts: List<String>) {
+/*    fun addTextDetails(texts: List<String>) {
         printer.printMultipleTextsAndStartPrinting(texts)
-    }
+    }*/
 
     fun addTextLeft(texts:String)  // Add Text on Left Side
     {
@@ -166,6 +171,7 @@ class ApprovedViewModel(context: Context): ViewModel() {
 
     suspend fun initPrinter(context: Context, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
+        Log.d(TAG, "Initializing printer in viewModel...")
         PrinterServiceRepository().initPrinter(context,iPrinterResultProviderListener)
     }
 

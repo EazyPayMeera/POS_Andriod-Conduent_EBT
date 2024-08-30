@@ -1,16 +1,18 @@
 package com.analogics.tpaymentsapos.rootUiScreens.pleasewait.viewmodel
 
-import PrinterServiceRepository
+
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import java.io.ByteArrayOutputStream
 
 class PleaseWaitViewModel(context: Context): ViewModel() {
@@ -21,78 +23,7 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
     private val printer = Printer.getInstance()
 
 
-    data class Receipt(
-        val merchantName: String,
-        val address: String,
-        val phone: String,
-        val transactionDetails: TransactionDetails,
-        val items: List<ReceiptItem>,
-        val subtotal: Double,
-        val tax: Double,
-        val total: Double,
-        val paymentMethod: String,
-        val cardNumber: String,
-        val authCode: String,
-        val customerService: CustomerService
-    )
 
-    data class TransactionDetails(
-        val dateTime: String,
-        val receiptNumber: String,
-        val terminalNumber: String
-    )
-
-    data class ReceiptItem(
-        val name: String,
-        val price: Double
-    )
-
-    data class CustomerService(
-        val phone: String,
-        val email: String
-    )
-
-    fun printReceiptDetails(receipt: ApprovedViewModel.Receipt) {
-        val receiptDetails = listOf(
-            "********** RECEIPT **********",
-            "",
-            "MERCHANT: ${receipt.merchantName}",
-            "ADDRESS: ${receipt.address}",
-            "PHONE:   ${receipt.phone}",
-            "----------------------------------------",
-            "TRANSACTION DETAILS",
-            "----------------------------------------",
-            "DATE/TIME:   ${receipt.transactionDetails.dateTime}",
-            "RECEIPT #:   ${receipt.transactionDetails.receiptNumber}",
-            "TERMINAL #:  ${receipt.transactionDetails.terminalNumber}",
-            "----------------------------------------",
-            "ITEMS PURCHASED",
-            "----------------------------------------"
-        ) + receipt.items.mapIndexed { index, item ->
-            "${index + 1}. ${item.name}              $${item.price}"
-        } + listOf(
-            "----------------------------------------",
-            "SUBTOTAL:              $${receipt.subtotal}",
-            "TAX (5%):              $${receipt.tax}",
-            "TOTAL:                 $${receipt.total}",
-            "----------------------------------------",
-            "PAYMENT METHOD: ${receipt.paymentMethod}",
-            "CARD NUMBER:   ${receipt.cardNumber}",
-            "AUTH CODE:     ${receipt.authCode}",
-            "----------------------------------------",
-            "THANK YOU FOR SHOPPING",
-            "   WITH US TODAY!",
-            "PLEASE VISIT US AGAIN SOON!",
-            "----------------------------------------",
-            "CUSTOMER SERVICE CONTACT",
-            "TEL: ${receipt.customerService.phone}",
-            "EMAIL: ${receipt.customerService.email}",
-            "----------------------------------------"
-        )
-
-        //printer.addText(receiptDetails)
-        addTextDetails(receiptDetails)
-    }
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
         var imageData: ByteArray? = null
@@ -115,36 +46,6 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
     }
 
 
-
-    fun initPrint(context: Context) {
-        printer.initPrint(context) // Pass the context instance directly
-    }
-
-
-    fun addTextDetails(texts: List<String>) {
-        printer.printMultipleTextsAndStartPrinting(texts)
-    }
-
-    fun addTextLeft(texts:String)  // Add Text on Left Side
-    {
-        printer.addTextOnlyLeft(texts)
-    }
-
-    fun addTextLeftRight(textLeft:String,textRight:String)
-    {
-        printer.addTextLeft_Right(textLeft,textRight)
-    }
-
-    fun addTextLeftCenterRight(textLeft:String,textCenter:String,textRight:String)
-    {
-        printer.addTextLeft_Center_Right(textLeft,textCenter,textRight)
-    }
-
-    fun printReceipt(context: Context)
-    {
-        printer.startPrinting()
-    }
-
     fun addImage(format: Bundle, imageData: ByteArray)
     {
         printer.addImage(format,imageData)
@@ -165,9 +66,15 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
         printer.feedLine(lines)
     }
 
-    suspend fun initPrinter(context: Context, iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun addReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
-        PrinterServiceRepository().initPrinter(context,iPrinterResultProviderListener)
+        Log.d(TAG, "Initializing printer in viewModel...")
+        PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
+    }
+
+    fun startPrint()
+    {
+        printer.startPrinting()
     }
 
 

@@ -4,6 +4,7 @@ package com.analogics.tpaymentcore.Printer
 import android.content.Context
 import android.device.PrinterManager
 import android.os.Bundle
+import android.util.Log
 import com.urovo.file.logfile
 import com.urovo.sdk.print.PrinterProviderImpl
 import com.urovo.sdk.print.PrinterProviderImpl.TAG
@@ -26,10 +27,10 @@ class Printer constructor() {
     private var mPrinter: PrinterProviderImpl? = null
     private var mPrinterMan:PrinterManager? = null
 
-
+    // To Initialize the Printer
     fun initPrint(context: Context) {
 
-        logfile.printLog("===initPrint")
+        logfile.printLog("===initPrint in Printer kt")
 
         // Use the provided context instance instead of `Context` type
         if (this.mPrinter == null) {
@@ -40,6 +41,7 @@ class Printer constructor() {
 
     }
 
+    // Get Printer Status
     fun getPrinterStatus(): Int {
         logfile.printLog(TAG + "===getStatus")
         var ret = -1
@@ -56,13 +58,14 @@ class Printer constructor() {
 
     }
 
+    // To Add Image In Receipt
     fun addImage(format: Bundle,imageData: ByteArray)
     {
         mPrinter?.addImage(format,imageData)
     }
 
 
-
+    // To add text
     fun addText(text: String)
     {
         // Define default formatting options
@@ -94,6 +97,7 @@ class Printer constructor() {
         }
     }
 
+    // Add Text on Left
     // Overloaded method with String only
     fun addTextOnlyLeft(text: String) {
 
@@ -109,6 +113,7 @@ class Printer constructor() {
         mPrinter?.addTextOnlyLeft(format,text)
     }
 
+    // Add Text on Left and Right
     fun addTextLeft_Right(textLeft: String?, textRight: String?) {
         // Create a default Bundle with predefined formatting
         val defaultFormat = Bundle()
@@ -122,6 +127,7 @@ class Printer constructor() {
         mPrinter?.addTextLeft_Right(defaultFormat, textLeft, textRight)
     }
 
+    // Add Text On Left Center And Right Align
     fun addTextLeft_Center_Right(textLeft: String?, textCenter: String?, textRight: String?) {
         // Call the original method with default formatting
         val defaultFormat = Bundle()
@@ -135,37 +141,42 @@ class Printer constructor() {
         mPrinter?.addTextLeft_Center_Right(defaultFormat, textLeft, textCenter, textRight)
     }
 
+    // To add Barcode
     fun barCodePrinting(format: Bundle,barcode:String)
     {
         mPrinter?.addBarCode(format,barcode)
     }
 
+    // Feed Line to Receipt
     fun feedLine(lines:Int)
     {
         mPrinter?.feedLine(lines)
     }
 
+    // Add Qr Code in Receipt
     fun qrCodePrinting(format: Bundle,barcode:String)
     {
         mPrinter?.addQrCode(format,barcode)
     }
 
+    // Start Print API
     fun startPrinting()
     {
         mPrinter?.startPrint()
     }
 
+    // Print multiple texts
     fun printMultipleTextsAndStartPrinting(texts: List<String>) {
-
         try {
             // Add each text to the printer
             for (text in texts) {
                 addText(text)
             }
-
+            // Start the printing process
+            startPrinting()
         } catch (e: Exception) {
-            // Handle the exception (e.g., log it or show an error message)
-            logfile.printLog("Error in printMultipleTextsAndStartPrinting: ${e.message}")
+            // Handle the exception
+            Log.e(TAG, "Error in printMultipleTextsAndStartPrinting: ${e.message}")
         }
     }
 

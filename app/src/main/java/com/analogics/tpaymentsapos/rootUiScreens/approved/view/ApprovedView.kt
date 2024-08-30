@@ -1,7 +1,9 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 //import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
+import android.content.ContentValues.TAG
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -166,58 +168,28 @@ fun CircularMenu(
 @Composable
 fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
     val isMerchantReceipt = Authorisation.isMerchantReceipt
-    // Get the context
     val context = LocalContext.current
-
-    // Create the ViewModel with the context
     val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
-
     val printStatus by viewModel.printStatus
-
     val updated_amt = updated_amt
-
-
-    suspend fun initPrinter()
-    {
-        viewModel.initPrinter(context,object : IPrinterResultProviderListener {
-
-            override fun onSuccess(result: Any?) {
-
-            }
-
-            override fun onFailure(exception: Exception) {
-
-            }
-        })
-    }
-
+    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
     Column {
-        // Top App Bar with back button
         CommonTopAppBar(
             title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        // Outer Surface with background color, padding, and rounded corners
-        BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
-        ) {
+        BackgroundScreen {
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
-                    .fillMaxSize(), // Fill the entire available space
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // Align content to the start
+                horizontalAlignment = Alignment.Start
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
 
-                // Approved TextView
                 TextView(
                     text = stringResource(id = R.string.approved),
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
@@ -228,51 +200,49 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         .align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium)) // Blank space
-
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                 Text(
                     text = "₹$updated_amt",
                     fontSize = 30.sp,
                     color = colorResource(id = R.color.purple_200),
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
-                // Image for approval
+
                 ImageView(
-                    imageId = R.drawable.aprrove_scr, // Replace with your image resource
+                    imageId = R.drawable.aprrove_scr,
                     size = MaterialTheme.dimens.DP_120_CompactMedium,
-                    alignment = Alignment.Center, // Align image horizontally within the Box
+                    alignment = Alignment.Center,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Align the Box horizontally within the parent
+                        .align(Alignment.CenterHorizontally)
                 )
 
-                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium)) // Blank space
-
-                // Circular Menu with Print and menu option handling
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Optional padding for horizontal spacing
+                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
                         onPrintClick = {
-                                //Authorisation.isMerchantReceipt = true
-                                viewModel.initPrint(context)
+                            coroutineScope.launch {
+                                viewModel.initPrinter(context, object : IPrinterResultProviderListener {
+                                    override fun onSuccess(result: Any?) {
+                                        if(result?.equals(true)==true)
+                                            Log.d(TAG, "Initialization of printer is Successful")
+                                        else
+                                            Log.d(TAG, "Initialization of printer is Failed")
+                                    }
+                                    override fun onFailure(exception: Exception) {}
+                                })
                                 viewModel.GetStatus()
-
+                            }
                         },
                         onMenuOptionClick = { option ->
                             when (option) {
-                                "Customer Receipt" -> {
-                                    Authorisation.isMerchantReceipt = true
-                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
-
-                                }
-                                "Merchant Receipt" -> {
+                                "Customer Receipt", "Merchant Receipt" -> {
                                     Authorisation.isMerchantReceipt = true
                                     navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                                 }
@@ -285,13 +255,11 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                     )
                 }
 
-
-                // Done button at the bottom
                 Box(
                     modifier = Modifier
                         .padding(top = MaterialTheme.dimens.DP_33_CompactMedium)
-                        .align(Alignment.CenterHorizontally), // Aligns the Box itself horizontally within the parent
-                    contentAlignment = Alignment.Center // Centers the OkButton within the Box
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
                 ) {
                     OkButton(
                         onClick = {
@@ -304,6 +272,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
         }
     }
 }
+
 
 
 
