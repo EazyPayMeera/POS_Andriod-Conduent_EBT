@@ -4,7 +4,7 @@ package com.analogics.paymentservicecore.repository.paymentService
 import android.content.Context
 import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
 import com.analogics.builder_core.repository.BuildApiRepository
-import com.analogics.paymentservicecore.constants.ConfigConst
+import com.analogics.paymentservicecore.constants.ConfigConstants
 
 import com.analogics.paymentservicecore.listeners.requestListener.IPaymentServiceRequestListener
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
@@ -72,7 +72,7 @@ class PaymentServiceRepository @Inject constructor(private var buildApiRepositor
 
     override fun isPaymentSDKInit(context: Context): Boolean {
         try {
-            return SharedPrefHandler.getConfigVal(context, ConfigConst.CONFIG_KEY_IS_PAYMENT_SDK_INIT) == true
+            return SharedPrefHandler.getConfigVal(context, ConfigConstants.CONFIG_KEY_IS_PAYMENT_SDK_INIT) == true
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -81,7 +81,7 @@ class PaymentServiceRepository @Inject constructor(private var buildApiRepositor
 
     override fun isPaymentSDKInit(context: Context, isInit: Boolean) {
         try {
-            SharedPrefHandler.setConfigVal(context, ConfigConst.CONFIG_KEY_IS_PAYMENT_SDK_INIT, isInit)
+            SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_PAYMENT_SDK_INIT, isInit)
         } catch (e: Exception) {
             e.printStackTrace()
         }
