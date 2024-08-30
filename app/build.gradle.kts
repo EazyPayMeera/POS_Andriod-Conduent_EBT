@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -110,5 +111,8 @@ dependencies {
     implementation("io.coil-kt:coil-svg:2.2.2")
     implementation("androidx.compose.material:material:1.5.0") // Use the latest version
     api(project(":paymentservicecore"))
+    api(project(":paymentservicecore:securityframework"))
+
+
 }
 
