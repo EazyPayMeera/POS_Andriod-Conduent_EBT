@@ -2,8 +2,13 @@ package com.analogics.securityframework.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class SecuredSharedPrefManager(context: Context, prefsName: String) {
+class SecureSharePrefManager @Inject constructor(
+    @ApplicationContext context: Context,
+    prefsName: String = "MyAppPrefs"
+) {
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)

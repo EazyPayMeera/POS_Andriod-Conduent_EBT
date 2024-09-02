@@ -13,6 +13,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,9 +39,15 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerConten
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import java.util.Timer
 import kotlin.concurrent.schedule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -138,6 +145,28 @@ fun TrainingView(
     val hasSDKInit = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+
+
+//    var txnDtlsEntity:TxnDtlsEntity=TxnDtlsEntity()
+//    txnDtlsEntity=txnDtlsEntity.copy(incrementNumber(500),"11","111","111",
+//        "11","111","111","11","111",
+//        "111","11","111","111","11",
+//        "111","111","11","111","111","11",
+//        "111","111","11","111","111",
+//        "11","111","111","11","111",
+//        "111","11","111","111","11","111",
+//        "111","11","111","111","11",
+//        "111","111","11",111.00,1,"11",
+//        "111","111","11","111",true,
+//        "en","111",true,false,false,true,true,"aa",true)
+//    LaunchedEffect(Unit) { // 'Unit' here means this will run only once when the composable enters composition
+//        withContext(Dispatchers.IO) { // Switching to IO thread
+//
+//            dashboardViewModel.insertData(txnDtlsEntity)
+//            Log.e("database done", "insertt" + txnDtlsEntity)
+//
+//        }
+//    }
     // Function to handle drawer open and close
     fun toggleDrawer(open: Boolean) {
         coroutineScope.launch {
@@ -217,8 +246,8 @@ fun TrainingView(
     }
 
     /* Initialize Payment SDK */
-    if(!hasSDKInit.value)
-        initPaymentSDK(context)
+//    if(!hasSDKInit.value)
+      //  initPaymentSDK(context)
 }
 
 

@@ -1,0 +1,33 @@
+package com.analogics.securityframework.database.databaseClient
+
+import android.content.Context
+import androidx.room.Room
+import com.analogics.securityframework.database.dao.ITxnDao
+import com.analogics.securityframework.database.dbConstant.DBConstant
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabaseClient {
+        return Room.databaseBuilder(
+            appContext,
+            AppDatabaseClient::class.java,
+            DBConstant.TPAYDB
+        ).build()
+    }
+
+    @Provides
+    fun provideTxnDao(database: AppDatabaseClient): ITxnDao {
+        return database.getTxnDao()
+    }
+}
