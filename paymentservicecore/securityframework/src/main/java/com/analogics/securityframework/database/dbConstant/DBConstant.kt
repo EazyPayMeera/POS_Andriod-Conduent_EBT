@@ -1,5 +1,5 @@
 package com.analogics.securityframework.database.dbConstant
 
 object DBConstant {
-    const val  TPAYDB= "TPayDB"
+    const val  TXN_DB_NAME= "TxnDB"
 }
