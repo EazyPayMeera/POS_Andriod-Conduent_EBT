@@ -1,8 +1,12 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,14 +22,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -83,7 +86,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     value = invoiceno,
                     onValueChange = { newValue -> viewModel.updateInvoiceNo(newValue) },
                     placeholder = stringResource(id = R.string.invoice_no),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.Uri,
                     onDoneAction = {
 
@@ -95,7 +98,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 if(isRefund || isVoid || isAuthcap)
                 {
                     TextView(
-                        text = "------------------or------------------",
+                        text = stringResource(id = R.string.or),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -106,7 +109,7 @@ fun InvoiceView(navHostController: NavHostController) {
 
                     ScannerButton(
                         text = stringResource(id = R.string.scan_qr),
-                        onClick = {Authorisation.isNewauth = true
+                        onClick = {
                             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)},
                         backgroundColor = Color(0xFFEDEDED),
                         contentColor = Color.Black,

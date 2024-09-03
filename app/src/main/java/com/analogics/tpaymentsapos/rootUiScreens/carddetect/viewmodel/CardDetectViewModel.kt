@@ -7,7 +7,14 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+var updated_amt = ""
+
 class CardDetectViewModel : ViewModel() {
+
+    // Function to set the total amount and update the global variable
+    fun setTotalAmount(amount: String) {
+        updated_amt = amount // Update the global variable as well
+    }
 
     // Function to handle the delay and navigation
     fun navigateAfterDelay(navHostController: NavHostController) {

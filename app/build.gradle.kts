@@ -75,6 +75,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.core.animation)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -116,6 +118,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    // ZXing core
+    implementation("com.google.zxing:core:3.5.0")
 
 
     // Coil SVG decoder

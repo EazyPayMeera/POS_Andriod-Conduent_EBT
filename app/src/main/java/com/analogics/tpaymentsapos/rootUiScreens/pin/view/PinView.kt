@@ -1,9 +1,11 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,7 +74,7 @@ fun PinView(navHostController: NavHostController) {
                     value = pinViewModel.invoiceno,
                     onValueChange = { newValue -> pinViewModel.onPinChange(newValue) },
                     placeholder = stringResource(id = R.string.enter_Pin),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.NumberPassword,
                     onDoneAction = { pinViewModel.onDoneAction(navHostController) },
                     isPassword = true

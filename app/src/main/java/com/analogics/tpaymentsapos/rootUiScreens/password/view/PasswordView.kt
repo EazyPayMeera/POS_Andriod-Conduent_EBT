@@ -1,8 +1,12 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,7 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.password.viewmodel.PasswordViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -39,8 +42,7 @@ fun PasswordView(navHostController: NavHostController) {
 
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
-    val isPreauth = Authorisation.isNewauth
-    val isAuthcap = Authorisation.isAuthcap
+    val isPreauth = TransactionState.isPreauth
 
     Column {
         CommonTopAppBar(
@@ -80,7 +82,7 @@ fun PasswordView(navHostController: NavHostController) {
                     value = password,
                     onValueChange = { newValue -> viewModel.updatePassword(newValue) },
                     placeholder = stringResource(id = R.string.enter_password),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.Password,
                     onDoneAction = {
                         viewModel.navigateToInvoiceScreen(navHostController)

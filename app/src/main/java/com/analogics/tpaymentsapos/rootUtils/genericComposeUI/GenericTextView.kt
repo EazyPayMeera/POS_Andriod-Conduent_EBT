@@ -2,7 +2,6 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -15,11 +14,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import com.analogics.tpaymentsapos.ui.theme.Roboto
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun TextView(
@@ -56,8 +54,8 @@ fun TextView(
 @Composable
 fun GenericCard(
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
-    elevation: Dp = 4.dp,
+    shape: RoundedCornerShape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium),
+    elevation: Dp = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium,
     backgroundColor: Color = MaterialTheme.colors.surface,
     content: @Composable () -> Unit
 ) {

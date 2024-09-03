@@ -1,23 +1,22 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PreauthTypeSelectionSurface
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
@@ -28,8 +27,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun PreauthView(navHostController: NavHostController) {
     val isRefund = TransactionState.isRefund
-    val isNewauth = Authorisation.isNewauth
-    val isAuthcap = Authorisation.isAuthcap
+    val isAuthcap = TransactionState.isAuthcap
 
     Column {
         /*CommonTopAppBar(
@@ -76,7 +74,7 @@ fun PreauthView(navHostController: NavHostController) {
 
                 ScannerButton(
                     text = stringResource(id = R.string.new_auth),
-                    onClick = {Authorisation.isNewauth = true
+                    onClick = {
                         navHostController.navigate(AppNavigationItems.InvoiceScreen.route)},
                     backgroundColor = Color(0xFFEDEDED),
                     contentColor = Color.Black,

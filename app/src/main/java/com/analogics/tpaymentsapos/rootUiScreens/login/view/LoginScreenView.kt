@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
@@ -18,26 +19,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
-import com.analogics.tpaymentsapos.ui.theme.dimens
-
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.ui.theme.dimens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -46,7 +43,7 @@ import kotlinx.coroutines.launch
 fun LoginScreenView(navHostController: NavHostController?) {
     val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             AppHeader(
@@ -111,7 +108,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                     // "Forgot Password?" clickable text
                     TextView(
                         text = stringResource(id = R.string.forget_pswd),
-                        color = Color(0xFFFFA500),
+                        color = colorResource(id = R.color.purple_200),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -124,6 +121,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
                     ) {
+                        val message = stringResource(id = R.string.not_empty)
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
@@ -132,7 +130,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                                     }
 
                                 } else {
-                                    Toast.makeText(context, "Email And password not empty", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }
                             },
                             title = stringResource(id = R.string.login)

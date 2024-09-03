@@ -98,8 +98,8 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
-            .clickable { /* Handle item click */ },
+            .padding(horizontal = MaterialTheme.dimens.DP_15_CompactMedium),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

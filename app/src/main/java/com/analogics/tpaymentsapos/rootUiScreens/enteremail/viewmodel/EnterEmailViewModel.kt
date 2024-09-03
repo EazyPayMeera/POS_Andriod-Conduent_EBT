@@ -2,11 +2,13 @@ package com.analogics.tpaymentsapos.rootUiScreens.enteremail.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import androidx.navigation.NavHostController
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+
+var globalVariable: String = ""
 
 class EnterEmailViewModel : ViewModel() {
     private val _email = MutableStateFlow("")
@@ -14,11 +16,12 @@ class EnterEmailViewModel : ViewModel() {
 
     fun updateEmail(newValue: String) {
         _email.value = newValue
+        globalVariable = _email.value
     }
 
     fun navigateToAmountScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.EmailScreen.createRoute(_email.value))
+            navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
         }
     }
 
