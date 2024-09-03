@@ -232,7 +232,7 @@ fun SettingsContent(
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.text,
-                modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium) // Need to change here
+                modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Need to change here
             )
 
             Text(

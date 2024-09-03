@@ -236,7 +236,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                                     }
                                     override fun onFailure(exception: Exception) {}
                                 })
-                                /*viewModel.GetStatus()*/
                             }
                         },
                         onMenuOptionClick = { option ->

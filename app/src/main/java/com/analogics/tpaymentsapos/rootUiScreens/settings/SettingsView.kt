@@ -57,7 +57,7 @@ fun SettingsView(navHostController: NavHostController) {
                 Image(
                     painter = painterResource(id = R.drawable.language), // Replace with your image resource
                     contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium) // Adjust size as needed // need to change here
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // need to change here
                 )
 
                 // Set Language text
@@ -72,7 +72,7 @@ fun SettingsView(navHostController: NavHostController) {
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
                     contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium) // Adjust size as needed // Need to change here
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // Need to change here
                 )
             }
         }
@@ -99,7 +99,7 @@ fun SettingsView(navHostController: NavHostController) {
                 Image(
                     painter = painterResource(id = R.drawable.password), // Replace with your image resource
                     contentDescription = "Language Icon",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium) // Adjust size as needed // need to change here
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // need to change here
                 )
 
                 // Change Password text
@@ -115,7 +115,7 @@ fun SettingsView(navHostController: NavHostController) {
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
                     contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium), // Adjust size as needed // Need to change here 24.dp
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium), // Adjust size as needed // Need to change here 24.dp
                 )
             }
         }
@@ -143,7 +143,7 @@ fun SettingsView(navHostController: NavHostController) {
                 Image(
                     painter = painterResource(id = R.drawable.settings), // Replace with your image resource
                     contentDescription = "Language Icon",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium) // Adjust size as needed Need to change here 24.dp
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed Need to change here 24.dp
                 )
 
                 // Change Password text
@@ -160,7 +160,7 @@ fun SettingsView(navHostController: NavHostController) {
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
                     contentDescription = "Arrow Icon",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium) // Adjust size as needed need to change here 24.dp
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed need to change here 24.dp
                 )
             }
         }

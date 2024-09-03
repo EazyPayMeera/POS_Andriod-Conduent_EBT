@@ -114,7 +114,7 @@ fun InputTextField(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium), // Need to change Here 
+                modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium), // Need to change Here
                 tint = Color.Black
             )
         },
@@ -148,7 +148,7 @@ fun InputTextField(
         } else {
             VisualTransformation.None
         },
-        shape = RoundedCornerShape(MaterialTheme.dimens.DP_12_CompactMedium),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = colorResource(id = R.color.purple_200),
             unfocusedBorderColor = Color.LightGray,
@@ -199,7 +199,7 @@ fun AppButton(
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_28_CompactMedium) // Adjust size as needed
                             .clip(CircleShape) // Make the image round
-                            .padding(end = MaterialTheme.dimens.DP_12_CompactMedium) // Space between image and text
+                            .padding(end = MaterialTheme.dimens.DP_15_CompactMedium) // Space between image and text
                     )
                 }
                 Text(text = title)
@@ -355,7 +355,7 @@ fun CommonLayout(
         )
 
         Surface(
-            color = Color(0xFFF7931E), // Orange color for the outer Surface
+            color = colorResource(id = R.color.purple_200), // Orange color for the outer Surface
             modifier = Modifier
                 .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the outer Surface
                 .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
@@ -512,13 +512,13 @@ fun FooterButtons(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium) // Adjust padding as needed // need to change
+            .padding(bottom = MaterialTheme.dimens.DP_23_CompactMedium) // Adjust padding as needed // need to change
     ) {
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_24_CompactMedium), // Adjust vertical padding if needed
+                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             var isFirstButtonPressed by remember { mutableStateOf(false) }
@@ -529,7 +529,10 @@ fun FooterButtons(
                 modifier = Modifier
                     .width(MaterialTheme.dimens.DP_126_CompactMedium)
                     .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                    .shadow(4.dp, shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium))
+                    .shadow(
+                        MaterialTheme.dimens.DP_4_CompactMedium,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
                     .background(
                         color = colorResource(R.color.white),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -542,7 +545,7 @@ fun FooterButtons(
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
                     modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_130_CompactMedium)
+                        .width(/*MaterialTheme.dimens.DP_130_CompactMedium*/130.dp)
                         .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
                             width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
@@ -595,7 +598,7 @@ fun FooterButtons(
                         secondButtonOnClick()
                     },
                     modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_130_CompactMedium)
+                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
                         .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
                             width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
@@ -1069,22 +1072,22 @@ fun OutlinedTextField(
         modifier = modifier
             .focusRequester(focusRequester)
             .padding(MaterialTheme.dimens.DP_2_CompactMedium)
-            .width(MaterialTheme.dimens.DP_180_CompactMedium)
+            .width(MaterialTheme.dimens.DP_280_CompactMedium)
             .height(MaterialTheme.dimens.DP_70_CompactMedium),
         leadingIcon = if (amount) {
             {
                 Text(
                     text = "\u20B9", // Unicode for ₹ symbol
-                    fontSize = MaterialTheme.dimens.SP_28_CompactMedium, // Adjust the size of the icon
+                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium, // Adjust the size of the icon
                     fontWeight = FontWeight.Bold,
                     color = Color.Black // Set the color to black
                 )
             }
         } else null,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+            focusedBorderColor = colorResource(id = R.color.purple_200), // Orange color for focused state
             unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
-            focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+            focusedLabelColor = colorResource(id = R.color.purple_200), // Orange color for focused label
             unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
         )
     )
