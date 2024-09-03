@@ -18,8 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,8 +51,6 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
 *
 * */
     AppLogger.currentLogLevel = BuildConfig.DEBUG_LEVEL.toInt()
-
-
     val scale = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
@@ -62,9 +62,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
                     OvershootInterpolator(10f).getInterpolation(it)
                 })
         )
-        viewModel.onSplashScreenFinished {
-            navController.navigate(AppNavigationItems.OnBoardingScreen.route)
-        }
+        viewModel.onSplashScreenFinished(navController)
     }
     GenericCard(
         Modifier

@@ -12,8 +12,6 @@ import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.securityframework.handler.SharedPrefHandler
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentSDKListener
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
-import io.reactivex.internal.util.ExceptionHelper
 import javax.inject.Inject
 
 class PaymentServiceRepository @Inject constructor(private var buildApiRepository: BuildApiRepository) :
@@ -85,6 +83,40 @@ class PaymentServiceRepository @Inject constructor(private var buildApiRepositor
     override fun isPaymentSDKInit(context: Context, isInit: Boolean) {
         try {
             SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_PAYMENT_SDK_INIT, isInit)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun isOnboardingCompleted(context: Context): Boolean {
+        try {
+            return SharedPrefHandler.getConfigVal(context, ConfigConstants.CONFIG_KEY_IS_ONBOARDING_COMPLETED) == true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
+    override fun isOnboardingCompleted(context: Context, isComplete: Boolean) {
+        try {
+            SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_ONBOARDING_COMPLETED, isComplete)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun isLoggedIn(context: Context): Boolean {
+        try {
+            return SharedPrefHandler.getConfigVal(context, ConfigConstants.CONFIG_KEY_IS_LOGGED_IN) == true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
+    override fun isLoggedIn(context: Context, isLoggedIn: Boolean) {
+        try {
+            SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_LOGGED_IN, isLoggedIn)
         } catch (e: Exception) {
             e.printStackTrace()
         }

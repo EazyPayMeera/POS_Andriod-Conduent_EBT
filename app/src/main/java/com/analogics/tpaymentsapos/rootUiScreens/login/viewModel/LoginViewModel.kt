@@ -42,6 +42,7 @@ IOnRootAppPaymentListener {
             try {
                     //paymentServiceRepository.apiEmpDetails(iOnRootAppPaymentListener = this@LoginViewModel)
                 navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                paymentServiceRepository.isLoggedIn(context,true)
             } catch (e: Exception) {
                e.printStackTrace()
             }

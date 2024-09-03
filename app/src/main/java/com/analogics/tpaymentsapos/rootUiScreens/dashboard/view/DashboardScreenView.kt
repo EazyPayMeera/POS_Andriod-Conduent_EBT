@@ -142,7 +142,6 @@ fun TrainingView(
     val selectedButton = dashboardViewModel.selectedButton.value
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val hasSDKInit = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
 
@@ -172,38 +171,6 @@ fun TrainingView(
         coroutineScope.launch {
             if (open) drawerState.open() else drawerState.close()
         }
-    }
-
-    fun initPaymentSDK(context : Context) {
-        Timer("initSDK").schedule(500) {
-            coroutineScope.launch {
-                dashboardViewModel.initPaymentSDK(context, object :
-                 IOnRootAppPaymentListener {
-
-                    override fun onPaymentSuccess(result: Any) {
-                        if (result?.equals(true) == true)
-                            Toast.makeText(
-                                context,
-                                R.string.emv_sdk_init_success,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        else
-                            Toast.makeText(
-                                context,
-                                R.string.emv_sdk_init_failure,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                    }
-
-                    override fun onPaymentError(tError: PaymentServiceError) {
-                        Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
-                            .show()
-                        Log.e("EMV_APP", tError.errorMessage)
-                    }
-                })
-            }
-        }
-        hasSDKInit.value = true
     }
 
     ModalDrawer(
@@ -246,8 +213,9 @@ fun TrainingView(
     }
 
     /* Initialize Payment SDK */
-//    if(!hasSDKInit.value)
-      //  initPaymentSDK(context)
+    LaunchedEffect(Unit) {
+        dashboardViewModel.initPaymentSDK(context, this)
+    }
 }
 
 

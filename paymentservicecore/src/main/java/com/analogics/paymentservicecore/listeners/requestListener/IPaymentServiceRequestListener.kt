@@ -11,4 +11,8 @@ interface IPaymentServiceRequestListener {
     iOnRootAppPaymentListener:IOnRootAppPaymentListener)
     fun isPaymentSDKInit(context: Context): Boolean
     fun isPaymentSDKInit(context: Context, isInit : Boolean)
+    fun isOnboardingCompleted(context: Context): Boolean
+    fun isOnboardingCompleted(context: Context, isInit: Boolean)
+    fun isLoggedIn(context: Context): Boolean
+    fun isLoggedIn(context: Context, isLoggedIn: Boolean)
 }

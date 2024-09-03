@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class SecureSharePrefManager @Inject constructor(
+class SecuredSharedPrefManager @Inject constructor(
     @ApplicationContext context: Context,
     prefsName: String = "MyAppPrefs"
 ) {
