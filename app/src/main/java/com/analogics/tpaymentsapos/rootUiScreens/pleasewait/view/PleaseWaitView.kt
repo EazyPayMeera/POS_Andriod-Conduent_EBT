@@ -87,19 +87,6 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 }
             })
 
-/*            viewModel.feedLine(3)
-            format = Bundle().apply {
-                putInt("align", 1)
-                putInt("offset", 1)
-                putInt("expectedHeight", 300)
-            }
-            receipt.qrcode?.let { qrcode ->
-                viewModel.addQRCode(format, qrcode)
-            }
-            viewModel.feedLine(3)
-            viewModel.startPrint()
-            delay(2000) // Delay for 2 seconds
-            Authorisation.isMerchantReceipt = false*/
         }
 
         delay(2000) // Delay for 2 seconds

@@ -166,12 +166,14 @@ class Printer constructor() {
     }
 
     // Print multiple texts
-    fun printMultipleTextsAndStartPrinting(texts: List<String>) {
+    fun printMultipleTextsAndStartPrinting(format: Bundle,barcode:String,texts: List<String>) {
         try {
             // Add each text to the printer
             for (text in texts) {
                 addText(text)
             }
+            qrCodePrinting(format,barcode)
+            feedLine(3)
             // Start the printing process
             startPrinting()
         } catch (e: Exception) {

@@ -22,6 +22,8 @@
     <string name="password">Password</string>
     <string name="placehldr_username">Please Enter Username</string>
     <string name="placehldr_password">Please Enter Password</string>
+    <string name="not_empty">Email And password not empty</string>
+
 
     //Dashboard
 
@@ -91,6 +93,8 @@
     <string name="ereceipt_sent">e-Receipt was successfully sent</string>
     <string name="ok">OK</string>
     <string name="ten">10%</string>
+    <string name="tax_1">Tax 1</string>
+    <string name="tax_2">Tax 2</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
     <string name="or">---------------or---------------</string>
@@ -125,5 +129,9 @@
     <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
     <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
     <string name="processing">Processing</string>
+<!--
+    &lt;!&ndash;Configuration&ndash;&gt;
+    <string name="ten">10%</string>-->
+
 
 </resources>

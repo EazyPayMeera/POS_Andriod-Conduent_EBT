@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(MaterialTheme.dimens.DP_24_CompactMedium),
-            backgroundColor = Color(0xFFFFA500), // Replace with any color you want
+            backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
         ){
             Column(
@@ -116,7 +117,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 TextView(
                     text = stringResource(id = R.string.txn_sum),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color(0xFFFFA500),
+                    color = colorResource(id = R.color.purple_200),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
@@ -189,7 +190,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
                             if (index < settingsItems.size - 1) {
                                 androidx.compose.material3.Divider(
-                                    color = Color(0xFFB3B3B3),
+                                    color = colorResource(id = R.color.white),
                                     thickness = 1.dp
                                 )
                             }

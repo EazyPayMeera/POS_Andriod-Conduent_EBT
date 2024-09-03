@@ -17,8 +17,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -52,7 +50,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         )
 
         GenericCard(
-            modifier = Modifier.padding(19.dp)
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -91,7 +89,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
                     TextView(
                         text = viewModel.transactionDateTime,
-                        fontSize = 15.sp,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -100,8 +98,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = "Card:",
-                        fontSize = 15.sp,
+                        text = stringResource(id = R.string.card),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -110,8 +108,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = "Auth Code:",
-                        fontSize = 15.sp,
+                        text = stringResource(id = R.string.auth_code),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -120,8 +118,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = "No.:",
-                        fontSize = 15.sp,
+                        text = stringResource(id = R.string.no),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -130,8 +128,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = "Invoice Number:",
-                        fontSize = 15.sp,
+                        text = stringResource(id = R.string.inc_no),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -139,8 +137,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                             .align(Alignment.Start)
                     )
                     TextView(
-                        text = "POS Entry:",
-                        fontSize = 15.sp,
+                        text = stringResource(id = R.string.pos_entry),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -150,24 +148,24 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 }
                 if(isAuthcap)
                 {
-                    Spacer(modifier = Modifier.height(10.dp))
-
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
                     TextView(
-                        text = "Original Amount: ${viewModel.transactionDateTime}",
-                        fontSize = 15.sp,
+
+                        text = stringResource(id = R.string.original_amount).format(viewModel.transactionDateTime),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(bottom = 10.dp)
+                            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
                             .align(Alignment.CenterHorizontally)
                     )
                     TextView(
-                        text = "Txn Date: ${viewModel.transactionDateTime}",
-                        fontSize = 15.sp,
+                        text = stringResource(id = R.string.date).format(viewModel.transactionDateTime),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(bottom = 10.dp)
+                            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
                             .align(Alignment.CenterHorizontally)
                     )
                 }

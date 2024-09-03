@@ -58,7 +58,7 @@ object PrinterHandler : PrinterListener {
     ) {
         try {
 
-            Printer.getInstance().printMultipleTextsAndStartPrinting(receipt)
+            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt)
             Printer.getInstance().feedLine(3)
             //Printer.getInstance().qrCodePrinting(barcodeFormat,"123456")
 

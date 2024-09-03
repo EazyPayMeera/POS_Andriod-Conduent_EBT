@@ -105,6 +105,8 @@ class PrinterServiceRepository @Inject constructor() : PrinterRequestListener, I
             Log.e(TAG, "Failed to print receipt: ${e.message}")
             iPrinterResultProviderListener.onSuccess(false)
         }
+
+
     }
 
 

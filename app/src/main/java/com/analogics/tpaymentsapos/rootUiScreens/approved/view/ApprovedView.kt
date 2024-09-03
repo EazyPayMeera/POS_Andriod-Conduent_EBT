@@ -39,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
@@ -204,7 +203,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
                 Text(
                     text = "₹$updated_amt",
-                    fontSize = 30.sp,
+                    fontSize = MaterialTheme.dimens.SP_30_CompactMedium,
                     color = colorResource(id = R.color.purple_200),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -237,7 +236,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                                     }
                                     override fun onFailure(exception: Exception) {}
                                 })
-                                viewModel.GetStatus()
+                                /*viewModel.GetStatus()*/
                             }
                         },
                         onMenuOptionClick = { option ->

@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -88,7 +88,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(), // Wraps content height
-                        backgroundColor = Color(0xFFFFA500), // Replace with any color you want
+                        backgroundColor = colorResource(id = R.color.purple_200),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
                         Column(
@@ -111,7 +111,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                             // Display the totalAmount here
                             Text(
                                 text = "₹$totalAmount",
-                                fontSize = 30.sp,
+                                fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
@@ -172,7 +172,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                     TextView(
                         text = stringResource(id = R.string.chip_detected),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                        color = Color(0xFFF7931E),
+                        color = colorResource(id = R.color.purple_200),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)

@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -56,7 +55,7 @@ fun DrawerItem(label: String, onClick: () -> Unit) {
                 text = label,
                 fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
             )
         }
 

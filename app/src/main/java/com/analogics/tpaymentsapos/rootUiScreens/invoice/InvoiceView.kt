@@ -95,7 +95,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 if(isRefund || isVoid || isAuthcap)
                 {
                     TextView(
-                        text = "------------------or------------------",
+                        text = stringResource(id = R.string.or),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
