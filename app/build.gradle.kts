@@ -23,7 +23,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField ("String", "DEBUG_LEVEL", "\"2\"")
+        buildConfigField ("Integer", "LOG_LEVEL", "2")
     }
 
     buildTypes {

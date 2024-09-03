@@ -36,7 +36,7 @@ IOnRootAppPaymentListener {
         pwdCredentials.value = newPassword
     }
 
-    suspend fun onLoginClick(navHost: NavHostController?, context: Context) {
+    fun onLoginClick(navHost: NavHostController?, context: Context) {
         this.navHostController=navHost!!
         viewModelScope.launch {
             try {

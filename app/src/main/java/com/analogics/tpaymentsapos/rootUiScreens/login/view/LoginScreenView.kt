@@ -24,6 +24,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -99,9 +100,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {
-                            coroutineScope.launch {
                                 viewModel.onLoginClick(navHostController,context)
-                            }
                         }
                     )
 
@@ -125,10 +124,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
-                                    coroutineScope.launch {
                                         viewModel.onLoginClick(navHostController,context)
-                                    }
-
                                 } else {
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }

@@ -50,7 +50,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
         AppLogger.e(TAG, "onCreate: Error initializing app", Throwable("Simulated error"))
 *
 * */
-    AppLogger.currentLogLevel = BuildConfig.DEBUG_LEVEL.toInt()
+    AppLogger.setLogLevel(BuildConfig.LOG_LEVEL)
     val scale = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {

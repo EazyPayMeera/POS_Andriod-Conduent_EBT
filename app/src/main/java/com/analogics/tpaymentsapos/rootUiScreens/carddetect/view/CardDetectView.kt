@@ -33,7 +33,6 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
@@ -49,7 +48,6 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
-    val isAuthcap = Authorisation.isAuthcap
     val viewModel: CardDetectViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()

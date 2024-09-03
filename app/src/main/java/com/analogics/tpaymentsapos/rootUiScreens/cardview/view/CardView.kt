@@ -33,6 +33,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
@@ -41,6 +42,7 @@ import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -55,28 +57,9 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
-    val viewModel: CardViewModel = viewModel()
-    val isAuthcap = Authorisation.isAuthcap
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    suspend fun startPayment()
-    {
-        viewModel.startPayment(context,object : IResultProviderListener {
-
-            override fun onSuccess(result: Any?) {
-                if(result?.equals(true)==true)
-                    viewModel.navigateToApprovalScreen(navHostController)
-                else
-                    viewModel.navigateToDeclinedScreen(navHostController)
-            }
-
-            override fun onFailure(exception: Exception) {
-                viewModel.navigateToDeclinedScreen(navHostController)
-            }
-        })
-    }
 
     Column {
 
