@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,9 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.ui.theme.dimens
+
 @Composable
 fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostController,
                         onMenuItemClick: (String) -> Unit) {
@@ -98,8 +97,7 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.dimens.DP_15_CompactMedium),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(vertical = MaterialTheme.dimens.DP_15_CompactMedium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
