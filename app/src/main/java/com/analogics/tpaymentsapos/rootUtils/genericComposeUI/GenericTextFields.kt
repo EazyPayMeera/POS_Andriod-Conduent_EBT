@@ -511,7 +511,7 @@ fun FooterButtons(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = MaterialTheme.dimens.DP_23_CompactMedium) // Adjust padding as needed // need to change
+            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium) // Adjust padding as needed // need to change
     ) {
         Row(
             modifier = Modifier
@@ -527,7 +527,7 @@ fun FooterButtons(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
                     .shadow(
                         MaterialTheme.dimens.DP_4_CompactMedium,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -581,7 +581,7 @@ fun FooterButtons(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
                     .shadow(
                         MaterialTheme.dimens.DP_4_CompactMedium,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)

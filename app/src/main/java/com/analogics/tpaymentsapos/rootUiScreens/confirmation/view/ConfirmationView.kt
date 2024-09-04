@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,12 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
@@ -39,6 +42,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
+import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -99,70 +103,129 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 )
                 TextView(
                     text = "₹${formatAmountdouble(totalAmount)}",
-                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                    fontSize = MaterialTheme.dimens.sp_44_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
                 )
             }
         }
 
         TransactionSummaryCard(amountDouble,tipAmount,sgstAmount,igstAmount)
 
-        Column {
-            GenericCard(
+        GenericCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = MaterialTheme.dimens.DP_24_CompactMedium,
+                    end = MaterialTheme.dimens.DP_24_CompactMedium,
+                    top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                    bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                ),
+            elevation = MaterialTheme.dimens.DP_10_CompactMedium,
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = MaterialTheme.dimens.DP_24_CompactMedium,
-                        end = MaterialTheme.dimens.DP_24_CompactMedium,
-                        top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
-                        bottom = MaterialTheme.dimens.DP_10_CompactMedium
-                    ),
-                elevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    .padding(MaterialTheme.dimens.DP_20_CompactMedium)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    TextView(
+                        text = stringResource(id = R.string.add_tip),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    CustomSwitch(
+                        checked = isTipEnabled,
+                        onCheckedChange = { isTipEnabled = it },
+                        checkedImage = R.drawable.switch_checked,
+                        uncheckedImage = R.drawable.switch_unchecked,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        onClick = { selectedTip = "10%" },
+                        enabled = isTipEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (selectedTip == "10%" && isTipEnabled) {
+                                dashboardOrangeColor
+                            } else {
+                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                            },
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
                     ) {
-                        TextView(
-                            text = stringResource(id = R.string.add_tip),
-                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Switch(
-                            checked = isTipEnabled,
-                            onCheckedChange = { isTipEnabled = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFA000), // Orange color
-                                uncheckedThumbColor = Color.Gray
-                            )
-                        )
+                        Text(text = "10%")
                     }
 
-                    if (isTipEnabled) {
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            TipOptionButton("10%", selectedTip) { selectedTip = it }
-                            TipOptionButton("15%", selectedTip) { selectedTip = it }
-                            TipOptionButton("20%", selectedTip) { selectedTip = it }
-                            TipOptionButton("Custom", selectedTip) { selectedTip = it }
-                        }
+                    Button(
+                        onClick = { selectedTip = "15%" },
+                        enabled = isTipEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (selectedTip == "15%" && isTipEnabled) {
+                                dashboardOrangeColor
+                            } else {
+                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                            },
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                    ) {
+                        Text(text = "15%")
+                    }
+
+                    Button(
+                        onClick = { selectedTip = "20%" },
+                        enabled = isTipEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (selectedTip == "20%" && isTipEnabled) {
+                                dashboardOrangeColor
+                            } else {
+                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                            },
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                    ) {
+                        Text(text = "20%")
+                    }
+
+                    Button(
+                        onClick = { selectedTip = "Custom" },
+                        enabled = isTipEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (selectedTip == "Custom" && isTipEnabled) {
+                                dashboardOrangeColor
+                            } else {
+                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                            },
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                    ) {
+                        Text(text = "Custom")
                     }
                 }
             }
         }
+
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
@@ -269,12 +332,26 @@ fun TransactionSummaryItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextView(
-            text = label,
-            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-            color = Color.Gray,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
+        // Add the bullet icon
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.orange_bullet), // Replace with your orange bullet drawable resource
+                contentDescription = null,
+                tint = dashboardOrangeColor, // Adjust the color to match the bullet color
+                modifier = Modifier
+                    .size(15.dp) // Adjust size as needed
+                    .padding(end = MaterialTheme.dimens.DP_10_CompactMedium) // Spacing between bullet and text
+            )
+
+            TextView(
+                text = label,
+                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                color = Color.Gray,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        }
 
         TextView(
             text = "₹${formatAmountdouble(amount)}",
@@ -284,3 +361,5 @@ fun TransactionSummaryItem(
         )
     }
 }
+
+

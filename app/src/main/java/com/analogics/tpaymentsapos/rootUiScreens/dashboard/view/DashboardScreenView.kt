@@ -1,10 +1,13 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ModalDrawer
@@ -14,8 +17,6 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,10 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
@@ -42,15 +40,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerConten
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
-import java.util.Timer
-import kotlin.concurrent.schedule
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -64,6 +54,7 @@ fun DashboardView(navHostController: NavHostController) {
         dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel)
     ) {}
 }
+
 @Composable
 fun dashboardItemListData(
     navHostController: NavHostController,
