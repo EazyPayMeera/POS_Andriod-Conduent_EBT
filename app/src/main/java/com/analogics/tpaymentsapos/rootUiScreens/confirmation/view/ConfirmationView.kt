@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,15 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurableViewType
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.SettingsItem
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.SettingsSurface
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TippingView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -61,6 +58,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
 
+    var isTaxesEnabled by remember { mutableStateOf(false) }
 
 
     Column {
@@ -79,8 +77,8 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 .padding(
                     start = MaterialTheme.dimens.DP_24_CompactMedium,
                     end = MaterialTheme.dimens.DP_24_CompactMedium,
-                    top = MaterialTheme.dimens.DP_10_CompactMedium, // Reduced top padding
-                    bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                    top = MaterialTheme.dimens.DP_24_CompactMedium, // Reduced top padding
+                    bottom = MaterialTheme.dimens.DP_5_CompactMedium
                 ),
             backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
@@ -119,25 +117,25 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         start = MaterialTheme.dimens.DP_24_CompactMedium,
                         end = MaterialTheme.dimens.DP_24_CompactMedium,
                         top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
-                        bottom = MaterialTheme.dimens.DP_24_CompactMedium
+                        bottom = MaterialTheme.dimens.DP_10_CompactMedium
                     ),
                 elevation = MaterialTheme.dimens.DP_10_CompactMedium,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(MaterialTheme.dimens.DP_20_CompactMedium)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         TextView(
-                            text = "Add Tip?",
-                            fontSize = MaterialTheme.dimens.SP_20_CompactMedium,
+                            text = stringResource(id = R.string.add_tip),
+                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = MaterialTheme.dimens.DP_4_CompactMedium)
+                            modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Switch(
@@ -151,7 +149,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     }
 
                     if (isTipEnabled) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
@@ -159,7 +157,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             TipOptionButton("10%", selectedTip) { selectedTip = it }
                             TipOptionButton("15%", selectedTip) { selectedTip = it }
                             TipOptionButton("20%", selectedTip) { selectedTip = it }
-                            TipOptionButton("Custom Tip", selectedTip) { selectedTip = it }
+                            TipOptionButton("Custom", selectedTip) { selectedTip = it }
                         }
                     }
                 }
@@ -187,12 +185,12 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit) {
     Button(
         onClick = { onSelect(tip) },
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_21_CompactMedium),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (tip == selectedTip) Color(0xFFFFA000) else Color(0xFFF0F0F0),
+            backgroundColor = if (tip == selectedTip) colorResource(id = R.color.white) else colorResource(id = R.color.purple_200),
             contentColor = Color.Black
         ),
-        modifier = Modifier.padding(4.dp)
+        modifier = Modifier.padding(MaterialTheme.dimens.DP_4_CompactMedium)
     ) {
         Text(text = tip)
     }

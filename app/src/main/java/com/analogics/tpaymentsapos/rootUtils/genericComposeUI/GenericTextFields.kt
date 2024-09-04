@@ -941,14 +941,14 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
             .shadow(
-                elevation = MaterialTheme.dimens.DP_5_CompactMedium,
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
+                elevation = MaterialTheme.dimens.DP_50_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
             .background(
                 Color(0xFFFC7519),
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_5_CompactMedium)
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
     ) {
         Card(
@@ -957,10 +957,10 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = MaterialTheme.dimens.DP_50_CompactMedium,
-                    start = MaterialTheme.dimens.DP_30_CompactMedium,
-                    end = MaterialTheme.dimens.DP_30_CompactMedium,
-                    bottom = MaterialTheme.dimens.DP_50_CompactMedium,
+                    top = MaterialTheme.dimens.DP_25_CompactMedium,
+                    start = MaterialTheme.dimens.DP_25_CompactMedium,
+                    end = MaterialTheme.dimens.DP_25_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_25_CompactMedium,
                 )
                 .align(Alignment.Center)
         ) {
