@@ -757,7 +757,7 @@ fun CardWithImageText(
 ) {
     GenericCard(
         modifier = modifier
-            .padding(start = 5.dp,)
+            .padding(start = 10.dp,)
             .clickable(onClick = onClick)
             .border(
                 width = 2.dp, // Adjust the border width as needed
@@ -777,7 +777,7 @@ fun CardWithImageText(
         ) {
             ImageView(imageId = imageResId,
                 modifier = Modifier
-                    .size(40.dp) // Adjust the size as needed
+                    .size(35.dp) // Adjust the size as needed
                     .align(Alignment.CenterHorizontally) // Center the image
             )
             Spacer(modifier = Modifier.height(8.dp))

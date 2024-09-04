@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -232,6 +233,7 @@ fun TrainingView(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
+                        .padding(10.dp)
                 ) {
                     DashboardContentSurface(
                         dashboardItemLists = dashboardItemLists,
@@ -286,7 +288,7 @@ fun DashboardContentSurface(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium),
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {

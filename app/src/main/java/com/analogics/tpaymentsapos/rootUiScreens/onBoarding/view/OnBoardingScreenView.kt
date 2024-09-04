@@ -16,6 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,100 +47,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoardingScreenViewModel = hiltViewModel()) {
-    val pagerState = rememberPagerState(initialPage = 0)
-    val imageSlider = listOf(
-        OnBoardingContentList(
-            headNote = stringResource(id = R.string.safe_fast_txn),
-            subNote = stringResource(id = R.string.single_use_pass)
-        ),
-        OnBoardingContentList(
-            image = R.drawable.onboarding2,
-            headNote = stringResource(id = R.string.analysis_data),
-            subNote = stringResource(id = R.string.improving_customer)
-        ),
-        OnBoardingContentList(
-            image = R.drawable.onboarding3,
-            headNote = stringResource(id = R.string.quick_and_easy_payments),
-            subNote = stringResource(id = R.string.creating_pay),
-            isIndicatorShow = false
-        )
-    )
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            yield()
-            delay(3000)
-            pagerState.animateScrollToPage(
-                page = (pagerState.currentPage + 1) % pagerState.pageCount
-            )
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color("#D9D9D9".toColorInt()))
-    ) {
-        HorizontalPager(
-            count = imageSlider.size,
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            ShowCardView(pagerState, page, imageSlider, navHostController)
-        }
-
-        // "Skip" text and HorizontalPagerIndicator
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = MaterialTheme.dimens.DP_120_CompactMedium) // Adjust padding as needed
-        ) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TextView(
-                    text = stringResource(id = R.string.skip),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Normal,
-                    maxLines = 1,
-                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium), // Adjust padding
-                    textAlign = TextAlign.Center,
-                    onClick = { navHostController.navigate(AppNavigationItems.LoginScreen.route) }
-                )
-
-                HorizontalPagerIndicator(
-                    pagerState = pagerState,
-                    modifier = Modifier
-                        .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium)
-                )
-            }
-        }
-
-        // "Get Started" button only on the third page
-        if (pagerState.currentPage == 2) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust the padding as needed
-            ) {
-                AppButton(
-                    onClick = {
-                        navHostController.navigate(AppNavigationItems.LoginScreen.route)
-                    },
-                    title = stringResource(R.string.get_started)
-                )
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -203,6 +113,113 @@ fun ShowCardView(
                     color = Color("#B3B3B3".toColorInt()),
                     textAlign = TextAlign.Center,
                     fontSize = MaterialTheme.dimens.SP_16_CompactMedium
+                )
+            }
+        }
+    }
+}
+
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoardingScreenViewModel = hiltViewModel()) {
+    val pagerState = rememberPagerState(initialPage = 0)
+    val imageSlider = listOf(
+        OnBoardingContentList(
+            headNote = stringResource(id = R.string.safe_fast_txn),
+            subNote = stringResource(id = R.string.single_use_pass)
+        ),
+        OnBoardingContentList(
+            image = R.drawable.onboarding2,
+            headNote = stringResource(id = R.string.analysis_data),
+            subNote = stringResource(id = R.string.improving_customer)
+        ),
+        OnBoardingContentList(
+            image = R.drawable.onboarding3,
+            headNote = stringResource(id = R.string.quick_and_easy_payments),
+            subNote = stringResource(id = R.string.creating_pay),
+            isIndicatorShow = false
+        )
+    )
+
+    var isUserInteracted by remember { mutableStateOf(false) }
+
+    LaunchedEffect(pagerState.currentPage) {
+        // Delay the resumption of auto-slide to avoid immediate sliding after manual interaction
+        isUserInteracted = true
+        delay(1000)
+        isUserInteracted = false
+    }
+
+    LaunchedEffect(isUserInteracted) {
+        // Auto-slide logic, only runs when the user hasn't interacted for a while
+        if (!isUserInteracted) {
+            while (true) {
+                delay(2000)
+                pagerState.animateScrollToPage(
+                    page = (pagerState.currentPage + 1) % pagerState.pageCount
+                )
+            }
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color("#D9D9D9".toColorInt()))
+    ) {
+        HorizontalPager(
+            count = imageSlider.size,
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            ShowCardView(pagerState, page, imageSlider, navHostController)
+        }
+
+        // "Skip" text and HorizontalPagerIndicator
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = MaterialTheme.dimens.DP_120_CompactMedium) // Adjust padding as needed
+        ) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextView(
+                    text = stringResource(id = R.string.skip),
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium), // Adjust padding
+                    textAlign = TextAlign.Center,
+                    onClick = { navHostController.navigate(AppNavigationItems.LoginScreen.route) }
+                )
+
+                HorizontalPagerIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium)
+                )
+            }
+        }
+
+        // "Get Started" button only on the third page
+        if (pagerState.currentPage == 2) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust the padding as needed
+            ) {
+                AppButton(
+                    onClick = {
+                        navHostController.navigate(AppNavigationItems.LoginScreen.route)
+                    },
+                    title = stringResource(R.string.get_started)
                 )
             }
         }

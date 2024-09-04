@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Icon
@@ -88,6 +89,14 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             function = {
                 onMenuItemClick("Settings")
                 navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
+            }
+        )
+        DrawerMenuItem(
+            icon = Icons.Default.Logout,
+            label = "Logout",
+            function = {
+                onMenuItemClick("Logout")
+                navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
             }
         )
     }
