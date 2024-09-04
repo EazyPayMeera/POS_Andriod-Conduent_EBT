@@ -12,6 +12,7 @@ data class BatchEntity(
 
     /* Batch Info */
     @ColumnInfo(name = "MerchantId") var merchantId: String? = null,
+    @ColumnInfo(name = "TerminalId") var terminalId: String? = null,
     @ColumnInfo(name = "CashierId") var cashierId: String? = null,
     @ColumnInfo(name = "BatchId") var batchId: String? = null,
     @ColumnInfo(name = "BatchStatus") var batchStatus: String? = null,
