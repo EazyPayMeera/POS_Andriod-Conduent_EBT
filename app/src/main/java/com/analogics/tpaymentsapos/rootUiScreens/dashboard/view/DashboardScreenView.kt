@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -54,82 +56,92 @@ import kotlinx.coroutines.withContext
 @Composable
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
+    TransactionState.isPurchase = false
+
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
         dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel)
     ) {}
 }
-
 @Composable
 fun dashboardItemListData(
     navHostController: NavHostController,
     dashboardViewModel: DashboardViewModel
 ): List<DashboardItemList> {
+
+    // Helper function to set the transaction state
+    fun setTransactionState(
+        isPurchase: Boolean = false,
+        isRefund: Boolean = false,
+        isPreauth: Boolean = false,
+        isAuthcap: Boolean = false,
+        isVoid: Boolean = false,
+        isTransaction: Boolean = false
+    ) {
+        TransactionState.isPurchase = isPurchase
+        TransactionState.isRefund = isRefund
+        TransactionState.isPreauth = isPreauth
+        TransactionState.isAuthcap = isAuthcap
+        TransactionState.isVoid = isVoid
+        TransactionState.isTransaction = isTransaction
+    }
+
+    // Helper function to create DashboardItemList
+    @Composable
+    fun createDashboardItem(
+        titleId: Int,
+        iconId: Int,
+        route: String,
+        onClickState: () -> Unit
+    ): DashboardItemList {
+        return DashboardItemList(
+            stringResource(id = titleId),
+            iconId,
+            onClick = {
+                dashboardViewModel.navigateTo(navHostController, route)
+                onClickState()
+            }
+        )
+    }
+
     return listOf(
-        DashboardItemList(
-            stringResource(id = R.string.purchase),
-            R.drawable.purchase,
-            onClick = {
-                dashboardViewModel.navigateTo(
-                    navHostController,
-                    AppNavigationItems.InvoiceScreen.route
-                )
-                TransactionState.isPurchase = true
-
-            }),
-        DashboardItemList(
-            stringResource(id = R.string.refund),
-            R.drawable.dashboard_refund,
-            onClick = {
-                dashboardViewModel.navigateTo(
-                    navHostController,
-                    AppNavigationItems.PasswordScreen.route
-                )
-                TransactionState.isRefund = true
-            }),
-        DashboardItemList(
-            stringResource(id = R.string.pre_auth),
-            R.drawable.dashboard_preauth,
-            onClick = {
-                dashboardViewModel.navigateTo(
-                    navHostController,
-                    AppNavigationItems.InvoiceScreen.route
-                )
-                TransactionState.isPreauth = true
-
-            }),
-        DashboardItemList(
-            stringResource(id = R.string.auth_capture),
-            R.drawable.dashboard_auth_capture,
-            onClick = {
-                dashboardViewModel.navigateTo(
-                    navHostController,
-                    AppNavigationItems.InvoiceScreen.route
-                )
-                TransactionState.isAuthcap = true
-            }),
-        DashboardItemList(
-            stringResource(id = R.string.void_trans),
-            R.drawable.dashboard_void,
-            onClick = {
-                dashboardViewModel.navigateTo(
-                    navHostController,
-                    AppNavigationItems.PasswordScreen.route
-                )
-                TransactionState.isVoid = true
-            }),
-        DashboardItemList(
-            stringResource(id = R.string.transactions),
-            R.drawable.dashboard_transaction,
-            onClick = {
-                dashboardViewModel.navigateTo(
-                    navHostController,
-                    AppNavigationItems.PasswordScreen.route
-                )
-                TransactionState.isTransaction = true
-
-            })
+        createDashboardItem(
+            titleId = R.string.purchase,
+            iconId = R.drawable.purchase,
+            route = AppNavigationItems.InvoiceScreen.route,
+            onClickState = { setTransactionState(isPurchase = true) }
+        ),
+        createDashboardItem(
+            titleId = R.string.refund,
+            iconId = R.drawable.dashboard_refund,
+            route = AppNavigationItems.PasswordScreen.route,
+            onClickState = { setTransactionState(isRefund = true) }
+        ),
+        createDashboardItem(
+            titleId = R.string.pre_auth,
+            iconId = R.drawable.dashboard_preauth,
+            route = AppNavigationItems.InvoiceScreen.route,
+            onClickState = { setTransactionState(isPreauth = true) }
+        ),
+        createDashboardItem(
+            titleId = R.string.auth_capture,
+            iconId = R.drawable.dashboard_auth_capture,
+            route = AppNavigationItems.InvoiceScreen.route,
+            onClickState = { setTransactionState(isAuthcap = true) }
+        ),
+        createDashboardItem(
+            titleId = R.string.void_trans,
+            iconId = R.drawable.dashboard_void,
+            route = AppNavigationItems.PasswordScreen.route,
+            onClickState = { setTransactionState(isVoid = true) }
+        ),
+        createDashboardItem(
+            titleId = R.string.transactions,
+            iconId = R.drawable.dashboard_transaction,
+            route = AppNavigationItems.TxnListScreen.route,
+            onClickState = { setTransactionState(isTransaction = true) }
+        )
     )
 }
 
@@ -145,28 +157,6 @@ fun TrainingView(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-
-
-//    var txnDtlsEntity:TxnDtlsEntity=TxnDtlsEntity()
-//    txnDtlsEntity=txnDtlsEntity.copy(incrementNumber(500),"11","111","111",
-//        "11","111","111","11","111",
-//        "111","11","111","111","11",
-//        "111","111","11","111","111","11",
-//        "111","111","11","111","111",
-//        "11","111","111","11","111",
-//        "111","11","111","111","11","111",
-//        "111","11","111","111","11",
-//        "111","111","11",111.00,1,"11",
-//        "111","111","11","111",true,
-//        "en","111",true,false,false,true,true,"aa",true)
-//    LaunchedEffect(Unit) { // 'Unit' here means this will run only once when the composable enters composition
-//        withContext(Dispatchers.IO) { // Switching to IO thread
-//
-//            dashboardViewModel.insertData(txnDtlsEntity)
-//            Log.e("database done", "insertt" + txnDtlsEntity)
-//
-//        }
-//    }
     // Function to handle drawer open and close
     fun toggleDrawer(open: Boolean) {
         coroutineScope.launch {
@@ -187,7 +177,7 @@ fun TrainingView(
         Scaffold(
             topBar = {
                 AppHeader(
-                    title = stringResource(id = R.string.training),
+                    title = stringResource(id = R.string.application_name),
                     onBackButtonClick = { /* Handle back button click if needed */ },
                     icon1 = R.drawable.baseline_menu_24,
                     onIcon1Click = { toggleDrawer(true) },
@@ -244,11 +234,11 @@ fun DashboardContentSurface(
         ) {
             TextView(
                 text = stringResource(id = R.string.training),
-                fontSize = MaterialTheme.dimens.SP_20_CompactMedium,
+                fontSize = 20.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
                     .align(Alignment.CenterHorizontally)
             )
 
@@ -256,8 +246,12 @@ fun DashboardContentSurface(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                        .padding(
+                            start = MaterialTheme.dimens.DP_5_CompactMedium,
+                            end = MaterialTheme.dimens.DP_5_CompactMedium,
+                            bottom = MaterialTheme.dimens.DP_5_CompactMedium
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.DP_5_CompactMedium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     rowConfigs.forEach { config ->
@@ -286,6 +280,7 @@ fun DashboardContentSurface(
                 AppButton(
                     onClick = { /* Handle print receipt click */ },
                     title = stringResource(id = R.string.print_last_receipt),
+                    image = painterResource(id = R.drawable.ic_print)
                 )
             }
         }

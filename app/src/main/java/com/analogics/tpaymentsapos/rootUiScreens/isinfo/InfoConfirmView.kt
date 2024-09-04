@@ -1,5 +1,5 @@
 // AmountView.kt
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.isinfo
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

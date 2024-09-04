@@ -47,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -192,16 +193,14 @@ fun AppButton(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                image?.let {
+                if (image != null) {
                     Image(
-                        painter = it,
+                        painter = image,
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.DP_28_CompactMedium) // Adjust size as needed
-                            .clip(CircleShape) // Make the image round
-                            .padding(end = MaterialTheme.dimens.DP_15_CompactMedium) // Space between image and text
-                    )
+                        modifier = Modifier,
+                        )
                 }
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(text = title)
             }
         }
@@ -770,7 +769,6 @@ fun CardWithImageText(
 ) {
     GenericCard(
         modifier = modifier
-            .padding(start = MaterialTheme.dimens.DP_5_CompactMedium,)
             .clickable(onClick = onClick)
             .border(
                 width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
@@ -864,7 +862,7 @@ fun AppHeader(
                         painter = painterResource(id = icon1),
                         contentDescription = "icon1",
                         modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
+                            .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)
                             .clickable { onIcon1Click?.invoke() }
                     )
                 }

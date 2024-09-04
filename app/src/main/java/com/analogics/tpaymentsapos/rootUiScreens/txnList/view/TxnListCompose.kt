@@ -1,3 +1,5 @@
+
+
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 
 import androidx.compose.foundation.layout.*
@@ -11,25 +13,29 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun TransactionListScreen(viewModel: FakeTransactionViewModel = hiltViewModel()) {
+fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
     val transactions = viewModel.transactionList.collectAsState().value
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    Column {
+        CommonTopAppBar(
+            title = stringResource(R.string.transactions),
+            onBackButtonClick = { navHostController.popBackStack() }
+        )
         GenericCard(
-            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
+            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_17_CompactMedium)
         ) {
             Column(
                 modifier = Modifier
@@ -39,7 +45,7 @@ fun TransactionListScreen(viewModel: FakeTransactionViewModel = hiltViewModel())
             }
         }
         GenericCard(
-            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
+            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_17_CompactMedium)
         ) {
             Column(
                 modifier = Modifier
@@ -110,12 +116,13 @@ fun TransactionItem(transaction: TxnDataList) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewTransactionListScreen() {
+    val navHostController:NavHostController=NavHostController(context = LocalContext.current)
     val mockTransactions = listOf(
         TxnDataList(1, "Today @ 14:15:30", "Purchase", 450.00, true),
         TxnDataList(2, "Today @ 14:15:30", "Refund", 50.00, false),
         TxnDataList(3, "26-2-2020 @ 14:15:30", "Purchase", 50.00, true)
     )
-    TransactionListScreen(viewModel = FakeTransactionViewModel(mockTransactions))
+    TransactionListScreen(navHostController,viewModel = FakeTransactionViewModel(mockTransactions))
 }
 
 class FakeTransactionViewModel(mockTransactions: List<TxnDataList>) : TxnViewModel() {

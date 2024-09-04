@@ -61,7 +61,6 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
 
-    var isTaxesEnabled by remember { mutableStateOf(false) }
 
 
     Column {
@@ -110,82 +109,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         }
 
-        GenericCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = MaterialTheme.dimens.DP_24_CompactMedium,
-                    end = MaterialTheme.dimens.DP_24_CompactMedium, // Reduced top padding
-                    bottom = MaterialTheme.dimens.DP_10_CompactMedium
-                ),
-            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(MaterialTheme.dimens.DP_11_CompactMedium)
-            ) {
-
-                TextView(
-                    text = stringResource(id = R.string.txn_sum),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = colorResource(id = R.color.purple_200),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                        .align(Alignment.Start)
-                )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-                TextView(
-                    text = "${stringResource(id = R.string.tnx_amount)}₹${
-                        formatAmountdouble(
-                            amountDouble
-                        )
-                    }",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                        .align(Alignment.Start)
-                )
-
-                TextView(
-                    text = "${stringResource(id = R.string.tip_amt)}₹${formatAmountdouble(tipAmount)}",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                        .align(Alignment.Start)
-                )
-                TextView(
-                    text = "${stringResource(id = R.string.sgst_amt)}₹${
-                        formatAmountdouble(
-                            sgstAmount
-                        )
-                    }",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                        .align(Alignment.Start)
-                )
-                TextView(
-                    text = "${stringResource(id = R.string.igst_amt)}₹${
-                        formatAmountdouble(
-                            igstAmount
-                        )
-                    }",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                        .align(Alignment.Start)
-                )
-
-            }
-        }
-
-
+        TransactionSummaryCard(amountDouble,tipAmount,sgstAmount,igstAmount)
 
         Column {
             GenericCard(
@@ -274,3 +198,91 @@ fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit
     }
 }
 
+@Composable
+fun TransactionSummaryCard(
+    amountDouble: Double,
+    tipAmount: Double,
+    sgstAmount: Double,
+    igstAmount: Double
+) {
+    GenericCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = MaterialTheme.dimens.DP_24_CompactMedium,
+                end = MaterialTheme.dimens.DP_24_CompactMedium,
+                bottom = MaterialTheme.dimens.DP_10_CompactMedium
+            ),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_11_CompactMedium)
+        ) {
+            // Transaction Summary Title
+            TextView(
+                text = stringResource(id = R.string.txn_sum),
+                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                color = colorResource(id = R.color.purple_200),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
+
+            // Transaction Amount
+            TransactionSummaryItem(
+                label = stringResource(id = R.string.tnx_amount),
+                amount = amountDouble
+            )
+
+            // Tip Amount
+            TransactionSummaryItem(
+                label = stringResource(id = R.string.tip_amt),
+                amount = tipAmount
+            )
+
+            // SGST Amount
+            TransactionSummaryItem(
+                label = stringResource(id = R.string.sgst_amt),
+                amount = sgstAmount
+            )
+
+            // IGST Amount
+            TransactionSummaryItem(
+                label = stringResource(id = R.string.igst_amt),
+                amount = igstAmount
+            )
+        }
+    }
+}
+
+@Composable
+fun TransactionSummaryItem(
+    label: String,
+    amount: Double
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextView(
+            text = label,
+            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+            color = Color.Gray,
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+
+        TextView(
+            text = "₹${formatAmountdouble(amount)}",
+            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+            color = Color.Gray,
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+    }
+}
