@@ -30,7 +30,7 @@ class OnBoardingScreenViewModel @Inject constructor(private  var paymentServiceR
     fun onOnboardingCompleted(navController: NavController) {
         viewModelScope.launch {
             navController.navigate(AppNavigationItems.LoginScreen.route)
-            paymentServiceRepository.isOnboardingCompleted(navController.context,true)
+            paymentServiceRepository.getPosConfig().apply { isOnboardingComplete=true }.saveToPrefs(navController.context)
         }
     }
 }

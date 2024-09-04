@@ -9,6 +9,7 @@ import com.analogics.paymentservicecore.constants.ConfigConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IPaymentServiceRequestListener
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
+import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.securityframework.handler.SharedPrefHandler
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentSDKListener
@@ -19,14 +20,14 @@ class PaymentServiceRepository @Inject constructor(private var buildApiRepositor
     IPaymentSDKListener, IApiServiceResponseListener {
     lateinit var iOnRootAppPaymentListener: IOnRootAppPaymentListener
     lateinit var context: Context
+
     override fun onTPaymentSDKInit(uiData: String) {
         /* Just for testing comparing with uiData value */
         if (uiData == "SUCCESS") {
-            isPaymentSDKInit(context, true)
+            PosConfig.apply { isPaymentSDKInit = true }.saveToPrefs(context)
             iOnRootAppPaymentListener.onPaymentSuccess(true)
-        }
-        else {
-            isPaymentSDKInit(context, false)
+        } else {
+            PosConfig.apply { isPaymentSDKInit = false }.saveToPrefs(context)
             iOnRootAppPaymentListener.onPaymentError(PaymentServiceError("Error"))
         }
     }
@@ -59,7 +60,7 @@ class PaymentServiceRepository @Inject constructor(private var buildApiRepositor
     ) {
         this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         this.context = context
-        if(!isPaymentSDKInit(context))
+        if (PosConfig.isPaymentSDKInit != true)
             PaymentConfigurationHandler.initPaymentSDK(context, this)
     }
 
@@ -71,54 +72,7 @@ class PaymentServiceRepository @Inject constructor(private var buildApiRepositor
         PaymentConfigurationHandler.startPayment(context, this)
     }
 
-    override fun isPaymentSDKInit(context: Context): Boolean {
-        try {
-            return SharedPrefHandler.getConfigVal(context, ConfigConstants.CONFIG_KEY_IS_PAYMENT_SDK_INIT) == true
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
-    }
-
-    override fun isPaymentSDKInit(context: Context, isInit: Boolean) {
-        try {
-            SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_PAYMENT_SDK_INIT, isInit)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    override fun isOnboardingCompleted(context: Context): Boolean {
-        try {
-            return SharedPrefHandler.getConfigVal(context, ConfigConstants.CONFIG_KEY_IS_ONBOARDING_COMPLETED) == true
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
-    }
-
-    override fun isOnboardingCompleted(context: Context, isComplete: Boolean) {
-        try {
-            SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_ONBOARDING_COMPLETED, isComplete)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    override fun isLoggedIn(context: Context): Boolean {
-        try {
-            return SharedPrefHandler.getConfigVal(context, ConfigConstants.CONFIG_KEY_IS_LOGGED_IN) == true
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
-    }
-
-    override fun isLoggedIn(context: Context, isLoggedIn: Boolean) {
-        try {
-            SharedPrefHandler.setConfigVal(context, ConfigConstants.CONFIG_KEY_IS_LOGGED_IN, isLoggedIn)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    override fun getPosConfig(): PosConfig {
+        return PosConfig
     }
 }

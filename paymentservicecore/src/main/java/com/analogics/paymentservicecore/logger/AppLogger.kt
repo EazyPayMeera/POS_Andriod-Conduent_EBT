@@ -9,6 +9,10 @@ object AppLogger {
         NONE,ERROR,WARN,INFO,DEBUG,VERBOSE
     }
 
+    enum class MODULE{
+        APP_UI,PAYMENT_LIB,SECURITY_LIB,BUILDER_LIB,POS_CONFIG
+    }
+
     // Set the current log level (e.g., controlled by BuildConfig or any other mechanism)
     var currentLogLevel: LOG_LEVEL = LOG_LEVEL.DEBUG // Default to the most verbose level
 
@@ -28,41 +32,41 @@ object AppLogger {
     }
 
     // Method to log an error
-    fun e(tag: String, message: String, throwable: Throwable? = null) {
+    fun e(tag: MODULE, message: String, throwable: Throwable? = null) {
         if (currentLogLevel >= LOG_LEVEL.ERROR) {
             if (throwable != null) {
-                Log.e(tag, message, throwable)
+                Log.e(tag.toString(), message, throwable)
             } else {
-                Log.e(tag, message)
+                Log.e(tag.toString(), message)
             }
         }
     }
 
     // Method to log a warning
-    fun w(tag: String, message: String) {
+    fun w(tag: MODULE, message: String) {
         if (currentLogLevel >= LOG_LEVEL.WARN) {
-            Log.w(tag, message)
+            Log.w(tag.toString(), message)
         }
     }
 
     // Method to log an informational message
-    fun i(tag: String, message: String) {
+    fun i(tag: MODULE, message: String) {
         if (currentLogLevel >= LOG_LEVEL.INFO) {
-            Log.i(tag, message)
+            Log.i(tag.toString(), message)
         }
     }
 
     // Method to log a debug message
-    fun d(tag: String, message: String) {
+    fun d(tag: MODULE, message: String) {
         if (currentLogLevel >= LOG_LEVEL.DEBUG) {
-            Log.d(tag, message)
+            Log.d(tag.toString(), message)
         }
     }
 
     // Method to log a verbose/trace message
-    fun v(tag: String, message: String) {
+    fun v(tag: MODULE, message: String) {
         if (currentLogLevel >= LOG_LEVEL.VERBOSE) {
-            Log.v(tag, message)
+            Log.v(tag.toString(), message)
         }
     }
 }
