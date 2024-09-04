@@ -1,6 +1,6 @@
 // ConfirmationView.kt
 
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.confirmation.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurableViewType
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.SettingsItem
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.SettingsSurface
@@ -38,7 +40,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -46,9 +47,11 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
     var selectedTipPercentage by remember { mutableStateOf(0) }
     val amountDouble = amount.toDoubleOrNull() ?: 0.0
+    var selectedTip by remember { mutableStateOf("10%") }
 
     val sgstAmount = calculateTax(amountDouble)
     val igstAmount = calculateTax(amountDouble)
+    var isTipEnabled by remember { mutableStateOf(false) }
     val tipAmount = calculateTip(amountDouble, selectedTipPercentage)
 
     val isRefund = TransactionState.isRefund
@@ -58,6 +61,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
 
     var isTaxesEnabled by remember { mutableStateOf(false) }
+
 
     Column {
         CommonTopAppBar(
@@ -72,10 +76,15 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
         GenericCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                .padding(
+                    start = MaterialTheme.dimens.DP_24_CompactMedium,
+                    end = MaterialTheme.dimens.DP_24_CompactMedium,
+                    top = MaterialTheme.dimens.DP_10_CompactMedium, // Reduced top padding
+                    bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                ),
             backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-        ){
+        ) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,10 +112,11 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
         GenericCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = MaterialTheme.dimens.DP_24_CompactMedium,
-                    end = MaterialTheme.dimens.DP_24_CompactMedium,
-                    top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
-                    bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                .padding(
+                    start = MaterialTheme.dimens.DP_24_CompactMedium,
+                    end = MaterialTheme.dimens.DP_24_CompactMedium, // Reduced top padding
+                    bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                ),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
         ) {
             Column(
@@ -126,7 +136,11 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                 TextView(
-                    text = "${stringResource(id = R.string.tnx_amount)}₹${formatAmountdouble(amountDouble)}",
+                    text = "${stringResource(id = R.string.tnx_amount)}₹${
+                        formatAmountdouble(
+                            amountDouble
+                        )
+                    }",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -143,7 +157,11 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = "${stringResource(id = R.string.sgst_amt)}₹${formatAmountdouble(sgstAmount)}",
+                    text = "${stringResource(id = R.string.sgst_amt)}₹${
+                        formatAmountdouble(
+                            sgstAmount
+                        )
+                    }",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -151,7 +169,11 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = "${stringResource(id = R.string.igst_amt)}₹${formatAmountdouble(igstAmount)}",
+                    text = "${stringResource(id = R.string.igst_amt)}₹${
+                        formatAmountdouble(
+                            igstAmount
+                        )
+                    }",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -162,63 +184,92 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         }
 
-            val settingsItems = listOf(
-                SettingsItem(
-                    imageRes = R.drawable.config_training_mode,
-                    text = stringResource(id = R.string.training_mode),
-                    isChecked = isTaxesEnabled,
-                    onCheckedChange = { isTaxesEnabled = it }
-                )
-            )
 
-            Column {
-                androidx.compose.material3.Card(
+
+        Column {
+            GenericCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = MaterialTheme.dimens.DP_24_CompactMedium,
+                        end = MaterialTheme.dimens.DP_24_CompactMedium,
+                        top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                        bottom = MaterialTheme.dimens.DP_24_CompactMedium
+                    ),
+                elevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+            ) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = MaterialTheme.dimens.DP_24_CompactMedium,
-                            end = MaterialTheme.dimens.DP_24_CompactMedium,
-                            top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
-                            bottom = MaterialTheme.dimens.DP_24_CompactMedium),
-                    elevation = CardDefaults.elevatedCardElevation(10.dp),
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                        .padding(8.dp)
                 ) {
-                    Column {
-                        settingsItems.forEachIndexed { index, item ->
-                            SettingsSurface(
-                                modifier = Modifier.fillMaxWidth(),
-                                item = item
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextView(
+                            text = "Add Tip?",
+                            fontSize = MaterialTheme.dimens.SP_20_CompactMedium,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = MaterialTheme.dimens.DP_4_CompactMedium)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = isTipEnabled,
+                            onCheckedChange = { isTipEnabled = it },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color(0xFFFFA000), // Orange color
+                                uncheckedThumbColor = Color.Gray
                             )
+                        )
+                    }
 
-                            if (index < settingsItems.size - 1) {
-                                androidx.compose.material3.Divider(
-                                    color = colorResource(id = R.color.white),
-                                    thickness = 1.dp
-                                )
-                            }
-
-                            if (index == 4 && item.isChecked) {
-                                TippingView(type = ConfigurableViewType.Percentage)
-                            }
-                            if (index == 5 && item.isChecked) {
-                                TippingView(type = ConfigurableViewType.Taxes)
-                            }
+                    if (isTipEnabled) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            TipOptionButton("10%", selectedTip) { selectedTip = it }
+                            TipOptionButton("15%", selectedTip) { selectedTip = it }
+                            TipOptionButton("20%", selectedTip) { selectedTip = it }
+                            TipOptionButton("Custom Tip", selectedTip) { selectedTip = it }
                         }
                     }
                 }
             }
-
+        }
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { navHostController.navigate(AppNavigationItems.CardScreen.createRoute(
-                formatAmountdouble(totalAmount)
-            )) }
+            secondButtonOnClick = {
+                navHostController.navigate(
+                    AppNavigationItems.CardScreen.createRoute(
+                        formatAmountdouble(totalAmount)
+                    )
+                )
+            }
         )
     }
 
 
 }
 
+@Composable
+fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit) {
+    Button(
+        onClick = { onSelect(tip) },
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (tip == selectedTip) Color(0xFFFFA000) else Color(0xFFF0F0F0),
+            contentColor = Color.Black
+        ),
+        modifier = Modifier.padding(4.dp)
+    ) {
+        Text(text = tip)
+    }
+}
 

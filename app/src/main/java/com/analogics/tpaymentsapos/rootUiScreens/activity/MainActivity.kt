@@ -37,7 +37,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
-import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmationView
+import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView

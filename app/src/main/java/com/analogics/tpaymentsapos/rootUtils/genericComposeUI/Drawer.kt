@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -70,7 +72,7 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             label = "Set Language",
             function = {
                 onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                navHostController.navigate(AppNavigationItems.LanguageScreen.route)
             }
         )
         DrawerMenuItem(
@@ -78,7 +80,7 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             label = "Change Password",
             function = {
                 onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
             }
         )
         DrawerMenuItem(
@@ -86,7 +88,15 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             label = "Configuration",
             function = {
                 onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.SettingsScreen.route)
+                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
+            }
+        )
+        DrawerMenuItem(
+            icon = Icons.Default.Logout,
+            label = "Logout",
+            function = {
+                onMenuItemClick("Logout")
+                navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
             }
         )
     }
@@ -97,7 +107,8 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = MaterialTheme.dimens.DP_15_CompactMedium),
+            .padding(vertical = MaterialTheme.dimens.DP_15_CompactMedium)
+            .clickable { function() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

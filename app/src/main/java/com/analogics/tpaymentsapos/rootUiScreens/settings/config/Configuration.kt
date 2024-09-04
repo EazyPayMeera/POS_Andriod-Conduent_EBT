@@ -36,6 +36,8 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.*
+import com.analogics.tpaymentsapos.ui.theme.tipBgColor
 
 
 @Composable
@@ -147,7 +149,7 @@ fun TippingView(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.White)
+            .background(color = tipBgColor)
             .padding(MaterialTheme.dimens.DP_24_CompactMedium)
     ) {
         Column(
