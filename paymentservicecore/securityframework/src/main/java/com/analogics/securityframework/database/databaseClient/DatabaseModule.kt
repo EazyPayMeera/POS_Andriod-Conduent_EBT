@@ -2,6 +2,7 @@ package com.analogics.securityframework.database.databaseClient
 
 import android.content.Context
 import androidx.room.Room
+import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
 import com.analogics.securityframework.database.dbConstant.DBConstant
 import dagger.Module
@@ -22,8 +23,13 @@ object DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabaseClient::class.java,
-            DBConstant.TPAYDB
+            DBConstant.TXN_DB_NAME
         ).build()
+    }
+
+    @Provides
+    fun provideBatchDao(database: AppDatabaseClient): IBatchDao {
+        return database.getBatchDao()
     }
 
     @Provides

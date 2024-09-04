@@ -1,7 +1,17 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import android.content.ContentValues.TAG
+import android.os.Build
+import android.os.Bundle
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,84 +22,109 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.pleasewait.viewmodel.PleaseWaitViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GifImage
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.delay
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
-    // Define state and resources
     var invoiceno by remember { mutableStateOf("") }
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
     val isPreauth = TransactionState.isPreauth
-    val isAuthcap = Authorisation.isAuthcap
+    val isMerchantReceipt = Authorisation.isMerchantReceipt
+    val isEreceipt = Authorisation.isEreceipt
 
-    // Access string resources
-    val refund = stringResource(id = R.string.refund)
-    val void = stringResource(id = R.string.void_trans)
-    val preAuth = stringResource(id = R.string.pre_auth)
-    val purchase = stringResource(id = R.string.purchase)
+    val context = LocalContext.current
+    val viewModel: PleaseWaitViewModel = viewModel { PleaseWaitViewModel(context) }
 
-    // Navigation with delay
     LaunchedEffect(Unit) {
-        delay(2000) // Delay for 2 seconds (2000 milliseconds)
-        val destination = if (isVoid) {
-            AppNavigationItems.ApprovedScreen.route
-        } else {
-            AppNavigationItems.ApprovedScreen.route
+        if (isMerchantReceipt) {
+            val bitmap = viewModel.getLogoBitmap(context, R.drawable.master_mono)
+            val imageData: ByteArray = viewModel.getBitmapBytes(bitmap) ?: ByteArray(0)
+            var format = Bundle().apply {
+                putInt("align", -1)
+                putInt("width", 300)
+                putInt("height", 100)
+                putInt("offset", 0)
+            }
+            viewModel.addImage(format, imageData)
+
+            format = Bundle().apply {
+                putInt("align", 1)
+                putInt("width", 300)
+                putInt("height", 100)
+                putSerializable("barcode_type", BarcodeFormat.CODE_39)
+            }
+
+            viewModel.addReceiptDetails(format,object : IPrinterResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                    if (result == true) {
+                        Log.d(TAG, "Receipt printed successfully")
+                    } else {
+                        Log.d(TAG, "Receipt print failed")
+                    }
+                }
+                override fun onFailure(exception: Exception) {
+                    Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
+                }
+            })
+
         }
-        navHostController.navigate(destination) // Navigate to the desired screen
+
+        delay(2000) // Delay for 2 seconds
+        val destination = when {
+            isMerchantReceipt -> AppNavigationItems.TrainingScreen.route
+            isEreceipt -> AppNavigationItems.EmailScreen.route
+            else -> AppNavigationItems.ApprovedScreen.route
+        }
+        navHostController.navigate(destination)
     }
 
     Column {
-        // Top App Bar with back button
         CommonTopAppBar(
             title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        // Outer Surface with background color, padding, and rounded corners
-        BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
-        ) {
+        BackgroundScreen() {
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
-                    .fillMaxSize(), // Fill the entire available space
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // Align content to the start
+                horizontalAlignment = Alignment.Start
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
 
-                // TextView for "Please Wait"
                 TextView(
-                    text = stringResource(id = R.string.printing),
+                    text = if (isMerchantReceipt) stringResource(id = R.string.printing) else stringResource(id = R.string.processing),
                     fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                        .align(Alignment.CenterHorizontally)
                 )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
-                // TextView for "Please Wait"
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
+
                 TextView(
                     text = stringResource(id = R.string.plz_wait),
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
@@ -97,34 +132,29 @@ fun PleaseWaitView(navHostController: NavHostController) {
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
+                        .align(Alignment.CenterHorizontally)
                 )
 
-                // TextView for "Please Wait"
-                TextView(
-                    text = stringResource(id = R.string.merchant_recp),
-                    fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the TextView horizontally within the Column
-                )
+                if (isMerchantReceipt) {
+                    TextView(
+                        text = stringResource(id = R.string.merchant_recp),
+                        fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
 
-                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium)) // Blank space
-
-                // GIF Image
                 GifImage(
-                    gifResId = R.drawable.wait, // Use your GIF resource here
+                    gifResId = R.drawable.wait,
                     modifier = Modifier
                         .size(MaterialTheme.dimens.DP_120_CompactMedium)
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the GIF horizontally within the Column
+                        .align(Alignment.CenterHorizontally)
                 )
             }
         }
     }
 }
-
-
-

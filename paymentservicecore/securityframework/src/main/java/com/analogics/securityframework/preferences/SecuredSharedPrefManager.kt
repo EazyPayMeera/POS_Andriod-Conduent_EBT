@@ -1,15 +1,14 @@
-package com.analogics.securityframework.prefrences
+package com.analogics.securityframework.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class SecureSharePrefManager @Inject constructor(
+class SecuredSharedPrefManager @Inject constructor(
     @ApplicationContext context: Context,
     prefsName: String = "MyAppPrefs"
 ) {
-
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
@@ -68,6 +67,8 @@ class SecureSharePrefManager @Inject constructor(
     fun getLong(key: String, defaultValue: Long = -1L): Long {
         return sharedPreferences.getLong(key, defaultValue)
     }
+
+    fun getAll() = sharedPreferences.all
 
     //  val prefs = SecureSharePrefManager(context, "MyAppPrefs")
     //  prefs.putString("username", "JohnDoe")

@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.os.IInputActionListener
 import android.text.TextUtils
 import android.util.Log
-import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -20,7 +20,7 @@ import java.util.Locale
 
 class EMV {
     companion object : EmvListener, PinInputListener {
-        lateinit var iPaymentCoreHandlerListener: IPaymentCoreHandlerListener
+        lateinit var iPaymentSDKListener: IPaymentSDKListener
         fun initialize(context: Context) {
             Thread {
                 try {
@@ -40,10 +40,10 @@ class EMV {
             }.start()
         }
 
-        fun startPayment(context: Context, iPaymentCoreHandlerListener: IPaymentCoreHandlerListener) {
+        fun startPayment(context: Context, iPaymentSDKListener: IPaymentSDKListener) {
             Thread {
                 try {
-                    this.iPaymentCoreHandlerListener = iPaymentCoreHandlerListener
+                    this.iPaymentSDKListener = iPaymentSDKListener
                     val data = Hashtable<String, Any>()
                     data["checkCardMode"] = ContantPara.CheckCardMode.INSERT_OR_TAP //
                     data["currencyCode"] = "682" //682
@@ -120,9 +120,9 @@ class EMV {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
             if(p0==ContantPara.TransactionResult.ONLINE_APPROVAL || p0==ContantPara.TransactionResult.OFFLINE_APPROVAL)
-                iPaymentCoreHandlerListener.onTPaymentSDKHandler("SUCCESS")
+                iPaymentSDKListener.onTPaymentSDKHandler("SUCCESS")
             else
-                iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
+                iPaymentSDKListener.onTPaymentSDKHandler("FAILURE")
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -177,9 +177,9 @@ class EMV {
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
             if(p0==ContantPara.NfcTransResult.ONLINE_APPROVAL || p0==ContantPara.NfcTransResult.OFFLINE_APPROVAL)
-                iPaymentCoreHandlerListener.onTPaymentSDKHandler("SUCCESS")
+                iPaymentSDKListener.onTPaymentSDKHandler("SUCCESS")
             else
-                iPaymentCoreHandlerListener.onTPaymentSDKHandler("FAILURE")
+                iPaymentSDKListener.onTPaymentSDKHandler("FAILURE")
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {

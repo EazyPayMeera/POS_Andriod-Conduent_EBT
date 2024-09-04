@@ -197,7 +197,7 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
                     maxLines = 1,
                     modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium), // Adjust padding
                     textAlign = TextAlign.Center,
-                    onClick = { navHostController.navigate(AppNavigationItems.LoginScreen.route) }
+                    onClick = { viewModel.onOnboardingCompleted(navHostController) }
                 )
 
                 HorizontalPagerIndicator(
@@ -217,7 +217,7 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
             ) {
                 AppButton(
                     onClick = {
-                        navHostController.navigate(AppNavigationItems.LoginScreen.route)
+                        viewModel.onOnboardingCompleted(navHostController)
                     },
                     title = stringResource(R.string.get_started)
                 )

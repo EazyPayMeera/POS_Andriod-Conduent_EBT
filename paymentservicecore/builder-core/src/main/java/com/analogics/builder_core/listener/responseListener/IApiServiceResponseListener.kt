@@ -2,7 +2,7 @@ package com.analogics.builder_core.listener.responseListener
 
 
 
-interface IBuilderCoreResponseListener {
-  fun onApiSuccessRes(respone:Any)
+interface IApiServiceResponseListener {
+  fun onApiSuccessRes(response:Any)
   fun onApiFailureRes(error:Any)
 }

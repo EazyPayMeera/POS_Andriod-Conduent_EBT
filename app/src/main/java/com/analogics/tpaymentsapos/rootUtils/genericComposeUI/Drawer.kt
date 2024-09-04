@@ -33,6 +33,7 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.ui.theme.dimens
+
 @Composable
 fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostController,
                         onMenuItemClick: (String) -> Unit) {
@@ -107,7 +108,7 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
+            .padding(vertical = MaterialTheme.dimens.DP_15_CompactMedium)
             .clickable { function() },
         verticalAlignment = Alignment.CenterVertically
     ) {

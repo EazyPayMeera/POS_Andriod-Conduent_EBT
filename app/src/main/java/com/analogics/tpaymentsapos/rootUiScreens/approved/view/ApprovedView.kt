@@ -1,40 +1,69 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+//import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
+import android.content.ContentValues.TAG
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import android.content.SharedPreferences
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.cos
 import kotlin.math.sin
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+
 
 
 
@@ -44,7 +73,6 @@ fun CircularMenu(
     onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
-
     val menuOptions = listOf("Customer Receipt", "Merchant Receipt", "E-RECEIPT")
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
@@ -52,9 +80,6 @@ fun CircularMenu(
 
     val printButtonInitialColor = colorResource(id = R.color.purple_200)
     var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
-
-
-// Store values
 
     LaunchedEffect(expanded) {
         distance.animateTo(
@@ -109,7 +134,10 @@ fun CircularMenu(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(MaterialTheme.dimens.DP_200_CompactMedium)
-                .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape) // Add shadow with circular shape
+                .shadow(
+                    MaterialTheme.dimens.DP_4_CompactMedium,
+                    shape = CircleShape
+                ) // Add shadow with circular shape
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
                     scope.launch {
@@ -136,10 +164,20 @@ fun CircularMenu(
 
 
 
+
+
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
+    val isMerchantReceipt = Authorisation.isMerchantReceipt
+    val context = LocalContext.current
+    val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
+    val printStatus by viewModel.printStatus
+    val updated_amt = updated_amt
+    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
+
     Column {
-        // Top App Bar with back button
         CommonTopAppBar(
             title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
@@ -163,7 +201,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
             ) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space
 
-                // Approved TextView
                 TextView(
                     text = stringResource(id = R.string.approved),
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
@@ -174,59 +211,65 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         .align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                // Image for approval
-                ImageView(
-                    imageId = R.drawable.approve, // Replace with your image resource
-                    size = MaterialTheme.dimens.DP_110_CompactMedium,
-                    alignment = Alignment.Center, // Align image horizontally within the Box
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Align the Box horizontally within the parent
+                Text(
+                    text = "₹$updated_amt",
+                    fontSize = MaterialTheme.dimens.SP_30_CompactMedium,
+                    color = colorResource(id = R.color.purple_200),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space
+                ImageView(
+                    imageId = R.drawable.aprrove_scr,
+                    size = MaterialTheme.dimens.DP_120_CompactMedium,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                        .align(Alignment.CenterHorizontally)
+                )
 
-                // Circular Menu with Print and menu option handling
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Optional padding for horizontal spacing
+                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
                         onPrintClick = {
-                            // Do something on Print click
+                            coroutineScope.launch {
+                                viewModel.initPrinter(context, object : IPrinterResultProviderListener {
+                                    override fun onSuccess(result: Any?) {
+                                        if(result?.equals(true)==true)
+                                            Log.d(TAG, "Initialization of printer is Successful")
+                                        else
+                                            Log.d(TAG, "Initialization of printer is Failed")
+                                    }
+                                    override fun onFailure(exception: Exception) {}
+                                })
+                            }
                         },
                         onMenuOptionClick = { option ->
                             when (option) {
-                                "Customer Receipt" -> {
-
-
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
-                                "Merchant Receipt" -> {
-                                    // Handle Merchant Receipt click
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                "Customer Receipt", "Merchant Receipt" -> {
+                                    Authorisation.isMerchantReceipt = true
+                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                                 }
                                 "E-RECEIPT" -> {
-
+                                    Authorisation.isEreceipt = true
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
                             }
-                            navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                         }
                     )
                 }
 
-                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space
-
-                // Done button at the bottom
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_55_CompactMedium)
-                        .align(Alignment.CenterHorizontally), // Aligns the Box itself horizontally within the parent
-                    contentAlignment = Alignment.Center // Centers the OkButton within the Box
+                        .padding(top = MaterialTheme.dimens.DP_33_CompactMedium)
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
                 ) {
                     OkButton(
                         onClick = {
@@ -239,6 +282,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
         }
     }
 }
+
 
 
 

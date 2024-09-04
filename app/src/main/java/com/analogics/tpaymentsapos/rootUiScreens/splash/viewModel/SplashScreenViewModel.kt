@@ -1,15 +1,29 @@
 package com.analogics.tpaymentsapos.rootUiScreens.splash.viewModel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SplashScreenViewModel: ViewModel() {
-    fun onSplashScreenFinished(onNavigate: () -> Unit) {
+@HiltViewModel
+class SplashScreenViewModel @Inject constructor(private  var paymentServiceRepository: PaymentServiceRepository) : ViewModel() {
+    fun onSplashScreenFinished(navController: NavController) {
         viewModelScope.launch {
-            delay(3000L) //  delay for splash screen
-            onNavigate()
+            if(paymentServiceRepository.isLoggedIn(navController.context))
+                navController.navigate(AppNavigationItems.DashBoardScreen.route)
+            else if(paymentServiceRepository.isOnboardingCompleted(navController.context))
+                navController.navigate(AppNavigationItems.LoginScreen.route)
+            else {
+                delay(3000L) //  delay for splash screen
+                navController.navigate(AppNavigationItems.OnBoardingScreen.route)
+            }
         }
     }
 }

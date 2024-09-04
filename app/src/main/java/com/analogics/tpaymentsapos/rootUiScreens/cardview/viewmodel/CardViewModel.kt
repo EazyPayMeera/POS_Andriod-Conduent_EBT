@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +27,21 @@ class CardViewModel @Inject constructor(private  var paymentServiceRepository: P
         }
     }
 
-    suspend fun startPayment(context: Context, iPaymentResultListener: IOnRootAppPaymentListener)
-    {
-        paymentServiceRepository.startPayment(context,iPaymentResultListener)
+    fun startPayment(context: Context, navHostController: NavHostController) {
+        viewModelScope.launch {
+            paymentServiceRepository.startPayment(context, object :
+                IOnRootAppPaymentListener {
+                override fun onPaymentSuccess(response: Any) {
+                    if (response == true)
+                        navigateToApprovalScreen(navHostController)
+                    else
+                        navigateToDeclinedScreen(navHostController)
+                }
+
+                override fun onPaymentError(tError: PaymentServiceError) {
+                    navigateToDeclinedScreen(navHostController)
+                }
+            })
+        }
     }
 }

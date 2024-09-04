@@ -64,6 +64,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -113,7 +114,7 @@ fun InputTextField(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium), // Need to change Here
                 tint = Color.Black
             )
         },
@@ -147,11 +148,11 @@ fun InputTextField(
         } else {
             VisualTransformation.None
         },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color(0xFFFFA500),
+            focusedBorderColor = colorResource(id = R.color.purple_200),
             unfocusedBorderColor = Color.LightGray,
-            focusedLabelColor = Color(0xFFFFA500),
+            focusedLabelColor = colorResource(id = R.color.purple_200),
             unfocusedLabelColor = Color.LightGray
         )
     )
@@ -169,15 +170,18 @@ fun AppButton(
 ) {
     Box(
         modifier = Modifier
-            .width(248.dp)
-            .padding(bottom = 20.dp)
-            .background(colorResource(R.color.purple_200), shape = RoundedCornerShape(10.dp))
+            .width(MaterialTheme.dimens.DP_248_CompactMedium)
+            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+            .background(
+                colorResource(R.color.purple_200),
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+            )
     )
     {
         Button(onClick = onClick,
             modifier = Modifier
                 .wrapContentSize()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
@@ -193,9 +197,9 @@ fun AppButton(
                         painter = it,
                         contentDescription = null,
                         modifier = Modifier
-                            .size(28.dp) // Adjust size as needed
+                            .size(MaterialTheme.dimens.DP_28_CompactMedium) // Adjust size as needed
                             .clip(CircleShape) // Make the image round
-                            .padding(end = 12.dp) // Space between image and text
+                            .padding(end = MaterialTheme.dimens.DP_15_CompactMedium) // Space between image and text
                     )
                 }
                 Text(text = title)
@@ -227,8 +231,8 @@ fun CustomSurface(
     val focusRequester = remember { FocusRequester() }
 
     // Define height and width based on the isRefund flag
-    val surfaceHeight = if (isRefund) 380.dp else if (isVoid || isAuthcap) 540.dp else 250.dp
-    val surfaceWidth = 410.dp
+    val surfaceHeight = if (isRefund) MaterialTheme.dimens.DP_380_CompactMedium else if (isVoid || isAuthcap) MaterialTheme.dimens.DP_540_CompactMedium else MaterialTheme.dimens.DP_250_CompactMedium
+    val surfaceWidth = MaterialTheme.dimens.DP_410_CompactMedium
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -237,37 +241,37 @@ fun CustomSurface(
     Surface(
         color = Color.White,
         modifier = modifier
-            .padding(16.dp)
+            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
             .fillMaxWidth()
             .height(surfaceHeight)
             .width(surfaceWidth),
-        shape = RoundedCornerShape(18.dp),
-        shadowElevation = 8.dp
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+        shadowElevation = MaterialTheme.dimens.DP_20_CompactMedium
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = titleText,
-                fontSize = 14.sp,
+                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                     .align(Alignment.CenterHorizontally)
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
 
             Image(
                 painter = painterResource(id = imageResourceId),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(70.dp)
-                    .padding(bottom = 16.dp)
+                    .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
             )
 
             OutlinedTextField(
@@ -275,7 +279,7 @@ fun CustomSurface(
                 onValueChange = onValueChange,
                 label = { Text(label) },
                 placeholder = { Text(placeholder) },
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = keyboardType,
                     imeAction = ImeAction.Done
@@ -286,9 +290,9 @@ fun CustomSurface(
                 visualTransformation = visualTransformation,
                 modifier = modifier
                     .focusRequester(focusRequester)
-                    .padding(2.dp)
-                    .width(280.dp)
-                    .height(70.dp),
+                    .padding(MaterialTheme.dimens.DP_2_CompactMedium)
+                    .width(MaterialTheme.dimens.DP_180_CompactMedium)
+                    .height(MaterialTheme.dimens.DP_70_CompactMedium),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
                     unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
@@ -319,7 +323,7 @@ fun CommonTopAppBar(
                 text = title,
                 fontWeight = FontWeight.Bold, // Make text bold
                 style = TextStyle(
-                    fontSize = 20.sp, // Adjust font size if needed
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium, // Adjust font size if needed
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -330,7 +334,7 @@ fun CommonTopAppBar(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "back_button",
                 modifier = Modifier
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
                     .clickable { onBackButtonClick() }
             )
         },
@@ -351,32 +355,32 @@ fun CommonLayout(
         )
 
         Surface(
-            color = Color(0xFFF7931E), // Orange color for the outer Surface
+            color = colorResource(id = R.color.purple_200), // Orange color for the outer Surface
             modifier = Modifier
-                .padding(16.dp) // Padding for the outer Surface
-                .height(540.dp) // Adjust the height as per your requirement
-                .width(410.dp), // Adjust the width as per your requirement
-            shape = RoundedCornerShape(18.dp) // Rounded corners for the outer Surface
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the outer Surface
+                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
+                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
         ) {
             Box( // Use Box to apply shadow before Surface
                 modifier = Modifier
-                    .padding(10.dp) // Padding for the outer Surface
-                    .height(440.dp) // Adjust the height as per your requirement
-                    .width(390.dp) // Adjust the width as per your requirement
+                    .padding(MaterialTheme.dimens.DP_11_CompactMedium) // Padding for the outer Surface
+                    .height(MaterialTheme.dimens.DP_440_CompactMedium) // Adjust the height as per your requirement
+                    .width(MaterialTheme.dimens.DP_390_CompactMedium) // Adjust the width as per your requirement
                     .shadow( // Apply shadow using Modifier.shadow
-                        elevation = 8.dp, // Elevation height for shadow
-                        shape = RoundedCornerShape(16.dp), // Match shape to Surface
+                        elevation = MaterialTheme.dimens.DP_20_CompactMedium, // Elevation height for shadow
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium), // Match shape to Surface
                         clip = false // Do not clip to the shape
                     )
             ) {
                 Surface(
                     color = Color.White, // White color for the inner Surface
                     modifier = Modifier.fillMaxSize(), // Fill available space
-                    shape = RoundedCornerShape(16.dp) // Rounded corners for the inner Surface
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium) // Rounded corners for the inner Surface
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(16.dp) // Padding for the content inside the inner Surface
+                            .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
                             .fillMaxSize(), // Fill the entire available space
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start // Align content to the start
@@ -386,8 +390,8 @@ fun CommonLayout(
                                 painter = painterResource(id = it),
                                 contentDescription = contentDescription,
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .padding(bottom = 16.dp)
+                                    .size(MaterialTheme.dimens.DP_40_CompactMedium)
+                                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
                                     .align(Alignment.End) // Align the image to the end
                             )
                         }
@@ -406,8 +410,8 @@ fun OkButton(onClick:()->Unit,
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
-            .width(248.dp)
-            .padding(bottom = 20.dp)
+            .width(MaterialTheme.dimens.DP_248_CompactMedium)
+            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
             .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp))
 
     )
@@ -438,9 +442,12 @@ fun SettingsUpperSurface(
             .height(height) // Applying customizable height
             .shadow(
                 elevation = elevation,
-                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                shape = RoundedCornerShape(
+                    topStart = MaterialTheme.dimens.DP_24_CompactMedium,
+                    topEnd = MaterialTheme.dimens.DP_24_CompactMedium
+                )
             ),
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        shape = RoundedCornerShape(topStart = MaterialTheme.dimens.DP_24_CompactMedium, topEnd = MaterialTheme.dimens.DP_24_CompactMedium),
         color = color
     ) {
         content()
@@ -471,8 +478,8 @@ fun SettingsLowerSurface(
     elevation: Dp = 0.dp,
     color: Color = MaterialTheme.colorScheme.background,
     height: Dp, // Customizable height parameter
-    bottomStartRadius: Dp = 16.dp,
-    bottomEndRadius: Dp = 16.dp,
+    bottomStartRadius: Dp = MaterialTheme.dimens.DP_24_CompactMedium,
+    bottomEndRadius: Dp = MaterialTheme.dimens.DP_24_CompactMedium,
     content: @Composable () -> Unit
 ) {
     Surface(
@@ -505,13 +512,13 @@ fun FooterButtons(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 24.dp) // Adjust padding as needed
+            .padding(bottom = MaterialTheme.dimens.DP_23_CompactMedium) // Adjust padding as needed // need to change
     ) {
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(vertical = 16.dp), // Adjust vertical padding if needed
+                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             var isFirstButtonPressed by remember { mutableStateOf(false) }
@@ -520,12 +527,15 @@ fun FooterButtons(
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .width(126.dp)
-                    .padding(bottom = 20.dp)
-                    .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                    .shadow(
+                        MaterialTheme.dimens.DP_4_CompactMedium,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
                     .background(
                         color = colorResource(R.color.white),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                     )
             ) {
                 Button(
@@ -533,24 +543,24 @@ fun FooterButtons(
                         isFirstButtonPressed = true
                         firstButtonOnClick()
                     },
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
                     modifier = Modifier
-                        .width(130.dp)
-                        .height(48.dp)
+                        .width(/*MaterialTheme.dimens.DP_130_CompactMedium*/130.dp)
+                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
-                            width = if (isFirstButtonPressed) 2.dp else 0.dp,
-                            color = if (isFirstButtonPressed) Color(0xFFFFA500) else Color.Transparent,
-                            shape = RoundedCornerShape(10.dp)
+                            width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                            color = if (isFirstButtonPressed) colorResource(id = R.color.purple_200) else Color.Transparent,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
-                    shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.Black,
                         containerColor = colorResource(R.color.grey)
                     ),
                     elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 12.dp,
-                        hoveredElevation = 6.dp,
-                        focusedElevation = 10.dp
+                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
                     Text(
@@ -571,12 +581,15 @@ fun FooterButtons(
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .width(126.dp)
-                    .padding(bottom = 20.dp)
-                    .shadow(4.dp, shape = RoundedCornerShape(10.dp))
+                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                    .shadow(
+                        MaterialTheme.dimens.DP_4_CompactMedium,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
                     .background(
                         color = colorResource(R.color.white),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                     )
             ) {
                 Button(
@@ -585,23 +598,23 @@ fun FooterButtons(
                         secondButtonOnClick()
                     },
                     modifier = Modifier
-                        .width(130.dp)
-                        .height(48.dp)
+                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
-                            width = if (isSecondButtonPressed) 2.dp else 0.dp,
-                            color = if (isSecondButtonPressed) Color(0xFFFFA500) else Color.Transparent,
-                            shape = RoundedCornerShape(10.dp)
+                            width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                            color = if (isSecondButtonPressed) colorResource(id = R.color.purple_200) else Color.Transparent,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.Black,
                         containerColor = colorResource(R.color.grey)
                     ),
                     elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 12.dp,
-                        hoveredElevation = 6.dp,
-                        focusedElevation = 10.dp
+                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
                     Text(
@@ -634,8 +647,8 @@ object TransactionState {
 }
 
 object Authorisation {
-    var isNewauth: Boolean = false
-    var isAuthcap: Boolean = false
+    var isMerchantReceipt: Boolean = false
+    var isEreceipt: Boolean = false
 }
 
 @Composable
@@ -652,15 +665,15 @@ fun ScannerButton(
             containerColor = backgroundColor,
             contentColor = contentColor
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_12_CompactMedium),
         modifier = modifier
-            .padding(2.dp)
-            .width(280.dp)
-            .height(70.dp)
+            .padding(MaterialTheme.dimens.DP_2_CompactMedium)
+            .width(MaterialTheme.dimens.DP_180_CompactMedium)
+            .height(MaterialTheme.dimens.DP_70_CompactMedium)
     ) {
         Text(
             text = text,
-            fontSize = 24.sp,
+            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
             fontWeight = FontWeight.Bold
         )
     }
@@ -685,55 +698,55 @@ fun PreauthTypeSelectionSurface(
     Surface(
         color = Color.White,
         modifier = Modifier
-            .padding(25.dp)
-            .width(430.dp)
-            .height(400.dp),
-        shape = RoundedCornerShape(18.dp)
+            .padding(MaterialTheme.dimens.DP_35_CompactMedium)
+            .width(MaterialTheme.dimens.DP_430_CompactMedium)
+            .height(MaterialTheme.dimens.DP_400_CompactMedium),
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
-                fontSize = 14.sp,
+                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                     .align(Alignment.CenterHorizontally)
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
 
             Image(
                 painter = painterResource(id = imageResourceId),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(70.dp)
-                    .padding(bottom = 16.dp)
+                    .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
             )
 
             ScannerButton(
                 text = firstButtonText,
                 onClick = onFirstButtonClick,
-                backgroundColor = Color(0xFFEDEDED),
+                backgroundColor = colorResource(id = R.color.white),
                 contentColor = Color.Black,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
             Text(
-                text = "---------------or----------------",
+                text = stringResource(id = R.string.or),
                 fontSize = 14.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = MaterialTheme.dimens.DP_30_CompactMedium)
                     .align(Alignment.CenterHorizontally)
             )
 
@@ -742,7 +755,7 @@ fun PreauthTypeSelectionSurface(
                 onClick = onSecondButtonClick,
                 backgroundColor = Color(0xFFEDEDED),
                 contentColor = Color.Black,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
             )
         }
     }
@@ -757,31 +770,36 @@ fun CardWithImageText(
 ) {
     GenericCard(
         modifier = modifier
-            .padding(start = 10.dp,)
+            .padding(start = MaterialTheme.dimens.DP_5_CompactMedium,)
             .clickable(onClick = onClick)
             .border(
-                width = 2.dp, // Adjust the border width as needed
-                color = if (isSelected) Color(0xFFFFA500) else Color.Transparent, // Orange color if selected, otherwise transparent
-                shape = RoundedCornerShape(8.dp)
+                width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
+                color = if (isSelected) colorResource(id = R.color.purple_200) else Color.Transparent, // Orange color if selected, otherwise transparent
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
             ),
-        backgroundColor = Color(0xFFF8F7F3),
-        elevation = 5.dp,
-        shape = RoundedCornerShape(10.dp)
+        backgroundColor = colorResource(id = R.color.white),
+        elevation = MaterialTheme.dimens.DP_5_CompactMedium,
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth() // Fills the width available
-                .padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 10.dp)
+                .padding(
+                    start = MaterialTheme.dimens.DP_22_CompactMedium,
+                    end = MaterialTheme.dimens.DP_22_CompactMedium,
+                    top = MaterialTheme.dimens.DP_11_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_11_CompactMedium
+                )
         ) {
             ImageView(imageId = imageResId,
                 modifier = Modifier
-                    .size(35.dp) // Adjust the size as needed
+                    .size(MaterialTheme.dimens.DP_40_CompactMedium) // Adjust the size as needed
                     .align(Alignment.CenterHorizontally) // Center the image
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            TextView(text = text, fontSize = 15.sp)
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
+            TextView(text = text, fontSize = MaterialTheme.dimens.SP_18_CompactMedium)
         }
     }
 }
@@ -833,7 +851,7 @@ fun AppHeader(
                 text = title,
                 color = Color.Black, // Ensure text color contrasts with the background
                 style = TextStyle(
-                    fontSize = 20.sp, // Ensure font size is large enough
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium, // Ensure font size is large enough
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -846,7 +864,7 @@ fun AppHeader(
                         painter = painterResource(id = icon1),
                         contentDescription = "icon1",
                         modifier = Modifier
-                            .padding(horizontal = 12.dp)
+                            .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
                             .clickable { onIcon1Click?.invoke() }
                     )
                 }
@@ -858,7 +876,7 @@ fun AppHeader(
                     painter = painterResource(id = icon2),
                     contentDescription = "icon2",
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
                         .clickable { onIcon2Click?.invoke() }
                 )
             }
@@ -874,20 +892,20 @@ fun AppHeader(
 @Composable
 fun TopBoldText(
     text: String,
-    fontSize: TextUnit = 24.sp // Default size if not provided
+    fontSize: TextUnit = MaterialTheme.dimens.SP_27_CompactMedium // Default size if not provided
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
         modifier = Modifier
             .fillMaxWidth() // Ensures the Column takes the full width
-            .padding(top = 20.dp)
+            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
     ) {
         Text(
             text = text,
             fontSize = fontSize, // Use the provided fontSize
             color = Color.Black,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_21_CompactMedium)
         )
     }
 }
@@ -905,13 +923,13 @@ fun HeaderImage(
         horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
         modifier = Modifier
             .fillMaxWidth() // Ensures the Column takes the full width
-            .padding(top = 20.dp)
+            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
     ) {
         Image(
             painter = painterResource(id = imageResId),
             contentDescription = null, // Decorative image
             modifier = Modifier
-                .size(50.dp) // Default size
+                .size(MaterialTheme.dimens.DP_50_CompactMedium) // Default size
 
         )
     }
@@ -964,22 +982,22 @@ fun SmallSurface(
     isAuthcap:Boolean = false,
     content: (@Composable (ColumnScope.() -> Unit))? = null
 ) {
-    val surfaceHeight = if (isRefund) 350.dp else if (isVoid || isAuthcap) 440.dp else 250.dp
-    val surfaceWidth = 410.dp
+    val surfaceHeight = if (isRefund) MaterialTheme.dimens.DP_350_CompactMedium else if (isVoid || isAuthcap) MaterialTheme.dimens.DP_440_CompactMedium else MaterialTheme.dimens.DP_250_CompactMedium
+    val surfaceWidth = MaterialTheme.dimens.DP_410_CompactMedium
 
     Surface(
         color = Color.White,
         modifier = modifier
-            .padding(16.dp)
+            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
             .fillMaxWidth()
             .height(surfaceHeight)
             .width(surfaceWidth),
-        shape = RoundedCornerShape(18.dp),
-        shadowElevation = 8.dp
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+        shadowElevation = MaterialTheme.dimens.DP_20_CompactMedium
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -994,7 +1012,7 @@ fun SmallSurface(
 @Composable
 fun ImageView(
     imageId: Int,
-    size: Dp = 70.dp,
+    size: Dp = MaterialTheme.dimens.DP_70_CompactMedium,
     shape: Shape = RectangleShape,
     alignment: Alignment = Alignment.Center, // Alignment parameter for usage within a Box
     modifier: Modifier = Modifier,
@@ -1022,12 +1040,13 @@ fun OutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
     keyboardType: KeyboardType = KeyboardType.Text,
     onDoneAction: () -> Unit = {},
     isPassword: Boolean = false, // New parameter to indicate if it's a password field
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     modifier: Modifier = Modifier,
+    amount: Boolean = false // New parameter to indicate if ₹ icon should be sh
 ) {
     // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
@@ -1052,17 +1071,29 @@ fun OutlinedTextField(
         visualTransformation = visualTransformation, // Use passed visualTransformation
         modifier = modifier
             .focusRequester(focusRequester)
-            .padding(2.dp)
-            .width(280.dp)
-            .height(70.dp),
+            .padding(MaterialTheme.dimens.DP_2_CompactMedium)
+            .width(MaterialTheme.dimens.DP_280_CompactMedium)
+            .height(MaterialTheme.dimens.DP_70_CompactMedium),
+        leadingIcon = if (amount) {
+            {
+                Text(
+                    text = "\u20B9", // Unicode for ₹ symbol
+                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium, // Adjust the size of the icon
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black // Set the color to black
+                )
+            }
+        } else null,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
+            focusedBorderColor = colorResource(id = R.color.purple_200), // Orange color for focused state
             unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
-            focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
+            focusedLabelColor = colorResource(id = R.color.purple_200), // Orange color for focused label
             unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
         )
     )
 }
+
+
 
 
 @Composable

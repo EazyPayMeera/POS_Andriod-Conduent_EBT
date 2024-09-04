@@ -3,19 +3,39 @@ package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.analogics.tpaymentsapos.R // Import the R class for resource access
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
+import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.*
 import com.analogics.tpaymentsapos.ui.theme.tipBgColor
 
@@ -77,8 +97,8 @@ fun ConfigurationView(navHostController: NavHostController) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.elevatedCardElevation(10.dp)
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
+            elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_11_CompactMedium)
         ) {
             Column {
                 settingsItems.forEachIndexed { index, item ->
@@ -88,7 +108,7 @@ fun ConfigurationView(navHostController: NavHostController) {
                     )
 
                     if (index < settingsItems.size - 1) {
-                        Divider(color = Color(0xFFB3B3B3), thickness = 1.dp)
+                        Divider(color = colorResource(id = R.color.white), thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                     }
 
                     if (index == 4 && item.isChecked) {
@@ -117,8 +137,8 @@ fun TippingView(
     type: ConfigurableViewType
 ) {
     val options = when (type) {
-        ConfigurableViewType.Percentage -> listOf("10%", "20%", "30%")
-        ConfigurableViewType.Taxes -> listOf("Tax 1", "Tax 3")
+        ConfigurableViewType.Percentage -> listOf(stringResource(id = R.string.ten), stringResource(id = R.string.fifteen), stringResource(id = R.string.twenty))
+        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_1), stringResource(id = R.string.tax_2))
     }
 
     val title = when (type) {
@@ -130,13 +150,12 @@ fun TippingView(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = tipBgColor)
-            .padding(16.dp)
-
+            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
         ) {
             Text(
                 text = title,
@@ -144,7 +163,7 @@ fun TippingView(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
             )
 
             Row(
@@ -155,9 +174,9 @@ fun TippingView(
                 options.forEach { option ->
                     Card(
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(40.dp)
-                            .border(1.dp, Color.Gray),
+                            .width(MaterialTheme.dimens.DP_100_CompactMedium)
+                            .height(MaterialTheme.dimens.DP_40_CompactMedium)
+                            .border(MaterialTheme.dimens.DP_1_CompactMedium, Color.Gray),
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -190,7 +209,7 @@ fun SettingsSurface(
     item: SettingsItem,
 ) {
     Surface(
-        modifier = Modifier.height(60.dp),
+        modifier = Modifier.height(MaterialTheme.dimens.DP_60_CompactMedium),
         color = Color.White
     ) {
         SettingsContent(
@@ -205,7 +224,7 @@ fun SettingsContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -215,13 +234,13 @@ fun SettingsContent(
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.text,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Need to change here
             )
 
             Text(
                 text = item.text,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
             )
         }
 

@@ -1,15 +1,11 @@
 package com.analogics.securityframework.database.databaseClient
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
-import com.analogics.securityframework.database.dbConstant.DBConstant
-import com.analogics.securityframework.database.entity.TxnDtlsEntity
-import kotlin.concurrent.Volatile
-
-
+import com.analogics.securityframework.database.entity.BatchEntity
+import com.analogics.securityframework.database.entity.TxnEntity
 
 
 //@Database(entities = [TxnDtlsEntity::class], version = 1)
@@ -37,7 +33,8 @@ import kotlin.concurrent.Volatile
 //    }
 //}
 
-@Database(entities = [TxnDtlsEntity::class], version = 1.toInt())
+@Database(entities = [BatchEntity::class,TxnEntity::class], version = 1.toInt())
 abstract class AppDatabaseClient : RoomDatabase() {
+    abstract fun getBatchDao(): IBatchDao
     abstract fun getTxnDao(): ITxnDao
 }

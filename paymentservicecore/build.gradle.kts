@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("org.jetbrains.kotlin.kapt")
 }
-
 android {
     namespace = "com.analogics.paymentservicecore"
     compileSdk = 34
