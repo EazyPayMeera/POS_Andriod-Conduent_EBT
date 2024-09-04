@@ -5,7 +5,6 @@ import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import android.content.SharedPreferences
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -199,11 +198,11 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start // Align content to the start
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
 
                 TextView(
                     text = stringResource(id = R.string.approved),
-                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -215,15 +214,15 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
                 Text(
                     text = "₹$updated_amt",
-                    fontSize = MaterialTheme.dimens.SP_30_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = colorResource(id = R.color.purple_200),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
                 ImageView(
-                    imageId = R.drawable.aprrove_scr,
-                    size = MaterialTheme.dimens.DP_120_CompactMedium,
+                    imageId = R.drawable.approve,
+                    size = MaterialTheme.dimens.DP_126_CompactMedium,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
@@ -267,7 +266,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_33_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
                 ) {
