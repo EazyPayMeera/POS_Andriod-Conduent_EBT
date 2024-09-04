@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.tpaymentsapos.BuildConfig
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.splash.viewModel.SplashScreenViewModel
@@ -34,9 +36,21 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import java.util.logging.Logger
 
 @Composable
 fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewModel = hiltViewModel()) {
+/*
+*
+* AppLogger.d(TAG, "onCreate: Activity started")
+   AppLogger.i(TAG, "onCreate: Initializing UI components")
+        AppLogger.w(TAG, "onCreate: Potential configuration issue detected")
+        AppLogger.e(TAG, "onCreate: Error initializing app", Throwable("Simulated error"))
+*
+* */
+    AppLogger.currentLogLevel = BuildConfig.DEBUG_LEVEL.toInt()
+
+
     val scale = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {

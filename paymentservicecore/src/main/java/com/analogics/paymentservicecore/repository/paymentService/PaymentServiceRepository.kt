@@ -10,6 +10,7 @@ import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPayment
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentCoreHandlerListener
+import io.reactivex.internal.util.ExceptionHelper
 import javax.inject.Inject
 
 class PaymentServiceRepository @Inject constructor(private var makeRequestRepository: MakeRequestRepository) :
@@ -20,6 +21,7 @@ class PaymentServiceRepository @Inject constructor(private var makeRequestReposi
 
     override fun onTPaymentSDKHandler(uiData: String) {
         /* Just for testing comparing with uiData value */
+
         if (uiData == "SUCCESS")
             iOnRootAppPaymentListener.onPaymentSuccess(true)
         else
