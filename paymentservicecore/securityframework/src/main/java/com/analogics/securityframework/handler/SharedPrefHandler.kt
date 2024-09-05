@@ -3,9 +3,15 @@ package com.analogics.securityframework.handler
 import android.content.Context
 import com.analogics.securityframework.listener.ISharedPrefReqListener
 import com.analogics.securityframework.preferences.SecuredSharedPrefManager
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 object SharedPrefHandler : ISharedPrefReqListener {
     val appPrefName = "AppPrefs"
+
+   lateinit var pref :SecuredSharedPrefManager
+
     override fun getConfigVal(context: Context, key: String): Any? {
         try {
             val prefs = SecuredSharedPrefManager(context, appPrefName)

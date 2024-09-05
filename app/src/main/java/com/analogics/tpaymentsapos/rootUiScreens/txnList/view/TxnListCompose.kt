@@ -35,7 +35,7 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
             onBackButtonClick = { navHostController.popBackStack() }
         )
         GenericCard(
-            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_17_CompactMedium)
+            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(
                 modifier = Modifier
@@ -45,7 +45,7 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
             }
         }
         GenericCard(
-            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_17_CompactMedium)
+            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(
                 modifier = Modifier

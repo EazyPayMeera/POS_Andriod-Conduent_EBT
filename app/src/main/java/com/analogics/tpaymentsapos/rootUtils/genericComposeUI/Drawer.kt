@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -36,8 +37,10 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostController,
-                        onMenuItemClick: (String) -> Unit) {
+fun CustomDrawerContent(
+    onCloseDrawer: () -> Unit, navHostController: NavHostController,
+    onMenuItemClick: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -67,40 +70,55 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
         }
 
         Divider(color = Color.Gray, thickness = 1.dp)
+        GenericCard(
+            modifier = Modifier
+                .padding(top= 10.dp)
+                .fillMaxWidth(),
+            elevation = 10.dp,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.DP_10_CompactMedium)
+            ) {
+                DrawerMenuItem(
+                    icon = Icons.Default.Chat,
+                    label = "Set Language",
+                    function = {
+                        onMenuItemClick("Settings")
+                        navHostController.navigate(AppNavigationItems.LanguageScreen.route)
+                    }
+                )
+                Divider(color = Color.Gray, thickness = 1.dp)
+                DrawerMenuItem(
+                    icon = Icons.Default.VpnKey,
+                    label = "Change Password",
+                    function = {
+                        onMenuItemClick("Settings")
+                        navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
+                    }
+                )
+                Divider(color = Color.Gray, thickness = 1.dp)
+                DrawerMenuItem(
+                    icon = Icons.Default.Settings,
+                    label = "Configuration",
+                    function = {
+                        onMenuItemClick("Settings")
+                        navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
+                    }
+                )
+                Divider(color = Color.Gray, thickness = 1.dp)
+                DrawerMenuItem(
+                    icon = Icons.Default.Logout,
+                    label = "Logout",
+                    function = {
+                        onMenuItemClick("Logout")
+                        navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
+                    }
+                )
+            }
+        }
 
-        // Drawer Menu Items
-        DrawerMenuItem(
-            icon = Icons.Default.Chat,
-            label = "Set Language",
-            function = {
-                onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.LanguageScreen.route)
-            }
-        )
-        DrawerMenuItem(
-            icon = Icons.Default.VpnKey,
-            label = "Change Password",
-            function = {
-                onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
-            }
-        )
-        DrawerMenuItem(
-            icon = Icons.Default.Settings,
-            label = "Configuration",
-            function = {
-                onMenuItemClick("Settings")
-                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
-            }
-        )
-        DrawerMenuItem(
-            icon = Icons.Default.Logout,
-            label = "Logout",
-            function = {
-                onMenuItemClick("Logout")
-                navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
-            }
-        )
     }
 }
 
