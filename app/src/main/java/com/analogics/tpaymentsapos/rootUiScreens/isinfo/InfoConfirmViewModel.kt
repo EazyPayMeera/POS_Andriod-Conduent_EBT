@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
 
@@ -20,10 +19,6 @@ class InfoConfirmViewModel : ViewModel() {
 
     val transactionDateTime: String = getFormattedDateTime()
 
-    val isRefund: Boolean = TransactionState.isRefund
-    val isVoid: Boolean = TransactionState.isVoid
-    val isPreauth: Boolean = TransactionState.isPreauth
-    val isAuthcap: Boolean = TransactionState.isAuthcap
 
     fun onAmountChange(newValue: String) {
         if (newValue.all { it.isDigit() || it == '.' }) {

@@ -19,15 +19,10 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isPreauth
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isVoid
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun PreauthView(navHostController: NavHostController) {
-    val isRefund = TransactionState.isRefund
-    val isAuthcap = TransactionState.isAuthcap
 
     Column {
         /*CommonTopAppBar(
@@ -35,12 +30,6 @@ fun PreauthView(navHostController: NavHostController) {
             onBackButtonClick = { navHostController.popBackStack() }
         )*/
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

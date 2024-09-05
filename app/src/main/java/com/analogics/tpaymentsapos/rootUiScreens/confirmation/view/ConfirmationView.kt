@@ -2,6 +2,7 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.confirmation.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,12 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.Trans_Amt
+import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.updated_tip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
@@ -45,34 +47,29 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
+
+
 @Composable
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
-    var selectedTipPercentage by remember { mutableStateOf(0) }
-    val amountDouble = amount.toDoubleOrNull() ?: 0.0
-    var selectedTip by remember { mutableStateOf("10%") }
+
+    var updated_tip = updated_tip
+    val transAmount = Trans_Amt
+    var selectedTipPercentage by remember { mutableStateOf(0.0) }
+    val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
+    var selectedTip by remember { mutableStateOf("") }
 
     val sgstAmount = calculateTax(amountDouble)
     val igstAmount = calculateTax(amountDouble)
     var isTipEnabled by remember { mutableStateOf(false) }
-    val tipAmount = calculateTip(amountDouble, selectedTipPercentage)
 
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
-
+    val tipAmount = calculateTip(amountDouble, selectedTipPercentage / 100)
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
-
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
+    Log.d("TipChange", "Updated TipAmt: $updated_tip")
 
     Column {
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
         GenericCard(
@@ -81,10 +78,10 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 .padding(
                     start = MaterialTheme.dimens.DP_24_CompactMedium,
                     end = MaterialTheme.dimens.DP_24_CompactMedium,
-                    top = MaterialTheme.dimens.DP_24_CompactMedium, // Reduced top padding
+                    top = MaterialTheme.dimens.DP_24_CompactMedium,
                     bottom = MaterialTheme.dimens.DP_5_CompactMedium
                 ),
-            backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+            backgroundColor = colorResource(id = R.color.purple_200),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
         ) {
             Column(
@@ -156,7 +153,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Button(
-                        onClick = { selectedTip = "10%" },
+                        onClick = { selectedTip = "10%"; selectedTipPercentage = 10.0 },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == "10%" && isTipEnabled) {
@@ -173,7 +170,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     }
 
                     Button(
-                        onClick = { selectedTip = "15%" },
+                        onClick = { selectedTip = "15%"; selectedTipPercentage = 15.0  },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == "15%" && isTipEnabled) {
@@ -190,7 +187,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     }
 
                     Button(
-                        onClick = { selectedTip = "20%" },
+                        onClick = { selectedTip = "20%"; selectedTipPercentage = 20.0  },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == "20%" && isTipEnabled) {
@@ -207,7 +204,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     }
 
                     Button(
-                        onClick = { selectedTip = "Custom" },
+                        onClick = { navHostController.navigate(AppNavigationItems.TipScreen.route); selectedTip = "Custom" },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == "Custom" && isTipEnabled) {
@@ -240,8 +237,6 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         )
     }
-
-
 }
 
 @Composable
@@ -250,7 +245,7 @@ fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit
         onClick = { onSelect(tip) },
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_21_CompactMedium),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (tip == selectedTip) colorResource(id = R.color.white) else colorResource(id = R.color.purple_200),
+            backgroundColor = if (tip == selectedTip) colorResource(id = R.color.purple_200) else colorResource(id = R.color.white),
             contentColor = Color.Black
         ),
         modifier = Modifier.padding(MaterialTheme.dimens.DP_4_CompactMedium)

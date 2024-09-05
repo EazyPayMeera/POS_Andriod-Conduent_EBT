@@ -21,7 +21,6 @@ fun RefundAmtView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.purchase),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

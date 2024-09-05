@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">TPaymentsAPOS</string>
+    <string name="app_name">Eazy Payments</string>
     <string name="top_back">Back</string>
-    //splash
+    <!-- splash -->
     <string name="welcome">WELCOME</string>
 
-    //onBoardScreen
+    <!-- onBoardScreen -->
     <string name="safe_fast_txn">Safe and fast transaction</string>
     <string name="single_use_pass">Single use password that won’t work twice, keeping your details safe even if they get exposed</string>
     <string name="analysis_data">Analysis of data</string>
@@ -14,7 +14,7 @@
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
 
-    //Login
+    <!-- Login -->
     <string name="plz_login">Please login to continue</string>
     <string name="login">Login</string>
     <string name="forget_pswd">Forgot Password?</string>
@@ -24,10 +24,7 @@
     <string name="placehldr_password">Please Enter Password</string>
     <string name="not_empty">Email And password not empty</string>
 
-
-    //Dashboard
-
-
+    <!-- Dashboard -->
     <string name="refund">Refund</string>
     <string name="refund_amt">Enter the Refund Amount</string>
     <string name="enter_invoice">Enter the Invoice Number</string>
@@ -73,13 +70,13 @@
     <string name="adjust">Adjust</string>
     <string name="enter_the_percentage">Enter the Percentage</string>
     <string name="percentage">Percentage</string>
-    <string name="application_name">T Payment</string>
+    <string name="application_name">Eazy Payments</string>
     <string name="plz_wait">Please Wait</string>
-    <string name="enter_password">Enter Your Password</string> Set Language
+    <string name="enter_password">Enter Your Password</string>
     <string name="set_lang">Set Language</string>
     <string name="select_lang">Select Your Language</string>
-    <string name="hindi">Hindi</string>
-    <string name="english">English</string> Scan QR/Barcode
+    <string name="hindi">हिन्दी</string>
+    <string name="english">English</string>
     <string name="scan_qr">Scan QR/Barcode</string>
     <string name="password_">Forget Password ?</string>
     <string name="call_customercare">Call Customer Care for Password</string>

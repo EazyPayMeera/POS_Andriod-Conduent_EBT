@@ -5,8 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,18 +16,13 @@ class InvoiceViewModel : ViewModel() {
     private val _invoiceno = MutableStateFlow("")
     val invoiceno: StateFlow<String> = _invoiceno
 
-    val isRefund: Boolean = TransactionState.isRefund
-    val isVoid: Boolean = TransactionState.isVoid
-    val isPreauth: Boolean = TransactionState.isPreauth
-    val isAuthcap: Boolean = TransactionState.isAuthcap
-
     fun updateInvoiceNo(newValue: String) {
         _invoiceno.value = newValue
     }
 
     fun navigateToAmountScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            if(isAuthcap)
+            if(TxnInfo.txnType==TxnType.AUTHCAP)
             {
                 navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
             }

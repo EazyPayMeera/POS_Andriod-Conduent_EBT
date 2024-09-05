@@ -16,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.pin.viewmodel.PinViewModel
@@ -26,7 +25,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -36,12 +34,6 @@ fun PinView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = when {
-                TransactionState.isRefund -> stringResource(R.string.refund)
-                TransactionState.isVoid -> stringResource(R.string.void_trans)
-                TransactionState.isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -62,7 +54,7 @@ fun PinView(navHostController: NavHostController) {
 
                 TextView(
                     text = stringResource(id = R.string.enter_Pin),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     1,

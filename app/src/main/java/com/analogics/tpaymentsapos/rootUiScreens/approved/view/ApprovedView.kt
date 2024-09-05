@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
@@ -178,7 +180,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -211,14 +212,15 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-
-                Text(
-                    text = "₹$updated_amt",
-                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                    color = colorResource(id = R.color.purple_200),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                if(TxnInfo.txnType!= TxnType.VOID) {
+                    Text(
+                        text = "₹$updated_amt",
+                        fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                        color = colorResource(id = R.color.purple_200),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
 
                 ImageView(
                     imageId = R.drawable.approve,

@@ -38,7 +38,12 @@ object SharedPrefHandler : ISharedPrefReqListener {
                 is Long -> prefs.putLong(key, value)
                 is Float -> prefs.putFloat(key, value)
                 is Boolean -> prefs.putBoolean(key, value)
-                else -> prefs.putString(key, value.toString())
+                else -> {
+                    if (value != null)
+                        prefs.putString(key, value.toString())
+                    else
+                        prefs.remove(key)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

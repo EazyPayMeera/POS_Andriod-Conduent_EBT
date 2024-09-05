@@ -76,6 +76,13 @@ class SecuredSharedPrefManager @Inject constructor(
 
     fun getAll() = sharedPreferences.all
 
+    fun remove(key: String) {
+        with(sharedPreferences.edit()) {
+            remove(key)
+            apply()
+        }
+    }
+
     //  val prefs = SecureSharePrefManager(context, "MyAppPrefs")
     //  prefs.putString("username", "JohnDoe")
 

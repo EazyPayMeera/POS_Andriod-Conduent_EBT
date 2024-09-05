@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.enteremail.viewmodel.EnterEmailViewModel
@@ -27,7 +26,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -39,18 +37,8 @@ fun EnterEmailView(navHostController: NavHostController) {
     // Collect the state from ViewModel
     val email by viewModel.email.collectAsState()
 
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
-
     Column {
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -64,7 +52,7 @@ fun EnterEmailView(navHostController: NavHostController) {
             ) {
                 TextView(
                     text = stringResource(id = R.string.enter_email),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     1,

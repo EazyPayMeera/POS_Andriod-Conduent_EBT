@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
@@ -26,28 +25,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.ui.theme.dimens
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
     val viewModel: CardDetectViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -64,12 +56,6 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
     Column {
 
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -103,7 +89,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                             modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
                             Text(
-                                text = if (isRefund) stringResource(id = R.string.refund_amt_data) else stringResource(
+                                text = if (TxnInfo.txnType == TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
                                     id = R.string.total_amt
                                 ),
                                 fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -117,7 +103,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                             // Display the totalAmount here
                             Text(
                                 text = "₹$totalAmount",
-                                fontSize = MaterialTheme.dimens.SP_30_CompactMedium,
+                                fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier

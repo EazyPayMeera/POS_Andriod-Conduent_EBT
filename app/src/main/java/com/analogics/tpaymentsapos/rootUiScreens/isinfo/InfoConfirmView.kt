@@ -30,9 +30,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isPreauth
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isRefund
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isVoid
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -42,12 +39,6 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
     Column {
 
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
