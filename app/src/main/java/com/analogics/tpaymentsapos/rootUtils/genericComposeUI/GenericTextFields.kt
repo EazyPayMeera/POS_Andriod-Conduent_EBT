@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -47,7 +46,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -185,7 +183,7 @@ fun AppButton(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
-            colors = ButtonDefaults.buttonColors(
+            colors = buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
             ),
@@ -416,30 +414,28 @@ fun CommonLayout(
 }
 
 @Composable
-fun OkButton(onClick:()->Unit,
-              title:String)
-{
-    Box(
-        contentAlignment = Alignment.BottomCenter,
+fun OkButton(
+    onClick: () -> Unit,
+    title: String
+) {
+    Button(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp))
-
-    )
-    {
-        Button(modifier = Modifier.wrapContentSize(),
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color.Black,
-                containerColor = colorResource(R.color.grey)
-            ),
-            onClick = onClick) {
-            Text(
-                text = title,
-            )
-        }
+            .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Apply shadow directly to the Button
+            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp)),
+        colors = buttonColors(
+            contentColor = Color.Black,
+            containerColor = colorResource(R.color.grey)
+        ),
+        onClick = onClick
+    ) {
+        Text(
+            text = title
+        )
     }
 }
+
+
 
 @Composable
 fun SettingsUpperSurface(
@@ -564,7 +560,7 @@ fun FooterButtons(
                             color = if (isFirstButtonPressed) colorResource(id = R.color.purple_200) else Color.Transparent,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
-                    colors = ButtonDefaults.buttonColors(
+                    colors = buttonColors(
                         contentColor = Color.Black,
                         containerColor = colorResource(R.color.grey)
                     ),
@@ -618,7 +614,7 @@ fun FooterButtons(
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                    colors = ButtonDefaults.buttonColors(
+                    colors = buttonColors(
                         contentColor = Color.Black,
                         containerColor = colorResource(R.color.grey)
                     ),
@@ -1079,7 +1075,7 @@ fun OutlinedTextField(
         value = value,
         onValueChange = handleValueChange,
         label = { Text("") }, // Label is always empty
-        placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_28_CompactMedium) },
+        placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_23_CompactMedium) },
         textStyle = textStyle,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,

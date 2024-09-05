@@ -50,9 +50,15 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
     val context = LocalContext.current
     val viewModel: PleaseWaitViewModel = viewModel { PleaseWaitViewModel(context) }
+    var isPrintingStarted by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (isMerchantReceipt) {
+            // Phase 1: Show "Please Wait" for a few seconds
+            delay(2000) // Delay for 4 seconds before starting the printing process
+            isPrintingStarted = true
+
+            // Phase 2: Printing process
             val bitmap = viewModel.getLogoBitmap(context, R.drawable.master_mono)
             val imageData: ByteArray = viewModel.getBitmapBytes(bitmap) ?: ByteArray(0)
             var format = Bundle().apply {
@@ -70,7 +76,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 putSerializable("barcode_type", BarcodeFormat.CODE_39)
             }
 
-            viewModel.addReceiptDetails(format,object : IPrinterResultProviderListener {
+            viewModel.addReceiptDetails(format, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     if (result == true) {
                         Log.d(TAG, "Receipt printed successfully")
@@ -78,14 +84,17 @@ fun PleaseWaitView(navHostController: NavHostController) {
                         Log.d(TAG, "Receipt print failed")
                     }
                 }
+
                 override fun onFailure(exception: Exception) {
                     Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
                 }
             })
 
-        }
+            // Phase 3: Navigate to the appropriate screen
 
-        delay(2000) // Delay for 2 seconds
+        }
+        delay(2000) // Additional delay to ensure the printing completes
+        // For non-merchant receipt cases, navigate without waiting for printing
         val destination = when {
             isMerchantReceipt -> AppNavigationItems.TrainingScreen.route
             isEreceipt -> AppNavigationItems.EmailScreen.route

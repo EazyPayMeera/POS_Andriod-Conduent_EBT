@@ -166,7 +166,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    if(TxnInfo.txnType!=TxnType.REFUND) {
+                    if(TxnInfo.txnType==TxnType.PURCHASE) {
                         //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                         TextView(

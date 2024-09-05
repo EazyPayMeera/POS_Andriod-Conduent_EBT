@@ -56,7 +56,7 @@ fun SettingsView(navHostController: NavHostController) {
             ) {
                 // Leading image
                 Image(
-                    painter = painterResource(id = R.drawable.language), // Replace with your image resource
+                    painter = painterResource(id = R.drawable.lan), // Replace with your image resource
                     contentDescription = "",
                     modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // need to change here
                 )

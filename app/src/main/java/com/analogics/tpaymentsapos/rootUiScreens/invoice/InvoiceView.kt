@@ -84,7 +84,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 if(TxnInfo.txnType in listOf(TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP))
                 {
                     TextView(
-                        text = stringResource(id = R.string.or),
+                        text = "",
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -94,7 +94,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     )
 
                     ImageView(
-                        imageId = R.drawable.scanner, size = MaterialTheme.dimens.DP_50_CompactMedium,
+                        imageId = R.drawable.scannerd, size = MaterialTheme.dimens.DP_70_CompactMedium,
                         shape = RectangleShape, // Example shape, can be any Shape
                         alignment = Alignment.Center,
                         Modifier.clickable {
