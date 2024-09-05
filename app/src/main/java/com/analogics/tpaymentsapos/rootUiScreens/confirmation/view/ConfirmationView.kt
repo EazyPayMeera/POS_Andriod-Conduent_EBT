@@ -2,6 +2,7 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.confirmation.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.Trans_Amt
+import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.updated_tip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -41,16 +44,21 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmou
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
+var updated_tip = updated_tip
+val transAmount = Trans_Amt
+
 @Composable
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
-    var selectedTipPercentage by remember { mutableStateOf(0) }
-    val amountDouble = amount.toDoubleOrNull() ?: 0.0
-    var selectedTip by remember { mutableStateOf("10%") }
+    var selectedTipPercentage by remember { mutableStateOf(0.0) }
+    val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
+    var selectedTip by remember { mutableStateOf("") }
 
     val sgstAmount = calculateTax(amountDouble)
     val igstAmount = calculateTax(amountDouble)
     var isTipEnabled by remember { mutableStateOf(false) }
-    val tipAmount = calculateTip(amountDouble, selectedTipPercentage)
+    val tipAmount = calculateTip(amountDouble, selectedTipPercentage / 100)
+
+
 
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
@@ -60,6 +68,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
+    Log.d("TipChange", "Updated TipAmt: $updated_tip")
 
     Column {
         CommonTopAppBar(
@@ -71,16 +80,17 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             },
             onBackButtonClick = { navHostController.popBackStack() }
         )
+
         GenericCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     start = MaterialTheme.dimens.DP_24_CompactMedium,
                     end = MaterialTheme.dimens.DP_24_CompactMedium,
-                    top = MaterialTheme.dimens.DP_24_CompactMedium, // Reduced top padding
+                    top = MaterialTheme.dimens.DP_24_CompactMedium,
                     bottom = MaterialTheme.dimens.DP_5_CompactMedium
                 ),
-            backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+            backgroundColor = colorResource(id = R.color.purple_200),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
         ) {
             Column(
@@ -112,7 +122,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 .fillMaxWidth()
                 .padding(
                     start = MaterialTheme.dimens.DP_24_CompactMedium,
-                    end = MaterialTheme.dimens.DP_24_CompactMedium, // Reduced top padding
+                    end = MaterialTheme.dimens.DP_24_CompactMedium,
                     top = MaterialTheme.dimens.DP_4_CompactMedium,
                     bottom = MaterialTheme.dimens.DP_10_CompactMedium
                 ),
@@ -146,9 +156,13 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
                         .align(Alignment.Start)
                 )
-
+                Log.d("SelectedTip", "Selected tip is: $selectedTip")
                 TextView(
-                    text = "${stringResource(id = R.string.tip_amt)}₹${formatAmountdouble(tipAmount)}",
+                    text = if (selectedTip == "Custom") {
+                        "${stringResource(id = R.string.tip_amt)} ₹$updated_tip"
+                    } else {
+                        "${stringResource(id = R.string.tip_amt)} ₹${formatAmountdouble(tipAmount)}"
+                    },
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = Color.Gray,
                     modifier = Modifier
@@ -179,11 +193,8 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
                         .align(Alignment.Start)
                 )
-
             }
         }
-
-
 
         Column {
             GenericCard(
@@ -192,7 +203,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     .padding(
                         start = MaterialTheme.dimens.DP_24_CompactMedium,
                         end = MaterialTheme.dimens.DP_24_CompactMedium,
-                        top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                        top = MaterialTheme.dimens.DP_4_CompactMedium,
                         bottom = MaterialTheme.dimens.DP_10_CompactMedium
                     ),
                 elevation = MaterialTheme.dimens.DP_10_CompactMedium,
@@ -218,7 +229,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             checked = isTipEnabled,
                             onCheckedChange = { isTipEnabled = it },
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFA000), // Orange color
+                                checkedThumbColor = Color(0xFFFFA000),
                                 uncheckedThumbColor = Color.Gray
                             )
                         )
@@ -230,10 +241,22 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            TipOptionButton("10%", selectedTip) { selectedTip = it }
-                            TipOptionButton("15%", selectedTip) { selectedTip = it }
-                            TipOptionButton("20%", selectedTip) { selectedTip = it }
-                            TipOptionButton("Custom", selectedTip) { selectedTip = it }
+                            TipOptionButton("10%", selectedTip) {
+                                selectedTip = it
+                                selectedTipPercentage = 10.0
+                            }
+                            TipOptionButton("15%", selectedTip) {
+                                selectedTip = it
+                                selectedTipPercentage = 15.0
+                            }
+                            TipOptionButton("20%", selectedTip) {
+                                selectedTip = it
+                                selectedTipPercentage = 20.0
+                            }
+                            TipOptionButton("Custom", selectedTip) {
+                                selectedTip = it
+                                navHostController.navigate(AppNavigationItems.TipScreen.route)
+                            }
                         }
                     }
                 }
@@ -253,8 +276,6 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         )
     }
-
-
 }
 
 @Composable
@@ -263,7 +284,7 @@ fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit
         onClick = { onSelect(tip) },
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_21_CompactMedium),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (tip == selectedTip) colorResource(id = R.color.white) else colorResource(id = R.color.purple_200),
+            backgroundColor = if (tip == selectedTip) colorResource(id = R.color.purple_200) else colorResource(id = R.color.white),
             contentColor = Color.Black
         ),
         modifier = Modifier.padding(MaterialTheme.dimens.DP_4_CompactMedium)

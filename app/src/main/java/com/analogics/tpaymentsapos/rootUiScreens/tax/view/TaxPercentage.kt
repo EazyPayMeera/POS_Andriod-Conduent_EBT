@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -57,7 +56,7 @@ fun TaxPercentageView(navHostController: NavHostController) {
             ) {
                 TextView(
                     text = stringResource(id = R.string.enter_the_percentage),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     1,
