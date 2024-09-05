@@ -39,7 +39,7 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
     }
 
     fun resetSelection() {
-        _selectedButton.value = null
+        _selectedButton.value = false.toString()
     }
 
     fun initPaymentSDK(context: Context, coroutineScope: CoroutineScope)

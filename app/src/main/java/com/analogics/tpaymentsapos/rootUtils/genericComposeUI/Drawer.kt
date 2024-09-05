@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -52,7 +53,7 @@ fun CustomDrawerContent(onCloseDrawer: () -> Unit,  navHostController: NavHostCo
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "NAMEHERE",
+                text = stringResource(id = R.string.application_name),
                 style = MaterialTheme.typography.headlineSmall.copy(
                     color = Color(0xFFFFA500) // Orange color
                 )
