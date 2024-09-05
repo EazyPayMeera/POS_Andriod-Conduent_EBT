@@ -19,6 +19,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.AmountViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -27,10 +29,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isAuthcap
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isPreauth
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isRefund
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState.isVoid
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -40,12 +38,6 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
     Column {
 
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -67,7 +59,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     textAlign = TextAlign.Center
                 )
                 ImageView(
-                    imageId = if(isVoid || isRefund) R.drawable.void_amt else R.drawable.card,
+                    imageId = if(TxnInfo.txnType==TxnType.VOID || TxnInfo.txnType==TxnType.REFUND) R.drawable.void_amt else R.drawable.card,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
@@ -84,7 +76,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     amount = true
                 )
 
-                if (isVoid) {
+                if (TxnInfo.txnType==TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     TextView(
@@ -146,7 +138,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                             .align(Alignment.Start)
                     )
                 }
-                if(isAuthcap)
+                if(TxnInfo.txnType==TxnType.AUTHCAP)
                 {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
                     TextView(

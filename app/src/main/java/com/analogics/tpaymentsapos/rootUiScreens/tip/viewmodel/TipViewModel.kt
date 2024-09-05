@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 
 var updated_tip = ""
@@ -18,11 +17,6 @@ class TipViewModel : ViewModel() {
 
     var formattedtipAmount by mutableStateOf("0.00")
         private set
-
-    val isRefund: Boolean = TransactionState.isRefund
-    val isVoid: Boolean = TransactionState.isVoid
-    val isPreauth: Boolean = TransactionState.isPreauth
-    val isAuthcap: Boolean = TransactionState.isAuthcap
 
     // Function to set the total amount and update the global variable
     fun setTipAmount(tip: String) {

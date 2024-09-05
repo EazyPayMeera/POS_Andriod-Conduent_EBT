@@ -36,7 +36,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GifImage
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.delay
@@ -46,9 +45,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
     var invoiceno by remember { mutableStateOf("") }
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
     val isMerchantReceipt = Authorisation.isMerchantReceipt
     val isEreceipt = Authorisation.isEreceipt
 
@@ -100,7 +96,6 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

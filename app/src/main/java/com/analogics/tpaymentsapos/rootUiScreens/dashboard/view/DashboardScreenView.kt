@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
@@ -38,7 +40,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 
@@ -46,7 +47,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
-    TransactionState.isPurchase = false
 
     TrainingView(
         navHostController = navHostController,
@@ -62,21 +62,7 @@ fun dashboardItemListData(
 ): List<DashboardItemList> {
 
     // Helper function to set the transaction state
-    fun setTransactionState(
-        isPurchase: Boolean = false,
-        isRefund: Boolean = false,
-        isPreauth: Boolean = false,
-        isAuthcap: Boolean = false,
-        isVoid: Boolean = false,
-        isTransaction: Boolean = false
-    ) {
-        TransactionState.isPurchase = isPurchase
-        TransactionState.isRefund = isRefund
-        TransactionState.isPreauth = isPreauth
-        TransactionState.isAuthcap = isAuthcap
-        TransactionState.isVoid = isVoid
-        TransactionState.isTransaction = isTransaction
-    }
+    fun setTransactionType(txnType: TxnType) {TxnInfo.txnType = txnType }
 
     // Helper function to create DashboardItemList
     @Composable
@@ -101,37 +87,37 @@ fun dashboardItemListData(
             titleId = R.string.purchase,
             iconId = R.drawable.purchase,
             route = AppNavigationItems.InvoiceScreen.route,
-            onClickState = { setTransactionState(isPurchase = true) }
+            onClickState = { setTransactionType(TxnType.PURCHASE) }
         ),
         createDashboardItem(
             titleId = R.string.refund,
             iconId = R.drawable.dashboard_refund,
             route = AppNavigationItems.PasswordScreen.route,
-            onClickState = { setTransactionState(isRefund = true) }
+            onClickState = { setTransactionType(TxnType.REFUND) }
         ),
         createDashboardItem(
             titleId = R.string.pre_auth,
             iconId = R.drawable.dashboard_preauth,
             route = AppNavigationItems.InvoiceScreen.route,
-            onClickState = { setTransactionState(isPreauth = true) }
+            onClickState = { setTransactionType(TxnType.PREAUTH) }
         ),
         createDashboardItem(
             titleId = R.string.auth_capture,
             iconId = R.drawable.dashboard_auth_capture,
             route = AppNavigationItems.InvoiceScreen.route,
-            onClickState = { setTransactionState(isAuthcap = true) }
+            onClickState = { setTransactionType(TxnType.AUTHCAP) }
         ),
         createDashboardItem(
             titleId = R.string.void_trans,
             iconId = R.drawable.dashboard_void,
             route = AppNavigationItems.PasswordScreen.route,
-            onClickState = { setTransactionState(isVoid = true) }
+            onClickState = { setTransactionType(TxnType.VOID) }
         ),
         createDashboardItem(
             titleId = R.string.transactions,
             iconId = R.drawable.dashboard_transaction,
             route = AppNavigationItems.TxnListScreen.route,
-            onClickState = { setTransactionState(isTransaction = true) }
+            onClickState = {  }
         )
     )
 }

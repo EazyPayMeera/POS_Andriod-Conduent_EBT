@@ -19,6 +19,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -26,7 +28,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -38,20 +39,8 @@ fun InvoiceView(navHostController: NavHostController) {
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
 
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
-    val isAuthcap = TransactionState.isAuthcap
-
-
     Column {
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -92,7 +81,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     isPassword = false
                 )
 
-                if(isRefund || isVoid || isAuthcap)
+                if(TxnInfo.txnType in listOf(TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP))
                 {
                     TextView(
                         text = stringResource(id = R.string.or),

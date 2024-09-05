@@ -35,7 +35,6 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.purchase),
             onBackButtonClick = { navHostController.popBackStack() }
         )
         GenericCard(

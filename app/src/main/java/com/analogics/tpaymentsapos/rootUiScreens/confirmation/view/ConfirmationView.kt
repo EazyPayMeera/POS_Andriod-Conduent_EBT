@@ -40,7 +40,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
@@ -61,26 +60,12 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
     val igstAmount = calculateTax(amountDouble)
     var isTipEnabled by remember { mutableStateOf(false) }
     val tipAmount = calculateTip(amountDouble, selectedTipPercentage / 100)
-
-
-
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
-
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
-
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
 
     Column {
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
         GenericCard(

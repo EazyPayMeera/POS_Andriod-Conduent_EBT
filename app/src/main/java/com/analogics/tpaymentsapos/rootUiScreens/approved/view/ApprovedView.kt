@@ -178,7 +178,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
 
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

@@ -45,7 +45,6 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
     Column {
         // Top App Bar with back button
         CommonTopAppBar(
-            title = stringResource(id = R.string.approved),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

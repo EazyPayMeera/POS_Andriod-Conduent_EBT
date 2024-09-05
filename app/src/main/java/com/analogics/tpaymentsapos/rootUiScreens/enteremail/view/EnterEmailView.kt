@@ -26,7 +26,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -38,18 +37,8 @@ fun EnterEmailView(navHostController: NavHostController) {
     // Collect the state from ViewModel
     val email by viewModel.email.collectAsState()
 
-    val isRefund = TransactionState.isRefund
-    val isVoid = TransactionState.isVoid
-    val isPreauth = TransactionState.isPreauth
-
     Column {
         CommonTopAppBar(
-            title = when {
-                isRefund -> stringResource(R.string.refund)
-                isVoid -> stringResource(R.string.void_trans)
-                isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

@@ -25,7 +25,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -35,12 +34,6 @@ fun PinView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            title = when {
-                TransactionState.isRefund -> stringResource(R.string.refund)
-                TransactionState.isVoid -> stringResource(R.string.void_trans)
-                TransactionState.isPreauth -> stringResource(R.string.pre_auth)
-                else -> stringResource(R.string.purchase)
-            },
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

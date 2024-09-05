@@ -83,6 +83,8 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.text.SimpleDateFormat
@@ -306,12 +308,23 @@ fun CustomSurface(
     }
 }
 
-
+@Composable
+fun getTransTypeString(txnType: TxnType?=null) : String
+{
+    return when(txnType?:TxnInfo.txnType){
+        TxnType.PURCHASE -> stringResource(id = R.string.purchase)
+        TxnType.REFUND -> stringResource(id = R.string.refund)
+        TxnType.PREAUTH -> stringResource(id = R.string.pre_auth)
+        TxnType.AUTHCAP -> stringResource(id = R.string.auth_capture)
+        TxnType.VOID -> stringResource(id = R.string.void_trans)
+        null -> stringResource(id = R.string.app_name)
+    }
+}
 
 
 @Composable
 fun CommonTopAppBar(
-    title: String,
+    title: String?=null,
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
     modifier: Modifier = Modifier
@@ -319,7 +332,7 @@ fun CommonTopAppBar(
     TopAppBar(
         title = {
             Text(
-                text = title,
+                text = title?: getTransTypeString(),
                 fontWeight = FontWeight.Bold, // Make text bold
                 style = TextStyle(
                     fontSize = MaterialTheme.dimens.SP_23_CompactMedium, // Adjust font size if needed
@@ -636,14 +649,14 @@ fun FooterButtons(
 
 
 
-object TransactionState {
+/*object TransactionState {
     var isRefund: Boolean = false
     var isVoid: Boolean = false
     var isPurchase: Boolean = false
     var isPreauth: Boolean = false
     var isTransaction: Boolean = false
     var isAuthcap: Boolean = false
-}
+}*/
 
 object Authorisation {
     var isMerchantReceipt: Boolean = false

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -30,7 +31,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun SettingsView(navHostController: NavHostController) {
     Column {
         CommonTopAppBar(
-            title = "Settings",
+            title = stringResource(id = R.string.settings),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
