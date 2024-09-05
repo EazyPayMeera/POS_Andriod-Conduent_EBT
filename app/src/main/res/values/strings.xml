@@ -78,7 +78,7 @@
     <string name="enter_password">Enter Your Password</string> Set Language
     <string name="set_lang">Set Language</string>
     <string name="select_lang">Select Your Language</string>
-    <string name="hindi">Hindi</string>
+    <string name="hindi">हिन्दी</string>
     <string name="english">English</string> Scan QR/Barcode
     <string name="scan_qr">Scan QR/Barcode</string>
     <string name="password_">Forget Password ?</string>

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -47,7 +46,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -183,7 +181,7 @@ fun AppButton(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
-            colors = ButtonDefaults.buttonColors(
+            colors = buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.purple_200)
             ),
@@ -416,11 +414,12 @@ fun OkButton(onClick:()->Unit,
     )
     {
         Button(modifier = Modifier.wrapContentSize(),
-            colors = ButtonDefaults.buttonColors(
+            colors = buttonColors(
                 contentColor = Color.Black,
                 containerColor = colorResource(R.color.grey)
             ),
-            onClick = onClick) {
+            onClick = onClick,
+            ) {
             Text(
                 text = title,
             )
@@ -551,7 +550,7 @@ fun FooterButtons(
                             color = if (isFirstButtonPressed) colorResource(id = R.color.purple_200) else Color.Transparent,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
-                    colors = ButtonDefaults.buttonColors(
+                    colors = buttonColors(
                         contentColor = Color.Black,
                         containerColor = colorResource(R.color.grey)
                     ),
@@ -605,7 +604,7 @@ fun FooterButtons(
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                    colors = ButtonDefaults.buttonColors(
+                    colors = buttonColors(
                         contentColor = Color.Black,
                         containerColor = colorResource(R.color.grey)
                     ),

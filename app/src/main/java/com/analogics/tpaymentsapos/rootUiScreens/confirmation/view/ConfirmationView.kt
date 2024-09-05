@@ -48,11 +48,13 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
-var updated_tip = updated_tip
-val transAmount = Trans_Amt
+
 
 @Composable
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
+
+    var updated_tip = updated_tip
+    val transAmount = Trans_Amt
     var selectedTipPercentage by remember { mutableStateOf(0.0) }
     val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
     var selectedTip by remember { mutableStateOf("") }
@@ -60,9 +62,8 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
     val sgstAmount = calculateTax(amountDouble)
     val igstAmount = calculateTax(amountDouble)
     var isTipEnabled by remember { mutableStateOf(false) }
+
     val tipAmount = calculateTip(amountDouble, selectedTipPercentage / 100)
-
-
 
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
@@ -72,6 +73,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
+    Log.d("TipChange", "Updated TipAmt: $updated_tip")
 
     Column {
         CommonTopAppBar(
@@ -215,7 +217,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     }
 
                     Button(
-                        onClick = { selectedTip = "Custom" },
+                        onClick = { navHostController.navigate(AppNavigationItems.TipScreen.route); selectedTip = "Custom" },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == "Custom" && isTipEnabled) {
