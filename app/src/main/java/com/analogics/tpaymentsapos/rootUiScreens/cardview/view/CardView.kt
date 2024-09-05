@@ -51,7 +51,9 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
     val isRefund = TransactionState.isRefund
     val isVoid = TransactionState.isVoid
+    val isAuthcap = TransactionState.isAuthcap
     val isPreauth = TransactionState.isPreauth
+    val isPurchase = TransactionState.isPurchase
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -174,7 +176,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    if(!isRefund) {
+                    if(isPurchase) {
                         //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                         TextView(

@@ -401,31 +401,28 @@ fun CommonLayout(
 }
 
 @Composable
-fun OkButton(onClick:()->Unit,
-              title:String)
-{
-    Box(
-        contentAlignment = Alignment.BottomCenter,
+fun OkButton(
+    onClick: () -> Unit,
+    title: String
+) {
+    Button(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp))
-
-    )
-    {
-        Button(modifier = Modifier.wrapContentSize(),
-            colors = buttonColors(
-                contentColor = Color.Black,
-                containerColor = colorResource(R.color.grey)
-            ),
-            onClick = onClick,
-            ) {
-            Text(
-                text = title,
-            )
-        }
+            .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Apply shadow directly to the Button
+            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp)),
+        colors = buttonColors(
+            contentColor = Color.Black,
+            containerColor = colorResource(R.color.grey)
+        ),
+        onClick = onClick
+    ) {
+        Text(
+            text = title
+        )
     }
 }
+
+
 
 @Composable
 fun SettingsUpperSurface(
@@ -1065,7 +1062,7 @@ fun OutlinedTextField(
         value = value,
         onValueChange = handleValueChange,
         label = { Text("") }, // Label is always empty
-        placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_28_CompactMedium) },
+        placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_23_CompactMedium) },
         textStyle = textStyle,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,

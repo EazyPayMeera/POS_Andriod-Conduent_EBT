@@ -35,6 +35,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemLi
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
@@ -46,7 +47,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
-    TransactionState.isPurchase = false
 
     TrainingView(
         navHostController = navHostController,
@@ -143,6 +143,9 @@ fun TrainingView(
     dashboardItemLists: List<DashboardItemList>,
     onMenuItemClick: (String) -> Unit
 ) {
+
+    Authorisation.isEreceipt = false
+    Authorisation.isMerchantReceipt = false
     val selectedButton = dashboardViewModel.selectedButton.value
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()

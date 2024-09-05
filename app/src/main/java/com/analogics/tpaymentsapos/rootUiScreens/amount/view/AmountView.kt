@@ -58,7 +58,11 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
                 TextView(
-                    text = stringResource(id = R.string.auth_amt),
+                    text = if (isRefund) stringResource(id = R.string.refund_amt) else if(isPreauth) stringResource(
+                        id = R.string.auth_amt
+                    ) else stringResource(
+                        id = R.string.purchase_amt
+                    ),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
