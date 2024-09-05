@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
@@ -52,7 +54,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TransactionState
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -176,7 +177,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
     val printStatus by viewModel.printStatus
     val updated_amt = updated_amt
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
-    val isVoid = TransactionState.isVoid
 
     Column {
         CommonTopAppBar(
@@ -212,7 +212,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                if(!isVoid) {
+                if(TxnInfo.txnType!= TxnType.VOID) {
                     Text(
                         text = "₹$updated_amt",
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,

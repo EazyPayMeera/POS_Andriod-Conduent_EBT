@@ -50,7 +50,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
                 TextView(
-                    text = if (isRefund) stringResource(id = R.string.refund_amt) else if(isPreauth) stringResource(
+                    text = if (TxnInfo.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt) else if(TxnInfo.txnType==TxnType.PREAUTH) stringResource(
                         id = R.string.auth_amt
                     ) else stringResource(
                         id = R.string.purchase_amt
