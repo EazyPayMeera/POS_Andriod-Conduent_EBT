@@ -59,7 +59,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 TextView(
                     text = stringResource(id = R.string.auth_amt),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     1,

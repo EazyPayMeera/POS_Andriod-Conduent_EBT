@@ -37,7 +37,7 @@ fun formatAmount(input: String): String {
     val format = DecimalFormat("#0.00")
     val formattedValue = format.format(doubleValue)
 
-    val maxDigits = 13
+    val maxDigits = 12
     val totalDigits = formattedValue.replace(".", "").length
 
     return if (totalDigits <= maxDigits) {
@@ -46,6 +46,10 @@ fun formatAmount(input: String): String {
         val truncatedValue = formattedValue.substring(0, maxDigits - 3) + ".00" // Adjust according to decimal precision
         truncatedValue
     }
+}
+
+fun calculateTip(amount: Double, tip: Double): Double {
+    return amount * tip
 }
 
 fun createAmountTransformation(): VisualTransformation {

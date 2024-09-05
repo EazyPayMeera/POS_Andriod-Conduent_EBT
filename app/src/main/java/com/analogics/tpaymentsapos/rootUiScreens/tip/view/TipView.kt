@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.TipViewModel
@@ -28,8 +27,11 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
+
 @Composable
 fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hiltViewModel()) {
+
+    /*viewModel.setTipAmount(updated_amt)*/
 
     Column {
         CommonTopAppBar(
@@ -46,7 +48,7 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
             ) {
                 TextView(
                     text = stringResource(id = R.string.enter_tip_amount),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     1,
@@ -60,7 +62,7 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                 )
 
                 OutlinedTextField(
-                    value = viewModel.amount,
+                    value = viewModel.tipamount,
                     onValueChange = {viewModel.onTipChange(it)},
                     placeholder = stringResource(id = R.string.tip_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),

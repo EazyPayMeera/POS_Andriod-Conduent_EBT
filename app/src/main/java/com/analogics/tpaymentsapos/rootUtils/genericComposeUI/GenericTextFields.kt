@@ -1046,7 +1046,7 @@ fun OutlinedTextField(
     isPassword: Boolean = false, // New parameter to indicate if it's a password field
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     modifier: Modifier = Modifier,
-    amount: Boolean = false // New parameter to indicate if ₹ icon should be sh
+    amount: Boolean = false // New parameter to indicate if ₹ icon should be shown
 ) {
     // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
@@ -1055,11 +1055,20 @@ fun OutlinedTextField(
         focusRequester.requestFocus()
     }
 
+    // Handle value change with length restriction if `amount` flag is true
+    val handleValueChange: (String) -> Unit = { newValue ->
+        if (amount && newValue.length > 11) {
+            onValueChange(newValue.take(11)) // Restrict input to 12 characters
+        } else {
+            onValueChange(newValue)
+        }
+    }
+
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = handleValueChange,
         label = { Text("") }, // Label is always empty
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_28_CompactMedium) },
         textStyle = textStyle,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
