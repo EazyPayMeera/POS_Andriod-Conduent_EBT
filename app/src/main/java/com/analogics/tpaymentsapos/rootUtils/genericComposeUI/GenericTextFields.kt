@@ -346,7 +346,7 @@ fun CommonTopAppBar(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "back_button",
                 modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_55_CompactMedium)
+                    .size(MaterialTheme.dimens.DP_40_CompactMedium)
                     .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
                     .clickable { onBackButtonClick() }
             )
@@ -955,6 +955,42 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            .shadow(
+                elevation = MaterialTheme.dimens.DP_50_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+            .background(
+                Color(0xFFFC7519),
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+    ) {
+        Card(
+            elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
+            backgroundColor= Color.White,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = MaterialTheme.dimens.DP_25_CompactMedium,
+                    start = MaterialTheme.dimens.DP_25_CompactMedium,
+                    end = MaterialTheme.dimens.DP_25_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_25_CompactMedium,
+                )
+                .align(Alignment.Center)
+        ) {
+            componentView()
+        }
+    }
+}
+
+
+
+@Composable
+fun DialogueScreen(componentView :@Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .height(320.dp)
+            .width(650.dp)
+            .padding(MaterialTheme.dimens.DP_4_CompactMedium)
             .shadow(
                 elevation = MaterialTheme.dimens.DP_50_CompactMedium,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)

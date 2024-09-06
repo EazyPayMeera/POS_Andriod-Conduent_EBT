@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,41 +39,52 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun CustomDrawerContent(
-    onCloseDrawer: () -> Unit, navHostController: NavHostController,
+    onCloseDrawer: () -> Unit,
+    navHostController: NavHostController,
     onMenuItemClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
             .background(Color(0xFFFAFAF7)) // Match the drawer background color
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         // Header with Name and Close Icon
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .clickable { onCloseDrawer() } // Make the whole box clickable
         ) {
-            Text(
-                text = stringResource(id = R.string.application_name),
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    color = Color(0xFFFFA500) // Orange color
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp), // Apply padding here
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(id = R.string.application_name),
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        color = Color(0xFFFFA500) // Orange color
+                    )
                 )
-            )
-            IconButton(onClick = onCloseDrawer) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close Drawer"
-                )
+                Spacer(modifier = Modifier.width(20.dp))
+                IconButton(
+                    onClick = onCloseDrawer,
+                    modifier = Modifier.size(30.dp) // Adjust the size here
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Drawer"
+                    )
+                }
             }
         }
 
         Divider(color = Color.Gray, thickness = 1.dp)
         GenericCard(
             modifier = Modifier
-                .padding(top= 10.dp)
+                .padding(top = 10.dp)
                 .fillMaxWidth(),
             elevation = 10.dp,
             shape = RoundedCornerShape(8.dp)
@@ -118,29 +130,30 @@ fun CustomDrawerContent(
                 )
             }
         }
-
     }
 }
+
+
 
 @Composable
 fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = MaterialTheme.dimens.DP_15_CompactMedium)
+            .padding(vertical = MaterialTheme.dimens.DP_25_CompactMedium)
             .clickable { function() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(30.dp),
             tint = Color.Gray
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.weight(1f))
         Icon(
