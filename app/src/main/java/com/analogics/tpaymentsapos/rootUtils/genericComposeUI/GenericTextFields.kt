@@ -172,7 +172,7 @@ fun AppButton(
     Box(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
             .background(
                 colorResource(R.color.purple_200),
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -344,6 +344,7 @@ fun CommonTopAppBar(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "back_button",
                 modifier = Modifier
+                    .size(MaterialTheme.dimens.DP_55_CompactMedium)
                     .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
                     .clickable { onBackButtonClick() }
             )
@@ -520,7 +521,7 @@ fun FooterButtons(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium) // Adjust padding as needed // need to change
+            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed // need to change
     ) {
         Row(
             modifier = Modifier
@@ -536,7 +537,7 @@ fun FooterButtons(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                     .shadow(
                         MaterialTheme.dimens.DP_4_CompactMedium,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -871,6 +872,7 @@ fun AppHeader(
                         painter = painterResource(id = icon1),
                         contentDescription = "icon1",
                         modifier = Modifier
+                            .size(MaterialTheme.dimens.DP_60_CompactMedium) // Increase the size here, e.g., 48.dp
                             .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)
                             .clickable { onIcon1Click?.invoke() }
                     )

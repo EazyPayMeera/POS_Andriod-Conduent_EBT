@@ -230,11 +230,11 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
-
+                Spacer(modifier = Modifier.height(30.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
+                        .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
