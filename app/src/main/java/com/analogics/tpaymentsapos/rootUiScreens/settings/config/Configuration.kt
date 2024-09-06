@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -222,35 +224,47 @@ fun SettingsSurface(
 fun SettingsContent(
     item: SettingsItem
 ) {
-    Row(
+    // Handle the click event to toggle the switch
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
+            .clickable {
+                item.onCheckedChange(!item.isChecked) // Toggle the switch state
+            }
     ) {
         Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp), // Added padding for better touch area
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = item.imageRes),
-                contentDescription = item.text,
-                modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Need to change here
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = item.imageRes),
+                    contentDescription = item.text,
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed
+                )
 
-            Text(
-                text = item.text,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
+                Text(
+                    text = item.text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
+                )
+            }
+
+            CustomSwitch(
+                checked = item.isChecked,
+                onCheckedChange = { newCheckedState ->
+                    item.onCheckedChange(newCheckedState)
+                },
+                checkedImage = R.drawable.switch_checked, // Your checked drawable
+                uncheckedImage = R.drawable.switch_unchecked, // Your unchecked drawable
             )
         }
-
-        CustomSwitch(
-            checked = item.isChecked,
-            onCheckedChange = item.onCheckedChange,
-            checkedImage = R.drawable.switch_checked, // Your checked drawable
-            uncheckedImage = R.drawable.switch_unchecked, // Your unchecked drawable
-        )
     }
 }
 

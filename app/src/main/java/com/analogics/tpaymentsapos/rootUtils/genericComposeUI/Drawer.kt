@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,7 +39,8 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun CustomDrawerContent(
-    onCloseDrawer: () -> Unit, navHostController: NavHostController,
+    onCloseDrawer: () -> Unit,
+    navHostController: NavHostController,
     onMenuItemClick: (String) -> Unit
 ) {
     Column(
@@ -48,27 +50,34 @@ fun CustomDrawerContent(
             .padding(12.dp)
     ) {
         // Header with Name and Close Icon
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .clickable { onCloseDrawer() } // Make the whole box clickable
         ) {
-            Text(
-                text = stringResource(id = R.string.application_name),
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    color = Color(0xFFFFA500) // Orange color
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp), // Apply padding here
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(id = R.string.application_name),
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        color = Color(0xFFFFA500) // Orange color
+                    )
                 )
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            IconButton(onClick = onCloseDrawer,
-                ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close Drawer",
+                Spacer(modifier = Modifier.width(20.dp))
+                IconButton(
+                    onClick = onCloseDrawer,
                     modifier = Modifier.size(30.dp) // Adjust the size here
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Drawer"
+                    )
+                }
             }
         }
 
@@ -121,9 +130,10 @@ fun CustomDrawerContent(
                 )
             }
         }
-
     }
 }
+
+
 
 @Composable
 fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {

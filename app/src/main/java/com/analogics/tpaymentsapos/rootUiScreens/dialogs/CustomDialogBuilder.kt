@@ -1,26 +1,26 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DialogueScreen
 import com.analogics.tpaymentsapos.ui.theme.dashboardCardBgColor
-import com.analogics.tpaymentsapos.ui.theme.dimens
 
 class CustomDialogBuilder private constructor() {
 
@@ -44,11 +44,11 @@ class CustomDialogBuilder private constructor() {
     @Composable
     fun buildDialog(onClose: () -> Unit) {
         Dialog(onDismissRequest = { if (isCancelable) onClose() }) {
-            BackgroundScreen {
+            DialogueScreen {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
@@ -57,7 +57,7 @@ class CustomDialogBuilder private constructor() {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
+                                .padding(4.dp),
                             contentAlignment = Alignment.TopEnd
                         ) {
                             IconButton(onClick = onClose) {
@@ -75,7 +75,7 @@ class CustomDialogBuilder private constructor() {
                         text = title,
                         style = MaterialTheme.typography.h6,
                         color = Color.Black,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier.padding(top = 4.dp)
                     )
 
                     // Subtitle
@@ -83,7 +83,7 @@ class CustomDialogBuilder private constructor() {
                         text = subtitle,
                         style = MaterialTheme.typography.h5,
                         color = Color.Black,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
 
                     // Small text
@@ -91,7 +91,7 @@ class CustomDialogBuilder private constructor() {
                         text = smallText,
                         style = MaterialTheme.typography.subtitle2,
                         color = Color.Gray,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 0.dp)
                     )
 
                     // Progress Indicator
