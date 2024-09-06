@@ -17,7 +17,11 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +39,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
@@ -198,6 +203,7 @@ fun DashboardContentSurface(
     selectedButton: String?,
     onButtonClick: (String, () -> Unit) -> Unit
 ) {
+    var isDialogVisible by remember { mutableStateOf(false) }
     Surface(
         color = Color.White,
         modifier = Modifier
@@ -259,10 +265,21 @@ fun DashboardContentSurface(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppButton(
-                    onClick = { /* Handle print receipt click */ },
+                    onClick = {isDialogVisible=true  },
                     title = stringResource(id = R.string.print_last_receipt),
                     image = painterResource(id = R.drawable.ic_print)
                 )
+            }
+            if (isDialogVisible) {
+                CustomDialogBuilder.create()
+                    .setTitle("Printing")
+                    .setSubtitle("Please Wait")
+                    .setSmallText("Merchant Receipt")
+                    .setShowCloseButton(true) // Can set to false if you don't want the close button
+                    .setCancelable(true)
+                    .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                    .setProgressColor(Color(0xFFFF9800)) // Orange color
+                    .buildDialog(onClose = { isDialogVisible = false })
             }
         }
     }
