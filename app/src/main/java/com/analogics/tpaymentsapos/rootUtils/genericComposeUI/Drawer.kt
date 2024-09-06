@@ -45,13 +45,13 @@ fun CustomDrawerContent(
         modifier = Modifier
             .fillMaxHeight()
             .background(Color(0xFFFAFAF7)) // Match the drawer background color
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         // Header with Name and Close Icon
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -61,10 +61,13 @@ fun CustomDrawerContent(
                     color = Color(0xFFFFA500) // Orange color
                 )
             )
-            IconButton(onClick = onCloseDrawer) {
+            Spacer(modifier = Modifier.width(20.dp))
+            IconButton(onClick = onCloseDrawer,
+                ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close Drawer"
+                    contentDescription = "Close Drawer",
+                    modifier = Modifier.size(30.dp) // Adjust the size here
                 )
             }
         }
@@ -72,7 +75,7 @@ fun CustomDrawerContent(
         Divider(color = Color.Gray, thickness = 1.dp)
         GenericCard(
             modifier = Modifier
-                .padding(top= 10.dp)
+                .padding(top = 10.dp)
                 .fillMaxWidth(),
             elevation = 10.dp,
             shape = RoundedCornerShape(8.dp)
@@ -127,20 +130,20 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = MaterialTheme.dimens.DP_15_CompactMedium)
+            .padding(vertical = MaterialTheme.dimens.DP_25_CompactMedium)
             .clickable { function() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(30.dp),
             tint = Color.Gray
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.weight(1f))
         Icon(
