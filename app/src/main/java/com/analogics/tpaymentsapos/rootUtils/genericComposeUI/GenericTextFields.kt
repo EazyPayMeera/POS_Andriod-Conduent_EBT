@@ -331,7 +331,7 @@ fun CommonTopAppBar(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "back_button",
                 modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_55_CompactMedium)
+                    .size(MaterialTheme.dimens.DP_40_CompactMedium)
                     .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
                     .clickable { onBackButtonClick() }
             )
