@@ -12,9 +12,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.confirmshift.viewmodel.ConfirmShiftViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
@@ -26,9 +30,10 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun ConfirmShiftView(navHostController: NavHostController) {
+    val viewModel: ConfirmShiftViewModel = hiltViewModel()
     Column {
         CommonTopAppBar(
-            title = stringResource(id = R.string.forget_pswd),
+            title = stringResource(id = R.string.end_shift_title),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -70,20 +75,20 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space added here
 
-                Text(
-                    text = "Are you sure you want to end your shift?",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+/*                Text(
+                    text = stringResource(id = R.string.end_shift_title),
+                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                     color = Color.LightGray,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Center the subheader text
-                )
+                )*/
 
                 Text(
-                    text = "end your shift?",
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.LightGray,
+                    text = stringResource(id = R.string.end_shift_message),
+                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                    color = Color.Gray,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -96,7 +101,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                     firstButtonTitle = stringResource(id = R.string.cancel),
                     firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
                     secondButtonTitle = stringResource(id = R.string.yes),
-                    secondButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController) }
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here

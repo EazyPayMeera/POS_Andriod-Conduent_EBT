@@ -10,7 +10,7 @@ object AppLogger {
     }
 
     enum class MODULE{
-        APP_UI,PAYMENT_LIB,SECURITY_LIB,BUILDER_LIB,POS_CONFIG
+        APP_UI,APP_LOGIC,PAYMENT_LIB,SECURITY_LIB,BUILDER_LIB,POS_CONFIG
     }
 
     // Set the current log level (e.g., controlled by BuildConfig or any other mechanism)
