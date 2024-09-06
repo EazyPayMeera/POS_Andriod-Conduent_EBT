@@ -64,11 +64,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -1065,16 +1067,16 @@ fun OutlinedTextField(
     }
 
     // Handle value change with length restriction if `amount` flag is true
-    val handleValueChange: (String) -> Unit = { newValue ->
-        if (amount && newValue.length > 11) {
-            onValueChange(newValue.take(11)) // Restrict input to 12 characters
+    val handleValueChange: (TextFieldValue) -> Unit = { newValue ->
+        if (amount) {
+            if(removeNonDigits(newValue.text).length <= 12) onValueChange(formatAmount(newValue.text)) // Restrict input to 12 characters
         } else {
-            onValueChange(newValue)
+            onValueChange(newValue.text)
         }
     }
 
     OutlinedTextField(
-        value = value,
+        value = TextFieldValue(value, selection = TextRange(value.length)),
         onValueChange = handleValueChange,
         label = { Text("") }, // Label is always empty
         placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_23_CompactMedium) },
@@ -1106,7 +1108,8 @@ fun OutlinedTextField(
             focusedBorderColor = colorResource(id = R.color.purple_200), // Orange color for focused state
             unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
             focusedLabelColor = colorResource(id = R.color.purple_200), // Orange color for focused label
-            unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+            unfocusedLabelColor = Color.LightGray, // Light grey color for unfocused label,
+            cursorColor = Color.Transparent
         )
     )
 }

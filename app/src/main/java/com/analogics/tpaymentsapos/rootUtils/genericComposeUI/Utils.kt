@@ -4,7 +4,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import com.analogics.paymentservicecore.logger.AppLogger
 import java.text.DecimalFormat
+import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {
     return amount * 0.15
@@ -25,31 +27,25 @@ fun formatAmountdouble(amount: Double): String {
     return decimalFormat.format(amount)
 }
 
-fun formatAmount(input: String): String {
-
-    if (input.isEmpty()) {
-        return "0.00"
+fun formatAmount(input: String, decimalPlaces: Int = 2): String {
+    try {
+        val amount  = removeNonDigits(input)
+        val dAmount: Double = amount.toDoubleOrNull()?:0.00
+        return "%,.${decimalPlaces}f".format(java.util.Locale.ENGLISH, dAmount/10.0.pow(decimalPlaces))
+    }catch (e:Exception)
+    {
+        AppLogger.e(AppLogger.MODULE.APP_UI,e.message.toString())
     }
-    val numericValue = input.toDouble()
-
-    val doubleValue = numericValue / 100
-
-    val format = DecimalFormat("#0.00")
-    val formattedValue = format.format(doubleValue)
-
-    val maxDigits = 12
-    val totalDigits = formattedValue.replace(".", "").length
-
-    return if (totalDigits <= maxDigits) {
-        formattedValue
-    } else {
-        val truncatedValue = formattedValue.substring(0, maxDigits - 3) + ".00" // Adjust according to decimal precision
-        truncatedValue
-    }
+    return ""
 }
 
 fun calculateTip(amount: Double, tip: Double): Double {
     return amount * tip
+}
+
+fun removeNonDigits(input: String): String {
+    val re = Regex("[^0-9]")
+    return re.replace(input, "")
 }
 
 fun createAmountTransformation(): VisualTransformation {

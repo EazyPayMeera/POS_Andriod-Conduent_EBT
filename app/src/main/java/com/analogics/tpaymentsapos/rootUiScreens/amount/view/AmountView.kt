@@ -50,11 +50,11 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
                 TextView(
-                    text = if (TxnInfo.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt) else if(TxnInfo.txnType==TxnType.PREAUTH) stringResource(
-                        id = R.string.auth_amt
-                    ) else stringResource(
-                        id = R.string.purchase_amt
-                    ),
+                    text = when(TxnInfo.txnType){
+                        TxnType.REFUND -> stringResource(R.string.refund_amt)
+                        TxnType.PREAUTH -> stringResource(R.string.auth_amt)
+                        else -> stringResource(R.string.purchase_amt)
+                    },
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -70,7 +70,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
 
                 OutlinedTextField(
-                    value = viewModel.rawInput,
+                    value = viewModel.transAmount,
                     onValueChange = {viewModel.onAmountChange(it)},
                     placeholder = stringResource(id = R.string.auth_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),

@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.Trans_Amt
 import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.updated_tip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
@@ -53,7 +52,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     var updated_tip = updated_tip
-    val transAmount = Trans_Amt
+    val transAmount = amount.replace(",", "")
     var selectedTipPercentage by remember { mutableStateOf(0.0) }
     val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
     var selectedTip by remember { mutableStateOf("") }
