@@ -2,7 +2,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,6 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.*
-import com.analogics.tpaymentsapos.ui.theme.tipBgColor
 
 
 @Composable
@@ -97,7 +94,7 @@ fun ConfigurationView(navHostController: NavHostController) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                .padding(MaterialTheme.dimens.DP_20_CompactMedium),
             elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_11_CompactMedium)
         ) {
             Column {
@@ -149,17 +146,17 @@ fun TippingView(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = tipBgColor)
-            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            .background(color = Color.White)
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
+                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
         ) {
             Text(
                 text = title,
-                style = if (type == ConfigurableViewType.Percentage) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.headlineSmall,
+                style = if (type == ConfigurableViewType.Percentage) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -175,8 +172,11 @@ fun TippingView(
                     Card(
                         modifier = Modifier
                             .width(MaterialTheme.dimens.DP_100_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_40_CompactMedium)
-                            .border(MaterialTheme.dimens.DP_1_CompactMedium, Color.Gray),
+                            .height(MaterialTheme.dimens.DP_34_CompactMedium),
+                            /*.border(MaterialTheme.dimens.DP_1_CompactMedium, Color.LightGray),*/
+                        onClick = {},
+                        elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium) // Use CardDefaults for elevation
+
                     ) {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -188,6 +188,7 @@ fun TippingView(
                                 text = option,
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center
+
                             )
                         }
                     }
@@ -239,7 +240,7 @@ fun SettingsContent(
 
             Text(
                 text = item.text,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
             )
         }

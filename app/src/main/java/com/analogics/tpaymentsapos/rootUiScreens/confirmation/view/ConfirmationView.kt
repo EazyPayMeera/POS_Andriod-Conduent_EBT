@@ -164,6 +164,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
+
                 ) {
                     Button(
                         onClick = { selectedTip = "10%"; selectedTipPercentage = 10.0 },
@@ -176,7 +177,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             },
                             contentColor = Color.Black
                         ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
                     ) {
                         Text(text = "10%")
@@ -193,7 +194,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             },
                             contentColor = Color.Black
                         ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
                     ) {
                         Text(text = "15%")
@@ -210,7 +211,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             },
                             contentColor = Color.Black
                         ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
                     ) {
                         Text(text = "20%")
@@ -227,7 +228,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             },
                             contentColor = Color.Black
                         ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_10_CompactMedium),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
                     ) {
                         Text(text = "Custom")
