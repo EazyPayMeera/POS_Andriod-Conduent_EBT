@@ -119,7 +119,7 @@
     <string name="auto_print_merchant">Auto Print Merchant Receipt</string>
     <string name="enable_tipping">Enable Tipping</string>
     <string name="taxes">Taxes</string>
-    <string name="adjust_per">Adjust %</string>
+    <string name="adjust_per">--------Adjust %--------</string>
 	
     <string name="is_correct">Is this information correct?</string>
 	
