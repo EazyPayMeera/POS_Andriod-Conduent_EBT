@@ -17,13 +17,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.isinfo.InfoConfirmViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -91,7 +87,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 )
 
                 TextView(
-                    text = stringResource(id = R.string.card),
+                    text = stringResource(id = R.string.card) + " ************6983",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -101,7 +97,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                     )
 
                 TextView(
-                    text = stringResource(id = R.string.auth_code),
+                    text = stringResource(id = R.string.auth_code) + " 896356",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -111,7 +107,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 )
 
                 TextView(
-                    text = stringResource(id = R.string.no),
+                    text = stringResource(id = R.string.no) + " 100034345364633",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -121,7 +117,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 )
 
                 TextView(
-                    text = stringResource(id = R.string.inc_no),
+                    text = stringResource(id = R.string.inc_no) + "INVC1234",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -130,7 +126,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = stringResource(id = R.string.pos_entry),
+                    text = stringResource(id = R.string.pos_entry) + "Contact",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,

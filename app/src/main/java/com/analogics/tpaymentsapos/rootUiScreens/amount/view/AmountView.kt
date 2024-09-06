@@ -35,6 +35,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
 
+
     Column {
 
         CommonTopAppBar(
@@ -94,7 +95,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.card),
+                        text = stringResource(id = R.string.card) + " ************6983",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -104,7 +105,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.auth_code),
+                        text = stringResource(id = R.string.auth_code) + " 896356",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -114,7 +115,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.no),
+                        text = stringResource(id = R.string.no) + " 100034345364633",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -124,7 +125,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.inc_no),
+                        text = stringResource(id = R.string.inc_no) + " INVC1234",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -133,7 +134,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                             .align(Alignment.Start)
                     )
                     TextView(
-                        text = stringResource(id = R.string.pos_entry),
+                        text = stringResource(id = R.string.pos_entry) + " Contact",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
@@ -147,22 +148,22 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
                     TextView(
 
-                        text = stringResource(id = R.string.original_amount).format(viewModel.transactionDateTime),
+                        text = stringResource(id = R.string.original_amount) + "20.00",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.Start)
                     )
                     TextView(
-                        text = stringResource(id = R.string.date).format(viewModel.transactionDateTime),
+                        text = stringResource(id = R.string.date) + viewModel.transactionDateTime,
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.Start)
                     )
                 }
             }

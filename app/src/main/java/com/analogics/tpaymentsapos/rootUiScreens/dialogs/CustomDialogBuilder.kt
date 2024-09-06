@@ -1,11 +1,15 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -17,10 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DialogueScreen
+import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.ui.theme.dashboardCardBgColor
+import com.analogics.tpaymentsapos.ui.theme.dimens
 
 class CustomDialogBuilder private constructor() {
 
@@ -44,14 +51,47 @@ class CustomDialogBuilder private constructor() {
     @Composable
     fun buildDialog(onClose: () -> Unit) {
         Dialog(onDismissRequest = { if (isCancelable) onClose() }) {
-            DialogueScreen {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+            ) {
+                GenericCard (modifier = Modifier
+                    .wrapContentHeight() // Wraps content height
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),){
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
-
                     ) {
+
+                    GenericCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(), // Wraps content height
+                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                        shape = RoundedCornerShape(0.dp),
+                    ){
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
+                        ) {
+
+                            // Title
+                            Text(
+                                text = smallText,
+                                style = MaterialTheme.typography.h6,
+                                color = Color.Black,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+
+
+                        }
+
+                    }
+
                     // Close button
                     if (showCloseButton) {
                         Box(
@@ -70,6 +110,7 @@ class CustomDialogBuilder private constructor() {
                         }
                     }
 
+
                     // Title
                     Text(
                         text = title,
@@ -86,13 +127,13 @@ class CustomDialogBuilder private constructor() {
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
 
-                    // Small text
+/*                    // Small text
                     Text(
                         text = smallText,
                         style = MaterialTheme.typography.subtitle2,
                         color = Color.Gray,
                         modifier = Modifier.padding(bottom = 0.dp)
-                    )
+                    )*/
 
                     // Progress Indicator
                     CircularProgressIndicator(
@@ -103,7 +144,9 @@ class CustomDialogBuilder private constructor() {
                         strokeWidth = 4.dp,
                     )
                 }
+                    }
             }
+            
         }
     }
 
