@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,8 +40,11 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun LanguageView(navHostController: NavHostController) {
 
+    // Retrieve the string resources only once
+    val englishText = stringResource(id = R.string.english)
+    val hindiText = stringResource(id = R.string.hindi)
     // State to manage the selected language
-    var selectedLanguage by remember { mutableStateOf("Hindi") }
+    var selectedLanguage by remember { mutableStateOf(hindiText) }
 
 
     Column {
@@ -121,10 +123,10 @@ fun LanguageView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.weight(1f)) // This will push the RadioButton to the end
 
                     RadioButton(
-                        selected = selectedLanguage == stringResource(id = R.string.hindi),
-                        onClick = { selectedLanguage = "Hindi" },
+                        selected = selectedLanguage == stringResource(id = R.string.english),
+                        onClick = { selectedLanguage = englishText },
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = colorResource(id = R.color.Orange),
+                            selectedColor = dashboardOrangeColor,
                             unselectedColor = Color.Gray
                         )
                     )
@@ -169,8 +171,8 @@ fun LanguageView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.weight(1f)) // This will push the RadioButton to the end
 
                     RadioButton(
-                        selected = selectedLanguage == stringResource(id = R.string.english),
-                        onClick = { selectedLanguage = "English" },
+                        selected = selectedLanguage == stringResource(id = R.string.hindi),
+                        onClick = { selectedLanguage = hindiText},
                         colors = RadioButtonDefaults.colors(
                             selectedColor = dashboardOrangeColor,
                             unselectedColor = Color.Gray
