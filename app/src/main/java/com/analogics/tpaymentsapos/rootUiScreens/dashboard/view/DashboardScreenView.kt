@@ -209,7 +209,7 @@ fun DashboardContentSurface(
         color = Color.White,
         modifier = Modifier
             .fillMaxSize()
-            .padding(MaterialTheme.dimens.DP_15_CompactMedium),
+            .padding(MaterialTheme.dimens.DP_9_CompactMedium),
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
         elevation = MaterialTheme.dimens.DP_10_CompactMedium
     ) {

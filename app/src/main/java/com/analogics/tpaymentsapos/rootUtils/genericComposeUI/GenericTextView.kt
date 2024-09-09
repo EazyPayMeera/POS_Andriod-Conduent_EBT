@@ -54,7 +54,7 @@ fun TextView(
 @Composable
 fun GenericCard(
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium),
+    shape: RoundedCornerShape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
     elevation: Dp = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium,
     backgroundColor: Color = MaterialTheme.colors.surface,
     content: @Composable () -> Unit

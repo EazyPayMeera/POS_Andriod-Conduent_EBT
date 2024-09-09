@@ -78,7 +78,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
             ImageView(
                 imageId= R.drawable.ic_launcher_foreground,
                 contentDescription = "",
-                modifier = Modifier.size(MaterialTheme.dimens.DP_60_CompactMedium)
+                modifier = Modifier.size(MaterialTheme.dimens.DP_70_CompactMedium)
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))

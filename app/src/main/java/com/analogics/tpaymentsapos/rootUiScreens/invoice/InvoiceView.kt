@@ -45,7 +45,8 @@ fun InvoiceView(navHostController: NavHostController) {
         )
 
         GenericCard(
-            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium),
+            elevation = MaterialTheme.dimens.DP_10_CompactMedium
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
