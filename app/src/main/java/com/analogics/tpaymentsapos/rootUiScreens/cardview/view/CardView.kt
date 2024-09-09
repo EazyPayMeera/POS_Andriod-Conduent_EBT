@@ -67,9 +67,10 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
         ) {
             GenericCard(
                 modifier = Modifier
-                    .wrapContentHeight() // Wraps content height
+                    //.wrapContentHeight() // Wraps content height
                     .fillMaxWidth()
                     .align(Alignment.TopStart),
+
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
             ) {
                 Column(
@@ -104,7 +105,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                             // Display the totalAmount here
                             Text(
                                 text = "₹$totalAmount",
-                                fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                                fontSize = MaterialTheme.dimens.sp_44_CompactMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
