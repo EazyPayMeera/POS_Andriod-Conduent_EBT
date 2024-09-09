@@ -960,7 +960,7 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
             .background(
-                Color(0xFFFC7519),
+                color = colorResource(id = R.color.purple_200),
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
     ) {
@@ -996,7 +996,7 @@ fun DialogueScreen(componentView :@Composable () -> Unit) {
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
             .background(
-                Color(0xFFFC7519),
+                color = colorResource(id = R.color.purple_200),
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
     ) {

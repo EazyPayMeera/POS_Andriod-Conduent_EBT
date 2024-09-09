@@ -96,7 +96,7 @@ fun ConfigurationView(navHostController: NavHostController) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.dimens.DP_20_CompactMedium),
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
             elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_11_CompactMedium)
         ) {
             Column {

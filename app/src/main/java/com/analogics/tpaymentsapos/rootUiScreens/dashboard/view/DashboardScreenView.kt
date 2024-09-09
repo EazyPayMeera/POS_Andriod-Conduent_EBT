@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -278,7 +279,7 @@ fun DashboardContentSurface(
                     .setShowCloseButton(true) // Can set to false if you don't want the close button
                     .setCancelable(true)
                     .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                    .setProgressColor(Color(0xFFFF9800)) // Orange color
+                    .setProgressColor(colorResource(id = R.color.purple_200)) // Orange color
                     .buildDialog(onClose = { isDialogVisible = false })
             }
         }
