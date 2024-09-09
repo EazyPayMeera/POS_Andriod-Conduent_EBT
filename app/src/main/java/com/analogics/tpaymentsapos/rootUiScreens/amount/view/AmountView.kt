@@ -1,11 +1,12 @@
 // AmountView.kt
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -73,6 +74,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 OutlinedTextField(
                     value = viewModel.rawInput,
                     onValueChange = {viewModel.onAmountChange(it)},
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,

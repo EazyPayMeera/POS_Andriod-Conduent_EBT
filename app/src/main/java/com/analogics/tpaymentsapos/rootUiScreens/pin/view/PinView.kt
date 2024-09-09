@@ -4,6 +4,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -65,6 +66,7 @@ fun PinView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = pinViewModel.invoiceno,
                     onValueChange = { newValue -> pinViewModel.onPinChange(newValue) },
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = stringResource(id = R.string.enter_Pin),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.NumberPassword,
@@ -80,6 +82,7 @@ fun PinView(navHostController: NavHostController) {
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { pinViewModel.onDoneAction(navHostController) }
         )
+
     }
 }
 

@@ -23,7 +23,8 @@ sealed class AppNavigationItems(val route: String) {
  object EnterEmailScreen : AppNavigationItems(NavScreensEnum.EnterEmailView.name)
  object InfoConfirmScreen : AppNavigationItems(NavScreensEnum.InfoConfirmView.name)
  object TxnListScreen:AppNavigationItems(NavScreensEnum.TxnListView.name)
- //object DeclineScreen : AppNavigationItems(NavScreensEnum.DeclineView.name)
+ object SucessScreen:AppNavigationItems(NavScreensEnum.SucessView.name)
+
 
  object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
   fun createRoute(totalAmount: String) = "card_screen/$totalAmount"

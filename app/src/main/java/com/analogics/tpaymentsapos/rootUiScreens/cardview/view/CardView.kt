@@ -159,7 +159,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         )
 
                         ImageView(
-                            imageId = R.drawable.master,
+                            imageId = R.drawable.rupay,
                             shape = RectangleShape,
                             modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
                         )

@@ -54,7 +54,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
 
                 TextView(
                     text = stringResource(id = R.string.sucess),
-                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -66,7 +66,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
 
                 TextView(
                     text = stringResource(id = R.string.sent_email),
-                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_44_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -74,7 +74,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
                         .align(Alignment.CenterHorizontally) // Center the subheader text
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_55_CompactMedium)) // Blank space added here
 
                 TextView(
                     text = stringResource(id = R.string.ereceipt_sent),
@@ -102,7 +102,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
                 ) {
                     OkButton(
                         onClick = {
-                            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                            navHostController.navigate(AppNavigationItems.SucessScreen.route)
                         },
                         title = stringResource(id = R.string.ok)
                     )

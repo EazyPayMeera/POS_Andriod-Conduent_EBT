@@ -70,6 +70,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -572,10 +573,14 @@ fun FooterButtons(
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
-                    Text(
-                        text = firstButtonTitle,
+
+                    TextView(
+                        text = firstButtonTitle.uppercase(),
+                        fontSize = /*MaterialTheme.dimens.SP_21_CompactMedium*/15.sp,
                         color = Color.Black,
-                        style = MaterialTheme.typography.bodyMedium
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -626,10 +631,14 @@ fun FooterButtons(
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
-                    Text(
-                        text = secondButtonTitle,
+
+                    TextView(
+                        text = secondButtonTitle.uppercase(),
+                        fontSize = /*MaterialTheme.dimens.SP_21_CompactMedium*/15.sp,
                         color = Color.Black,
-                        style = MaterialTheme.typography.bodyMedium
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -1085,6 +1094,7 @@ fun OutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    shape: Shape = OutlinedTextFieldDefaults.shape,
     textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
     keyboardType: KeyboardType = KeyboardType.Text,
     onDoneAction: () -> Unit = {},
@@ -1112,6 +1122,7 @@ fun OutlinedTextField(
     OutlinedTextField(
         value = value,
         onValueChange = handleValueChange,
+        shape = shape,
         label = { Text("") }, // Label is always empty
         placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_23_CompactMedium) },
         textStyle = textStyle,
@@ -1134,7 +1145,9 @@ fun OutlinedTextField(
                     text = "\u20B9", // Unicode for ₹ symbol
                     fontSize = MaterialTheme.dimens.SP_29_CompactMedium, // Adjust the size of the icon
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black // Set the color to black
+                    color = Color.Black, // Set the color to black,
+                    textAlign = TextAlign.Center
+
                 )
             }
         } else null,
@@ -1146,6 +1159,8 @@ fun OutlinedTextField(
         )
     )
 }
+
+
 
 
 

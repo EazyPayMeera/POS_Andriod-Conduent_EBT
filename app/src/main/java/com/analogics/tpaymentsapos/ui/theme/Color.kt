@@ -18,3 +18,5 @@ val dashbaordTextColor=Color(0XFF4A4B50)
 
 val viewLineColor=Color(0XFFB3B3B3)
 val tipBgColor=Color(0XFFDADADA)
+val tipBColor =Color(0xFFF8F7F3)
+val BgColor = Color(0xFFFFFFFF)

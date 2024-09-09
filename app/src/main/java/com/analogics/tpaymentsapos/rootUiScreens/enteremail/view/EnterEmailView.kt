@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -68,6 +69,7 @@ fun EnterEmailView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = email,
                     onValueChange = { newValue -> viewModel.updateEmail(newValue) },
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = stringResource(id = R.string.email),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
                     keyboardType = KeyboardType.Email,
