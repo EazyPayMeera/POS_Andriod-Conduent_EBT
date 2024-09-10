@@ -115,7 +115,7 @@ fun LanguageView(navHostController: NavHostController) {
                         text = stringResource(id = R.string.english),
                         fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                         color = Color.Black,
-                        fontWeight = FontWeight.Bold,
+                        //fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
                         textAlign = TextAlign.Center
                     )
@@ -164,7 +164,7 @@ fun LanguageView(navHostController: NavHostController) {
                         text = stringResource(id = R.string.hindi),
                         fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                         color = Color.Black,
-                        fontWeight = FontWeight.Bold,
+                        //fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
                         textAlign = TextAlign.Center
                     )
