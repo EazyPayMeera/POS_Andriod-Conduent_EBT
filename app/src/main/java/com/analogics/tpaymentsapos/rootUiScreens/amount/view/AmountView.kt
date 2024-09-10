@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -84,7 +83,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController)},
                     visualTransformation = createAmountTransformation(),
-                    amount = true
+                    amount = false
                 )
 
                 if (TxnInfo.txnType==TxnType.VOID) {
