@@ -66,7 +66,7 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                     onValueChange = {viewModel.onTipChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = stringResource(id = R.string.tip_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {
                         viewModel.onConfirm(navHostController)
