@@ -1,7 +1,14 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -11,21 +18,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.confirmshift.viewmodel.ConfirmShiftViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonLayout
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HeaderImage
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TopBoldText
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -56,34 +57,22 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
                 Text(
                     text = stringResource(id = R.string.confirm_btn),
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Center the header text
                 )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
 
                 Image(
                     painter = painterResource(id = R.drawable.logout), // Replace with your image resource
                     contentDescription = null, // Decorative image
                     modifier = Modifier
                         .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Center the image
                 )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space added here
-
-/*                Text(
-                    text = stringResource(id = R.string.end_shift_title),
-                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                    color = Color.LightGray,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the subheader text
-                )*/
 
                 Text(
                     text = stringResource(id = R.string.end_shift_message),
@@ -91,31 +80,30 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Center the subheader text
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Blank space added here
 
                 FooterButtons(
                     firstButtonTitle = stringResource(id = R.string.cancel),
                     firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
                     secondButtonTitle = stringResource(id = R.string.yes),
-                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController) }
+                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController) },
+                    alignment = Alignment.TopCenter
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
-
-                Box(
-                    modifier = Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium)
-                    .align(Alignment.CenterHorizontally), // Aligns the Box itself horizontally within the parent
-                contentAlignment = Alignment.Center
+                Row(
+/*                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MaterialTheme.dimens.DP_4_CompactMedium),*/
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom
                 ) {
                     AppButton(
-                        onClick = {
-                            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
-                        },
-                        title = stringResource(id = R.string.print_shift_report),
+                        onClick = {navHostController.navigate(AppNavigationItems.TrainingScreen.route)  },
+                        title = stringResource(id = R.string.print_last_receipt),
+                        image = painterResource(id = R.drawable.ic_print)
                     )
                 }
 

@@ -519,7 +519,8 @@ fun FooterButtons(
     firstButtonTitle: String,
     firstButtonOnClick: () -> Unit,
     secondButtonTitle: String,
-    secondButtonOnClick: () -> Unit
+    secondButtonOnClick: () -> Unit,
+    alignment: Alignment = Alignment.BottomCenter // Default alignment
 ) {
     Box(
         modifier = Modifier
@@ -528,7 +529,7 @@ fun FooterButtons(
     ) {
         Row(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
+                .align(alignment)
                 .fillMaxWidth()
                 .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -1103,7 +1104,9 @@ fun OutlinedTextField(
     isPassword: Boolean = false, // New parameter to indicate if it's a password field
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     modifier: Modifier = Modifier,
-    amount: Boolean = false // New parameter to indicate if ₹ icon should be shown
+    amount: Boolean = false, // New parameter to indicate if ₹ icon should be shown
+    trailingIcon: @Composable (() -> Unit)? = null,
+    readOnly: Boolean = false,
 ) {
     // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
@@ -1136,6 +1139,8 @@ fun OutlinedTextField(
             onDone = { onDoneAction() }
         ),
         visualTransformation = visualTransformation, // Use passed visualTransformation
+        readOnly = readOnly,
+        trailingIcon = trailingIcon,
         modifier = modifier
             .focusRequester(focusRequester)
             .padding(MaterialTheme.dimens.DP_2_CompactMedium)

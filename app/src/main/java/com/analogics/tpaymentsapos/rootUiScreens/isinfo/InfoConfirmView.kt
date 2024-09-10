@@ -1,23 +1,34 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.isinfo
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -32,7 +43,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirmViewModel = hiltViewModel()){
-
+    var isEditable by remember { mutableStateOf(false) }
     Column {
 
         CommonTopAppBar(
@@ -65,14 +76,23 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
 
                 OutlinedTextField(
                     value = viewModel.rawInput,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    onValueChange = {if (isEditable) viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = "",
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController)},
                     visualTransformation = createAmountTransformation(),
-                    amount = true
+                    readOnly = !isEditable,
+                    trailingIcon = {Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.pencil),  // You can replace this with your vector image
+                        contentDescription = "Edit Icon",
+                        modifier = Modifier
+                            .padding(end = MaterialTheme.dimens.DP_20_CompactMedium)
+                            .size(24.dp) // Set the icon size here
+                            .clickable { isEditable = !isEditable },  // Toggle editable state on icon click
+                        tint = colorResource(id = R.color.purple_200)
+                    )}
                 )
 
 

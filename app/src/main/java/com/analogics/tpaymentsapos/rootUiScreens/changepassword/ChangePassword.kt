@@ -1,0 +1,118 @@
+package com.analogics.tpaymentsapos.rootUiScreens.changepassword
+
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.ui.theme.dimens
+
+@Composable
+fun ChangePasswordView(navHostController: NavHostController?) {
+    val viewModel: LoginViewModel = hiltViewModel()
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            AppHeader(
+                title = stringResource(id = R.string.change_password),
+                onBackButtonClick = { /* Handle back button click if needed */ },
+                icon1 = R.drawable.baseline_arrow_back_24,
+                onIcon1Click = {  },
+                backgroundColor = Color.White,
+                isIcon2Visible = false
+            )
+        },
+        content = { padding ->
+            Surface(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)) {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
+                ) {
+                    ImageView(
+                        imageId =  R.drawable.unlock, // Decorative image
+                        size = MaterialTheme.dimens.DP_40_CompactMedium     )
+
+                    TextView(
+                        text = stringResource(id = R.string.plz_ent_new_pass),
+                        fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                        color = Color.Black,
+                        modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
+                    )
+
+                    InputTextField(
+                        inputValue = viewModel.emailCredentials.value,
+                        onChange = { viewModel.onEmailChange(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(id = R.string.username),
+                        placeHolder = stringResource(id = R.string.placehldr_username),
+                        icon = Icons.Outlined.Person,
+                        keyboardType = KeyboardType.Uri
+                    )
+
+                    InputTextField(
+                        inputValue = viewModel.pwdCredentials.value,
+                        onChange = { viewModel.onPasswordChange(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(id = R.string.password),
+                        placeHolder = stringResource(id = R.string.placehldr_new_password),
+                        icon = Icons.Outlined.Lock,
+                        keyboardType = KeyboardType.Uri,
+                        isPasswordField = true,
+                        keyboardActions = KeyboardActions.Default.onDone,
+                        onActionDone = {
+                            viewModel.onLoginClick(navHostController,context)
+                        }
+                    )
+
+                    Box(
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
+                    ) {
+                        val message = stringResource(id = R.string.not_empty)
+                        AppButton(
+                            onClick = {
+                                if (viewModel.isFormValid) {
+                                    viewModel.onLoginClick(navHostController,context)
+                                } else {
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            title = stringResource(id = R.string.login)
+                        )
+                    }
+                }
+            }
+        }
+    )
+}

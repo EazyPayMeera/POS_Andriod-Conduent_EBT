@@ -107,7 +107,7 @@ fun CustomDrawerContent(
                     label = "Change Password",
                     function = {
                         onMenuItemClick("Settings")
-                        navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
+                        navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route)
                     }
                 )
                 Divider(color = Color.Gray, thickness = 1.dp)

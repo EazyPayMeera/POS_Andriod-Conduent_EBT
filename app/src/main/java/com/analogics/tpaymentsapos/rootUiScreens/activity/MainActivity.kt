@@ -32,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
+import com.analogics.tpaymentsapos.rootUiScreens.changepassword.ChangePasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.invoice.InvoiceView
@@ -280,6 +281,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.SucessScreen.route) {
             SucessView(navHostController)
+        }
+        composable(AppNavigationItems.ChangePasswordScreen.route) {
+            ChangePasswordView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,
