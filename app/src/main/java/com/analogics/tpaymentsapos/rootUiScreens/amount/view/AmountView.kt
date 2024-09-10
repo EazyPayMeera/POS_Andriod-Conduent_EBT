@@ -87,7 +87,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     keyboardType = KeyboardType.Number,
                     onDoneAction = { viewModel.onConfirm(navHostController) },
                     visualTransformation = createAmountTransformation(),
-                    amount = true
+                    amount = false
                 )
 
                 // Conditional Content based on TxnType
