@@ -279,7 +279,6 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         },
                         title = stringResource(id = R.string.done),
                     )
-
                 }
             }
         }

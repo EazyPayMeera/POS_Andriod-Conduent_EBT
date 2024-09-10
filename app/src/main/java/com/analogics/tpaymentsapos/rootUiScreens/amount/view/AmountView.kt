@@ -34,15 +34,15 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransf
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
-
-
+fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()) {
     Column {
 
+        // Top App Bar
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
+        // Main Content
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
@@ -51,126 +51,90 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
+                // Title Text
                 TextView(
-                    text = if (TxnInfo.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt) else if(TxnInfo.txnType==TxnType.PREAUTH) stringResource(
-                        id = R.string.auth_amt
-                    ) else stringResource(
-                        id = R.string.purchase_amt
-                    ),
+                    text = when (TxnInfo.txnType) {
+                        TxnType.REFUND -> stringResource(id = R.string.refund_amt)
+                        TxnType.PREAUTH -> stringResource(id = R.string.auth_amt)
+                        else -> stringResource(id = R.string.purchase_amt)
+                    },
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    1,
-                    Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                    modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
                     textAlign = TextAlign.Center
                 )
+
+                // Image View
                 ImageView(
-                    imageId = if(TxnInfo.txnType==TxnType.VOID || TxnInfo.txnType==TxnType.REFUND) R.drawable.void_amt else R.drawable.card,
+                    imageId = if (TxnInfo.txnType == TxnType.VOID || TxnInfo.txnType == TxnType.REFUND) R.drawable.void_amt else R.drawable.card,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
-                    alignment = Alignment.Center,
+                    alignment = Alignment.Center
                 )
 
+                // Outlined Text Field
                 OutlinedTextField(
                     value = viewModel.rawInput,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    onValueChange = { viewModel.onAmountChange(it) },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
+                    textStyle = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
+                        textAlign = TextAlign.End
+                    ),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController)},
+                    onDoneAction = { viewModel.onConfirm(navHostController) },
                     visualTransformation = createAmountTransformation(),
                     amount = true
                 )
 
-                if (TxnInfo.txnType==TxnType.VOID) {
+                // Conditional Content based on TxnType
+                if (TxnInfo.txnType == TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
-                    TextView(
-                        text = viewModel.transactionDateTime,
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    TextView(
-                        text = stringResource(id = R.string.card) + " ************6983",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.Start)
-                    )
-
-                    TextView(
-                        text = stringResource(id = R.string.auth_code) + " 896356",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.Start)
-                    )
-
-                    TextView(
-                        text = stringResource(id = R.string.no) + " 100034345364633",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.Start)
-                    )
-
-                    TextView(
-                        text = stringResource(id = R.string.inc_no) + " INVC1234",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.Start)
-                    )
-                    TextView(
-                        text = stringResource(id = R.string.pos_entry) + " Contact",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.Start)
-                    )
+                    listOf(
+                        stringResource(id = R.string.card) + " ************6983",
+                        stringResource(id = R.string.auth_code) + " 896356",
+                        stringResource(id = R.string.no) + " 100034345364633",
+                        stringResource(id = R.string.inc_no) + " INVC1234",
+                        stringResource(id = R.string.pos_entry) + " Contact"
+                    ).forEach {
+                        TextView(
+                            text = it,
+                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                                .align(Alignment.Start)
+                        )
+                    }
                 }
-                if(TxnInfo.txnType==TxnType.AUTHCAP)
-                {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
-                    TextView(
 
-                        text = stringResource(id = R.string.original_amount) + "20.00",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                            .align(Alignment.Start)
-                    )
-                    TextView(
-                        text = stringResource(id = R.string.date) + viewModel.transactionDateTime,
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                            .align(Alignment.Start)
-                    )
+                if (TxnInfo.txnType == TxnType.AUTHCAP) {
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
+
+                    listOf(
+                        stringResource(id = R.string.original_amount) + "20.00",
+                        stringResource(id = R.string.date) + viewModel.transactionDateTime
+                    ).forEach {
+                        TextView(
+                            text = it,
+                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                                .align(Alignment.Start)
+                        )
+                    }
                 }
             }
         }
 
+        // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { viewModel.onCancel(navHostController) },
@@ -179,4 +143,5 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         )
     }
 }
+
 

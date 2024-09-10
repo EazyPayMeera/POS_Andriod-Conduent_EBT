@@ -1139,7 +1139,7 @@ fun OutlinedTextField(
             .padding(MaterialTheme.dimens.DP_2_CompactMedium)
             .width(MaterialTheme.dimens.DP_280_CompactMedium)
             .height(MaterialTheme.dimens.DP_70_CompactMedium),
-        leadingIcon = if (amount) {
+        prefix = if (amount) {
             {
                 Text(
                     text = "\u20B9", // Unicode for ₹ symbol
