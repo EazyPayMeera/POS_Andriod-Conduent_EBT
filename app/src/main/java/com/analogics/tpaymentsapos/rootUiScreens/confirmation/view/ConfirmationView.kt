@@ -99,7 +99,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 )
                 TextView(
                     text = "₹${formatAmountdouble(totalAmount)}",
-                    fontSize = MaterialTheme.dimens.sp_44_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start),

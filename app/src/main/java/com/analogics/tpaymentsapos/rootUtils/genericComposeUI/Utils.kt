@@ -5,8 +5,8 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.analogics.paymentservicecore.logger.AppLogger
+import java.math.BigDecimal
 import java.text.DecimalFormat
-import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {
     return amount * 0.15
@@ -29,15 +29,24 @@ fun formatAmountdouble(amount: Double): String {
 
 fun formatAmount(input: String, decimalPlaces: Int = 2): String {
     try {
-        val amount  = removeNonDigits(input)
-        val dAmount: Double = amount.toDoubleOrNull()?:0.00
-        return "%,.${decimalPlaces}f".format(java.util.Locale.ENGLISH, dAmount/10.0.pow(decimalPlaces))
-    }catch (e:Exception)
-    {
-        AppLogger.e(AppLogger.MODULE.APP_UI,e.message.toString())
+        // Remove non-digit characters and limit to 12 digits
+        val digitsOnly = removeNonDigits(input)
+        val limitedDigits = digitsOnly.take(12)  // Limit to 12 digits
+
+        // Handle case where there is no valid input
+        if (limitedDigits.isEmpty()) {
+            return "0.00"
+        }
+
+        // Convert to BigDecimal for precise formatting
+        val amount = BigDecimal(limitedDigits).movePointLeft(decimalPlaces)
+        return "%,.${decimalPlaces}f".format(java.util.Locale.ENGLISH, amount.toDouble())
+    } catch (e: Exception) {
+        AppLogger.e(AppLogger.MODULE.APP_UI, e.message.toString())
     }
-    return ""
+    return "0.00"
 }
+
 
 fun calculateTip(amount: Double, tip: Double): Double {
     return amount * tip
