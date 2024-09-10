@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,6 +64,7 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                 OutlinedTextField(
                     value = viewModel.tipamount,
                     onValueChange = {viewModel.onTipChange(it)},
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     placeholder = stringResource(id = R.string.tip_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.Number,

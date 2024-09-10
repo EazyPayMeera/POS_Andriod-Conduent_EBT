@@ -51,11 +51,16 @@ fun removeNonDigits(input: String): String {
 fun createAmountTransformation(): VisualTransformation {
     return object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
-            val formatted = formatAmount(text.text)
+            // Format the text using your formatAmount function
+            val formatted = "₹${formatAmount(text.text)}"
+
+            // Define the offset mapping
             val offsetMapping = object : OffsetMapping {
                 override fun originalToTransformed(offset: Int): Int = formatted.length
                 override fun transformedToOriginal(offset: Int): Int = text.length
             }
+
+            // Return the TransformedText object
             return TransformedText(AnnotatedString(formatted), offsetMapping)
         }
     }

@@ -31,10 +31,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
+import com.analogics.tpaymentsapos.rootUiScreens.invoice.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.isinfo.InfoConfirmView
-import com.analogics.tpaymentsapos.rootUiScreens.login.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
 import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
@@ -42,7 +43,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
-import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.login.LanguageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
@@ -57,6 +57,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPass
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
+import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -276,6 +277,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.TxnListScreen.route) {
            TransactionListScreen(navHostController)
+        }
+        composable(AppNavigationItems.SucessScreen.route) {
+            SucessView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

@@ -45,7 +45,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmou
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
-
+import com.analogics.tpaymentsapos.ui.theme.tipBColor
 
 
 @Composable
@@ -159,7 +159,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             backgroundColor = if (selectedTip == "10%" && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
-                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
                             contentColor = Color.Black
                         ),
@@ -176,7 +176,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             backgroundColor = if (selectedTip == "15%" && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
-                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
                             contentColor = Color.Black
                         ),
@@ -193,7 +193,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             backgroundColor = if (selectedTip == "20%" && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
-                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
                             contentColor = Color.Black
                         ),
@@ -210,7 +210,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             backgroundColor = if (selectedTip == "Custom" && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
-                                Color.LightGray.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
                             contentColor = Color.Black
                         ),
@@ -343,7 +343,8 @@ fun TransactionSummaryItem(
             TextView(
                 text = label,
                 fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = Color.Gray,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
         }
@@ -351,7 +352,8 @@ fun TransactionSummaryItem(
         TextView(
             text = "₹${formatAmountdouble(amount)}",
             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-            color = Color.Gray,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
     }

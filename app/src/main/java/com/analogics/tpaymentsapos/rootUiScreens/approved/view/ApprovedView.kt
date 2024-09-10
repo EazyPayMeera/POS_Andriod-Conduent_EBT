@@ -121,7 +121,7 @@ fun CircularMenu(
                         }
                     }
             ) {
-                Text(
+                TextView(
                     text = option,
                     color = Color.Black,
                     fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
@@ -152,7 +152,7 @@ fun CircularMenu(
                     expanded = !expanded
                 }
         ) {
-            Text(
+            TextView(
                 text = stringResource(id = R.string.print),
                 color = Color.Black,
                 fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
@@ -261,6 +261,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                                     Authorisation.isEreceipt = true
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
+
                             }
                         }
                     )

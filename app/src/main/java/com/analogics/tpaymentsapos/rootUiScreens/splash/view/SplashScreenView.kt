@@ -6,7 +6,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.splash.view
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,19 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.tpaymentsapos.BuildConfig
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.splash.viewModel.SplashScreenViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -38,7 +33,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import java.util.logging.Logger
 
 @Composable
 fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewModel = hiltViewModel()) {
@@ -82,9 +76,9 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
 
             ImageView(
-                imageId= R.drawable.logo_analogics,
+                imageId= R.drawable.ic_launcher_foreground,
                 contentDescription = "",
-                modifier = Modifier.size(MaterialTheme.dimens.DP_60_CompactMedium)
+                modifier = Modifier.size(MaterialTheme.dimens.DP_70_CompactMedium)
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
