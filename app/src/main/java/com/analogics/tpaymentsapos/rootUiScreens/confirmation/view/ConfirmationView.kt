@@ -42,7 +42,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountdouble
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.analogics.tpaymentsapos.ui.theme.tipBColor
@@ -52,7 +52,7 @@ import com.analogics.tpaymentsapos.ui.theme.tipBColor
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     var updated_tip = updated_tip
-    val transAmount = amount.replace(",", "")
+    val transAmount = formatAmount(amount, withSymbol = false, withSeparator = false)
     var selectedTipPercentage by remember { mutableStateOf(0.0) }
     val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
     var selectedTip by remember { mutableStateOf("") }
@@ -98,7 +98,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = "₹${formatAmountdouble(totalAmount)}",
+                    text = formatAmount(totalAmount),
                     fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -231,7 +231,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             secondButtonOnClick = {
                 navHostController.navigate(
                     AppNavigationItems.CardScreen.createRoute(
-                        formatAmountdouble(totalAmount)
+                        formatAmount(totalAmount)
                     )
                 )
             }
@@ -350,7 +350,7 @@ fun TransactionSummaryItem(
         }
 
         TextView(
-            text = "₹${formatAmountdouble(amount)}",
+            text = formatAmount(amount),
             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
             color = Color.Black,
             fontWeight = FontWeight.Bold,

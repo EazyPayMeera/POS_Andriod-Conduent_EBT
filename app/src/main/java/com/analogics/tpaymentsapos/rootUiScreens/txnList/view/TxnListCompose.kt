@@ -2,6 +2,8 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -24,7 +26,10 @@ import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
@@ -74,14 +79,14 @@ fun SummarySection() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Purchase", style = MaterialTheme.typography.body2, color = Color.Gray)
-            Text("₹450.00", style = MaterialTheme.typography.body2)
+            Text(formatAmount(450.00), style = MaterialTheme.typography.body2)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Refund", style = MaterialTheme.typography.body2, color = Color.Gray)
-            Text("₹50.00", style = MaterialTheme.typography.body2)
+            Text(formatAmount(50.00), style = MaterialTheme.typography.body2)
         }
     }
 }
@@ -101,7 +106,7 @@ fun TransactionItem(transaction: TxnDataList) {
                 Text(transaction.type, style = MaterialTheme.typography.body2)
             }
             Text(
-                text = "₹${transaction.amount}",
+                text = formatAmount(transaction.amount),
                 style = MaterialTheme.typography.body2,
                 color = if (transaction.isPositive) Color(0xFF4CAF50) else Color.Red
             )
@@ -131,6 +136,7 @@ class FakeTransactionViewModel(mockTransactions: List<TxnDataList>) : TxnViewMod
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeaderSection() {
     Row(
@@ -142,7 +148,7 @@ fun HeaderSection() {
     ) {
         Column {
             Text(
-                text = "February 2020",
+                text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                 style = MaterialTheme.typography.caption,
                 color = Color(0xFFFFA000) // Orange color
             )
@@ -153,7 +159,7 @@ fun HeaderSection() {
                 color = Color.Gray
             )
             Text(
-                text = "₹400.00",
+                text = formatAmount(400.00),
                 style = MaterialTheme.typography.h4,
                 color = Color(0xFFFFA000) // Orange color
             )

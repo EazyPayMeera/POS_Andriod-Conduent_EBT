@@ -104,7 +104,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                             // Display the totalAmount here
                             Text(
-                                text = "₹$totalAmount",
+                                text = totalAmount,
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,

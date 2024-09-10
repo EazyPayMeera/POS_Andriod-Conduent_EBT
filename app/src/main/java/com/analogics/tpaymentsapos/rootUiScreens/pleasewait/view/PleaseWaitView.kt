@@ -96,7 +96,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
         delay(2000) // Additional delay to ensure the printing completes
         // For non-merchant receipt cases, navigate without waiting for printing
         val destination = when {
-            isMerchantReceipt -> AppNavigationItems.TrainingScreen.route
+            isMerchantReceipt -> AppNavigationItems.ApprovedScreen.route
             isEreceipt -> AppNavigationItems.EmailScreen.route
             else -> AppNavigationItems.ApprovedScreen.route
         }
