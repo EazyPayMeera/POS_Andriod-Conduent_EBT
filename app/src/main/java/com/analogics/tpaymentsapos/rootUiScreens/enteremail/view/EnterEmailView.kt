@@ -69,7 +69,7 @@ fun EnterEmailView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = email,
                     onValueChange = { newValue -> viewModel.updateEmail(newValue) },
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.email),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
                     keyboardType = KeyboardType.Email,
