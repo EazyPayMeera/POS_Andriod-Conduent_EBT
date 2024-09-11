@@ -76,24 +76,17 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 }
             })
 
-            // Phase 3: Navigate to the appropriate screen
 
         }
         delay(2000) // Additional delay to ensure the printing completes
-        // For non-merchant receipt cases, navigate without waiting for printing
-/*        val destination = when {
-            isMerchantReceipt -> AppNavigationItems.TrainingScreen.route
-            isEreceipt -> AppNavigationItems.EmailScreen.route
-            else -> AppNavigationItems.ApprovedScreen.route
-        }
-        navHostController.navigate(destination)*/
+
     }
 
-    if (isMerchantReceipt || isEreceipt) {
+    if (isMerchantReceipt || isCustomerReceipt) {
         CustomDialogBuilder.create()
             .setTitle("Printing")
             .setSubtitle("Please Wait")
-            .setSmallText(if(isMerchantReceipt) "Merchant Receipt" else "Customer Receipt")
+            .setSmallText(if(isCustomerReceipt) "Customer Receipt" else "Merchant Receipt")
             .setShowCloseButton(true) // Can set to false if you don't want the close button
             .setCancelable(true)
             .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
