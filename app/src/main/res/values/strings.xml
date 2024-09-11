@@ -34,6 +34,8 @@
     <string name="enter_email">Enter the Email Id</string>
     <string name="invoice_no">Invoice Number</string>
     <string name="auth_amt">Enter the Authorisation Amount</string>
+    <string name="authcap_amt">Enter the Auth Captured Amount</string>
+    <string name="void_pur">Void Purchase</string>
     <string name="purchase_amt">Enter the Transaction Amount</string>
     <string name="purchase">Purchase</string>
     <string name="pre_auth">Pre-Auth</string>

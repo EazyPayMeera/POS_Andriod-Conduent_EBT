@@ -175,6 +175,12 @@ class ApprovedViewModel(context: Context): ViewModel() {
         PrinterServiceRepository().initPrinter(context,iPrinterResultProviderListener)
     }
 
+    suspend fun addReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener)
+    {
+        Log.d(TAG, "Initializing printer in viewModel...")
+        PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
+    }
+
 
     fun GetStatus() {
         val status = printer.getPrinterStatus()

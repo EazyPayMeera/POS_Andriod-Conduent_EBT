@@ -5,38 +5,22 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.pleasewait.viewmodel.PleaseWaitViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GifImage
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.delay
 
@@ -47,10 +31,12 @@ fun PleaseWaitView(navHostController: NavHostController) {
     var invoiceno by remember { mutableStateOf("") }
     val isMerchantReceipt = Authorisation.isMerchantReceipt
     val isEreceipt = Authorisation.isEreceipt
+    val isCustomerReceipt = Authorisation.isCustomerReceipt
 
     val context = LocalContext.current
     val viewModel: PleaseWaitViewModel = viewModel { PleaseWaitViewModel(context) }
     var isPrintingStarted by remember { mutableStateOf(false) }
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (isMerchantReceipt) {
@@ -95,15 +81,32 @@ fun PleaseWaitView(navHostController: NavHostController) {
         }
         delay(2000) // Additional delay to ensure the printing completes
         // For non-merchant receipt cases, navigate without waiting for printing
-        val destination = when {
+/*        val destination = when {
             isMerchantReceipt -> AppNavigationItems.TrainingScreen.route
             isEreceipt -> AppNavigationItems.EmailScreen.route
             else -> AppNavigationItems.ApprovedScreen.route
         }
-        navHostController.navigate(destination)
+        navHostController.navigate(destination)*/
     }
 
-    Column {
+    if (isMerchantReceipt || isEreceipt) {
+        CustomDialogBuilder.create()
+            .setTitle("Printing")
+            .setSubtitle("Please Wait")
+            .setSmallText(if(isMerchantReceipt) "Merchant Receipt" else "Customer Receipt")
+            .setShowCloseButton(true) // Can set to false if you don't want the close button
+            .setCancelable(true)
+            .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+            .setProgressColor(colorResource(id = R.color.purple_200)) // Orange color
+            .setNavAction {
+                navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+            }
+            .buildDialog(onClose = { isDialogVisible = false })
+    }
+/*    Authorisation.isMerchantReceipt = false
+    Authorisation.isEreceipt = false*/
+
+    /*Column {
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
@@ -160,5 +163,5 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 )
             }
         }
-    }
+    }*/
 }

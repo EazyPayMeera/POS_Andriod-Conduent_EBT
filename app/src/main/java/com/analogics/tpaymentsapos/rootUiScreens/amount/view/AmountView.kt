@@ -58,6 +58,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     text = when(TxnInfo.txnType){
                         TxnType.REFUND -> stringResource(R.string.refund_amt)
                         TxnType.PREAUTH -> stringResource(R.string.auth_amt)
+                        TxnType.AUTHCAP -> stringResource(id = R.string.authcap_amt)
+                        TxnType.VOID -> stringResource(id = R.string.void_pur)
                         else -> stringResource(R.string.purchase_amt)
                     },
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
@@ -90,6 +92,17 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
                 if (TxnInfo.txnType==TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
+                    TextView(
+                        text = viewModel.transactionDateTime,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                            .align(Alignment.Start)
+                    )
+
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     listOf(
                         stringResource(id = R.string.card) + " ************6983",
@@ -110,7 +123,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     }
                 }
 
-                if (TxnInfo.txnType == TxnType.AUTHCAP) {
+                if (TxnInfo.txnType == TxnType.AUTHCAP || TxnInfo.txnType == TxnType.REFUND) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
                     listOf(

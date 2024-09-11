@@ -175,7 +175,6 @@ fun TippingView(
                         modifier = Modifier
                             .width(MaterialTheme.dimens.DP_100_CompactMedium)
                             .height(MaterialTheme.dimens.DP_34_CompactMedium),
-                            /*.border(MaterialTheme.dimens.DP_1_CompactMedium, Color.LightGray),*/
                         onClick = {},
                         elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium) // Use CardDefaults for elevation
 

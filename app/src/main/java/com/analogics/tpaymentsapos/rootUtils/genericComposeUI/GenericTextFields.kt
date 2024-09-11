@@ -670,6 +670,7 @@ fun FooterButtons(
 object Authorisation {
     var isMerchantReceipt: Boolean = false
     var isEreceipt: Boolean = false
+    var isCustomerReceipt = false
 }
 
 @Composable

@@ -7,10 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +24,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.pin.viewmodel.PinViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -32,6 +39,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun PinView(navHostController: NavHostController) {
     // Get the ViewModel
     val pinViewModel: PinViewModel = hiltViewModel()
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     Column {
         CommonTopAppBar(
@@ -70,7 +78,7 @@ fun PinView(navHostController: NavHostController) {
                     placeholder = stringResource(id = R.string.enter_Pin),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.NumberPassword,
-                    onDoneAction = { pinViewModel.onDoneAction(navHostController) },
+                    onDoneAction = { isDialogVisible=true },
                     isPassword = true
                 )
             }
@@ -80,8 +88,23 @@ fun PinView(navHostController: NavHostController) {
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { pinViewModel.onCancelAction(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { pinViewModel.onDoneAction(navHostController) }
+            secondButtonOnClick = { isDialogVisible=true }
         )
+
+        if (isDialogVisible) {
+            CustomDialogBuilder.create()
+                .setTitle("Processing")
+                .setSubtitle("Please Wait")
+                .setSmallText("Processing...")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(colorResource(id = R.color.purple_200)) // Orange color
+                .setNavAction {
+                    navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
+        }
 
     }
 }

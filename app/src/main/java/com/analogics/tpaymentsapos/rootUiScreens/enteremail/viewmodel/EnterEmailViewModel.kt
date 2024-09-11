@@ -19,9 +19,9 @@ class EnterEmailViewModel : ViewModel() {
         globalVariable = _email.value
     }
 
-    fun navigateToAmountScreen(navHostController: NavHostController) {
+    fun navigateToEmailScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+            navHostController.navigate(AppNavigationItems.EmailScreen.route)
         }
     }
 

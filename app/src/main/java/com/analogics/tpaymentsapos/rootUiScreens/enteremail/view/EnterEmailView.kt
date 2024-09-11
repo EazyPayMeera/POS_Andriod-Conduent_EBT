@@ -74,7 +74,7 @@ fun EnterEmailView(navHostController: NavHostController) {
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
                     keyboardType = KeyboardType.Email,
                     onDoneAction = {
-                        viewModel.navigateToAmountScreen(navHostController)
+                        viewModel.navigateToEmailScreen(navHostController)
                     },
                     isPassword = false
                 )
@@ -87,7 +87,7 @@ fun EnterEmailView(navHostController: NavHostController) {
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { viewModel.navigateToTrainingScreen(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.navigateToAmountScreen(navHostController) }
+            secondButtonOnClick = { viewModel.navigateToEmailScreen(navHostController) }
         )
     }
 }

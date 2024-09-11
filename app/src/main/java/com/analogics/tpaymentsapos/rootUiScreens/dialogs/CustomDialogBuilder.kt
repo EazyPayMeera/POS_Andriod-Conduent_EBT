@@ -18,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,8 +29,10 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.ui.theme.dashboardCardBgColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.delay
 
 class CustomDialogBuilder private constructor() {
+
 
     private var title: String = "Title"
     private var subtitle: String = "Subtitle"
@@ -38,6 +41,7 @@ class CustomDialogBuilder private constructor() {
     private var isCancelable: Boolean = true
     private var backgroundColor: Color = dashboardCardBgColor
     private var progressColor: Color = Color(0xFFFF9800)
+    private var navAction: (() -> Unit)? = null // New parameter for navigation actio
 
 
     fun setTitle(title: String) = apply { this.title = title }
@@ -47,6 +51,7 @@ class CustomDialogBuilder private constructor() {
     fun setCancelable(cancelable: Boolean) = apply { this.isCancelable = cancelable }
     fun setBackgroundColor(color: Color) = apply { this.backgroundColor = color }
     fun setProgressColor(color: Color) = apply { this.progressColor = color }
+    fun setNavAction(action: () -> Unit) = apply { this.navAction = action } // Set navigation action
 
     @Composable
     fun buildDialog(onClose: () -> Unit) {
@@ -145,6 +150,11 @@ class CustomDialogBuilder private constructor() {
                     )
                 }
                     }
+            }
+            // Delay and navigate after 2 seconds
+            LaunchedEffect(Unit) {
+                delay(2000) // 2 seconds delay
+                navAction?.invoke() // Replace "destination_route" with your actual route
             }
             
         }
