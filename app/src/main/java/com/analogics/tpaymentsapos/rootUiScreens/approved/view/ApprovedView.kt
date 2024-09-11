@@ -254,7 +254,11 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         },
                         onMenuOptionClick = { option ->
                             when (option) {
-                                "Customer Receipt", "Merchant Receipt" -> {
+                                "Customer Receipt" -> {
+                                    Authorisation.isCustomerReceipt = true
+                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+                                }
+                                "Merchant Receipt" -> {
                                     Authorisation.isMerchantReceipt = true
                                     //navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                                     viewModel.printReceipt(coroutineScope)

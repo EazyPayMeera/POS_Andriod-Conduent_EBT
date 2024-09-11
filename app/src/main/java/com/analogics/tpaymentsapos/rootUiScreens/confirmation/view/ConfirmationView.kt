@@ -29,7 +29,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -51,7 +50,7 @@ import com.analogics.tpaymentsapos.ui.theme.tipBColor
 @Composable
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
-    var updated_tip = updated_tip
+    val updated_tip = updated_tip
     val transAmount = formatAmount(amount, withSymbol = false, withSeparator = false)
     var selectedTipPercentage by remember { mutableStateOf(0.0) }
     val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
@@ -61,7 +60,8 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
     val igstAmount = calculateTax(amountDouble)
     var isTipEnabled by remember { mutableStateOf(false) }
 
-    val tipAmount = calculateTip(amountDouble, selectedTipPercentage / 100)
+    val calculatedTip = calculateTip(amountDouble, selectedTipPercentage / 100)
+    val tipAmount = if (calculatedTip != 0.0) calculatedTip else updated_tip
     val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
@@ -156,7 +156,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                         onClick = { selectedTip = "10%"; selectedTipPercentage = 10.0 },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (selectedTip == "10%" && isTipEnabled) {
+                            backgroundColor = if (selectedTip == stringResource(id = R.string.ten) && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -164,9 +164,15 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             contentColor = Color.Black
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
                     ) {
-                        Text(text = "10%")
+                        Text(text = stringResource(id = R.string.ten))
                     }
 
                     Button(
@@ -181,16 +187,23 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             contentColor = Color.Black
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
+
                     ) {
-                        Text(text = "15%")
+                        Text(text = stringResource(id = R.string.fifteen))
                     }
 
                     Button(
                         onClick = { selectedTip = "20%"; selectedTipPercentage = 20.0  },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (selectedTip == "20%" && isTipEnabled) {
+                            backgroundColor = if (selectedTip == stringResource(id = R.string.twenty) && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -198,16 +211,22 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             contentColor = Color.Black
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
                     ) {
-                        Text(text = "20%")
+                        Text(text = stringResource(id = R.string.twenty))
                     }
 
                     Button(
                         onClick = { navHostController.navigate(AppNavigationItems.TipScreen.route); selectedTip = "Custom" },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (selectedTip == "Custom" && isTipEnabled) {
+                            backgroundColor = if (selectedTip == stringResource(id = R.string.custom) && isTipEnabled) {
                                 dashboardOrangeColor
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -215,9 +234,16 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             contentColor = Color.Black
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
+                        //modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
                     ) {
-                        Text(text = "Custom")
+                        Text(text = stringResource(id = R.string.custom))
                     }
                 }
             }
@@ -336,7 +362,7 @@ fun TransactionSummaryItem(
                 contentDescription = null,
                 tint = dashboardOrangeColor, // Adjust the color to match the bullet color
                 modifier = Modifier
-                    .size(15.dp) // Adjust size as needed
+                    .size(MaterialTheme.dimens.DP_25_CompactMedium) // Adjust size as needed
                     .padding(end = MaterialTheme.dimens.DP_10_CompactMedium) // Spacing between bullet and text
             )
 

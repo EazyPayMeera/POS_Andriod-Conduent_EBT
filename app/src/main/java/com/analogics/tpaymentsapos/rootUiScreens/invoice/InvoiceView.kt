@@ -90,6 +90,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 )
 
                 if (TxnInfo.txnType in listOf(TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP)) {
+
                     TextView(
                         text = "",
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,

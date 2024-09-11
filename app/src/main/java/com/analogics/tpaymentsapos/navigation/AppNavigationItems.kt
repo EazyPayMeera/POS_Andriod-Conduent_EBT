@@ -24,6 +24,7 @@ sealed class AppNavigationItems(val route: String) {
  object InfoConfirmScreen : AppNavigationItems(NavScreensEnum.InfoConfirmView.name)
  object TxnListScreen:AppNavigationItems(NavScreensEnum.TxnListView.name)
  object SucessScreen:AppNavigationItems(NavScreensEnum.SucessView.name)
+ object ChangePasswordScreen:AppNavigationItems(NavScreensEnum.ChangePasswordView.name)
 
 
  object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
