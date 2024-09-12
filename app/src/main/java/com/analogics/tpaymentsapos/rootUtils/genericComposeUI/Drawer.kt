@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -47,7 +46,7 @@ fun CustomDrawerContent(
         modifier = Modifier
             .fillMaxHeight()
             .background(Color(0xFFFAFAF7)) // Match the drawer background color
-            .padding(12.dp)
+            .padding(MaterialTheme.dimens.DP_13_CompactMedium)
     ) {
         // Header with Name and Close Icon
         Box(
@@ -58,20 +57,20 @@ fun CustomDrawerContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp), // Apply padding here
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium), // Apply padding here
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.application_name),
                     style = MaterialTheme.typography.headlineSmall.copy(
-                        color = Color(0xFFFFA500) // Orange color
+                        color = MaterialTheme.colorScheme.primary // Orange color
                     )
                 )
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_21_CompactMedium))
                 IconButton(
                     onClick = onCloseDrawer,
-                    modifier = Modifier.size(30.dp) // Adjust the size here
+                    modifier = Modifier.size(MaterialTheme.dimens.DP_33_CompactMedium) // Adjust the size here
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -81,13 +80,13 @@ fun CustomDrawerContent(
             }
         }
 
-        Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
+        Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
         GenericCard(
             modifier = Modifier
-                .padding(top = 10.dp)
+                .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                 .fillMaxWidth(),
-            elevation = 10.dp,
-            shape = RoundedCornerShape(8.dp)
+            elevation = MaterialTheme.dimens.DP_11_CompactMedium,
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
         ) {
             Column(
                 modifier = Modifier
@@ -101,7 +100,7 @@ fun CustomDrawerContent(
                         navHostController.navigate(AppNavigationItems.LanguageScreen.route)
                     }
                 )
-                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
+                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                 DrawerMenuItem(
                     icon = Icons.Default.VpnKey,
                     label = "Change Password",
@@ -110,7 +109,7 @@ fun CustomDrawerContent(
                         navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route)
                     }
                 )
-                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
+                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                 DrawerMenuItem(
                     icon = Icons.Default.Settings,
                     label = "Configuration",
@@ -119,7 +118,7 @@ fun CustomDrawerContent(
                         navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
                     }
                 )
-                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
+                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                 DrawerMenuItem(
                     icon = Icons.Default.Logout,
                     label = "Logout",
@@ -147,10 +146,10 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.size(30.dp),
+            modifier = Modifier.size(MaterialTheme.dimens.DP_33_CompactMedium),
             tint = MaterialTheme.colorScheme.onSecondary
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_24_CompactMedium))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium
