@@ -7,7 +7,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +44,7 @@ fun PreauthView(navHostController: NavHostController) {
                 TextView(
                     text = stringResource(id = R.string.sel_pre_auth),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
@@ -65,8 +64,8 @@ fun PreauthView(navHostController: NavHostController) {
                     text = stringResource(id = R.string.new_auth),
                     onClick = {
                         navHostController.navigate(AppNavigationItems.InvoiceScreen.route)},
-                    backgroundColor = Color(0xFFEDEDED),
-                    contentColor = Color.Black,
+                    backgroundColor = MaterialTheme.colorScheme.onSecondary,
+                    contentColor = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
                 )
             }

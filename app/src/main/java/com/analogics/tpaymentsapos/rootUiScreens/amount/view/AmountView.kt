@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -32,6 +31,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.ui.theme.dimens
+
 
 @Composable
 fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
@@ -63,7 +63,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                         else -> stringResource(R.string.purchase_amt)
                     },
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
@@ -95,7 +95,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     TextView(
                         text = viewModel.transactionDateTime,
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
@@ -114,7 +114,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                         TextView(
                             text = it,
                             fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -133,7 +133,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                         TextView(
                             text = it,
                             fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)

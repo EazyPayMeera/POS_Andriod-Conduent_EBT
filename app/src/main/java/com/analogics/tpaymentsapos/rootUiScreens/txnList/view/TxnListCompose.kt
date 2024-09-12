@@ -2,9 +2,19 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Print
@@ -73,14 +83,14 @@ fun SummarySection() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Purchase", style = MaterialTheme.typography.body2, color = Color.Gray)
+            Text("Purchase", style = MaterialTheme.typography.body2, color = MaterialTheme.colors.onSecondary)
             Text("₹450.00", style = MaterialTheme.typography.body2)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Refund", style = MaterialTheme.typography.body2, color = Color.Gray)
+            Text("Refund", style = MaterialTheme.typography.body2, color = MaterialTheme.colors.onSecondary)
             Text("₹50.00", style = MaterialTheme.typography.body2)
         }
     }
@@ -97,7 +107,7 @@ fun TransactionItem(transaction: TxnDataList) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(transaction.date, style = MaterialTheme.typography.caption, color = Color.Gray)
+                Text(transaction.date, style = MaterialTheme.typography.caption, color = MaterialTheme.colors.onSecondary)
                 Text(transaction.type, style = MaterialTheme.typography.body2)
             }
             Text(

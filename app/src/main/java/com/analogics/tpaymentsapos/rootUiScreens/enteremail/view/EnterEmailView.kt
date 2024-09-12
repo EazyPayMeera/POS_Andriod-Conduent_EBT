@@ -10,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -54,7 +53,7 @@ fun EnterEmailView(navHostController: NavHostController) {
                 TextView(
                     text = stringResource(id = R.string.enter_email),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),

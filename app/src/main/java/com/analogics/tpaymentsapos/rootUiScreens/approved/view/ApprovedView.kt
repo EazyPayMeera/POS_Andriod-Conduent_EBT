@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -79,7 +78,7 @@ fun CircularMenu(
     val distance = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
 
-    val printButtonInitialColor = colorResource(id = R.color.purple_200)
+    val printButtonInitialColor = MaterialTheme.colorScheme.primary
     var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
 
     LaunchedEffect(expanded) {
@@ -112,7 +111,7 @@ fun CircularMenu(
                     )
                     .size(MaterialTheme.dimens.DP_60_CompactMedium)
                     .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape)
-                    .background(colorResource(id = R.color.purple_200), shape = CircleShape)
+                    .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
                     .clickable {
                         onMenuOptionClick(option)
                         expanded = false
@@ -123,7 +122,7 @@ fun CircularMenu(
             ) {
                 TextView(
                     text = option,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -154,7 +153,7 @@ fun CircularMenu(
         ) {
             TextView(
                 text = stringResource(id = R.string.print),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -204,7 +203,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 TextView(
                     text = stringResource(id = R.string.approved),
                     fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -216,7 +215,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                     Text(
                         text = "₹$updated_amt",
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                        color = colorResource(id = R.color.purple_200),
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )

@@ -4,8 +4,10 @@ import android.content.Context
 import android.device.ScanManager
 import android.os.Bundle
 import com.urovo.file.logfile
+import com.urovo.i9000s.api.emv.Funs.context
 import com.urovo.sdk.scanner.InnerScannerImpl
 import com.urovo.sdk.scanner.listener.ScannerListener
+
 
 
 class Scanner constructor() {
@@ -37,18 +39,50 @@ class Scanner constructor() {
 
     }
 
-    fun startScanning(                // For Start Scanning
-        context: Context,
-        data: Bundle?,
-        cameraId: Int,
-        timeout: Long,
-        listener: ScannerListener?
+    fun startScanner(
+        data: Bundle,
+        cameraId: Int = 1,
+        timeout: Long = 5000L, // default timeout set to 5 seconds
+        onScanned: (qrCode: String) -> Unit,
+        onError: (errorCode: Int, message: String) -> Unit,
+        onTimeout: () -> Unit,
+        onCancel: () -> Unit
     ) {
-        // Calling startScan on mScanner object with the passed parameters
-        mScanner?.startScan(context, data, cameraId, timeout, listener)
+        val listener = object : ScannerListener {
+            override fun onSuccess(qrCode: String) {
+                onScanned(qrCode)
+            }
+
+            override fun onError(errorCode: Int, message: String) {
+                onError(errorCode, message)
+            }
+
+            override fun onTimeout() {
+                onTimeout()
+            }
+
+            override fun onCancel() {
+                onCancel()
+            }
+        }
+
+        try {
+            // Call the startScan method from InnerScannerImpl
+            mScanner?.startScan(context, data, cameraId, timeout, listener)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onError(-1, "Failed to start scanner: ${e.message}")
+        }
     }
 
-
-
+    // Function to stop the scanner
+    fun stopScanner() {
+        try {
+            // Safely call stopScan if scannerImpl is not null
+            mScanner?.stopScan()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
 }

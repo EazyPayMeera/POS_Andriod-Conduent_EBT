@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
@@ -28,9 +28,7 @@ import kotlinx.coroutines.delay
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
-    var invoiceno by remember { mutableStateOf("") }
     val isMerchantReceipt = Authorisation.isMerchantReceipt
-    val isEreceipt = Authorisation.isEreceipt
     val isCustomerReceipt = Authorisation.isCustomerReceipt
 
     val context = LocalContext.current
@@ -82,7 +80,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
     }
 
-    if (isMerchantReceipt || isCustomerReceipt) {
+    /*if (isMerchantReceipt || isCustomerReceipt) {*/
         CustomDialogBuilder.create()
             .setTitle("Printing")
             .setSubtitle("Please Wait")
@@ -90,12 +88,12 @@ fun PleaseWaitView(navHostController: NavHostController) {
             .setShowCloseButton(true) // Can set to false if you don't want the close button
             .setCancelable(true)
             .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-            .setProgressColor(colorResource(id = R.color.purple_200)) // Orange color
+            .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
             .setNavAction {
                 navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
             }
             .buildDialog(onClose = { isDialogVisible = false })
-    }
+
 /*    Authorisation.isMerchantReceipt = false
     Authorisation.isEreceipt = false*/
 
@@ -117,7 +115,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 TextView(
                     text = if (isMerchantReceipt) stringResource(id = R.string.printing) else stringResource(id = R.string.processing),
                     fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -128,7 +126,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 TextView(
                     text = stringResource(id = R.string.plz_wait),
                     fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -139,7 +137,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                     TextView(
                         text = stringResource(id = R.string.merchant_recp),
                         fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSecondary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)

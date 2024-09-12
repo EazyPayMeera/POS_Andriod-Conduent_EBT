@@ -59,7 +59,7 @@ fun ShowCardView(
     GenericCard(
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium),
         elevation = MaterialTheme.dimens.DP_4_CompactMedium,
-        backgroundColor = Color.White, // Card background color
+        backgroundColor = MaterialTheme.colorScheme.onPrimary, // Card background color
         modifier = Modifier
             .fillMaxHeight()
             .padding(MaterialTheme.dimens.DP_15_CompactMedium)
@@ -99,7 +99,7 @@ fun ShowCardView(
                 TextView(
                     text = imageSlider[pageIndex].headNote,
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(
                         vertical = MaterialTheme.dimens.DP_20_CompactMedium
@@ -192,7 +192,7 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
                 TextView(
                     text = stringResource(id = R.string.skip),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     fontWeight = FontWeight.Normal,
                     maxLines = 1,
                     modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium), // Adjust padding

@@ -20,12 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -36,9 +34,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreenView(navHostController: NavHostController?) {
@@ -52,7 +47,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                 onBackButtonClick = { /* Handle back button click if needed */ },
                 icon1 = R.drawable.baseline_arrow_back_24,
                 onIcon1Click = {  },
-                backgroundColor = Color.White,
+                backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
             )
         },
@@ -75,7 +70,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                     TextView(
                         text = stringResource(id = R.string.plz_login),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
 
@@ -107,7 +102,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                     // "Forgot Password?" clickable text
                     TextView(
                         text = stringResource(id = R.string.forget_pswd),
-                        color = colorResource(id = R.color.purple_200),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier

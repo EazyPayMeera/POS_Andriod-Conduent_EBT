@@ -68,7 +68,7 @@ fun LanguageView(navHostController: NavHostController) {
                 TextView(
                     text = stringResource(id = R.string.select_lang),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
@@ -85,7 +85,7 @@ fun LanguageView(navHostController: NavHostController) {
 
                 // Divider after "English"
                 Divider(
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     thickness = MaterialTheme.dimens.DP_1_CompactMedium,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -114,7 +114,7 @@ fun LanguageView(navHostController: NavHostController) {
                     TextView(
                         text = stringResource(id = R.string.english),
                         fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         //fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
                         textAlign = TextAlign.Center
@@ -127,7 +127,7 @@ fun LanguageView(navHostController: NavHostController) {
                         onClick = { selectedLanguage = englishText },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = dashboardOrangeColor,
-                            unselectedColor = Color.Gray
+                            unselectedColor = MaterialTheme.colorScheme.onSecondary
                         )
                     )
                 }
@@ -135,7 +135,7 @@ fun LanguageView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                 // Divider after "Hindi"
                 Divider(
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     thickness = MaterialTheme.dimens.DP_1_CompactMedium,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -163,7 +163,7 @@ fun LanguageView(navHostController: NavHostController) {
                     TextView(
                         text = stringResource(id = R.string.hindi),
                         fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         //fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
                         textAlign = TextAlign.Center
@@ -175,7 +175,7 @@ fun LanguageView(navHostController: NavHostController) {
                         onClick = { selectedLanguage = hindiText},
                         colors = RadioButtonDefaults.colors(
                             selectedColor = dashboardOrangeColor,
-                            unselectedColor = Color.Gray
+                            unselectedColor = MaterialTheme.colorScheme.onSecondary
                         )
                     )
                 }

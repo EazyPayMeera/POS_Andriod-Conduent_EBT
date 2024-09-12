@@ -2,7 +2,12 @@ package com.analogics.tpaymentsapos.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFF7931E)
+val OrangeThemeColor = Color(0xFFF7931E)
+val White = Color(0xFFF0EEEE)
+val OnPrimary = Color(0xFFFFFFFF)
+val PrimaryContainer = Color(0xFFCCCCCC)
+val Grey = Color(0xFF888888)
+val Black = Color(0xFF000000)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 

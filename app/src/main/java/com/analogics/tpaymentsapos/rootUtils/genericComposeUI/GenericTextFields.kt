@@ -104,7 +104,7 @@ fun InputTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     keyboardActions: (KeyboardActionScope.() -> Unit)? = null, // Changed to nullable
     isPasswordField: Boolean = false,
-    placeholderColor: Color = Color.Gray,
+    placeholderColor: Color = MaterialTheme.colorScheme.onSecondary,
     onActionDone: (() -> Unit)? = null // Added onActionDone parameter
 ) {
     var isPasswordVisible by remember { mutableStateOf(!isPasswordField) }
@@ -119,7 +119,7 @@ fun InputTextField(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium), // Need to change Here
-                tint = Color.Black
+                tint = MaterialTheme.colorScheme.tertiary
             )
         },
         trailingIcon = {
@@ -154,10 +154,10 @@ fun InputTextField(
         },
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.purple_200),
-            unfocusedBorderColor = Color.LightGray,
-            focusedLabelColor = colorResource(id = R.color.purple_200),
-            unfocusedLabelColor = Color.LightGray
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer
         )
     )
 }
@@ -177,7 +177,7 @@ fun AppButton(
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
             .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
             .background(
-                colorResource(R.color.purple_200),
+                color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
             )
     )
@@ -187,8 +187,8 @@ fun AppButton(
                 .wrapContentSize()
                 .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
             colors = buttonColors(
-                contentColor = Color.Black,
-                containerColor = colorResource(R.color.purple_200)
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.primary
             ),
             ) {
             Row(
@@ -241,7 +241,7 @@ fun CustomSurface(
     }
 
     Surface(
-        color = Color.White,
+        color = MaterialTheme.colorScheme.onPrimary,
         modifier = modifier
             .padding(MaterialTheme.dimens.DP_24_CompactMedium)
             .fillMaxWidth()
@@ -260,7 +260,7 @@ fun CustomSurface(
             Text(
                 text = titleText,
                 fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
@@ -297,9 +297,9 @@ fun CustomSurface(
                     .height(MaterialTheme.dimens.DP_70_CompactMedium),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
-                    unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
+                    unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
                     focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
-                    unfocusedLabelColor = Color.LightGray // Light grey color for unfocused label
+                    unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer // Light grey color for unfocused label
                 )
             )
 
@@ -369,7 +369,7 @@ fun CommonLayout(
         )
 
         Surface(
-            color = colorResource(id = R.color.purple_200), // Orange color for the outer Surface
+            color = MaterialTheme.colorScheme.primary, // Orange color for the outer Surface
             modifier = Modifier
                 .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the outer Surface
                 .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
@@ -388,7 +388,7 @@ fun CommonLayout(
                     )
             ) {
                 Surface(
-                    color = Color.White, // White color for the inner Surface
+                    color = MaterialTheme.colorScheme.onPrimary, // White color for the inner Surface
                     modifier = Modifier.fillMaxSize(), // Fill available space
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium) // Rounded corners for the inner Surface
                 ) {
@@ -428,7 +428,7 @@ fun OkButton(
             .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Apply shadow directly to the Button
             .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp)),
         colors = buttonColors(
-            contentColor = Color.Black,
+            contentColor = MaterialTheme.colorScheme.tertiary,
             containerColor = colorResource(R.color.grey)
         ),
         onClick = onClick
@@ -547,7 +547,7 @@ fun FooterButtons(
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                     )
                     .background(
-                        color = colorResource(R.color.white),
+                        color = MaterialTheme.colorScheme.secondary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                     )
             ) {
@@ -562,11 +562,11 @@ fun FooterButtons(
                         .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
                             width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
-                            color = if (isFirstButtonPressed) colorResource(id = R.color.purple_200) else Color.Transparent,
+                            color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
                     colors = buttonColors(
-                        contentColor = Color.Black,
+                        contentColor = MaterialTheme.colorScheme.tertiary,
                         containerColor = colorResource(R.color.grey)
                     ),
                     elevation = ButtonDefaults.buttonElevation(
@@ -580,7 +580,7 @@ fun FooterButtons(
                     TextView(
                         text = firstButtonTitle.uppercase(),
                         fontSize = /*MaterialTheme.dimens.SP_21_CompactMedium*/15.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         1,
                         textAlign = TextAlign.Center
@@ -605,7 +605,7 @@ fun FooterButtons(
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                     )
                     .background(
-                        color = colorResource(R.color.white),
+                        color = MaterialTheme.colorScheme.secondary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                     )
             ) {
@@ -619,12 +619,12 @@ fun FooterButtons(
                         .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
                             width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
-                            color = if (isSecondButtonPressed) colorResource(id = R.color.purple_200) else Color.Transparent,
+                            color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                         ),
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
                     colors = buttonColors(
-                        contentColor = Color.Black,
+                        contentColor = MaterialTheme.colorScheme.tertiary,
                         containerColor = colorResource(R.color.grey)
                     ),
                     elevation = ButtonDefaults.buttonElevation(
@@ -638,7 +638,7 @@ fun FooterButtons(
                     TextView(
                         text = secondButtonTitle.uppercase(),
                         fontSize = /*MaterialTheme.dimens.SP_21_CompactMedium*/15.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         1,
                         textAlign = TextAlign.Center
@@ -678,7 +678,7 @@ fun ScannerButton(
     text: String,
     onClick: () -> Unit,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = Color.White,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     modifier: Modifier = Modifier
 ) {
     Button(
@@ -718,7 +718,7 @@ fun PreauthTypeSelectionSurface(
     onSecondButtonClick: () -> Unit
 ) {
     Surface(
-        color = Color.White,
+        color = MaterialTheme.colorScheme.onPrimary,
         modifier = Modifier
             .padding(MaterialTheme.dimens.DP_35_CompactMedium)
             .width(MaterialTheme.dimens.DP_430_CompactMedium)
@@ -735,7 +735,7 @@ fun PreauthTypeSelectionSurface(
             Text(
                 text = title,
                 fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
@@ -755,8 +755,8 @@ fun PreauthTypeSelectionSurface(
             ScannerButton(
                 text = firstButtonText,
                 onClick = onFirstButtonClick,
-                backgroundColor = colorResource(id = R.color.white),
-                contentColor = Color.Black,
+                backgroundColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
             )
 
@@ -765,7 +765,7 @@ fun PreauthTypeSelectionSurface(
             Text(
                 text = stringResource(id = R.string.or),
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(bottom = MaterialTheme.dimens.DP_30_CompactMedium)
@@ -776,7 +776,7 @@ fun PreauthTypeSelectionSurface(
                 text = secondButtonText,
                 onClick = onSecondButtonClick,
                 backgroundColor = Color(0xFFEDEDED),
-                contentColor = Color.Black,
+                contentColor = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
             )
         }
@@ -795,10 +795,10 @@ fun CardWithImageText(
             .clickable(onClick = onClick)
             .border(
                 width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
-                color = if (isSelected) colorResource(id = R.color.purple_200) else Color.Transparent, // Orange color if selected, otherwise transparent
+                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, // Orange color if selected, otherwise transparent
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
             ),
-        backgroundColor = colorResource(id = R.color.white),
+        backgroundColor = MaterialTheme.colorScheme.secondary,
         elevation = MaterialTheme.dimens.DP_5_CompactMedium,
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
     ) {
@@ -870,7 +870,7 @@ fun AppHeader(
         title = {
             Text(
                 text = title,
-                color = Color.Black, // Ensure text color contrasts with the background
+                color = MaterialTheme.colorScheme.tertiary, // Ensure text color contrasts with the background
                 style = TextStyle(
                     fontSize = MaterialTheme.dimens.SP_23_CompactMedium, // Ensure font size is large enough
                     fontWeight = FontWeight.Bold
@@ -925,7 +925,7 @@ fun TopBoldText(
         Text(
             text = text,
             fontSize = fontSize, // Use the provided fontSize
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.tertiary,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(MaterialTheme.dimens.DP_21_CompactMedium)
         )
@@ -971,13 +971,13 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
             .background(
-                color = colorResource(id = R.color.purple_200),
+                color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
     ) {
         Card(
             elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
-            backgroundColor= Color.White,
+            backgroundColor= MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
@@ -1007,13 +1007,13 @@ fun DialogueScreen(componentView :@Composable () -> Unit) {
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
             .background(
-                color = colorResource(id = R.color.purple_200),
+                color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
     ) {
         Card(
             elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
-            backgroundColor= Color.White,
+            backgroundColor= MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
@@ -1044,7 +1044,7 @@ fun SmallSurface(
     val surfaceWidth = MaterialTheme.dimens.DP_410_CompactMedium
 
     Surface(
-        color = Color.White,
+        color = MaterialTheme.colorScheme.onPrimary,
         modifier = modifier
             .padding(MaterialTheme.dimens.DP_24_CompactMedium)
             .fillMaxWidth()
@@ -1153,17 +1153,17 @@ fun OutlinedTextField(
                     text = "\u20B9", // Unicode for ₹ symbol
                     fontSize = MaterialTheme.dimens.SP_29_CompactMedium, // Adjust the size of the icon
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black, // Set the color to black,
+                    color = MaterialTheme.colorScheme.tertiary, // Set the color to black,
                     textAlign = TextAlign.Center
 
                 )
             }
         } else null,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.purple_200), // Orange color for focused state
-            unfocusedBorderColor = Color.LightGray, // Light grey color for unfocused state
-            focusedLabelColor = colorResource(id = R.color.purple_200), // Orange color for focused label
-            unfocusedLabelColor = Color.LightGray, // Light grey color for unfocused label,
+            focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
+            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
+            focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
+            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
             cursorColor = Color.Transparent
         )
     )

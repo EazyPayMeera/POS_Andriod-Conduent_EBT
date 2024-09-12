@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -82,7 +81,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(), // Wraps content height
-                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                        backgroundColor = MaterialTheme.colorScheme.primary, // Replace with any color you want
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
                         Column(
@@ -95,7 +94,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                                     id = R.string.total_amt
                                 ),
                                 fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
                                     .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -106,7 +105,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                             Text(
                                 text = "₹$totalAmount",
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
-                                color = Color.Black,
+                                color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
                                     .align(Alignment.Start)
@@ -128,7 +127,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                     TextView(
                         text = stringResource(id = R.string.tap_swipe_insert),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .clickable {
@@ -173,7 +172,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         TextView(
                             text = stringResource(id = R.string.or),
                             fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .clickable {
@@ -190,7 +189,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                         Button(
                             onClick = { /* Handle button click */ },
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                             modifier = Modifier
                                 .width(MaterialTheme.dimens.DP_200_CompactMedium)

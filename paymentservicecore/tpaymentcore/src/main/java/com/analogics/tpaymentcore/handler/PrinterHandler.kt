@@ -32,24 +32,6 @@ object PrinterHandler : PrinterListener {
         }
     }
 
-    /*override fun startPrint(
-        printerHandlerListener: IPrinterHandlerListener
-    ) {
-        try {
-            // Start printing
-            Printer.getInstance().startPrint()
-            Log.d(TAG, "Printing started successfully.")
-
-            // Notify success
-            printerHandlerListener.onPrinterRespHandler("SUCCESS")
-        } catch (exception: Exception) {
-            Log.e(TAG, "Failed to start printing: ${exception.message}")
-
-            // Notify failure
-            printerHandlerListener.onPrinterRespHandler("FAILURE")
-        }
-    }*/
-
     fun addReceiptDetails(
         barcodeFormat: Bundle,
         barcode:String,

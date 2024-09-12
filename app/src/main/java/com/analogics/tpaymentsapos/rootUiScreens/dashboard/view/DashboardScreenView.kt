@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -168,7 +167,7 @@ fun TrainingView(
                     onBackButtonClick = { /* Handle back button click if needed */ },
                     icon1 = R.drawable.baseline_menu_24,
                     onIcon1Click = { toggleDrawer(true) },
-                    backgroundColor = Color.White,
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary,
                     isIcon2Visible = false
                 )
             },
@@ -206,7 +205,7 @@ fun DashboardContentSurface(
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     Surface(
-        color = Color.White,
+        color = MaterialTheme.colorScheme.onPrimary,
         modifier = Modifier
             .fillMaxSize()
             .padding(MaterialTheme.dimens.DP_9_CompactMedium),
@@ -223,7 +222,7 @@ fun DashboardContentSurface(
             TextView(
                 text = stringResource(id = R.string.training),
                 fontSize = 20.sp,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
@@ -279,7 +278,7 @@ fun DashboardContentSurface(
                     .setShowCloseButton(true) // Can set to false if you don't want the close button
                     .setCancelable(true)
                     .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                    .setProgressColor(colorResource(id = R.color.purple_200)) // Orange color
+                    .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                     .buildDialog(onClose = { isDialogVisible = false })
             }
         }

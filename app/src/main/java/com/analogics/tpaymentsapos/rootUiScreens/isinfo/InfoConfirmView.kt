@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -61,7 +60,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = stringResource(id = R.string.is_correct),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
@@ -91,7 +90,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                             .padding(end = MaterialTheme.dimens.DP_20_CompactMedium)
                             .size(24.dp) // Set the icon size here
                             .clickable { isEditable = !isEditable },  // Toggle editable state on icon click
-                        tint = colorResource(id = R.color.purple_200)
+                        tint = MaterialTheme.colorScheme.primary
                     )}
                 )
 
@@ -101,7 +100,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = viewModel.transactionDateTime,
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -111,7 +110,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = stringResource(id = R.string.card) + " ************6983",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -121,7 +120,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = stringResource(id = R.string.auth_code) + " 896356",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -131,7 +130,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = stringResource(id = R.string.no) + " 100034345364633",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -141,7 +140,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = stringResource(id = R.string.inc_no) + "INVC1234",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -150,7 +149,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 TextView(
                     text = stringResource(id = R.string.pos_entry) + "Contact",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)

@@ -45,7 +45,7 @@ fun SucessView(navHostController: NavHostController) {
                 TextView(
                     text = "Payment",
                     fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     //modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
@@ -55,7 +55,7 @@ fun SucessView(navHostController: NavHostController) {
                 TextView(
                     text = "Sucessful",
                     fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     //modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),

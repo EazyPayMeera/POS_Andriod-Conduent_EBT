@@ -54,7 +54,7 @@ fun PasswordView(navHostController: NavHostController) {
                 TextView(
                     text = stringResource(id = R.string.enter_password),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
                     Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),

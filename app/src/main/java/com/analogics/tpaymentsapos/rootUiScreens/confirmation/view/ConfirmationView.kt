@@ -24,8 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,7 +78,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     top = MaterialTheme.dimens.DP_24_CompactMedium,
                     bottom = MaterialTheme.dimens.DP_5_CompactMedium
                 ),
-            backgroundColor = colorResource(id = R.color.purple_200),
+            backgroundColor = MaterialTheme.colorScheme.primary,
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
         ) {
             Column(
@@ -91,7 +89,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 TextView(
                     text = stringResource(id = R.string.total_amt),
                     fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -100,7 +98,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 TextView(
                     text = "₹${formatAmountdouble(totalAmount)}",
                     fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start),
                 )
@@ -132,7 +130,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     TextView(
                         text = stringResource(id = R.string.add_tip),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
                     )
@@ -161,7 +159,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
-                            contentColor = Color.Black
+                            contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier
@@ -184,7 +182,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
-                            contentColor = Color.Black
+                            contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier
@@ -208,7 +206,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
-                            contentColor = Color.Black
+                            contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         modifier = Modifier
@@ -231,7 +229,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                             },
-                            contentColor = Color.Black
+                            contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         //modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
@@ -271,8 +269,8 @@ fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit
         onClick = { onSelect(tip) },
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_21_CompactMedium),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (tip == selectedTip) colorResource(id = R.color.purple_200) else colorResource(id = R.color.white),
-            contentColor = Color.Black
+            backgroundColor = if (tip == selectedTip) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.tertiary
         ),
         modifier = Modifier.padding(MaterialTheme.dimens.DP_4_CompactMedium)
     ) {
@@ -306,7 +304,7 @@ fun TransactionSummaryCard(
             TextView(
                 text = stringResource(id = R.string.txn_sum),
                 fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = colorResource(id = R.color.purple_200),
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
@@ -369,7 +367,7 @@ fun TransactionSummaryItem(
             TextView(
                 text = label,
                 fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
@@ -378,7 +376,7 @@ fun TransactionSummaryItem(
         TextView(
             text = "₹${formatAmountdouble(amount)}",
             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.tertiary,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.CenterVertically)
         )

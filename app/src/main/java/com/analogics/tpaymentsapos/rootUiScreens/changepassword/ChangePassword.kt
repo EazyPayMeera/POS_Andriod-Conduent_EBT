@@ -44,7 +44,7 @@ fun ChangePasswordView(navHostController: NavHostController?) {
                 onBackButtonClick = { /* Handle back button click if needed */ },
                 icon1 = R.drawable.baseline_arrow_back_24,
                 onIcon1Click = {  },
-                backgroundColor = Color.White,
+                backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
             )
         },
@@ -67,7 +67,7 @@ fun ChangePasswordView(navHostController: NavHostController?) {
                     TextView(
                         text = stringResource(id = R.string.plz_ent_new_pass),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
 

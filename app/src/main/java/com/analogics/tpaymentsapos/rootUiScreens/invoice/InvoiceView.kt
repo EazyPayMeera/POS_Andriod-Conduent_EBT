@@ -59,7 +59,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 TextView(
                     text = stringResource(id = R.string.enter_invoice),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
@@ -94,7 +94,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     TextView(
                         text = "",
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),

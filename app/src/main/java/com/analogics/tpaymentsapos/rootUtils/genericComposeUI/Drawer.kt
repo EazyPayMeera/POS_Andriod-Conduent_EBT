@@ -81,7 +81,7 @@ fun CustomDrawerContent(
             }
         }
 
-        Divider(color = Color.Gray, thickness = 1.dp)
+        Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
         GenericCard(
             modifier = Modifier
                 .padding(top = 10.dp)
@@ -101,7 +101,7 @@ fun CustomDrawerContent(
                         navHostController.navigate(AppNavigationItems.LanguageScreen.route)
                     }
                 )
-                Divider(color = Color.Gray, thickness = 1.dp)
+                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
                 DrawerMenuItem(
                     icon = Icons.Default.VpnKey,
                     label = "Change Password",
@@ -110,7 +110,7 @@ fun CustomDrawerContent(
                         navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route)
                     }
                 )
-                Divider(color = Color.Gray, thickness = 1.dp)
+                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
                 DrawerMenuItem(
                     icon = Icons.Default.Settings,
                     label = "Configuration",
@@ -119,7 +119,7 @@ fun CustomDrawerContent(
                         navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
                     }
                 )
-                Divider(color = Color.Gray, thickness = 1.dp)
+                Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = 1.dp)
                 DrawerMenuItem(
                     icon = Icons.Default.Logout,
                     label = "Logout",
@@ -148,7 +148,7 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(30.dp),
-            tint = Color.Gray
+            tint = MaterialTheme.colorScheme.onSecondary
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
@@ -159,7 +159,7 @@ fun DrawerMenuItem(icon: ImageVector, label: String, function: () -> Unit) {
         Icon(
             imageVector = Icons.Default.ArrowForward,
             contentDescription = null,
-            tint = Color.Gray
+            tint = MaterialTheme.colorScheme.onSecondary
         )
     }
 }

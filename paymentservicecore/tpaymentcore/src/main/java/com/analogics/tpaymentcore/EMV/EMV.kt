@@ -678,9 +678,9 @@ class EMV {
                     Color.BLUE,
                     Color.YELLOW,
                     Color.GREEN,
-                    Color.GRAY,
+                    MaterialTheme.colorScheme.onSecondary,
                     Color.RED,
-                    Color.BLACK,
+                    MaterialTheme.colorScheme.tertiary,
                     Color.LTGRAY
                 )
             )

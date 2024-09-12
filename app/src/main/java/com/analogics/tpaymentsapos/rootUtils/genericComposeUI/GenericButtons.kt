@@ -34,7 +34,7 @@ fun CustomSwitch(
             contentDescription = null,
             modifier = Modifier
                 .size(MaterialTheme.dimens.DP_40_CompactMedium) // Size of the switch thumb
-                .background(Color.White) // Background for the thumb
+                .background(MaterialTheme.colorScheme.onPrimary) // Background for the thumb
                 .clip(RoundedCornerShape(MaterialTheme.dimens.DP_21_CompactMedium)) // Optional: Rounded corners for the thumb
         )
     }

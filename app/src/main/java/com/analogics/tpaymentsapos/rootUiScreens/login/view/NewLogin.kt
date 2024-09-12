@@ -79,7 +79,7 @@
 //                text = "Please Login to continue",
 //                modifier = Modifier.heightIn(min = 40.dp),
 //                textAlign = TextAlign.Center,
-//                color = Color.Gray,
+//                color = MaterialTheme.colorScheme.onSecondary,
 //                style = TextStyle(
 //                    fontSize = 18.sp,
 //                    fontWeight = FontWeight.Bold,
@@ -138,7 +138,7 @@
 //        .fillMaxWidth()
 //        .padding(5.dp)
 //        .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
-//        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+//        .background(color = MaterialTheme.colorScheme.onPrimary, shape = RoundedCornerShape(8.dp))
 //        .border(
 //            width = 2.dp,
 //            color = if (isFocused) Color(0xFFFFA500) else Color.Transparent,

@@ -1,7 +1,15 @@
 package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -45,7 +53,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     Text(
                         text = stringResource(id = R.string.password_),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -66,7 +74,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     Text(
                         text = stringResource(id = R.string.call_customercare),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = Color.LightGray,
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -89,7 +97,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         Text(
                             text = stringResource(id = R.string.mid),
                             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -108,7 +116,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         Text(
                             text = stringResource(id = R.string.tid),
                             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -127,7 +135,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         Text(
                             text = stringResource(id = R.string.sr_no),
                             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -146,7 +154,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         Text(
                             text = stringResource(id = R.string.call_center),
                             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
                     }

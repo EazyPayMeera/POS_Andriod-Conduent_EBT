@@ -58,7 +58,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                 Text(
                     text = stringResource(id = R.string.confirm_btn),
                     fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
@@ -77,7 +77,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                 Text(
                     text = stringResource(id = R.string.end_shift_message),
                     fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)

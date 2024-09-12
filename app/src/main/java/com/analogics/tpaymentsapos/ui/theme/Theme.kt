@@ -11,25 +11,29 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.analogics.tpaymentsapos.rootUiScreens.activity.MainActivity
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = Color.White,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = OrangeThemeColor,
+    onPrimary = OnPrimary,
+    primaryContainer = PrimaryContainer,
+    secondary = White,
+    onSecondary = Grey,
+    tertiary = Black
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
+    onPrimary = MaterialTheme.colorScheme.onPrimary,
     onSecondary = Color.White,
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
@@ -42,7 +46,7 @@ private val LightColorScheme = lightColorScheme(
 fun TPaymentsAPOSTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

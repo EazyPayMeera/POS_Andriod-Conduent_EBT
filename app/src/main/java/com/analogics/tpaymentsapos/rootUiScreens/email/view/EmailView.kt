@@ -55,7 +55,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
                 TextView(
                     text = stringResource(id = R.string.sucess),
                     fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -67,7 +67,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
                 TextView(
                     text = stringResource(id = R.string.sent_email),
                     fontSize = MaterialTheme.dimens.SP_44_CompactMedium,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -79,7 +79,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
                 TextView(
                     text = stringResource(id = R.string.ereceipt_sent),
                     fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                    color = Color.LightGray,
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -89,7 +89,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
                 TextView(
                     text = "on $updated_email",
                     fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                    color = Color.LightGray,
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
