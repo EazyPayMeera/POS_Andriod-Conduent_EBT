@@ -7,6 +7,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.analogics.paymentservicecore.logger.AppLogger
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {
     return amount * 0.15
@@ -21,30 +22,21 @@ fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmoun
     return transactionAmount + tipAmount + sgstAmount + igstAmount
 }
 
-
-fun formatAmountdouble(amount: Double): String {
-    val decimalFormat = DecimalFormat("#.00")
-    return decimalFormat.format(amount)
+fun formatAmount(amount: Double, decimalPlaces: Int = 2, withSymbol: Boolean = true, withSeparator: Boolean = true): String {
+    return formatAmount("%.${decimalPlaces}f".format(amount),decimalPlaces,withSymbol,withSeparator)
 }
 
-fun formatAmount(input: String, decimalPlaces: Int = 2): String {
+fun formatAmount(input: String, decimalPlaces: Int = 2, withSymbol: Boolean = true, withSeparator: Boolean = true): String {
     try {
-        // Remove non-digit characters and limit to 12 digits
-        val digitsOnly = removeNonDigits(input)
-        val limitedDigits = digitsOnly.take(12)  // Limit to 12 digits
-
-        // Handle case where there is no valid input
-        if (limitedDigits.isEmpty()) {
-            return "0.00"
-        }
-
-        // Convert to BigDecimal for precise formatting
-        val amount = BigDecimal(limitedDigits).movePointLeft(decimalPlaces)
-        return "%,.${decimalPlaces}f".format(java.util.Locale.ENGLISH, amount.toDouble())
+        val amount  = removeNonDigits(input).take(12)
+        val dAmount: Double = amount.toDoubleOrNull()?:0.00
+        val currency : String = if(withSymbol) "₹" else ""
+        val separator : String = if(withSeparator) "," else ""
+        return "$currency %${separator}.${decimalPlaces}f".format(java.util.Locale.ENGLISH, dAmount/10.0.pow(decimalPlaces))
     } catch (e: Exception) {
         AppLogger.e(AppLogger.MODULE.APP_UI, e.message.toString())
     }
-    return "0.00"
+    return ""
 }
 
 
@@ -61,7 +53,7 @@ fun createAmountTransformation(): VisualTransformation {
     return object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             // Format the text using your formatAmount function
-            val formatted = "₹${formatAmount(text.text)}"
+            val formatted = formatAmount(text.text)
 
             // Define the offset mapping
             val offsetMapping = object : OffsetMapping {

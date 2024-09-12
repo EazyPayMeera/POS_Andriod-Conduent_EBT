@@ -76,7 +76,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 OutlinedTextField(
                     value = viewModel.rawInput,
                     onValueChange = {if (isEditable) viewModel.onAmountChange(it)},
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,

@@ -81,7 +81,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 OutlinedTextField(
                     value = viewModel.transAmount,
                     onValueChange = {viewModel.onAmountChange(it)},
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,

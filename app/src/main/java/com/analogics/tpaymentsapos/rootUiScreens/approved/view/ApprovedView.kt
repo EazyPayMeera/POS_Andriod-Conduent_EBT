@@ -47,6 +47,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -213,7 +214,7 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                 if(TxnInfo.txnType!= TxnType.VOID) {
                     Text(
-                        text = "₹$updated_amt",
+                        text = updated_amt,
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -258,7 +259,8 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                                 }
                                 "Merchant Receipt" -> {
                                     Authorisation.isMerchantReceipt = true
-                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+                                    //navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+                                    viewModel.printReceipt(coroutineScope)
                                 }
                                 "E-RECEIPT" -> {
                                     Authorisation.isEreceipt = true
@@ -282,6 +284,18 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         },
                         title = stringResource(id = R.string.done),
                     )
+                }
+
+                if (viewModel.isPrinting.value) {
+                    CustomDialogBuilder.create()
+                        .setTitle(stringResource(id = R.string.printing))
+                        .setSubtitle(stringResource(id = R.string.plz_wait))
+                        .setSmallText(stringResource(id = R.string.merchant_recp))
+                        .setShowCloseButton(true) // Can set to false if you don't want the close button
+                        .setCancelable(true)
+                        .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                        .setProgressColor(Color(0xFFFF9800)) // Orange color
+                        .buildDialog(onClose = { viewModel.isPrinting.value = false })
                 }
             }
         }

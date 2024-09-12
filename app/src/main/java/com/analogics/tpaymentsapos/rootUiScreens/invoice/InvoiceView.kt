@@ -76,7 +76,7 @@ fun InvoiceView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = invoiceno,
                     onValueChange = { newValue -> viewModel.updateInvoiceNo(newValue) },
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.invoice_no),
                     textStyle = TextStyle(
                         fontWeight = FontWeight.Bold,

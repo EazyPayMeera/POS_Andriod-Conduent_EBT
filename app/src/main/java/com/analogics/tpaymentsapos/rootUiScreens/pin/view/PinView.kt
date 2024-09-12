@@ -73,7 +73,7 @@ fun PinView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = pinViewModel.invoiceno,
                     onValueChange = { newValue -> pinViewModel.onPinChange(newValue) },
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.enter_Pin),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.NumberPassword,

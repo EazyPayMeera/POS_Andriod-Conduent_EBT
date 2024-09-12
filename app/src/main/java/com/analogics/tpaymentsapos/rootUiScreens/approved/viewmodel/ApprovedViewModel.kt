@@ -7,18 +7,28 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
+import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.google.zxing.BarcodeFormat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
 class ApprovedViewModel(context: Context): ViewModel() {
 
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
+    val isPrinting = mutableStateOf(false)
 
     private val printer = Printer.getInstance()
 
@@ -169,18 +179,47 @@ class ApprovedViewModel(context: Context): ViewModel() {
         printer.feedLine(lines)
     }
 
+    fun printReceipt(coroutineScope: CoroutineScope)
+    {
+        isPrinting.value = true
+        coroutineScope.launch {
+            /*addReceiptDetails(object : IPrinterResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                    if (result == true) {
+                        Log.d(TAG, "Receipt printed successfully")
+                    } else {
+                        Log.d(TAG, "Receipt print failed")
+                    }
+                    isPrinting.value = false
+                }
+
+                override fun onFailure(exception: Exception) {
+                    Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
+                    isPrinting.value = false
+                }
+            })*/
+            delay(3000)
+            isPrinting.value = false
+        }
+    }
+
     suspend fun initPrinter(context: Context, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
         Log.d(TAG, "Initializing printer in viewModel...")
         PrinterServiceRepository().initPrinter(context,iPrinterResultProviderListener)
     }
 
-    suspend fun addReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun addReceiptDetails(iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
         Log.d(TAG, "Initializing printer in viewModel...")
+        val format = Bundle().apply {
+            putInt("align", 1)
+            putInt("width", 300)
+            putInt("height", 100)
+            putSerializable("barcode_type", BarcodeFormat.CODE_39)
+        }
         PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
     }
-
 
     fun GetStatus() {
         val status = printer.getPrinterStatus()
