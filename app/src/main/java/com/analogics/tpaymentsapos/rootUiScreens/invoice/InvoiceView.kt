@@ -1,5 +1,8 @@
 package com.analogics.tpaymentsapos.rootUiScreens.invoice
 
+import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,10 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
@@ -31,15 +36,19 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.launch
 
-
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun InvoiceView(navHostController: NavHostController) {
+    val context = LocalContext.current
     // Get ViewModel instance
     val viewModel: InvoiceViewModel = hiltViewModel()
 
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column {
         CommonTopAppBar(
@@ -56,6 +65,21 @@ fun InvoiceView(navHostController: NavHostController) {
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
 
+                coroutineScope.launch {
+                    viewModel.initScanner(context, object :
+                        IScannerResultProviderListener {
+                        override fun onSuccess(result: Any?) {
+                            if (result?.equals(true) == true)
+                                Log.d(TAG, "Initialization of printer is Successful")
+                            else
+                                Log.d(TAG, "Initialization of printer is Failed")
+                        }
+                        override fun onFailure(exception: Exception) {
+                            // No action needed, failure is handled elsewhere
+                        }
+                    })
+                }
+
                 TextView(
                     text = stringResource(id = R.string.enter_invoice),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
@@ -70,7 +94,8 @@ fun InvoiceView(navHostController: NavHostController) {
                     imageId = R.drawable.invoice,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
-                    alignment = Alignment.Center
+                    alignment = Alignment.Center,
+                    contentDescription = ""
                 )
 
                 OutlinedTextField(
@@ -106,7 +131,10 @@ fun InvoiceView(navHostController: NavHostController) {
                         size = MaterialTheme.dimens.DP_70_CompactMedium,
                         shape = RectangleShape,
                         alignment = Alignment.Center,
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable {
+
+                        },
+                        contentDescription = ""
                     )
                 }
             }
@@ -120,4 +148,5 @@ fun InvoiceView(navHostController: NavHostController) {
         )
     }
 }
+
 

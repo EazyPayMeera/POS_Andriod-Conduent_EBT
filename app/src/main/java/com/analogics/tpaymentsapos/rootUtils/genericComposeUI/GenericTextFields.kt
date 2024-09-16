@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 
-import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -58,8 +56,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -73,17 +69,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.ImageLoader
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.request.ImageRequest
-import coil.size.Size
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
@@ -162,10 +150,6 @@ fun InputTextField(
     )
 }
 
-
-
-
-
 @Composable
 fun AppButton(
     onClick: () -> Unit,
@@ -210,104 +194,6 @@ fun AppButton(
     }
 }
 
-@Composable
-fun CustomSurface(
-    imageResourceId: Int,
-    titleText: String,
-    label: String,
-    placeholder: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    onDoneAction: () -> Unit,
-    isPassword: Boolean = false,
-    isRefund: Boolean = false,
-    isVoid: Boolean = false,
-    isAuthcap:Boolean = false,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-    modifier: Modifier = Modifier,
-    content: @Composable (ColumnScope.() -> Unit)? = null // New parameter for custom content
-) {
-
-    // Create a FocusRequester instance
-    val focusRequester = remember { FocusRequester() }
-
-    // Define height and width based on the isRefund flag
-    val surfaceHeight = if (isRefund) MaterialTheme.dimens.DP_380_CompactMedium else if (isVoid || isAuthcap) MaterialTheme.dimens.DP_540_CompactMedium else MaterialTheme.dimens.DP_250_CompactMedium
-    val surfaceWidth = MaterialTheme.dimens.DP_410_CompactMedium
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
-    Surface(
-        color = MaterialTheme.colorScheme.onPrimary,
-        modifier = modifier
-            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-            .fillMaxWidth()
-            .height(surfaceHeight)
-            .width(surfaceWidth),
-        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-        shadowElevation = MaterialTheme.dimens.DP_20_CompactMedium
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = titleText,
-                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = MaterialTheme.colorScheme.tertiary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                    .align(Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
-
-            Image(
-                painter = painterResource(id = imageResourceId),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-            )
-
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
-                label = { Text(label) },
-                placeholder = { Text(placeholder) },
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_21_CompactMedium),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = keyboardType,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { onDoneAction() }
-                ),
-                visualTransformation = visualTransformation,
-                modifier = modifier
-                    .focusRequester(focusRequester)
-                    .padding(MaterialTheme.dimens.DP_2_CompactMedium)
-                    .width(MaterialTheme.dimens.DP_180_CompactMedium)
-                    .height(MaterialTheme.dimens.DP_70_CompactMedium),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFFFFA500), // Orange color for focused state
-                    unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
-                    focusedLabelColor = Color(0xFFFFA500), // Orange color for focused label
-                    unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer // Light grey color for unfocused label
-                )
-            )
-
-            // Custom content
-            content?.invoke(this)
-        }
-    }
-}
 
 @Composable
 fun getTransTypeString(txnType: TxnType?=null) : String
@@ -354,67 +240,6 @@ fun CommonTopAppBar(
         },
         modifier = modifier
     )
-}
-@Composable
-fun CommonLayout(
-    title: String,
-    imageResId: Int? = null,
-    contentDescription: String? = null,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column {
-        CommonTopAppBar(
-            title = title,
-            onBackButtonClick = { /* Handle back button click */ }
-        )
-
-        Surface(
-            color = MaterialTheme.colorScheme.primary, // Orange color for the outer Surface
-            modifier = Modifier
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the outer Surface
-                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
-        ) {
-            Box( // Use Box to apply shadow before Surface
-                modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_11_CompactMedium) // Padding for the outer Surface
-                    .height(MaterialTheme.dimens.DP_440_CompactMedium) // Adjust the height as per your requirement
-                    .width(MaterialTheme.dimens.DP_390_CompactMedium) // Adjust the width as per your requirement
-                    .shadow( // Apply shadow using Modifier.shadow
-                        elevation = MaterialTheme.dimens.DP_20_CompactMedium, // Elevation height for shadow
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium), // Match shape to Surface
-                        clip = false // Do not clip to the shape
-                    )
-            ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.onPrimary, // White color for the inner Surface
-                    modifier = Modifier.fillMaxSize(), // Fill available space
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium) // Rounded corners for the inner Surface
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
-                            .fillMaxSize(), // Fill the entire available space
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.Start // Align content to the start
-                    ) {
-                        imageResId?.let {
-                            Image(
-                                painter = painterResource(id = it),
-                                contentDescription = contentDescription,
-                                modifier = Modifier
-                                    .size(MaterialTheme.dimens.DP_40_CompactMedium)
-                                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                                    .align(Alignment.End) // Align the image to the end
-                            )
-                        }
-                        content()
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -514,7 +339,7 @@ fun SettingsLowerSurface(
     }
 }
 
-@Composable
+/*@Composable
 fun FooterButtons(
     firstButtonTitle: String,
     firstButtonOnClick: () -> Unit,
@@ -538,10 +363,157 @@ fun FooterButtons(
             var isSecondButtonPressed by remember { mutableStateOf(false) }
 
             Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                    .shadow(
+                        MaterialTheme.dimens.DP_4_CompactMedium,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
+            ) {
+                Button(
+                    onClick = {
+                        isFirstButtonPressed = true
+                        firstButtonOnClick()
+                    },
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+                    modifier = Modifier
+                        .width(*//*MaterialTheme.dimens.DP_130_CompactMedium*//*130.dp)
+                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
+                        .border(
+                            width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                            color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                        ),
+                    colors = buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
+                    )
+                ) {
+
+                    TextView(
+                        text = firstButtonTitle.uppercase(),
+                        fontSize = *//*MaterialTheme.dimens.SP_21_CompactMedium*//*15.sp,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            LaunchedEffect(isFirstButtonPressed) {
+                if (isFirstButtonPressed) {
+                    kotlinx.coroutines.delay(100)
+                    isFirstButtonPressed = false
+                }
+            }
+
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier
+                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                    .shadow(
+                        MaterialTheme.dimens.DP_4_CompactMedium,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                    )
+            ) {
+                Button(
+                    onClick = {
+                        isSecondButtonPressed = true
+                        secondButtonOnClick()
+                    },
+                    modifier = Modifier
+                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
+                        .border(
+                            width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                            color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                        ),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+                    colors = buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
+                    )
+                ) {
+
+                    TextView(
+                        text = secondButtonTitle.uppercase(),
+                        fontSize = *//*MaterialTheme.dimens.SP_21_CompactMedium*//*15.sp,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            LaunchedEffect(isSecondButtonPressed) {
+                if (isSecondButtonPressed) {
+                    kotlinx.coroutines.delay(100)
+                    isSecondButtonPressed = false
+                }
+            }
+        }
+    }
+}*/
+
+@Composable
+fun FooterButtons(
+    firstButtonTitle: String,
+    firstButtonOnClick: () -> Unit,
+    secondButtonTitle: String,
+    secondButtonOnClick: () -> Unit,
+    alignment: Alignment = Alignment.BottomCenter // Default alignment
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed
+    ) {
+        Row(
+            modifier = Modifier
+                .align(alignment)
+                .fillMaxWidth()
+                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            var isFirstButtonPressed by remember { mutableStateOf(false) }
+            var isSecondButtonPressed by remember { mutableStateOf(false) }
+
+            Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     .width(MaterialTheme.dimens.DP_126_CompactMedium)
                     .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                    .clickable {
+                        isFirstButtonPressed = true
+                        firstButtonOnClick()
+                    }
+                    .padding(8.dp) // Increase padding to enlarge touchable area
                     .shadow(
                         MaterialTheme.dimens.DP_4_CompactMedium,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -600,6 +572,11 @@ fun FooterButtons(
                 modifier = Modifier
                     .width(MaterialTheme.dimens.DP_126_CompactMedium)
                     .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                    .clickable {
+                        isSecondButtonPressed = true
+                        secondButtonOnClick()
+                    }
+                    .padding(8.dp) // Increase padding to enlarge touchable area
                     .shadow(
                         MaterialTheme.dimens.DP_4_CompactMedium,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -656,20 +633,9 @@ fun FooterButtons(
     }
 }
 
-
-
-/*object TransactionState {
-    var isRefund: Boolean = false
-    var isVoid: Boolean = false
-    var isPurchase: Boolean = false
-    var isPreauth: Boolean = false
-    var isTransaction: Boolean = false
-    var isAuthcap: Boolean = false
-}*/
-
 object Authorisation {
     var isMerchantReceipt: Boolean = false
-    var isEreceipt: Boolean = false
+    var isEReceipt: Boolean = false
     var isCustomerReceipt = false
 }
 
@@ -708,80 +674,7 @@ fun getFormattedDateTime(): String {
 }
 
 
-@Composable
-fun PreauthTypeSelectionSurface(
-    title: String,
-    imageResourceId: Int,
-    firstButtonText: String,
-    secondButtonText: String,
-    onFirstButtonClick: () -> Unit,
-    onSecondButtonClick: () -> Unit
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.onPrimary,
-        modifier = Modifier
-            .padding(MaterialTheme.dimens.DP_35_CompactMedium)
-            .width(MaterialTheme.dimens.DP_430_CompactMedium)
-            .height(MaterialTheme.dimens.DP_400_CompactMedium),
-        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = title,
-                fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                color = MaterialTheme.colorScheme.tertiary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                    .align(Alignment.CenterHorizontally)
-            )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
-
-            Image(
-                painter = painterResource(id = imageResourceId),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-            )
-
-            ScannerButton(
-                text = firstButtonText,
-                onClick = onFirstButtonClick,
-                backgroundColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
-            )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-
-            Text(
-                text = stringResource(id = R.string.or),
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.tertiary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(bottom = MaterialTheme.dimens.DP_30_CompactMedium)
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            ScannerButton(
-                text = secondButtonText,
-                onClick = onSecondButtonClick,
-                backgroundColor = Color(0xFFEDEDED),
-                contentColor = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
-            )
-        }
-    }
-}
 @Composable
 fun CardWithImageText(
     text: String,
@@ -814,10 +707,12 @@ fun CardWithImageText(
                     bottom = MaterialTheme.dimens.DP_11_CompactMedium
                 )
         ) {
-            ImageView(imageId = imageResId,
+            ImageView(
+                imageId = imageResId,
                 modifier = Modifier
                     .size(MaterialTheme.dimens.DP_40_CompactMedium) // Adjust the size as needed
-                    .align(Alignment.CenterHorizontally) // Center the image
+                    .align(Alignment.CenterHorizontally),
+                contentDescription = "" // Center the image
             )
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
             TextView(text = text, fontSize = MaterialTheme.dimens.SP_18_CompactMedium)
@@ -827,36 +722,8 @@ fun CardWithImageText(
 
 
 @Composable
-fun GifImage(
-    modifier: Modifier = Modifier,
-    gifResId: Int
-) {
-    val context = LocalContext.current
-    val imageLoader = ImageLoader.Builder(context)
-        .components {
-            if (SDK_INT >= 28) {
-                add(ImageDecoderDecoder.Factory())
-            } else {
-                add(GifDecoder.Factory())
-            }
-        }
-        .build()
-    Image(
-        painter = rememberAsyncImagePainter(
-            ImageRequest.Builder(context).data(data = gifResId).apply {
-                size(Size.ORIGINAL)
-            }.build(), imageLoader = imageLoader
-        ),
-        contentDescription = null,
-        modifier = modifier.fillMaxWidth(),
-    )
-}
-
-
-@Composable
 fun AppHeader(
     title: String,
-    onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
     icon1: Int? = null,
     icon2: Int? = null,
@@ -864,7 +731,8 @@ fun AppHeader(
     onIcon2Click: (() -> Unit)? = null,
     isIcon1Visible: Boolean = true,
     isIcon2Visible: Boolean = true,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackButtonClick: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -879,17 +747,15 @@ fun AppHeader(
         },
         backgroundColor = backgroundColor,
         navigationIcon = {
-            if (isIcon1Visible) {
-                if (icon1 != null) {
-                    Image(
-                        painter = painterResource(id = icon1),
-                        contentDescription = "icon1",
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.DP_60_CompactMedium) // Increase the size here, e.g., 48.dp
-                            .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)
-                            .clickable { onIcon1Click?.invoke() }
-                    )
-                }
+            if (isIcon1Visible && icon1 != null) {
+                Image(
+                    painter = painterResource(id = icon1),
+                    contentDescription = "icon1",
+                    modifier = Modifier
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Increase the size here, e.g., 48.dp
+                        .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)
+                        .clickable { onIcon1Click?.invoke() }
+                )
             }
         },
         actions = {
@@ -906,59 +772,6 @@ fun AppHeader(
         modifier = modifier
     )
 }
-
-
-
-
-// Added this function to add Bold Top text for UI In logout screen Amount Screen
-@Composable
-fun TopBoldText(
-    text: String,
-    fontSize: TextUnit = MaterialTheme.dimens.SP_27_CompactMedium // Default size if not provided
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
-        modifier = Modifier
-            .fillMaxWidth() // Ensures the Column takes the full width
-            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
-    ) {
-        Text(
-            text = text,
-            fontSize = fontSize, // Use the provided fontSize
-            color = MaterialTheme.colorScheme.tertiary,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(MaterialTheme.dimens.DP_21_CompactMedium)
-        )
-    }
-}
-
-
-// Added function for Header Image
-@Composable
-fun HeaderImage(
-    imageName: String
-) {
-    val context = LocalContext.current
-    val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally, // Center horizontally within the Column
-        modifier = Modifier
-            .fillMaxWidth() // Ensures the Column takes the full width
-            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
-    ) {
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = null, // Decorative image
-            modifier = Modifier
-                .size(MaterialTheme.dimens.DP_50_CompactMedium) // Default size
-
-        )
-    }
-}
-
-
-
 
 @Composable
 fun BackgroundScreen(componentView :@Composable () -> Unit) {
@@ -993,80 +806,6 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     }
 }
 
-
-
-@Composable
-fun DialogueScreen(componentView :@Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .height(320.dp)
-            .width(650.dp)
-            .padding(MaterialTheme.dimens.DP_4_CompactMedium)
-            .shadow(
-                elevation = MaterialTheme.dimens.DP_50_CompactMedium,
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
-            )
-            .background(
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
-            )
-    ) {
-        Card(
-            elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
-            backgroundColor= MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = MaterialTheme.dimens.DP_25_CompactMedium,
-                    start = MaterialTheme.dimens.DP_25_CompactMedium,
-                    end = MaterialTheme.dimens.DP_25_CompactMedium,
-                    bottom = MaterialTheme.dimens.DP_25_CompactMedium,
-                )
-                .align(Alignment.Center)
-        ) {
-            componentView()
-        }
-    }
-}
-
-
-
-
-@Composable
-fun SmallSurface(
-    modifier: Modifier = Modifier,
-    isRefund: Boolean = false,
-    isVoid: Boolean = false,
-    isAuthcap:Boolean = false,
-    content: (@Composable (ColumnScope.() -> Unit))? = null
-) {
-    val surfaceHeight = if (isRefund) MaterialTheme.dimens.DP_350_CompactMedium else if (isVoid || isAuthcap) MaterialTheme.dimens.DP_440_CompactMedium else MaterialTheme.dimens.DP_250_CompactMedium
-    val surfaceWidth = MaterialTheme.dimens.DP_410_CompactMedium
-
-    Surface(
-        color = MaterialTheme.colorScheme.onPrimary,
-        modifier = modifier
-            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-            .fillMaxWidth()
-            .height(surfaceHeight)
-            .width(surfaceWidth),
-        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-        shadowElevation = MaterialTheme.dimens.DP_20_CompactMedium
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Custom content, if available
-            content?.invoke(this)
-        }
-    }
-}
-
-
 @Composable
 fun ImageView(
     imageId: Int,
@@ -1074,8 +813,7 @@ fun ImageView(
     shape: Shape = RectangleShape,
     alignment: Alignment = Alignment.Center, // Alignment parameter for usage within a Box
     modifier: Modifier = Modifier,
-    contentDescription: String = "group 360",
-    contentScale: ContentScale = ContentScale.Crop,
+    contentDescription: String,
 ) {
     Box(
         modifier = Modifier
@@ -1174,9 +912,4 @@ fun OutlinedTextField(
 
 
 
-@Composable
-@Preview
-fun abc()
-{
 
-}

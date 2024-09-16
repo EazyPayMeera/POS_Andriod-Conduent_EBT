@@ -63,6 +63,7 @@ fun EnterEmailView(navHostController: NavHostController) {
                     imageId = R.drawable.card, size = MaterialTheme.dimens.DP_60_CompactMedium,
                     shape = RectangleShape, // Example shape, can be any Shape
                     alignment = Alignment.Center,
+                    contentDescription = "",
                 )
 
                 OutlinedTextField(

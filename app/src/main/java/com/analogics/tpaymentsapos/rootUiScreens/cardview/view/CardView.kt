@@ -2,6 +2,8 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,15 +25,19 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnInfo
@@ -44,7 +50,11 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
-
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import java.util.EnumMap
 
 @Composable
 fun CardView(navHostController: NavHostController, totalAmount: String) {
@@ -52,6 +62,9 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    // State to manage QR code dialog visibility
+    val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
 
     Column {
 
@@ -66,10 +79,8 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
         ) {
             GenericCard(
                 modifier = Modifier
-                    //.wrapContentHeight() // Wraps content height
                     .fillMaxWidth()
                     .align(Alignment.TopStart),
-
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
             ) {
                 Column(
@@ -80,8 +91,8 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                     GenericCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .wrapContentHeight(), // Wraps content height
-                        backgroundColor = MaterialTheme.colorScheme.primary, // Replace with any color you want
+                            .wrapContentHeight(),
+                        backgroundColor = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
                         Column(
@@ -119,7 +130,8 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         imageId = R.drawable.swip_card,
                         size = MaterialTheme.dimens.DP_40_CompactMedium,
                         shape = RectangleShape,
-                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                        contentDescription = ""
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -148,27 +160,28 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         ImageView(
                             imageId = R.drawable.master,
                             shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                            contentDescription = ""
                         )
 
                         ImageView(
                             imageId = R.drawable.visa,
                             shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                            contentDescription = ""
                         )
 
                         ImageView(
                             imageId = R.drawable.rupay,
                             shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                            contentDescription = ""
                         )
                     }
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                     if(TxnInfo.txnType==TxnType.PURCHASE) {
-                        //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-
                         TextView(
                             text = stringResource(id = R.string.or),
                             fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -188,7 +201,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                         Button(
-                            onClick = { /* Handle button click */ },
+                            onClick = { setShowQRCodeDialog(true) }, // Show QR code dialog on button click
                             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                             modifier = Modifier
@@ -207,10 +220,78 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
             }
         }
     }
+
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, navHostController)
     }
+
+    // QR Code Dialog
+    if (showQRCodeDialog) {
+        QRCodeDialog(
+            qrCodeContent = "Your QR Code Content Here", // Replace with the content you want to encode
+            onDismiss = { setShowQRCodeDialog(false) }
+        )
+    }
 }
 
+@Composable
+fun QRCodeDialog(
+    qrCodeContent: String,
+    onDismiss: () -> Unit
+) {
+    // Generate QR Code bitmap
+    val qrCodeBitmap = generateQRCode(qrCodeContent, 300, 300) // Adjust size as needed
+    val imageBitmap = qrCodeBitmap?.asImageBitmap() // Convert Bitmap to ImageBitmap
 
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Display QR Code
+                imageBitmap?.let {
+                    Image(
+                        bitmap = it,
+                        contentDescription = "QR Code",
+                        modifier = Modifier.size(300.dp)
+                    )
+                }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Close button
+                Button(onClick = onDismiss) {
+                    Text(text = "Close")
+                }
+            }
+        }
+    }
+}
+
+fun generateQRCode(content: String, width: Int, height: Int): Bitmap? {
+    try {
+        val hints = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
+        hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+
+        // Generate the BitMatrix for the QR code
+        val bitMatrix: BitMatrix = MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, width, height, hints)
+
+        // Convert the BitMatrix to a Bitmap
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bitmap.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+            }
+        }
+        return bitmap
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
+}

@@ -116,7 +116,8 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                         imageId = R.drawable.swip_card,
                         size = MaterialTheme.dimens.DP_40_CompactMedium,
                         shape = RectangleShape,
-                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                        contentDescription = ""
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -141,19 +142,22 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
                         ImageView(
                             imageId = R.drawable.master,
                             shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                            contentDescription = ""
                         )
 
                         ImageView(
                             imageId = R.drawable.visa,
                             shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                            contentDescription = ""
                         )
 
                         ImageView(
                             imageId = R.drawable.rupay,
                             shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                            contentDescription = ""
                         )
                     }
 

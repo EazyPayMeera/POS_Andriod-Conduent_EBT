@@ -24,10 +24,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun PreauthView(navHostController: NavHostController) {
 
     Column {
-        /*CommonTopAppBar(
-            title = stringResource(id = R.string.pre_auth),
-            onBackButtonClick = { navHostController.popBackStack() }
-        )*/
+
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
@@ -57,7 +54,8 @@ fun PreauthView(navHostController: NavHostController) {
                     alignment = Alignment.Center, // Align image horizontally within the Box
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Align the Box horizontally within the parent
+                        .align(Alignment.CenterHorizontally),
+                    contentDescription = "" // Align the Box horizontally within the parent
                 )
 
                 ScannerButton(

@@ -70,7 +70,8 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                     alignment = Alignment.Center, // Align image horizontally within the Box
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Align the Box horizontally within the parent
+                        .align(Alignment.CenterHorizontally),
+                    contentDescription = "" // Align the Box horizontally within the parent
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_31_CompactMedium)) // Blank space

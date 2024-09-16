@@ -56,17 +56,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.math.cos
 import kotlin.math.sin
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-
-
-
 
 
 @Composable
@@ -74,7 +65,10 @@ fun CircularMenu(
     onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
-    val menuOptions = listOf("Customer Receipt", "Merchant Receipt", "E-RECEIPT")
+    val menuOptions = listOf(
+        stringResource(id = R.string.cust_recp), stringResource(id = R.string.merchant_recp), stringResource(
+        id = R.string.e_recp
+    ))
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -170,12 +164,11 @@ fun CircularMenu(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
-    val isMerchantReceipt = Authorisation.isMerchantReceipt
+fun ApprovedView(navHostController: NavHostController) {
     val context = LocalContext.current
     val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
     val printStatus by viewModel.printStatus
-    val updated_amt = updated_amt
+    val updatedAmount = updated_amt
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
     Column {
@@ -212,9 +205,9 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                if(TxnInfo.txnType!= TxnType.VOID) {
+                TxnInfo.txnType.takeIf { it != TxnType.VOID }?.let {
                     Text(
-                        text = updated_amt,
+                        text = updatedAmount,
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -228,7 +221,8 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
+                        .align(Alignment.CenterHorizontally),
+                    contentDescription = ""
                 )
                 Spacer(modifier = Modifier.height(30.dp))
                 Box(
@@ -247,7 +241,9 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                                         else
                                             Log.d(TAG, "Initialization of printer is Failed")
                                     }
-                                    override fun onFailure(exception: Exception) {}
+                                    override fun onFailure(exception: Exception) {
+                                        // No action needed, failure is handled elsewhere
+                                    }
                                 })
                             }
                         },
@@ -259,11 +255,10 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                                 }
                                 "Merchant Receipt" -> {
                                     Authorisation.isMerchantReceipt = true
-                                    //navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                                     viewModel.printReceipt(coroutineScope)
                                 }
                                 "E-RECEIPT" -> {
-                                    Authorisation.isEreceipt = true
+                                    Authorisation.isEReceipt = true
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
 
@@ -294,13 +289,17 @@ fun ApprovedView(navHostController: NavHostController, totalAmount: String) {
                         .setShowCloseButton(true) // Can set to false if you don't want the close button
                         .setCancelable(true)
                         .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                        .setProgressColor(Color(0xFFFF9800)) // Orange color
+                        .setProgressColor(MaterialTheme.colorScheme.primary) // Orange color
                         .buildDialog(onClose = { viewModel.isPrinting.value = false })
                 }
             }
         }
     }
 }
+
+
+
+
 
 
 

@@ -7,16 +7,11 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.CoroutineScope
@@ -66,47 +61,6 @@ class ApprovedViewModel(context: Context): ViewModel() {
         val email: String
     )
 
-/*    fun printReceiptDetails(receipt: Receipt) {
-        val receiptDetails = listOf(
-            "********** RECEIPT **********",
-            "",
-            "MERCHANT: ${receipt.merchantName}",
-            "ADDRESS: ${receipt.address}",
-            "PHONE:   ${receipt.phone}",
-            "----------------------------------------",
-            "TRANSACTION DETAILS",
-            "----------------------------------------",
-            "DATE/TIME:   ${receipt.transactionDetails.dateTime}",
-            "RECEIPT #:   ${receipt.transactionDetails.receiptNumber}",
-            "TERMINAL #:  ${receipt.transactionDetails.terminalNumber}",
-            "----------------------------------------",
-            "ITEMS PURCHASED",
-            "----------------------------------------"
-        ) + receipt.items.mapIndexed { index, item ->
-            "${index + 1}. ${item.name}              $${item.price}"
-        } + listOf(
-            "----------------------------------------",
-            "SUBTOTAL:              $${receipt.subtotal}",
-            "TAX (5%):              $${receipt.tax}",
-            "TOTAL:                 $${receipt.total}",
-            "----------------------------------------",
-            "PAYMENT METHOD: ${receipt.paymentMethod}",
-            "CARD NUMBER:   ${receipt.cardNumber}",
-            "AUTH CODE:     ${receipt.authCode}",
-            "----------------------------------------",
-            "THANK YOU FOR SHOPPING",
-            "   WITH US TODAY!",
-            "PLEASE VISIT US AGAIN SOON!",
-            "----------------------------------------",
-            "CUSTOMER SERVICE CONTACT",
-            "TEL: ${receipt.customerService.phone}",
-            "EMAIL: ${receipt.customerService.email}",
-            "----------------------------------------"
-        )
-
-        //printer.addText(receiptDetails)
-        addTextDetails(receiptDetails)
-    }*/
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
         var imageData: ByteArray? = null
@@ -183,21 +137,6 @@ class ApprovedViewModel(context: Context): ViewModel() {
     {
         isPrinting.value = true
         coroutineScope.launch {
-            /*addReceiptDetails(object : IPrinterResultProviderListener {
-                override fun onSuccess(result: Any?) {
-                    if (result == true) {
-                        Log.d(TAG, "Receipt printed successfully")
-                    } else {
-                        Log.d(TAG, "Receipt print failed")
-                    }
-                    isPrinting.value = false
-                }
-
-                override fun onFailure(exception: Exception) {
-                    Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
-                    isPrinting.value = false
-                }
-            })*/
             delay(3000)
             isPrinting.value = false
         }

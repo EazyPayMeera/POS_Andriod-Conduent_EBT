@@ -1,12 +1,15 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.repository.scannerService.ScannerServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,4 +40,37 @@ class InvoiceViewModel : ViewModel() {
             navHostController.navigate(AppNavigationItems.TrainingScreen.route)
         }
     }
+
+    suspend fun initScanner(context: Context, iScannerResultProviderListener: IScannerResultProviderListener)
+    {
+        Log.d(TAG, "Initializing printer in viewModel...")
+        ScannerServiceRepository().initScanner(context,iScannerResultProviderListener)
+    }
+
+    /*suspend fun startScanner(
+        data: Bundle,
+        onScanned: (String) -> Unit,
+        onError: (Int, String) -> Unit,
+        onTimeout: () -> Unit,
+        onCancel: () -> Unit,
+        scannerHandlerListener: IScannerHandlerListener
+    ) {
+        Log.d(TAG, "Start scanner in viewModel...")
+        try {
+            // Assuming ScannerServiceRepository is already instantiated
+            ScannerServiceRepository().startScanner(
+                data = data,
+                onScanned = onScanned,
+                onError = onError,
+                onTimeout = onTimeout,
+                onCancel = onCancel,
+                scannerHandlerListener = scannerHandlerListener
+            )
+            Log.d(TAG, "Scanner started successfully in viewModel")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start scanner in viewModel: ${e.message}")
+        }
+    }*/
+
+
 }

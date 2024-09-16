@@ -56,6 +56,7 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                     imageId = R.drawable.card, size = MaterialTheme.dimens.DP_60_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
+                    contentDescription = "",
                 )
 
                 OutlinedTextField(

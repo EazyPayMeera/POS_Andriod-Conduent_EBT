@@ -55,7 +55,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view.OnBoardSlideView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
-import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.RefundAmtView
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
@@ -245,11 +244,8 @@ fun AppNavigationGraph(
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                ApprovedView(navHostController, totalAmount)
+                ApprovedView(navHostController)
             }
-        }
-        composable(AppNavigationItems.RefundAmtScreen.route) {
-            RefundAmtView(navHostController)
         }
         composable(AppNavigationItems.SettingsScreen.route) {
             SettingsView(navHostController)

@@ -5,8 +5,6 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.analogics.paymentservicecore.logger.AppLogger
-import java.math.BigDecimal
-import java.text.DecimalFormat
 import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {

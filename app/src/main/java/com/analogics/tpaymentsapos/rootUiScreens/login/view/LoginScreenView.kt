@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,7 +64,9 @@ fun LoginScreenView(navHostController: NavHostController?) {
                 ) {
                     ImageView(
                         imageId =  R.drawable.unlock, // Decorative image
-                        size = MaterialTheme.dimens.DP_40_CompactMedium     )
+                        size = MaterialTheme.dimens.DP_40_CompactMedium,
+                        contentDescription = ""
+                    )
 
                     TextView(
                         text = stringResource(id = R.string.plz_login),

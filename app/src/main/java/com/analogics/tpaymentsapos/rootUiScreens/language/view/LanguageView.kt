@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,6 +78,7 @@ fun LanguageView(navHostController: NavHostController) {
                     imageId = R.drawable.language, size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape, // Example shape, can be any Shape
                     alignment = Alignment.Center,
+                    contentDescription = "",
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))

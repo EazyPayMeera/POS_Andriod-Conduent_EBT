@@ -71,6 +71,8 @@
     <string name="training">Training</string>
     <string name="printing">Printing</string>
     <string name="merchant_recp">Merchant Receipt</string>
+    <string name="e_recp">E-RECEIPT</string>
+    <string name="cust_recp">Customer Receipt</string>
     <string name="enter_tip_amount">Enter the Tip Amount</string>
     <string name="amount">Amount</string>
     <string name="adjust">Adjust</string>
@@ -93,7 +95,7 @@
     <string name="email">Email</string>
     <string name="sucess">Sucess</string>
     <string name="sent_email">Email Sent</string>
-    <string name="ereceipt_sent">e-Receipt was successfully sent</string>
+    <string name="ereceipt_sent">E-Receipt was successfully sent</string>
     <string name="ok">OK</string>
     <string name="ten">10%</string>
     <string name="tax_1">Tax 1</string>

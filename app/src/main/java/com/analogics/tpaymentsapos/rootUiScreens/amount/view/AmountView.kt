@@ -76,6 +76,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
+                    contentDescription = "",
                 )
 
                 OutlinedTextField(
