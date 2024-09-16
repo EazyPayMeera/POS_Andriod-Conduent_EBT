@@ -92,9 +92,9 @@ fun PinView(navHostController: NavHostController) {
 
         if (isDialogVisible) {
             CustomDialogBuilder.create()
-                .setTitle("Processing")
-                .setSubtitle("Please Wait")
-                .setSmallText("Processing...")
+                .setTitle(stringResource(id = R.string.processing))
+                .setSubtitle(stringResource(id = R.string.plz_wait))
+                .setSmallText(stringResource(id = R.string.processing))
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)

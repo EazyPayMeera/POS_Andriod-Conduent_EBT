@@ -26,7 +26,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -85,10 +84,10 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                     readOnly = !isEditable,
                     trailingIcon = {Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.pencil),  // You can replace this with your vector image
-                        contentDescription = "Edit Icon",
+                        contentDescription = "",
                         modifier = Modifier
                             .padding(end = MaterialTheme.dimens.DP_20_CompactMedium)
-                            .size(24.dp) // Set the icon size here
+                            .size(MaterialTheme.dimens.DP_24_CompactMedium) // Set the icon size here
                             .clickable { isEditable = !isEditable },  // Toggle editable state on icon click
                         tint = MaterialTheme.colorScheme.primary
                     )}

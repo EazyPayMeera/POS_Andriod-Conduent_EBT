@@ -71,7 +71,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
@@ -187,7 +186,7 @@ fun AppButton(
                         modifier = Modifier,
                         )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
                 Text(text = title)
             }
         }
@@ -231,7 +230,7 @@ fun CommonTopAppBar(
         navigationIcon = {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = "back_button",
+                contentDescription = "",
                 modifier = Modifier
                     .size(MaterialTheme.dimens.DP_40_CompactMedium)
                     .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
@@ -250,8 +249,8 @@ fun OkButton(
     Button(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .shadow(4.dp, shape = RoundedCornerShape(10.dp)) // Apply shadow directly to the Button
-            .background(colorResource(R.color.grey), shape = RoundedCornerShape(10.dp)),
+            .shadow(4.dp, shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)) // Apply shadow directly to the Button
+            .background(colorResource(R.color.grey), shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)),
         colors = buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
             containerColor = colorResource(R.color.grey)
@@ -513,7 +512,7 @@ fun FooterButtons(
                         isFirstButtonPressed = true
                         firstButtonOnClick()
                     }
-                    .padding(8.dp) // Increase padding to enlarge touchable area
+                    .padding(MaterialTheme.dimens.DP_20_CompactMedium) // Increase padding to enlarge touchable area
                     .shadow(
                         MaterialTheme.dimens.DP_4_CompactMedium,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -530,7 +529,7 @@ fun FooterButtons(
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
                     modifier = Modifier
-                        .width(/*MaterialTheme.dimens.DP_130_CompactMedium*/130.dp)
+                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
                         .height(MaterialTheme.dimens.DP_48_CompactMedium)
                         .border(
                             width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
@@ -551,7 +550,7 @@ fun FooterButtons(
 
                     TextView(
                         text = firstButtonTitle.uppercase(),
-                        fontSize = /*MaterialTheme.dimens.SP_21_CompactMedium*/15.sp,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         1,
@@ -614,7 +613,7 @@ fun FooterButtons(
 
                     TextView(
                         text = secondButtonTitle.uppercase(),
-                        fontSize = /*MaterialTheme.dimens.SP_21_CompactMedium*/15.sp,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         1,
@@ -750,7 +749,7 @@ fun AppHeader(
             if (isIcon1Visible && icon1 != null) {
                 Image(
                     painter = painterResource(id = icon1),
-                    contentDescription = "icon1",
+                    contentDescription = "",
                     modifier = Modifier
                         .size(MaterialTheme.dimens.DP_60_CompactMedium) // Increase the size here, e.g., 48.dp
                         .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)

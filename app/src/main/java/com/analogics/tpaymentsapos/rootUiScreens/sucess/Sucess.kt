@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -38,7 +38,7 @@ fun SucessView(navHostController: NavHostController) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(40.dp)
+                modifier = Modifier.padding(MaterialTheme.dimens.DP_40_CompactMedium)
             ) {
 
                 TextView(
@@ -63,7 +63,7 @@ fun SucessView(navHostController: NavHostController) {
 
                 ImageView(
                     imageId = R.drawable.sucess,
-                    size = 250.dp,
+                    size = MaterialTheme.dimens.DP_250_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
                     contentDescription = ""
@@ -73,9 +73,9 @@ fun SucessView(navHostController: NavHostController) {
         }
 
         FooterButtons(
-            firstButtonTitle = "E-RECEIPT",
+            firstButtonTitle = stringResource(id = R.string.e_recp),
             firstButtonOnClick = {navHostController.navigate(AppNavigationItems.EnterEmailScreen.route) },
-            secondButtonTitle = "HOME",
+            secondButtonTitle = stringResource(id = R.string.home),
             secondButtonOnClick = {navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
         )
     }

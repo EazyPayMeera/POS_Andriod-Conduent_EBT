@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -90,7 +89,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.user), // Replace with your icon resource
-                            contentDescription = "MID Icon",
+                            contentDescription = "",
                             modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium)
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
@@ -109,7 +108,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.terminal), // Replace with your icon resource
-                            contentDescription = "MID Icon",
+                            contentDescription = "",
                             modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium)
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
@@ -128,7 +127,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.list), // Replace with your icon resource
-                            contentDescription = "MID Icon",
+                            contentDescription = "",
                             modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium)
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text

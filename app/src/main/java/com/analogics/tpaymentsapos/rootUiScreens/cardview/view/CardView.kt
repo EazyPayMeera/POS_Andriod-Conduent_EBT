@@ -36,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -247,7 +246,7 @@ fun QRCodeDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -258,16 +257,16 @@ fun QRCodeDialog(
                 imageBitmap?.let {
                     Image(
                         bitmap = it,
-                        contentDescription = "QR Code",
-                        modifier = Modifier.size(300.dp)
+                        contentDescription = "",
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_300_CompactMedium)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium))
 
                 // Close button
                 Button(onClick = onDismiss) {
-                    Text(text = "Close")
+                    Text(text = stringResource(id = R.string.close))
                 }
             }
         }

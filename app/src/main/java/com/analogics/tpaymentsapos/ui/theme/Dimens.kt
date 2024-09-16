@@ -167,6 +167,7 @@ val CompactSmallDimens = Dimens(
     DP_190_CompactMedium = 190.dp,
     DP_200_CompactMedium = 200.dp,
     DP_248_CompactMedium = 248.dp,
+    DP_250_CompactMedium = 250.dp,
     DP_280_CompactMedium = 280.dp,
     DP_300_CompactMedium = 300.dp,
     DP_350_CompactMedium = 350.dp,

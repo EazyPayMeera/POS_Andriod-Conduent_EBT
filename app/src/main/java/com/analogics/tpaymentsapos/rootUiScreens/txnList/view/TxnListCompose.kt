@@ -69,7 +69,7 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
                 Text(
                     text = "Recent Transactions",
                     style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
                 )
 
                 LazyColumn {
@@ -109,7 +109,7 @@ fun TransactionItem(transaction: TxnDataList) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -122,10 +122,10 @@ fun TransactionItem(transaction: TxnDataList) {
                 color = if (transaction.isPositive) Color(0xFF4CAF50) else Color.Red
             )
             IconButton(onClick = { /* Handle item click */ }) {
-                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Arrow")
+                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
             }
         }
-        Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Color.Gray)
+        Divider(modifier = Modifier.fillMaxWidth(), thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium, color = Color.Gray)
     }
 }
 
@@ -135,9 +135,9 @@ fun TransactionItem(transaction: TxnDataList) {
 fun PreviewTransactionListScreen() {
     val navHostController:NavHostController=NavHostController(context = LocalContext.current)
     val mockTransactions = listOf(
-        TxnDataList(1, "Today @ 14:15:30", "Purchase", 450.00, true),
-        TxnDataList(2, "Today @ 14:15:30", "Refund", 50.00, false),
-        TxnDataList(3, "26-2-2020 @ 14:15:30", "Purchase", 50.00, true)
+        TxnDataList(1, "Today @ 14:15:30", stringResource(id = R.string.purchase), 450.00, true),
+        TxnDataList(2, "Today @ 14:15:30", stringResource(id = R.string.refund), 50.00, false),
+        TxnDataList(3, "26-2-2020 @ 14:15:30", stringResource(id = R.string.purchase), 50.00, true)
     )
     TransactionListScreen(navHostController,viewModel = FakeTransactionViewModel(mockTransactions))
 }
@@ -162,22 +162,22 @@ fun HeaderSection() {
             Text(
                 text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                 style = MaterialTheme.typography.caption,
-                color = Color(0xFFFFA000) // Orange color
+                color = androidx.compose.material3.MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium))
             Text(
-                text = "Net Total",
+                text = stringResource(id = R.string.net_total),
                 style = MaterialTheme.typography.h5,
                 color = Color.Gray
             )
             Text(
                 text = formatAmount(400.00),
                 style = MaterialTheme.typography.h4,
-                color = Color(0xFFFFA000) // Orange color
+                color = androidx.compose.material3.MaterialTheme.colorScheme.primary
             )
         }
         IconButton(onClick = { /* Handle print action */ }) {
-            Icon(Icons.Default.Print, contentDescription = "Print")
+            Icon(Icons.Default.Print, contentDescription = "")
         }
     }
 }

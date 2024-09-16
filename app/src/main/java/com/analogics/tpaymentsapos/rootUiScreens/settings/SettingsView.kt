@@ -63,7 +63,7 @@ fun SettingsView(navHostController: NavHostController) {
 
                 // Set Language text
                 Text(
-                    text = "Set Language",
+                    text = stringResource(id = R.string.set_lang),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium) // Space between text and images
                 )
@@ -105,7 +105,7 @@ fun SettingsView(navHostController: NavHostController) {
 
                 // Change Password text
                 Text(
-                    text = "Change Password",
+                    text = stringResource(id = R.string.change_password),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium) // Space between text and images
                 )
@@ -149,7 +149,7 @@ fun SettingsView(navHostController: NavHostController) {
 
                 // Change Password text
                 Text(
-                    text = "Configuration",
+                    text = stringResource(id = R.string.Configuration),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium) // Space between text and images
                 )
@@ -160,7 +160,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Trailing image
                 Image(
                     painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "Arrow Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed need to change here 24.dp
                 )
             }

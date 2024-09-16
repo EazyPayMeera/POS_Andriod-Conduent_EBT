@@ -18,6 +18,7 @@
     <string name="plz_login">Please login to continue</string>
     <string name="plz_ent_new_pass">Please Enter Your New Password</string>
     <string name="login">Login</string>
+    <string name="log_out">Logout</string>
     <string name="change_password">Change Password</string>
     <string name="forget_pswd">Forgot Password?</string>
     <string name="username">Username</string>
@@ -29,6 +30,7 @@
 
     <!-- Dashboard -->
     <string name="refund">Refund</string>
+    <string name="net_total">Net Total</string>
     <string name="refund_amt">Enter the Refund Amount</string>
     <string name="enter_invoice">Enter the Invoice Number</string>
     <string name="enter_email">Enter the Email Id</string>
@@ -84,6 +86,7 @@
     <string name="set_lang">Set Language</string>
     <string name="select_lang">Select Your Language</string>
     <string name="hindi">हिन्दी</string>
+    <string name="home">HOME</string>
     <string name="english">English</string>
     <string name="scan_qr">Scan QR/Barcode</string>
     <string name="password_">Forget Password ?</string>
@@ -103,6 +106,7 @@
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
     <string name="or">---------------or---------------</string>
+    <string name="close">Close</string>
     <string name="chip_detected">Chip Detected</string>
     <string name="approved">APPROVED</string>
     <string name="original_amount">Original Amount :</string>

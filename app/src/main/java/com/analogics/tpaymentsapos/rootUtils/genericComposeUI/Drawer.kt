@@ -74,7 +74,7 @@ fun CustomDrawerContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close Drawer"
+                        contentDescription = ""
                     )
                 }
             }
@@ -94,7 +94,7 @@ fun CustomDrawerContent(
             ) {
                 DrawerMenuItem(
                     icon = Icons.Default.Chat,
-                    label = "Set Language",
+                    label = stringResource(id = R.string.set_lang),
                     function = {
                         onMenuItemClick("Settings")
                         navHostController.navigate(AppNavigationItems.LanguageScreen.route)
@@ -103,7 +103,7 @@ fun CustomDrawerContent(
                 Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                 DrawerMenuItem(
                     icon = Icons.Default.VpnKey,
-                    label = "Change Password",
+                    label = stringResource(id = R.string.change_password),
                     function = {
                         onMenuItemClick("Settings")
                         navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route)
@@ -112,7 +112,7 @@ fun CustomDrawerContent(
                 Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                 DrawerMenuItem(
                     icon = Icons.Default.Settings,
-                    label = "Configuration",
+                    label = stringResource(id = R.string.Configuration),
                     function = {
                         onMenuItemClick("Settings")
                         navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
@@ -121,7 +121,7 @@ fun CustomDrawerContent(
                 Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                 DrawerMenuItem(
                     icon = Icons.Default.Logout,
-                    label = "Logout",
+                    label = stringResource(id = R.string.log_out),
                     function = {
                         onMenuItemClick("Logout")
                         navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route)
