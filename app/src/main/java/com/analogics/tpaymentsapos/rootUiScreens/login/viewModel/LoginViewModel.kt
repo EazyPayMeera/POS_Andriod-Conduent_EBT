@@ -7,24 +7,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
 
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
-class LoginViewModel @Inject constructor(private var paymentServiceRepository: PaymentServiceRepository): ViewModel(),
-IOnRootAppPaymentListener {
+class LoginViewModel @Inject constructor(private var paymentServiceRepository: PaymentServiceRepository) :
+    ViewModel(),
+    IOnRootAppPaymentListener {
     var emailCredentials = mutableStateOf("")
     var pwdCredentials = mutableStateOf("")
     var userApiSuccessHolder = MutableStateFlow(ObjEmployeeResponse())
+    var useRootAppPaymentDetails = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
-    lateinit var navHostController:NavHostController
+    lateinit var navHostController: NavHostController
     val isFormValid: Boolean
         get() = emailCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank()
 
@@ -37,29 +43,54 @@ IOnRootAppPaymentListener {
     }
 
     fun onLoginClick(navHost: NavHostController?, context: Context) {
-        this.navHostController=navHost!!
+        this.navHostController = navHost!!
         viewModelScope.launch {
             try {
-                    //paymentServiceRepository.apiEmpDetails(iOnRootAppPaymentListener = this@LoginViewModel)
+                //paymentServiceRepository.apiEmpDetails(iOnRootAppPaymentListener = this@LoginViewModel)
                 navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
-                paymentServiceRepository.getPosConfig().apply {isLoggedIn = true}.saveToPrefs(context)
+                paymentServiceRepository.getPosConfig().apply { isLoggedIn = true }
+                    .saveToPrefs(context)
+
+
             } catch (e: Exception) {
-               e.printStackTrace()
+                e.printStackTrace()
             }
         }
     }
 
+    /*
+       * Call any API like bellow and it will return the dummy data in ObjRootAppPaymnet Details
+       *
+       * */
+    fun onApiDeviceLogin() {
+        viewModelScope.launch {
+            try {
+                paymentServiceRepository.apiServiceLogin(useRootAppPaymentDetails.value as PaymentServiceTxnDetails,this@LoginViewModel)
+            } catch (e: Exception) {
+                AppLogger.d(AppLogger.MODULE.APP_UI,e.message?:"")
+            }
+        }
+      }
 
     override fun onPaymentSuccess(response: Any) {
-        userApiSuccessHolder.value=response as ObjEmployeeResponse
-        if (isFormValid) {
-            navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+        when (response) {
+            is ObjRootAppPaymentDetails -> {
+                useRootAppPaymentDetails.value = response
+            }
+
+            else -> {
+                userApiSuccessHolder.value = response as ObjEmployeeResponse
+                if (isFormValid) {
+                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                }
+                Log.e("API Response", response.toString())
+            }
         }
-        Log.e("API Response",response.toString())
+
     }
 
     override fun onPaymentError(paymentError: PaymentServiceError) {
-        Log.e("API Response",paymentError.errorMessage)
-        userApiErrorHolder.value= paymentError
+        Log.e("API Response", paymentError.errorMessage)
+        userApiErrorHolder.value = paymentError
     }
 }

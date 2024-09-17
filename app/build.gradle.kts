@@ -120,7 +120,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     // ZXing core
     implementation("com.google.zxing:core:3.5.0")
-
+    implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("androidx.compose.ui:ui-graphics:1.5.0")
     // Coil SVG decoder
     implementation("io.coil-kt:coil-svg:2.2.2")
