@@ -12,26 +12,25 @@ import javax.inject.Inject
 class AuthCaptureRequestRepository @Inject constructor(
     private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository,
-    private var builderUtils: BuilderUtils
+    private var buildApiRepository: BuildApiRepository
 ) :
     IApiServiceResponseListener {
 
-    suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+    suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
         buildApiRepository.apiPreAuth(
             this,
-            builderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createPre_AuthRequest(paymentServiceTxnDetails)
             )
         )
     }
 
-    suspend fun sendAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+    suspend fun sendAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
         buildApiRepository.apiPostAuth(
             this,
-            builderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createAuthCaptureRequest(paymentServiceTxnDetails)
             )
         )

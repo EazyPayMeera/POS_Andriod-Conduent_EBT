@@ -13,6 +13,7 @@ import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPayment
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.example.example.ObjEmployeeResponse
@@ -65,12 +66,15 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
     fun onApiDeviceLogin() {
         viewModelScope.launch {
             try {
-                paymentServiceRepository.apiServiceLogin(useRootAppPaymentDetails.value as PaymentServiceTxnDetails,this@LoginViewModel)
+                val requestDetails =
+                    PaymentServiceUtils.objectToJsonString(useRootAppPaymentDetails.value)
+                paymentServiceRepository.apiServiceLogin(
+                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@LoginViewModel)
             } catch (e: Exception) {
-                AppLogger.d(AppLogger.MODULE.APP_UI,e.message?:"")
+                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }
         }
-      }
+    }
 
     override fun onPaymentSuccess(response: Any) {
         when (response) {

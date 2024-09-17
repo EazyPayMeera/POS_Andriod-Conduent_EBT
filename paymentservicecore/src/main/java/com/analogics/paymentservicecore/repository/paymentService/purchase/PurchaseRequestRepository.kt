@@ -12,16 +12,15 @@ import javax.inject.Inject
 class PurchaseRequestRepository @Inject constructor(
     private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository,
-    private var builderUtils: BuilderUtils
+    private var buildApiRepository: BuildApiRepository
 ) :
     IApiServiceResponseListener {
 
-    suspend fun sendPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+    suspend fun sendPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
         buildApiRepository.apiPurchase(
             this,
-            builderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createPurchaseRequest(paymentServiceTxnDetails)
             )
         )

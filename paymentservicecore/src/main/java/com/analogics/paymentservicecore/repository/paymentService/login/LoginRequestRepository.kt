@@ -12,16 +12,15 @@ import javax.inject.Inject
 class LoginRequestRepository @Inject constructor(
     private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository,
-    private var builderUtils: BuilderUtils
+    private var buildApiRepository: BuildApiRepository
 ) :
     IApiServiceResponseListener {
 
-    suspend fun apiDeviceLogin(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+    suspend fun apiDeviceLogin(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
         buildApiRepository.apiDeviceLogin(
             this,
-            builderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createLoginRequest(paymentServiceTxnDetails)
             )
         )

@@ -10,7 +10,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import javax.inject.Inject
 
-class BuildApiRepository @Inject constructor(private val iApiService: IAPIService, private var  builderUtils: BuilderUtils):IBuildApiRequestListener{
+class BuildApiRepository @Inject constructor(private val iApiService: IAPIService):IBuildApiRequestListener{
     lateinit var iApiServiceResponseListener:IApiServiceResponseListener
 
 

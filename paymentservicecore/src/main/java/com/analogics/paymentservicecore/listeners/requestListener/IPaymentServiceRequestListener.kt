@@ -15,32 +15,32 @@ interface IPaymentServiceRequestListener {
     fun getPosConfig(): PosConfig
 
     suspend fun apiServiceRefund(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 
     suspend fun apiServiceVoid(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 
     suspend fun apiServicePurchase(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 
     suspend fun apiServiceAuthCapture(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 
     suspend fun apiServiceReversal(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 
     suspend fun apiServiceLogin(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 

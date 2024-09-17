@@ -12,16 +12,15 @@ import javax.inject.Inject
 class ReversalRequestRepository @Inject constructor(
     private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository,
-    private var builderUtils: BuilderUtils
+    private var buildApiRepository: BuildApiRepository
 ) :
     IApiServiceResponseListener {
 
-    suspend fun sendReversal(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+    suspend fun sendReversal(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
         buildApiRepository.apiReversal(
             this,
-            builderUtils.prepareAPIRequestBody(apiServiceRequestBuilder.createReversalRequest(paymentServiceTxnDetails)
+            BuilderUtils.prepareAPIRequestBody(apiServiceRequestBuilder.createReversalRequest(paymentServiceTxnDetails)
         ))
     }
 

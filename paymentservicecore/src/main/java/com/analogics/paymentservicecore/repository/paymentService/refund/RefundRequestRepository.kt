@@ -9,13 +9,22 @@ import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import javax.inject.Inject
 
-class RefundRequestRepository @Inject constructor (private  var paymentServiceRepository:PaymentServiceRepository,var apiServiceRequestBuilder:APIServiceRequestBuilder,private var buildApiRepository: BuildApiRepository,private var builderUtils:BuilderUtils):IApiServiceResponseListener {
+class RefundRequestRepository @Inject constructor(
+    private var paymentServiceRepository: PaymentServiceRepository,
+    var apiServiceRequestBuilder: APIServiceRequestBuilder,
+    private var buildApiRepository: BuildApiRepository
+) : IApiServiceResponseListener {
 
-  suspend  fun sendRefundRequest(paymentServiceTxnDetails:  PaymentServiceTxnDetails)
-    {
+    suspend fun sendRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
-        buildApiRepository.apiRefund(this,builderUtils.prepareAPIRequestBody(apiServiceRequestBuilder.createRefundRequest(paymentServiceTxnDetails)))
+        buildApiRepository.apiRefund(
+            this,
+            BuilderUtils.prepareAPIRequestBody(
+                apiServiceRequestBuilder.createRefundRequest(paymentServiceTxnDetails)
+            )
+        )
     }
+
     override fun onApiSuccessRes(response: String) {
         paymentServiceRepository.onAPIServiceResponse(response)
     }

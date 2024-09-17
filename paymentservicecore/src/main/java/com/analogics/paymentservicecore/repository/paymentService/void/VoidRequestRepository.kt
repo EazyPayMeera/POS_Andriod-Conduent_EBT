@@ -13,16 +13,15 @@ import javax.inject.Inject
 class VoidRequestRepository @Inject constructor(
     private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository,
-    private var builderUtils: BuilderUtils
+    private var buildApiRepository: BuildApiRepository
 ) :
     IApiServiceResponseListener {
 
-    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
         buildApiRepository.apiVoid(
             this,
-            builderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createVoidRequest(paymentServiceTxnDetails)
             )
         )
