@@ -224,7 +224,7 @@ fun ApprovedView(navHostController: NavHostController) {
                         .align(Alignment.CenterHorizontally),
                     contentDescription = ""
                 )
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -249,15 +249,15 @@ fun ApprovedView(navHostController: NavHostController) {
                         },
                         onMenuOptionClick = { option ->
                             when (option) {
-                                "Customer Receipt" -> {
+                                context.resources.getString((R.string.cust_recp)) -> {
                                     Authorisation.isCustomerReceipt = true
                                     navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                                 }
-                                "Merchant Receipt" -> {
+                                context.resources.getString((R.string.merchant_recp)) -> {
                                     Authorisation.isMerchantReceipt = true
                                     viewModel.printReceipt(coroutineScope)
                                 }
-                                "E-RECEIPT" -> {
+                                context.resources.getString((R.string.e_recp)) -> {
                                     Authorisation.isEReceipt = true
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }

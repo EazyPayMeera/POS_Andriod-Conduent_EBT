@@ -150,8 +150,9 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     horizontalArrangement = Arrangement.SpaceEvenly
 
                 ) {
+                    val tenPercent = stringResource(id = R.string.ten)
                     Button(
-                        onClick = { selectedTip = "10%"; selectedTipPercentage = 10.0 },
+                        onClick = { selectedTip = tenPercent; selectedTipPercentage = 10.0 },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == stringResource(id = R.string.ten) && isTipEnabled) {
@@ -172,9 +173,9 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     ) {
                         Text(text = stringResource(id = R.string.ten))
                     }
-
+                    val fifteenPercent = stringResource(id = R.string.fifteen)
                     Button(
-                        onClick = { selectedTip = "15%"; selectedTipPercentage = 15.0  },
+                        onClick = { selectedTip = fifteenPercent; selectedTipPercentage = 15.0  },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == "15%" && isTipEnabled) {
@@ -196,9 +197,9 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                     ) {
                         Text(text = stringResource(id = R.string.fifteen))
                     }
-
+                    val twentyPercent = stringResource(id = R.string.twenty)
                     Button(
-                        onClick = { selectedTip = "20%"; selectedTipPercentage = 20.0  },
+                        onClick = { selectedTip = twentyPercent; selectedTipPercentage = 20.0  },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (selectedTip == stringResource(id = R.string.twenty) && isTipEnabled) {
