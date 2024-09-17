@@ -13,10 +13,19 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     suspend fun  updateBatch(batchEntity: BatchEntity){
         iBatchDao.update(batchEntity)
     }
+    // Get Transaction Details From Batch Using Merchant-Id
+    suspend fun fetchTransactionDetailsBatch(merchantId: String): TxnEntity? {
+        return iBatchDao.getTransactionDetailsTxnBatch(merchantId)
+    }
+
     suspend fun  insertTxn(txnEntity: TxnEntity){
         iTxnDao.insert(txnEntity)
     }
     suspend fun  updateTxn(txnEntity: TxnEntity){
         iTxnDao.update(txnEntity)
+    }
+    // Get Transaction Details From Transaction Using Merchant-Id
+    suspend fun fetchTransactionDetailsTxn(merchantId: String): TxnEntity? {
+        return iTxnDao.getTransactionDetailsTxn(merchantId)
     }
 }
