@@ -1,8 +1,8 @@
 package com.analogics.paymentservicecore.listeners.requestListener
 
 import android.content.Context
+import android.os.Bundle
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
-import com.google.mlkit.vision.common.InputImage
 
 interface ScannerRequestListener {
     suspend fun initScanner(
@@ -12,8 +12,11 @@ interface ScannerRequestListener {
 
     // Starts the scanner with an InputImage and callbacks
     suspend fun startScanner(
-        image: InputImage,
+        context: Context,
+        data: Bundle,
         onScanned: (qrCode: String) -> Unit,
-        onError: (errorCode: Int, message: String) -> Unit
+        onError: (errorCode: Int, message: String) -> Unit,
+        onTimeout: () -> Unit,
+        onCancel: () -> Unit
     )
 }

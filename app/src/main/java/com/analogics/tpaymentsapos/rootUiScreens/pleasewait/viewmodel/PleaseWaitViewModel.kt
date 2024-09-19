@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import java.io.ByteArrayOutputStream
 
 class PleaseWaitViewModel(context: Context): ViewModel() {
@@ -68,8 +69,9 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
 
     suspend fun addReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
+        val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
         Log.d(TAG, "Initializing printer in viewModel...")
-        PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
+        PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
     }
 
     fun startPrint()
