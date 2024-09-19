@@ -1,12 +1,12 @@
 package com.analogics.paymentservicecore.repository.scannerService
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import com.analogics.paymentservicecore.listeners.requestListener.ScannerRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.tpaymentcore.handler.ScannerHandler
 import com.analogics.tpaymentcore.listener.IScannerHandlerListener
-import com.google.mlkit.vision.common.InputImage
 import javax.inject.Inject
 
 class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, IScannerHandlerListener {
@@ -33,14 +33,37 @@ class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, I
     }
 
     override suspend fun startScanner(
-        image: InputImage,
+        context: Context,
+        data: Bundle,
         onScanned: (qrCode: String) -> Unit,
-        onError: (errorCode: Int, message: String) -> Unit
+        onError: (errorCode: Int, message: String) -> Unit,
+        onTimeout: () -> Unit,
+        onCancel: () -> Unit
     ) {
-        Log.d(TAG, "Start scanner in Payment Service Repository...")
+        Log.d(TAG, "Starting scanner in Payment Service Repository...")
         try {
-            // Start the scanner with the provided image
-            ScannerHandler.startScanner(image, onScanned, onError)
+            // Start the scanner with the provided parameters
+            ScannerHandler.startScanner(
+                context = context,
+                data = data,
+                onScanned = { qrCode ->
+                    Log.d(TAG, "Scanned QR code: $qrCode")
+                    onScanned(qrCode)
+                },
+                onError = { errorCode, message ->
+                    Log.e(TAG, "Scanner error: $message")
+                    onError(errorCode, message)
+                },
+                onTimeout = {
+                    Log.d(TAG, "Scanner timeout.")
+                    onTimeout()
+                },
+                onCancel = {
+                    Log.d(TAG, "Scanner canceled.")
+                    onCancel()
+                },
+                scannerHandlerListener = this
+            )
             Log.d(TAG, "Scanner started successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start scanner: ${e.message}")

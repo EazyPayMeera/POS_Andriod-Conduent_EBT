@@ -1,8 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.invoice
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +22,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
@@ -42,7 +39,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun InvoiceView(navHostController: NavHostController) {
     val context = LocalContext.current
-    // Get ViewModel instance
     val viewModel: InvoiceViewModel = hiltViewModel()
 
     // Collect the state from ViewModel
@@ -66,18 +62,18 @@ fun InvoiceView(navHostController: NavHostController) {
             ) {
 
                 coroutineScope.launch {
-                    viewModel.initScanner(context, object :
+                    /*viewModel.initScanner(context, object :
                         IScannerResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if (result?.equals(true) == true)
-                                Log.d(TAG, "Initialization of printer is Successful")
+                                Log.d(TAG, "Initialization of scanner is Successful")
                             else
-                                Log.d(TAG, "Initialization of printer is Failed")
+                                Log.d(TAG, "Initialization of scanner is Failed")
                         }
                         override fun onFailure(exception: Exception) {
                             // No action needed, failure is handled elsewhere
                         }
-                    })
+                    })*/
                 }
 
                 TextView(
@@ -132,7 +128,6 @@ fun InvoiceView(navHostController: NavHostController) {
                         shape = RectangleShape,
                         alignment = Alignment.Center,
                         modifier = Modifier.clickable {
-
                         },
                         contentDescription = ""
                     )
@@ -148,5 +143,7 @@ fun InvoiceView(navHostController: NavHostController) {
         )
     }
 }
+
+
 
 
