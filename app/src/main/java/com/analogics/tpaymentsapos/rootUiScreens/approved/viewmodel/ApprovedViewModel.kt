@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -144,12 +145,15 @@ class ApprovedViewModel(context: Context): ViewModel() {
 
     suspend fun initPrinter(context: Context, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
+        val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
         Log.d(TAG, "Initializing printer in viewModel...")
-        PrinterServiceRepository().initPrinter(context,iPrinterResultProviderListener)
+        PrinterServiceRepository(receiptBuilder).initPrinter(context, iPrinterResultProviderListener)
     }
+
 
     suspend fun addReceiptDetails(iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
+        val receiptBuilder = ReceiptBuilder()
         Log.d(TAG, "Initializing printer in viewModel...")
         val format = Bundle().apply {
             putInt("align", 1)
@@ -157,20 +161,8 @@ class ApprovedViewModel(context: Context): ViewModel() {
             putInt("height", 100)
             putSerializable("barcode_type", BarcodeFormat.CODE_39)
         }
-        PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
+        PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
     }
 
-    fun GetStatus() {
-        val status = printer.getPrinterStatus()
-        _printStatus.value = when (status) {
-            0 -> "Printer is OK"
-            240 -> "Error: Status 240"
-            243 -> "Error: Status 243"
-            225 -> "Error: Status 225"
-            247 -> "Error: Status 247"
-            251 -> "Error: Status 251"
-            242 -> "Error: Status 242"
-            else -> "Unknown status: $status"
-        }
-    }
+
 }

@@ -49,6 +49,15 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51")
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     //   implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+
+
+    implementation ("com.google.mlkit:barcode-scanning:17.0.3") // Add the latest version available
+    implementation ("androidx.camera:camera-camera2:1.1.0") // For CameraX
+    implementation ("androidx.camera:camera-lifecycle:1.1.0")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha28")
+
+    implementation ("com.google.mlkit:barcode-scanning:17.0.0")
+
     api(project(":paymentservicecore:tpaymentcore"))
     api(project(":paymentservicecore:builder-core"))
     api(project(":paymentservicecore:securityframework"))
