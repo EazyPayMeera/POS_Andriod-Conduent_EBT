@@ -10,7 +10,7 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import javax.inject.Inject
 
 class AuthCaptureRequestRepository @Inject constructor(
-    private var paymentServiceRepository: PaymentServiceRepository,
+    //private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
 ) :
@@ -37,11 +37,11 @@ class AuthCaptureRequestRepository @Inject constructor(
     }
 
     override fun onApiSuccessRes(response: String) {
-        paymentServiceRepository.onAPIServiceResponse(response)
+        //paymentServiceRepository.onAPIServiceResponse(response)
     }
 
     override fun onApiFailureRes(error: Any) {
-        paymentServiceRepository.onAPIServiceResponse(PaymentServiceError(error.toString()))
+        //paymentServiceRepository.onAPIServiceResponse(PaymentServiceError(error.toString()))
     }
 
 

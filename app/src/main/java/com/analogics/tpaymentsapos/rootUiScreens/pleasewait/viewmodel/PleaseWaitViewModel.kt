@@ -71,6 +71,7 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
     {
         val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
         Log.d(TAG, "Initializing printer in viewModel...")
+        //PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
         PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
     }
 

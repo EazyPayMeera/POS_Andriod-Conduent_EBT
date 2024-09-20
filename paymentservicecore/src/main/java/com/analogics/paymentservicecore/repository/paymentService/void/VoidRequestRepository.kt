@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository.paymentService.void
+package com.analogics.paymentservicecore.repository.paymentService
 
 import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 
 class VoidRequestRepository @Inject constructor(
-    private var paymentServiceRepository: PaymentServiceRepository,
+    //private var paymentServiceRepository: PaymentServiceRepository,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
 ) :
@@ -28,11 +28,11 @@ class VoidRequestRepository @Inject constructor(
     }
 
     override fun onApiSuccessRes(response: String) {
-        paymentServiceRepository.onAPIServiceResponse(response)
+        //paymentServiceRepository.onAPIServiceResponse(response)
     }
 
     override fun onApiFailureRes(error: Any) {
-        paymentServiceRepository.onAPIServiceResponse(PaymentServiceError(error.toString()))
+        //paymentServiceRepository.onAPIServiceResponse(PaymentServiceError(error.toString()))
     }
 
 
