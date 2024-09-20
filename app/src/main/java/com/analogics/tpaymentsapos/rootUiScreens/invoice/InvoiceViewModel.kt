@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
-import com.analogics.paymentservicecore.repository.scannerService.ScannerServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,7 +43,6 @@ class InvoiceViewModel : ViewModel() {
     suspend fun initScanner(context: Context, iScannerResultProviderListener: IScannerResultProviderListener)
     {
         Log.d(TAG, "Initializing printer in viewModel...")
-        ScannerServiceRepository().initScanner(context,iScannerResultProviderListener)
     }
 
     /*suspend fun startScanner(

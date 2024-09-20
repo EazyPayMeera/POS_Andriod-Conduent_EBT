@@ -15,7 +15,7 @@ import com.analogics.paymentservicecore.repository.paymentService.login.LoginReq
 import com.analogics.paymentservicecore.repository.paymentService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.reversal.ReversalRequestRepository
-import com.analogics.paymentservicecore.repository.paymentService.void.VoidRequestRepository
+import com.analogics.paymentservicecore.repository.paymentService.VoidRequestRepository
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 import javax.inject.Inject
@@ -27,7 +27,6 @@ class PaymentServiceRepository @Inject constructor(
     private val reversalRequestRepository: ReversalRequestRepository,
     private val voidRequestRepository: VoidRequestRepository,
     private val purchaseRequestRepository: PurchaseRequestRepository
-
 ) :
     IPaymentServiceRequestListener,
     IPaymentSDKListener {

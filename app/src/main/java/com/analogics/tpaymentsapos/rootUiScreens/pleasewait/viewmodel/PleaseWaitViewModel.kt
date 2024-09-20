@@ -69,7 +69,7 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
     suspend fun addReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
         Log.d(TAG, "Initializing printer in viewModel...")
-        PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
+        //PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
     }
 
     fun startPrint()
