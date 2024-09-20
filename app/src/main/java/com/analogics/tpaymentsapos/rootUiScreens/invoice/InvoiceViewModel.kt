@@ -1,7 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import android.content.ContentValues.TAG
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,13 +10,17 @@ import com.analogics.paymentservicecore.listeners.responseListener.IScannerResul
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class InvoiceViewModel : ViewModel() {
+    private val TAG = "InvoiceViewModel"
     private val _invoiceno = MutableStateFlow("")
     val invoiceno: StateFlow<String> = _invoiceno
+
+    private val scannerServiceRepository = ScannerServiceRepository() // Instantiate here
 
     fun updateInvoiceNo(newValue: String) {
         _invoiceno.value = newValue
@@ -38,35 +42,32 @@ class InvoiceViewModel : ViewModel() {
         }
     }
 
-    suspend fun initScanner(context: Context, iScannerResultProviderListener: IScannerResultProviderListener)
-    {
-        Log.d(TAG, "Initializing printer in viewModel...")
+    suspend fun initScanner(context: Context, iScannerResultProviderListener: IScannerResultProviderListener) {
+        Log.d(TAG, "Initializing scanner in viewModel...")
+        scannerServiceRepository.initScanner(context, iScannerResultProviderListener)
     }
 
-    /*suspend fun startScanner(
+    suspend fun startScanner(
+        context: Context,
         data: Bundle,
-        onScanned: (String) -> Unit,
+        onSuccess: (String) -> Unit,
         onError: (Int, String) -> Unit,
         onTimeout: () -> Unit,
-        onCancel: () -> Unit,
-        scannerHandlerListener: IScannerHandlerListener
+        onCancel: () -> Unit
     ) {
-        Log.d(TAG, "Start scanner in viewModel...")
+        Log.d(TAG, "Starting scanner in viewModel...")
         try {
-            // Assuming ScannerServiceRepository is already instantiated
-            ScannerServiceRepository().startScanner(
-                data = data,
-                onScanned = onScanned,
-                onError = onError,
-                onTimeout = onTimeout,
-                onCancel = onCancel,
-                scannerHandlerListener = scannerHandlerListener
+            scannerServiceRepository.startScanner(
+                context,
+                data,
+                onSuccess,
+                onError,
+                onTimeout,
+                onCancel
             )
             Log.d(TAG, "Scanner started successfully in viewModel")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start scanner in viewModel: ${e.message}")
         }
-    }*/
-
-
+    }
 }

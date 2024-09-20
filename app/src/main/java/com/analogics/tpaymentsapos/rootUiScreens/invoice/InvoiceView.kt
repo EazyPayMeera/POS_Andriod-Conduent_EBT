@@ -1,6 +1,12 @@
 package com.analogics.tpaymentsapos.rootUiScreens.invoice
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ContentValues.TAG
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +26,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
@@ -43,8 +52,20 @@ fun InvoiceView(navHostController: NavHostController) {
 
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
-
     val coroutineScope = rememberCoroutineScope()
+
+    // Define the request code
+    val CAMERA_REQUEST_CODE = 100
+
+    // Permission check
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(
+            (context as? Activity) ?: return, // Cast context to Activity
+            arrayOf(Manifest.permission.CAMERA),
+            CAMERA_REQUEST_CODE
+        )
+    }
 
     Column {
         CommonTopAppBar(
@@ -60,20 +81,44 @@ fun InvoiceView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
-
+                // Initialize the scanner if permissions are granted
                 coroutineScope.launch {
-                    /*viewModel.initScanner(context, object :
-                        IScannerResultProviderListener {
-                        override fun onSuccess(result: Any?) {
-                            if (result?.equals(true) == true)
-                                Log.d(TAG, "Initialization of scanner is Successful")
-                            else
-                                Log.d(TAG, "Initialization of scanner is Failed")
-                        }
-                        override fun onFailure(exception: Exception) {
-                            // No action needed, failure is handled elsewhere
-                        }
-                    })*/
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED) {
+                        viewModel.initScanner(context, object : IScannerResultProviderListener {
+                            override fun onSuccess(result: Any?) {
+                                if (result?.equals(true) == true)
+                                    Log.d(TAG, "Initialization of scanner is Successful")
+                                else
+                                    Log.d(TAG, "Initialization of scanner is Failed")
+                            }
+
+                            override fun onFailure(exception: Exception) {
+                                Log.e(TAG, "Scanner initialization failed: ${exception.message}")
+                            }
+                        })
+
+                        // Start the scanner using the back camera
+                        viewModel.startScanner(
+                            context,
+                            Bundle().apply {
+                                putString("camera_facing", "back") // Specify to use back camera
+                            },
+                            onSuccess = { qrCode ->
+                                Log.d(TAG, "Scanned QR Code: $qrCode")
+                                // Handle the scanned QR code as needed
+                            },
+                            onError = { errorCode, message ->
+                                Log.e(TAG, "Scanner Error [$errorCode]: $message")
+                            },
+                            onTimeout = {
+                                Log.d(TAG, "Scanner timed out.")
+                            },
+                            onCancel = {
+                                Log.d(TAG, "Scanner was canceled.")
+                            }
+                        )
+                    }
                 }
 
                 TextView(
@@ -111,7 +156,6 @@ fun InvoiceView(navHostController: NavHostController) {
                 )
 
                 if (TxnInfo.txnType in listOf(TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP)) {
-
                     TextView(
                         text = "",
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
@@ -128,6 +172,28 @@ fun InvoiceView(navHostController: NavHostController) {
                         shape = RectangleShape,
                         alignment = Alignment.Center,
                         modifier = Modifier.clickable {
+                            // Call the scanner functionality here
+                            coroutineScope.launch {
+                                viewModel.startScanner(
+                                    context,
+                                    Bundle().apply {
+                                        putString("camera_facing", "back") // Ensure back camera is used
+                                    },
+                                    onSuccess = { qrCode ->
+                                        Log.d(TAG, "Scanned QR Code: $qrCode")
+                                        // Handle the scanned QR code as needed
+                                    },
+                                    onError = { errorCode, message ->
+                                        Log.e(TAG, "Scanner Error [$errorCode]: $message")
+                                    },
+                                    onTimeout = {
+                                        Log.d(TAG, "Scanner timed out.")
+                                    },
+                                    onCancel = {
+                                        Log.d(TAG, "Scanner was canceled.")
+                                    }
+                                )
+                            }
                         },
                         contentDescription = ""
                     )
@@ -143,7 +209,3 @@ fun InvoiceView(navHostController: NavHostController) {
         )
     }
 }
-
-
-
-
