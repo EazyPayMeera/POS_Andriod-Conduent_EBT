@@ -97,27 +97,6 @@ fun InvoiceView(navHostController: NavHostController) {
                                 Log.e(TAG, "Scanner initialization failed: ${exception.message}")
                             }
                         })
-
-                        // Start the scanner using the back camera
-                        viewModel.startScanner(
-                            context,
-                            Bundle().apply {
-                                putString("camera_facing", "back") // Specify to use back camera
-                            },
-                            onSuccess = { qrCode ->
-                                Log.d(TAG, "Scanned QR Code: $qrCode")
-                                // Handle the scanned QR code as needed
-                            },
-                            onError = { errorCode, message ->
-                                Log.e(TAG, "Scanner Error [$errorCode]: $message")
-                            },
-                            onTimeout = {
-                                Log.d(TAG, "Scanner timed out.")
-                            },
-                            onCancel = {
-                                Log.d(TAG, "Scanner was canceled.")
-                            }
-                        )
                     }
                 }
 
