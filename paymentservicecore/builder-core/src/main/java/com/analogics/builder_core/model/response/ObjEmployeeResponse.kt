@@ -1,5 +1,6 @@
 package com.example.example
 
+import com.analogics.builder_core.model.response.ObjEmployeeData
 import com.google.gson.annotations.SerializedName
 
 

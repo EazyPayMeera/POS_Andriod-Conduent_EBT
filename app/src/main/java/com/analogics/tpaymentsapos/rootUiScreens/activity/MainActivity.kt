@@ -19,11 +19,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocal
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -61,13 +65,14 @@ import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
-
+var SharedViewModelLocal= compositionLocalOf{SharedViewModel()}
 
 const val STORAGE_PERMISSION_CODE = 23
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var sharedViewModel:SharedViewModel= ViewModelProvider(this)[SharedViewModel::class.java]
 
         if (!checkStoragePermissions(this))
             requestStoragePermissions(this)
@@ -79,7 +84,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigationGraph(navHostController = rememberNavController())
+                    CompositionLocalProvider(SharedViewModelLocal provides sharedViewModel) {
+                        AppNavigationGraph(navHostController = rememberNavController())
+                    }
+
                 }
             }
         }

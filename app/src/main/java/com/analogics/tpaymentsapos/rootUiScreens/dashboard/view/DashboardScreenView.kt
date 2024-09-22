@@ -36,6 +36,8 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -52,6 +54,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
+    val sharedViewModel= SharedViewModelLocal.current
 
     TrainingView(
         navHostController = navHostController,

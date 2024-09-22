@@ -3,7 +3,6 @@ package com.analogics.securityframework.handler
 import android.content.Context
 import com.analogics.securityframework.listener.ISharedPrefReqListener
 import com.analogics.securityframework.preferences.SecuredSharedPrefManager
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton

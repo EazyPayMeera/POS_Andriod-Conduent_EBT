@@ -1,8 +1,8 @@
-package com.analogics.builder_core.model.void
+package com.analogics.builder_core.model.auth_capture
 
 import com.google.gson.annotations.SerializedName
 
-data class PostAuthReqeust (
+data class PostAuthRequest (
     @SerializedName("MerchantId") 		var merchantId: String? = null ,
     @SerializedName("TerminalId") 		var terminalId: String? = null ,
 @SerializedName("CashierId")        var cashierId: String? = null ,

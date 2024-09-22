@@ -22,8 +22,9 @@ class InvoiceViewModel : ViewModel() {
 
     private val scannerServiceRepository = ScannerServiceRepository() // Instantiate here
 
-    fun updateInvoiceNo(newValue: String) {
+    fun updateInvoiceNo(newValue: String): String {
         _invoiceno.value = newValue
+        return _invoiceno.value // Return the updated invoice number
     }
 
     fun navigateToAmountScreen(navHostController: NavHostController) {

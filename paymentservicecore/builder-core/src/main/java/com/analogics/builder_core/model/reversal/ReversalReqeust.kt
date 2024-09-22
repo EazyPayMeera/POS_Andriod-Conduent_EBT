@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model.void
+package com.analogics.builder_core.model.reversal
 
 import com.google.gson.annotations.SerializedName
 

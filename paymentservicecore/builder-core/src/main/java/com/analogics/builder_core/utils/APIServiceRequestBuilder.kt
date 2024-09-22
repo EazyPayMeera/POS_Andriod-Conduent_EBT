@@ -1,19 +1,19 @@
 package com.analogics.builder_core.utils
 
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.builder_core.model.login.UserLoginReqeust
-import com.analogics.builder_core.model.void.PostAuthReqeust
-import com.analogics.builder_core.model.void.PreAuthReqeust
-import com.analogics.builder_core.model.void.PurchaseReqeust
-import com.analogics.builder_core.model.void.RefundReqeust
-import com.analogics.builder_core.model.void.ReversalReqeust
+import com.analogics.builder_core.model.auth_capture.PostAuthRequest
+import com.analogics.builder_core.model.auth_capture.PreAuthRequest
+import com.analogics.builder_core.model.login.UserLoginRequest
+import com.analogics.builder_core.model.purchase.PurchaseRequest
+import com.analogics.builder_core.model.reund.RefundRequest
+import com.analogics.builder_core.model.reversal.ReversalReqeust
 import com.analogics.builder_core.model.void.VoidReqeust
 import javax.inject.Inject
 
 class APIServiceRequestBuilder @Inject constructor() {
 
-    fun createLoginRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): UserLoginReqeust {
-        return UserLoginReqeust(
+    fun createLoginRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): UserLoginRequest {
+        return UserLoginRequest(
             merchantId = paymentServiceTxnDetails?.merchantId,
             terminalId = paymentServiceTxnDetails?.terminalId,
             loginId = paymentServiceTxnDetails?.loginId,
@@ -24,8 +24,8 @@ class APIServiceRequestBuilder @Inject constructor() {
         )
     }
 
-    fun createPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PurchaseReqeust {
-        return PurchaseReqeust(
+    fun createPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PurchaseRequest {
+        return PurchaseRequest(
             merchantId = paymentServiceTxnDetails?.merchantId,
             terminalId = paymentServiceTxnDetails?.terminalId,
             cashierId = paymentServiceTxnDetails?.loginId,
@@ -79,8 +79,8 @@ class APIServiceRequestBuilder @Inject constructor() {
         )
     }
 
-    fun createRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): RefundReqeust {
-        return RefundReqeust(
+    fun createRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): RefundRequest {
+        return RefundRequest(
 
             merchantId = paymentServiceTxnDetails?.merchantId,
             terminalId = paymentServiceTxnDetails?.terminalId,
@@ -114,8 +114,8 @@ class APIServiceRequestBuilder @Inject constructor() {
         )
     }
 
-    fun createAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PostAuthReqeust {
-        return PostAuthReqeust(
+    fun createAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PostAuthRequest {
+        return PostAuthRequest(
             merchantId = paymentServiceTxnDetails?.merchantId,
             terminalId = paymentServiceTxnDetails?.terminalId,
             cashierId = paymentServiceTxnDetails?.loginId,
@@ -142,8 +142,8 @@ class APIServiceRequestBuilder @Inject constructor() {
         )
     }
 
-    fun createPre_AuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PreAuthReqeust {
-        return PreAuthReqeust(
+    fun createPre_AuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PreAuthRequest {
+        return PreAuthRequest(
 
             merchantId = paymentServiceTxnDetails?.merchantId,
             terminalId = paymentServiceTxnDetails?.terminalId,

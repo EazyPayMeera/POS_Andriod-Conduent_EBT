@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("org.jetbrains.kotlin.kapt")
 }
-configurations.maybeCreate("default")
-artifacts.add("default", file("urovo_sdk_v1.0.9.aar"))
+
 android {
-    namespace = "com.analogics.tpaymentcore"
+    namespace = "com.example.mylibrary"
     compileSdk = 34
 
     defaultConfig {
@@ -39,10 +37,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(files("libs/urovo_sdk_v1.0.9.aar"))
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
 }
