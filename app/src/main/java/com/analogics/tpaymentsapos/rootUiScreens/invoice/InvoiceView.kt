@@ -170,6 +170,18 @@ fun InvoiceView(navHostController: NavHostController) {
                                     },
                                     onCancel = {
                                         Log.d(TAG, "Scanner was canceled.")
+                                    },object : IScannerResultProviderListener{
+                                        override fun onSuccess(result: Any?) {
+                                            if (result == "SUCCESS")
+                                                Log.d(TAG, "Initialization of scanner is Successful. Result: $result")
+                                            else
+                                                Log.d(TAG, "Initialization of scanner is Failed")
+                                        }
+
+                                        override fun onFailure(exception: Exception) {
+                                            Log.e(TAG, "Scanner initialization failed: ${exception.message}")
+                                        }
+
                                     }
                                 )
                             }

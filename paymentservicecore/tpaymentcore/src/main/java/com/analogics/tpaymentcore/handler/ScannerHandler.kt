@@ -38,7 +38,7 @@ object ScannerHandler : ScannerListener {
             Scanner.getInstance().startScan(data,cameraId,timeout,scannerHandlerListener)
 
             // Notify success with result
-            scannerHandlerListener.onScannerRespHandler("SUCCESS") // Replace with actual scan result
+            //scannerHandlerListener.onScannerRespHandler("SUCCESS") // Replace with actual scan result
         } catch (exception: Exception) {
             Log.e(TAG, "Failed to start scan: ${exception.message}")
 

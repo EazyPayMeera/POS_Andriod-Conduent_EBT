@@ -43,10 +43,10 @@ class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, I
             ScannerHandler.startScan(data, /* cameraId */ 1, /* timeout */ 10000, this) // Example call
 
             // Simulate a successful scan for demonstration
-            onSuccess("SimulatedQRCode")
+            //onSuccess("SimulatedQRCode")
         } catch (e: Exception) {
             Log.e(TAG, "Error starting scanner: ${e.message}")
-            onError(1, "Failed to start scanner")
+            //onError(1, "Failed to start scanner")
         }
     }
 

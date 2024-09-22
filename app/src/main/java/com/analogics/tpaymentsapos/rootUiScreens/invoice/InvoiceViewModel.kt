@@ -53,7 +53,8 @@ class InvoiceViewModel : ViewModel() {
         onSuccess: (String) -> Unit,
         onError: (Int, String) -> Unit,
         onTimeout: () -> Unit,
-        onCancel: () -> Unit
+        onCancel: () -> Unit,
+
     ) {
         Log.d(TAG, "Starting scanner in viewModel...")
         try {
