@@ -16,45 +16,24 @@ class TipViewModel : ViewModel() {
     var tipamount by mutableStateOf("")
         private set
 
-    var formattedtipAmount by mutableStateOf("0.00")
-        private set
+/*    var formattedtipAmount by mutableStateOf("0.00")
+        private set*/
 
-    // Function to set the total amount and update the global variable
-/*    fun setTipAmount(tip: String) {
-        updated_tip = tip // Update the global variable as well
-    }*/
 
     fun setTipAmount(tip: Double) {
         updated_tip = tip // Update the global variable as well
+        Log.d("Formattedtip", "Set Tip: $updated_tip")
     }
+
 
     fun onTipChange(newValue: String) {
-        if (newValue.all { it.isDigit() || it == '.' }) {
-            tipamount = newValue
-            formattedtipAmount = formatAmount(newValue)
-
-            // Convert formatted tip amount back to Double
-            val formattedTipAsDouble = formattedtipAmount.toDoubleOrNull() ?: 0.0
-            setTipAmount(formattedTipAsDouble)
-
-            // Print the result
-            Log.d("TipChange", "Updated tip amount: $formattedTipAsDouble")
-            Log.d("Formattedtip", "Formatted tip amount: $formattedTipAsDouble")
-        }
+        tipamount = formatAmount(newValue, withSymbol = false)
+        Log.d("TipChange", "tipamount: $tipamount")
+        Log.d("TipChange", "Before conversion: '${tipamount.trim()}'")
+        val formattedTipAsDouble = tipamount.toDoubleOrNull() ?: 0.00
+        setTipAmount(formattedTipAsDouble)
+        Log.d("TipChange", "Updated tip amount: $formattedTipAsDouble")
     }
-
-/*    fun onTipChange(newValue: String) {
-        if (newValue.all { it.isDigit() || it == '.' }) {
-            tipamount = newValue
-            formattedtipAmount = formatAmount(newValue)
-            setTipAmount(formattedtipAmount)
-
-            // Print the result returned from setTipAmount
-            Log.d("TipChange", "Updated tip amount: $updated_tip")
-            Log.d("Formattedtip", "Formattedtip amount: $formattedtipAmount")
-
-        }
-    }*/
 
     fun onConfirm(navHostController: NavHostController) {
         navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(tipamount))
