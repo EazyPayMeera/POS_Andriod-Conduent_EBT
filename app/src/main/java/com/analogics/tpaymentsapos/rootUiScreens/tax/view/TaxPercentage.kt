@@ -83,11 +83,11 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                     value = viewModel.transAmount,
                     onValueChange = {viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = stringResource(id = R.string.auth_amt),
+                    placeholder = "",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.Center),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController)},
-                    visualTransformation = createAmountTransformation(),
+                    visualTransformation = createAmountTransformation(withSymbol = false,trailing = true),
                     amount = false,
                 )
 

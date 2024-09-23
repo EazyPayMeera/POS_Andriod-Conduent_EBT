@@ -20,17 +20,18 @@ fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmoun
     return transactionAmount + tipAmount + sgstAmount + igstAmount
 }
 
-fun formatAmount(amount: Double, decimalPlaces: Int = 2, withSymbol: Boolean = true, withSeparator: Boolean = true): String {
+fun formatAmount(amount: Double, decimalPlaces: Int = 2, withSymbol: Boolean = false, withSeparator: Boolean = true): String {
     return formatAmount("%.${decimalPlaces}f".format(amount),decimalPlaces,withSymbol,withSeparator)
 }
 
-fun formatAmount(input: String, decimalPlaces: Int = 2, withSymbol: Boolean = true, withSeparator: Boolean = true): String {
+fun formatAmount(input: String, decimalPlaces: Int = 2, withSymbol: Boolean = true, withSeparator: Boolean = true,trailing: Boolean = false): String {
     try {
         val amount  = removeNonDigits(input).take(12)
         val dAmount: Double = amount.toDoubleOrNull()?:0.00
         val currency : String = if(withSymbol) "₹" else ""
         val separator : String = if(withSeparator) "," else ""
-        return "$currency %${separator}.${decimalPlaces}f".format(java.util.Locale.ENGLISH, dAmount/10.0.pow(decimalPlaces))
+        val icon : String = if(trailing) "%" else ""
+        return "$currency %${separator}.${decimalPlaces}f".format(java.util.Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces)) + icon
     } catch (e: Exception) {
         AppLogger.e(AppLogger.MODULE.APP_UI, e.message.toString())
     }
@@ -47,11 +48,11 @@ fun removeNonDigits(input: String): String {
     return re.replace(input, "")
 }
 
-fun createAmountTransformation(): VisualTransformation {
+fun createAmountTransformation(withSymbol: Boolean = true,trailing: Boolean = false): VisualTransformation {
     return object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             // Format the text using your formatAmount function
-            val formatted = formatAmount(text.text)
+            val formatted = formatAmount(text.text,withSymbol = withSymbol, trailing = trailing)
 
             // Define the offset mapping
             val offsetMapping = object : OffsetMapping {
