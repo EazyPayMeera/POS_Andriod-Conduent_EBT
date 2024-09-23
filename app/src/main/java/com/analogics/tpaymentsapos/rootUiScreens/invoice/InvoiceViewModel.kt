@@ -56,13 +56,14 @@ class InvoiceViewModel : ViewModel() {
         iScannerResultProviderListener: IScannerResultProviderListener
 
     ) {
-        Log.d(TAG, "Starting scanner in viewModel...")
+
         try {
             scannerServiceRepository.startScanner(
                 context,
                 data,
                 iScannerResultProviderListener
             )
+
             Log.d(TAG, "Scanner started successfully in viewModel")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start scanner in viewModel: ${e.message}")

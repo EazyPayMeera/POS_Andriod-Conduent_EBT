@@ -40,7 +40,7 @@ object ScannerHandler : ScannerListener {
             Log.e(TAG, "Failed to start scan: ${exception.message}")
 
             // Notify failure
-            scannerHandlerListener.onScannerRespHandler("Scan failed")
+            //scannerHandlerListener.onScannerRespHandler("Scan failed")
         }
     }
 

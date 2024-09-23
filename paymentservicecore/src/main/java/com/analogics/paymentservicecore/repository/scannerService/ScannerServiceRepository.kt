@@ -57,7 +57,7 @@ class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, I
 
     override fun onScannerRespHandler(uiData: String) {
         Log.d(TAG, "Received printer response: $uiData")
-        if (uiData != "SUCCESS") {
+        if (uiData != "FAIL") {
             Log.d(TAG, "Printer response is SUCCESS.")
             iScannerResultProviderListener.onSuccess(uiData)
         } else {
