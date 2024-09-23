@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class InvoiceViewModel : ViewModel() {
     private val TAG = "InvoiceViewModel"
+    // State to hold the invoice number
     private val _invoiceno = MutableStateFlow("")
     val invoiceno: StateFlow<String> = _invoiceno
 
@@ -51,20 +52,15 @@ class InvoiceViewModel : ViewModel() {
     suspend fun startScanner(
         context: Context,
         data: Bundle,
-        onSuccess: (String) -> Unit,
-        onError: (Int, String) -> Unit,
-        onTimeout: () -> Unit,
-        onCancel: () -> Unit
+        iScannerResultProviderListener: IScannerResultProviderListener
+
     ) {
         Log.d(TAG, "Starting scanner in viewModel...")
         try {
             scannerServiceRepository.startScanner(
                 context,
                 data,
-                onSuccess,
-                onError,
-                onTimeout,
-                onCancel
+                iScannerResultProviderListener
             )
             Log.d(TAG, "Scanner started successfully in viewModel")
         } catch (e: Exception) {

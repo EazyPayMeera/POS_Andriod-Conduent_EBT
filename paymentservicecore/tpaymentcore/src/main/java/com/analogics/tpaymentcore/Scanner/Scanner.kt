@@ -35,19 +35,20 @@ class Scanner private constructor() {
         try {
             innerScanner?.startScan(innerScanner?.mContext ?: return, data, cameraId, timeout, object : ScannerListener {
                 override fun onSuccess(result: String) {
+                    Log.d("Scanner", "Scan successful in scanner kt: $result")
                     scannerHandlerListener.onScannerRespHandler(result)
                 }
 
                 override fun onError(code: Int, message: String) {
-                    scannerHandlerListener.onScannerRespHandler(message)
+                    scannerHandlerListener.onScannerRespHandler("FAIL")
                 }
 
                 override fun onCancel() {
-                    scannerHandlerListener.onScannerRespHandler("1")
+                    scannerHandlerListener.onScannerRespHandler("FAIL")
                 }
 
                 override fun onTimeout() {
-                    scannerHandlerListener.onScannerRespHandler("1")
+                    scannerHandlerListener.onScannerRespHandler("FAIL")
                 }
             })
         } catch (e: Exception) {
