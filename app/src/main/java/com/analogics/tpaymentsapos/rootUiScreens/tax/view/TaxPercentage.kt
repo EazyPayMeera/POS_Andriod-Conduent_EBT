@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -20,8 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.TaxPercentageViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -32,19 +29,17 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransf
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun TaxPercentageView(navHostController: NavHostController) {
-    // Get the ViewModel
-    val taxPercentageViewModel: TaxPercentageViewModel = hiltViewModel()
+fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercentageViewModel = hiltViewModel()) {
 
-    // States from the ViewModel
-    val rawInput by remember { mutableStateOf(taxPercentageViewModel.rawInput) }
-
+    val updated_tax = updated_tax
     Column {
+
+        // Top App Bar
         CommonTopAppBar(
-            title = stringResource(id = R.string.adjust),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
+        // Main Content
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
@@ -53,46 +48,58 @@ fun TaxPercentageView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
+                // Title Text
                 TextView(
                     text = stringResource(id = R.string.enter_the_percentage),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
-                    Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                    Modifier.padding(top = MaterialTheme.dimens.DP_24_CompactMedium),
                     textAlign = TextAlign.Center
                 )
+
+                // Title Text
+                TextView(
+                    text = "SGST : " + updated_tax,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Bold,
+                    1,
+                    Modifier.padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    textAlign = TextAlign.Center
+                )
+
+                // Image View
                 ImageView(
-                    imageId = R.drawable.card, size = MaterialTheme.dimens.DP_60_CompactMedium,
+                    imageId = R.drawable.card,
+                    size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
                     contentDescription = "",
                 )
 
                 OutlinedTextField(
-                    value = rawInput,
-                    onValueChange = { newValue ->
-                        taxPercentageViewModel.onRawInputChange(newValue)
-                    },
+                    value = viewModel.transAmount,
+                    onValueChange = {viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = stringResource(id = R.string.enter_the_percentage),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
+                    placeholder = stringResource(id = R.string.auth_amt),
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.Center),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {
-                        taxPercentageViewModel.onDoneAction(navHostController)
-                    },
+                    onDoneAction = {viewModel.onConfirm(navHostController)},
                     visualTransformation = createAmountTransformation(),
-                    isPassword = true
+                    amount = false,
                 )
 
             }
         }
 
+        // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
+            firstButtonOnClick = { viewModel.onCancel(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { taxPercentageViewModel.onDoneAction(navHostController) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController) }
         )
     }
 }

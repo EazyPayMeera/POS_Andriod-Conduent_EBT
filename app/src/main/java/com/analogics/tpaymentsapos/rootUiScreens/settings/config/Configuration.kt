@@ -26,13 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -105,15 +106,15 @@ fun ConfigurationView(navHostController: NavHostController) {
                         item = item
                     )
 
-                    if (index < settingsItems.size - 1) {
+                    if (index < settingsItems.size) {
                         Divider(color = MaterialTheme.colorScheme.secondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
                     }
 
                     if (index == 4 && item.isChecked) {
-                        TippingView(type = ConfigurableViewType.Percentage)
+                        TippingView(navHostController,type = ConfigurableViewType.Percentage)
                     }
                     if (index == 5 && item.isChecked) {
-                        TippingView(type = ConfigurableViewType.Taxes)
+                        TippingView(navHostController,type = ConfigurableViewType.Taxes)
                     }
                 }
                 }
@@ -132,11 +133,13 @@ data class SettingsItem(
 
 @Composable
 fun TippingView(
+    navHostController: NavHostController,
     type: ConfigurableViewType
 ) {
+    val updated_tax = updated_tax
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(stringResource(id = R.string.ten), stringResource(id = R.string.fifteen), stringResource(id = R.string.twenty))
-        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_1), stringResource(id = R.string.tax_2))
+        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_1) + updated_tax , stringResource(id = R.string.tax_2) + updated_tax)
     }
 
     val title = when (type) {
@@ -153,7 +156,7 @@ fun TippingView(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                /*.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)*/
         ) {
             Text(
                 text = title,
@@ -172,9 +175,14 @@ fun TippingView(
                 options.forEach { option ->
                     Card(
                         modifier = Modifier
-                            .width(MaterialTheme.dimens.DP_100_CompactMedium)
+                            .width(MaterialTheme.dimens.DP_115_CompactMedium)
                             .height(MaterialTheme.dimens.DP_34_CompactMedium),
-                        onClick = {},
+                        onClick = {
+                            if(type == ConfigurableViewType.Taxes)
+                            {
+                                navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+                            }
+                        },
                         elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium) // Use CardDefaults for elevation
 
                     ) {
@@ -187,7 +195,9 @@ fun TippingView(
                             Text(
                                 text = option,
                                 style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(MaterialTheme.dimens.DP_4_CompactMedium)
 
                             )
                         }

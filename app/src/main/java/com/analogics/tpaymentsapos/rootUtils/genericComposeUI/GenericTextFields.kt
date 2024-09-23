@@ -550,7 +550,7 @@ fun FooterButtons(
 
                     TextView(
                         text = firstButtonTitle.uppercase(),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         1,
@@ -613,7 +613,7 @@ fun FooterButtons(
 
                     TextView(
                         text = secondButtonTitle.uppercase(),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         1,

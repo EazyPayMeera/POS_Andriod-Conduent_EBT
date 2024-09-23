@@ -6,32 +6,32 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
+
+var updated_tax: Double = 0.00
 
 class TaxPercentageViewModel : ViewModel() {
-    // State for raw input and formatted tax percentage
-    var rawInput by mutableStateOf("")
+    var transAmount by mutableStateOf("")
         private set
 
-    var taxpercentage by mutableStateOf("0.00")
-        private set
+    val transactionDateTime: String = getFormattedDateTime()
 
-    // Function to handle changes to the raw input
-    fun onRawInputChange(newValue: String) {
-        if (newValue.all { char -> char.isDigit() || char == '.' }) {
-            rawInput = newValue
-            taxpercentage = formatAmount(newValue)
-        }
+    fun setTaxAmount(tip: Double) {
+        updated_tax = tip // Update the global variable as well
     }
 
-    // Function to handle the Done action
-    fun onDoneAction(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(taxpercentage))
+    fun onAmountChange(newValue: String) {
+        transAmount = formatAmount(newValue, withSymbol = false)
+        val formattedTipAsDouble = transAmount.toDoubleOrNull() ?: 0.00
+        setTaxAmount(formattedTipAsDouble)
     }
 
-    // Utility function to format amount (if not already defined elsewhere)
-    private fun formatAmount(amount: String): String {
-        // Implement the formatting logic or use an existing method
-        // Example: "1234" -> "1,234.00"
-        return amount
+    fun onConfirm(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems.ConfigurationScreen.route)
+    }
+
+    fun onCancel(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
     }
 }
