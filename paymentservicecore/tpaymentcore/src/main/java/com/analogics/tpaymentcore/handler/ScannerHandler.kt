@@ -36,9 +36,6 @@ object ScannerHandler : ScannerListener {
             Log.d(TAG, "Starting scan with camera ID: $cameraId and timeout: $timeout")
 
             Scanner.getInstance().startScan(data,cameraId,timeout,scannerHandlerListener)
-
-            // Notify success with result
-            //scannerHandlerListener.onScannerRespHandler("SUCCESS") // Replace with actual scan result
         } catch (exception: Exception) {
             Log.e(TAG, "Failed to start scan: ${exception.message}")
 

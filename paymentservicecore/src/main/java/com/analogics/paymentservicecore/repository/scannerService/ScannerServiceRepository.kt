@@ -24,6 +24,7 @@ class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, I
         try {
             ScannerHandler.initScanner(context, this) // Pass this as the listener
             Log.d(TAG, "Scanner initialized successfully in Payment Service Repository...")
+            iScannerResultProviderListener.onSuccess("SUCCESS")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize scanner: ${e.message}")
             iScannerResultProviderListener.onFailure(e)
@@ -33,17 +34,12 @@ class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, I
     override suspend fun startScanner(
         context: Context,
         data: Bundle,
-        onSuccess: (qrCode: String) -> Unit,
-        onError: (errorCode: Int, message: String) -> Unit,
-        onTimeout: () -> Unit,
-        onCancel: () -> Unit
+        iScannerResultProviderListener: IScannerResultProviderListener
     ) {
         try {
             // Start the scanner
+            this.iScannerResultProviderListener = iScannerResultProviderListener
             ScannerHandler.startScan(data, /* cameraId */ 1, /* timeout */ 10000, this) // Example call
-
-            // Simulate a successful scan for demonstration
-            //onSuccess("SimulatedQRCode")
         } catch (e: Exception) {
             Log.e(TAG, "Error starting scanner: ${e.message}")
             //onError(1, "Failed to start scanner")
@@ -61,7 +57,7 @@ class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, I
 
     override fun onScannerRespHandler(uiData: String) {
         Log.d(TAG, "Received printer response: $uiData")
-        if (uiData == "SUCCESS") {
+        if (uiData != "SUCCESS") {
             Log.d(TAG, "Printer response is SUCCESS.")
             iScannerResultProviderListener.onSuccess(uiData)
         } else {

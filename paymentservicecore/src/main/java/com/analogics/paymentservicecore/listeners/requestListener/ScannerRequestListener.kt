@@ -14,9 +14,6 @@ interface ScannerRequestListener {
     suspend fun startScanner(
         context: Context,
         data: Bundle,
-        onScanned: (qrCode: String) -> Unit,
-        onError: (errorCode: Int, message: String) -> Unit,
-        onTimeout: () -> Unit,
-        onCancel: () -> Unit
+        iScannerResultProviderListener: IScannerResultProviderListener
     )
 }

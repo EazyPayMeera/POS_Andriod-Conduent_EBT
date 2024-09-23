@@ -87,14 +87,14 @@ fun InvoiceView(navHostController: NavHostController) {
                         == PackageManager.PERMISSION_GRANTED) {
                         viewModel.initScanner(context, object : IScannerResultProviderListener {
                             override fun onSuccess(result: Any?) {
-                                if (result?.equals(true) == true)
+                                if (result == "SUCCESS")
                                     Log.d(TAG, "Initialization of scanner is Successful")
                                 else
-                                    Log.d(TAG, "Initialization of scanner is Failed")
+                                    Log.d(TAG, "Initialization of scanner is Failed : $result" )
                             }
 
                             override fun onFailure(exception: Exception) {
-                                Log.e(TAG, "Scanner initialization failed: ${exception.message}")
+                                Log.e(TAG, "Scanner initialization failed on Failure: ${exception.message}")
                             }
                         })
                     }
@@ -158,24 +158,14 @@ fun InvoiceView(navHostController: NavHostController) {
                                     Bundle().apply {
                                         putString("camera_facing", "back") // Ensure back camera is used
                                     },
-                                    onSuccess = { qrCode ->
-                                        Log.d(TAG, "Scanned QR Code: $qrCode")
-                                        // Handle the scanned QR code as needed
-                                    },
-                                    onError = { errorCode, message ->
-                                        Log.e(TAG, "Scanner Error [$errorCode]: $message")
-                                    },
-                                    onTimeout = {
-                                        Log.d(TAG, "Scanner timed out.")
-                                    },
-                                    onCancel = {
-                                        Log.d(TAG, "Scanner was canceled.")
-                                    },object : IScannerResultProviderListener{
+                                    object : IScannerResultProviderListener{
                                         override fun onSuccess(result: Any?) {
-                                            if (result == "SUCCESS")
-                                                Log.d(TAG, "Initialization of scanner is Successful. Result: $result")
-                                            else
-                                                Log.d(TAG, "Initialization of scanner is Failed")
+                                            if (result is String) {
+                                                Log.d(TAG, "Scanner result: $result")
+
+                                            } else {
+                                                Log.d(TAG, "Scanner failed to return a string result")
+                                            }
                                         }
 
                                         override fun onFailure(exception: Exception) {
@@ -200,3 +190,4 @@ fun InvoiceView(navHostController: NavHostController) {
         )
     }
 }
+
