@@ -12,8 +12,9 @@ class PasswordViewModel : ViewModel() {
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
 
-    fun updatePassword(newValue: String) {
+    fun updatePassword(newValue: String):String {
         _password.value = newValue
+        return _password.value
     }
 
     fun navigateToInvoiceScreen(navHostController: NavHostController) {

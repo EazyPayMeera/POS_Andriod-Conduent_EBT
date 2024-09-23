@@ -18,8 +18,9 @@ class AmountViewModel : ViewModel() {
 
     val transactionDateTime: String = getFormattedDateTime()
 
-    fun onAmountChange(newValue: String) {
+    fun onAmountChange(newValue: String) :String{
         transAmount = formatAmount(newValue)
+        return transAmount
     }
 
     fun onConfirm(navHostController: NavHostController) {

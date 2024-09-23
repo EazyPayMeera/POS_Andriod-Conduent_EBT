@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
@@ -42,14 +41,14 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.invoice.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.isinfo.InfoConfirmView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
-import com.analogics.tpaymentsapos.rootUiScreens.login.CardDetectView
-import com.analogics.tpaymentsapos.rootUiScreens.login.CardView
+import com.analogics.tpaymentsapos.rootUiScreens.carddetect.view.CardDetectView
+import com.analogics.tpaymentsapos.rootUiScreens.cardview.view.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.LanguageView
-import com.analogics.tpaymentsapos.rootUiScreens.login.PasswordView
+import com.analogics.tpaymentsapos.rootUiScreens.password.view.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PreauthView

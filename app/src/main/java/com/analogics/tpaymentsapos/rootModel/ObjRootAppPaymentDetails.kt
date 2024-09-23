@@ -3,8 +3,11 @@ package com.analogics.tpaymentsapos.rootModel
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import javax.inject.Inject
+import javax.inject.Singleton
 
-data class ObjRootAppPaymentDetails(
+@Singleton
+data class ObjRootAppPaymentDetails (
     @SerializedName("MerchantId") var merchantId: String? = null,
     @SerializedName("TerminalId") var terminalId: String? = null,
     @SerializedName("LoginId") var loginId: String? = null,

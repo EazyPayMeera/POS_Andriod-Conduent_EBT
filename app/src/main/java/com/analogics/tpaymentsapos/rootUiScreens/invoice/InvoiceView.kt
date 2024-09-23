@@ -54,6 +54,8 @@ fun InvoiceView(navHostController: NavHostController) {
     val context = LocalContext.current
     val viewModel: InvoiceViewModel = hiltViewModel()
     var sharedViewModel= SharedViewModelLocal
+    var obj=sharedViewModel.current.objRootAppPaymentDetail
+    Log.d("password",obj.toString())
 
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
@@ -196,6 +198,5 @@ fun InvoiceView(navHostController: NavHostController) {
         )
     }
 
-    sharedViewModel.current.objRootAppPaymentDetails.invoiceNo=viewModel.updateInvoiceNo(invoiceno)
+    sharedViewModel.current.objRootAppPaymentDetail.invoiceNo =viewModel.updateInvoiceNo(invoiceno)
 }
-

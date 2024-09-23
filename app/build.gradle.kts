@@ -129,7 +129,7 @@ dependencies {
     api(project(":paymentservicecore"))
     api(project(":paymentservicecore:securityframework"))
     api(project(":paymentservicecore:tpaymentcore"))
-    implementation(libs.google.gson)
+   // implementation(libs.google.gson)
 
 
 }
