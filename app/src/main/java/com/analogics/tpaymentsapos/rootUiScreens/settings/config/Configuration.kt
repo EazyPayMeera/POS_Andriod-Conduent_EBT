@@ -106,13 +106,15 @@ fun ConfigurationView(navHostController: NavHostController) {
                         item = item
                     )
 
-                    if (index < settingsItems.size) {
-                        Divider(color = MaterialTheme.colorScheme.secondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
-                    }
 
                     if (index == 4 && item.isChecked) {
                         TippingView(navHostController,type = ConfigurableViewType.Percentage)
                     }
+
+                    if (index < settingsItems.size - 1) {
+                        Divider(color = MaterialTheme.colorScheme.secondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
+                    }
+
                     if (index == 5 && item.isChecked) {
                         TippingView(navHostController,type = ConfigurableViewType.Taxes)
                     }
