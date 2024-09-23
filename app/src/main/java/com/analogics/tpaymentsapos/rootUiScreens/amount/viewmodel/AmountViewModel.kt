@@ -19,10 +19,11 @@ class AmountViewModel : ViewModel() {
     val transactionDateTime: String = getFormattedDateTime()
 
     fun onAmountChange(newValue: String) {
-        transAmount = formatAmount(newValue)
+        transAmount = newValue
     }
 
     fun onConfirm(navHostController: NavHostController) {
+        transAmount = formatAmount(transAmount)
         when(TxnInfo.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.createRoute(transAmount))

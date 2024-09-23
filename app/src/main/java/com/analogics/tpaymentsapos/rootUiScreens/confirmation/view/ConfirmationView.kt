@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.updated_tip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
@@ -49,7 +50,7 @@ import com.analogics.tpaymentsapos.ui.theme.tipBColor
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
     val updated_tip = updated_tip
-    val transAmount = formatAmount(amount, withSymbol = false, withSeparator = false)
+    val transAmount = formatAmount(amount, symbol = Symbol(type = Symbol.Type.NONE))
     var selectedTipPercentage by remember { mutableStateOf(0.0) }
     val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
     var selectedTip by remember { mutableStateOf("") }

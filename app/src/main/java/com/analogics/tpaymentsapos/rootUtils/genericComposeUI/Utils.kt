@@ -5,6 +5,8 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.tpaymentsapos.rootModel.Symbol
+import java.util.Locale
 import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {
@@ -20,24 +22,26 @@ fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmoun
     return transactionAmount + tipAmount + sgstAmount + igstAmount
 }
 
-fun formatAmount(amount: Double, decimalPlaces: Int = 2, withSymbol: Boolean = false, withSeparator: Boolean = true): String {
-    return formatAmount("%.${decimalPlaces}f".format(amount),decimalPlaces,withSymbol,withSeparator)
+fun formatAmount(amount: Double, decimalPlaces: Int = 2, symbol: Symbol?=Symbol(type = Symbol.Type.NONE), withSeparator: Boolean = true): String {
+    return formatAmount("%.${decimalPlaces}f".format(amount),decimalPlaces,symbol,withSeparator)
 }
 
-fun formatAmount(input: String, decimalPlaces: Int = 2, withSymbol: Boolean = true, withSeparator: Boolean = true,trailing: Boolean = false): String {
+fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String {
     try {
         val amount  = removeNonDigits(input).take(12)
         val dAmount: Double = amount.toDoubleOrNull()?:0.00
-        val currency : String = if(withSymbol) "₹" else ""
+        val currency = symbol?.get()?:""
         val separator : String = if(withSeparator) "," else ""
-        val icon : String = if(trailing) "%" else ""
-        return "$currency %${separator}.${decimalPlaces}f".format(java.util.Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces)) + icon
+        return when(symbol?.position) {
+            Symbol.Position.START -> "$currency %${separator}.${decimalPlaces}f".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
+            Symbol.Position.END -> "%.${decimalPlaces}f $currency".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
+            else -> "%.${decimalPlaces}f".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
+        }
     } catch (e: Exception) {
         AppLogger.e(AppLogger.MODULE.APP_UI, e.message.toString())
     }
     return ""
 }
-
 
 fun calculateTip(amount: Double, tip: Double): Double {
     return amount * tip
@@ -48,11 +52,11 @@ fun removeNonDigits(input: String): String {
     return re.replace(input, "")
 }
 
-fun createAmountTransformation(withSymbol: Boolean = true,trailing: Boolean = false): VisualTransformation {
+fun createAmountTransformation(symbol: Symbol?=Symbol()): VisualTransformation {
     return object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             // Format the text using your formatAmount function
-            val formatted = formatAmount(text.text,withSymbol = withSymbol, trailing = trailing)
+            val formatted = formatAmount(text.text,symbol=symbol)
 
             // Define the offset mapping
             val offsetMapping = object : OffsetMapping {

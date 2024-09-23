@@ -19,11 +19,6 @@ class TipViewModel : ViewModel() {
     var formattedtipAmount by mutableStateOf("0.00")
         private set
 
-    // Function to set the total amount and update the global variable
-/*    fun setTipAmount(tip: String) {
-        updated_tip = tip // Update the global variable as well
-    }*/
-
     fun setTipAmount(tip: Double) {
         updated_tip = tip // Update the global variable as well
     }

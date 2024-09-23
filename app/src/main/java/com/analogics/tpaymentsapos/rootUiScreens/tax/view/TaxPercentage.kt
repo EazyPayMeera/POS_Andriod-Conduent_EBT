@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.TaxPercentageViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -80,14 +81,14 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                 )
 
                 OutlinedTextField(
-                    value = viewModel.transAmount,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    value = viewModel.taxPercent,
+                    onValueChange = {viewModel.onTaxChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.Center),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController)},
-                    visualTransformation = createAmountTransformation(withSymbol = false,trailing = true),
+                    visualTransformation = createAmountTransformation(Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END)),
                     amount = false,
                 )
 
