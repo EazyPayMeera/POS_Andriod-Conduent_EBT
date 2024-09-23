@@ -162,6 +162,7 @@ fun InvoiceView(navHostController: NavHostController) {
                                         override fun onSuccess(result: Any?) {
                                             if (result is String) {
                                                 Log.d(TAG, "Scanner result: $result")
+                                                viewModel.updateInvoiceNo(result)
 
                                             } else {
                                                 Log.d(TAG, "Scanner failed to return a string result")
