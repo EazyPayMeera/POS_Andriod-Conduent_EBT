@@ -22,7 +22,7 @@ class AmountViewModel : ViewModel() {
     fun onAmountChange(newValue: String) :String{
         TxnInfo.tip = 0.00
         transAmount = formatAmount(newValue)
-        return transAmount
+        return formatAmountToDouble(newValue).toString()
     }
 
     fun onConfirm(navHostController: NavHostController) {
