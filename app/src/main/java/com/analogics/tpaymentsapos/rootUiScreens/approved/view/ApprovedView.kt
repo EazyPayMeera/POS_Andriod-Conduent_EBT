@@ -213,6 +213,7 @@ fun ApprovedView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
+
                 }
 
                 ImageView(
@@ -269,7 +270,7 @@ fun ApprovedView(navHostController: NavHostController) {
 
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
                 ) {

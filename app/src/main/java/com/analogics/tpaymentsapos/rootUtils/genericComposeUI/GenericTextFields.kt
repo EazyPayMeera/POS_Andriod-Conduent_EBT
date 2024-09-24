@@ -249,11 +249,11 @@ fun OkButton(
     Button(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .shadow(4.dp, shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)) // Apply shadow directly to the Button
-            .background(colorResource(R.color.grey), shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)),
+            .height(MaterialTheme.dimens.DP_50_CompactMedium),// Uncomment if you want to apply shadow directly to the Button
+        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium), // Keep the shape here
         colors = buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
-            containerColor = colorResource(R.color.grey)
+            containerColor = colorResource(R.color.grey) // You can keep this if you want a specific color, or change it as needed
         ),
         onClick = onClick
     ) {
@@ -262,6 +262,7 @@ fun OkButton(
         )
     }
 }
+
 
 
 
