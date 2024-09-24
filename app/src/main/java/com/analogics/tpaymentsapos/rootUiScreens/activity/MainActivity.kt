@@ -33,6 +33,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.changepassword.ChangePasswordView
@@ -211,12 +212,10 @@ fun AppNavigationGraph(
         composable(AppNavigationItems.PasswordScreen.route) {
             PasswordView(navHostController)
         }
-        composable(
-            route = AppNavigationItems.ConfirmationScreen.route,
-            arguments = listOf(navArgument("amount") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val amount = backStackEntry.arguments?.getString("amount") ?: "0.00"
-            ConfirmationView(navHostController, amount)
+        composable(AppNavigationItems.ConfirmationScreen.route) { entry->
+            val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)
+            entry.savedStateHandle.remove<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)
+            ConfirmationView(navHostController, customTipAmount)
         }
         composable(AppNavigationItems.TipScreen.route) {
             TipView(navHostController)

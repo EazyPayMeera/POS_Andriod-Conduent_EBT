@@ -16,7 +16,7 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
 
-    @SerializedName("authAmount") var authAmount: String? = null,
+    @SerializedName("authAmount") var authAmount: Double? = 0.00,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
@@ -34,12 +34,12 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("timeZone") var timeZone: String? = null,
     @SerializedName("accountType") var accountType: String? = null,
     @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,
-    @SerializedName("txnAmount") var txnAmount: Double? = null,
-    @SerializedName("tip") var tip: String? = null,
-    @SerializedName("cashback") var cashback: String? = null,
-    @SerializedName("CGST") var CGST: String? = null,
-    @SerializedName("SGST") var SGST: String? = null,
-    @SerializedName("ttlAmount") var ttlAmount: String? = null,
+    @SerializedName("txnAmount") var txnAmount: Double? = 0.00,
+    @SerializedName("tip") var tip: Double? = 0.00,
+    @SerializedName("cashback") var cashback: Double? = 0.00,
+    @SerializedName("CGST") var CGST: Double? = 0.00,
+    @SerializedName("SGST") var SGST: Double? = 0.00,
+    @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("txnStatus") var txnStatus: String? = null,
 
     ):Serializable

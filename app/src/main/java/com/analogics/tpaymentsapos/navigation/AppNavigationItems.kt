@@ -1,5 +1,7 @@
 package com.analogics.tpaymentsapos.navigation
 
+import androidx.compose.runtime.MutableDoubleState
+
 sealed class AppNavigationItems(val route: String) {
  object SplashScreen : AppNavigationItems(NavScreensEnum.SplashScreen.name)
  object DashBoardScreen : AppNavigationItems(NavScreensEnum.DashBoardView.name)
@@ -9,6 +11,7 @@ sealed class AppNavigationItems(val route: String) {
  object PleaseWaitScreen : AppNavigationItems(NavScreensEnum.PleaseWaitView.name)
  object TrainingScreen : AppNavigationItems(NavScreensEnum.TrainingView.name)
  object AmountScreen : AppNavigationItems(NavScreensEnum.AmountView.name)
+ object ConfirmationScreen : AppNavigationItems(NavScreensEnum.ConfirmationView.name)
 
  object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
  object TipScreen : AppNavigationItems(NavScreensEnum.TipView.name)
@@ -26,7 +29,6 @@ sealed class AppNavigationItems(val route: String) {
  object SucessScreen:AppNavigationItems(NavScreensEnum.SucessView.name)
  object ChangePasswordScreen:AppNavigationItems(NavScreensEnum.ChangePasswordView.name)
 
-
  object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
   fun createRoute(totalAmount: String) = "card_screen/$totalAmount"
  }
@@ -36,7 +38,6 @@ sealed class AppNavigationItems(val route: String) {
  }
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
- //object EmailScreen : AppNavigationItems(NavScreensEnum.EmailView.name)
 
  object EmailScreen : AppNavigationItems("email_screen/{email}") {
   fun createRoute(email: String) = "email_screen/$email"
@@ -50,7 +51,4 @@ sealed class AppNavigationItems(val route: String) {
   fun createRoute(totalAmount: String) = "decline_screen/$totalAmount"
  }
 
- object ConfirmationScreen : AppNavigationItems("confirmation_screen/{amount}") {
-  fun createRoute(amount: String) = "confirmation_screen/$amount"
- }
 }

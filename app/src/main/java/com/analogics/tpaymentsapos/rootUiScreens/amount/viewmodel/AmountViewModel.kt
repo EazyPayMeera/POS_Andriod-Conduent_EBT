@@ -35,7 +35,7 @@ class AmountViewModel : ViewModel() {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
             }
             else -> {
-                navHostController.navigate(AppNavigationItems.ConfirmationScreen.createRoute(transAmount))
+                navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
             }
         }
     }
