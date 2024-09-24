@@ -212,7 +212,6 @@ fun ApprovedView(navHostController: NavHostController) {
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
-                            .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
                     )
 
                 }
