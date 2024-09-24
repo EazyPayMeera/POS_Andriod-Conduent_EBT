@@ -29,6 +29,7 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -41,6 +42,8 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: CardDetectViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    val sharedViewModel = localSharedViewModel.current
 
     // Use LaunchedEffect to handle the delay and navigation
     LaunchedEffect(Unit) {
@@ -99,7 +102,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
 
                             // Display the totalAmount here
                             Text(
-                                text = totalAmount,
+                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toString(),
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,

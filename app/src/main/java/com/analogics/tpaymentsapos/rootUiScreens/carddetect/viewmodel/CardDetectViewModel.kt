@@ -1,22 +1,16 @@
 package com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.google.gson.Gson
 
 var updated_amt = ""
 
-class CardDetectViewModel @Inject constructor(var dbRepository: TxnDBRepository) : ViewModel() {
+class CardDetectViewModel @Inject constructor() : ViewModel() {
 
     // Function to set the total amount and update the global variable
     fun setTotalAmount(amount: String) {

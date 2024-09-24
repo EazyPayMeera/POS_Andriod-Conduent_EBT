@@ -69,7 +69,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     Log.d("password2","dbentery sccuesss")
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
-
+    Log.d("qrcode","After set qr code")
     Column {
 
         CommonTopAppBar(
@@ -118,7 +118,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                             // Display the totalAmount here
                             Text(
-                                text = totalAmount,
+                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toString()/*totalAmount*/,
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,

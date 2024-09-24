@@ -262,12 +262,6 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
                 )
             }
         )
-        val updatedAmount = sharedViewModel.objRootAppPaymentDetail.copy(
-            ttlAmount = totalAmount.toString()
-        )
-        sharedViewModel.objRootAppPaymentDetail = updatedAmount
-
-        Log.d("password1", sharedViewModel.objRootAppPaymentDetail.toString())
     }
 }
 
