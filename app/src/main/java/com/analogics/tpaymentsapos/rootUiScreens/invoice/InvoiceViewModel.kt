@@ -10,6 +10,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IScannerResul
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +27,12 @@ class InvoiceViewModel : ViewModel() {
     fun updateInvoiceNo(newValue: String): String {
         _invoiceno.value = newValue
         return _invoiceno.value // Return the updated invoice number
+    }
+
+    fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel)
+    {
+        sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
+        navigateToAmountScreen(navHostController)
     }
 
     fun navigateToAmountScreen(navHostController: NavHostController) {

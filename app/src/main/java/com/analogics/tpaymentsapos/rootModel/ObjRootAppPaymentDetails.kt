@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootModel
 
 
+import com.analogics.paymentservicecore.models.TxnType
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import javax.inject.Inject
@@ -26,7 +27,7 @@ data class ObjRootAppPaymentDetails (
     /* Card Details */
     @SerializedName("EmvData") var emvData: String? = null,
 
-    @SerializedName("TxnType") var txnType:String?=null,
+    @SerializedName("TxnType") var txnType:TxnType?=null,
     @SerializedName("BatchId") var batchId: String? = null,
     @SerializedName("InvoiceNo") var invoiceNo: String? = null,
     @SerializedName("PurchaseOrderNo") var purchaseOrderNo: String? = null,
@@ -34,7 +35,7 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("TimeZone") var timeZone: String? = null,
     @SerializedName("AccountType") var accountType: String? = null,
     @SerializedName("TxnCurrencyCode") var txnCurrencyCode: String? = null,
-    @SerializedName("TxnAmount") var txnAmount: String? = null,
+    @SerializedName("TxnAmount") var txnAmount: Double? = null,
     @SerializedName("Tip") var tip: String? = null,
     @SerializedName("Cashback") var cashback: String? = null,
     @SerializedName("CGST") var CGST: String? = null,

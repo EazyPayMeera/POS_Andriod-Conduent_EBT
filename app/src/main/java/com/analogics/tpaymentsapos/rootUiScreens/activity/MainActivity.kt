@@ -64,7 +64,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
-var SharedViewModelLocal= compositionLocalOf{SharedViewModel()}
+var localSharedViewModel= compositionLocalOf{SharedViewModel()}
 
 const val STORAGE_PERMISSION_CODE = 23
 @AndroidEntryPoint
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CompositionLocalProvider(SharedViewModelLocal provides sharedViewModel) {
+                    CompositionLocalProvider(localSharedViewModel provides sharedViewModel) {
                         AppNavigationGraph(navHostController = rememberNavController())
                     }
 

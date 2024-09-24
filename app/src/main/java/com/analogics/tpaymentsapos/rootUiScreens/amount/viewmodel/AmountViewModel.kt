@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountToDouble
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
@@ -20,12 +21,12 @@ class AmountViewModel : ViewModel() {
     val transactionDateTime: String = getFormattedDateTime()
 
     fun onAmountChange(newValue: String) :String{
-        TxnInfo.tip = 0.00
         transAmount = formatAmount(newValue)
         return formatAmountToDouble(newValue).toString()
     }
 
-    fun onConfirm(navHostController: NavHostController) {
+    fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+        sharedViewModel.objRootAppPaymentDetail.txnAmount = formatAmountToDouble(transAmount)
         when(TxnInfo.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.createRoute(transAmount))

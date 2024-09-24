@@ -29,14 +29,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavArgument
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -45,7 +43,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.Args
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -53,9 +50,7 @@ import kotlinx.coroutines.launch
 fun InvoiceView(navHostController: NavHostController) {
     val context = LocalContext.current
     val viewModel: InvoiceViewModel = hiltViewModel()
-    var sharedViewModel= SharedViewModelLocal
-    var obj=sharedViewModel.current.objRootAppPaymentDetail
-    Log.d("password",obj.toString())
+    var sharedViewModel= localSharedViewModel.current
 
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
@@ -136,7 +131,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     ),
                     keyboardType = KeyboardType.Uri,
                     onDoneAction = {
-                        viewModel.navigateToAmountScreen(navHostController)
+                        viewModel.onConfirm(navHostController, sharedViewModel)
                     },
                     isPassword = false
                 )
@@ -198,5 +193,5 @@ fun InvoiceView(navHostController: NavHostController) {
         )
     }
 
-    sharedViewModel.current.objRootAppPaymentDetail.invoiceNo =viewModel.updateInvoiceNo(invoiceno)
+    //sharedViewModel.objRootAppPaymentDetail.invoiceNo = viewModel.updateInvoiceNo(invoiceno)
 }

@@ -37,7 +37,7 @@ import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -54,23 +54,24 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
-    val sharedViewModel= SharedViewModelLocal.current
+    val sharedViewModel= localSharedViewModel.current
 
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
-        dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel)
+        dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel, sharedViewModel)
     ) {}
 }
 
 @Composable
 fun dashboardItemListData(
     navHostController: NavHostController,
-    dashboardViewModel: DashboardViewModel
+    dashboardViewModel: DashboardViewModel,
+    sharedViewModel : SharedViewModel
 ): List<DashboardItemList> {
 
     // Helper function to set the transaction state
-    fun setTransactionType(txnType: TxnType) {TxnInfo.txnType = txnType }
+    fun setTransactionType(txnType: TxnType) {sharedViewModel.objRootAppPaymentDetail.txnType = txnType }
 
     // Helper function to create DashboardItemList
     @Composable

@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.password.viewmodel.PasswordViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -35,7 +35,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun PasswordView(navHostController: NavHostController) {
     // Get ViewModel instance
     val viewModel: PasswordViewModel = hiltViewModel()
-    var sharedViewModel= SharedViewModelLocal.current
+    var sharedViewModel= localSharedViewModel.current
 
     // Collect the state from ViewModel
     val password by viewModel.password.collectAsState()

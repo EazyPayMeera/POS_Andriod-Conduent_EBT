@@ -44,7 +44,7 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -63,7 +63,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val sharedViewModel = SharedViewModelLocal.current
+    val sharedViewModel = localSharedViewModel.current
     Log.d("password2","dbentery start")
     viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
     Log.d("password2","dbentery sccuesss")

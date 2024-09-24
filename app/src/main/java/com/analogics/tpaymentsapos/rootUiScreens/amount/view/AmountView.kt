@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.AmountViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -38,7 +38,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
 
-    var sharedViewModel= SharedViewModelLocal.current
+    var sharedViewModel= localSharedViewModel.current
     Column {
 
         // Top App Bar
@@ -88,7 +88,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     placeholder = stringResource(id = R.string.auth_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController)},
+                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     visualTransformation = createAmountTransformation(),
                     amount = false
                 )
@@ -152,16 +152,10 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { viewModel.onCancel(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
     }
 
-    val updatedAmount = sharedViewModel.objRootAppPaymentDetail.copy(
-        txnAmount = viewModel.onAmountChange(viewModel.transAmount)
-    )
-    sharedViewModel.objRootAppPaymentDetail = updatedAmount
-
-    Log.d("password1", sharedViewModel.objRootAppPaymentDetail.toString())
 }
 
 

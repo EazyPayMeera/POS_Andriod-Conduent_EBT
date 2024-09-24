@@ -32,7 +32,7 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -65,7 +65,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
     Log.d("TipChange", "Updated TipAmt: $updated_tip")
-    val sharedViewModel= SharedViewModelLocal.current
+    val sharedViewModel= localSharedViewModel.current
     Column {
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
