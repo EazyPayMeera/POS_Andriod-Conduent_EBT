@@ -64,9 +64,6 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val sharedViewModel = localSharedViewModel.current
-    Log.d("password2","dbentery start")
-    viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
-    Log.d("password2","dbentery sccuesss")
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
     Log.d("qrcode","After set qr code")
@@ -227,6 +224,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, navHostController)
+        viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
     }
 
     // QR Code Dialog

@@ -4,43 +4,42 @@ package com.analogics.tpaymentsapos.rootModel
 import com.analogics.paymentservicecore.models.TxnType
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 data class ObjRootAppPaymentDetails (
-    @SerializedName("MerchantId") var merchantId: String? = null,
-    @SerializedName("TerminalId") var terminalId: String? = null,
-    @SerializedName("LoginId") var loginId: String? = null,
-    @SerializedName("LoginPassword") var loginPassword: String? = null,
-    @SerializedName("DeviceSN") var deviceSN: String? = null,
-    @SerializedName("DeviceMake") var deviceMake: String? = null,
-    @SerializedName("DeviceModel") var deviceModel: String? = null,
+    @SerializedName("merchantId") var merchantId: String? = null,
+    @SerializedName("terminalId") var terminalId: String? = null,
+    @SerializedName("loginId") var loginId: String? = null,
+    @SerializedName("loginPassword") var loginPassword: String? = null,
+    @SerializedName("deviceSN") var deviceSN: String? = null,
+    @SerializedName("deviceMake") var deviceMake: String? = null,
+    @SerializedName("deviceModel") var deviceModel: String? = null,
 
-    @SerializedName("AuthAmount") var authAmount: String? = null,
-    @SerializedName("HostAuthCode") var hostAuthCode: String? = null,
-    @SerializedName("HostRespCode") var hostRespCode: String? = null,
-    @SerializedName("HostAuthResult") var hostAuthResult: String? = null,
-    @SerializedName("HostTxnRef") var hostTxnRef: String? = null,
+    @SerializedName("authAmount") var authAmount: String? = null,
+    @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
+    @SerializedName("hostRespCode") var hostRespCode: String? = null,
+    @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
+    @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
-    @SerializedName("RefundableAmount") var refundableAmount: String? = null,
+    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     /* Card Details */
-    @SerializedName("EmvData") var emvData: String? = null,
+    @SerializedName("emvData") var emvData: String? = null,
 
-    @SerializedName("TxnType") var txnType:TxnType?=null,
-    @SerializedName("BatchId") var batchId: String? = null,
-    @SerializedName("InvoiceNo") var invoiceNo: String? = null,
-    @SerializedName("PurchaseOrderNo") var purchaseOrderNo: String? = null,
-    @SerializedName("DateTime") var dateTime: String? = null,
-    @SerializedName("TimeZone") var timeZone: String? = null,
-    @SerializedName("AccountType") var accountType: String? = null,
-    @SerializedName("TxnCurrencyCode") var txnCurrencyCode: String? = null,
-    @SerializedName("TxnAmount") var txnAmount: Double? = null,
-    @SerializedName("Tip") var tip: String? = null,
-    @SerializedName("Cashback") var cashback: String? = null,
+    @SerializedName("txnType") var txnType:TxnType?=null,
+    @SerializedName("batchId") var batchId: String? = null,
+    @SerializedName("invoiceNo") var invoiceNo: String? = null,
+    @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
+    @SerializedName("dateTime") var dateTime: String? = null,
+    @SerializedName("timeZone") var timeZone: String? = null,
+    @SerializedName("accountType") var accountType: String? = null,
+    @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,
+    @SerializedName("txnAmount") var txnAmount: Double? = null,
+    @SerializedName("tip") var tip: String? = null,
+    @SerializedName("cashback") var cashback: String? = null,
     @SerializedName("CGST") var CGST: String? = null,
     @SerializedName("SGST") var SGST: String? = null,
-    @SerializedName("TtlAmount") var ttlAmount: String? = null,
-    @SerializedName("TxnStatus") var txnStatus: String? = null,
+    @SerializedName("ttlAmount") var ttlAmount: String? = null,
+    @SerializedName("txnStatus") var txnStatus: String? = null,
 
     ):Serializable
