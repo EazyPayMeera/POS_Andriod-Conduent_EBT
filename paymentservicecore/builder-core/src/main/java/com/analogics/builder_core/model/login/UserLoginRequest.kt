@@ -2,7 +2,7 @@ package com.analogics.builder_core.model.login
 
 import com.google.gson.annotations.SerializedName
 
-data class UserLoginReqeust (
+data class UserLoginRequest (
 @SerializedName("MerchantId") var merchantId: String? = null,
 @SerializedName("TerminalId") var terminalId: String? = null,
 @SerializedName("LoginId") var loginId: String? = null,

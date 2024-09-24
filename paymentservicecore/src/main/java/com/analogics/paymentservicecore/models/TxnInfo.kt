@@ -2,7 +2,7 @@ package com.analogics.paymentservicecore.models
 
 import com.google.gson.annotations.SerializedName
 
-enum class TxnType { PURCHASE, REFUND, PREAUTH, AUTHCAP, VOID  }
+enum class TxnType { PURCHASE, REFUND, PREAUTH, AUTHCAP, VOID ,TXNLIST}
 enum class TxnStatus { INITIATED, APPROVED, DECLINED, ERROR, REVERSED, VOIDED, REFUNDED }
 
 object TxnInfo {

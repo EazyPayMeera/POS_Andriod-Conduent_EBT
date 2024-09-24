@@ -203,6 +203,7 @@ fun getTransTypeString(txnType: TxnType?=null) : String
         TxnType.PREAUTH -> stringResource(id = R.string.pre_auth)
         TxnType.AUTHCAP -> stringResource(id = R.string.auth_capture)
         TxnType.VOID -> stringResource(id = R.string.void_trans)
+        TxnType.TXNLIST -> stringResource(id=R.string.auth_capture)
         null -> stringResource(id = R.string.app_name)
     }
 }

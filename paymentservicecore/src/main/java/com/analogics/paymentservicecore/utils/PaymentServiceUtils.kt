@@ -2,7 +2,6 @@ package com.analogics.paymentservicecore.utils
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.util.Objects
 
 object PaymentServiceUtils {
 

@@ -21,13 +21,12 @@ class InvoiceViewModel : ViewModel() {
     private val _invoiceno = MutableStateFlow("")
     val invoiceno: StateFlow<String> = _invoiceno
 
-    // Method to update the invoice number
-    fun updateInvoiceNo(newInvoiceNo: String) {
-        _invoiceno.value = newInvoiceNo
-    }
-
     private val scannerServiceRepository = ScannerServiceRepository() // Instantiate here
 
+    fun updateInvoiceNo(newValue: String): String {
+        _invoiceno.value = newValue
+        return _invoiceno.value // Return the updated invoice number
+    }
 
     fun navigateToAmountScreen(navHostController: NavHostController) {
         viewModelScope.launch {

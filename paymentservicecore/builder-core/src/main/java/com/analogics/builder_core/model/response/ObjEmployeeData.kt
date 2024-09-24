@@ -1,4 +1,4 @@
-package com.example.example
+package com.analogics.builder_core.model.response
 
 import com.google.gson.annotations.SerializedName
 

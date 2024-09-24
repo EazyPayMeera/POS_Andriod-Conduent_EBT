@@ -1,5 +1,4 @@
 package com.analogics.tpaymentsapos.rootUiScreens.confirmshift.viewmodel
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.analogics.paymentservicecore.logger.AppLogger

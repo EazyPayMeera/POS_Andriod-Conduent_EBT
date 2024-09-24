@@ -2,7 +2,6 @@ package com.analogics.builder_core.repository
 
 import com.analogics.builder_core.listener.requestListener.IBuildApiRequestListener
 import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
-import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.networkservicecore.nComponent.IAPIService
 import com.analogics.networkservicecore.nComponent.NetworkCallProvider
 import com.analogics.networkservicecore.nComponent.ResultProvider

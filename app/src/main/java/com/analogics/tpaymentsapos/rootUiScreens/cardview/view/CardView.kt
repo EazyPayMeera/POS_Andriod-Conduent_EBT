@@ -1,8 +1,9 @@
 // CardView.kt
 
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.cardview.view
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModelLocal
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -61,7 +63,10 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
+    val sharedViewModel = SharedViewModelLocal.current
+    Log.d("password2","dbentery start")
+    viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
+    Log.d("password2","dbentery sccuesss")
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
 

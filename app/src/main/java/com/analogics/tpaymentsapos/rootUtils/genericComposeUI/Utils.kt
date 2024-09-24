@@ -1,3 +1,5 @@
+
+
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import androidx.compose.ui.text.AnnotatedString
@@ -7,6 +9,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import java.util.Locale
+import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.google.gson.Gson
 import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {
@@ -72,4 +77,10 @@ fun createAmountTransformation(symbol: Symbol?=Symbol()): VisualTransformation {
             return TransformedText(AnnotatedString(formatted), offsetMapping)
         }
     }
+
+    fun convertToEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
+        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+        return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
+    }
+
 }

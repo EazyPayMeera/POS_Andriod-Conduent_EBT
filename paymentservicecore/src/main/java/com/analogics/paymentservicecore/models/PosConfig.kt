@@ -5,7 +5,6 @@ import android.os.Build
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.handler.SharedPrefHandler
 import com.google.gson.annotations.SerializedName
-import javax.inject.Inject
 
 object PosConfig {
 
