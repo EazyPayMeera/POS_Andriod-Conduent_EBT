@@ -10,17 +10,22 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentcore.Printer.Printer
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
-class ApprovedViewModel(context: Context): ViewModel() {
+class ApprovedViewModel(var dbRepository: TxnDBRepository, context: Context): ViewModel() {
 
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
@@ -162,6 +167,16 @@ class ApprovedViewModel(context: Context): ViewModel() {
             putSerializable("barcode_type", BarcodeFormat.CODE_39)
         }
         PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
+    }
+
+    // Update all the entities by setting invoice no as primary key
+    fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
+        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+
+        dbRepository.updateTxn(Gson().fromJson(json, TxnEntity::class.java))
+        Log.d("password " +
+                "record insert suc", Gson().fromJson(json, TxnEntity::class.java).toString())
+
     }
 
 

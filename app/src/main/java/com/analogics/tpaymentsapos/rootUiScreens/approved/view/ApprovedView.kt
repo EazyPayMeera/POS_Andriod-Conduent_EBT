@@ -38,13 +38,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -166,10 +167,14 @@ fun CircularMenu(
 @Composable
 fun ApprovedView(navHostController: NavHostController) {
     val context = LocalContext.current
-    val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
+    val viewModel: ApprovedViewModel = hiltViewModel()
     val printStatus by viewModel.printStatus
     val updatedAmount = updated_amt
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
+
+    val sharedViewModel = localSharedViewModel.current
+
+    viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
 
     Column {
         CommonTopAppBar(
