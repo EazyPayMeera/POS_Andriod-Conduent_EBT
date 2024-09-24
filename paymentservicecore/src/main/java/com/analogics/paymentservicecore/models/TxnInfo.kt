@@ -22,12 +22,12 @@ object TxnInfo {
     @SerializedName("TxnType")          var txnType: TxnType? = null
     @SerializedName("AccountType")      var accountType: String? = null
     @SerializedName("TxnCurrencyCode")  var txnCurrencyCode: String? = null
-    @SerializedName("TxnAmount")        var txnAmount: String? = null
-    @SerializedName("Tip")              var tip: String? = null
+    @SerializedName("TxnAmount")        var txnAmount: Double? = null
+    @SerializedName("Tip")              var tip: Double? = null
     @SerializedName("Cashback")         var cashback: String? = null
-    @SerializedName("CGST")             var CGST: String? = null
-    @SerializedName("SGST")             var SGST: String? = null
-    @SerializedName("TtlAmount")        var ttlAmount: String? = null
+    @SerializedName("CGST")             var CGST: Double? = null
+    @SerializedName("SGST")             var SGST: Double? = null
+    @SerializedName("TtlAmount")        var ttlAmount: Double? = null
     @SerializedName("TxnStatus")        var txnStatus: TxnStatus? = null
 
     /* Card Details */

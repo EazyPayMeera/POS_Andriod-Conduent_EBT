@@ -28,10 +28,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootModel.Symbol
-import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.updated_tip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -49,19 +48,18 @@ import com.analogics.tpaymentsapos.ui.theme.tipBColor
 @Composable
 fun ConfirmationView(navHostController: NavHostController, amount: String) {
 
-    val updated_tip = updated_tip
-    val transAmount = formatAmount(amount, symbol = Symbol(type = Symbol.Type.NONE))
+    val updated_tip = TxnInfo.tip?:0.00
+    val transAmount = TxnInfo.txnAmount?:0.00
     var selectedTipPercentage by remember { mutableStateOf(0.0) }
-    val amountDouble = transAmount.toDoubleOrNull() ?: 0.0
     var selectedTip by remember { mutableStateOf("") }
 
-    val sgstAmount = calculateTax(amountDouble)
-    val igstAmount = calculateTax(amountDouble)
+    val sgstAmount = calculateTax(transAmount)
+    val igstAmount = calculateTax(transAmount)
     var isTipEnabled by remember { mutableStateOf(false) }
 
-    val calculatedTip = calculateTip(amountDouble, selectedTipPercentage / 100)
+    val calculatedTip = calculateTip(transAmount, selectedTipPercentage / 100)
     val tipAmount = if (calculatedTip != 0.0) calculatedTip else updated_tip
-    val totalAmount = calculateTotalAmount(amountDouble, tipAmount, sgstAmount, igstAmount)
+    val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, igstAmount)
     var isTaxesEnabled by remember { mutableStateOf(false) }
 
     Log.d("TipChange", "Updated TipAmt: $updated_tip")
@@ -106,7 +104,7 @@ fun ConfirmationView(navHostController: NavHostController, amount: String) {
             }
         }
 
-        TransactionSummaryCard(amountDouble,tipAmount,sgstAmount,igstAmount)
+        TransactionSummaryCard(transAmount,tipAmount,sgstAmount,igstAmount)
 
         GenericCard(
             modifier = Modifier

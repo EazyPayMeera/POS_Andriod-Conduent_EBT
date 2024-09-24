@@ -414,7 +414,7 @@ fun FooterButtons(
 
             LaunchedEffect(isFirstButtonPressed) {
                 if (isFirstButtonPressed) {
-                    kotlinx.coroutines.delay(100)
+                    //kotlinx.coroutines.delay(100)
                     isFirstButtonPressed = false
                 }
             }
@@ -624,7 +624,7 @@ fun FooterButtons(
 
             LaunchedEffect(isSecondButtonPressed) {
                 if (isSecondButtonPressed) {
-                    kotlinx.coroutines.delay(100)
+                    //kotlinx.coroutines.delay(100)
                     isSecondButtonPressed = false
                 }
             }

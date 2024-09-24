@@ -22,6 +22,10 @@ fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmoun
     return transactionAmount + tipAmount + sgstAmount + igstAmount
 }
 
+fun formatAmountToDouble(amount: String, decimalPlaces: Int = 2): Double {
+    return formatAmount(amount,decimalPlaces, Symbol(type = Symbol.Type.NONE),withSeparator=false).toDoubleOrNull()?:0.00
+}
+
 fun formatAmount(amount: Double, decimalPlaces: Int = 2, symbol: Symbol?=Symbol(type = Symbol.Type.NONE), withSeparator: Boolean = true): String {
     return formatAmount("%.${decimalPlaces}f".format(amount),decimalPlaces,symbol,withSeparator)
 }
