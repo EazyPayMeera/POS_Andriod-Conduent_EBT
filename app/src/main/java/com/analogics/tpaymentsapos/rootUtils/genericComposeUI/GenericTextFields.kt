@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import android.graphics.Rect
 import android.util.Log
+import android.view.View
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -77,12 +78,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -511,30 +515,28 @@ fun FooterButtons(
     val context = LocalContext.current
     val isKeyboardVisible = remember { mutableStateOf(false) }
 
+
+    fun updateKeyboardState(view : View) {
+        val isKeyboardOpen = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) != false
+        isKeyboardVisible.value = isKeyboardOpen
+    }
     // Get the current view
     val rootView = LocalView.current
-
+    val view = LocalView.current
     // Use DisposableEffect to set up a listener for layout changes
-    DisposableEffect(Unit) {
+    DisposableEffect(view) {
         val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val rect = Rect()
-            rootView.getWindowVisibleDisplayFrame(rect)
-            val heightDiff = rootView.height - (rect.bottom - rect.top)
-            isKeyboardVisible.value = heightDiff > 100 // Threshold for keyboard visibility
-
-            // Log the keyboard visibility state
-            if (isKeyboardVisible.value) {
-                Log.d("FooterButtons", "Keyboard is open")
-            } else {
-                Log.d("FooterButtons", "Keyboard is closed")
-            }
-
+          updateKeyboardState(view)
         }
         rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
 
         onDispose {
             rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
         }
+    }
+
+    LaunchedEffect(view) {
+        updateKeyboardState(view)
     }
 
     Box(
@@ -609,12 +611,12 @@ fun FooterButtons(
             }
 
             // Handle button press delay
-            LaunchedEffect(isFirstButtonPressed) {
+            /*LaunchedEffect(isFirstButtonPressed) {
                 if (isFirstButtonPressed) {
-                    kotlinx.coroutines.delay(100)
+                    //delay(100)
                     isFirstButtonPressed = false
                 }
-            }
+            }*/
 
             // Second Button
             Box(
@@ -673,11 +675,11 @@ fun FooterButtons(
             }
 
             // Handle button press delay for second button
-            LaunchedEffect(isSecondButtonPressed) {
+            /*LaunchedEffect(isSecondButtonPressed) {
                 if (isSecondButtonPressed) {
                     isSecondButtonPressed = false
                 }
-            }
+            }*/
         }
     }
 }
