@@ -29,13 +29,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.time.LocalDateTime
@@ -45,6 +48,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
     val transactions = viewModel.transactionList.collectAsState().value
+    viewModel.fetchTransactions()
+    var sharedViewModel= localSharedViewModel.current
     Column {
         CommonTopAppBar(
             title = stringResource(R.string.transactions),
@@ -113,14 +118,16 @@ fun TransactionItem(transaction: TxnDataList) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(transaction.date, style = MaterialTheme.typography.caption, color = Color.Gray)
-                Text(transaction.type, style = MaterialTheme.typography.body2)
+                transaction.dateTime?.let { Text(it, style = MaterialTheme.typography.caption, color = Color.Gray) }
+                Text(transaction.txnType.toString(), style = MaterialTheme.typography.body2)
             }
-            Text(
-                text = formatAmount(transaction.amount),
-                style = MaterialTheme.typography.body2,
-                color = if (transaction.isPositive) Color(0xFF4CAF50) else Color.Red
-            )
+            transaction.ttlAmount?.let { formatAmount(it) }?.let {
+                TextView(
+                    text = it,
+                    style = MaterialTheme.typography.body2,
+                    color = if (true) Color(0xFF4CAF50) else Color.Red, fontSize = 20.sp
+                )
+            }
             IconButton(onClick = { /* Handle item click */ }) {
                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
             }
@@ -129,24 +136,9 @@ fun TransactionItem(transaction: TxnDataList) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun PreviewTransactionListScreen() {
-    val navHostController:NavHostController=NavHostController(context = LocalContext.current)
-    val mockTransactions = listOf(
-        TxnDataList(1, "Today @ 14:15:30", stringResource(id = R.string.purchase), 450.00, true),
-        TxnDataList(2, "Today @ 14:15:30", stringResource(id = R.string.refund), 50.00, false),
-        TxnDataList(3, "26-2-2020 @ 14:15:30", stringResource(id = R.string.purchase), 50.00, true)
-    )
-    TransactionListScreen(navHostController,viewModel = FakeTransactionViewModel(mockTransactions))
-}
 
-class FakeTransactionViewModel(mockTransactions: List<TxnDataList>) : TxnViewModel() {
-    init {
-        _transactionList.value = mockTransactions
-    }
-}
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

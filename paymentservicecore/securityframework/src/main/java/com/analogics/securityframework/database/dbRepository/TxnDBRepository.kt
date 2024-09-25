@@ -28,4 +28,8 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     suspend fun fetchTransactionDetailsTxn(merchantId: String): TxnEntity? {
         return iTxnDao.getTransactionDetailsTxn(merchantId)
     }
+
+    suspend fun getAllTxnListData(): List<TxnEntity>{
+        return iTxnDao.getAllTxnListData()
+    }
 }

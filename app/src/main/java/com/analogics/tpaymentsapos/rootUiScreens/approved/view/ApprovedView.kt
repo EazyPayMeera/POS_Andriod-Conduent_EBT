@@ -55,6 +55,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import kotlin.math.cos
@@ -175,6 +176,7 @@ fun ApprovedView(navHostController: NavHostController) {
 
     val sharedViewModel = localSharedViewModel.current
 
+    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
 
     Column {
         CommonTopAppBar(
@@ -281,7 +283,8 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
-                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                            var objRoot=sharedViewModel.objRootAppPaymentDetail.copy(dateTime = getCurrentDateTime())
+                            viewModel.updateTxnData(objRoot)
                             navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                         },
                         title = stringResource(id = R.string.done),
