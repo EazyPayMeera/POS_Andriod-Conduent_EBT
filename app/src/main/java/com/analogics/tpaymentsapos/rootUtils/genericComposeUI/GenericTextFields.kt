@@ -1,7 +1,9 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 
+import android.graphics.Rect
 import android.util.Log
+import android.view.ViewTreeObserver
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,6 +42,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,7 +60,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -235,7 +240,6 @@ fun CommonTopAppBar(
                 modifier = Modifier
                     .size(MaterialTheme.dimens.DP_60_CompactMedium) // Set a larger size for the clickable area
                     .clickable {
-                        Log.d("CommonTopAppBar", "Back button clicked")
                         onBackButtonClick()
                     }
             ) {
@@ -500,6 +504,36 @@ fun FooterButtons(
     secondButtonOnClick: () -> Unit,
     alignment: Alignment = Alignment.BottomCenter // Default alignment
 ) {
+    // State to track keyboard visibility
+    val context = LocalContext.current
+    val isKeyboardVisible = remember { mutableStateOf(false) }
+
+    // Get the current view
+    val rootView = LocalView.current
+
+    // Use DisposableEffect to set up a listener for layout changes
+    DisposableEffect(Unit) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+            val heightDiff = rootView.height - (rect.bottom - rect.top)
+            isKeyboardVisible.value = heightDiff > 100 // Threshold for keyboard visibility
+
+            // Log the keyboard visibility state
+            if (isKeyboardVisible.value) {
+                Log.d("FooterButtons", "Keyboard is open")
+            } else {
+                Log.d("FooterButtons", "Keyboard is closed")
+            }
+
+        }
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -507,7 +541,7 @@ fun FooterButtons(
     ) {
         Row(
             modifier = Modifier
-                .align(alignment)
+                .align(if (isKeyboardVisible.value) Alignment.TopCenter else alignment)
                 .fillMaxWidth()
                 .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -515,6 +549,7 @@ fun FooterButtons(
             var isFirstButtonPressed by remember { mutableStateOf(false) }
             var isSecondButtonPressed by remember { mutableStateOf(false) }
 
+            // First Button
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
@@ -559,7 +594,6 @@ fun FooterButtons(
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
-
                     TextView(
                         text = firstButtonTitle.uppercase(),
                         fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
@@ -571,6 +605,7 @@ fun FooterButtons(
                 }
             }
 
+            // Handle button press delay
             LaunchedEffect(isFirstButtonPressed) {
                 if (isFirstButtonPressed) {
                     kotlinx.coroutines.delay(100)
@@ -578,6 +613,7 @@ fun FooterButtons(
                 }
             }
 
+            // Second Button
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
@@ -622,7 +658,6 @@ fun FooterButtons(
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
-
                     TextView(
                         text = secondButtonTitle.uppercase(),
                         fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
@@ -634,15 +669,16 @@ fun FooterButtons(
                 }
             }
 
+            // Handle button press delay for second button
             LaunchedEffect(isSecondButtonPressed) {
                 if (isSecondButtonPressed) {
-                    //kotlinx.coroutines.delay(100)
                     isSecondButtonPressed = false
                 }
             }
         }
     }
 }
+
 
 object Authorisation {
     var isMerchantReceipt: Boolean = false
