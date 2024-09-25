@@ -74,6 +74,8 @@ import androidx.compose.ui.unit.dp
 import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -195,9 +197,10 @@ fun AppButton(
 
 
 @Composable
-fun getTransTypeString(txnType: TxnType?=null) : String
+fun getTransTypeString() : String
 {
-    return when(txnType?:TxnInfo.txnType){
+    val sharedViewModel = localSharedViewModel.current
+    return when(sharedViewModel.objRootAppPaymentDetail.txnType){
         TxnType.PURCHASE -> stringResource(id = R.string.purchase)
         TxnType.REFUND -> stringResource(id = R.string.refund)
         TxnType.PREAUTH -> stringResource(id = R.string.pre_auth)

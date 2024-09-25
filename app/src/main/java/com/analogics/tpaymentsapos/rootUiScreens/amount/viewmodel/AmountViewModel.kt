@@ -20,13 +20,18 @@ class AmountViewModel : ViewModel() {
 
     val transactionDateTime: String = getFormattedDateTime()
 
+    fun onLoad(sharedViewModel: SharedViewModel)
+    {
+        transAmount.ifEmpty { transAmount = formatAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00) }
+    }
+
     fun onAmountChange(newValue: String) :String{
         transAmount = formatAmount(newValue)
         return formatAmountToDouble(newValue).toString()
     }
 
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
-        sharedViewModel.objRootAppPaymentDetail.txnAmount = formatAmountToDouble(transAmount)
+        calculateTotal(sharedViewModel)
         when(TxnInfo.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.createRoute(transAmount))
@@ -42,5 +47,18 @@ class AmountViewModel : ViewModel() {
 
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+    }
+
+    private fun calculateTax(txnAmount: Double, percent: Double) : Double {
+        return txnAmount * percent / 100.00
+    }
+
+    private fun calculateTotal(sharedViewModel: SharedViewModel)  {
+        sharedViewModel.objRootAppPaymentDetail.txnAmount = formatAmountToDouble(transAmount)
+        sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)
+        sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)
+        sharedViewModel.objRootAppPaymentDetail.ttlAmount = (sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00)
+                                                            + (sharedViewModel.objRootAppPaymentDetail.CGST?:0.00)
+                                                            + (sharedViewModel.objRootAppPaymentDetail.SGST?:0.00)
     }
 }

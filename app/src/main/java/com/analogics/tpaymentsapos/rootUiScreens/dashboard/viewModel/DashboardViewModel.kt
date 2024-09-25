@@ -12,6 +12,7 @@ import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -38,8 +39,9 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
         navHostController.navigate(route)
     }
 
-    fun resetSelection() {
+    fun clearTransData(sharedViewModel: SharedViewModel) {
         _selectedButton.value = false.toString()
+        sharedViewModel.clearTransData()
     }
 
     fun initPaymentSDK(context: Context, coroutineScope: CoroutineScope)

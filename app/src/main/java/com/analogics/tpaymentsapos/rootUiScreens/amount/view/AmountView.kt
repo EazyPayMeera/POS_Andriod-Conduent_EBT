@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -32,6 +33,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTransTypeString
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -154,6 +156,10 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(sharedViewModel)
     }
 
 }

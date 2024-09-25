@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTransTypeString
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.analogics.tpaymentsapos.ui.theme.tipBColor
@@ -52,18 +54,15 @@ import com.analogics.tpaymentsapos.ui.theme.tipBColor
 fun ConfirmationView(navHostController: NavHostController, customTipAmount : Double? =null, viewModel: ConfirmationViewModel = hiltViewModel()) {
     val sharedViewModel= localSharedViewModel.current
     val transAmount = sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00
+    val sgstAmount = sharedViewModel.objRootAppPaymentDetail.SGST?:0.00
+    val cgstAmount = sharedViewModel.objRootAppPaymentDetail.CGST?:0.00
     val tipAmount by remember {viewModel.tipAmount}
-    val sgstAmount = calculateTax(transAmount)
-    val cgstAmount = calculateTax(transAmount)
     var isTipEnabled by remember { viewModel.isTipEnabled }
-
     val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, cgstAmount)
-
-    customTipAmount?.let { viewModel.tipAmount.doubleValue = it }
 
     Column {
         CommonTopAppBar(
-            onBackButtonClick = { navHostController.popBackStack() }
+            onBackButtonClick = { viewModel.onBack(navHostController, sharedViewModel) }
         )
         GenericCard(
             modifier = Modifier
@@ -101,7 +100,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
             }
         }
 
-        TransactionSummaryCard(transAmount,tipAmount,sgstAmount,cgstAmount,sharedViewModel)
+        TransactionSummaryCard(transAmount, tipAmount, sgstAmount, cgstAmount, sharedViewModel)
 
         GenericCard(
             modifier = Modifier
@@ -133,7 +132,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     Spacer(modifier = Modifier.weight(1f))
                     CustomSwitch(
                         checked = isTipEnabled,
-                        onCheckedChange = { viewModel.onTipToggle(it) },
+                        onCheckedChange = { viewModel.onTipToggle(it, sharedViewModel) },
                         checkedImage = R.drawable.switch_checked,
                         uncheckedImage = R.drawable.switch_unchecked,
                     )
@@ -146,9 +145,9 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     horizontalArrangement = Arrangement.SpaceEvenly
 
                 ) {
-                    val tenPercent = stringResource(id = R.string.ten)
+
                     Button(
-                        onClick = { viewModel.onTipPercentChange(1,10.00, sharedViewModel) },
+                        onClick = { viewModel.onTipPercentChange(1, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (viewModel.selectedButton.intValue == 1 && isTipEnabled) {
@@ -167,11 +166,11 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                         )
                     ) {
-                        Text(text = stringResource(id = R.string.ten))
+                        Text(text = viewModel.getTipPercentLabel(1))
                     }
-                    val fifteenPercent = stringResource(id = R.string.fifteen)
+
                     Button(
-                        onClick = { viewModel.onTipPercentChange(2,15.00, sharedViewModel)  },
+                        onClick = { viewModel.onTipPercentChange(2, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (viewModel.selectedButton.intValue == 2 && isTipEnabled) {
@@ -191,11 +190,11 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                         )
 
                     ) {
-                        Text(text = stringResource(id = R.string.fifteen))
+                        Text(text = viewModel.getTipPercentLabel(2))
                     }
-                    val twentyPercent = stringResource(id = R.string.twenty)
+
                     Button(
-                        onClick = { viewModel.onTipPercentChange(3,30.00, sharedViewModel)  },
+                        onClick = { viewModel.onTipPercentChange(3, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (viewModel.selectedButton.intValue == 3 && isTipEnabled) {
@@ -214,11 +213,11 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                         )
                     ) {
-                        Text(text = stringResource(id = R.string.twenty))
+                        Text(text = viewModel.getTipPercentLabel(3))
                     }
 
                     Button(
-                        onClick = { viewModel.onCustomTip(4,navHostController) },
+                        onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = if (viewModel.selectedButton.intValue == 4 && isTipEnabled) {
@@ -247,16 +246,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
+            firstButtonOnClick = { viewModel.onCancel(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = {
-                navHostController.navigate(
-                    AppNavigationItems.CardScreen.createRoute(
-                        formatAmount(totalAmount)
-                    )
-                )
-            }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(customTipAmount,sharedViewModel)
     }
 }
 

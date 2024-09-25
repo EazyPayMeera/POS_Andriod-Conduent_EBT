@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -138,7 +137,7 @@ fun TrainingView(
     dashboardItemLists: List<DashboardItemList>,
     onMenuItemClick: (String) -> Unit
 ) {
-
+    val sharedViewModel= localSharedViewModel.current
     Authorisation.isEReceipt = false
     Authorisation.isMerchantReceipt = false
     val selectedButton = dashboardViewModel.selectedButton.value
@@ -195,6 +194,7 @@ fun TrainingView(
 
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
+        dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, this)
     }
 }
