@@ -1,6 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-//import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
+
 import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
@@ -45,7 +45,6 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -167,14 +166,15 @@ fun CircularMenu(
 @Composable
 fun ApprovedView(navHostController: NavHostController) {
     val context = LocalContext.current
+    //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
     val viewModel: ApprovedViewModel = hiltViewModel()
     val printStatus by viewModel.printStatus
     val updatedAmount = updated_amt
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
-    val sharedViewModel = localSharedViewModel.current
+    //val sharedViewModel = localSharedViewModel.current
 
-    viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
 
     Column {
         CommonTopAppBar(

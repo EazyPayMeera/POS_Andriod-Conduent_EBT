@@ -20,12 +20,15 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepo
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import javax.inject.Inject
 
-class ApprovedViewModel(var dbRepository: TxnDBRepository, context: Context): ViewModel() {
+@HiltViewModel
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel() {
 
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
