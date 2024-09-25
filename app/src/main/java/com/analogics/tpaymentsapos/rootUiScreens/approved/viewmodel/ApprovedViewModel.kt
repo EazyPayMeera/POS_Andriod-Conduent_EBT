@@ -178,7 +178,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
         dbRepository.updateTxn(Gson().fromJson(json, TxnEntity::class.java))
         Log.d("password " +
-                "record insert suc", Gson().fromJson(json, TxnEntity::class.java).toString())
+                "record update suc ", Gson().fromJson(json, TxnEntity::class.java).toString())
 
     }
 

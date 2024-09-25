@@ -45,6 +45,7 @@ import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -172,9 +173,8 @@ fun ApprovedView(navHostController: NavHostController) {
     val updatedAmount = updated_amt
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
-    //val sharedViewModel = localSharedViewModel.current
+    val sharedViewModel = localSharedViewModel.current
 
-    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
 
     Column {
         CommonTopAppBar(
@@ -281,6 +281,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
+                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                         },
                         title = stringResource(id = R.string.done),

@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -249,7 +250,9 @@ fun DashboardContentSurface(
                             text = config.text,
                             imageResId = config.iconResId,
                             isSelected = selectedButton == config.text,
-                            onClick = { onButtonClick(config.text, config.onClick) },
+                            onClick = {
+                                Log.d("CardWithImageText", "Card clicked: ")
+                                onButtonClick(config.text, config.onClick) },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(MaterialTheme.dimens.DP_4_CompactMedium)
