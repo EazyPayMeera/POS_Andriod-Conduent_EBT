@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -209,9 +210,10 @@ fun getTransTypeString(txnType: TxnType?=null) : String
 }
 
 
+
 @Composable
 fun CommonTopAppBar(
-    title: String?=null,
+    title: String? = null,
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
     modifier: Modifier = Modifier
@@ -219,24 +221,32 @@ fun CommonTopAppBar(
     TopAppBar(
         title = {
             Text(
-                text = title?: getTransTypeString(),
-                fontWeight = FontWeight.Bold, // Make text bold
+                text = title ?: getTransTypeString(),
+                fontWeight = FontWeight.Bold,
                 style = TextStyle(
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium, // Adjust font size if needed
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     fontWeight = FontWeight.Bold
                 )
             )
         },
         backgroundColor = backgroundColor,
         navigationIcon = {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "",
+            Box(
                 modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_40_CompactMedium)
-                    .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
-                    .clickable { onBackButtonClick() }
-            )
+                    .size(MaterialTheme.dimens.DP_60_CompactMedium) // Set a larger size for the clickable area
+                    .clickable {
+                        Log.d("CommonTopAppBar", "Back button clicked")
+                        onBackButtonClick()
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .align(Alignment.Center) // Center the icon in the Box
+                        .size(24.dp) // Keep the icon size unchanged
+                )
+            }
         },
         modifier = modifier
     )
