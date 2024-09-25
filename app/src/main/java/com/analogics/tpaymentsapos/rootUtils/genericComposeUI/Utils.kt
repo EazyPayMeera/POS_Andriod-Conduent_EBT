@@ -7,11 +7,13 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.tpaymentsapos.rootModel.Symbol
-import java.util.Locale
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.pow
 
 fun calculateTax(amount: Double): Double {
@@ -41,9 +43,10 @@ fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol()
         val dAmount: Double = amount.toDoubleOrNull()?:0.00
         val currency = symbol?.get()?:""
         val separator : String = if(withSeparator) "," else ""
+        val spaceChar : String = if(symbol?.noSpace==true) "" else " "
         return when(symbol?.position) {
-            Symbol.Position.START -> "$currency %${separator}.${decimalPlaces}f".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
-            Symbol.Position.END -> "%.${decimalPlaces}f $currency".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
+            Symbol.Position.START -> "$currency$spaceChar%${separator}.${decimalPlaces}f".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
+            Symbol.Position.END -> "%.${decimalPlaces}f$spaceChar$currency".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
             else -> "%.${decimalPlaces}f".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
         }
     } catch (e: Exception) {
@@ -77,10 +80,16 @@ fun createAmountTransformation(symbol: Symbol?=Symbol()): VisualTransformation {
             return TransformedText(AnnotatedString(formatted), offsetMapping)
         }
     }
+}
 
-    fun convertToEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
-        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
-        return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
-    }
 
+fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
+    val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+    return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
+}
+
+
+fun getCurrentDateTime(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return sdf.format(Date())
 }

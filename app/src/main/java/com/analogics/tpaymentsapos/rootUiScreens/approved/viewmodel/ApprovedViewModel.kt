@@ -13,12 +13,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
-import com.google.gson.Gson
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -174,11 +173,11 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     // Update all the entities by setting invoice no as primary key
     fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
-        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+        // Convert ObjRootAppPaymentDetails to JSON
 
-        dbRepository.updateTxn(Gson().fromJson(json, TxnEntity::class.java))
+        dbRepository.updateTxn(convertObjRootToTxnEntity(objRootAppPaymentDetails))
         Log.d("password " +
-                "record insert suc", Gson().fromJson(json, TxnEntity::class.java).toString())
+                "record update suc ", convertObjRootToTxnEntity(objRootAppPaymentDetails).toString())
 
     }
 
