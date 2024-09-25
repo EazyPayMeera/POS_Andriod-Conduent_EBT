@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 
 class VoidRequestRepository @Inject constructor(
-    private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
+    //private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
 ) :
@@ -27,11 +27,11 @@ class VoidRequestRepository @Inject constructor(
     }
 
     override fun onApiSuccessRes(response: String) {
-        paymentServiceRepository.value.onAPIServiceResponse(response)
+        //paymentServiceRepository.value.onAPIServiceResponse(response)
     }
 
     override fun onApiFailureRes(error: Any) {
-        paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
+        //paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
     }
 
 
