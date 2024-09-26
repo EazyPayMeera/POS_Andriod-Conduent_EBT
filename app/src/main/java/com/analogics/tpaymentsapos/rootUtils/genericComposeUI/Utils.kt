@@ -6,6 +6,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -90,7 +91,7 @@ fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails
 }
 
 
-fun getCurrentDateTime(): String {
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+fun getCurrentDateTime(format : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT): String {
+    val sdf = SimpleDateFormat(format, Locale.getDefault())
     return sdf.format(Date())
 }

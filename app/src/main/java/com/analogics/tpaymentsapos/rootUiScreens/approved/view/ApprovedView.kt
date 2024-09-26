@@ -283,8 +283,10 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
-                            val objRoot=sharedViewModel.objRootAppPaymentDetail.copy(dateTime = getCurrentDateTime())
-                            viewModel.updateTxnData(objRoot)
+                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                         },
                         title = stringResource(id = R.string.done),
@@ -302,6 +304,7 @@ fun ApprovedView(navHostController: NavHostController) {
                         .setProgressColor(MaterialTheme.colorScheme.primary) // Orange color
                         .buildDialog(onClose = { viewModel.isPrinting.value = false })
                 }
+
             }
         }
     }

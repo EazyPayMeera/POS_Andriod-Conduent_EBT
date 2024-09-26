@@ -32,10 +32,13 @@ class InvoiceViewModel : ViewModel() {
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel)
     {
         sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
-        navigateToAmountScreen(navHostController)
+        Log.d("Invoice No", "Invoice No in onConfirm: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
+        navigateToAmountScreen(navHostController,sharedViewModel)
     }
 
-    fun navigateToAmountScreen(navHostController: NavHostController) {
+    fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
+        sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
+        Log.d("Invoice No", "Invoice No in Amount: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
         viewModelScope.launch {
             if (TxnInfo.txnType == TxnType.AUTHCAP) {
                 navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
