@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -17,9 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel() {
-    private val _transactionList = MutableStateFlow<List<TxnDataList>>(emptyList())
-    val transactionList: StateFlow<List<TxnDataList>> = _transactionList
-    private var allTransactionList: List<TxnEntity>? = null
+    private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
+    val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
+     var allTransactionList: List<TxnEntity>? = null
 
     init {
         // Fetch transactions asynchronously
@@ -36,13 +37,25 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
             }
+
+            Log.d("all data", allTransactionList?.let {
+                val txnDataList = convertTxnEntityListToTxnDataList(it)
+                _transactionList.value = txnDataList
+            }.toString())
         }
     }
 
-    private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<TxnDataList> {
+    private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
         val gson = Gson()
         val json = gson.toJson(txnEntityList)
-        val txnDataListType = object : TypeToken<List<TxnDataList>>() {}.type
+        val txnDataListType = object : TypeToken<List<ObjRootAppPaymentDetails>>() {}.type
         return gson.fromJson(json, txnDataListType)
+    }
+
+    fun totalPurchaseTransactions(txn:TxnType): Double {
+        return allTransactionList
+            ?.filter { it.txnType == txn.toString()  }
+            ?.sumOf { it.ttlAmount?.toDoubleOrNull() ?: 0.0 }  // Handle possible null amounts
+            ?: 0.0  // Return 0.0 if the list is null
     }
 }

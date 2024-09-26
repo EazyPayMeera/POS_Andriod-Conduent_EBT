@@ -30,7 +30,7 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
     @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
-    @SerializedName("dateTime") var dateTime: String? = null,
+    @SerializedName("DateTime") var dateTime: String? = null,
     @SerializedName("timeZone") var timeZone: String? = null,
     @SerializedName("accountType") var accountType: String? = null,
     @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,

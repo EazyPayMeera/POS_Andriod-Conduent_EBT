@@ -3,6 +3,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,16 +26,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -48,6 +48,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
     val transactions = viewModel.transactionList.collectAsState().value
+    Log.d("txnList", transactions.toString())
     viewModel.fetchTransactions()
     var sharedViewModel= localSharedViewModel.current
     Column {
@@ -61,8 +62,8 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
             Column(
                 modifier = Modifier
             ) {
-                HeaderSection()
-                SummarySection()
+                HeaderSection(viewModel)
+                SummarySection(viewModel)
             }
         }
         GenericCard(
@@ -88,27 +89,27 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
 }
 
 @Composable
-fun SummarySection() {
+fun SummarySection(viewModel: TxnViewModel) {
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Purchase", style = MaterialTheme.typography.body2, color = Color.Gray)
-            Text(formatAmount(450.00), style = MaterialTheme.typography.body2)
+            Text(formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE)), style = MaterialTheme.typography.body2)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Refund", style = MaterialTheme.typography.body2, color = Color.Gray)
-            Text(formatAmount(50.00), style = MaterialTheme.typography.body2)
+            Text(formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND)), style = MaterialTheme.typography.body2)
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: TxnDataList) {
+fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
     Column {
 
         Row(
@@ -125,7 +126,7 @@ fun TransactionItem(transaction: TxnDataList) {
                 TextView(
                     text = it,
                     style = MaterialTheme.typography.body2,
-                    color = if (true) Color(0xFF4CAF50) else Color.Red, fontSize = 20.sp
+                    color = Color(0xFF4CAF50), fontSize = 20.sp
                 )
             }
             IconButton(onClick = { /* Handle item click */ }) {
@@ -142,7 +143,7 @@ fun TransactionItem(transaction: TxnDataList) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HeaderSection() {
+fun HeaderSection(viewModel: TxnViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +164,7 @@ fun HeaderSection() {
                 color = Color.Gray
             )
             Text(
-                text = formatAmount(400.00),
+                text = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE)-viewModel.totalPurchaseTransactions(TxnType.REFUND)),
                 style = MaterialTheme.typography.h4,
                 color = androidx.compose.material3.MaterialTheme.colorScheme.primary
             )

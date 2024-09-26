@@ -28,6 +28,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.passwordTransform
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -79,7 +80,7 @@ fun PasswordView(navHostController: NavHostController) {
                     onDoneAction = {
                         viewModel.navigateToInvoiceScreen(navHostController)
                     },
-                    isPassword = true
+                    isPassword = true,
                 )
 
             }

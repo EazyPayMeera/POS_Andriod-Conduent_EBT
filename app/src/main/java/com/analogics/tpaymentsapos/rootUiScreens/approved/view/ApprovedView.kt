@@ -283,7 +283,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
-                            var objRoot=sharedViewModel.objRootAppPaymentDetail.copy(dateTime = getCurrentDateTime())
+                            val objRoot=sharedViewModel.objRootAppPaymentDetail.copy(dateTime = getCurrentDateTime())
                             viewModel.updateTxnData(objRoot)
                             navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                         },
