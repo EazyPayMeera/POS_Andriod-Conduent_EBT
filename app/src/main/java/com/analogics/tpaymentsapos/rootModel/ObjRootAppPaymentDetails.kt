@@ -8,6 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 data class ObjRootAppPaymentDetails (
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,
@@ -30,7 +31,7 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
     @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
-    @SerializedName("DateTime") var dateTime: String? = null,
+    @SerializedName("dateTime") var dateTime: String? = null,
     @SerializedName("timeZone") var timeZone: String? = null,
     @SerializedName("accountType") var accountType: String? = null,
     @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,

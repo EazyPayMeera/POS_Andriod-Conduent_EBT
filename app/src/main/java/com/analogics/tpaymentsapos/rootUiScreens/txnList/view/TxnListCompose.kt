@@ -51,6 +51,7 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
     Log.d("txnList", transactions.toString())
     viewModel.fetchTransactions()
     var sharedViewModel= localSharedViewModel.current
+    Log.d("TransactionDateTime", "DateTime using obj: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
     Column {
         CommonTopAppBar(
             title = stringResource(R.string.transactions),
@@ -119,8 +120,10 @@ fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                transaction.dateTime?.let { Text(it, style = MaterialTheme.typography.caption, color = Color.Gray) }
+                Log.d("TransactionDateTime", "DateTime: ${transaction.invoiceNo}")
+                transaction.dateTime.toString().let { Text(it, style = MaterialTheme.typography.caption, color = Color.Gray) }
                 Text(transaction.txnType.toString(), style = MaterialTheme.typography.body2)
+                Log.d("TransactionDateTime", "TxnType: ${transaction.txnType}")
             }
             transaction.ttlAmount?.let { formatAmount(it) }?.let {
                 TextView(
