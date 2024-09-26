@@ -1,7 +1,6 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnInfo.txnType
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
@@ -33,7 +33,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTransTypeString
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -59,7 +58,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = when(TxnInfo.txnType){
+                    text = when(txnType){
                         TxnType.REFUND -> stringResource(R.string.refund_amt)
                         TxnType.PREAUTH -> stringResource(R.string.auth_amt)
                         TxnType.AUTHCAP -> stringResource(id = R.string.authcap_amt)
@@ -92,7 +91,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     visualTransformation = createAmountTransformation(),
-                    amount = false
+                    amount = false,
                 )
 
                 if (TxnInfo.txnType==TxnType.VOID) {

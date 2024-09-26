@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCode
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +35,6 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
@@ -43,6 +46,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -51,7 +56,6 @@ fun InvoiceView(navHostController: NavHostController) {
     val context = LocalContext.current
     val viewModel: InvoiceViewModel = hiltViewModel()
     var sharedViewModel= localSharedViewModel.current
-
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -133,55 +137,22 @@ fun InvoiceView(navHostController: NavHostController) {
                     onDoneAction = {
                         viewModel.onConfirm(navHostController, sharedViewModel)
                     },
-                    isPassword = false
+                    isPassword = false,
+                    trailingIcon = if (sharedViewModel.objRootAppPaymentDetail.txnType in listOf(
+                            TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP)) {
+                        {
+                            Icon(
+                                imageVector = Icons.Default.QrCode,  // Your QR code icon
+                                contentDescription = null, // Provide a content description if needed
+                                modifier = Modifier
+                                    .clickable {
+                                        openScanner(context, viewModel)
+                                    },  // Toggle editable state on icon click
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    } else null // No trailing icon if the condition is false
                 )
-
-                if (TxnInfo.txnType in listOf(TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP)) {
-                    TextView(
-                        text = "",
-                        fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        modifier = Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
-                        textAlign = TextAlign.Center
-                    )
-
-                    ImageView(
-                        imageId = R.drawable.scannerd,
-                        size = MaterialTheme.dimens.DP_70_CompactMedium,
-                        shape = RectangleShape,
-                        alignment = Alignment.Center,
-                        modifier = Modifier.clickable {
-                            // Call the scanner functionality here
-                            coroutineScope.launch {
-                                viewModel.startScanner(
-                                    context,
-                                    Bundle().apply {
-                                        putString("camera_facing", "back") // Ensure back camera is used
-                                    },
-                                    object : IScannerResultProviderListener{
-                                        override fun onSuccess(result: Any?) {
-                                            if (result is String) {
-                                                Log.d(TAG, "Scanner result: $result")
-                                                viewModel.updateInvoiceNo(result)
-
-                                            } else {
-                                                Log.d(TAG, "Scanner failed to return a string result")
-                                            }
-                                        }
-
-                                        override fun onFailure(exception: Exception) {
-                                            Log.e(TAG, "Scanner initialization failed: ${exception.message}")
-                                        }
-
-                                    }
-                                )
-                            }
-                        },
-                        contentDescription = ""
-                    )
-                }
             }
         }
 
@@ -194,4 +165,32 @@ fun InvoiceView(navHostController: NavHostController) {
     }
 
     //sharedViewModel.objRootAppPaymentDetail.invoiceNo = viewModel.updateInvoiceNo(invoiceno)
+}
+
+
+fun openScanner(context: Context, viewModel: InvoiceViewModel) {
+    val coroutineScope = CoroutineScope(Dispatchers.Main) // Use an appropriate coroutine context
+
+    coroutineScope.launch {
+        viewModel.startScanner(
+            context,
+            Bundle().apply {
+                putString("camera_facing", "back") // Ensure back camera is used
+            },
+            object : IScannerResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                    if (result is String) {
+                        Log.d(TAG, "Scanner result: $result")
+                        viewModel.updateInvoiceNo(result)
+                    } else {
+                        Log.d(TAG, "Scanner failed to return a string result")
+                    }
+                }
+
+                override fun onFailure(exception: Exception) {
+                    Log.e(TAG, "Scanner initialization failed: ${exception.message}")
+                }
+            }
+        )
+    }
 }
