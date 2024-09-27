@@ -11,6 +11,7 @@ sealed class AppNavigationItems(val route: String) {
  object PleaseWaitScreen : AppNavigationItems(NavScreensEnum.PleaseWaitView.name)
  object TrainingScreen : AppNavigationItems(NavScreensEnum.TrainingView.name)
  object AmountScreen : AppNavigationItems(NavScreensEnum.AmountView.name)
+ object CardScreen : AppNavigationItems(NavScreensEnum.CardView.name)
  object ConfirmationScreen : AppNavigationItems(NavScreensEnum.ConfirmationView.name)
 
  object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
@@ -29,11 +30,7 @@ sealed class AppNavigationItems(val route: String) {
  object SucessScreen:AppNavigationItems(NavScreensEnum.SucessView.name)
  object ChangePasswordScreen:AppNavigationItems(NavScreensEnum.ChangePasswordView.name)
 
- object CardScreen : AppNavigationItems("card_screen/{totalAmount}") {
-  fun createRoute(totalAmount: String) = "card_screen/$totalAmount"
- }
-
- object CardDetectScreen : AppNavigationItems("card_detect_screen/{totalAmount}") {
+ object CardDetectScreen : AppNavigationItems("card_detect_screen") {
   fun createRoute(totalAmount: String) = "card_detect_screen/$totalAmount"
  }
 

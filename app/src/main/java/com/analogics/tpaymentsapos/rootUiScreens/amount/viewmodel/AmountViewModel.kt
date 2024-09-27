@@ -32,7 +32,7 @@ class AmountViewModel : ViewModel() {
         calculateTotal(sharedViewModel)
         when(TxnInfo.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
-                navHostController.navigate(AppNavigationItems.CardScreen.createRoute(transAmount))
+                navHostController.navigate(AppNavigationItems.CardScreen.route)
             }
             TxnType.VOID,TxnType.AUTHCAP -> {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)

@@ -56,6 +56,15 @@ fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol()
     return ""
 }
 
+fun Double?.toAmountFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String
+{
+    return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
+}
+
+fun String?.toAmountFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String
+{
+    return formatAmount(this?:"0.00",decimalPlaces,symbol,withSeparator)
+}
 
 fun calculateTip(amount: Double, tip: Double): Double {
     return amount * tip

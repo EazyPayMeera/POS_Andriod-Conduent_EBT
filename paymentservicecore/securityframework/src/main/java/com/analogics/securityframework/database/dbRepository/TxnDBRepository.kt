@@ -1,9 +1,11 @@
 package com.analogics.securityframework.database.dbRepository
 
+import android.util.Log
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
+import java.util.logging.Logger
 import javax.inject.Inject
 
 class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao) {
@@ -19,7 +21,13 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     }
 
     suspend fun  insertTxn(txnEntity: TxnEntity){
-        iTxnDao.insert(txnEntity)
+        try {
+            iTxnDao.insert(txnEntity)
+        }catch ( e : Exception)
+        {
+            Log.e("DATABASE",e.message.toString())
+        }
+
     }
     suspend fun  updateTxn(txnEntity: TxnEntity){
         iTxnDao.update(txnEntity)
