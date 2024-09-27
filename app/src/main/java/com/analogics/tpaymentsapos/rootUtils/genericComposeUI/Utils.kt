@@ -6,11 +6,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
 
@@ -53,6 +56,7 @@ fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol()
     return ""
 }
 
+
 fun calculateTip(amount: Double, tip: Double): Double {
     return amount * tip
 }
@@ -78,13 +82,16 @@ fun createAmountTransformation(symbol: Symbol?=Symbol()): VisualTransformation {
             return TransformedText(AnnotatedString(formatted), offsetMapping)
         }
     }
+}
 
 
+fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
+    val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+    return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
+}
 
-    fun convertToEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
-        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
-        return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
-    }
 
-
+fun getCurrentDateTime(format : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT): String {
+    val sdf = SimpleDateFormat(format, Locale.getDefault())
+    return sdf.format(Date())
 }

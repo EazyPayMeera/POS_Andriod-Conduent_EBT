@@ -97,7 +97,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 if (TxnInfo.txnType==TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                     TextView(
-                        text = viewModel.transactionDateTime,
+                        text = "",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -132,7 +132,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
                     listOf(
                         stringResource(id = R.string.original_amount) + "20.00",
-                        stringResource(id = R.string.date) + viewModel.transactionDateTime
+                        stringResource(id = R.string.date)
                     ).forEach {
                         TextView(
                             text = it,

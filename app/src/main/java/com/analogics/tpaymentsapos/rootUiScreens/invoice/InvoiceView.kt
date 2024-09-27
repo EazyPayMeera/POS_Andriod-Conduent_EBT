@@ -160,7 +160,7 @@ fun InvoiceView(navHostController: NavHostController) {
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { viewModel.navigateToTrainingScreen(navHostController) },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.navigateToAmountScreen(navHostController) }
+            secondButtonOnClick = { viewModel.navigateToAmountScreen(navHostController,sharedViewModel) }
         )
     }
 

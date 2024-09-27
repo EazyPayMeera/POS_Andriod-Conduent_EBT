@@ -55,6 +55,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import kotlin.math.cos
@@ -175,6 +176,7 @@ fun ApprovedView(navHostController: NavHostController) {
 
     val sharedViewModel = localSharedViewModel.current
 
+    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
 
     Column {
         CommonTopAppBar(
@@ -281,7 +283,10 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
+                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                         },
                         title = stringResource(id = R.string.done),
@@ -299,6 +304,7 @@ fun ApprovedView(navHostController: NavHostController) {
                         .setProgressColor(MaterialTheme.colorScheme.primary) // Orange color
                         .buildDialog(onClose = { viewModel.isPrinting.value = false })
                 }
+
             }
         }
     }
