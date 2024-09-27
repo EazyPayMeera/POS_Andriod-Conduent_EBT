@@ -23,7 +23,7 @@ object PrinterHandler : PrinterListener {
             Log.d(TAG, "Printer initialized successfully.")
 
             // Notify success
-            printerHandlerListener.onPrinterRespHandler("SUCCESS")
+            //printerHandlerListener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
             Log.e(TAG, "Failed to initialize printer: ${exception.message}")
 

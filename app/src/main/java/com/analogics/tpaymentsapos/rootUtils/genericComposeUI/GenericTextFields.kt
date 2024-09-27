@@ -685,13 +685,6 @@ fun FooterButtons(
     }
 }
 
-
-object Authorisation {
-    var isMerchantReceipt: Boolean = false
-    var isEReceipt: Boolean = false
-    var isCustomerReceipt = false
-}
-
 @Composable
 fun ScannerButton(
     text: String,

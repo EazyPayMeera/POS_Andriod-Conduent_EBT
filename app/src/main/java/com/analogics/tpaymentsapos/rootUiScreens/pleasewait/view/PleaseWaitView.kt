@@ -21,7 +21,6 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.pleasewait.viewmodel.PleaseWaitViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.google.zxing.BarcodeFormat
 import kotlinx.coroutines.delay
 
@@ -29,8 +28,8 @@ import kotlinx.coroutines.delay
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
-    val isMerchantReceipt = Authorisation.isMerchantReceipt
-    val isCustomerReceipt = Authorisation.isCustomerReceipt
+    val isMerchantReceipt = true
+    val isCustomerReceipt = false
 
     val context = LocalContext.current
     val viewModel: PleaseWaitViewModel = viewModel { PleaseWaitViewModel(context) }

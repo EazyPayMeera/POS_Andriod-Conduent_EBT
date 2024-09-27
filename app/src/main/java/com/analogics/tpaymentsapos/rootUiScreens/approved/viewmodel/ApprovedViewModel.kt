@@ -9,18 +9,28 @@ import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentcore.Printer.Printer
+import com.analogics.tpaymentcore.handler.PrinterHandler.addReceiptDetails
+import com.analogics.tpaymentcore.handler.PrinterHandler.initPrinter
+import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -32,6 +42,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
     val isPrinting = mutableStateOf(false)
+    val isCustomer = mutableStateOf(false)
 
     private val printer = Printer.getInstance()
 
@@ -116,11 +127,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         printer.addTextLeft_Center_Right(textLeft,textCenter,textRight)
     }
 
-    fun printReceipt(context: Context)
-    {
-        printer.startPrinting()
-    }
-
     fun addImage(format: Bundle, imageData: ByteArray)
     {
         printer.addImage(format,imageData)
@@ -141,12 +147,22 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         printer.feedLine(lines)
     }
 
-    fun printReceipt(coroutineScope: CoroutineScope)
+    @OptIn(DelicateCoroutinesApi::class)
+    fun printReceipt(context: Context, customer: Boolean = false)
     {
         isPrinting.value = true
-        coroutineScope.launch {
-            delay(3000)
-            isPrinting.value = false
+        isCustomer.value = customer
+
+        GlobalScope.launch {
+            initPrinter(context, object : IPrinterResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                    isPrinting.value = false
+                }
+
+                override fun onFailure(exception: Exception) {
+                    isPrinting.value = false
+                }
+            })
         }
     }
 
@@ -155,6 +171,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
         Log.d(TAG, "Initializing printer in viewModel...")
         PrinterServiceRepository(receiptBuilder).initPrinter(context, iPrinterResultProviderListener)
+        addReceiptDetails(iPrinterResultProviderListener)
     }
 
 

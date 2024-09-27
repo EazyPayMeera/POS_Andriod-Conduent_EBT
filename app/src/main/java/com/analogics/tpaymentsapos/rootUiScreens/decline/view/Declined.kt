@@ -84,9 +84,6 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
-                        onPrintClick = {
-                            // Do something on Print click
-                        },
                         onMenuOptionClick = { option ->
                             when (option) {
                                 "Customer Receipt" -> {
