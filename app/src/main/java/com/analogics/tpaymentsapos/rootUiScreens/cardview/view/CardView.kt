@@ -138,7 +138,8 @@ fun CardView(navHostController: NavHostController) {
                         text = stringResource(id = R.string.tap_swipe_insert),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))

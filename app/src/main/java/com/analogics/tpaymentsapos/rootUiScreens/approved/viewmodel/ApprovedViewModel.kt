@@ -9,29 +9,19 @@ import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentcore.handler.PrinterHandler.addReceiptDetails
-import com.analogics.tpaymentcore.handler.PrinterHandler.initPrinter
-import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -188,7 +178,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
     }
 
-    // Update all the entities by setting invoice no as primary key
+/*    // Update all the entities by setting invoice no as primary key
     fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
         // Convert ObjRootAppPaymentDetails to JSON
 
@@ -196,7 +186,27 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         Log.d("password " +
                 "record update suc ", convertObjRootToTxnEntity(objRootAppPaymentDetails).toString())
 
+    }*/
+
+    fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails) = viewModelScope.launch {
+        // Convert ObjRootAppPaymentDetails to JSON or entity object
+        val txnEntity = convertObjRootToTxnEntity(objRootAppPaymentDetails)
+
+        txnEntity.id?.let { id ->
+            // Check if the entity exists in the database using the primary key (invoice no)
+            val existingEntity = dbRepository.fetchTransactionDetailsTxn(id.toString())
+
+            if (existingEntity != null) {
+                // Entry found, proceed with update
+                dbRepository.updateTxn(txnEntity)
+                Log.d("Record Update", "Record update successful for invoice no: $id")
+            } else {
+                // Entry not found, log the message
+                dbRepository.insertTxn(txnEntity)
+            }
+        } ?: Log.d("Record Update", "Invoice No is null")
     }
+
 
 
 }

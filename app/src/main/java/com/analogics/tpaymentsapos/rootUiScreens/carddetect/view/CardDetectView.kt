@@ -35,10 +35,11 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
+fun CardDetectView(navHostController: NavHostController) {
     val viewModel: CardDetectViewModel = hiltViewModel()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -52,7 +53,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
         // Navigate to another screen after the delay without removing the current screen from the back stack
         navHostController.navigate(AppNavigationItems.PinScreen.route)
     }
-    viewModel.setTotalAmount(totalAmount)
+    /*viewModel.setTotalAmount(totalAmount)*/
     Column {
 
         CommonTopAppBar(
@@ -102,7 +103,7 @@ fun CardDetectView(navHostController: NavHostController, totalAmount: String) {
 
                             // Display the totalAmount here
                             Text(
-                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toString(),
+                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,

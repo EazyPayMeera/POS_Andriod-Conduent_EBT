@@ -236,12 +236,15 @@ fun AppNavigationGraph(
         ) { backStackEntry ->
             CardView(navHostController)
         }
-        composable(
+/*        composable(
             route = AppNavigationItems.CardDetectScreen.route,
             arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             CardDetectView(navHostController, totalAmount)
+        }*/
+        composable(AppNavigationItems.CardDetectScreen.route) {
+            CardDetectView(navHostController)
         }
         composable(AppNavigationItems.PinScreen.route) {
             PinView(navHostController)

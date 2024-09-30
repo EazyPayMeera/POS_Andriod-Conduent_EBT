@@ -28,10 +28,11 @@ sealed class AppNavigationItems(val route: String) {
  object SucessScreen:AppNavigationItems(NavScreensEnum.SucessView.name)
  object ChangePasswordScreen:AppNavigationItems(NavScreensEnum.ChangePasswordView.name)
  object BarcodeScreen:AppNavigationItems(NavScreensEnum.BarcodeView.name)
+ object CardDetectScreen:AppNavigationItems(NavScreensEnum.CardDetectView.name)
 
- object CardDetectScreen : AppNavigationItems("card_detect_screen") {
+/* object CardDetectScreen : AppNavigationItems("card_detect_screen") {
   fun createRoute(totalAmount: String) = "card_detect_screen/$totalAmount"
- }
+ }*/
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
 
