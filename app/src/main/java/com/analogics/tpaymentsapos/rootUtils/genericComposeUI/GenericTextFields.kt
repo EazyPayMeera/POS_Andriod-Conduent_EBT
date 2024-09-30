@@ -1,9 +1,7 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 
-import android.graphics.Rect
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.Image
@@ -81,13 +79,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -794,30 +789,42 @@ fun AppHeader(
         backgroundColor = backgroundColor,
         navigationIcon = {
             if (isIcon1Visible && icon1 != null) {
-                Image(
-                    painter = painterResource(id = icon1),
-                    contentDescription = "",
+                Box(
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Increase the size here, e.g., 48.dp
-                        .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Same touch area size as in CommonTopAppBar
                         .clickable { onIcon1Click?.invoke() }
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = icon1),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .align(Alignment.Center) // Center the icon in the Box
+                            .size(24.dp) // Set the icon size similar to the second function
+                    )
+                }
             }
         },
         actions = {
             if (isIcon2Visible && icon2 != null) {
-                Image(
-                    painter = painterResource(id = icon2),
-                    contentDescription = "icon2",
+                Box(
                     modifier = Modifier
-                        .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Same touch area size for the action icon
                         .clickable { onIcon2Click?.invoke() }
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = icon2),
+                        contentDescription = "icon2",
+                        modifier = Modifier
+                            .align(Alignment.Center) // Center the icon in the Box
+                            .size(24.dp) // Set the icon size
+                    )
+                }
             }
         },
         modifier = modifier
     )
 }
+
 
 @Composable
 fun BackgroundScreen(componentView :@Composable () -> Unit) {
