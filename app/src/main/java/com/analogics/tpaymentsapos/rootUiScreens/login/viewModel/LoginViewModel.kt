@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,16 +44,12 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         pwdCredentials.value = newPassword
     }
 
-    fun onLoginClick(navHost: NavHostController?, context: Context) {
+    fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
         viewModelScope.launch {
             try {
-                //paymentServiceRepository.apiEmpDetails(iOnRootAppPaymentListener = this@LoginViewModel)
-                navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
-                paymentServiceRepository.getPosConfig().apply { isLoggedIn = true }
-                    .saveToPrefs(context)
-
-
+                navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

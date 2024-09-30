@@ -12,7 +12,7 @@ interface IPaymentServiceRequestListener {
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
 
-    fun getPosConfig(): PosConfig
+    fun getPosConfig(context: Context): PosConfig
 
     suspend fun apiServiceRefund(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,

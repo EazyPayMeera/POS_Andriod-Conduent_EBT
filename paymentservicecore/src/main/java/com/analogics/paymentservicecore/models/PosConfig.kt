@@ -5,8 +5,9 @@ import android.os.Build
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.handler.SharedPrefHandler
 import com.google.gson.annotations.SerializedName
+import javax.inject.Inject
 
-object PosConfig {
+class PosConfig @Inject constructor(val context: Context) {
 
     /* Merchant & Cashier Info */
     @SerializedName("MerchantId") var merchantId: String? = null
@@ -54,7 +55,7 @@ object PosConfig {
     @SerializedName("IsPaymentSDKInit") var isPaymentSDKInit: Boolean? = false
     @SerializedName("IsOnboardingComplete") var isOnboardingComplete: Boolean? = false
             
-    fun loadFromPrefs(context: Context) : PosConfig
+    fun loadFromPrefs() : PosConfig
     {
         try {
             for (field in this.javaClass.declaredFields) {
@@ -86,7 +87,7 @@ object PosConfig {
         return this
     }
 
-    fun saveToPrefs(context: Context) : PosConfig {
+    fun saveToPrefs() : PosConfig {
         try {
             for (field in this.javaClass.declaredFields) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

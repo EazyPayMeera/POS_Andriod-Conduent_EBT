@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.tpaymentsapos.BuildConfig
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.splash.viewModel.SplashScreenViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -46,6 +47,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
 * */
     AppLogger.setLogLevel(BuildConfig.LOG_LEVEL)
     val scale = remember { Animatable(0f) }
+    var sharedViewModel = localSharedViewModel.current
 
     LaunchedEffect(Unit) {
         scale.animateTo(
@@ -56,7 +58,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
                     OvershootInterpolator(10f).getInterpolation(it)
                 })
         )
-        viewModel.onSplashScreenFinished(navController)
+        viewModel.onSplashScreenFinished(navController, sharedViewModel)
     }
     GenericCard(
         Modifier

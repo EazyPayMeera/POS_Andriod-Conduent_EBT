@@ -32,6 +32,7 @@ import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.model.OnBoardingContentList
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.viewModel.OnBoardingScreenViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
@@ -122,6 +123,8 @@ fun ShowCardView(
 @Composable
 fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoardingScreenViewModel = hiltViewModel()) {
     val pagerState = rememberPagerState(initialPage = 0)
+    val sharedViewModel = localSharedViewModel.current
+
     val imageSlider = listOf(
         OnBoardingContentList(
             headNote = stringResource(id = R.string.safe_fast_txn),
@@ -194,7 +197,7 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
                     maxLines = 1,
                     modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium), // Adjust padding
                     textAlign = TextAlign.Center,
-                    onClick = { viewModel.onOnboardingCompleted(navHostController) }
+                    onClick = { viewModel.onOnboardingCompleted(navHostController, sharedViewModel) }
                 )
 
                 HorizontalPagerIndicator(
@@ -214,7 +217,7 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
             ) {
                 AppButton(
                     onClick = {
-                        viewModel.onOnboardingCompleted(navHostController)
+                        viewModel.onOnboardingCompleted(navHostController, sharedViewModel)
                     },
                     title = stringResource(R.string.get_started)
                 )

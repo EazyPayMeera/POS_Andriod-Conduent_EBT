@@ -44,27 +44,32 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
         sharedViewModel.clearTransData()
     }
 
-    fun initPaymentSDK(context: Context, coroutineScope: CoroutineScope)
-    {
+    fun initPaymentSDK(context: Context, coroutineScope: CoroutineScope, sharedViewModel: SharedViewModel) {
+        if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             coroutineScope.launch {
                 paymentServiceRepository.initPaymentSDK(context, object :
                     IOnRootAppPaymentListener {
                     override fun onPaymentSuccess(result: Any) {
-                        if (result?.equals(true) == true)
+                        if (result == true) {
+                            sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }?.saveToPrefs()
                             Toast.makeText(
                                 context,
                                 R.string.emv_sdk_init_success,
                                 Toast.LENGTH_SHORT
                             ).show()
-                        else
+                        }
+                        else {
+                            sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
                             Toast.makeText(
                                 context,
                                 R.string.emv_sdk_init_failure,
                                 Toast.LENGTH_SHORT
                             ).show()
+                        }
                     }
 
                     override fun onPaymentError(tError: PaymentServiceError) {
+                        sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
                         Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
                             .show()
                         Log.e("EMV_APP", tError.errorMessage)
@@ -72,4 +77,5 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
                 })
             }
         }
+    }
 }
