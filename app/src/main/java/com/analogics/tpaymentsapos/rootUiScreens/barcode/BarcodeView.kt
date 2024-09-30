@@ -25,6 +25,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -60,7 +61,7 @@ fun BarcodeView(navHostController: NavHostController) {
                 )
 
                 Text(
-                    text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toString(),
+                    text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
                     fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
