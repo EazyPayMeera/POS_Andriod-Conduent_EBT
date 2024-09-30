@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -17,7 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.Symbol
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.TaxPercentageViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -33,6 +39,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercentageViewModel = hiltViewModel()) {
 
     val updated_tax = updated_tax
+    var isDialogVisible by remember { mutableStateOf(false) }
     Column {
 
         // Top App Bar
@@ -98,9 +105,33 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
         // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { viewModel.onCancel(navHostController) },
+            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController) }
         )
+
+        if (isDialogVisible) {
+            CustomDialogBuilder.create()
+                .setTitle("Are you sure want to Cancel ?")
+                .setSubtitle("")
+                .setSmallText("")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+                }
+                .setOnConfirmAction {
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                }
+                .setShowButtons(true)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
+
+        }
     }
 }

@@ -194,7 +194,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
         txnEntity.id?.let { id ->
             // Check if the entity exists in the database using the primary key (invoice no)
-            val existingEntity = dbRepository.fetchTransactionDetailsTxn(id.toString())
+            val existingEntity = dbRepository.fetchTransactionDetailsTxn(id)
 
             if (existingEntity != null) {
                 // Entry found, proceed with update

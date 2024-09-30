@@ -38,6 +38,7 @@ fun PinView(navHostController: NavHostController) {
     // Get the ViewModel
     val pinViewModel: PinViewModel = hiltViewModel()
     var isDialogVisible by remember { mutableStateOf(false) }
+    var iscancel by remember { mutableStateOf(false) }
 
     Column {
         CommonTopAppBar(
@@ -85,10 +86,34 @@ fun PinView(navHostController: NavHostController) {
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { pinViewModel.onCancelAction(navHostController) },
+            firstButtonOnClick = { /*pinViewModel.onCancelAction(navHostController)*/iscancel = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { isDialogVisible=true }
         )
+
+        if (iscancel) {
+            CustomDialogBuilder.create()
+                .setTitle("Are you sure want to Cancel ?")
+                .setSubtitle("")
+                .setSmallText("")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    navHostController.navigate(AppNavigationItems.PinScreen.route)
+                }
+                .setOnConfirmAction {
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                }
+                .setShowButtons(true)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { iscancel = false })
+
+        }
 
         if (isDialogVisible) {
             CustomDialogBuilder.create()

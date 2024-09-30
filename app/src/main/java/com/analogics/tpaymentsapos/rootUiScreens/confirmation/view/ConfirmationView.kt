@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,9 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.viewmodel.ConfirmationViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -53,6 +56,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
     val tipAmount by remember {viewModel.tipAmount}
     var isTipEnabled by remember { viewModel.isTipEnabled }
     val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, cgstAmount)
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     Column {
         CommonTopAppBar(
@@ -240,10 +244,34 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { viewModel.onCancel(navHostController) },
+            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/ isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
+
+        if (isDialogVisible) {
+            CustomDialogBuilder.create()
+                .setTitle("Are you sure want to Cancel ?")
+                .setSubtitle("")
+                .setSmallText("")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
+                }
+                .setOnConfirmAction {
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                }
+                .setShowButtons(true)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
+
+        }
     }
 
     LaunchedEffect(Unit) {

@@ -20,7 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -37,7 +40,9 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -59,6 +64,7 @@ fun InvoiceView(navHostController: NavHostController) {
     // Collect the state from ViewModel
     val invoiceno by viewModel.invoiceno.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     // Define the request code
     val CAMERA_REQUEST_CODE = 100
@@ -158,13 +164,38 @@ fun InvoiceView(navHostController: NavHostController) {
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { viewModel.navigateToTrainingScreen(navHostController) },
+            firstButtonOnClick = { /*viewModel.navigateToTrainingScreen(navHostController)*/ isDialogVisible=true},
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.navigateToAmountScreen(navHostController,sharedViewModel) }
         )
     }
 
-    //sharedViewModel.objRootAppPaymentDetail.invoiceNo = viewModel.updateInvoiceNo(invoiceno)
+
+    if (isDialogVisible) {
+        CustomDialogBuilder.create()
+            .setTitle("Are you sure want to Cancel ?")
+            .setSubtitle("")
+            .setSmallText("")
+            .setShowCloseButton(true) // Can set to false if you don't want the close button
+            .setCancelable(true)
+            .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+            .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+            .setShowProgressIndicator(false)
+            .setOnCancelAction {
+                navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
+            }
+            .setOnConfirmAction {
+                navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+            }
+            .setShowButtons(true)
+            .setNavAction {
+                navHostController.popBackStack()
+            }
+            .buildDialog(onClose = { isDialogVisible = false })
+
+    }
+
+
 }
 
 
