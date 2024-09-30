@@ -36,6 +36,7 @@ import androidx.navigation.navArgument
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
+import com.analogics.tpaymentsapos.rootUiScreens.barcode.BarcodeView
 import com.analogics.tpaymentsapos.rootUiScreens.changepassword.ChangePasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
@@ -211,6 +212,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.PasswordScreen.route) {
             PasswordView(navHostController)
+        }
+        composable(AppNavigationItems.BarcodeScreen.route) {
+            BarcodeView(navHostController)
         }
         composable(AppNavigationItems.ConfirmationScreen.route) { entry->
             val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)

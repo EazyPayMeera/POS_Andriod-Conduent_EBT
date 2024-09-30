@@ -19,8 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,7 +32,6 @@ import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.viewmodel.ConfirmationViewModel
@@ -43,11 +40,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTax
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTransTypeString
 import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.analogics.tpaymentsapos.ui.theme.tipBColor
@@ -285,7 +279,6 @@ fun TransactionSummaryCard(
     igstAmount: Double,
     sharedViewModel: SharedViewModel
 ) {
- var sharedViewModel = sharedViewModel.objRootAppPaymentDetail
     GenericCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -314,7 +307,7 @@ fun TransactionSummaryCard(
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
             // Transaction Amount
-            sharedViewModel.txnAmount?.toDouble()?.let {
+            sharedViewModel.objRootAppPaymentDetail.txnAmount?.toDouble()?.let {
                 TransactionSummaryItem(
                     label = stringResource(id = R.string.tnx_amount),
                     amount = it

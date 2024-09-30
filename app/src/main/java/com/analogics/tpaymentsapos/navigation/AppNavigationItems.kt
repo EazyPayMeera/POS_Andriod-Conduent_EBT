@@ -1,7 +1,5 @@
 package com.analogics.tpaymentsapos.navigation
 
-import androidx.compose.runtime.MutableDoubleState
-
 sealed class AppNavigationItems(val route: String) {
  object SplashScreen : AppNavigationItems(NavScreensEnum.SplashScreen.name)
  object DashBoardScreen : AppNavigationItems(NavScreensEnum.DashBoardView.name)
@@ -29,6 +27,7 @@ sealed class AppNavigationItems(val route: String) {
  object TxnListScreen:AppNavigationItems(NavScreensEnum.TxnListView.name)
  object SucessScreen:AppNavigationItems(NavScreensEnum.SucessView.name)
  object ChangePasswordScreen:AppNavigationItems(NavScreensEnum.ChangePasswordView.name)
+ object BarcodeScreen:AppNavigationItems(NavScreensEnum.BarcodeView.name)
 
  object CardDetectScreen : AppNavigationItems("card_detect_screen") {
   fun createRoute(totalAmount: String) = "card_detect_screen/$totalAmount"
