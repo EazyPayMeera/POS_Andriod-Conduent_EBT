@@ -141,6 +141,8 @@
 <!--
     &lt;!&ndash;Configuration&ndash;&gt;
     <string name="ten">10%</string>-->
+<!--//txnlist -->
+    <string name="recentActivity">Recent Activity</string>
 
 
 </resources>
