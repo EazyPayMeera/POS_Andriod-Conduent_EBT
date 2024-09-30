@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
@@ -38,6 +39,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun LoginScreenView(navHostController: NavHostController?) {
     val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
+    val sharedViewModel = localSharedViewModel.current
 
     Scaffold(
         topBar = {
@@ -95,7 +97,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {
-                                viewModel.onLoginClick(navHostController,context)
+                                viewModel.onLoginClick(navHostController,sharedViewModel)
                         }
                     )
 
@@ -119,7 +121,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
-                                        viewModel.onLoginClick(navHostController,context)
+                                        viewModel.onLoginClick(navHostController,sharedViewModel)
                                 } else {
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }

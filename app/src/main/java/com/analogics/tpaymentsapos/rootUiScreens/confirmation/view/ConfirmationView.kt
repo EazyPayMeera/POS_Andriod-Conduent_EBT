@@ -29,6 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.PosConfig
+import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -100,142 +103,144 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
 
         TransactionSummaryCard(transAmount, tipAmount, sgstAmount, cgstAmount, sharedViewModel)
 
-        GenericCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = MaterialTheme.dimens.DP_24_CompactMedium,
-                    end = MaterialTheme.dimens.DP_24_CompactMedium,
-                    top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
-                    bottom = MaterialTheme.dimens.DP_10_CompactMedium
-                ),
-            elevation = MaterialTheme.dimens.DP_10_CompactMedium,
-            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-        ) {
-            Column(
+        sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE }?.let {
+            GenericCard(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+                    .fillMaxWidth()
+                    .padding(
+                        start = MaterialTheme.dimens.DP_24_CompactMedium,
+                        end = MaterialTheme.dimens.DP_24_CompactMedium,
+                        top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                        bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                    ),
+                elevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .padding(MaterialTheme.dimens.DP_20_CompactMedium)
                 ) {
-                    TextView(
-                        text = stringResource(id = R.string.add_tip),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    CustomSwitch(
-                        checked = isTipEnabled,
-                        onCheckedChange = { viewModel.onTipToggle(it, sharedViewModel) },
-                        checkedImage = R.drawable.switch_checked,
-                        uncheckedImage = R.drawable.switch_unchecked,
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-
-                ) {
-
-                    Button(
-                        onClick = { viewModel.onTipPercentChange(1, sharedViewModel) },
-                        enabled = isTipEnabled,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.intValue == 1 && isTipEnabled) {
-                                dashboardOrangeColor
-                            } else {
-                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
-                            },
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
-                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = viewModel.getTipPercentLabel(1))
+                        TextView(
+                            text = stringResource(id = R.string.add_tip),
+                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        CustomSwitch(
+                            checked = isTipEnabled,
+                            onCheckedChange = { viewModel.onTipToggle(it, sharedViewModel) },
+                            checkedImage = R.drawable.switch_checked,
+                            uncheckedImage = R.drawable.switch_unchecked,
+                        )
                     }
 
-                    Button(
-                        onClick = { viewModel.onTipPercentChange(2, sharedViewModel) },
-                        enabled = isTipEnabled,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.intValue == 2 && isTipEnabled) {
-                                dashboardOrangeColor
-                            } else {
-                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
-                            },
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
-                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
-                        )
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
 
                     ) {
-                        Text(text = viewModel.getTipPercentLabel(2))
-                    }
 
-                    Button(
-                        onClick = { viewModel.onTipPercentChange(3, sharedViewModel) },
-                        enabled = isTipEnabled,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.intValue == 3 && isTipEnabled) {
-                                dashboardOrangeColor
-                            } else {
-                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
-                            },
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
-                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
-                        )
-                    ) {
-                        Text(text = viewModel.getTipPercentLabel(3))
-                    }
+                        Button(
+                            onClick = { viewModel.onTipPercentChange(1, sharedViewModel) },
+                            enabled = isTipEnabled,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = if (viewModel.selectedButton.intValue == 1 && isTipEnabled) {
+                                    dashboardOrangeColor
+                                } else {
+                                    tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                },
+                                contentColor = MaterialTheme.colorScheme.tertiary
+                            ),
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                            modifier = Modifier
+                                .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                                pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                                disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                            )
+                        ) {
+                            Text(text = viewModel.getTipPercentLabel(1))
+                        }
 
-                    Button(
-                        onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
-                        enabled = isTipEnabled,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.intValue == 4 && isTipEnabled) {
-                                dashboardOrangeColor
-                            } else {
-                                tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
-                            },
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        //modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
-                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
-                        )
-                    ) {
-                        Text(text = stringResource(id = R.string.custom))
+                        Button(
+                            onClick = { viewModel.onTipPercentChange(2, sharedViewModel) },
+                            enabled = isTipEnabled,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = if (viewModel.selectedButton.intValue == 2 && isTipEnabled) {
+                                    dashboardOrangeColor
+                                } else {
+                                    tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                },
+                                contentColor = MaterialTheme.colorScheme.tertiary
+                            ),
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                            modifier = Modifier
+                                .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                                pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                                disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                            )
+
+                        ) {
+                            Text(text = viewModel.getTipPercentLabel(2))
+                        }
+
+                        Button(
+                            onClick = { viewModel.onTipPercentChange(3, sharedViewModel) },
+                            enabled = isTipEnabled,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = if (viewModel.selectedButton.intValue == 3 && isTipEnabled) {
+                                    dashboardOrangeColor
+                                } else {
+                                    tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                },
+                                contentColor = MaterialTheme.colorScheme.tertiary
+                            ),
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                            modifier = Modifier
+                                .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                                pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                                disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                            )
+                        ) {
+                            Text(text = viewModel.getTipPercentLabel(3))
+                        }
+
+                        Button(
+                            onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
+                            enabled = isTipEnabled,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = if (viewModel.selectedButton.intValue == 4 && isTipEnabled) {
+                                    dashboardOrangeColor
+                                } else {
+                                    tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
+                                },
+                                contentColor = MaterialTheme.colorScheme.tertiary
+                            ),
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                            //modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                            modifier = Modifier
+                                .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                                pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                                disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                            )
+                        ) {
+                            Text(text = stringResource(id = R.string.custom))
+                        }
                     }
                 }
             }
