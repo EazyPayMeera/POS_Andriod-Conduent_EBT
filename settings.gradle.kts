@@ -27,4 +27,4 @@ include(":paymentservicecore:networkservicecore")
 include(":paymentservicecore:builder-core")
 include(":paymentservicecore:tpaymentcore")
 include(":paymentservicecore:securityframework")
-include(":paymentservicecore:mylibrary")
+

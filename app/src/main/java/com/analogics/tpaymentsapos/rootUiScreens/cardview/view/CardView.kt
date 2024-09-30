@@ -182,7 +182,8 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    if(TxnInfo.txnType==TxnType.PURCHASE) {
+                    if (sharedViewModel.objRootAppPaymentDetail.txnType in listOf(
+                            TxnType.PURCHASE)) {
                         TextView(
                             text = stringResource(id = R.string.or),
                             fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -202,7 +203,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                         Button(
-                            onClick = { setShowQRCodeDialog(true) }, // Show QR code dialog on button click
+                            onClick = { /*setShowQRCodeDialog(true)*/ navHostController.navigate(AppNavigationItems.BarcodeScreen.route)}, // Show QR code dialog on button click
                             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                             modifier = Modifier

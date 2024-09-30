@@ -61,108 +61,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-@Composable
-fun CircularMenu(
-    onPrintClick: () -> Unit,
-    onMenuOptionClick: (String) -> Unit
-) {
-    val menuOptions = listOf(
-        stringResource(id = R.string.cust_recp), stringResource(id = R.string.merchant_recp), stringResource(
-        id = R.string.e_recp
-    ))
-    var expanded by remember { mutableStateOf(false) }
-    val distance = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
-
-    val printButtonInitialColor = MaterialTheme.colorScheme.primary
-    var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
-
-    LaunchedEffect(expanded) {
-        distance.animateTo(
-            targetValue = if (expanded) 80f else 0f,
-            animationSpec = tween(durationMillis = 500)
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .size(MaterialTheme.dimens.DP_120_CompactMedium)
-            .padding(MaterialTheme.dimens.DP_21_CompactMedium),
-        contentAlignment = Alignment.Center
-    ) {
-        menuOptions.forEachIndexed { index, option ->
-            val angle = when (index) {
-                0 -> 0f // Right
-                1 -> 180f // Left
-                2 -> -90f // Up
-                else -> 0f
-            }
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .offset(
-                        x = (distance.value * cos(Math.toRadians(angle.toDouble()))).dp,
-                        y = (distance.value * sin(Math.toRadians(angle.toDouble()))).dp
-                    )
-                    .size(MaterialTheme.dimens.DP_60_CompactMedium)
-                    .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape)
-                    .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
-                    .clickable {
-                        onMenuOptionClick(option)
-                        expanded = false
-                        scope.launch {
-                            printButtonColor = printButtonInitialColor
-                        }
-                    }
-            ) {
-                TextView(
-                    text = option,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(MaterialTheme.dimens.DP_200_CompactMedium)
-                .shadow(
-                    MaterialTheme.dimens.DP_4_CompactMedium,
-                    shape = CircleShape
-                ) // Add shadow with circular shape
-                .background(printButtonColor, shape = CircleShape)
-                .clickable {
-                    scope.launch {
-                        printButtonColor = if (expanded) {
-                            Color.Gray
-                        } else {
-                            printButtonInitialColor
-                        }
-                    }
-                    onPrintClick()
-                    expanded = !expanded
-                }
-        ) {
-            TextView(
-                text = stringResource(id = R.string.print),
-                color = MaterialTheme.colorScheme.tertiary,
-                fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-
-
-
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApprovedView(navHostController: NavHostController) {
@@ -300,6 +198,108 @@ fun ApprovedView(navHostController: NavHostController) {
                         .buildDialog(onClose = { viewModel.isPrinting.value = false })
                 }
             }
+        }
+    }
+}
+
+
+
+
+
+
+@Composable
+fun CircularMenu(
+    onPrintClick: () -> Unit,
+    onMenuOptionClick: (String) -> Unit
+) {
+    val menuOptions = listOf(
+        stringResource(id = R.string.cust_recp), stringResource(id = R.string.merchant_recp), stringResource(
+        id = R.string.e_recp
+    ))
+    var expanded by remember { mutableStateOf(false) }
+    val distance = remember { Animatable(0f) }
+    val scope = rememberCoroutineScope()
+
+    val printButtonInitialColor = MaterialTheme.colorScheme.primary
+    var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
+
+    LaunchedEffect(expanded) {
+        distance.animateTo(
+            targetValue = if (expanded) 80f else 0f,
+            animationSpec = tween(durationMillis = 500)
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .size(MaterialTheme.dimens.DP_120_CompactMedium)
+            .padding(MaterialTheme.dimens.DP_21_CompactMedium),
+        contentAlignment = Alignment.Center
+    ) {
+        menuOptions.forEachIndexed { index, option ->
+            val angle = when (index) {
+                0 -> 0f // Right
+                1 -> 180f // Left
+                2 -> -90f // Up
+                else -> 0f
+            }
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .offset(
+                        x = (distance.value * cos(Math.toRadians(angle.toDouble()))).dp,
+                        y = (distance.value * sin(Math.toRadians(angle.toDouble()))).dp
+                    )
+                    .size(MaterialTheme.dimens.DP_60_CompactMedium)
+                    .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape)
+                    .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
+                    .clickable {
+                        onMenuOptionClick(option)
+                        expanded = false
+                        scope.launch {
+                            printButtonColor = printButtonInitialColor
+                        }
+                    }
+            ) {
+                TextView(
+                    text = option,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(MaterialTheme.dimens.DP_200_CompactMedium)
+                .shadow(
+                    MaterialTheme.dimens.DP_4_CompactMedium,
+                    shape = CircleShape
+                ) // Add shadow with circular shape
+                .background(printButtonColor, shape = CircleShape)
+                .clickable {
+                    scope.launch {
+                        printButtonColor = if (expanded) {
+                            Color.Gray
+                        } else {
+                            printButtonInitialColor
+                        }
+                    }
+                    onPrintClick()
+                    expanded = !expanded
+                }
+        ) {
+            TextView(
+                text = stringResource(id = R.string.print),
+                color = MaterialTheme.colorScheme.tertiary,
+                fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
