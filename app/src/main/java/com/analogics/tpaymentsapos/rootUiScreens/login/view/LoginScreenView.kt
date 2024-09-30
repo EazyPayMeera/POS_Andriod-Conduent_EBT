@@ -44,7 +44,6 @@ fun LoginScreenView(navHostController: NavHostController?) {
             AppHeader(
                 title = stringResource(id = R.string.login),
                 onBackButtonClick = { /* Handle back button click if needed */ },
-                icon1 = R.drawable.baseline_arrow_back_24,
                 onIcon1Click = {  },
                 backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
