@@ -8,6 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 data class ObjRootAppPaymentDetails (
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,

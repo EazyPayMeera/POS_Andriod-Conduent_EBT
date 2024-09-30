@@ -49,167 +49,22 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun ApprovedView(navHostController: NavHostController) {
-    val context = LocalContext.current
-    //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
-    val viewModel: ApprovedViewModel = hiltViewModel()
-    val printStatus by viewModel.printStatus
-    val updatedAmount = updated_amt
-    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
-
-    val sharedViewModel = localSharedViewModel.current
-
-
-    Column {
-        CommonTopAppBar(
-            onBackButtonClick = { navHostController.popBackStack() }
-        )
-
-        // Outer Surface with background color, padding, and rounded corners
-        BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
-                    .fillMaxSize(), // Fill the entire available space
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // Align content to the start
-            ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
-
-                TextView(
-                    text = stringResource(id = R.string.approved),
-                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                TxnInfo.txnType.takeIf { it != TxnType.VOID }?.let {
-                    Text(
-                        text = updatedAmount,
-                        fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-
-                }
-
-                ImageView(
-                    imageId = R.drawable.approve,
-                    size = MaterialTheme.dimens.DP_126_CompactMedium,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentDescription = ""
-                )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularMenu(
-                        onPrintClick = {
-                            coroutineScope.launch {
-                                viewModel.initPrinter(context, object : IPrinterResultProviderListener {
-                                    override fun onSuccess(result: Any?) {
-                                        if(result?.equals(true)==true)
-                                            Log.d(TAG, "Initialization of printer is Successful")
-                                        else
-                                            Log.d(TAG, "Initialization of printer is Failed")
-                                    }
-                                    override fun onFailure(exception: Exception) {
-                                        // No action needed, failure is handled elsewhere
-                                    }
-                                })
-                            }
-                        },
-                        onMenuOptionClick = { option ->
-                            when (option) {
-                                context.resources.getString((R.string.cust_recp)) -> {
-                                    Authorisation.isCustomerReceipt = true
-                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
-                                }
-                                context.resources.getString((R.string.merchant_recp)) -> {
-                                    Authorisation.isMerchantReceipt = true
-                                    viewModel.printReceipt(coroutineScope)
-                                }
-                                context.resources.getString((R.string.e_recp)) -> {
-                                    Authorisation.isEReceipt = true
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
-
-                            }
-                        }
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OkButton(
-                        onClick = {
-                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
-                            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
-                        },
-                        title = stringResource(id = R.string.done),
-                    )
-                }
-
-                if (viewModel.isPrinting.value) {
-                    CustomDialogBuilder.create()
-                        .setTitle(stringResource(id = R.string.printing))
-                        .setSubtitle(stringResource(id = R.string.plz_wait))
-                        .setSmallText(stringResource(id = R.string.merchant_recp))
-                        .setShowCloseButton(true) // Can set to false if you don't want the close button
-                        .setCancelable(true)
-                        .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                        .setProgressColor(MaterialTheme.colorScheme.primary) // Orange color
-                        .buildDialog(onClose = { viewModel.isPrinting.value = false })
-                }
-            }
-        }
-    }
-}
-
-
-
-
-
-
 @Composable
 fun CircularMenu(
-    onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
     val menuOptions = listOf(
@@ -289,7 +144,6 @@ fun CircularMenu(
                             printButtonInitialColor
                         }
                     }
-                    onPrintClick()
                     expanded = !expanded
                 }
         ) {
@@ -300,6 +154,138 @@ fun CircularMenu(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
+        }
+    }
+}
+
+
+
+
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun ApprovedView(navHostController: NavHostController) {
+    val context = LocalContext.current
+    //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
+    val viewModel: ApprovedViewModel = hiltViewModel()
+    val printStatus by viewModel.printStatus
+    val updatedAmount = updated_amt
+    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
+
+    val sharedViewModel = localSharedViewModel.current
+
+    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+
+    Column {
+        CommonTopAppBar(
+            onBackButtonClick = { navHostController.popBackStack() }
+        )
+
+        // Outer Surface with background color, padding, and rounded corners
+        BackgroundScreen(
+//            color = Color(0xFFF7931E), // Orange color for the outer Surface
+//            modifier = Modifier
+//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
+//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
+//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
+//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
+                    .fillMaxSize(), // Fill the entire available space
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start // Align content to the start
+            ) {
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
+
+                TextView(
+                    text = stringResource(id = R.string.approved),
+                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
+                sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it != TxnType.VOID }?.let {
+                    Text(
+                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                        fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+                }
+
+                ImageView(
+                    imageId = R.drawable.approve,
+                    size = MaterialTheme.dimens.DP_126_CompactMedium,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                        .align(Alignment.CenterHorizontally),
+                    contentDescription = ""
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularMenu(
+                        onMenuOptionClick = { option ->
+                            when (option) {
+                                context.resources.getString((R.string.cust_recp)) -> {
+                                    viewModel.printReceipt(context, true)
+                                }
+                                context.resources.getString((R.string.merchant_recp)) -> {
+                                    viewModel.printReceipt(context)
+                                }
+                                context.resources.getString((R.string.e_recp)) -> {
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                            }
+                        }
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
+                ) {
+                    OkButton(
+                        onClick = {
+                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+                            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                        },
+                        title = stringResource(id = R.string.done),
+                    )
+                }
+
+                if (viewModel.isPrinting.value) {
+                    CustomDialogBuilder.create()
+                        .setTitle(stringResource(id = R.string.printing))
+                        .setSubtitle(stringResource(id = R.string.plz_wait))
+                        .setSmallText(stringResource(id = if(viewModel.isCustomer.value) R.string.cust_recp else R.string.merchant_recp))
+                        .setShowCloseButton(true) // Can set to false if you don't want the close button
+                        .setCancelable(true)
+                        .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                        .setProgressColor(MaterialTheme.colorScheme.primary) // Orange color
+                        .buildDialog(onClose = { viewModel.isPrinting.value = false })
+                }
+
+            }
         }
     }
 }

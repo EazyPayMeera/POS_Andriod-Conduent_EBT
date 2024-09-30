@@ -232,11 +232,9 @@ fun AppNavigationGraph(
             EmailView(navHostController, email)
         }
         composable(
-            route = AppNavigationItems.CardScreen.route,
-            arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
+            route = AppNavigationItems.CardScreen.route
         ) { backStackEntry ->
-            val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
-            CardView(navHostController, totalAmount)
+            CardView(navHostController)
         }
         composable(
             route = AppNavigationItems.CardDetectScreen.route,

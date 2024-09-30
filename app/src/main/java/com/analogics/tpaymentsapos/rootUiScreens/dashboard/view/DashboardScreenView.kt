@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -43,10 +44,11 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardVi
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.removeNonDigits
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 
@@ -55,7 +57,6 @@ import kotlinx.coroutines.launch
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
     val sharedViewModel= localSharedViewModel.current
-
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
@@ -71,7 +72,10 @@ fun dashboardItemListData(
 ): List<DashboardItemList> {
 
     // Helper function to set the transaction state
-    fun setTransactionType(txnType: TxnType) {sharedViewModel.objRootAppPaymentDetail.txnType = txnType }
+    fun setTransactionType(txnType: TxnType) {
+        sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
+        sharedViewModel.objRootAppPaymentDetail.txnType = txnType
+    }
 
     // Helper function to create DashboardItemList
     @Composable
@@ -126,7 +130,7 @@ fun dashboardItemListData(
             titleId = R.string.transactions,
             iconId = R.drawable.dashboard_transaction,
             route = AppNavigationItems.TxnListScreen.route,
-            onClickState = {  }
+            onClickState = { setTransactionType(TxnType.TXNLIST) }
         )
     )
 }
@@ -139,8 +143,6 @@ fun TrainingView(
     onMenuItemClick: (String) -> Unit
 ) {
     val sharedViewModel= localSharedViewModel.current
-    Authorisation.isEReceipt = false
-    Authorisation.isMerchantReceipt = false
     val selectedButton = dashboardViewModel.selectedButton.value
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()

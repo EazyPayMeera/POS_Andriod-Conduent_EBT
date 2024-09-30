@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -50,6 +49,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -58,15 +59,15 @@ import com.google.zxing.common.BitMatrix
 import java.util.EnumMap
 
 @Composable
-fun CardView(navHostController: NavHostController, totalAmount: String) {
+fun CardView(navHostController: NavHostController) {
 
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val sharedViewModel = localSharedViewModel.current
+
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
-    Log.d("qrcode","After set qr code")
+
     Column {
 
         CommonTopAppBar(
@@ -102,7 +103,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                             modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
                             Text(
-                                text = if (TxnInfo.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
+                                text = if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
                                     id = R.string.total_amt
                                 ),
                                 fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -115,7 +116,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                             // Display the totalAmount here
                             Text(
-                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toString()/*totalAmount*/,
+                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,
@@ -141,13 +142,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         text = stringResource(id = R.string.tap_swipe_insert),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .clickable {
-                                navHostController.navigate(
-                                    AppNavigationItems.CardDetectScreen.createRoute(totalAmount)
-                                )
-                            }
+                        fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -182,28 +177,20 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    if (sharedViewModel.objRootAppPaymentDetail.txnType in listOf(
-                            TxnType.PURCHASE)) {
+                    if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.PURCHASE) {
                         TextView(
                             text = stringResource(id = R.string.or),
                             fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
-                                .clickable {
-                                    navHostController.navigate(
-                                        AppNavigationItems.CardDetectScreen.createRoute(
-                                            totalAmount
-                                        )
-                                    )
-                                }
                                 .align(Alignment.CenterHorizontally)
                         )
 
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                         Button(
-                            onClick = { /*setShowQRCodeDialog(true)*/ navHostController.navigate(AppNavigationItems.BarcodeScreen.route)}, // Show QR code dialog on button click
+                            onClick = { setShowQRCodeDialog(true) }, // Show QR code dialog on button click
                             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                             modifier = Modifier

@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 
 import android.graphics.Rect
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
@@ -684,13 +685,6 @@ fun FooterButtons(
     }
 }
 
-
-object Authorisation {
-    var isMerchantReceipt: Boolean = false
-    var isEReceipt: Boolean = false
-    var isCustomerReceipt = false
-}
-
 @Composable
 fun ScannerButton(
     text: String,
@@ -882,6 +876,13 @@ fun ImageView(
         )
     }
 }
+val passwordTransform = object : PasswordTransformationMethod() {
+    override fun getTransformation(source: CharSequence, view: View?): CharSequence {
+        val transformed = super.getTransformation(source, view)
+        // Convert to String and replace bullet character with '*'
+        return transformed.toString().replace('\u2022', '*')
+    }
+}
 
 @Composable
 fun OutlinedTextField(
@@ -956,6 +957,7 @@ fun OutlinedTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
             cursorColor = Color.Transparent
         )
+
     )
 }
 

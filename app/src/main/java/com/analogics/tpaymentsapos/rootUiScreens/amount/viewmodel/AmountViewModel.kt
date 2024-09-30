@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,14 +12,11 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountToDouble
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
 
 class AmountViewModel : ViewModel() {
 
     var transAmount by mutableStateOf("")
         private set
-
-    val transactionDateTime: String = getFormattedDateTime()
 
     fun onLoad(sharedViewModel: SharedViewModel)
     {
@@ -34,7 +32,7 @@ class AmountViewModel : ViewModel() {
         calculateTotal(sharedViewModel)
         when(TxnInfo.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
-                navHostController.navigate(AppNavigationItems.CardScreen.createRoute(transAmount))
+                navHostController.navigate(AppNavigationItems.CardScreen.route)
             }
             TxnType.VOID,TxnType.AUTHCAP -> {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
@@ -53,6 +51,7 @@ class AmountViewModel : ViewModel() {
         return txnAmount * percent / 100.00
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel)  {
         sharedViewModel.objRootAppPaymentDetail.txnAmount = formatAmountToDouble(transAmount)
         sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)

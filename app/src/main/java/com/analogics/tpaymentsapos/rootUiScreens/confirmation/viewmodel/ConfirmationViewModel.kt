@@ -75,7 +75,7 @@ class ConfirmationViewModel : ViewModel() {
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = totalAmount.doubleValue
         when(sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.PURCHASE,TxnType.REFUND,TxnType.PREAUTH -> {
-                navHostController.navigate(AppNavigationItems.CardScreen.createRoute(totalAmount.toString()))
+                navHostController.navigate(AppNavigationItems.CardScreen.route)
             }
             TxnType.VOID,TxnType.AUTHCAP -> {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
