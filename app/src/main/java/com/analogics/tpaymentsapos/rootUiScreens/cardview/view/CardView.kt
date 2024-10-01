@@ -206,7 +206,7 @@ fun CardView(navHostController: NavHostController) {
 
                         Box(
                             modifier = Modifier
-                                .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                                .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
                                 .align(Alignment.CenterHorizontally),
                             contentAlignment = Alignment.Center
                         ) {
