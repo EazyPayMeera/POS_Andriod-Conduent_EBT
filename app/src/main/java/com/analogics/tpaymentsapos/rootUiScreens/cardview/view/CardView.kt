@@ -45,6 +45,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewMode
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -194,12 +195,27 @@ fun CardView(navHostController: NavHostController) {
                             modifier = Modifier
                                 .width(MaterialTheme.dimens.DP_200_CompactMedium)
                                 .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
-                                .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
+                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.upi_icon),
                                 contentDescription = null,
                                 modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium)
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OkButton(
+                                onClick = {
+                                    navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                                },
+                                title = stringResource(id = R.string.cancel),
+                                maxsizebutton = false
                             )
                         }
                     }

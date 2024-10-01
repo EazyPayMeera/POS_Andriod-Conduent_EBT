@@ -266,16 +266,26 @@ fun CommonTopAppBar(
 @Composable
 fun OkButton(
     onClick: () -> Unit,
-    title: String
+    title: String,
+    maxsizebutton: Boolean = true // New parameter to control button size
 ) {
     Button(
         modifier = Modifier
-            .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .height(MaterialTheme.dimens.DP_50_CompactMedium),// Uncomment if you want to apply shadow directly to the Button
+            .then(
+                if (maxsizebutton) {
+                    Modifier
+                        .width(MaterialTheme.dimens.DP_248_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                } else {
+                    Modifier
+                        .width(MaterialTheme.dimens.DP_126_CompactMedium) // Specify a different size for the full button
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                }
+            ), // Using Modifier.then() to conditionally apply the size
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium), // Keep the shape here
         colors = buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
-            containerColor = colorResource(R.color.grey) // You can keep this if you want a specific color, or change it as needed
+            containerColor = colorResource(R.color.grey) // Keep or change as needed
         ),
         onClick = onClick
     ) {
@@ -284,6 +294,7 @@ fun OkButton(
         )
     }
 }
+
 
 
 

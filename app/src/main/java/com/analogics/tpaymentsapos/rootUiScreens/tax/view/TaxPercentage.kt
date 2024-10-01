@@ -63,7 +63,7 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
-                    Modifier.padding(top = MaterialTheme.dimens.DP_24_CompactMedium),
+                    Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium),
                     textAlign = TextAlign.Center
                 )
 
@@ -74,7 +74,7 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
-                    Modifier.padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    Modifier.padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium),
                     textAlign = TextAlign.Center
                 )
 
