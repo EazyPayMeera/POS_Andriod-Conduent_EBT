@@ -5,8 +5,8 @@ object AppConstants {
     const val KEY_CUSTOM_TIP_AMOUNT = "customTipAmount"
 
     /* Value constants */
+    const val DEFAULT_UI_LANGUAGE_CODE = "en"
     const val DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
     const val UNIQUE_ID_DATE_TIME_FORMAT = "DHHmmss"
-
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L
 }
