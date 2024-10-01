@@ -10,23 +10,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -41,8 +42,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
 
         CommonTopAppBar(
             title = "Transactions",
-            onBackButtonClick = { navHostController.popBackStack() },
-            showBackIcon = false
+            onBackButtonClick = { navHostController.popBackStack() }
         )
 
         Box(
@@ -62,91 +62,119 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                 ) {
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
+                        text = sharedViewModel.objRootAppPaymentDetail.txnType.toString(),
+                        fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
+                        text = "APPROVED",
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
+                    )
+
+                    TextView(
+                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                        fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
                     )
 
                     ImageView(
-                        imageId = R.drawable.master,
+                        imageId = R.drawable.txn_aprove,
                         shape = RectangleShape,
-                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium),
                         contentDescription = ""
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        text = sharedViewModel.objRootAppPaymentDetail.dateTime.toString(),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = 10.dp)
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        text = "Card: Visa **** **** **** 1234",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 30.dp, start = 34.dp)
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        text = "Auth Code: Auth 1234",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        text = "No.:100034345364633",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        text = "Invoice number: " + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        text = "POS Entry: Contactless",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start),
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
                     )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularMenu(
+                            onMenuOptionClick = { option ->
+                                when (option) {
+                                    context.resources.getString((R.string.cust_recp)) -> {
+                                        //viewModel.printReceipt(context, true)
+                                    }
+                                    context.resources.getString((R.string.merchant_recp)) -> {
+                                        //viewModel.printReceipt(context)
+                                    }
+                                    context.resources.getString((R.string.e_recp)) -> {
+                                        navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.startPayment(context, navHostController)
-        viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
     }
 
 }
