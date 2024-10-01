@@ -33,7 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -94,7 +96,7 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
                     // Display the transactions list
                     LazyColumn {
                         items(transactions.size) { index ->
-                            TransactionItem(transaction = transactions[index])
+                            TransactionItem(transaction = transactions[index],navHostController,sharedViewModel)
                         }
                     }
                 }
@@ -124,7 +126,7 @@ fun SummarySection(viewModel: TxnViewModel) {
 }
 
 @Composable
-fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
+fun TransactionItem(transaction: ObjRootAppPaymentDetails,navHostController: NavHostController,sharedViewModel: SharedViewModel) {
     Column {
 
         Row(
@@ -146,7 +148,10 @@ fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
                     color = Color(0xFF4CAF50), fontSize = 20.sp
                 )
             }
-            IconButton(onClick = { /* Handle item click */ }) {
+            IconButton(onClick = {
+                sharedViewModel.objRootAppPaymentDetail = transaction
+                navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+            }) {
                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
             }
         }
