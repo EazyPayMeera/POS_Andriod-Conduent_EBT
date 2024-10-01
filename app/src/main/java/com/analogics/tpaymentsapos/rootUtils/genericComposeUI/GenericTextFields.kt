@@ -224,7 +224,8 @@ fun CommonTopAppBar(
     title: String? = null,
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showBackIcon: Boolean = true // New parameter to control arrow visibility
 ) {
     TopAppBar(
         title = {
@@ -238,26 +239,29 @@ fun CommonTopAppBar(
             )
         },
         backgroundColor = backgroundColor,
-        navigationIcon = {
-            Box(
-                modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_60_CompactMedium) // Set a larger size for the clickable area
-                    .clickable {
-                        onBackButtonClick()
-                    }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
+        navigationIcon = if (showBackIcon) {
+            {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center) // Center the icon in the Box
-                        .size(24.dp) // Keep the icon size unchanged
-                )
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Set a larger size for the clickable area
+                        .clickable {
+                            onBackButtonClick()
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .align(Alignment.Center) // Center the icon in the Box
+                            .size(24.dp) // Keep the icon size unchanged
+                    )
+                }
             }
-        },
+        } else null, // If showBackIcon is false, do not display the navigation icon
         modifier = modifier
     )
 }
+
 
 @Composable
 fun OkButton(

@@ -79,9 +79,19 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
                     modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
                 )
 
-                LazyColumn {
-                    items(transactions.size) { index ->
-                        TransactionItem(transaction = transactions[index])
+                if (transactions.isNullOrEmpty()) {
+                    // Display message when there are no transactions
+                    Text(
+                        text = "There are no transactions.",
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(start = 60.dp,end = 60.dp)
+                    )
+                } else {
+                    // Display the transactions list
+                    LazyColumn {
+                        items(transactions.size) { index ->
+                            TransactionItem(transaction = transactions[index])
+                        }
                     }
                 }
             }

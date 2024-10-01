@@ -39,6 +39,7 @@ fun BarcodeView(navHostController: NavHostController) {
     Column {
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
+
         )
 
         BackgroundScreen {
