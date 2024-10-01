@@ -76,15 +76,19 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
                 Text(
                     text = "Recent Transactions",
                     style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 )
+                Divider(color = Color.Gray, thickness = 1.dp/*, modifier = Modifier.padding(horizontal = 16.dp)*/)
 
                 if (transactions.isNullOrEmpty()) {
                     // Display message when there are no transactions
                     Text(
-                        text = "There are no transactions.",
+                        text = "Transaction List is Empty",
                         style = MaterialTheme.typography.body1,
-                        modifier = Modifier.padding(start = 60.dp,end = 60.dp)
+                        color = Color.Gray,
+                        modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                            .align(Alignment.CenterHorizontally)
                     )
                 } else {
                     // Display the transactions list
