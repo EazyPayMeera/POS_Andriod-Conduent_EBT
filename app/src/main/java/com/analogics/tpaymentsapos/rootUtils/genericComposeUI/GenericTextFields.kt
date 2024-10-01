@@ -776,7 +776,13 @@ fun AppHeader(
     onBackButtonClick: () -> Unit
 ) {
     TopAppBar(
+
         title = {
+            // Add Spacer before title only when both icons are null
+            if (icon1 == null && icon2 == null) {
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium)) // Adjust the width as per your layout needs
+            }
+
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.tertiary, // Ensure text color contrasts with the background
@@ -787,8 +793,8 @@ fun AppHeader(
             )
         },
         backgroundColor = backgroundColor,
-        navigationIcon = {
-            if (isIcon1Visible && icon1 != null) {
+        navigationIcon = if (isIcon1Visible && icon1 != null) {
+            {
                 Box(
                     modifier = Modifier
                         .size(MaterialTheme.dimens.DP_60_CompactMedium) // Same touch area size as in CommonTopAppBar
@@ -796,14 +802,14 @@ fun AppHeader(
                 ) {
                     Image(
                         painter = painterResource(id = icon1),
-                        contentDescription = "",
+                        contentDescription = "icon1",
                         modifier = Modifier
                             .align(Alignment.Center) // Center the icon in the Box
-                            .size(24.dp) // Set the icon size similar to the second function
+                            .size(24.dp) // Set the icon size
                     )
                 }
             }
-        },
+        } else null, // Don't add the navigation icon if it's not visible or null
         actions = {
             if (isIcon2Visible && icon2 != null) {
                 Box(
@@ -824,6 +830,7 @@ fun AppHeader(
         modifier = modifier
     )
 }
+
 
 
 @Composable

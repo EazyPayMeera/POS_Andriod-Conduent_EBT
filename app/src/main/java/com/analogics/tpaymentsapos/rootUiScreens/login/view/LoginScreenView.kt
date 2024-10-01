@@ -46,8 +46,8 @@ fun LoginScreenView(navHostController: NavHostController?) {
             AppHeader(
                 title = stringResource(id = R.string.login),
                 onBackButtonClick = { /* Handle back button click if needed */ },
-                onIcon1Click = {  },
-                backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                isIcon1Visible = false,
+                //backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
             )
         },
@@ -108,14 +108,14 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(top = MaterialTheme.dimens.DP_24_CompactMedium)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                             .clickable {
                                 navHostController?.navigate(AppNavigationItems.ForgetPasswordScreen.route)
                             }
                     )
 
                     Box(
-                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_12_CompactMedium)
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {
                         val message = stringResource(id = R.string.not_empty)
                         AppButton(
