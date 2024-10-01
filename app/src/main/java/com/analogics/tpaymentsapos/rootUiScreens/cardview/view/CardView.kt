@@ -195,7 +195,7 @@ fun CardView(navHostController: NavHostController) {
                             modifier = Modifier
                                 .width(MaterialTheme.dimens.DP_200_CompactMedium)
                                 .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
-                                .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
+                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.upi_icon),
@@ -206,7 +206,7 @@ fun CardView(navHostController: NavHostController) {
 
                         Box(
                             modifier = Modifier
-                                .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                                 .align(Alignment.CenterHorizontally),
                             contentAlignment = Alignment.Center
                         ) {
@@ -215,6 +215,7 @@ fun CardView(navHostController: NavHostController) {
                                     navHostController.navigate(AppNavigationItems.TrainingScreen.route)
                                 },
                                 title = stringResource(id = R.string.cancel),
+                                maxsizebutton = false
                             )
                         }
                     }
