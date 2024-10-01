@@ -21,10 +21,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,10 +31,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -106,7 +103,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
 
 
                     if (index == 4 && item.isChecked) {
-                        TippingView(navHostController, type = ConfigurableViewType.Percentage)
+                        TippingView(ConfigurableViewType.Percentage,navHostController, viewModel, sharedViewModel)
                     }
 
                     if (index < settingsItems.size - 1) {
@@ -117,7 +114,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                     }
 
                     if (index == 5 && item.isChecked) {
-                        TippingView(navHostController, type = ConfigurableViewType.Taxes)
+                        TippingView(ConfigurableViewType.Taxes,navHostController, viewModel, sharedViewModel)
                     }
                 }
             }
@@ -140,13 +137,14 @@ data class SettingsItem(
 
 @Composable
 fun TippingView(
+    type: ConfigurableViewType,
     navHostController: NavHostController,
-    type: ConfigurableViewType
+    viewModel : ConfigViewModel,
+    sharedViewModel: SharedViewModel
 ) {
-    val updated_tax = updated_tax
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(stringResource(id = R.string.ten), stringResource(id = R.string.fifteen), stringResource(id = R.string.twenty))
-        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_1) + updated_tax , stringResource(id = R.string.tax_2) + updated_tax)
+        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + ":" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + ":" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
     }
 
     val title = when (type) {
@@ -167,7 +165,7 @@ fun TippingView(
         ) {
             Text(
                 text = title,
-                style = if (type == ConfigurableViewType.Percentage) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -187,7 +185,7 @@ fun TippingView(
                         onClick = {
                             if(type == ConfigurableViewType.Taxes)
                             {
-                                navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+                                viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
                             }
                         },
                         elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium) // Use CardDefaults for elevation

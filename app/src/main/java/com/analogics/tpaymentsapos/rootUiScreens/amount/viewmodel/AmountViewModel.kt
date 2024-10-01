@@ -11,7 +11,7 @@ import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountToDouble
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
 class AmountViewModel : ViewModel() {
 
@@ -25,7 +25,7 @@ class AmountViewModel : ViewModel() {
 
     fun onAmountChange(newValue: String) :String{
         transAmount = formatAmount(newValue)
-        return formatAmountToDouble(newValue).toString()
+        return transformToAmountDouble(newValue).toString()
     }
 
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
@@ -53,7 +53,7 @@ class AmountViewModel : ViewModel() {
 
     @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel)  {
-        sharedViewModel.objRootAppPaymentDetail.txnAmount = formatAmountToDouble(transAmount)
+        sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
         sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)
         sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = (sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00)

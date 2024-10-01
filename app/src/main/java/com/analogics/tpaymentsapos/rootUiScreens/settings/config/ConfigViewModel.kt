@@ -3,6 +3,8 @@ package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import javax.inject.Inject
 
@@ -53,6 +55,11 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
     fun onTaxEnabledChange(value: Boolean, sharedViewModel: SharedViewModel) {
         isTaxEnabled.value = value
         sharedViewModel.objPosConfig?.apply { this.isTaxEnabled = value }?.saveToPrefs()
+    }
+
+    fun onTaxPercentChange(index: Int, navHostController: NavHostController) {
+        navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(AppConstants.NAV_KEY_TAX_TYPE, if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST)
+        navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
     }
 
     fun onLoad(sharedViewModel: SharedViewModel)

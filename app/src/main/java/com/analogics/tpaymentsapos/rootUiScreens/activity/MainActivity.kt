@@ -220,8 +220,8 @@ fun AppNavigationGraph(
             BarcodeView(navHostController)
         }
         composable(AppNavigationItems.ConfirmationScreen.route) { entry->
-            val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)
-            entry.savedStateHandle.remove<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)
+            val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT)
+            entry.savedStateHandle.remove<Double?>(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT)
             ConfirmationView(navHostController, customTipAmount)
         }
         composable(AppNavigationItems.TipScreen.route) {
@@ -239,13 +239,7 @@ fun AppNavigationGraph(
         ) { backStackEntry ->
             CardView(navHostController)
         }
-/*        composable(
-            route = AppNavigationItems.CardDetectScreen.route,
-            arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
-            CardDetectView(navHostController, totalAmount)
-        }*/
+
         composable(AppNavigationItems.CardDetectScreen.route) {
             CardDetectView(navHostController)
         }

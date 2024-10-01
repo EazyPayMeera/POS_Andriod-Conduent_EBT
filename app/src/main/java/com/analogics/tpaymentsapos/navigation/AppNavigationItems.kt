@@ -31,10 +31,6 @@ sealed class AppNavigationItems(val route: String) {
  object CardDetectScreen:AppNavigationItems(NavScreensEnum.CardDetectView.name)
  object TransactionDetailsScreen:AppNavigationItems(NavScreensEnum.TransactionDetailsView.name)
 
-/* object CardDetectScreen : AppNavigationItems("card_detect_screen") {
-  fun createRoute(totalAmount: String) = "card_detect_screen/$totalAmount"
- }*/
-
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
 
  object EmailScreen : AppNavigationItems("email_screen/{email}") {
