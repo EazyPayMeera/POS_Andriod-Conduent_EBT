@@ -14,6 +14,7 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -63,6 +64,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPass
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
+import com.analogics.tpaymentsapos.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -170,6 +172,7 @@ fun GreetingPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigationGraph(
     modifier: Modifier = Modifier,
@@ -291,6 +294,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.ChangePasswordScreen.route) {
             ChangePasswordView(navHostController)
+        }
+        composable(AppNavigationItems.TransactionDetailsScreen.route) {
+            TransactionDetailsView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,
