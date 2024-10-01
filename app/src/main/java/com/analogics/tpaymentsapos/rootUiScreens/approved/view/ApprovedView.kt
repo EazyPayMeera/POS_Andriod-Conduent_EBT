@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
-import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -40,8 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -54,7 +51,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -232,6 +228,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     contentDescription = ""
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -254,7 +251,6 @@ fun ApprovedView(navHostController: NavHostController) {
                         }
                     )
                 }
-
                 Box(
                     modifier = Modifier
                         .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)

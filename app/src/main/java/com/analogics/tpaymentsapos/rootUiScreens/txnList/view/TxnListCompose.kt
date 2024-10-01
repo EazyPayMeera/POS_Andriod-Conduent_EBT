@@ -5,7 +5,9 @@ package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,7 +35,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -46,40 +50,39 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
+fun TransactionListScreen(navHostController: NavHostController, viewModel: TxnViewModel = hiltViewModel()) {
     val transactions = viewModel.transactionList.collectAsState().value
     Log.d("txnList", transactions.toString())
     viewModel.fetchTransactions()
-    var sharedViewModel= localSharedViewModel.current
+    val sharedViewModel = localSharedViewModel.current
     Log.d("TransactionDateTime", "DateTime using obj: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+
     Column {
         CommonTopAppBar(
             title = stringResource(R.string.transactions),
             onBackButtonClick = { navHostController.popBackStack() }
         )
+
         GenericCard(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
-            Column(
-                modifier = Modifier
-            ) {
+            Column {
                 HeaderSection(viewModel)
                 SummarySection(viewModel)
             }
         }
+
         GenericCard(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
-            Column(
-                modifier = Modifier
-            ) {
+            Column {
                 Text(
                     text = "Recent Transactions",
                     style = MaterialTheme.typography.h6,
                     color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 )
-                Divider(color = Color.Gray, thickness = 1.dp/*, modifier = Modifier.padding(horizontal = 16.dp)*/)
+                Divider(color = Color.Gray, thickness = 1.dp)
 
                 if (transactions.isNullOrEmpty()) {
                     // Display message when there are no transactions
@@ -87,14 +90,29 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
                         text = "Transaction List is Empty",
                         style = MaterialTheme.typography.body1,
                         color = Color.Gray,
-                        modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                        modifier = Modifier
+                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                             .align(Alignment.CenterHorizontally)
                     )
                 } else {
-                    // Display the transactions list
+                    // Make the whole area of each transaction touchable
                     LazyColumn {
                         items(transactions.size) { index ->
-                            TransactionItem(transaction = transactions[index])
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        // Handle click for this transaction item
+                                        sharedViewModel.objRootAppPaymentDetail = transactions[index]
+                                        navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+                                    }
+                            ) {
+                                TransactionItem(
+                                    transaction = transactions[index],
+                                    navHostController = navHostController,
+                                    sharedViewModel = sharedViewModel
+                                )
+                            }
                         }
                     }
                 }
@@ -102,6 +120,7 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
         }
     }
 }
+
 
 @Composable
 fun SummarySection(viewModel: TxnViewModel) {
@@ -124,7 +143,7 @@ fun SummarySection(viewModel: TxnViewModel) {
 }
 
 @Composable
-fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
+fun TransactionItem(transaction: ObjRootAppPaymentDetails,navHostController: NavHostController,sharedViewModel: SharedViewModel) {
     Column {
 
         Row(
@@ -146,7 +165,10 @@ fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
                     color = Color(0xFF4CAF50), fontSize = 20.sp
                 )
             }
-            IconButton(onClick = { /* Handle item click */ }) {
+            IconButton(onClick = {
+                sharedViewModel.objRootAppPaymentDetail = transaction
+                navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+            }) {
                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
             }
         }
