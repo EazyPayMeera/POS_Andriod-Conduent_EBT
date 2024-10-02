@@ -74,21 +74,27 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails)
+        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
     }
 
     override suspend fun apiServiceVoid(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails)
+        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
     }
 
     override suspend fun apiServicePurchase(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails)
+        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
     }
 
     override suspend fun apiServiceAuthCapture(
@@ -96,9 +102,13 @@ class PaymentServiceRepository @Inject constructor(
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
         if(TxnType.PREAUTH==TxnType.PREAUTH) {
-            authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails)
+            authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
+                onAPIServiceResponse(it)
+            }
         }else {
-            authCaptureRequestRepository.sendAuthCaptureRequest(paymentServiceTxnDetails)
+            authCaptureRequestRepository.sendAuthCaptureRequest(paymentServiceTxnDetails){
+                onAPIServiceResponse(it)
+            }
         }
     }
 
@@ -106,14 +116,18 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        reversalRequestRepository.sendReversal(paymentServiceTxnDetails)
+        reversalRequestRepository.sendReversal(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
     }
 
     override suspend fun apiServiceLogin(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails)
+        loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
     }
 
     override fun onAPIServiceResponse(response: Any) {

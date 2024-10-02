@@ -10,29 +10,26 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import javax.inject.Inject
 
 class LoginRequestRepository @Inject constructor(
-    //private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
-) :
-    IApiServiceResponseListener {
+) {
+    suspend fun apiDeviceLogin(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-    suspend fun apiDeviceLogin(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
+        buildApiRepository.apiRefund(
+            object :IApiServiceResponseListener{
+                override fun onApiSuccessRes(response: String) {
+                    onAPIServiceResponse(response)
 
-        buildApiRepository.apiDeviceLogin(
-            this,
+                }
+
+                override fun onApiFailureRes(error: Any) {
+                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                }
+            },
             BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createLoginRequest(paymentServiceTxnDetails)
             )
         )
     }
-
-    override fun onApiSuccessRes(response: String) {
-        //paymentServiceRepository.value.onAPIServiceResponse(response)
-    }
-
-    override fun onApiFailureRes(error: Any) {
-        //paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
-    }
-
 
 }
