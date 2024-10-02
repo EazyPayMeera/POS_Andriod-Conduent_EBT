@@ -10,27 +10,27 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import javax.inject.Inject
 
 class ReversalRequestRepository @Inject constructor(
-    private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
-) :
-    IApiServiceResponseListener {
+) {
 
-    suspend fun sendReversal(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
+    suspend fun sendReversal(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        buildApiRepository.apiReversal(
-            this,
-            BuilderUtils.prepareAPIRequestBody(apiServiceRequestBuilder.createReversalRequest(paymentServiceTxnDetails)
-        ))
+        buildApiRepository.apiRefund(
+            object :IApiServiceResponseListener{
+                override fun onApiSuccessRes(response: String) {
+                    onAPIServiceResponse(response)
+
+                }
+
+                override fun onApiFailureRes(error: Any) {
+                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                }
+            },
+            BuilderUtils.prepareAPIRequestBody(
+                apiServiceRequestBuilder.createReversalRequest(paymentServiceTxnDetails)
+            )
+        )
     }
-
-    override fun onApiSuccessRes(response: String) {
-        paymentServiceRepository.value.onAPIServiceResponse(response)
-    }
-
-    override fun onApiFailureRes(error: Any) {
-        paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
-    }
-
 
 }

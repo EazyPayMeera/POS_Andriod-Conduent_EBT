@@ -10,27 +10,27 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import javax.inject.Inject
 
 class RefundRequestRepository @Inject constructor(
-    private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
-) : IApiServiceResponseListener {
+) {
 
-    suspend fun sendRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
+    suspend fun sendRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
         buildApiRepository.apiRefund(
-            this,
+            object :IApiServiceResponseListener{
+                override fun onApiSuccessRes(response: String) {
+                    onAPIServiceResponse(response)
+
+                }
+
+                override fun onApiFailureRes(error: Any) {
+                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                }
+            },
             BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createRefundRequest(paymentServiceTxnDetails)
             )
         )
-    }
-
-    override fun onApiSuccessRes(response: String) {
-        paymentServiceRepository.value.onAPIServiceResponse(response)
-    }
-
-    override fun onApiFailureRes(error: Any) {
-        paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
     }
 
 

@@ -10,29 +10,26 @@ import javax.inject.Inject
 
 
 class VoidRequestRepository @Inject constructor(
-    private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
-) :
-    IApiServiceResponseListener {
+) {
+    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
+        buildApiRepository.apiRefund(
+            object :IApiServiceResponseListener{
+                override fun onApiSuccessRes(response: String) {
+                    onAPIServiceResponse(response)
 
-        buildApiRepository.apiVoid(
-            this,
+                }
+
+                override fun onApiFailureRes(error: Any) {
+                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                }
+            },
             BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createVoidRequest(paymentServiceTxnDetails)
             )
         )
     }
-
-    override fun onApiSuccessRes(response: String) {
-        paymentServiceRepository.value.onAPIServiceResponse(response)
-    }
-
-    override fun onApiFailureRes(error: Any) {
-        paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
-    }
-
 
 }
