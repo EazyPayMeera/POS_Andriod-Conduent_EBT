@@ -516,19 +516,19 @@ fun FooterButtons(
 
 @Composable
 fun FooterButtons(
-    firstButtonTitle: String,
-    firstButtonOnClick: () -> Unit,
-    secondButtonTitle: String,
-    secondButtonOnClick: () -> Unit,
+    firstButtonTitle: String?=null,
+    firstButtonOnClick: (() -> Unit)?={},
+    secondButtonTitle: String?=null,
+    secondButtonOnClick: (() -> Unit)?={},
     alignment: Alignment = Alignment.BottomCenter // Default alignment
 ) {
     // State to track keyboard visibility
     val context = LocalContext.current
     val isKeyboardVisible = remember { mutableStateOf(false) }
 
-
-    fun updateKeyboardState(view : View) {
-        val isKeyboardOpen = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) != false
+    fun updateKeyboardState(view: View) {
+        val isKeyboardOpen =
+            ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) != false
         isKeyboardVisible.value = isKeyboardOpen
     }
     // Get the current view
@@ -537,7 +537,7 @@ fun FooterButtons(
     // Use DisposableEffect to set up a listener for layout changes
     DisposableEffect(view) {
         val listener = ViewTreeObserver.OnGlobalLayoutListener {
-          updateKeyboardState(view)
+            updateKeyboardState(view)
         }
         rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
 
@@ -566,131 +566,120 @@ fun FooterButtons(
             var isSecondButtonPressed by remember { mutableStateOf(false) }
 
             // First Button
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier
-                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                    .clickable {
-                        isFirstButtonPressed = true
-                        firstButtonOnClick()
-                    }
-                    .padding(MaterialTheme.dimens.DP_20_CompactMedium) // Increase padding to enlarge touchable area
-                    .shadow(
-                        MaterialTheme.dimens.DP_4_CompactMedium,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-            ) {
-                Button(
-                    onClick = {
-                        isFirstButtonPressed = true
-                        firstButtonOnClick()
-                    },
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+            firstButtonTitle?.let {
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
                     modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
-                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
-                        .border(
-                            width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
-                            color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                        .width(MaterialTheme.dimens.DP_126_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .clickable {
+                            isFirstButtonPressed = true
+                            firstButtonOnClick?.invoke()
+                        }
+                        .padding(MaterialTheme.dimens.DP_20_CompactMedium) // Increase padding to enlarge touchable area
+                        .shadow(
+                            MaterialTheme.dimens.DP_4_CompactMedium,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        ),
-                    colors = buttonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        containerColor = colorResource(R.color.grey)
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
-                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                    )
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                        )
                 ) {
-                    TextView(
-                        text = firstButtonTitle.uppercase(),
-                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        1,
-                        textAlign = TextAlign.Center
-                    )
+                    Button(
+                        onClick = {
+                            isFirstButtonPressed = true
+                            firstButtonOnClick?.invoke()
+                        },
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+                        modifier = Modifier
+                            .width(MaterialTheme.dimens.DP_145_CompactMedium)
+                            .height(MaterialTheme.dimens.DP_48_CompactMedium)
+                            .border(
+                                width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                                color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                            ),
+                        colors = buttonColors(
+                            contentColor = MaterialTheme.colorScheme.tertiary,
+                            containerColor = colorResource(R.color.grey)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                            hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                            focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
+                        )
+                    ) {
+                        TextView(
+                            text = firstButtonTitle.uppercase(),
+                            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontWeight = FontWeight.Bold,
+                            1,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-
-            // Handle button press delay
-            /*LaunchedEffect(isFirstButtonPressed) {
-                if (isFirstButtonPressed) {
-                    //delay(100)
-                    isFirstButtonPressed = false
-                }
-            }*/
 
             // Second Button
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier
-                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                    .clickable {
-                        isSecondButtonPressed = true
-                        secondButtonOnClick()
-                    }
-                    .padding(8.dp) // Increase padding to enlarge touchable area
-                    .shadow(
-                        MaterialTheme.dimens.DP_4_CompactMedium,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-            ) {
-                Button(
-                    onClick = {
-                        isSecondButtonPressed = true
-                        secondButtonOnClick()
-                    },
+            secondButtonTitle?.let {
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
                     modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
-                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
-                        .border(
-                            width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
-                            color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                        .width(MaterialTheme.dimens.DP_126_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                        .clickable {
+                            isSecondButtonPressed = true
+                            secondButtonOnClick?.invoke()
+                        }
+                        .padding(8.dp) // Increase padding to enlarge touchable area
+                        .shadow(
+                            MaterialTheme.dimens.DP_4_CompactMedium,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        ),
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                    colors = buttonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        containerColor = colorResource(R.color.grey)
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
-                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                    )
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                        )
                 ) {
-                    TextView(
-                        text = secondButtonTitle.uppercase(),
-                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        1,
-                        textAlign = TextAlign.Center
-                    )
+                    Button(
+                        onClick = {
+                            isSecondButtonPressed = true
+                            secondButtonOnClick?.invoke()
+                        },
+                        modifier = Modifier
+                            .width(MaterialTheme.dimens.DP_145_CompactMedium)
+                            .height(MaterialTheme.dimens.DP_48_CompactMedium)
+                            .border(
+                                width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                                color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                            ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+                        colors = buttonColors(
+                            contentColor = MaterialTheme.colorScheme.tertiary,
+                            containerColor = colorResource(R.color.grey)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                            hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                            focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
+                        )
+                    ) {
+                        TextView(
+                            text = secondButtonTitle.uppercase(),
+                            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontWeight = FontWeight.Bold,
+                            1,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-
-            // Handle button press delay for second button
-            /*LaunchedEffect(isSecondButtonPressed) {
-                if (isSecondButtonPressed) {
-                    isSecondButtonPressed = false
-                }
-            }*/
         }
     }
 }

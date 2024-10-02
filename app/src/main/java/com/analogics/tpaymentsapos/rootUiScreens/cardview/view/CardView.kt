@@ -43,6 +43,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
@@ -204,7 +205,7 @@ fun CardView(navHostController: NavHostController) {
                             )
                         }
 
-                        Box(
+                        /*Box(
                             modifier = Modifier
                                 .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                                 .align(Alignment.CenterHorizontally),
@@ -217,12 +218,14 @@ fun CardView(navHostController: NavHostController) {
                                 title = stringResource(id = R.string.cancel),
                                 maxsizebutton = false
                             )
-                        }
+                        }*/
                     }
                 }
             }
         }
     }
+
+    FooterButtons(stringResource(id = R.string.cancel),{navHostController.navigate(AppNavigationItems.TrainingScreen.route)})
 
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, navHostController)
