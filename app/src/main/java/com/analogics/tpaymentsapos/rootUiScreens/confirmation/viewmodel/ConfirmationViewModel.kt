@@ -17,7 +17,7 @@ class ConfirmationViewModel : ViewModel() {
     var totalAmount = mutableDoubleStateOf(0.00)
     var tipAmount = mutableDoubleStateOf(0.00)
     var selectedButton = mutableIntStateOf(0)
-    var isTipEnabled = mutableStateOf(false)
+    var isTipButtonEnabled = mutableStateOf(false)
 
     private fun getTipPercent(button: Int) : Double
     {
@@ -58,13 +58,13 @@ class ConfirmationViewModel : ViewModel() {
 
     fun onCustomTip(navHostController: NavHostController, sharedViewModel: SharedViewModel){
         selectedButton.intValue = 4
-        sharedViewModel.isTipEnabled = isTipEnabled.value
+        sharedViewModel.isTipButtonEnabled = isTipButtonEnabled.value
         sharedViewModel.selectedTipButton = selectedButton.intValue
         navHostController.navigate(AppNavigationItems.TipScreen.route)
     }
 
     fun onTipToggle(state : Boolean, sharedViewModel: SharedViewModel){
-        isTipEnabled.value = state
+        isTipButtonEnabled.value = state
         if (state == false) {
             selectedButton.intValue = 0
             tipAmount.doubleValue = 0.00
@@ -95,7 +95,7 @@ class ConfirmationViewModel : ViewModel() {
         if(customTipAmount?.isFinite()==true)
             sharedViewModel.tipAmount = customTipAmount
         else {
-            isTipEnabled.value = sharedViewModel.isTipEnabled
+            isTipButtonEnabled.value = sharedViewModel.isTipButtonEnabled
             selectedButton.intValue = sharedViewModel.selectedTipButton
         }
         updateTotal(sharedViewModel)
@@ -103,7 +103,7 @@ class ConfirmationViewModel : ViewModel() {
 
     fun onBack(navHostController: NavHostController,sharedViewModel: SharedViewModel)
     {
-        sharedViewModel.isTipEnabled = isTipEnabled.value
+        sharedViewModel.isTipButtonEnabled = isTipButtonEnabled.value
         sharedViewModel.selectedTipButton = selectedButton.intValue
         navHostController.popBackStack()
     }

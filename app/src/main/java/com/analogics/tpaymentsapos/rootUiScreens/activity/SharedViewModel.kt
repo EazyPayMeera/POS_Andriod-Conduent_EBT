@@ -10,8 +10,8 @@ class SharedViewModel:ViewModel() {
    var objRootAppPaymentDetail: ObjRootAppPaymentDetails = ObjRootAppPaymentDetails()
    var objPosConfig: PosConfig? = null
 
-   /* UI flags */
-   var isTipEnabled: Boolean = false
+   /* UI flags for transaction states */
+   var isTipButtonEnabled: Boolean = false
    var selectedTipButton: Int = 0
    var tipAmount: Double = 0.00
 
@@ -19,7 +19,7 @@ class SharedViewModel:ViewModel() {
    fun clearTransData()
    {
       objRootAppPaymentDetail = ObjRootAppPaymentDetails()
-      isTipEnabled = false
+      isTipButtonEnabled = objPosConfig?.isTipEnabled == true
       selectedTipButton = 0
       tipAmount = 0.00
    }

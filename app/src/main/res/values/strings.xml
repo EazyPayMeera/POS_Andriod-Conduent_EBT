@@ -120,6 +120,7 @@
     <string name="tnx_amount">Transaction Amount:</string>
     <string name="tip_amt">Tip Amount:</string>
     <string name="sgst_amt">SGST Amount:</string>
+    <string name="cgst_amt">CGST Amount:</string>
     <string name="igst_amt">IGST Amount:</string>
 
 

@@ -54,8 +54,11 @@ class AmountViewModel : ViewModel() {
     @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel)  {
         sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
-        sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)
-        sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,10.00)
+        if(sharedViewModel.objPosConfig?.isTaxEnabled == true)
+        {
+            sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,sharedViewModel.objPosConfig?.CGSTPercent?:0.00)
+            sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,sharedViewModel.objPosConfig?.SGSTPercent?:0.00)
+        }
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = (sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00)
                                                             + (sharedViewModel.objRootAppPaymentDetail.CGST?:0.00)
                                                             + (sharedViewModel.objRootAppPaymentDetail.SGST?:0.00)

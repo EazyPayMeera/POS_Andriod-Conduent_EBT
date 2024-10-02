@@ -29,9 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -57,7 +55,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
     val sgstAmount = sharedViewModel.objRootAppPaymentDetail.SGST?:0.00
     val cgstAmount = sharedViewModel.objRootAppPaymentDetail.CGST?:0.00
     val tipAmount by remember {viewModel.tipAmount}
-    var isTipEnabled by remember { viewModel.isTipEnabled }
+    var isTipEnabled by remember { viewModel.isTipButtonEnabled }
     val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, cgstAmount)
     var isDialogVisible by remember { mutableStateOf(false) }
 
@@ -103,7 +101,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
 
         TransactionSummaryCard(transAmount, tipAmount, sgstAmount, cgstAmount, sharedViewModel)
 
-        sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE }?.let {
+        sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
             GenericCard(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -304,7 +302,7 @@ fun TransactionSummaryCard(
     amountDouble: Double,
     tipAmount: Double,
     sgstAmount: Double,
-    igstAmount: Double,
+    cgstAmount: Double,
     sharedViewModel: SharedViewModel
 ) {
     GenericCard(
@@ -343,22 +341,26 @@ fun TransactionSummaryCard(
             }
 
             // Tip Amount
-            TransactionSummaryItem(
-                label = stringResource(id = R.string.tip_amt),
-                amount = tipAmount
-            )
+            sharedViewModel.objPosConfig?.isTipEnabled?.takeIf { it == true }?.let {
+                TransactionSummaryItem(
+                    label = stringResource(id = R.string.tip_amt),
+                    amount = tipAmount
+                )
+            }
 
-            // SGST Amount
-            TransactionSummaryItem(
-                label = stringResource(id = R.string.sgst_amt),
-                amount = sgstAmount
-            )
+            sharedViewModel.objPosConfig?.isTaxEnabled?.takeIf { it == true }?.let {
+                // SGST Amount
+                TransactionSummaryItem(
+                    label = stringResource(id = R.string.sgst_amt),
+                    amount = sgstAmount
+                )
 
-            // IGST Amount
-            TransactionSummaryItem(
-                label = stringResource(id = R.string.igst_amt),
-                amount = igstAmount
-            )
+                // CGST Amount
+                TransactionSummaryItem(
+                    label = stringResource(id = R.string.cgst_amt),
+                    amount = cgstAmount
+                )
+            }
         }
     }
 }
