@@ -33,16 +33,13 @@ class AuthCaptureRequestRepository @Inject constructor(
             )
         )
     }
-
     suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
         buildApiRepository.apiRefund(
             object :IApiServiceResponseListener{
                 override fun onApiSuccessRes(response: String) {
                     onAPIServiceResponse(response)
-
                 }
-
                 override fun onApiFailureRes(error: Any) {
                     onAPIServiceResponse(PaymentServiceError(error.toString()))
                 }

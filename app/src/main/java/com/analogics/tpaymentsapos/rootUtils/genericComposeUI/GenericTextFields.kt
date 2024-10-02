@@ -1,6 +1,9 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 
+import android.text.method.PasswordTransformationMethod
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,6 +42,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +60,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,9 +77,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.analogics.paymentservicecore.models.TxnInfo
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -195,9 +203,10 @@ fun AppButton(
 
 
 @Composable
-fun getTransTypeString(txnType: TxnType?=null) : String
+fun getTransTypeString() : String
 {
-    return when(txnType?:TxnInfo.txnType){
+    val sharedViewModel = localSharedViewModel.current
+    return when(sharedViewModel.objRootAppPaymentDetail.txnType){
         TxnType.PURCHASE -> stringResource(id = R.string.purchase)
         TxnType.REFUND -> stringResource(id = R.string.refund)
         TxnType.PREAUTH -> stringResource(id = R.string.pre_auth)
@@ -209,52 +218,74 @@ fun getTransTypeString(txnType: TxnType?=null) : String
 }
 
 
+
 @Composable
 fun CommonTopAppBar(
-    title: String?=null,
+    title: String? = null,
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showBackIcon: Boolean = true // New parameter to control arrow visibility
 ) {
     TopAppBar(
         title = {
             Text(
-                text = title?: getTransTypeString(),
-                fontWeight = FontWeight.Bold, // Make text bold
+                text = title ?: getTransTypeString(),
+                fontWeight = FontWeight.Bold,
                 style = TextStyle(
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium, // Adjust font size if needed
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     fontWeight = FontWeight.Bold
                 )
             )
         },
         backgroundColor = backgroundColor,
-        navigationIcon = {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_40_CompactMedium)
-                    .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
-                    .clickable { onBackButtonClick() }
-            )
-        },
+        navigationIcon = if (showBackIcon) {
+            {
+                Box(
+                    modifier = Modifier
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Set a larger size for the clickable area
+                        .clickable {
+                            onBackButtonClick()
+                        }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .align(Alignment.Center) // Center the icon in the Box
+                            .size(24.dp) // Keep the icon size unchanged
+                    )
+                }
+            }
+        } else null, // If showBackIcon is false, do not display the navigation icon
         modifier = modifier
     )
 }
 
+
 @Composable
 fun OkButton(
     onClick: () -> Unit,
-    title: String
+    title: String,
+    maxsizebutton: Boolean = true // New parameter to control button size
 ) {
     Button(
         modifier = Modifier
-            .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .height(MaterialTheme.dimens.DP_50_CompactMedium),// Uncomment if you want to apply shadow directly to the Button
+            .then(
+                if (maxsizebutton) {
+                    Modifier
+                        .width(MaterialTheme.dimens.DP_248_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                } else {
+                    Modifier
+                        .width(MaterialTheme.dimens.DP_126_CompactMedium) // Specify a different size for the full button
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                }
+            ), // Using Modifier.then() to conditionally apply the size
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium), // Keep the shape here
         colors = buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
-            containerColor = colorResource(R.color.grey) // You can keep this if you want a specific color, or change it as needed
+            containerColor = colorResource(R.color.grey) // Keep or change as needed
         ),
         onClick = onClick
     ) {
@@ -263,6 +294,7 @@ fun OkButton(
         )
     }
 }
+
 
 
 
@@ -490,6 +522,34 @@ fun FooterButtons(
     secondButtonOnClick: () -> Unit,
     alignment: Alignment = Alignment.BottomCenter // Default alignment
 ) {
+    // State to track keyboard visibility
+    val context = LocalContext.current
+    val isKeyboardVisible = remember { mutableStateOf(false) }
+
+
+    fun updateKeyboardState(view : View) {
+        val isKeyboardOpen = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) != false
+        isKeyboardVisible.value = isKeyboardOpen
+    }
+    // Get the current view
+    val rootView = LocalView.current
+    val view = LocalView.current
+    // Use DisposableEffect to set up a listener for layout changes
+    DisposableEffect(view) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+          updateKeyboardState(view)
+        }
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+
+    LaunchedEffect(view) {
+        updateKeyboardState(view)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -497,7 +557,7 @@ fun FooterButtons(
     ) {
         Row(
             modifier = Modifier
-                .align(alignment)
+                .align(if (isKeyboardVisible.value) Alignment.TopCenter else alignment)
                 .fillMaxWidth()
                 .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -505,6 +565,7 @@ fun FooterButtons(
             var isFirstButtonPressed by remember { mutableStateOf(false) }
             var isSecondButtonPressed by remember { mutableStateOf(false) }
 
+            // First Button
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
@@ -549,7 +610,6 @@ fun FooterButtons(
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
-
                     TextView(
                         text = firstButtonTitle.uppercase(),
                         fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
@@ -561,13 +621,15 @@ fun FooterButtons(
                 }
             }
 
-            LaunchedEffect(isFirstButtonPressed) {
+            // Handle button press delay
+            /*LaunchedEffect(isFirstButtonPressed) {
                 if (isFirstButtonPressed) {
-                    kotlinx.coroutines.delay(100)
+                    //delay(100)
                     isFirstButtonPressed = false
                 }
-            }
+            }*/
 
+            // Second Button
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
@@ -612,7 +674,6 @@ fun FooterButtons(
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
                     )
                 ) {
-
                     TextView(
                         text = secondButtonTitle.uppercase(),
                         fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
@@ -624,20 +685,14 @@ fun FooterButtons(
                 }
             }
 
-            LaunchedEffect(isSecondButtonPressed) {
+            // Handle button press delay for second button
+            /*LaunchedEffect(isSecondButtonPressed) {
                 if (isSecondButtonPressed) {
-                    //kotlinx.coroutines.delay(100)
                     isSecondButtonPressed = false
                 }
-            }
+            }*/
         }
     }
-}
-
-object Authorisation {
-    var isMerchantReceipt: Boolean = false
-    var isEReceipt: Boolean = false
-    var isCustomerReceipt = false
 }
 
 @Composable
@@ -736,7 +791,13 @@ fun AppHeader(
     onBackButtonClick: () -> Unit
 ) {
     TopAppBar(
+
         title = {
+            // Add Spacer before title only when both icons are null
+            if (icon1 == null && icon2 == null) {
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium)) // Adjust the width as per your layout needs
+            }
+
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.tertiary, // Ensure text color contrasts with the background
@@ -747,32 +808,45 @@ fun AppHeader(
             )
         },
         backgroundColor = backgroundColor,
-        navigationIcon = {
-            if (isIcon1Visible && icon1 != null) {
-                Image(
-                    painter = painterResource(id = icon1),
-                    contentDescription = "",
+        navigationIcon = if (isIcon1Visible && icon1 != null) {
+            {
+                Box(
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Increase the size here, e.g., 48.dp
-                        .padding(horizontal = MaterialTheme.dimens.DP_17_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Same touch area size as in CommonTopAppBar
                         .clickable { onIcon1Click?.invoke() }
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = icon1),
+                        contentDescription = "icon1",
+                        modifier = Modifier
+                            .align(Alignment.Center) // Center the icon in the Box
+                            .size(24.dp) // Set the icon size
+                    )
+                }
             }
-        },
+        } else null, // Don't add the navigation icon if it's not visible or null
         actions = {
             if (isIcon2Visible && icon2 != null) {
-                Image(
-                    painter = painterResource(id = icon2),
-                    contentDescription = "icon2",
+                Box(
                     modifier = Modifier
-                        .padding(horizontal = MaterialTheme.dimens.DP_12_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Same touch area size for the action icon
                         .clickable { onIcon2Click?.invoke() }
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = icon2),
+                        contentDescription = "icon2",
+                        modifier = Modifier
+                            .align(Alignment.Center) // Center the icon in the Box
+                            .size(24.dp) // Set the icon size
+                    )
+                }
             }
         },
         modifier = modifier
     )
 }
+
+
 
 @Composable
 fun BackgroundScreen(componentView :@Composable () -> Unit) {
@@ -829,6 +903,13 @@ fun ImageView(
                 .fillMaxSize()
                 .clip(shape) // Apply the shape clipping to the image
         )
+    }
+}
+val passwordTransform = object : PasswordTransformationMethod() {
+    override fun getTransformation(source: CharSequence, view: View?): CharSequence {
+        val transformed = super.getTransformation(source, view)
+        // Convert to String and replace bullet character with '*'
+        return transformed.toString().replace('\u2022', '*')
     }
 }
 
@@ -905,6 +986,7 @@ fun OutlinedTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
             cursorColor = Color.Transparent
         )
+
     )
 }
 

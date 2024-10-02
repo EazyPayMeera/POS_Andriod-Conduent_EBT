@@ -13,16 +13,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
-import com.google.gson.Gson
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -33,6 +32,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
     val isPrinting = mutableStateOf(false)
+    val isCustomer = mutableStateOf(false)
 
     private val printer = Printer.getInstance()
 
@@ -117,11 +117,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         printer.addTextLeft_Center_Right(textLeft,textCenter,textRight)
     }
 
-    fun printReceipt(context: Context)
-    {
-        printer.startPrinting()
-    }
-
     fun addImage(format: Bundle, imageData: ByteArray)
     {
         printer.addImage(format,imageData)
@@ -142,12 +137,22 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         printer.feedLine(lines)
     }
 
-    fun printReceipt(coroutineScope: CoroutineScope)
+    @OptIn(DelicateCoroutinesApi::class)
+    fun printReceipt(context: Context, customer: Boolean = false)
     {
         isPrinting.value = true
-        coroutineScope.launch {
-            delay(3000)
-            isPrinting.value = false
+        isCustomer.value = customer
+
+        GlobalScope.launch {
+            initPrinter(context, object : IPrinterResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                    isPrinting.value = false
+                }
+
+                override fun onFailure(exception: Exception) {
+                    isPrinting.value = false
+                }
+            })
         }
     }
 
@@ -156,6 +161,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
         Log.d(TAG, "Initializing printer in viewModel...")
         PrinterServiceRepository(receiptBuilder).initPrinter(context, iPrinterResultProviderListener)
+        addReceiptDetails(iPrinterResultProviderListener)
     }
 
 
@@ -172,15 +178,35 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
     }
 
-    // Update all the entities by setting invoice no as primary key
+/*    // Update all the entities by setting invoice no as primary key
     fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
-        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+        // Convert ObjRootAppPaymentDetails to JSON
 
-        dbRepository.updateTxn(Gson().fromJson(json, TxnEntity::class.java))
+        dbRepository.updateTxn(convertObjRootToTxnEntity(objRootAppPaymentDetails))
         Log.d("password " +
-                "record insert suc", Gson().fromJson(json, TxnEntity::class.java).toString())
+                "record update suc ", convertObjRootToTxnEntity(objRootAppPaymentDetails).toString())
 
+    }*/
+
+    fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails) = viewModelScope.launch {
+        // Convert ObjRootAppPaymentDetails to JSON or entity object
+        val txnEntity = convertObjRootToTxnEntity(objRootAppPaymentDetails)
+
+        txnEntity.id?.let { id ->
+            // Check if the entity exists in the database using the primary key (invoice no)
+            val existingEntity = dbRepository.fetchTransactionDetailsTxn(id)
+
+            if (existingEntity != null) {
+                // Entry found, proceed with update
+                dbRepository.updateTxn(txnEntity)
+                Log.d("Record Update", "Record update successful for invoice no: $id")
+            } else {
+                // Entry not found, log the message
+                dbRepository.insertTxn(txnEntity)
+            }
+        } ?: Log.d("Record Update", "Invoice No is null")
     }
+
 
 
 }

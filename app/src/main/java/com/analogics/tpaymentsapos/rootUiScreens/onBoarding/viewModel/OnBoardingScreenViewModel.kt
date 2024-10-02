@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,10 +29,10 @@ class OnBoardingScreenViewModel @Inject constructor(private  var paymentServiceR
         }
     }
 
-    fun onOnboardingCompleted(navController: NavController) {
+    fun onOnboardingCompleted(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             navController.navigate(AppNavigationItems.LoginScreen.route)
-            paymentServiceRepository.getPosConfig().apply { isOnboardingComplete=true }.saveToPrefs(navController.context)
+            sharedViewModel.objPosConfig?.apply { isOnboardingComplete=true }?.saveToPrefs()
         }
     }
 }

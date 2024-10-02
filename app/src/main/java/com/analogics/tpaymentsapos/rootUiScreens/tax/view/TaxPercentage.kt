@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -17,9 +22,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.Symbol
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.TaxPercentageViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -27,12 +34,31 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercentageViewModel = hiltViewModel()) {
 
-    val updated_tax = updated_tax
+    var isDialogVisible by remember { mutableStateOf(false) }
+    var sharedViewModel = localSharedViewModel.current
+
+    @Composable
+    fun getPrompt(): String {
+        return when (viewModel.taxType) {
+            TaxPercentageViewModel.TaxType.SGST ->  stringResource(id = R.string.tax_prompt_sgst)
+            TaxPercentageViewModel.TaxType.CGST -> stringResource(id = R.string.tax_prompt_cgst)
+        }
+    }
+
+    @Composable
+    fun getCurrentTaxValue(): String {
+        return stringResource(id = R.string.tax_current_value) + " : " + when (viewModel.taxType) {
+            TaxPercentageViewModel.TaxType.SGST ->  sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat()
+            TaxPercentageViewModel.TaxType.CGST -> sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat()
+        }
+    }
+
     Column {
 
         // Top App Bar
@@ -51,23 +77,23 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
             ) {
                 // Title Text
                 TextView(
-                    text = stringResource(id = R.string.enter_the_percentage),
+                    text = getPrompt(),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
-                    Modifier.padding(top = MaterialTheme.dimens.DP_24_CompactMedium),
+                    Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium),
                     textAlign = TextAlign.Center
                 )
 
                 // Title Text
                 TextView(
-                    text = "SGST : " + updated_tax,
+                    text = getCurrentTaxValue(),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
-                    Modifier.padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    Modifier.padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium),
                     textAlign = TextAlign.Center
                 )
 
@@ -87,7 +113,7 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                     placeholder = "",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.Center),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController)},
+                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     visualTransformation = createAmountTransformation(Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END)),
                     amount = false,
                 )
@@ -98,9 +124,37 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
         // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { viewModel.onCancel(navHostController) },
+            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
+
+        if (isDialogVisible) {
+            CustomDialogBuilder.create()
+                .setTitle("Are you sure want to Cancel ?")
+                .setSubtitle("")
+                .setSmallText("")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+                }
+                .setOnConfirmAction {
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                }
+                .setShowButtons(true)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
+
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(navHostController)
     }
 }

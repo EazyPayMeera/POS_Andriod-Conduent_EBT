@@ -6,10 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
-import com.analogics.paymentservicecore.models.TxnInfo
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmountToDouble
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
 class TipViewModel : ViewModel() {
     var tipamount by mutableStateOf("")
@@ -20,7 +17,7 @@ class TipViewModel : ViewModel() {
     }
 
     fun onConfirm(navHostController: NavHostController) {
-        navHostController.previousBackStackEntry?.savedStateHandle?.set(AppConstants.KEY_CUSTOM_TIP_AMOUNT,formatAmountToDouble(tipamount))
+        navHostController.previousBackStackEntry?.savedStateHandle?.set(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT,transformToAmountDouble(tipamount))
         navHostController.popBackStack()
     }
 

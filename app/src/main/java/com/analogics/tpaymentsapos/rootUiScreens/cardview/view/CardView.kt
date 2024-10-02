@@ -3,9 +3,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.cardview.view
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -40,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -49,7 +45,9 @@ import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewMode
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -58,19 +56,20 @@ import com.google.zxing.common.BitMatrix
 import java.util.EnumMap
 
 @Composable
-fun CardView(navHostController: NavHostController, totalAmount: String) {
+fun CardView(navHostController: NavHostController) {
 
     val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val sharedViewModel = localSharedViewModel.current
+
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
-    Log.d("qrcode","After set qr code")
+
     Column {
 
         CommonTopAppBar(
-            onBackButtonClick = { navHostController.popBackStack() }
+            onBackButtonClick = { navHostController.popBackStack() },
+            showBackIcon = false
         )
 
         Box(
@@ -102,7 +101,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                             modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
                             Text(
-                                text = if (TxnInfo.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
+                                text = if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
                                     id = R.string.total_amt
                                 ),
                                 fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -115,7 +114,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                             // Display the totalAmount here
                             Text(
-                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toString()/*totalAmount*/,
+                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
                                 fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,
@@ -142,12 +141,7 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .clickable {
-                                navHostController.navigate(
-                                    AppNavigationItems.CardDetectScreen.createRoute(totalAmount)
-                                )
-                            }
+                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -182,38 +176,46 @@ fun CardView(navHostController: NavHostController, totalAmount: String) {
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    if(TxnInfo.txnType==TxnType.PURCHASE) {
+                    if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.PURCHASE) {
                         TextView(
                             text = stringResource(id = R.string.or),
                             fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
-                                .clickable {
-                                    navHostController.navigate(
-                                        AppNavigationItems.CardDetectScreen.createRoute(
-                                            totalAmount
-                                        )
-                                    )
-                                }
                                 .align(Alignment.CenterHorizontally)
                         )
 
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                         Button(
-                            onClick = { setShowQRCodeDialog(true) }, // Show QR code dialog on button click
+                            onClick = { navHostController.navigate(AppNavigationItems. BarcodeScreen.route) }, // Show QR code dialog on button click
                             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                             modifier = Modifier
                                 .width(MaterialTheme.dimens.DP_200_CompactMedium)
                                 .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
-                                .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
+                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.upi_icon),
                                 contentDescription = null,
                                 modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium)
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OkButton(
+                                onClick = {
+                                    navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                                },
+                                title = stringResource(id = R.string.cancel),
+                                maxsizebutton = false
                             )
                         }
                     }

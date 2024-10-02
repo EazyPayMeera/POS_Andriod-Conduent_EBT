@@ -1,7 +1,6 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -21,10 +25,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnInfo
+import com.analogics.paymentservicecore.models.TxnInfo.txnType
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel.AmountViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -39,6 +46,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
 
     var sharedViewModel= localSharedViewModel.current
+    var isDialogVisible by remember { mutableStateOf(false) }
     Column {
 
         // Top App Bar
@@ -57,7 +65,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = when(TxnInfo.txnType){
+                    text = when(txnType){
                         TxnType.REFUND -> stringResource(R.string.refund_amt)
                         TxnType.PREAUTH -> stringResource(R.string.auth_amt)
                         TxnType.AUTHCAP -> stringResource(id = R.string.authcap_amt)
@@ -90,13 +98,13 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     visualTransformation = createAmountTransformation(),
-                    amount = false
+                    amount = false,
                 )
 
                 if (TxnInfo.txnType==TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                     TextView(
-                        text = viewModel.transactionDateTime,
+                        text = "",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -131,7 +139,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
                     listOf(
                         stringResource(id = R.string.original_amount) + "20.00",
-                        stringResource(id = R.string.date) + viewModel.transactionDateTime
+                        stringResource(id = R.string.date)
                     ).forEach {
                         TextView(
                             text = it,
@@ -150,10 +158,38 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { viewModel.onCancel(navHostController) },
+            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
+
+        if (isDialogVisible) {
+            CustomDialogBuilder.create()
+                .setTitle("Are you sure want to Cancel ?")
+                .setSubtitle("")
+                .setSmallText("")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                }
+                .setOnConfirmAction {
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                }
+                .setShowButtons(true)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
+
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(sharedViewModel)
     }
 
 }

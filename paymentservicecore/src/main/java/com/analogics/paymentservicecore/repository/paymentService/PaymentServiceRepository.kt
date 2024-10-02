@@ -33,10 +33,8 @@ class PaymentServiceRepository @Inject constructor(
     override fun onTPaymentSDKInit(uiData: String) {
         /* Just for testing comparing with uiData value */
         if (uiData == "SUCCESS") {
-            PosConfig.apply { isPaymentSDKInit = true }.saveToPrefs(context)
             iOnRootAppPaymentListener.onPaymentSuccess(true)
         } else {
-            PosConfig.apply { isPaymentSDKInit = false }.saveToPrefs(context)
             iOnRootAppPaymentListener.onPaymentError(PaymentServiceError("Error"))
         }
     }
@@ -57,8 +55,7 @@ class PaymentServiceRepository @Inject constructor(
     ) {
         this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         this.context = context
-        if (PosConfig.isPaymentSDKInit != true)
-            PaymentConfigurationHandler.initPaymentSDK(context, this)
+        PaymentConfigurationHandler.initPaymentSDK(context, this)
     }
 
     override fun startPayment(
@@ -69,8 +66,8 @@ class PaymentServiceRepository @Inject constructor(
         PaymentConfigurationHandler.startPayment(context, this)
     }
 
-    override fun getPosConfig(): PosConfig {
-        return PosConfig
+    override fun getPosConfig(context: Context): PosConfig {
+        return PosConfig(context).loadFromPrefs()
     }
 
     override suspend fun apiServiceRefund(

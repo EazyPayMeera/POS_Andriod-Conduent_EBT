@@ -3,8 +3,11 @@
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,17 +28,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.time.LocalDateTime
@@ -43,38 +50,70 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
+fun TransactionListScreen(navHostController: NavHostController, viewModel: TxnViewModel = hiltViewModel()) {
     val transactions = viewModel.transactionList.collectAsState().value
+    Log.d("txnList", transactions.toString())
+    viewModel.fetchTransactions()
+    val sharedViewModel = localSharedViewModel.current
+    Log.d("TransactionDateTime", "DateTime using obj: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+
     Column {
         CommonTopAppBar(
             title = stringResource(R.string.transactions),
             onBackButtonClick = { navHostController.popBackStack() }
         )
+
         GenericCard(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
-            Column(
-                modifier = Modifier
-            ) {
-                HeaderSection()
-                SummarySection()
+            Column {
+                HeaderSection(viewModel)
+                SummarySection(viewModel)
             }
         }
+
         GenericCard(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
-            Column(
-                modifier = Modifier
-            ) {
+            Column {
                 Text(
                     text = "Recent Transactions",
                     style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                 )
+                Divider(color = Color.Gray, thickness = 1.dp)
 
-                LazyColumn {
-                    items(transactions.size) { index ->
-                        TransactionItem(transaction = transactions[index])
+                if (transactions.isNullOrEmpty()) {
+                    // Display message when there are no transactions
+                    Text(
+                        text = "Transaction List is Empty",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    // Make the whole area of each transaction touchable
+                    LazyColumn {
+                        items(transactions.size) { index ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        // Handle click for this transaction item
+                                        sharedViewModel.objRootAppPaymentDetail = transactions[index]
+                                        navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+                                    }
+                            ) {
+                                TransactionItem(
+                                    transaction = transactions[index],
+                                    navHostController = navHostController,
+                                    sharedViewModel = sharedViewModel
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -82,28 +121,29 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
     }
 }
 
+
 @Composable
-fun SummarySection() {
+fun SummarySection(viewModel: TxnViewModel) {
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Purchase", style = MaterialTheme.typography.body2, color = Color.Gray)
-            Text(formatAmount(450.00), style = MaterialTheme.typography.body2)
+            Text(formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE)), style = MaterialTheme.typography.body2)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Refund", style = MaterialTheme.typography.body2, color = Color.Gray)
-            Text(formatAmount(50.00), style = MaterialTheme.typography.body2)
+            Text(formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND)), style = MaterialTheme.typography.body2)
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: TxnDataList) {
+fun TransactionItem(transaction: ObjRootAppPaymentDetails,navHostController: NavHostController,sharedViewModel: SharedViewModel) {
     Column {
 
         Row(
@@ -113,15 +153,22 @@ fun TransactionItem(transaction: TxnDataList) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(transaction.date, style = MaterialTheme.typography.caption, color = Color.Gray)
-                Text(transaction.type, style = MaterialTheme.typography.body2)
+                Log.d("TransactionDateTime", "DateTime: ${transaction.invoiceNo}")
+                transaction.dateTime.toString().let { Text(it, style = MaterialTheme.typography.caption, color = Color.Gray) }
+                Text(transaction.txnType.toString(), style = MaterialTheme.typography.body2)
+                Log.d("TransactionDateTime", "TxnType: ${transaction.txnType}")
             }
-            Text(
-                text = formatAmount(transaction.amount),
-                style = MaterialTheme.typography.body2,
-                color = if (transaction.isPositive) Color(0xFF4CAF50) else Color.Red
-            )
-            IconButton(onClick = { /* Handle item click */ }) {
+            transaction.ttlAmount?.let { formatAmount(it) }?.let {
+                TextView(
+                    text = it,
+                    style = MaterialTheme.typography.body2,
+                    color = Color(0xFF4CAF50), fontSize = 20.sp
+                )
+            }
+            IconButton(onClick = {
+                sharedViewModel.objRootAppPaymentDetail = transaction
+                navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+            }) {
                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
             }
         }
@@ -129,28 +176,13 @@ fun TransactionItem(transaction: TxnDataList) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun PreviewTransactionListScreen() {
-    val navHostController:NavHostController=NavHostController(context = LocalContext.current)
-    val mockTransactions = listOf(
-        TxnDataList(1, "Today @ 14:15:30", stringResource(id = R.string.purchase), 450.00, true),
-        TxnDataList(2, "Today @ 14:15:30", stringResource(id = R.string.refund), 50.00, false),
-        TxnDataList(3, "26-2-2020 @ 14:15:30", stringResource(id = R.string.purchase), 50.00, true)
-    )
-    TransactionListScreen(navHostController,viewModel = FakeTransactionViewModel(mockTransactions))
-}
 
-class FakeTransactionViewModel(mockTransactions: List<TxnDataList>) : TxnViewModel() {
-    init {
-        _transactionList.value = mockTransactions
-    }
-}
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HeaderSection() {
+fun HeaderSection(viewModel: TxnViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -171,7 +203,7 @@ fun HeaderSection() {
                 color = Color.Gray
             )
             Text(
-                text = formatAmount(400.00),
+                text = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE)-viewModel.totalPurchaseTransactions(TxnType.REFUND)),
                 style = MaterialTheme.typography.h4,
                 color = androidx.compose.material3.MaterialTheme.colorScheme.primary
             )

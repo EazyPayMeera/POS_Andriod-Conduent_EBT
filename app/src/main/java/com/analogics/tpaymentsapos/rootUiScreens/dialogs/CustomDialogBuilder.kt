@@ -4,12 +4,18 @@ package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -41,8 +47,12 @@ class CustomDialogBuilder private constructor() {
     private var showCloseButton: Boolean = true
     private var isCancelable: Boolean = true
     private var backgroundColor: Color = dashboardCardBgColor
+    private var showProgressIndicator: Boolean = true
     private var progressColor: Color = Color(0xFFFF9800)
     private var navAction: (() -> Unit)? = null // New parameter for navigation actio
+    private var onCancelAction: (() -> Unit)? = null // Action for Cancel button
+    private var onConfirmAction: (() -> Unit)? = null // Action for Confirm button
+    private var showButtons: Boolean = false     // New parameter to control the visibility of both buttons
 
 
     fun setTitle(title: String) = apply { this.title = title }
@@ -52,7 +62,11 @@ class CustomDialogBuilder private constructor() {
     fun setCancelable(cancelable: Boolean) = apply { this.isCancelable = cancelable }
     fun setBackgroundColor(color: Color) = apply { this.backgroundColor = color }
     fun setProgressColor(color: Color) = apply { this.progressColor = color }
+    fun setShowProgressIndicator(show: Boolean) = apply { this.showProgressIndicator = show } // New method to control progress indicator
     fun setNavAction(action: () -> Unit) = apply { this.navAction = action } // Set navigation action
+    fun setOnCancelAction(action: () -> Unit) = apply { this.onCancelAction = action }
+    fun setOnConfirmAction(action: () -> Unit) = apply { this.onConfirmAction = action }
+    fun setShowButtons(show: Boolean) = apply { this.showButtons = show }    // Method to control the visibility of both buttons
 
     @Composable
     fun buildDialog(onClose: () -> Unit) {
@@ -141,14 +155,59 @@ class CustomDialogBuilder private constructor() {
                         modifier = Modifier.padding(bottom = 0.dp)
                     )*/
 
-                    // Progress Indicator
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(20.dp)
-                            .size(70.dp),
-                        color = progressColor,
-                        strokeWidth = 4.dp,
-                    )
+                    // Conditionally show Progress Indicator
+                    if (showProgressIndicator) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .size(70.dp),
+                            color = progressColor,
+                            strokeWidth = 4.dp,
+                        )
+                    }
+
+                    if (showButtons) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            // Cancel Button
+                            Button(
+                                onClick = {
+                                    onCancelAction?.invoke()
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.grey)),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .weight(1f) // Use weight to make button take equal space
+                                    .height(46.dp) // Set the desired height here
+                            ) {
+                                Text("Cancel", color = Color.Black)
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
+
+                            // Confirm Button
+                            Button(
+                                onClick = {
+                                    onConfirmAction?.invoke() // Execute confirm action
+                                    onClose()
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.grey)),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .weight(1f) // Use weight to make button take equal space
+                                    .height(46.dp) // Set the desired height here
+                            ) {
+                                Text("Confirm", color = Color.Black)
+                            }
+                        }
+                    }
+
+
+
                 }
                     }
             }

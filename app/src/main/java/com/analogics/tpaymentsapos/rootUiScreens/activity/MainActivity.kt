@@ -14,6 +14,7 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -36,6 +37,7 @@ import androidx.navigation.navArgument
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
+import com.analogics.tpaymentsapos.rootUiScreens.barcode.BarcodeView
 import com.analogics.tpaymentsapos.rootUiScreens.changepassword.ChangePasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
@@ -62,6 +64,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPass
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
+import com.analogics.tpaymentsapos.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -169,6 +172,7 @@ fun GreetingPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigationGraph(
     modifier: Modifier = Modifier,
@@ -212,9 +216,12 @@ fun AppNavigationGraph(
         composable(AppNavigationItems.PasswordScreen.route) {
             PasswordView(navHostController)
         }
+        composable(AppNavigationItems.BarcodeScreen.route) {
+            BarcodeView(navHostController)
+        }
         composable(AppNavigationItems.ConfirmationScreen.route) { entry->
-            val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)
-            entry.savedStateHandle.remove<Double?>(AppConstants.KEY_CUSTOM_TIP_AMOUNT)
+            val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT)
+            entry.savedStateHandle.remove<Double?>(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT)
             ConfirmationView(navHostController, customTipAmount)
         }
         composable(AppNavigationItems.TipScreen.route) {
@@ -228,18 +235,13 @@ fun AppNavigationGraph(
             EmailView(navHostController, email)
         }
         composable(
-            route = AppNavigationItems.CardScreen.route,
-            arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
+            route = AppNavigationItems.CardScreen.route
         ) { backStackEntry ->
-            val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
-            CardView(navHostController, totalAmount)
+            CardView(navHostController)
         }
-        composable(
-            route = AppNavigationItems.CardDetectScreen.route,
-            arguments = listOf(navArgument("totalAmount") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
-            CardDetectView(navHostController, totalAmount)
+
+        composable(AppNavigationItems.CardDetectScreen.route) {
+            CardDetectView(navHostController)
         }
         composable(AppNavigationItems.PinScreen.route) {
             PinView(navHostController)
@@ -286,6 +288,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.ChangePasswordScreen.route) {
             ChangePasswordView(navHostController)
+        }
+        composable(AppNavigationItems.TransactionDetailsScreen.route) {
+            TransactionDetailsView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

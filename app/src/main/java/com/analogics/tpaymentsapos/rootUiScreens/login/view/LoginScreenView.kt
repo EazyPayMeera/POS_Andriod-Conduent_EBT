@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
@@ -38,15 +39,15 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun LoginScreenView(navHostController: NavHostController?) {
     val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
+    val sharedViewModel = localSharedViewModel.current
 
     Scaffold(
         topBar = {
             AppHeader(
                 title = stringResource(id = R.string.login),
                 onBackButtonClick = { /* Handle back button click if needed */ },
-                icon1 = R.drawable.baseline_arrow_back_24,
-                onIcon1Click = {  },
-                backgroundColor = MaterialTheme.colorScheme.onPrimary,
+                isIcon1Visible = false,
+                //backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
             )
         },
@@ -96,7 +97,7 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {
-                                viewModel.onLoginClick(navHostController,context)
+                                viewModel.onLoginClick(navHostController,sharedViewModel)
                         }
                     )
 
@@ -107,20 +108,20 @@ fun LoginScreenView(navHostController: NavHostController?) {
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(top = MaterialTheme.dimens.DP_24_CompactMedium)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                             .clickable {
                                 navHostController?.navigate(AppNavigationItems.ForgetPasswordScreen.route)
                             }
                     )
 
                     Box(
-                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {
                         val message = stringResource(id = R.string.not_empty)
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
-                                        viewModel.onLoginClick(navHostController,context)
+                                        viewModel.onLoginClick(navHostController,sharedViewModel)
                                 } else {
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }

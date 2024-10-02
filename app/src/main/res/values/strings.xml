@@ -101,8 +101,11 @@
     <string name="ereceipt_sent">E-Receipt was successfully sent</string>
     <string name="ok">OK</string>
     <string name="ten">10%</string>
-    <string name="tax_1">SGST :</string>
-    <string name="tax_2">CGST :</string>
+    <string name="tax_label_sgst">SGST</string>
+    <string name="tax_label_cgst">CGST</string>
+    <string name="tax_prompt_sgst">Enter SGST Percentage</string>
+    <string name="tax_prompt_cgst">Enter CGST Percentage</string>
+    <string name="tax_current_value">Current Value</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
     <string name="or">---------------or---------------</string>
