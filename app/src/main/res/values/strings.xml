@@ -146,6 +146,7 @@
     <string name="ten">10%</string>-->
 <!--//txnlist -->
     <string name="recentActivity">Recent Activity</string>
+    <string name="see_all">See All</string>
 
 
 </resources>

@@ -115,11 +115,11 @@ fun CustomAlertDialog(
                             horizontalArrangement = Arrangement.End,
 
                         ) {
-                            Button(onClick = { onDismissRequest() }) {
+                            Button(onClick = { onDismissRequest()}) {
                                 Text("Cancel")
                             }
                             Spacer(modifier = Modifier.width(8.dp))
-                            Button(onClick =  {onDismissRequest()} ) {
+                            Button(onClick =  {} ) {
                                 Text("OK")
                             }
                         }
@@ -160,6 +160,8 @@ fun AlertDialogExample() {
 fun PreviewAlertDialogExample() {
     AlertDialogExample()
 }
+
+
 
 
 

@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.models.TxnType
@@ -14,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +23,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
      var allTransactionList: List<TxnEntity>? = null
+    var selectedDateTime = mutableStateOf(Date())
 
     init {
         // Fetch transactions asynchronously
@@ -44,7 +47,15 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             }.toString())
         }
     }
-
+    fun fetchTransactionDetailsTxnByDate(date: Date){
+        viewModelScope.launch {
+            allTransactionList=dbRepository.fetchTransactionDetailsTxnByDate(date)
+            allTransactionList?.let {
+                val txnDataList = convertTxnEntityListToTxnDataList(it)
+                _transactionList.value = txnDataList
+            }
+        }
+    }
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
         val gson = Gson()
         val json = gson.toJson(txnEntityList)
