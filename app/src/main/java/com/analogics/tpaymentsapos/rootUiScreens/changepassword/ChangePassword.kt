@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
@@ -35,12 +36,13 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun ChangePasswordView(navHostController: NavHostController?) {
     val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
+    val sharedViewModel = localSharedViewModel.current
 
     Scaffold(
         topBar = {
             AppHeader(
                 title = stringResource(id = R.string.change_password),
-                onBackButtonClick = { /* Handle back button click if needed */ },
+                onBackButtonClick = { navHostController?.popBackStack() },
                 icon1 = R.drawable.baseline_arrow_back_24,
                 onIcon1Click = {  },
                 backgroundColor = MaterialTheme.colorScheme.onPrimary,
@@ -93,7 +95,7 @@ fun ChangePasswordView(navHostController: NavHostController?) {
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {
-                            viewModel.onLoginClick(navHostController,context)
+                            viewModel.onLoginClick(navHostController,sharedViewModel)
                         }
                     )
 
@@ -104,7 +106,7 @@ fun ChangePasswordView(navHostController: NavHostController?) {
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
-                                    viewModel.onLoginClick(navHostController,context)
+                                    viewModel.onLoginClick(navHostController,sharedViewModel)
                                 } else {
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }

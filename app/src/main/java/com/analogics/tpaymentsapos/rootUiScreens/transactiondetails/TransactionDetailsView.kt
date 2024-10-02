@@ -1,0 +1,184 @@
+package com.analogics.tpaymentsapos.rootUiScreens.transactiondetails
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
+import com.analogics.tpaymentsapos.ui.theme.dimens
+
+
+@Composable
+fun TransactionDetailsView(navHostController: NavHostController) {
+
+    val viewModel: CardViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val sharedViewModel = localSharedViewModel.current
+
+    Column {
+
+        CommonTopAppBar(
+            title = "Transactions",
+            onBackButtonClick = { navHostController.popBackStack() }
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+        ) {
+            GenericCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopStart),
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+
+                    TextView(
+                        text = sharedViewModel.objRootAppPaymentDetail.txnType.toString(),
+                        fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
+                    )
+
+                    TextView(
+                        text = "APPROVED",
+                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
+                    )
+
+                    TextView(
+                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                        fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
+                    )
+
+                    ImageView(
+                        imageId = R.drawable.txn_aprove,
+                        shape = RectangleShape,
+                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium),
+                        contentDescription = ""
+                    )
+
+                    TextView(
+                        text = sharedViewModel.objRootAppPaymentDetail.dateTime.toString(),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(top = 10.dp)
+                    )
+
+                    TextView(
+                        text = "Card: Visa **** **** **** 1234",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 30.dp, start = 34.dp)
+                    )
+
+                    TextView(
+                        text = "Auth Code: Auth 1234",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
+                    )
+
+                    TextView(
+                        text = "No.:100034345364633",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
+                    )
+
+                    TextView(
+                        text = "Invoice number: " + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
+                    )
+
+                    TextView(
+                        text = "POS Entry: Contactless",
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Start)
+                            .padding(top = 10.dp,start = 34.dp)
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularMenu(
+                            onMenuOptionClick = { option ->
+                                when (option) {
+                                    context.resources.getString((R.string.cust_recp)) -> {
+                                        //viewModel.printReceipt(context, true)
+                                    }
+                                    context.resources.getString((R.string.merchant_recp)) -> {
+                                        //viewModel.printReceipt(context)
+                                    }
+                                    context.resources.getString((R.string.e_recp)) -> {
+                                        navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+
+
+

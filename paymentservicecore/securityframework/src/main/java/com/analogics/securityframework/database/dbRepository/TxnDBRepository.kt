@@ -1,5 +1,6 @@
 package com.analogics.securityframework.database.dbRepository
 
+import android.util.Log
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
 import com.analogics.securityframework.database.entity.BatchEntity
@@ -19,14 +20,20 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     }
 
     suspend fun  insertTxn(txnEntity: TxnEntity){
-        iTxnDao.insert(txnEntity)
+        try {
+            iTxnDao.insert(txnEntity)
+        }catch ( e : Exception)
+        {
+            Log.e("DATABASE",e.message.toString())
+        }
+
     }
     suspend fun  updateTxn(txnEntity: TxnEntity){
         iTxnDao.update(txnEntity)
     }
     // Get Transaction Details From Transaction Using Merchant-Id
-    suspend fun fetchTransactionDetailsTxn(merchantId: String): TxnEntity? {
-        return iTxnDao.getTransactionDetailsTxn(merchantId)
+    suspend fun fetchTransactionDetailsTxn(id: Long): TxnEntity? {
+        return iTxnDao.getTransactionDetailsTxn(id)
     }
 
     suspend fun getAllTxnListData(): List<TxnEntity>{

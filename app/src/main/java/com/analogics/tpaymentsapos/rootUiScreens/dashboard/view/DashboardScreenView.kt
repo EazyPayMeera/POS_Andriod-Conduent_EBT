@@ -44,7 +44,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardVi
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
@@ -144,8 +143,6 @@ fun TrainingView(
     onMenuItemClick: (String) -> Unit
 ) {
     val sharedViewModel= localSharedViewModel.current
-    Authorisation.isEReceipt = false
-    Authorisation.isMerchantReceipt = false
     val selectedButton = dashboardViewModel.selectedButton.value
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -201,7 +198,7 @@ fun TrainingView(
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
         dashboardViewModel.clearTransData(sharedViewModel)
-        dashboardViewModel.initPaymentSDK(context, this)
+        dashboardViewModel.initPaymentSDK(context, this, sharedViewModel)
     }
 }
 

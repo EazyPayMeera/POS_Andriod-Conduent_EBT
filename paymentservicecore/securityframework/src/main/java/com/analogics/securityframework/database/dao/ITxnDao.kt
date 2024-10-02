@@ -15,8 +15,8 @@ interface ITxnDao {
     suspend fun update(vararg txnEntity: TxnEntity)
 
     // Query to fetch a transaction by MerchantId
-    @Query("SELECT * FROM TxnTable WHERE MerchantId = :merchantId")
-    suspend fun getTransactionDetailsTxn(merchantId: String): TxnEntity?
+    @Query("SELECT * FROM TxnTable WHERE Id = :id")
+    suspend fun getTransactionDetailsTxn(id: Long): TxnEntity?
 
     @Query("SELECT * FROM TxnTable")
     suspend fun getAllTxnListData(): List<TxnEntity>

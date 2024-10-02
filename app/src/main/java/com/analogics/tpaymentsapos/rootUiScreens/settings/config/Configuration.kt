@@ -20,77 +20,72 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.updated_tax
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
 @Composable
-fun ConfigurationView(navHostController: NavHostController) {
-    var isEnableTipping by remember { mutableStateOf(false) }
-    var isTrainingModeEnabled by remember { mutableStateOf(false) }
-    var isAutoPrintReportEnabled by remember { mutableStateOf(false) }
-    var isPromptInvoiceNumberEnabled by remember { mutableStateOf(false) }
-    var isAutoPrintMerchantReceiptEnabled by remember { mutableStateOf(false) }
-    var isTaxesEnabled by remember { mutableStateOf(false) }
+fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigViewModel = hiltViewModel()) {
+    var sharedViewModel = localSharedViewModel.current
 
     val settingsItems = listOf(
         SettingsItem(
             imageRes = R.drawable.config_training_mode,
             text = stringResource(id = R.string.training_mode),
-            isChecked = isTrainingModeEnabled,
-            onCheckedChange = { isTrainingModeEnabled = it }
+            isChecked = viewModel.isTrainingMode.value,
+            onCheckedChange = { viewModel.onDemoModeChange(it,sharedViewModel) }
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.auto_report_print),
-            isChecked = isAutoPrintReportEnabled,
-            onCheckedChange = { isAutoPrintReportEnabled = it }
+            isChecked = viewModel.isAutoPrintReport.value,
+            onCheckedChange = { viewModel.onAutoPrintReportChange(it,sharedViewModel)}
         ),
         SettingsItem(
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
-            isChecked = isPromptInvoiceNumberEnabled,
-            onCheckedChange = { isPromptInvoiceNumberEnabled = it }
+            isChecked = viewModel.isPromptInvoiceNumber.value,
+            onCheckedChange = { viewModel.onPromptInvoiceNumberChange(it,sharedViewModel) }
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_m_print,
             text = stringResource(id = R.string.auto_print_merchant),
-            isChecked = isAutoPrintMerchantReceiptEnabled,
-            onCheckedChange = { isAutoPrintMerchantReceiptEnabled = it }
+            isChecked = viewModel.isAutoPrintMerchant.value,
+            onCheckedChange = { viewModel.onAutoPrintMerchantChange(it,sharedViewModel) }
         ),
         SettingsItem(
             imageRes = R.drawable.config_tipping,
             text = stringResource(id = R.string.enable_tipping),
-            isChecked = isEnableTipping,
-            onCheckedChange = { isEnableTipping = it }
+            isChecked = viewModel.isTippingEnabled.value,
+            onCheckedChange = { viewModel.onTippingEnabledChange(it,sharedViewModel) }
         ),
         SettingsItem(
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.taxes),
-            isChecked = isTaxesEnabled,
-            onCheckedChange = { isTaxesEnabled = it }
+            isChecked = viewModel.isTaxEnabled.value,
+            onCheckedChange = { viewModel.onTaxEnabledChange(it,sharedViewModel) }
         )
     )
 
     Column {
         CommonTopAppBar(
             title = stringResource(id = R.string.Configuration),
-            onBackButtonClick = { navHostController.popBackStack() }
+            onBackButtonClick = { viewModel.onBack(navHostController) }
         )
 
         Card(
@@ -108,21 +103,28 @@ fun ConfigurationView(navHostController: NavHostController) {
 
 
                     if (index == 4 && item.isChecked) {
-                        TippingView(navHostController,type = ConfigurableViewType.Percentage)
+                        TippingView(ConfigurableViewType.Percentage,navHostController, viewModel, sharedViewModel)
                     }
 
                     if (index < settingsItems.size - 1) {
-                        Divider(color = MaterialTheme.colorScheme.secondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
+                        Divider(
+                            color = MaterialTheme.colorScheme.secondary,
+                            thickness = MaterialTheme.dimens.DP_1_CompactMedium
+                        )
                     }
 
                     if (index == 5 && item.isChecked) {
-                        TippingView(navHostController,type = ConfigurableViewType.Taxes)
+                        TippingView(ConfigurableViewType.Taxes,navHostController, viewModel, sharedViewModel)
                     }
-                }
                 }
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(sharedViewModel)
+    }
+}
 
 data class SettingsItem(
     val imageRes: Int,
@@ -135,13 +137,14 @@ data class SettingsItem(
 
 @Composable
 fun TippingView(
+    type: ConfigurableViewType,
     navHostController: NavHostController,
-    type: ConfigurableViewType
+    viewModel : ConfigViewModel,
+    sharedViewModel: SharedViewModel
 ) {
-    val updated_tax = updated_tax
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(stringResource(id = R.string.ten), stringResource(id = R.string.fifteen), stringResource(id = R.string.twenty))
-        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_1) + updated_tax , stringResource(id = R.string.tax_2) + updated_tax)
+        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + ":" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + ":" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
     }
 
     val title = when (type) {
@@ -162,7 +165,7 @@ fun TippingView(
         ) {
             Text(
                 text = title,
-                style = if (type == ConfigurableViewType.Percentage) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,7 +185,7 @@ fun TippingView(
                         onClick = {
                             if(type == ConfigurableViewType.Taxes)
                             {
-                                navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+                                viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
                             }
                         },
                         elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium) // Use CardDefaults for elevation

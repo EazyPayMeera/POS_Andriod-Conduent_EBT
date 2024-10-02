@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,8 +27,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootModel.UiLanguage
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.language.viewmodel.LanguageViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -37,14 +42,8 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
 @Composable
-fun LanguageView(navHostController: NavHostController) {
-
-    // Retrieve the string resources only once
-    val englishText = stringResource(id = R.string.english)
-    val hindiText = stringResource(id = R.string.hindi)
-    // State to manage the selected language
-    var selectedLanguage by remember { mutableStateOf(hindiText) }
-
+fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewModel = hiltViewModel()) {
+    var sharedViewModel = localSharedViewModel.current
 
     Column {
         CommonTopAppBar(
@@ -123,8 +122,8 @@ fun LanguageView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.weight(1f)) // This will push the RadioButton to the end
 
                     RadioButton(
-                        selected = selectedLanguage == stringResource(id = R.string.english),
-                        onClick = { selectedLanguage = englishText },
+                        selected = viewModel.uiLanguage.value == UiLanguage.ENGLISH,
+                        onClick = { viewModel.onLanguageChange(UiLanguage.ENGLISH, sharedViewModel) },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = dashboardOrangeColor,
                             unselectedColor = MaterialTheme.colorScheme.onSecondary
@@ -171,8 +170,8 @@ fun LanguageView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.weight(1f)) // This will push the RadioButton to the end
 
                     RadioButton(
-                        selected = selectedLanguage == stringResource(id = R.string.hindi),
-                        onClick = { selectedLanguage = hindiText},
+                        selected = viewModel.uiLanguage.value == UiLanguage.HINDI,
+                        onClick = { viewModel.onLanguageChange(UiLanguage.HINDI, sharedViewModel)},
                         colors = RadioButtonDefaults.colors(
                             selectedColor = dashboardOrangeColor,
                             unselectedColor = MaterialTheme.colorScheme.onSecondary
@@ -184,5 +183,9 @@ fun LanguageView(navHostController: NavHostController) {
 
         }
 
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(sharedViewModel)
     }
 }

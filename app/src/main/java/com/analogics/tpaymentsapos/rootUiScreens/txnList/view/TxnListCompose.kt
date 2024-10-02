@@ -5,8 +5,10 @@ package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +39,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -50,7 +54,7 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnViewModel = hiltViewModel()) {
+fun TransactionListScreen(navHostController: NavHostController, viewModel: TxnViewModel = hiltViewModel()) {
     val transactions = viewModel.transactionList.collectAsState().value
     viewModel.fetchTransactions()
     var sharedViewModel= localSharedViewModel.current
@@ -72,45 +76,52 @@ fun TransactionListScreen(navHostController: NavHostController,viewModel: TxnVie
         GenericCard(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
-            Column(
-                modifier = Modifier
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                    // Ensures the image and text are aligned vertically together
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+            Column {
+                Text(
+                    text = "Recent Transactions",
+                    style = MaterialTheme.typography.h6,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                )
+                Divider(color = Color.Gray, thickness = 1.dp)
 
-                        Text(
-                            text = stringResource(id = R.string.recentActivity),
-                            style = MaterialTheme.typography.h6,
-                            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
-                        )
-                    }
+                if (transactions.isNullOrEmpty()) {
+                    // Display message when there are no transactions
                     Text(
-                        text = "see",
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier.padding(top=androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                        text = "Transaction List is Empty",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                            .align(Alignment.CenterHorizontally)
                     )
-                    Image(
-                        painter = painterResource(id = R.drawable.filter_image),
-                        contentDescription = "",
-                        modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium).padding(end = 5.dp) // Adjust size as needed
-                    )
-                }
-                LazyColumn {
-                    items(transactions.size) { index ->
-                        TransactionItem(transaction = transactions[index])
+                } else {
+                    // Make the whole area of each transaction touchable
+                    LazyColumn {
+                        items(transactions.size) { index ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        // Handle click for this transaction item
+                                        sharedViewModel.objRootAppPaymentDetail = transactions[index]
+                                        navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+                                    }
+                            ) {
+                                TransactionItem(
+                                    transaction = transactions[index],
+                                    navHostController = navHostController,
+                                    sharedViewModel = sharedViewModel
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun SummarySection(viewModel: TxnViewModel) {
@@ -167,7 +178,7 @@ fun SummarySection(viewModel: TxnViewModel) {
 }
 
 @Composable
-fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
+fun TransactionItem(transaction: ObjRootAppPaymentDetails,navHostController: NavHostController,sharedViewModel: SharedViewModel) {
     Column {
         Row(
             modifier = Modifier
@@ -198,8 +209,10 @@ fun TransactionItem(transaction: ObjRootAppPaymentDetails) {
                     fontSize = 20.sp
                 )
             }
-
-            IconButton(onClick = { /* Handle item click */ }) {
+            IconButton(onClick = {
+                sharedViewModel.objRootAppPaymentDetail = transaction
+                navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
+            }) {
                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
             }
         }

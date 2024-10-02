@@ -10,39 +10,44 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import javax.inject.Inject
 
 class AuthCaptureRequestRepository @Inject constructor(
-    //private var paymentServiceRepository: Lazy<PaymentServiceRepository>,
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
-) :
-    IApiServiceResponseListener {
+) {
 
-    suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
 
-        buildApiRepository.apiPreAuth(
-            this,
-            BuilderUtils.prepareAPIRequestBody(
-                apiServiceRequestBuilder.createPre_AuthRequest(paymentServiceTxnDetails)
-            )
-        )
-    }
+    suspend fun sendAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-    suspend fun sendAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?) {
+        buildApiRepository.apiRefund(
+            object :IApiServiceResponseListener{
+                override fun onApiSuccessRes(response: String) {
+                    onAPIServiceResponse(response)
 
-        buildApiRepository.apiPostAuth(
-            this,
+                }
+
+                override fun onApiFailureRes(error: Any) {
+                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                }
+            },
             BuilderUtils.prepareAPIRequestBody(
                 apiServiceRequestBuilder.createAuthCaptureRequest(paymentServiceTxnDetails)
             )
         )
     }
+    suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-    override fun onApiSuccessRes(response: String) {
-        //paymentServiceRepository.value.onAPIServiceResponse(response)
+        buildApiRepository.apiRefund(
+            object :IApiServiceResponseListener{
+                override fun onApiSuccessRes(response: String) {
+                    onAPIServiceResponse(response)
+                }
+                override fun onApiFailureRes(error: Any) {
+                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                }
+            },
+            BuilderUtils.prepareAPIRequestBody(
+                apiServiceRequestBuilder.createPre_AuthRequest(paymentServiceTxnDetails)
+            )
+        )
     }
-
-    override fun onApiFailureRes(error: Any) {
-        //paymentServiceRepository.value.onAPIServiceResponse(PaymentServiceError(error.toString()))
-    }
-
 
 }

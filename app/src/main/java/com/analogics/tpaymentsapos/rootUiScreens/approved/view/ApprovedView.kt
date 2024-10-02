@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
-import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -40,8 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -49,13 +46,13 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.Authorisation
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import kotlin.math.cos
@@ -64,7 +61,6 @@ import kotlin.math.sin
 
 @Composable
 fun CircularMenu(
-    onPrintClick: () -> Unit,
     onMenuOptionClick: (String) -> Unit
 ) {
     val menuOptions = listOf(
@@ -144,7 +140,6 @@ fun CircularMenu(
                             printButtonInitialColor
                         }
                     }
-                    onPrintClick()
                     expanded = !expanded
                 }
         ) {
@@ -212,9 +207,9 @@ fun ApprovedView(navHostController: NavHostController) {
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                TxnInfo.txnType.takeIf { it != TxnType.VOID }?.let {
+                sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it != TxnType.VOID }?.let {
                     Text(
-                        text = updatedAmount,
+                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -233,6 +228,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     contentDescription = ""
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -240,41 +236,21 @@ fun ApprovedView(navHostController: NavHostController) {
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
-                        onPrintClick = {
-                            coroutineScope.launch {
-                                viewModel.initPrinter(context, object : IPrinterResultProviderListener {
-                                    override fun onSuccess(result: Any?) {
-                                        if(result?.equals(true)==true)
-                                            Log.d(TAG, "Initialization of printer is Successful")
-                                        else
-                                            Log.d(TAG, "Initialization of printer is Failed")
-                                    }
-                                    override fun onFailure(exception: Exception) {
-                                        // No action needed, failure is handled elsewhere
-                                    }
-                                })
-                            }
-                        },
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
-                                    Authorisation.isCustomerReceipt = true
-                                    navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+                                    viewModel.printReceipt(context, true)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
-                                    Authorisation.isMerchantReceipt = true
-                                    viewModel.printReceipt(coroutineScope)
+                                    viewModel.printReceipt(context)
                                 }
                                 context.resources.getString((R.string.e_recp)) -> {
-                                    Authorisation.isEReceipt = true
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                 }
-
                             }
                         }
                     )
                 }
-
                 Box(
                     modifier = Modifier
                         .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
@@ -297,7 +273,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     CustomDialogBuilder.create()
                         .setTitle(stringResource(id = R.string.printing))
                         .setSubtitle(stringResource(id = R.string.plz_wait))
-                        .setSmallText(stringResource(id = R.string.merchant_recp))
+                        .setSmallText(stringResource(id = if(viewModel.isCustomer.value) R.string.cust_recp else R.string.merchant_recp))
                         .setShowCloseButton(true) // Can set to false if you don't want the close button
                         .setCancelable(true)
                         .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)

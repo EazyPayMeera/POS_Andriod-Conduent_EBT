@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.confirmshift.viewmodel.ConfirmShiftViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
@@ -31,6 +32,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun ConfirmShiftView(navHostController: NavHostController) {
     val viewModel: ConfirmShiftViewModel = hiltViewModel()
+    val sharedViewModel = localSharedViewModel.current
     Column {
         CommonTopAppBar(
             title = stringResource(id = R.string.end_shift_title),
@@ -88,7 +90,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                     firstButtonTitle = stringResource(id = R.string.cancel),
                     firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
                     secondButtonTitle = stringResource(id = R.string.yes),
-                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController) },
+                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController,sharedViewModel) },
                     alignment = Alignment.TopCenter
                 )
 

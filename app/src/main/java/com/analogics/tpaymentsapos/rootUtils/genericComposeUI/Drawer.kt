@@ -89,34 +89,30 @@ fun CustomDrawerContent(
         }
 
         Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
-        var isTrainingModeEnabled by remember { mutableStateOf(false) }
-        var isAutoPrintReportEnabled by remember { mutableStateOf(false) }
-        var isPromptInvoiceNumberEnabled by remember { mutableStateOf(false) }
-        var isAutoPrintMerchantReceiptEnabled by remember { mutableStateOf(false) }
 
         val drawersItems = listOf(
             DrawerItem(
                 imageRes = Icons.Default.Chat,
                 text = stringResource(id = R.string.set_lang),
-                isChecked = isTrainingModeEnabled,
+                isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.LanguageScreen.route) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.VpnKey,
                 text = stringResource(id = R.string.change_password),
-                isChecked = isAutoPrintReportEnabled,
+                isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Settings,
                 text = stringResource(id = R.string.Configuration),
-                isChecked = isPromptInvoiceNumberEnabled,
+                isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,
                 text = stringResource(id = R.string.log_out),
-                isChecked = isAutoPrintMerchantReceiptEnabled,
+                isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route) }
             )
         )
@@ -135,17 +131,12 @@ fun CustomDrawerContent(
                             item = item
                         )
 
-
-                        if (index == 4 && item.isChecked) {
-                            TippingView(navHostController,type = ConfigurableViewType.Percentage)
-                        }
-
-                        if (index < drawersItems.size - 1) {
-                            androidx.compose.material3.Divider(color = MaterialTheme.colorScheme.secondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
-                        }
-
-                        if (index == 5 && item.isChecked) {
-                            TippingView(navHostController,type = ConfigurableViewType.Taxes)
+                        index.takeIf { it < drawersItems.size - 1 }?.let {
+                            Divider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = MaterialTheme.dimens.DP_1_CompactMedium,
+                                color = Color.Gray
+                            )
                         }
                     }
                 }
