@@ -8,14 +8,13 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipPercentage
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
 class TipPercentageViewModel : ViewModel() {
 
-    var tipOption by mutableStateOf(TipPercentage.OPTION1)
+    var tipButton by mutableStateOf(TipButton.NONE)
 
     var tipPercent by mutableStateOf("")
         private set
@@ -26,11 +25,12 @@ class TipPercentageViewModel : ViewModel() {
 
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         navHostController.popBackStack()
-        when(tipOption)
+        when(tipButton)
         {
-            TipPercentage.OPTION1 -> sharedViewModel.objPosConfig?.apply { tipPercent1 = transformToAmountDouble(tipPercent, decimalPlaces = 0) }?.saveToPrefs()
-            TipPercentage.OPTION2 -> sharedViewModel.objPosConfig?.apply { tipPercent2 = transformToAmountDouble(tipPercent, decimalPlaces = 0) }?.saveToPrefs()
-            TipPercentage.OPTION3 -> sharedViewModel.objPosConfig?.apply { tipPercent3 = transformToAmountDouble(tipPercent, decimalPlaces = 0) }?.saveToPrefs()
+            TipButton.PERCENT1 -> sharedViewModel.objPosConfig?.apply { tipPercent1 = transformToAmountDouble(tipPercent, decimalPlaces = 0) }?.saveToPrefs()
+            TipButton.PERCENT2 -> sharedViewModel.objPosConfig?.apply { tipPercent2 = transformToAmountDouble(tipPercent, decimalPlaces = 0) }?.saveToPrefs()
+            TipButton.PERCENT3 -> sharedViewModel.objPosConfig?.apply { tipPercent3 = transformToAmountDouble(tipPercent, decimalPlaces = 0) }?.saveToPrefs()
+            else -> 0.00
         }
     }
 
@@ -41,17 +41,19 @@ class TipPercentageViewModel : ViewModel() {
     fun onLoad(navHostController: NavHostController, sharedViewModel: SharedViewModel)
     {
         navHostController.previousBackStackEntry?.savedStateHandle?.get<Int>(AppConstants.NAV_KEY_TIP_PERCENT_INDEX)?.let {
-            tipOption = when(it) {
-                TipPercentage.OPTION1.value -> TipPercentage.OPTION1
-                TipPercentage.OPTION2.value -> TipPercentage.OPTION2
-                else -> TipPercentage.OPTION3
+            tipButton = when(it) {
+                TipButton.PERCENT1.value -> TipButton.PERCENT1
+                TipButton.PERCENT2.value -> TipButton.PERCENT2
+                TipButton.PERCENT3.value -> TipButton.PERCENT3
+                else -> TipButton.NONE
             }
 
             tipPercent = when(it)
             {
-                TipPercentage.OPTION1.value -> sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
-                TipPercentage.OPTION2.value -> sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
-                else -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
+                TipButton.PERCENT1.value -> sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
+                TipButton.PERCENT2.value -> sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
+                TipButton.PERCENT3.value -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
+                else -> 0.00.toPercentFormat(decimalPlaces = 0)
             }
 
             navHostController.previousBackStackEntry?.savedStateHandle?.remove<Int>(AppConstants.NAV_KEY_TIP_PERCENT_INDEX)

@@ -26,7 +26,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipPercentage
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipButton
 import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.TipPercentageViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -46,19 +46,21 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
 
     @Composable
     fun getPrompt(): String {
-        return stringResource(id = R.string.tip_percent_change_prompt) + " " + when (viewModel.tipOption) {
-            TipPercentage.OPTION1 -> 1
-            TipPercentage.OPTION2 -> 2
-            else -> 3
+        return stringResource(id = R.string.tip_percent_change_prompt) + " " + when (viewModel.tipButton) {
+            TipButton.PERCENT1 -> 1
+            TipButton.PERCENT2 -> 2
+            TipButton.PERCENT3 -> 3
+            else -> ""
         }
     }
 
     @Composable
     fun getCurrentTipValue(): String {
-        return stringResource(id = R.string.tip_current_value) + " : " + when (viewModel.tipOption) {
-            TipPercentage.OPTION1 ->  sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
-            TipPercentage.OPTION2 ->  sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
-            else -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
+        return stringResource(id = R.string.tip_current_value) + " : " + when (viewModel.tipButton) {
+            TipButton.PERCENT1 ->  sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
+            TipButton.PERCENT2 ->  sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
+            TipButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
+            else -> ""
         }
     }
 

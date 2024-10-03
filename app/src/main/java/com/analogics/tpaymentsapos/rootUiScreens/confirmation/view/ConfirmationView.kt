@@ -36,6 +36,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.viewmodel.ConfirmationViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
@@ -147,10 +148,10 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     ) {
 
                         Button(
-                            onClick = { viewModel.onTipPercentChange(1, sharedViewModel) },
+                            onClick = { viewModel.onTipPercentChange(TipButton.PERCENT1, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.intValue == 1 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT1 && isTipEnabled) {
                                     dashboardOrangeColor
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -166,14 +167,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                                 disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                             )
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(1, sharedViewModel))
+                            Text(text = viewModel.getTipPercentLabel(TipButton.PERCENT1, sharedViewModel))
                         }
 
                         Button(
-                            onClick = { viewModel.onTipPercentChange(2, sharedViewModel) },
+                            onClick = { viewModel.onTipPercentChange(TipButton.PERCENT2, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.intValue == 2 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT2 && isTipEnabled) {
                                     dashboardOrangeColor
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -190,14 +191,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             )
 
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(2, sharedViewModel))
+                            Text(text = viewModel.getTipPercentLabel(TipButton.PERCENT2, sharedViewModel))
                         }
 
                         Button(
-                            onClick = { viewModel.onTipPercentChange(3, sharedViewModel) },
+                            onClick = { viewModel.onTipPercentChange(TipButton.PERCENT3, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.intValue == 3 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT3 && isTipEnabled) {
                                     dashboardOrangeColor
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -213,14 +214,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                                 disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                             )
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(3, sharedViewModel))
+                            Text(text = viewModel.getTipPercentLabel(TipButton.PERCENT3, sharedViewModel))
                         }
 
                         Button(
                             onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.intValue == 4 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == TipButton.CUSTOM && isTipEnabled) {
                                     dashboardOrangeColor
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)

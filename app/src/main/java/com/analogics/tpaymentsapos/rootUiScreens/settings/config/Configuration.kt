@@ -142,7 +142,7 @@ fun TippingView(
     sharedViewModel: SharedViewModel
 ) {
     val options = when (type) {
-        ConfigurableViewType.Percentage -> listOf(viewModel.getTipPercentLabel(TipPercentage.OPTION1, sharedViewModel), viewModel.getTipPercentLabel(TipPercentage.OPTION2, sharedViewModel), viewModel.getTipPercentLabel(TipPercentage.OPTION3, sharedViewModel))
+        ConfigurableViewType.Percentage -> listOf(viewModel.getTipPercentLabel(TipButton.PERCENT1, sharedViewModel), viewModel.getTipPercentLabel(TipButton.PERCENT2, sharedViewModel), viewModel.getTipPercentLabel(TipButton.PERCENT3, sharedViewModel))
         ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + "\n" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + "\n" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
     }
 
@@ -187,7 +187,14 @@ fun TippingView(
                             .height(cardHeight),
                         onClick = {
                             when(type) {
-                                ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(options.indexOf(option), navHostController)
+                                ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(
+                                    when(options.indexOf(option)){
+                                        0 -> TipButton.PERCENT1
+                                        1 -> TipButton.PERCENT2
+                                        2 -> TipButton.PERCENT3
+                                        else -> TipButton.NONE
+                                    }
+                                    , navHostController)
                                 ConfigurableViewType.Taxes -> viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
                             }
                         },
@@ -222,10 +229,12 @@ enum class ConfigurableViewType {
     Taxes
 }
 
-enum class TipPercentage(val value: Int) {
-    OPTION1(0),
-    OPTION2(1),
-    OPTION3(2)
+enum class TipButton(val value: Int) {
+    NONE(0),
+    PERCENT1(1),
+    PERCENT2(2),
+    PERCENT3(3),
+    CUSTOM(4),
 }
 
 @Composable

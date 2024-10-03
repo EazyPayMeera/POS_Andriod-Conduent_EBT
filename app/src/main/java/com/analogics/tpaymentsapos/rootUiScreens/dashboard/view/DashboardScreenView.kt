@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ModalDrawer
@@ -50,6 +52,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.removeNonDigits
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -184,6 +187,7 @@ fun TrainingView(
                         .padding(10.dp)
                 ) {
                     DashboardContentSurface(
+                        sharedViewModel = sharedViewModel,
                         dashboardItemLists = dashboardItemLists,
                         selectedButton = selectedButton,
                         onButtonClick = { text, onClick ->
@@ -205,6 +209,7 @@ fun TrainingView(
 
 @Composable
 fun DashboardContentSurface(
+    sharedViewModel: SharedViewModel,
     dashboardItemLists: List<DashboardItemList>,
     selectedButton: String?,
     onButtonClick: (String, () -> Unit) -> Unit
@@ -225,15 +230,25 @@ fun DashboardContentSurface(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextView(
-                text = stringResource(id = R.string.training),
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.tertiary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                    .align(Alignment.CenterHorizontally)
-            )
+
+            sharedViewModel.objPosConfig?.isDemoMode?.takeIf { it==true }?.let {
+                var visibility by remember { mutableStateOf(true) }
+
+                TextView(
+                    text = when(visibility) {true -> stringResource(id = R.string.training_mode); else -> " "}, // Adding space purposefully. Empty value sifts the layout
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                LaunchedEffect(visibility) {
+                    delay(AppConstants.TRAINING_MODE_BLINK_DELAY_MS)
+                    visibility = !visibility
+                }
+            }
 
             dashboardItemLists.chunked(2).forEach { rowConfigs ->
                 Row(
@@ -272,11 +287,11 @@ fun DashboardContentSurface(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AppButton(
-                    onClick = {isDialogVisible=true  },
-                    title = stringResource(id = R.string.print_last_receipt),
-                    image = painterResource(id = R.drawable.ic_print)
-                )
+                    AppButton(
+                        onClick = { isDialogVisible = true },
+                        title = stringResource(id = R.string.print_last_receipt),
+                        image = painterResource(id = R.drawable.ic_print)
+                    )
             }
             if (isDialogVisible) {
                 CustomDialogBuilder.create()

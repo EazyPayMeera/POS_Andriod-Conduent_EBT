@@ -29,17 +29,17 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
         isTaxEnabled.value = sharedViewModel.objPosConfig?.isTaxEnabled == true
     }
 
-    private fun getTipPercent(button: TipPercentage, sharedViewModel: SharedViewModel) : Double
+    private fun getTipPercent(button: TipButton, sharedViewModel: SharedViewModel) : Double
     {
         return when(button){
-            TipPercentage.OPTION1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
-            TipPercentage.OPTION2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
-            TipPercentage.OPTION3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
+            TipButton.PERCENT1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
+            TipButton.PERCENT2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
+            TipButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
             else -> 0.00
         }
     }
 
-    fun getTipPercentLabel(button: TipPercentage, sharedViewModel: SharedViewModel) : String
+    fun getTipPercentLabel(button: TipButton, sharedViewModel: SharedViewModel) : String
     {
         return formatAmount(getTipPercent(button, sharedViewModel), symbol = Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END, noSpace = true), decimalPlaces = 0)
     }
@@ -79,8 +79,8 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
         navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
     }
 
-    fun onTipPercentChange(index: Int, navHostController: NavHostController) {
-        navHostController.currentBackStackEntry?.savedStateHandle?.set<Int>(AppConstants.NAV_KEY_TIP_PERCENT_INDEX, index)
+    fun onTipPercentChange(button: TipButton, navHostController: NavHostController) {
+        navHostController.currentBackStackEntry?.savedStateHandle?.set<Int>(AppConstants.NAV_KEY_TIP_PERCENT_INDEX, button.value)
         navHostController.navigate(AppNavigationItems.TipPercentageScreen.route)
     }
 
