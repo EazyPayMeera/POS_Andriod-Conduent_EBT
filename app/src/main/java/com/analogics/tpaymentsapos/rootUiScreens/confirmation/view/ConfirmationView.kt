@@ -166,7 +166,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                                 disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                             )
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(1))
+                            Text(text = viewModel.getTipPercentLabel(1, sharedViewModel))
                         }
 
                         Button(
@@ -190,7 +190,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             )
 
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(2))
+                            Text(text = viewModel.getTipPercentLabel(2, sharedViewModel))
                         }
 
                         Button(
@@ -213,7 +213,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                                 disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                             )
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(3))
+                            Text(text = viewModel.getTipPercentLabel(3, sharedViewModel))
                         }
 
                         Button(

@@ -8,6 +8,8 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
 class TaxPercentageViewModel : ViewModel() {
@@ -31,20 +33,23 @@ class TaxPercentageViewModel : ViewModel() {
             TaxType.SGST -> sharedViewModel.objPosConfig?.apply { SGSTPercent = transformToAmountDouble(taxPercent) }?.saveToPrefs()
             TaxType.CGST -> sharedViewModel.objPosConfig?.apply { CGSTPercent = transformToAmountDouble(taxPercent) }?.saveToPrefs()
         }
-
     }
 
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigate(AppNavigationItems.TrainingScreen.route)
     }
 
-    fun onLoad(navHostController: NavHostController)
+    fun onLoad(navHostController: NavHostController, sharedViewModel: SharedViewModel)
     {
         navHostController.previousBackStackEntry?.savedStateHandle?.get<String>(AppConstants.NAV_KEY_TAX_TYPE)?.let {
-            if(it.equals(AppConstants.NAV_VAL_TAX_TYPE_SGST,true))
+            if(it.equals(AppConstants.NAV_VAL_TAX_TYPE_SGST,true)) {
                 taxType = TaxType.SGST
-            else
+                taxPercent = sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat()
+            }
+            else {
                 taxType = TaxType.CGST
+                taxPercent = sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat()
+            }
 
             navHostController.previousBackStackEntry?.savedStateHandle?.remove<String>(AppConstants.NAV_KEY_TAX_TYPE)
         }

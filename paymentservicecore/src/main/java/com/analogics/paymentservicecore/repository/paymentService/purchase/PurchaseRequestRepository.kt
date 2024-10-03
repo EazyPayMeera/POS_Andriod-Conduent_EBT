@@ -15,7 +15,7 @@ class PurchaseRequestRepository @Inject constructor(
 ) {
     suspend fun sendPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        buildApiRepository.apiRefund(
+        buildApiRepository.apiPurchase(
             object :IApiServiceResponseListener{
                 override fun onApiSuccessRes(response: String) {
                     onAPIServiceResponse(response)
@@ -23,7 +23,10 @@ class PurchaseRequestRepository @Inject constructor(
                 }
 
                 override fun onApiFailureRes(error: Any) {
-                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                   // onAPIServiceResponse(PaymentServiceError(error.toString()))
+
+                    paymentServiceTxnDetails?.let { onAPIServiceResponse(it) }
+
                 }
             },
             BuilderUtils.prepareAPIRequestBody(

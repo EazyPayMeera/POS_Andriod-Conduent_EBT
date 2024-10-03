@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import javax.inject.Inject
 
 class ConfigViewModel @Inject constructor() : ViewModel(){
@@ -25,6 +27,21 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
         isAutoPrintMerchant.value = sharedViewModel.objPosConfig?.isAutoPrintMerchant == true
         isTippingEnabled.value = sharedViewModel.objPosConfig?.isTipEnabled == true
         isTaxEnabled.value = sharedViewModel.objPosConfig?.isTaxEnabled == true
+    }
+
+    private fun getTipPercent(button: TipPercentage, sharedViewModel: SharedViewModel) : Double
+    {
+        return when(button){
+            TipPercentage.OPTION1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
+            TipPercentage.OPTION2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
+            TipPercentage.OPTION3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
+            else -> 0.00
+        }
+    }
+
+    fun getTipPercentLabel(button: TipPercentage, sharedViewModel: SharedViewModel) : String
+    {
+        return formatAmount(getTipPercent(button, sharedViewModel), symbol = Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END, noSpace = true), decimalPlaces = 0)
     }
 
     fun onDemoModeChange(value: Boolean, sharedViewModel: SharedViewModel) {
@@ -60,6 +77,11 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {
         navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(AppConstants.NAV_KEY_TAX_TYPE, if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST)
         navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+    }
+
+    fun onTipPercentChange(index: Int, navHostController: NavHostController) {
+        navHostController.currentBackStackEntry?.savedStateHandle?.set<Int>(AppConstants.NAV_KEY_TIP_PERCENT_INDEX, index)
+        navHostController.navigate(AppNavigationItems.TipPercentageScreen.route)
     }
 
     fun onLoad(sharedViewModel: SharedViewModel)

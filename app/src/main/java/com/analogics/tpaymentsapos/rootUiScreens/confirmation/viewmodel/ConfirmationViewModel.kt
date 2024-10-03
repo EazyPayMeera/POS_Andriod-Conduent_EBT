@@ -19,19 +19,19 @@ class ConfirmationViewModel : ViewModel() {
     var selectedButton = mutableIntStateOf(0)
     var isTipButtonEnabled = mutableStateOf(false)
 
-    private fun getTipPercent(button: Int) : Double
+    private fun getTipPercent(button: Int, sharedViewModel: SharedViewModel) : Double
     {
         return when(button){
-            1 -> 10.00
-            2 -> 15.00
-            3 -> 20.00
+            1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
+            2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
+            3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
             else -> 0.00
         }
     }
 
-    fun getTipPercentLabel(button: Int) : String
+    fun getTipPercentLabel(button: Int, sharedViewModel: SharedViewModel) : String
     {
-        return formatAmount(getTipPercent(button), symbol = Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END, noSpace = true), decimalPlaces = 0)
+        return formatAmount(getTipPercent(button, sharedViewModel), symbol = Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END, noSpace = true), decimalPlaces = 0)
     }
 
     private fun updateTotal(sharedViewModel: SharedViewModel)
@@ -40,7 +40,7 @@ class ConfirmationViewModel : ViewModel() {
             1, 2, 3 -> {
                 tipAmount.doubleValue = calculateTip(
                     sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,
-                    getTipPercent(selectedButton.intValue) / 100.00
+                    getTipPercent(selectedButton.intValue, sharedViewModel) / 100.00
                 )
             }
             4 -> {tipAmount.doubleValue = sharedViewModel.tipAmount}

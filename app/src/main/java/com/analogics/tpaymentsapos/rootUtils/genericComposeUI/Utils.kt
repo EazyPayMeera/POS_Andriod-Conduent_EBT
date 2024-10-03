@@ -81,11 +81,11 @@ fun removeNonDigits(input: String): String {
     return re.replace(input, "")
 }
 
-fun createAmountTransformation(symbol: Symbol?=Symbol()): VisualTransformation {
+fun createAmountTransformation(symbol: Symbol?=Symbol(),decimalPlaces: Int=2): VisualTransformation {
     return object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             // Format the text using your formatAmount function
-            val formatted = formatAmount(text.text,symbol=symbol)
+            val formatted = formatAmount(text.text,symbol=symbol, decimalPlaces=decimalPlaces)
 
             // Define the offset mapping
             val offsetMapping = object : OffsetMapping {

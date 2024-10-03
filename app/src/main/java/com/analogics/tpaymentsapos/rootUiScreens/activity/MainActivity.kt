@@ -57,6 +57,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PreauthView
 import com.analogics.tpaymentsapos.rootUiScreens.login.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TaxPercentageView
+import com.analogics.tpaymentsapos.rootUiScreens.login.TipPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view.OnBoardSlideView
@@ -270,6 +271,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.TaxPercentageScreen.route) {
             TaxPercentageView(navHostController)
+        }
+        composable(AppNavigationItems.TipPercentageScreen.route) {
+            TipPercentageView(navHostController)
         }
         composable(AppNavigationItems.PreauthScreen.route) {
             PreauthView(navHostController)

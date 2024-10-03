@@ -46,8 +46,8 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
     @Composable
     fun getPrompt(): String {
         return when (viewModel.taxType) {
-            TaxPercentageViewModel.TaxType.SGST ->  stringResource(id = R.string.tax_prompt_sgst)
-            TaxPercentageViewModel.TaxType.CGST -> stringResource(id = R.string.tax_prompt_cgst)
+            TaxPercentageViewModel.TaxType.SGST ->  stringResource(id = R.string.tax_percent_change_prompt_sgst)
+            TaxPercentageViewModel.TaxType.CGST -> stringResource(id = R.string.tax_percent_change_prompt_cgst)
         }
     }
 
@@ -155,6 +155,6 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onLoad(navHostController)
+        viewModel.onLoad(navHostController, sharedViewModel)
     }
 }

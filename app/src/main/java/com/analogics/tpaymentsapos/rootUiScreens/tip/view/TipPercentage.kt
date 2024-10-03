@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,8 +23,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.Symbol
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUiScreens.tip.viewmodel.TipViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipPercentage
+import com.analogics.tpaymentsapos.rootUiScreens.tax.viewmodel.TipPercentageViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -31,16 +35,41 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
-
 @Composable
-fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hiltViewModel()) {
+fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercentageViewModel = hiltViewModel()) {
+
     var isDialogVisible by remember { mutableStateOf(false) }
+    var sharedViewModel = localSharedViewModel.current
+
+    @Composable
+    fun getPrompt(): String {
+        return stringResource(id = R.string.tip_percent_change_prompt) + " " + when (viewModel.tipOption) {
+            TipPercentage.OPTION1 -> 1
+            TipPercentage.OPTION2 -> 2
+            else -> 3
+        }
+    }
+
+    @Composable
+    fun getCurrentTipValue(): String {
+        return stringResource(id = R.string.tip_current_value) + " : " + when (viewModel.tipOption) {
+            TipPercentage.OPTION1 ->  sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
+            TipPercentage.OPTION2 ->  sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
+            else -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
+        }
+    }
+
     Column {
+
+        // Top App Bar
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
+
+        // Main Content
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
@@ -49,43 +78,58 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
+                // Title Text
                 TextView(
-                    text = stringResource(id = R.string.enter_tip_amount),
+                    text = getPrompt(),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
-                    Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                    Modifier.padding(top = MaterialTheme.dimens.DP_10_CompactMedium),
                     textAlign = TextAlign.Center
                 )
+
+                // Title Text
+                TextView(
+                    text = getCurrentTipValue(),
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Bold,
+                    1,
+                    Modifier.padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium),
+                    textAlign = TextAlign.Center
+                )
+
+                // Image View
                 ImageView(
-                    imageId = R.drawable.card, size = MaterialTheme.dimens.DP_33_CompactMedium,
+                    imageId = R.drawable.card,
+                    size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
                     contentDescription = "",
                 )
 
                 OutlinedTextField(
-                    value = viewModel.tipAmount,
+                    value = viewModel.tipPercent,
                     onValueChange = {viewModel.onTipChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = stringResource(id = R.string.tip_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
+                    placeholder = "",
+                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.Center),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {
-                        viewModel.onConfirm(navHostController)
-                    },
-                    visualTransformation = createAmountTransformation()
+                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
+                    visualTransformation = createAmountTransformation(Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END), decimalPlaces = 0),
+                    amount = false,
                 )
 
             }
         }
 
+        // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/ isDialogVisible = true},
+            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
 
         if (isDialogVisible) {
@@ -99,10 +143,10 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.TipScreen.route)
+                    navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
                 }
                 .setOnConfirmAction {
-                    navHostController.popBackStack()
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
                 }
                 .setShowButtons(true)
                 .setNavAction {
@@ -111,5 +155,9 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                 .buildDialog(onClose = { isDialogVisible = false })
 
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(navHostController, sharedViewModel)
     }
 }

@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -143,7 +142,7 @@ fun TippingView(
     sharedViewModel: SharedViewModel
 ) {
     val options = when (type) {
-        ConfigurableViewType.Percentage -> listOf(stringResource(id = R.string.ten), stringResource(id = R.string.fifteen), stringResource(id = R.string.twenty))
+        ConfigurableViewType.Percentage -> listOf(viewModel.getTipPercentLabel(TipPercentage.OPTION1, sharedViewModel), viewModel.getTipPercentLabel(TipPercentage.OPTION2, sharedViewModel), viewModel.getTipPercentLabel(TipPercentage.OPTION3, sharedViewModel))
         ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + ":" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + ":" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
     }
 
@@ -183,9 +182,9 @@ fun TippingView(
                             .width(MaterialTheme.dimens.DP_115_CompactMedium)
                             .height(MaterialTheme.dimens.DP_34_CompactMedium),
                         onClick = {
-                            if(type == ConfigurableViewType.Taxes)
-                            {
-                                viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
+                            when(type) {
+                                ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(options.indexOf(option), navHostController)
+                                ConfigurableViewType.Taxes -> viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
                             }
                         },
                         elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium) // Use CardDefaults for elevation
@@ -217,6 +216,12 @@ fun TippingView(
 enum class ConfigurableViewType {
     Percentage,
     Taxes
+}
+
+enum class TipPercentage(val value: Int) {
+    OPTION1(0),
+    OPTION2(1),
+    OPTION3(2)
 }
 
 @Composable

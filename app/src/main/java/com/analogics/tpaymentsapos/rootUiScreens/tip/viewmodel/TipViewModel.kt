@@ -9,15 +9,15 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
 class TipViewModel : ViewModel() {
-    var tipamount by mutableStateOf("")
+    var tipAmount by mutableStateOf("")
         private set
 
     fun onTipChange(newValue: String) {
-        tipamount = newValue
+        tipAmount = newValue
     }
 
     fun onConfirm(navHostController: NavHostController) {
-        navHostController.previousBackStackEntry?.savedStateHandle?.set(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT,transformToAmountDouble(tipamount))
+        navHostController.previousBackStackEntry?.savedStateHandle?.set(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT,transformToAmountDouble(tipAmount))
         navHostController.popBackStack()
     }
 
