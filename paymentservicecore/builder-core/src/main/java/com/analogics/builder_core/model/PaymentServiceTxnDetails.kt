@@ -57,5 +57,6 @@ data class PaymentServiceTxnDetails(
     @SerializedName("OriginalCashback") var originalCashback: String? = null,
     @SerializedName("OriginalCGST") var originalCGST: String? = null,
     @SerializedName("OriginalSGST") var originalSGST: String? = null,
-    @SerializedName("OriginalTtlAmount") var originalTtlAmount: String? = null
+    @SerializedName("OriginalTtlAmount") var originalTtlAmount: String? = null,
+    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null
 )

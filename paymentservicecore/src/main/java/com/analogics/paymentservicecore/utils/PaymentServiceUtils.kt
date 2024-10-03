@@ -13,4 +13,10 @@ object PaymentServiceUtils {
         val gson = Gson()
         return gson.toJson(response, object : TypeToken<T>() {}.type)
     }
+
+    fun String.batchClosingTtlAmt():String{
+
+
+        return ""
+    }
 }

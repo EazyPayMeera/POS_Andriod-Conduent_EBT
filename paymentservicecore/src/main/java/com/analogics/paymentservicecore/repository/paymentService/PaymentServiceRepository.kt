@@ -9,6 +9,7 @@ import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.paymentservicecore.repository.paymentService.auth_capture.AuthCaptureRequestRepository
+import com.analogics.paymentservicecore.repository.paymentService.batch.BatchRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.login.LoginRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.refund.RefundRequestRepository
@@ -23,7 +24,8 @@ class PaymentServiceRepository @Inject constructor(
     private val loginRequestRepository: LoginRequestRepository,
     private val reversalRequestRepository: ReversalRequestRepository,
     private val voidRequestRepository: VoidRequestRepository,
-    private val purchaseRequestRepository: PurchaseRequestRepository
+    private val purchaseRequestRepository: PurchaseRequestRepository,
+    private val batchRequestRepository: BatchRequestRepository
 ) :
     IPaymentServiceRequestListener,
     IPaymentSDKListener {
@@ -129,6 +131,14 @@ class PaymentServiceRepository @Inject constructor(
             onAPIServiceResponse(it)
         }
     }
+    override suspend fun apiServiceBatch(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+    ) {
+        batchRequestRepository.sendBatchRequest(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
+    }
 
     override fun onAPIServiceResponse(response: Any) {
         when (response) {
@@ -141,4 +151,6 @@ class PaymentServiceRepository @Inject constructor(
             }
         }
     }
+
+
 }
