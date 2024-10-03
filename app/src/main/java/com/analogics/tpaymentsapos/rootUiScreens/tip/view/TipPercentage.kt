@@ -142,6 +142,7 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
+                .setAutoOff(false)
                 .setOnCancelAction {
                     navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
                 }

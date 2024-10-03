@@ -116,6 +116,7 @@ fun PasswordView(navHostController: NavHostController) {
                     navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
                 }
                 .setShowButtons(true)
+                .setAutoOff(false)
                 .setNavAction {
                     navHostController.popBackStack()
                 }

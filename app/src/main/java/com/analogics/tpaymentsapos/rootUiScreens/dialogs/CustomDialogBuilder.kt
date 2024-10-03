@@ -53,6 +53,7 @@ class CustomDialogBuilder private constructor() {
     private var onCancelAction: (() -> Unit)? = null // Action for Cancel button
     private var onConfirmAction: (() -> Unit)? = null // Action for Confirm button
     private var showButtons: Boolean = false     // New parameter to control the visibility of both buttons
+    private var autooff: Boolean = true     // New parameter to control the visibility of both buttons
 
 
     fun setTitle(title: String) = apply { this.title = title }
@@ -67,6 +68,7 @@ class CustomDialogBuilder private constructor() {
     fun setOnCancelAction(action: () -> Unit) = apply { this.onCancelAction = action }
     fun setOnConfirmAction(action: () -> Unit) = apply { this.onConfirmAction = action }
     fun setShowButtons(show: Boolean) = apply { this.showButtons = show }    // Method to control the visibility of both buttons
+    fun setAutoOff(show: Boolean) = apply { this.autooff = show }    // Method to control the visibility of both buttons
 
     @Composable
     fun buildDialog(onClose: () -> Unit) {
@@ -212,9 +214,11 @@ class CustomDialogBuilder private constructor() {
                     }
             }
             // Delay and navigate after 2 seconds
-            LaunchedEffect(Unit) {
-                delay(2000) // 2 seconds delay
-                navAction?.invoke() // Replace "destination_route" with your actual route
+            if(autooff) {
+                LaunchedEffect(Unit) {
+                    delay(2000) // 2 seconds delay
+                    navAction?.invoke() // Replace "destination_route" with your actual route
+                }
             }
             
         }

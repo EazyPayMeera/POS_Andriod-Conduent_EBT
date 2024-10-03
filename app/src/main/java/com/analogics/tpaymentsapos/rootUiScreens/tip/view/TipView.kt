@@ -95,6 +95,7 @@ fun TipView(navHostController: NavHostController, viewModel: TipViewModel = hilt
                 .setSmallText("")
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
                 .setCancelable(true)
+                .setAutoOff(false)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
