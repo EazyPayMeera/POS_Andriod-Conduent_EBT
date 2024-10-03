@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -144,7 +143,7 @@ fun TippingView(
 ) {
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(stringResource(id = R.string.ten), stringResource(id = R.string.fifteen), stringResource(id = R.string.twenty))
-        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + ":" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + ":" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
+        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + ":\n" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + ":\n" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
     }
 
     val title = when (type) {
@@ -169,9 +168,13 @@ fun TippingView(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                    /*.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)*/
             )
-
+            val cardHeight = if (type == ConfigurableViewType.Taxes) {
+                MaterialTheme.dimens.DP_50_CompactMedium
+            } else {
+                MaterialTheme.dimens.DP_34_CompactMedium
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -181,7 +184,7 @@ fun TippingView(
                     Card(
                         modifier = Modifier
                             .width(MaterialTheme.dimens.DP_115_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_34_CompactMedium),
+                            .height(cardHeight),
                         onClick = {
                             if(type == ConfigurableViewType.Taxes)
                             {
