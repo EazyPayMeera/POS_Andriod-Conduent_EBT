@@ -60,11 +60,11 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
     fun fetchTransactionDetailsTxnByDate(date: Date){
         viewModelScope.launch {
-            allTransactionList=dbRepository.fetchTransactionDetailsTxnByDate(date)
+            /*allTransactionList=dbRepository.fetchTransactionDetailsTxnByDate(date)
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
-            }
+            }*/
         }
     }
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
