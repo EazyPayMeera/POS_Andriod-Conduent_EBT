@@ -86,7 +86,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             try {
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(_transactionList.value)
-                paymentServiceRepository.apiServiceLogin(
+                paymentServiceRepository.apiServiceBatch(
                     PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@TxnViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
