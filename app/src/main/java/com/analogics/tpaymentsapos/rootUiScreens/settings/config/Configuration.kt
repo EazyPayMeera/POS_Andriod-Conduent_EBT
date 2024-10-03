@@ -143,7 +143,7 @@ fun TippingView(
 ) {
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(viewModel.getTipPercentLabel(TipPercentage.OPTION1, sharedViewModel), viewModel.getTipPercentLabel(TipPercentage.OPTION2, sharedViewModel), viewModel.getTipPercentLabel(TipPercentage.OPTION3, sharedViewModel))
-        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + ":" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + ":" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
+        ConfigurableViewType.Taxes -> listOf(stringResource(id = R.string.tax_label_sgst) + "\n" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat() , stringResource(id = R.string.tax_label_cgst) + "\n" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat())
     }
 
     val title = when (type) {
