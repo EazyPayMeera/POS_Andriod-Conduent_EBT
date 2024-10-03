@@ -168,9 +168,13 @@ fun TippingView(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                    /*.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)*/
             )
-
+            val cardHeight = if (type == ConfigurableViewType.Taxes) {
+                MaterialTheme.dimens.DP_50_CompactMedium
+            } else {
+                MaterialTheme.dimens.DP_34_CompactMedium
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -180,7 +184,7 @@ fun TippingView(
                     Card(
                         modifier = Modifier
                             .width(MaterialTheme.dimens.DP_115_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_34_CompactMedium),
+                            .height(cardHeight),
                         onClick = {
                             when(type) {
                                 ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(options.indexOf(option), navHostController)
