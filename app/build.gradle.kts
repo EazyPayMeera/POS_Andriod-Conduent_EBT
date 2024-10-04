@@ -24,6 +24,7 @@ android {
             useSupportLibrary = true
         }
         buildConfigField ("Integer", "LOG_LEVEL", "2")
+        buildConfigField ("String", "ACQUIRER_TYPE", "\"Global Payment\"")
     }
 
     buildTypes {

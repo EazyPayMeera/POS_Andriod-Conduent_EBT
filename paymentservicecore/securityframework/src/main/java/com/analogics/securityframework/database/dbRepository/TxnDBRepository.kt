@@ -5,6 +5,7 @@ import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
+import java.util.Date
 import javax.inject.Inject
 
 class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao) {
@@ -39,4 +40,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     suspend fun getAllTxnListData(): List<TxnEntity>{
         return iTxnDao.getAllTxnListData()
     }
+
+    suspend fun fetchTransactionDetailsTxnByDate(date: String): List<TxnEntity> {
+        return iTxnDao.getTransactionDetailsTxnBeforeTime(date)
+    }
+
+
 }

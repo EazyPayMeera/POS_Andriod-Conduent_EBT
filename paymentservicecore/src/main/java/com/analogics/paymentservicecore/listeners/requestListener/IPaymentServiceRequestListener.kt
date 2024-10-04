@@ -43,6 +43,10 @@ interface IPaymentServiceRequestListener {
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     )
+    suspend fun apiServiceBatch(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+    )
 
     fun onAPIServiceResponse(response: Any)
 }
