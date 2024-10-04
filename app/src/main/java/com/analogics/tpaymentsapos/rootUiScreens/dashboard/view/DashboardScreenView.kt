@@ -33,7 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
@@ -241,12 +240,12 @@ fun DashboardContentSurface(
                 modifier = Modifier
                     .fillMaxWidth() // Make the box fill the width
                     .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                    .height(30.dp) // Set a fixed height for the box
+                    .height(MaterialTheme.dimens.DP_33_CompactMedium) // Set a fixed height for the box
                     .wrapContentHeight() // Ensure the height wraps content
             ) {
                 TextView(
                     text = if (visibility && isDemoMode == true) stringResource(id = R.string.training_mode) else "",
-                    fontSize = 20.sp,
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -261,11 +260,7 @@ fun DashboardContentSurface(
                     visibility = !visibility // Toggle visibility
                 }
             }
-
-
-
-
-
+            
             dashboardItemLists.chunked(2).forEach { rowConfigs ->
                 Row(
                     modifier = Modifier
