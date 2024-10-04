@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -58,7 +61,9 @@ import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertLocalDateTimeToString
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.time.LocalDateTime
@@ -70,21 +75,28 @@ fun TransactionListScreen(
     navHostController: NavHostController,
     viewModel: TxnViewModel = hiltViewModel()
 ) {
+    // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
-    viewModel.fetchTransactions()
-    var sharedViewModel = localSharedViewModel.current
+    // Initial fetch of transactions (if needed)
+   viewModel.fetchTransactions()
+    val sharedViewModel = localSharedViewModel.current
 
-    // State to control visibility of the date picker
+    // State variables
     val showDateTimePicker = remember { mutableStateOf(false) }
-    val selectedDateTime = remember { mutableStateOf<LocalDateTime?>(null) } // Store selected date and time
+    val selectedDateTime = remember { mutableStateOf<LocalDateTime?>(null) }
+    val showMenu = remember { mutableStateOf(false) }
+    val selectedBatch = remember { mutableStateOf("") }
 
-    // Trigger the DateTimePicker when showDateTimePicker is true
+    // Date picker logic
     if (showDateTimePicker.value) {
         DateTimePickerDialog(
             onDismissRequest = { showDateTimePicker.value = false },
             onDateTimeSelected = { selectedDate ->
-                selectedDateTime.value = selectedDate // Update the selected date and time
-                showDateTimePicker.value = false // Close the picker
+                selectedDateTime.value = selectedDate
+                showDateTimePicker.value = false
+                viewModel.filterTransactionsByDate(selectedDate)
+                Log.d("filter viewmodel1",selectedDate.toString())
+
             }
         )
     }
@@ -94,15 +106,20 @@ fun TransactionListScreen(
             title = stringResource(R.string.transactions),
             onBackButtonClick = { navHostController.popBackStack() }
         )
+
+        // Transactions summary card
         GenericCard(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel)
+                HeaderSection(viewModel,sharedViewModel)
                 SummarySection(viewModel)
             }
         }
+
+        // Transaction list section with filter
         GenericCard(
+
             modifier = Modifier.padding(
                 start = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
                 end = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
@@ -123,43 +140,68 @@ fun TransactionListScreen(
                         style = MaterialTheme.typography.h6,
                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary
                     )
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = stringResource(id = R.string.see_all), // Replace with your text
+                            text = stringResource(id = R.string.see_all),
                             style = MaterialTheme.typography.body2,
                             color = Color.Gray,
                             modifier = Modifier.clickable {
                                 // Handle see all action here if needed
                             }
                         )
-                        Spacer(modifier = Modifier.width(10.dp)) // Optional space between the two texts
 
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        // Menu Trigger Icon for filters
                         Image(
                             painter = painterResource(id = R.drawable.filter_image),
-                            contentDescription = "",
+                            contentDescription = "Filter",
                             modifier = Modifier
                                 .size(24.dp)
                                 .clickable {
-                                    showDateTimePicker.value = true // Show the date picker when the image is clicked
+                                    showMenu.value = true
                                 }
                         )
+
+                        // Filter dropdown menu
+                        DropdownMenu(
+                            expanded = showMenu.value,
+                            onDismissRequest = { showMenu.value = false }
+                        ) {
+                            // Date filter
+                            DropdownMenuItem(onClick = {
+                                showMenu.value = false
+                                showDateTimePicker.value = true // Show date picker
+                            }) {
+                                Text("Select Date")
+                            }
+
+                            // Batch number filter (you can add logic to handle this)
+                            DropdownMenuItem(onClick = {
+                                showMenu.value = false
+                                // Logic for handling batch number filter
+                            }) {
+                                Text("Filter by Batch Number")
+                            }
+                        }
                     }
                 }
 
-                // Display selected date and time if available
+                // Display selected date & time (if any)
                 selectedDateTime.value?.let {
                     Text(
                         text = "Selected Date & Time: ${it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))}",
                         style = MaterialTheme.typography.body2,
                         color = Color.Gray,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp) // Padding for the text
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
                     )
                 }
 
                 Divider(color = Color.Gray, thickness = 1.dp)
 
+                // If transaction list is empty
                 if (transactions.isNullOrEmpty()) {
-                    // Display message when there are no transactions
                     Text(
                         text = "Transaction List is Empty",
                         style = MaterialTheme.typography.body1,
@@ -169,16 +211,14 @@ fun TransactionListScreen(
                             .align(Alignment.CenterHorizontally)
                     )
                 } else {
-                    // Make the whole area of each transaction touchable
+                    // Transaction list
                     LazyColumn {
                         items(transactions.size) { index ->
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        // Handle click for this transaction item
-                                        sharedViewModel.objRootAppPaymentDetail =
-                                            transactions[index]
+                                        sharedViewModel.objRootAppPaymentDetail = transactions[index]
                                         navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
                                     }
                             ) {
@@ -195,6 +235,8 @@ fun TransactionListScreen(
         }
     }
 }
+
+
 
 
 
@@ -333,7 +375,8 @@ fun TransactionItem(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HeaderSection(viewModel: TxnViewModel) {
+fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
+
     var isDialogVisible by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -354,12 +397,14 @@ fun HeaderSection(viewModel: TxnViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
-                    style = MaterialTheme.typography.caption,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
-                )
+                sharedViewModel.objRootAppPaymentDetail.batchId?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.caption,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
+                    )
+                }
 
                 Row {
                     IconButton(onClick = { /* Handle print action */ }) {

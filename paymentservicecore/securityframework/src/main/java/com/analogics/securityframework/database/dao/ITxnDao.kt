@@ -23,6 +23,7 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable")
     suspend fun getAllTxnListData(): List<TxnEntity>
 
-    @Query("SELECT * FROM TxnTable WHERE DateTime <= :dateTime")
-    suspend fun getTransactionDetailsTxnBeforeTime(dateTime: Date): List<TxnEntity>
+    @Query("SELECT * FROM TxnTable WHERE substr(dateTime, 1, 16) <= :date")
+     suspend fun getTransactionDetailsTxnBeforeTime(date: String): List<TxnEntity>
+
 }

@@ -41,7 +41,9 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getAllTxnListData()
     }
 
-    suspend fun fetchTransactionDetailsTxnByDate(date: Date): List<TxnEntity> {
+    suspend fun fetchTransactionDetailsTxnByDate(date: String): List<TxnEntity> {
         return iTxnDao.getTransactionDetailsTxnBeforeTime(date)
     }
+
+
 }

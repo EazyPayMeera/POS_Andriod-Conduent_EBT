@@ -2,6 +2,8 @@
 
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
@@ -13,6 +15,8 @@ import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
@@ -109,4 +113,10 @@ fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails
 fun getCurrentDateTime(format : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT): String {
     val sdf = SimpleDateFormat(format, Locale.getDefault())
     return sdf.format(Date())
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun convertLocalDateTimeToString(dateTime: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT1)
+    return dateTime.format(formatter)
 }
