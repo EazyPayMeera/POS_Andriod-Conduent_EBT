@@ -10,6 +10,7 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,12 +22,12 @@ class SplashScreenViewModel @Inject constructor(private  var paymentServiceRepos
         viewModelScope.launch {
             sharedViewModel.objPosConfig = paymentServiceRepository.getPosConfig(navController.context)
             if(sharedViewModel.objPosConfig?.isLoggedIn==true)
-                navController.navigate(AppNavigationItems.DashBoardScreen.route)
+                navController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
             else if(sharedViewModel.objPosConfig?.isOnboardingComplete==true)
-                navController.navigate(AppNavigationItems.LoginScreen.route)
+                navController.navigateAndClean(AppNavigationItems.LoginScreen.route)
             else {
                 delay(AppConstants.SPLASH_SCREEN_TIMEOUT_MS) //  delay for splash screen
-                navController.navigate(AppNavigationItems.OnBoardingScreen.route)
+                navController.navigateAndClean(AppNavigationItems.OnBoardingScreen.route)
             }
         }
     }

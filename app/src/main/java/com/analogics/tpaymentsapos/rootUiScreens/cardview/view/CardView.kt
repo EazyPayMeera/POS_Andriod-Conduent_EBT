@@ -48,6 +48,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
@@ -213,7 +214,7 @@ fun CardView(navHostController: NavHostController) {
                         ) {
                             OkButton(
                                 onClick = {
-                                    navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                                    navHostController.navigateAndClean(AppNavigationItems.DashboardScreen.route)
                                 },
                                 title = stringResource(id = R.string.cancel),
                                 maxsizebutton = false
@@ -225,7 +226,7 @@ fun CardView(navHostController: NavHostController) {
         }
     }
 
-    FooterButtons(stringResource(id = R.string.cancel),{navHostController.navigate(AppNavigationItems.TrainingScreen.route)})
+    FooterButtons(stringResource(id = R.string.cancel),{navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)})
 
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, navHostController)

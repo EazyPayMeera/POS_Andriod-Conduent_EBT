@@ -7,7 +7,6 @@ sealed class AppNavigationItems(val route: String) {
  object LoginScreen : AppNavigationItems(NavScreensEnum.LoginScreen.name)
  object ForgetPasswordScreen : AppNavigationItems(NavScreensEnum.ForgetPasswordView.name)
  object PleaseWaitScreen : AppNavigationItems(NavScreensEnum.PleaseWaitView.name)
- object TrainingScreen : AppNavigationItems(NavScreensEnum.TrainingView.name)
  object AmountScreen : AppNavigationItems(NavScreensEnum.AmountView.name)
  object CardScreen : AppNavigationItems(NavScreensEnum.CardView.name)
  object ConfirmationScreen : AppNavigationItems(NavScreensEnum.ConfirmationView.name)

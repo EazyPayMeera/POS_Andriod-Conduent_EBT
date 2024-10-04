@@ -8,9 +8,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.google.gson.Gson
@@ -119,4 +122,23 @@ fun getCurrentDateTime(format : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT): 
 fun convertLocalDateTimeToString(dateTime: LocalDateTime): String {
     val formatter = DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT1)
     return dateTime.format(formatter)
+}
+
+
+fun NavController.navigateAndClean(route: String) {
+    navigate(route = route) {
+        popUpTo(graph.startDestinationId) { inclusive = true }
+    }
+    graph.setStartDestination(route)
+}
+
+fun NavHostController.navigateAndClean(route: String) {
+    navigate(route = route) {
+        popUpTo(graph.startDestinationId) { inclusive = true }
+    }
+    graph.setStartDestination(route)
+}
+
+fun navigateToDashboard(navHostController: NavHostController) {
+    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
 }

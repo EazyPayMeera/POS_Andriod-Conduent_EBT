@@ -27,6 +27,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -88,7 +89,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
 
                 FooterButtons(
                     firstButtonTitle = stringResource(id = R.string.cancel),
-                    firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
+                    firstButtonOnClick = { viewModel.onCancel(navHostController) },
                     secondButtonTitle = stringResource(id = R.string.yes),
                     secondButtonOnClick = { viewModel.onShiftEnd(navHostController,sharedViewModel) },
                     alignment = Alignment.TopCenter
@@ -102,7 +103,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                     verticalAlignment = Alignment.Bottom
                 ) {
                     AppButton(
-                        onClick = {navHostController.navigate(AppNavigationItems.TrainingScreen.route)  },
+                        onClick = {navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)  },
                         title = stringResource(id = R.string.print_last_receipt),
                         image = painterResource(id = R.drawable.ic_print)
                     )

@@ -11,6 +11,7 @@ import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
 class AmountViewModel : ViewModel() {
@@ -44,7 +45,7 @@ class AmountViewModel : ViewModel() {
     }
 
     fun onCancel(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
     private fun calculateTax(txnAmount: Double, percent: Double) : Double {

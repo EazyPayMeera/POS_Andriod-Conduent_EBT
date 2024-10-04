@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import kotlinx.coroutines.launch
 
 class PinViewModel : ViewModel() {
@@ -24,7 +25,7 @@ class PinViewModel : ViewModel() {
 
     fun onCancelAction(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         }
     }
 }

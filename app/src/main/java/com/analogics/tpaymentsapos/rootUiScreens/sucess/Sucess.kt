@@ -19,6 +19,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.ui.theme.BgColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -76,7 +77,7 @@ fun SucessView(navHostController: NavHostController) {
             firstButtonTitle = stringResource(id = R.string.e_recp),
             firstButtonOnClick = {navHostController.navigate(AppNavigationItems.EnterEmailScreen.route) },
             secondButtonTitle = stringResource(id = R.string.home),
-            secondButtonOnClick = {navHostController.navigate(AppNavigationItems.TrainingScreen.route) }
+            secondButtonOnClick = {navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route) }
         )
     }
 }

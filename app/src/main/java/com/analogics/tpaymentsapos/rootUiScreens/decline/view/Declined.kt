@@ -22,6 +22,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -114,7 +115,7 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     OkButton(
                         onClick = {
-                            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),
                     )

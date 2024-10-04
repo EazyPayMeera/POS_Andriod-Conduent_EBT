@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.sucess
 
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 
 class SucessViewModel {
 
@@ -12,7 +13,7 @@ class SucessViewModel {
     }
 
     fun onHome(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
 }

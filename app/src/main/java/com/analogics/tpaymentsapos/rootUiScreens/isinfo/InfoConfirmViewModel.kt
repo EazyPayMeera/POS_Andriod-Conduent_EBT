@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 
 class InfoConfirmViewModel : ViewModel() {
     var rawInput by mutableStateOf("")
@@ -32,6 +33,6 @@ class InfoConfirmViewModel : ViewModel() {
     }
 
     fun onCancel(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 }

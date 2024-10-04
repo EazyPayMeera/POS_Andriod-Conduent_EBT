@@ -102,7 +102,7 @@ fun ChangePasswordView(navHostController: NavHostController?) {
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
                     ) {
-                        val message = stringResource(id = R.string.not_empty)
+                        val message = stringResource(id = R.string.cred_not_to_be_empty)
                         AppButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
