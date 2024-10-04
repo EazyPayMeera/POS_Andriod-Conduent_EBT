@@ -260,7 +260,7 @@ fun DashboardContentSurface(
                     visibility = !visibility // Toggle visibility
                 }
             }
-            
+
             dashboardItemLists.chunked(2).forEach { rowConfigs ->
                 Row(
                     modifier = Modifier
