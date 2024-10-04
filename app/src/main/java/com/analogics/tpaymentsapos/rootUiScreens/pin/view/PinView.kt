@@ -123,7 +123,6 @@ fun PinView(navHostController: NavHostController) {
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                .setAutoOff(false)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setNavAction {
                     navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
