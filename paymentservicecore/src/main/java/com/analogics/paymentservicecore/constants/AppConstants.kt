@@ -9,6 +9,7 @@ object AppConstants {
     /* Value constants */
     const val DEFAULT_UI_LANGUAGE_CODE = "en"
     const val DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
+    const val DEFAULT_DATE_TIME_FORMAT1 = "yyyy-MM-dd HH:mm"
     const val UNIQUE_ID_DATE_TIME_FORMAT = "DHHmmss"
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L

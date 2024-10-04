@@ -19,4 +19,7 @@ object PaymentServiceUtils {
 
         return ""
     }
+    inline fun <reified T> jsonStringToObjectList(response: String): List<T> {
+        return Gson().fromJson(response, object : TypeToken<T>() {}.type)
+    }
 }

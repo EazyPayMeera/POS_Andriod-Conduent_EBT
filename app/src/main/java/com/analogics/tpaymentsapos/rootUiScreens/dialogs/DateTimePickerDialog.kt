@@ -2,6 +2,8 @@ package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -9,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import java.time.LocalDateTime
 import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateTimePickerDialog(
     onDismissRequest: () -> Unit,

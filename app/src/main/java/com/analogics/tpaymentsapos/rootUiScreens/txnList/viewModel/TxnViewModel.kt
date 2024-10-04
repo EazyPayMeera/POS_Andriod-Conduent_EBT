@@ -1,6 +1,8 @@
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +18,7 @@ import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.example.example.ObjEmployeeResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -23,6 +26,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import javax.inject.Inject
 
@@ -35,11 +41,12 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     var selectedDateTime = mutableStateOf(Date())
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
+    private val filterTxn = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
 
     init {
         // Fetch transactions asynchronously
         viewModelScope.launch {
-            fetchTransactions()
+         fetchTransactions()
         }
     }
 
@@ -58,13 +65,33 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             }.toString())
         }
     }
-    fun fetchTransactionDetailsTxnByDate(date: Date){
+    fun fetchTransactionDetailsTxnByDate(date: String){
+        Log.d("filter viewmodel1",date)
         viewModelScope.launch {
-            /*allTransactionList=dbRepository.fetchTransactionDetailsTxnByDate(date)
+            allTransactionList =dbRepository.fetchTransactionDetailsTxnByDate(date)
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
-            }*/
+            }
+        }
+
+        Log.d("filter by date", allTransactionList?.let {
+            val txnDataList = convertTxnEntityListToTxnDataList(it)
+            _transactionList.value = txnDataList
+        }.toString())
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun filterTransactionsByDate(selectedDate: LocalDateTime) {
+        viewModelScope.launch {
+            // Filter the transactions that occurred before the selected date
+            val filteredList = _transactionList.value.filter { transaction ->
+                // Assuming `transaction.date` is in the format "yyyy-MM-dd"
+                val transactionDate = LocalDate.parse(transaction.dateTime, DateTimeFormatter.ISO_LOCAL_DATE)
+
+                // Compare the transaction date with the selected date (using toLocalDate to ignore time)
+                transactionDate.isBefore(selectedDate.toLocalDate())
+            }
+            filterTxn.value = filteredList
         }
     }
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
