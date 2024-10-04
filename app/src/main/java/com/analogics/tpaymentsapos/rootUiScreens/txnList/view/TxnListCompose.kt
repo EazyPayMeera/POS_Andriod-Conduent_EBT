@@ -3,8 +3,8 @@ package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +24,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Print
@@ -40,14 +39,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -55,15 +50,12 @@ import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.AlertDialogBuilder
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.DateTimePickerDialog
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertLocalDateTimeToString
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import java.time.LocalDateTime
@@ -75,6 +67,7 @@ fun TransactionListScreen(
     navHostController: NavHostController,
     viewModel: TxnViewModel = hiltViewModel()
 ) {
+
     // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
     // Initial fetch of transactions (if needed)
@@ -95,8 +88,6 @@ fun TransactionListScreen(
                 selectedDateTime.value = selectedDate
                 showDateTimePicker.value = false
                 viewModel.filterTransactionsByDate(selectedDate)
-                Log.d("filter viewmodel1",selectedDate.toString())
-
             }
         )
     }
@@ -218,7 +209,8 @@ fun TransactionListScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        sharedViewModel.objRootAppPaymentDetail = transactions[index]
+                                        sharedViewModel.objRootAppPaymentDetail =
+                                            transactions[index]
                                         navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
                                     }
                             ) {

@@ -175,6 +175,7 @@ fun AppButton(
     {
         Button(onClick = onClick,
             modifier = Modifier
+                .align(Alignment.BottomCenter) // Align button at the bottom
                 .wrapContentSize()
                 .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
             colors = buttonColors(

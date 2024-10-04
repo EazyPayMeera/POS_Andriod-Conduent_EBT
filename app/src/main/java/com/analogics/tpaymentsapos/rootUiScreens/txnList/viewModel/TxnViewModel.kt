@@ -15,18 +15,13 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
-import com.analogics.tpaymentsapos.rootUiScreens.txnList.model.TxnDataList
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
-import com.example.example.ObjEmployeeResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -57,6 +52,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
+                Log.d("Transaction Data List", txnDataList[1].toString())
             }
 
             Log.d("all data", allTransactionList?.let {
@@ -85,12 +81,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             // Filter the transactions that occurred before the selected date
             val filteredList = _transactionList.value.filter { transaction ->
-                // Assuming `transaction.date` is in the format "yyyy-MM-dd"
-                val transactionDate = LocalDate.parse(transaction.dateTime, DateTimeFormatter.ISO_LOCAL_DATE)
+                // Parse the transaction dateTime as LocalDateTime
+                val transactionDateTime = LocalDateTime.parse(transaction.dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-                // Compare the transaction date with the selected date (using toLocalDate to ignore time)
-                transactionDate.isBefore(selectedDate.toLocalDate())
+                // Compare the transaction date and time with the selected date and time
+                transactionDateTime.isBefore(selectedDate)
             }
+            // Update the filterTxn value with the filtered list
             filterTxn.value = filteredList
         }
     }

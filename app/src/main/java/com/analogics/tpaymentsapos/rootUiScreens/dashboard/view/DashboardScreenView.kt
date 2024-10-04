@@ -3,14 +3,15 @@ package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ModalDrawer
@@ -32,7 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
@@ -230,23 +230,34 @@ fun DashboardContentSurface(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val isDemoMode = sharedViewModel.objPosConfig?.isDemoMode
+            Log.d("DashboardContentSurface", "isDemoMode: $isDemoMode")
 
-            sharedViewModel.objPosConfig?.isDemoMode?.takeIf { it==true }?.let {
-                var visibility by remember { mutableStateOf(true) }
+            var visibility by remember { mutableStateOf(true) }
 
+            // Use a Box to maintain space and center the text
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth() // Make the box fill the width
+                    .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                    .height(MaterialTheme.dimens.DP_33_CompactMedium) // Set a fixed height for the box
+                    .wrapContentHeight() // Ensure the height wraps content
+            ) {
                 TextView(
-                    text = when(visibility) {true -> stringResource(id = R.string.training_mode); else -> " "}, // Adding space purposefully. Empty value sifts the layout
-                    fontSize = 20.sp,
+                    text = if (visibility && isDemoMode == true) stringResource(id = R.string.training_mode) else "",
+                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
+                        .align(Alignment.Center) // Center the text in the box
                 )
+            }
 
-                LaunchedEffect(visibility) {
+            // LaunchedEffect that toggles visibility
+            LaunchedEffect(Unit) {
+                while (true) {
                     delay(AppConstants.TRAINING_MODE_BLINK_DELAY_MS)
-                    visibility = !visibility
+                    visibility = !visibility // Toggle visibility
                 }
             }
 
