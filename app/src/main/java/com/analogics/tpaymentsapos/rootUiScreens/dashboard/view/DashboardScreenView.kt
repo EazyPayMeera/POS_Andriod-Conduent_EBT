@@ -191,7 +191,7 @@ fun TrainingView(
                         dashboardItemLists = dashboardItemLists,
                         selectedButton = selectedButton,
                         onButtonClick = { text, onClick ->
-                            dashboardViewModel.onButtonClick(text, onClick)
+                            dashboardViewModel.onButtonClick(text, onClick,sharedViewModel)
                         }
                     )
                 }

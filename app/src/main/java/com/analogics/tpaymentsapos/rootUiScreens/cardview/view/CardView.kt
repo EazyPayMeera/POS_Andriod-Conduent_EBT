@@ -3,7 +3,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.cardview.view
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -231,7 +230,7 @@ fun CardView(navHostController: NavHostController) {
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-        Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+        sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.BatchId
         viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
     }
 

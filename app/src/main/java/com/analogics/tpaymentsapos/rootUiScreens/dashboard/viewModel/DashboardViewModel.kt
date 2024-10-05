@@ -3,16 +3,17 @@ package com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import androidx.compose.runtime.State
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,9 +31,13 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
 //    }
 
 
-    fun onButtonClick(text: String, onClick: () -> Unit) {
+    fun onButtonClick(text: String, onClick: () -> Unit, sharedViewModel: SharedViewModel) {
         _selectedButton.value = text
         onClick()
+        val currentDateTime = getCurrentDateTime()
+        val formattedDate = currentDateTime.substring(0, 10).replace("-", "") // Extracts "20241005"
+
+        sharedViewModel.objPosConfig?.apply { BatchId = formattedDate }?.saveToPrefs()
     }
 
     fun navigateTo(navHostController: NavHostController, route: String) {
