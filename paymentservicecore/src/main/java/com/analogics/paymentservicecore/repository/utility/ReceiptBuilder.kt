@@ -11,18 +11,18 @@ class ReceiptBuilder {
             .addField("STORE PHONE:", "(123) 456-7890")
             .addField("ORDER DETAILS", "Order Details")
             .addField("ORDER DATE/TIME:", paymentDetails?.dateTime ?: "N/A")
-            .addField("ORDER #:", paymentDetails?.invoiceNo ?: "N/A")
+            .addField("Invoice No:", paymentDetails?.invoiceNo ?: "N/A")
             .addField("POS TERMINAL #:", paymentDetails?.terminalId ?: "N/A")
             .addField("PURCHASED ITEMS", "")
             // Assuming items would be dynamically passed
             .addItem(ReceiptItem("Item 1", 19.99)) // Example item, replace with actual data
             .addItem(ReceiptItem("Item 2", 9.99)) // Example item, replace with actual data
-            .addField("SUBTOTAL:", paymentDetails?.txnAmount.toString() ?: 0.00.toString())
-            .addField("SALES TAX:", paymentDetails?.ttlAmount ?:0.00.toString())
-            .addField("TOTAL AMOUNT:", paymentDetails?.ttlAmount ?:0.00.toString())
-            .addField("PAYMENT:", paymentDetails?.accountType ?: "N/A")
+            .addField("SUBTOTAL:", paymentDetails?.txnAmount.toString())
+            .addField("SALES TAX:", paymentDetails?.ttlAmount.toString())
+            .addField("TOTAL AMOUNT:", paymentDetails?.ttlAmount.toString())
+            .addField("PAYMENT:", paymentDetails?.accountType.toString())
             .addField("CARD:", "**** **** **** 1234") // Replace with actual masked card data if available
-            .addField("AUTHORIZATION:", paymentDetails?.hostAuthCode ?: "N/A")
+            .addField("AUTHORIZATION:", paymentDetails?.hostAuthCode.toString())
             .addField("THANK YOU FOR YOUR PURCHASE!\nWE APPRECIATE YOUR BUSINESS!", "")
             .addField("CUSTOMER SUPPORT", "")
             .addField("SUPPORT PHONE:", "(987) 654-3210")
