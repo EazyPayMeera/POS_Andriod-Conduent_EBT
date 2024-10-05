@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,7 +45,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
             Column(
                 modifier = Modifier
                     .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                    .fillMaxSize(), // Fill the entire available space
+                    .fillMaxHeight(), // Fill the entire available space
                 verticalArrangement = Arrangement.SpaceBetween, // Space between the header and footer
                 horizontalAlignment = Alignment.CenterHorizontally // Center content horizontally
             ) {
@@ -88,20 +88,22 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                     secondButtonOnClick = { viewModel.onShiftEnd(navHostController, sharedViewModel) },
                     alignment = Alignment.TopCenter
                 )
+            }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = MaterialTheme.dimens.DP_116_CompactMedium),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AppButton(
-                        onClick = {  },
-                        title = stringResource(id = R.string.print_last_receipt),
-                        image = painterResource(id = R.drawable.ic_print)
-                    )
-                }
+
+            Row(
+                modifier = Modifier
+                    //.fillMaxWidth()
+                    .height(MaterialTheme.dimens.DP_40_CompactMedium),
+                    //.padding(top = MaterialTheme.dimens.DP_145_CompactMedium),
+                horizontalArrangement = Arrangement.Absolute.Center,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                AppButton(
+                    onClick = {  },
+                    title = stringResource(id = R.string.print_last_receipt),
+                    image = painterResource(id = R.drawable.ic_print),
+                )
             }
         }
     }
