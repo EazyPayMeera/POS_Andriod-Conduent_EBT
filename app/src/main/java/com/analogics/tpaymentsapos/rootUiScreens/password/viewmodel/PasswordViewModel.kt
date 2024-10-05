@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class PasswordViewModel : ViewModel() {
 
     fun navigateToTrainingScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         }
     }
 }

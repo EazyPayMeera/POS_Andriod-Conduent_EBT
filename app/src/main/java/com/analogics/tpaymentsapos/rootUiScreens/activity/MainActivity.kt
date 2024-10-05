@@ -15,6 +15,10 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -204,9 +208,6 @@ fun AppNavigationGraph(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 PleaseWaitView(navHostController)
             }
-        }
-        composable(AppNavigationItems.TrainingScreen.route) {
-            DashboardView(navHostController)
         }
         composable(AppNavigationItems.AmountScreen.route) {
             AmountView(navHostController)

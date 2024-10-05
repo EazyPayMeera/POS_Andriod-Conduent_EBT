@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login.viewModel
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 
@@ -17,6 +16,8 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateToDashboard
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +49,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         this.navHostController = navHost!!
         viewModelScope.launch {
             try {
-                navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -82,7 +83,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
             else -> {
                 userApiSuccessHolder.value = response as ObjEmployeeResponse
                 if (isFormValid) {
-                    navHostController?.navigate(AppNavigationItems.TrainingScreen.route)
+                    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 }
                 Log.e("API Response", response.toString())
             }

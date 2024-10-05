@@ -12,6 +12,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 
 class ConfirmationViewModel : ViewModel() {
     var totalAmount = mutableDoubleStateOf(0.00)
@@ -81,13 +82,13 @@ class ConfirmationViewModel : ViewModel() {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
             }
             else -> {
-                navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
             }
         }
     }
 
     fun onCancel(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
     fun onLoad(customTipAmount : Double?,sharedViewModel: SharedViewModel)

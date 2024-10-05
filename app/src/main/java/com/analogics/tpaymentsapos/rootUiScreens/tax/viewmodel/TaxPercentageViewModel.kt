@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
@@ -36,7 +37,7 @@ class TaxPercentageViewModel : ViewModel() {
     }
 
     fun onCancel(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
     fun onLoad(navHostController: NavHostController, sharedViewModel: SharedViewModel)

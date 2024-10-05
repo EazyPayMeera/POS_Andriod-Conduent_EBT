@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,85 +27,91 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun ConfirmShiftView(navHostController: NavHostController) {
     val viewModel: ConfirmShiftViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
-
     Column {
         CommonTopAppBar(
             title = stringResource(id = R.string.end_shift_title),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        BackgroundScreen {
+        BackgroundScreen(
+//            color = Color(0xFFF7931E), // Orange color for the outer Surface
+//            modifier = Modifier
+//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
+//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
+//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
+//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
+        ) {
+
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
-                    .fillMaxHeight(), // Fill the entire available space
-                verticalArrangement = Arrangement.SpaceBetween, // Space between the header and footer
-                horizontalAlignment = Alignment.CenterHorizontally // Center content horizontally
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
+                    .fillMaxSize(), // Fill the entire available space
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start // Align content to the start
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier.fillMaxWidth()
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
+                Text(
+                    text = stringResource(id = R.string.confirm_btn),
+                    fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the header text
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.logout), // Replace with your image resource
+                    contentDescription = null, // Decorative image
+                    modifier = Modifier
+                        .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the image
+                )
+
+                Text(
+                    text = stringResource(id = R.string.end_shift_message),
+                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the subheader text
+                )
+
+
+                FooterButtons(
+                    firstButtonTitle = stringResource(id = R.string.cancel),
+                    firstButtonOnClick = { viewModel.onCancel(navHostController) },
+                    secondButtonTitle = stringResource(id = R.string.yes),
+                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController,sharedViewModel) },
+                    alignment = Alignment.TopCenter
+                )
+
+                Row(
+/*                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MaterialTheme.dimens.DP_4_CompactMedium),*/
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
-
-                    Text(
-                        text = stringResource(id = R.string.confirm_btn),
-                        fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
-                    )
-
-                    Image(
-                        painter = painterResource(id = R.drawable.logout),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                    )
-
-                    Text(
-                        text = stringResource(id = R.string.end_shift_message),
-                        fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        fontWeight = FontWeight.Bold
+                    AppButton(
+                        onClick = {navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)  },
+                        title = stringResource(id = R.string.print_last_receipt),
+                        image = painterResource(id = R.drawable.ic_print)
                     )
                 }
 
-                // Footer buttons with enough space to show the rounded button below
-                FooterButtons(
-                    firstButtonTitle = stringResource(id = R.string.cancel),
-                    firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
-                    secondButtonTitle = stringResource(id = R.string.yes),
-                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController, sharedViewModel) },
-                    alignment = Alignment.TopCenter
-                )
             }
 
-
-            Row(
-                modifier = Modifier
-                    //.fillMaxWidth()
-                    .height(MaterialTheme.dimens.DP_40_CompactMedium),
-                    //.padding(top = MaterialTheme.dimens.DP_145_CompactMedium),
-                horizontalArrangement = Arrangement.Absolute.Center,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                AppButton(
-                    onClick = {  },
-                    title = stringResource(id = R.string.print_last_receipt),
-                    image = painterResource(id = R.drawable.ic_print),
-                )
-            }
         }
     }
 }
-
 

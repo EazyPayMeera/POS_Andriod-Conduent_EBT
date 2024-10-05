@@ -9,6 +9,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TipButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 
@@ -35,7 +36,7 @@ class TipPercentageViewModel : ViewModel() {
     }
 
     fun onCancel(navHostController: NavHostController) {
-        navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
     fun onLoad(navHostController: NavHostController, sharedViewModel: SharedViewModel)

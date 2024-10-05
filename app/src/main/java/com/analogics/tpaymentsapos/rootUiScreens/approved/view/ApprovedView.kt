@@ -52,6 +52,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
@@ -263,7 +264,7 @@ fun ApprovedView(navHostController: NavHostController) {
                             Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
-                            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+                            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),
                     )

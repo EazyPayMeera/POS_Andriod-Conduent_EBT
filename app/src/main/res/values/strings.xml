@@ -26,7 +26,7 @@
     <string name="placehldr_username">Please Enter Username</string>
     <string name="placehldr_password">Please Enter Password</string>
     <string name="placehldr_new_password">Please Enter New Password</string>
-    <string name="not_empty">Email And password not empty</string>
+    <string name="cred_not_to_be_empty">Email and password should not be empty</string>
 
     <!-- Dashboard -->
     <string name="refund">Refund</string>

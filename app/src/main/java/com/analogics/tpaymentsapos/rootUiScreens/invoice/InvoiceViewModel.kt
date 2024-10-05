@@ -12,6 +12,7 @@ import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ class InvoiceViewModel : ViewModel() {
 
     fun navigateToTrainingScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.TrainingScreen.route)
+            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         }
     }
 
