@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,84 +34,77 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun ConfirmShiftView(navHostController: NavHostController) {
     val viewModel: ConfirmShiftViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
+
     Column {
         CommonTopAppBar(
             title = stringResource(id = R.string.end_shift_title),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
-        ) {
-
+        BackgroundScreen {
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                     .fillMaxSize(), // Fill the entire available space
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // Align content to the start
+                verticalArrangement = Arrangement.SpaceBetween, // Space between the header and footer
+                horizontalAlignment = Alignment.CenterHorizontally // Center content horizontally
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
-                Text(
-                    text = stringResource(id = R.string.confirm_btn),
-                    fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the header text
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
 
-                Image(
-                    painter = painterResource(id = R.drawable.logout), // Replace with your image resource
-                    contentDescription = null, // Decorative image
-                    modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                        .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the image
-                )
+                    Text(
+                        text = stringResource(id = R.string.confirm_btn),
+                        fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
+                    )
 
-                Text(
-                    text = stringResource(id = R.string.end_shift_message),
-                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally) // Center the subheader text
-                )
+                    Image(
+                        painter = painterResource(id = R.drawable.logout),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                    )
 
+                    Text(
+                        text = stringResource(id = R.string.end_shift_message),
+                        fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
+                // Footer buttons with enough space to show the rounded button below
                 FooterButtons(
                     firstButtonTitle = stringResource(id = R.string.cancel),
                     firstButtonOnClick = { navHostController.navigate(AppNavigationItems.TrainingScreen.route) },
                     secondButtonTitle = stringResource(id = R.string.yes),
-                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController,sharedViewModel) },
+                    secondButtonOnClick = { viewModel.onShiftEnd(navHostController, sharedViewModel) },
                     alignment = Alignment.TopCenter
                 )
 
                 Row(
-/*                    modifier = Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = MaterialTheme.dimens.DP_4_CompactMedium),*/
+                        .padding(top = MaterialTheme.dimens.DP_116_CompactMedium),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     AppButton(
-                        onClick = {navHostController.navigate(AppNavigationItems.TrainingScreen.route)  },
+                        onClick = {  },
                         title = stringResource(id = R.string.print_last_receipt),
                         image = painterResource(id = R.drawable.ic_print)
                     )
                 }
-
             }
-
         }
     }
 }
+
 

@@ -37,40 +37,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     private val printer = Printer.getInstance()
 
 
-    data class Receipt(
-        val receiptHeaader: String,
-        val merchantHead : String,
-        val merchantName: String,
-        val address: String,
-        val phone: String,
-        val transactionDetails: TransactionDetails,
-        val items: List<ReceiptItem>,
-        val subtotal: Double,
-        val tax: Double,
-        val total: Double,
-        val paymentMethod: String,
-        val cardNumber: String,
-        val authCode: String,
-        val customerService: CustomerService
-    )
-
-    data class TransactionDetails(
-        val dateTime: String,
-        val receiptNumber: String,
-        val terminalNumber: String
-    )
-
-    data class ReceiptItem(
-        val name: String,
-        val price: Double
-    )
-
-    data class CustomerService(
-        val phone: String,
-        val email: String
-    )
-
-
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
         var imageData: ByteArray? = null
         try {
@@ -206,6 +172,11 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         } ?: Log.d("Record Update", "Invoice No is null")
     }
+
+/*    fun ReceiptBuilder(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
+    {
+        ReceiptBuilder.createReceiptFromPaymentDetails(objRootAppPaymentDetails)
+    }*/
 
 
 

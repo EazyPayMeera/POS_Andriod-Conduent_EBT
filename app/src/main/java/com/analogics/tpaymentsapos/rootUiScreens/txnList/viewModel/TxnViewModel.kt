@@ -52,7 +52,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
-                Log.d("Transaction Data List", txnDataList[1].toString())
             }
 
             Log.d("all data", allTransactionList?.let {

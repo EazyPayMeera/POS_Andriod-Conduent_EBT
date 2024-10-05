@@ -553,7 +553,7 @@ fun FooterButtons(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed
     ) {
         Row(
