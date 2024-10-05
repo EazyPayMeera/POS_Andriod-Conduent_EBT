@@ -1,31 +1,34 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
+
 class ReceiptBuilder {
 
-    fun createReceipt(): Receipt {
+    fun createReceipt(paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
             .addField("STORE NAME:", "Awesome Store")
             .addField("STORE ADDRESS:", "1234 Market St, San Francisco, CA")
             .addField("STORE PHONE:", "(123) 456-7890")
             .addField("ORDER DETAILS", "Order Details")
-            .addField("ORDER DATE/TIME:", "2024-08-29 12:34")
-            .addField("ORDER #:", "12345")
-            .addField("POS TERMINAL #:", "67890")
+            .addField("ORDER DATE/TIME:", paymentDetails?.dateTime ?: "N/A")
+            .addField("ORDER #:", paymentDetails?.invoiceNo ?: "N/A")
+            .addField("POS TERMINAL #:", paymentDetails?.terminalId ?: "N/A")
             .addField("PURCHASED ITEMS", "")
-            .addItem(ReceiptItem("Item 1", 19.99))
-            .addItem(ReceiptItem("Item 2", 9.99))
-            .addField("SUBTOTAL:", "$29.98")
-            .addField("SALES TAX:", "$2.40")
-            .addField("TOTAL AMOUNT:", "$32.38")
-            .addField("PAYMENT:", "Credit Card")
-            .addField("CARD:", "**** **** **** 1234")
-            .addField("AUTHORIZATION:", "6789")
+            // Assuming items would be dynamically passed
+            .addItem(ReceiptItem("Item 1", 19.99)) // Example item, replace with actual data
+            .addItem(ReceiptItem("Item 2", 9.99)) // Example item, replace with actual data
+            .addField("SUBTOTAL:", paymentDetails?.txnAmount.toString() ?: 0.00.toString())
+            .addField("SALES TAX:", paymentDetails?.ttlAmount ?:0.00.toString())
+            .addField("TOTAL AMOUNT:", paymentDetails?.ttlAmount ?:0.00.toString())
+            .addField("PAYMENT:", paymentDetails?.accountType ?: "N/A")
+            .addField("CARD:", "**** **** **** 1234") // Replace with actual masked card data if available
+            .addField("AUTHORIZATION:", paymentDetails?.hostAuthCode ?: "N/A")
             .addField("THANK YOU FOR YOUR PURCHASE!\nWE APPRECIATE YOUR BUSINESS!", "")
             .addField("CUSTOMER SUPPORT", "")
             .addField("SUPPORT PHONE:", "(987) 654-3210")
             .addField("SUPPORT EMAIL:", "support@example.com")
-            .addField("BARCODE", "123456789012")
-            .addField("QR CODE", "https://example.com/qrcode")
+            .addField("BARCODE", paymentDetails?.hostTxnRef ?: "N/A") // Assuming txnRef is used for barcode
+            .addField("QR CODE", "https://example.com/qrcode") // You can generate a QR code based on txn details if needed
             .build()
     }
 

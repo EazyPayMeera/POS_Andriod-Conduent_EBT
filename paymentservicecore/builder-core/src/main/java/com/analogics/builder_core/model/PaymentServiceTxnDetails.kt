@@ -3,11 +3,11 @@ package com.analogics.builder_core.model
 import com.google.gson.annotations.SerializedName
 
 data class PaymentServiceTxnDetails(
-    @SerializedName("MerchantId") var merchantId: String? = null,
-    @SerializedName("TerminalId") var terminalId: String? = null,
-    @SerializedName("LoginId") var loginId: String? = null,
-    @SerializedName("LoginPassword") var loginPassword: String? = null,
-    @SerializedName("DeviceSN") var deviceSN: String? = null,
+    @SerializedName("merchantId") var merchantId: String? = null,
+    @SerializedName("terminalId") var terminalId: String? = null,
+    @SerializedName("loginId") var loginId: String? = null,
+    @SerializedName("loginPassword") var loginPassword: String? = null,
+    @SerializedName("deviceSN") var deviceSN: String? = null,
     @SerializedName("DeviceMake") var deviceMake: String? = null,
     @SerializedName("DeviceModel") var deviceModel: String? = null,
 
@@ -23,40 +23,40 @@ data class PaymentServiceTxnDetails(
 
 
     @SerializedName("BatchId") var batchId: String? = null,
-    @SerializedName("InvoiceNo") var invoiceNo: String? = null,
+    @SerializedName("invoiceNo") var invoiceNo: String? = null,
     @SerializedName("PurchaseOrderNo") var purchaseOrderNo: String? = null,
-    @SerializedName("DateTime") var dateTime: String? = null,
-    @SerializedName("TimeZone") var timeZone: String? = null,
-    @SerializedName("TxnType") var txnType: String? = null,
-    @SerializedName("AccountType") var accountType: String? = null,
-    @SerializedName("TxnCurrencyCode") var txnCurrencyCode: String? = null,
-    @SerializedName("TxnAmount") var txnAmount: String? = null,
-    @SerializedName("Tip") var tip: String? = null,
-    @SerializedName("Cashback") var cashback: String? = null,
+    @SerializedName("dateTime") var dateTime: String? = null,
+    @SerializedName("timeZone") var timeZone: String? = null,
+    @SerializedName("txnType") var txnType: String? = null,
+    @SerializedName("accountType") var accountType: String? = null,
+    @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,
+    @SerializedName("txnAmount") var txnAmount: String? = null,
+    @SerializedName("tip") var tip: String? = null,
+    @SerializedName("cashback") var cashback: String? = null,
     @SerializedName("CGST") var CGST: String? = null,
     @SerializedName("SGST") var SGST: String? = null,
-    @SerializedName("TtlAmount") var ttlAmount: String? = null,
+    @SerializedName("ttlAmount") var ttlAmount: String? = null,
 
     /* Card Details */
-    @SerializedName("CardEntryMode") var cardEntryMode: String? = null,
-    @SerializedName("CardMaskedPan") var cardMaskedPan: String? = null,
-    @SerializedName("CardBrand") var cardBrand: String? = null,
-    @SerializedName("CardAuthMethod") var cardAuthMethod: String? = null,
-    @SerializedName("CardAuthResult") var cardAuthResult: String? = null,
-    @SerializedName("CardCountryCode") var cardCountryCode: String? = null,
-    @SerializedName("CardLanguagePref") var cardLanguagePref: String? = null,
-    @SerializedName("OriginalHostTxnRef") var originalHostTxnRef: String? = null,
+    @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
+    @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
+    @SerializedName("cardBrand") var cardBrand: String? = null,
+    @SerializedName("cardAuthMethod") var cardAuthMethod: String? = null,
+    @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
+    @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
+    @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
+    @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
 
     /* Original Txn data for Void Refund Capture */
-    @SerializedName("OriginalTxnRef") var originalTxnRef: String? = null,
+    @SerializedName("originalTxnRef") var originalTxnRef: String? = null,
 
     /* Original Txn data for Void Refund Capture */
-    @SerializedName("OriginalTxnType") var originalTxnType: String? = null,
-    @SerializedName("OriginalTxnAmount") var originalTxnAmount: String? = null,
-    @SerializedName("OriginalTip") var originalTip: String? = null,
-    @SerializedName("OriginalCashback") var originalCashback: String? = null,
-    @SerializedName("OriginalCGST") var originalCGST: String? = null,
-    @SerializedName("OriginalSGST") var originalSGST: String? = null,
-    @SerializedName("OriginalTtlAmount") var originalTtlAmount: String? = null,
+    @SerializedName("originalTxnType") var originalTxnType: String? = null,
+    @SerializedName("originalTxnAmount") var originalTxnAmount: String? = null,
+    @SerializedName("originalTip") var originalTip: String? = null,
+    @SerializedName("originalCashback") var originalCashback: String? = null,
+    @SerializedName("originalCGST") var originalCGST: String? = null,
+    @SerializedName("originalSGST") var originalSGST: String? = null,
+    @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
     @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null
 )

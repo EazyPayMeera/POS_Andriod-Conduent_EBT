@@ -240,10 +240,13 @@ fun ApprovedView(navHostController: NavHostController) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
-                                    viewModel.printReceipt(context, true)
+                                    viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
-                                    viewModel.printReceipt(context)
+                                    viewModel.printReceipt(
+                                        context,
+                                        objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
+                                    )
                                 }
                                 context.resources.getString((R.string.e_recp)) -> {
                                     navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)

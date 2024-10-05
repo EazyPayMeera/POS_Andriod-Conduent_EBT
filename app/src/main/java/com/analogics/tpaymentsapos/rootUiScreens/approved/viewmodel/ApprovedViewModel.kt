@@ -11,7 +11,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -104,13 +107,17 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun printReceipt(context: Context, customer: Boolean = false)
+    fun printReceipt(
+        context: Context,
+        customer: Boolean = false,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails
+    )
     {
         isPrinting.value = true
         isCustomer.value = customer
 
         GlobalScope.launch {
-            initPrinter(context, object : IPrinterResultProviderListener {
+            initPrinter(context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     isPrinting.value = false
                 }
@@ -122,16 +129,31 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         }
     }
 
-    suspend fun initPrinter(context: Context, iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun initPrinter(
+        context: Context,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    )
     {
         val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
-        Log.d(TAG, "Initializing printer in viewModel...")
-        PrinterServiceRepository(receiptBuilder).initPrinter(context, iPrinterResultProviderListener)
-        addReceiptDetails(iPrinterResultProviderListener)
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "Approved View Model to Printer Service Repository 1")
+                val requestDetails =
+                    PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+                PrinterServiceRepository(receiptBuilder,PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
+                Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
+            } catch (e: Exception) {
+                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
+            }
+        }
+/*        Log.d(TAG, "Initializing printer in viewModel...")
+        PrinterServiceRepository(receiptBuilder,).initPrinter(context, iPrinterResultProviderListener)*/
+        addReceiptDetails(objRootAppPaymentDetail,iPrinterResultProviderListener)
     }
 
 
-    suspend fun addReceiptDetails(iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun addReceiptDetails(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
         val receiptBuilder = ReceiptBuilder()
         Log.d(TAG, "Initializing printer in viewModel...")
@@ -141,7 +163,9 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             putInt("height", 100)
             putSerializable("barcode_type", BarcodeFormat.CODE_39)
         }
-        PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
+        val requestDetails =
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        PrinterServiceRepository(receiptBuilder,PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).printReceiptDetails(format, iPrinterResultProviderListener)
     }
 
 /*    // Update all the entities by setting invoice no as primary key

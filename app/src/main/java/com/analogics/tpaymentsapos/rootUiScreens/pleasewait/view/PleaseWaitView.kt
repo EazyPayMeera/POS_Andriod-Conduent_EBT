@@ -1,9 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import android.content.ContentValues.TAG
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -60,7 +57,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 putSerializable("barcode_type", BarcodeFormat.CODE_39)
             }
 
-            viewModel.addReceiptDetails(format, object : IPrinterResultProviderListener {
+           /* viewModel.addReceiptDetails(format, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     if (result == true) {
                         Log.d(TAG, "Receipt printed successfully")
@@ -72,7 +69,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
                 override fun onFailure(exception: Exception) {
                     Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
                 }
-            })
+            })*/
 
 
         }

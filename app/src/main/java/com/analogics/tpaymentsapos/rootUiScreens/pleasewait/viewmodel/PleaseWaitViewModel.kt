@@ -1,19 +1,14 @@
 package com.analogics.tpaymentsapos.rootUiScreens.pleasewait.viewmodel
 
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import java.io.ByteArrayOutputStream
 
 class PleaseWaitViewModel(context: Context): ViewModel() {
@@ -67,6 +62,7 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
         printer.feedLine(lines)
     }
 
+/*
     suspend fun addReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
         val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
@@ -74,6 +70,7 @@ class PleaseWaitViewModel(context: Context): ViewModel() {
         //PrinterServiceRepository().printReceiptDetails(format, iPrinterResultProviderListener)
         PrinterServiceRepository(receiptBuilder).printReceiptDetails(format, iPrinterResultProviderListener)
     }
+*/
 
     fun startPrint()
     {

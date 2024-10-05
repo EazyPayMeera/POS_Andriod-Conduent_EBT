@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.PrinterRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.tpaymentcore.handler.PrinterHandler
@@ -10,14 +11,16 @@ import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
 import javax.inject.Inject
 
 class PrinterServiceRepository @Inject constructor(
-    private val receiptBuilder: ReceiptBuilder // Inject the ReceiptBuilder
+    private val receiptBuilder: ReceiptBuilder,
+    paymentServiceTxnDetails: PaymentServiceTxnDetails?,// Inject the ReceiptBuilder
 ) : PrinterRequestListener, IPrinterHandlerListener {
 
     private val TAG = "PrinterServiceRepo"
-
+/*    val pdetails = paymentServiceTxnDetails()
+    Log.d("Object Details","Transaction Details ${pdetails}")*/
     private lateinit var iPrinterResultProviderListener: IPrinterResultProviderListener
 
-    private val receipt: ReceiptBuilder.Receipt = receiptBuilder.createReceipt() // Use the correct reference
+    private val receipt: ReceiptBuilder.Receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails) // Use the correct reference
 
     override fun printReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener) {
         val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
