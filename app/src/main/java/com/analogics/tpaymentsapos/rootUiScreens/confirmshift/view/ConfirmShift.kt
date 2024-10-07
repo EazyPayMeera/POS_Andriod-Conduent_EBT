@@ -96,9 +96,6 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                 )
 
                 Row(
-/*                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = MaterialTheme.dimens.DP_4_CompactMedium),*/
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Bottom
                 ) {

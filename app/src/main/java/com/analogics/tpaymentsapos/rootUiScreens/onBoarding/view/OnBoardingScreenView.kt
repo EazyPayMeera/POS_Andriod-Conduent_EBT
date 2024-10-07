@@ -213,7 +213,7 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust the padding as needed
+                    .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium) // Adjust the padding as needed
             ) {
                 AppButton(
                     onClick = {

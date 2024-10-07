@@ -294,7 +294,7 @@ fun DashboardContentSurface(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = MaterialTheme.dimens.DP_25_CompactMedium),
+                    /*.padding(top = MaterialTheme.dimens.DP_25_CompactMedium)*/,
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {

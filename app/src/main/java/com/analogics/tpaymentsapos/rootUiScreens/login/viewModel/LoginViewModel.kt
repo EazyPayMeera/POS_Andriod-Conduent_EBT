@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         pwdCredentials.value = newPassword
     }
 
-    fun setLoginButtonState(enabled: Boolean) = { isLoginEnabled.value = enabled }
+    fun setLoginButtonState(enabled: Boolean)  { isLoginEnabled.value = enabled }
 
     fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!

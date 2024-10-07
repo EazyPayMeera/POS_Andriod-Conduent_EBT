@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -167,51 +168,30 @@ fun AppButton(
     Box(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-            .background(
-                color =  when (enabled)
-                {
-                    true->MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.onSecondary
-                },
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-            )
+            .height(MaterialTheme.dimens.DP_50_CompactMedium)
     )
     {
         Button(onClick = onClick,
             modifier = Modifier
-                .align(Alignment.BottomCenter) // Align button at the bottom
-                .wrapContentSize()
-                .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
-            colors =
-                when (enabled) {
-                    true-> buttonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                    else -> buttonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        containerColor = MaterialTheme.colorScheme.onSecondary
-                    )
-                }
-            ,
+                .align(Alignment.Center) // Align button at the bottom
+                .fillMaxSize(),
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+            colors = buttonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.primary
+            ),
             enabled = enabled != false
-            ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
             ) {
                 if (image != null) {
                     Image(
                         painter = image,
                         contentDescription = null,
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxHeight(),
                         )
+                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
                 }
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
-                Text(text = title)
-            }
+
+                Text(text = title, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal)
         }
     }
 }

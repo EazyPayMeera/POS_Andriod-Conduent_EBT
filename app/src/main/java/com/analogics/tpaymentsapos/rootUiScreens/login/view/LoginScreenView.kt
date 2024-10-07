@@ -39,8 +39,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun LoginScreenView(navHostController: NavHostController?) {
-    val viewModel: LoginViewModel = hiltViewModel()
+fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
 
