@@ -3,14 +3,29 @@ package com.analogics.builder_core.utils
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.model.auth_capture.PostAuthRequest
 import com.analogics.builder_core.model.auth_capture.PreAuthRequest
+import com.analogics.builder_core.model.auth_token.AuthTokenRequest
 import com.analogics.builder_core.model.login.UserLoginRequest
 import com.analogics.builder_core.model.purchase.PurchaseRequest
 import com.analogics.builder_core.model.reund.RefundRequest
 import com.analogics.builder_core.model.reversal.ReversalReqeust
 import com.analogics.builder_core.model.void.VoidReqeust
+import com.analogics.networkservicecore.serviceutils.NetworkConstants
 import javax.inject.Inject
 
 class APIServiceRequestBuilder @Inject constructor() {
+
+    fun createAccessTokenRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): AuthTokenRequest {
+        var appId = "pcAz2HwAompQWPEF4MXUJt91ldqEnzQR"
+        var appKey = "qqOKVz4gUATaoG6W"
+        var nonce = BuilderUtils.generateNonce()
+        var secret = BuilderUtils.generateSecret(nonce, appKey)
+        return AuthTokenRequest(
+            app_id = appId,
+            secret = secret,
+            grant_type = NetworkConstants.VAL_GRANT_TYPE_CREDENTIALS,
+            nonce = nonce
+        )
+    }
 
     fun createLoginRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): UserLoginRequest {
         return UserLoginRequest(

@@ -10,6 +10,7 @@ import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.paymentservicecore.repository.paymentService.auth_capture.AuthCaptureRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.batch.BatchRequestRepository
+import com.analogics.paymentservicecore.repository.paymentService.login.AccessTokenRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.login.LoginRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.refund.RefundRequestRepository
@@ -19,6 +20,7 @@ import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 import javax.inject.Inject
 
 class PaymentServiceRepository @Inject constructor(
+    private val accessTokenRequestRepository: AccessTokenRequestRepository,
     private var refundRequestRepository: RefundRequestRepository,
     private val authCaptureRequestRepository: AuthCaptureRequestRepository,
     private val loginRequestRepository: LoginRequestRepository,
@@ -76,6 +78,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }
@@ -85,6 +88,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }
@@ -94,6 +98,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }
@@ -103,6 +108,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         if(TxnType.PREAUTH==TxnType.PREAUTH) {
             authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
                 onAPIServiceResponse(it)
@@ -118,6 +124,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         reversalRequestRepository.sendReversal(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }
@@ -127,14 +134,27 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }
     }
+
+    override suspend fun apiServiceAccessToken(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+    ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
+            onAPIServiceResponse(it)
+        }
+    }
+
     override suspend fun apiServiceBatch(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
+        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         batchRequestRepository.sendBatchRequest(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }

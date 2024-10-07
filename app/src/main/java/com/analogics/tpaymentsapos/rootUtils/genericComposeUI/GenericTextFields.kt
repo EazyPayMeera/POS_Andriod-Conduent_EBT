@@ -161,14 +161,19 @@ fun InputTextField(
 fun AppButton(
     onClick: () -> Unit,
     title: String,
-    image: Painter? = null // Optional parameter for the image
+    image: Painter? = null, // Optional parameter for the image
+    enabled: Boolean? = true
 ) {
     Box(
         modifier = Modifier
             .width(MaterialTheme.dimens.DP_248_CompactMedium)
             .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color =  when (enabled)
+                {
+                    true->MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.onSecondary
+                },
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
             )
     )
@@ -178,10 +183,19 @@ fun AppButton(
                 .align(Alignment.BottomCenter) // Align button at the bottom
                 .wrapContentSize()
                 .padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium),
-            colors = buttonColors(
-                contentColor = MaterialTheme.colorScheme.tertiary,
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
+            colors =
+                when (enabled) {
+                    true-> buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                    else -> buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
+            ,
+            enabled = enabled != false
             ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

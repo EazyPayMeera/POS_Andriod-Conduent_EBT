@@ -27,7 +27,7 @@ class NetworkModule {
             .writeTimeout(30, TimeUnit.SECONDS)    // Set write timeout
             .build()
         return Retrofit.Builder()
-            .baseUrl(NetworkConstants.baseurl)
+            .baseUrl(NetworkConstants.BASEURL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .client(OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build())

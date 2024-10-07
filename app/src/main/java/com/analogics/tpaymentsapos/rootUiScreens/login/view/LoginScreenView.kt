@@ -16,6 +16,9 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -126,7 +129,8 @@ fun LoginScreenView(navHostController: NavHostController?) {
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }
                             },
-                            title = stringResource(id = R.string.login)
+                            title = stringResource(id = R.string.login),
+                            enabled = viewModel.isLoginEnabled.value
                         )
                     }
                 }

@@ -90,6 +90,15 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         } )
     }
 
+    override suspend fun apiGetAccessToken(
+        iApiServiceResponseListener: IApiServiceResponseListener,
+        requestBody: RequestBody
+    ) {
+        this.iApiServiceResponseListener=iApiServiceResponseListener
+        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+            iApiService.getAccessToken(requestBody)
+        } )
+    }
 
     override fun onApiSerivceHandler(apiResultProvider: ResultProvider<ResponseBody>) {
         when (apiResultProvider) {

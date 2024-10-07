@@ -21,6 +21,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateToDashboar
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,6 +31,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
     IOnRootAppPaymentListener {
     var emailCredentials = mutableStateOf("")
     var pwdCredentials = mutableStateOf("")
+    val isLoginEnabled = mutableStateOf(true)
     var userApiSuccessHolder = MutableStateFlow(ObjEmployeeResponse())
     var useRootAppPaymentDetails = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
@@ -45,12 +47,20 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         pwdCredentials.value = newPassword
     }
 
+    fun setLoginButtonState(enabled: Boolean) = { isLoginEnabled.value = enabled }
+
     fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
+
         viewModelScope.launch {
             try {
+
+                setLoginButtonState(false)
+                getAccessToken()
+/*
                 navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
+*/
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -74,6 +84,19 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         }
     }
 
+    fun getAccessToken() {
+        viewModelScope.launch {
+            try {
+                val requestDetails =
+                    PaymentServiceUtils.objectToJsonString(useRootAppPaymentDetails.value)
+                paymentServiceRepository.apiServiceAccessToken(
+                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@LoginViewModel)
+            } catch (e: Exception) {
+                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
+            }
+        }
+    }
+
     override fun onPaymentSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
@@ -81,7 +104,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
             }
 
             else -> {
-                userApiSuccessHolder.value = response as ObjEmployeeResponse
+                //userApiSuccessHolder.value = response as ObjEmployeeResponse
                 if (isFormValid) {
                     navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 }
@@ -94,5 +117,6 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
     override fun onPaymentError(paymentError: PaymentServiceError) {
         Log.e("API Response", paymentError.errorMessage)
         userApiErrorHolder.value = paymentError
+        setLoginButtonState(true)
     }
 }

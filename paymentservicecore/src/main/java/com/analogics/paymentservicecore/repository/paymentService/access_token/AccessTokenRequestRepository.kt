@@ -6,20 +6,18 @@ import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import javax.inject.Inject
 
-class LoginRequestRepository @Inject constructor(
+class AccessTokenRequestRepository @Inject constructor(
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var buildApiRepository: BuildApiRepository
 ) {
-    suspend fun apiDeviceLogin(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
+    suspend fun apiGetAccessToken(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        buildApiRepository.apiDeviceLogin(
+        buildApiRepository.apiGetAccessToken(
             object :IApiServiceResponseListener{
                 override fun onApiSuccessRes(response: String) {
                     onAPIServiceResponse(response)
-
                 }
 
                 override fun onApiFailureRes(error: Any) {
@@ -27,7 +25,7 @@ class LoginRequestRepository @Inject constructor(
                 }
             },
             BuilderUtils.prepareAPIRequestBody(
-                apiServiceRequestBuilder.createLoginRequest(paymentServiceTxnDetails)
+                apiServiceRequestBuilder.createAccessTokenRequest(paymentServiceTxnDetails)
             )
         )
     }
