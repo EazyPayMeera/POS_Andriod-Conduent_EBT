@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
@@ -134,6 +135,8 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                     }
                 }
             }
+
+            CustomDialogBuilder.ShowProgressDialog(viewModel.showProgress.value)
         }
     )
 }

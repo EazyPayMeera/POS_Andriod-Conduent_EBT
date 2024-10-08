@@ -45,11 +45,15 @@ class PaymentServiceRepository @Inject constructor(
 
     override fun onTPaymentSDKHandler(uiData: String) {
         /* Just for testing comparing with uiData value */
-
+        iOnRootAppPaymentListener.onDisplayProgress(false)
         if (uiData == "SUCCESS")
             iOnRootAppPaymentListener.onPaymentSuccess(true)
         else
             iOnRootAppPaymentListener.onPaymentError(PaymentServiceError("Error"))
+    }
+
+    override fun onTPaymentDisplayMessage(uiData: String?) {
+        iOnRootAppPaymentListener.onDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
     }
 
 
@@ -59,6 +63,7 @@ class PaymentServiceRepository @Inject constructor(
     ) {
         this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
         this.context = context
+        iOnRootAppPaymentListener.onDisplayProgress(false)
         PaymentConfigurationHandler.initPaymentSDK(context, this)
     }
 
@@ -67,6 +72,7 @@ class PaymentServiceRepository @Inject constructor(
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
         this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        iOnRootAppPaymentListener.onDisplayProgress(false)
         PaymentConfigurationHandler.startPayment(context, this)
     }
 
@@ -145,6 +151,7 @@ class PaymentServiceRepository @Inject constructor(
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
         this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iOnRootAppPaymentListener.onDisplayProgress(true)
         accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
             onAPIServiceResponse(it)
         }
@@ -161,6 +168,7 @@ class PaymentServiceRepository @Inject constructor(
     }
 
     override fun onAPIServiceResponse(response: Any) {
+        iOnRootAppPaymentListener.onDisplayProgress(false)
         when (response) {
             is PaymentServiceError -> {
                 iOnRootAppPaymentListener.onPaymentError(PaymentServiceError(response.toString()))

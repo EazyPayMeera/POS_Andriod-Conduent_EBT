@@ -2,9 +2,12 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
 import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
@@ -12,6 +15,7 @@ import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,6 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardViewModel @Inject constructor(private  var paymentServiceRepository: PaymentServiceRepository,var dbRepository: TxnDBRepository) : ViewModel() {
+
+    var showProgress = mutableStateOf(false)
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -46,6 +52,17 @@ class CardViewModel @Inject constructor(private  var paymentServiceRepository: P
                 override fun onPaymentError(tError: PaymentServiceError) {
                     navigateToDeclinedScreen(navHostController)
                 }
+
+                override fun onDisplayProgress(
+                    show: Boolean,
+                    title: String?,
+                    subTitle: String?,
+                    message: String?
+                ) {
+                    showProgress.value = show
+                    CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+                }
+
             })
         }
     }

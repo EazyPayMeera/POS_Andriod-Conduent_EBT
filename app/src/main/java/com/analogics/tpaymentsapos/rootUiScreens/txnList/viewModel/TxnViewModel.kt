@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -130,5 +131,14 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     override fun onPaymentError(paymentError: PaymentServiceError) {
         Log.e("API Response", paymentError.errorMessage)
         userApiErrorHolder.value = paymentError
+    }
+
+    override fun onDisplayProgress(
+        show: Boolean,
+        title: String?,
+        subTitle: String?,
+        message: String?
+    ) {
+        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
     }
 }
