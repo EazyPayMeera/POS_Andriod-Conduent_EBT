@@ -2,12 +2,10 @@ package com.analogics.tpaymentsapos.rootUiScreens.login.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.PaymentServiceError
@@ -18,11 +16,9 @@ import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateToDashboard
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,10 +55,8 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
 
                 setLoginButtonState(false)
                 getAccessToken()
-/*
                 navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
-*/
+                //sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

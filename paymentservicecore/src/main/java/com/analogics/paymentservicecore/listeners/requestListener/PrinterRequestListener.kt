@@ -6,5 +6,9 @@ import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResul
 
 interface PrinterRequestListener {
     suspend fun initPrinter(context: Context, iPrinterResultProviderListener: IPrinterResultProviderListener)
-    fun printReceiptDetails(format: Bundle,iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun printReceiptDetails(format: Bundle,
+                            barcodeString: String,
+                            receiptDetails: List<String>,
+                            alignment: List<Int>, // Assuming alignment is of type Int; adjust as necessary
+                            iPrinterResultProviderListener: IPrinterResultProviderListener)
 }

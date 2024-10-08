@@ -11,7 +11,6 @@ import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
 import javax.inject.Inject
 
 class PrinterServiceRepository @Inject constructor(
-    private val receiptBuilder: ReceiptBuilder,
     paymentServiceTxnDetails: PaymentServiceTxnDetails?,// Inject the ReceiptBuilder
 ) : PrinterRequestListener, IPrinterHandlerListener {
 
@@ -20,28 +19,18 @@ class PrinterServiceRepository @Inject constructor(
     Log.d("Object Details","Transaction Details ${pdetails}")*/
     private lateinit var iPrinterResultProviderListener: IPrinterResultProviderListener
 
-    private val receipt: ReceiptBuilder.Receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails) // Use the correct reference
 
-    override fun printReceiptDetails(format: Bundle, iPrinterResultProviderListener: IPrinterResultProviderListener) {
-        val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
-
-        val receiptDetails = receipt.fields.map { (label, value) ->
-            "$label: $value"
-        } + receipt.items.mapIndexed { index, item ->
-            "${index + 1}. ${item.name}              $${item.price}"
-        }
-
-        // Append additional details if they exist
-        val additionalDetails = mutableListOf<String>()
-        receipt.qrcode?.let { qrcode ->
-            additionalDetails.add("BARCODE $qrcode")
-        }
-
-        val allDetails = receiptDetails + additionalDetails
-
+    override suspend fun printReceiptDetails(
+        format: Bundle,
+        barcodeString: String,
+        receiptDetails: List<String>,
+        alignment: List<Int>, // Assuming alignment is of type Int; adjust as necessary
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    ) {
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
         try {
-            PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails, this) // Pass this as the listener
+            // Pass the retrieved arguments to the PrinterHandler
+            PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails, alignment, this) // Pass this as the listener
             Log.d(TAG, "Receipt printed successfully.")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to print receipt: ${e.message}")

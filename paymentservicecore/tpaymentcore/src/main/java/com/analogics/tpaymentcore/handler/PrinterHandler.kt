@@ -32,15 +32,16 @@ object PrinterHandler : PrinterListener {
         }
     }
 
-    fun addReceiptDetails(
+    suspend fun addReceiptDetails(
         barcodeFormat: Bundle,
         barcode:String,
         receipt: List<String>,
+        alignment: List<Int>,
         listener: IPrinterHandlerListener
     ) {
         try {
 
-            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt)
+            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt,alignment)
             Printer.getInstance().feedLine(3)
             //Printer.getInstance().qrCodePrinting(barcodeFormat,"123456")
 

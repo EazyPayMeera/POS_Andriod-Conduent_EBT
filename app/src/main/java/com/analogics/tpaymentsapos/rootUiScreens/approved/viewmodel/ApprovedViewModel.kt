@@ -18,8 +18,8 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,17 +71,17 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         printer.printMultipleTextsAndStartPrinting(texts)
     }*/
 
-    fun addTextLeft(texts:String)  // Add Text on Left Side
+    suspend fun addTextLeft(texts:String)  // Add Text on Left Side
     {
         printer.addTextOnlyLeft(texts)
     }
 
-    fun addTextLeftRight(textLeft:String,textRight:String)
+    suspend fun addTextLeftRight(textLeft:String, textRight:String)
     {
         printer.addTextLeft_Right(textLeft,textRight)
     }
 
-    fun addTextLeftCenterRight(textLeft:String,textCenter:String,textRight:String)
+    suspend fun addTextLeftCenterRight(textLeft:String, textCenter:String, textRight:String)
     {
         printer.addTextLeft_Center_Right(textLeft,textCenter,textRight)
     }
@@ -141,7 +141,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                 Log.d(TAG, "Approved View Model to Printer Service Repository 1")
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-                PrinterServiceRepository(receiptBuilder,PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
+                PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
                 Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
@@ -155,28 +155,61 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     suspend fun addReceiptDetails(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
+        // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
-        Log.d(TAG, "Initializing printer in viewModel...")
+
+        // Create the receipt using payment details
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+
+        // Generate the receipt
+        val receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails)
+
+        val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
+
+        val receiptDetails = receipt.fields.map { (label, value) ->
+            if (value.isEmpty())
+            {
+                "$label"
+            }
+            else {
+                "$label: $value"
+            }
+        } + receipt.items.mapIndexed { index, item ->
+            "${index + 1}. ${item.name}              $${item.price}"
+        }
+
+        val alignmentText: List<Int> = receipt.fields.map { field ->
+            // Use the alignment directly from field.third
+            when (field.third) {
+                ReceiptBuilder.Alignment.LEFT -> 0
+                ReceiptBuilder.Alignment.CENTER -> 1
+                ReceiptBuilder.Alignment.RIGHT -> 2
+                else -> 0 // Default to left alignment if no match
+            }
+        }
+        // Extract the alignment for the barcode only (assuming it's the first field or modify as needed)
+        val alignment: Int = receipt.fields.firstOrNull { it.first == "QR CODE" }?.let { field ->
+            when (field.third) {
+                ReceiptBuilder.Alignment.LEFT -> 0
+                ReceiptBuilder.Alignment.CENTER -> 1
+                ReceiptBuilder.Alignment.RIGHT -> 2
+                else -> -1 // Return a default or error value if alignment is not found
+            }
+        } ?: -1 // Return a default or error value if no barcode field is found
+
+        // Prepare the printing format
         val format = Bundle().apply {
-            putInt("align", 1)
+            putInt("align", alignment) // This might be your default alignment for text
             putInt("width", 300)
             putInt("height", 100)
             putSerializable("barcode_type", BarcodeFormat.CODE_39)
         }
-        val requestDetails =
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        PrinterServiceRepository(receiptBuilder,PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).printReceiptDetails(format, iPrinterResultProviderListener)
+
+        // Pass the receipt details to the PrinterServiceRepository
+        PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(format,barcodeString,receiptDetails,alignmentText, iPrinterResultProviderListener)
     }
-
-/*    // Update all the entities by setting invoice no as primary key
-    fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
-        // Convert ObjRootAppPaymentDetails to JSON
-
-        dbRepository.updateTxn(convertObjRootToTxnEntity(objRootAppPaymentDetails))
-        Log.d("password " +
-                "record update suc ", convertObjRootToTxnEntity(objRootAppPaymentDetails).toString())
-
-    }*/
 
     fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails) = viewModelScope.launch {
         // Convert ObjRootAppPaymentDetails to JSON or entity object
@@ -201,6 +234,8 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     {
         ReceiptBuilder.createReceiptFromPaymentDetails(objRootAppPaymentDetails)
     }*/
+
+
 
 
 
