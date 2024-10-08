@@ -6,12 +6,13 @@ import android.util.Log
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.PrinterRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.repository.utility.ReceiptBuilder
 import com.analogics.tpaymentcore.handler.PrinterHandler
 import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
 import javax.inject.Inject
 
 class PrinterServiceRepository @Inject constructor(
-    private val receiptBuilder: ReceiptBuilder,
+    receiptBuilder: ReceiptBuilder,
     paymentServiceTxnDetails: PaymentServiceTxnDetails?,// Inject the ReceiptBuilder
 ) : PrinterRequestListener, IPrinterHandlerListener {
 
@@ -31,6 +32,20 @@ class PrinterServiceRepository @Inject constructor(
             "${index + 1}. ${item.name}              $${item.price}"
         }
 
+        // Map alignment values to integers
+        val alignment: List<Int> = receipt.fields.map { field ->
+            when (field.third) {
+                ReceiptBuilder.Alignment.LEFT -> 0
+                ReceiptBuilder.Alignment.CENTER -> 1
+                ReceiptBuilder.Alignment.RIGHT -> 2
+            }
+        }
+
+// Log or process the integer alignment values
+        alignment.forEach { alignmentInt ->
+            Log.d(TAG, "Alignment as Int: $alignmentInt")  // Log each integer alignment value
+        }
+
         // Append additional details if they exist
         val additionalDetails = mutableListOf<String>()
         receipt.qrcode?.let { qrcode ->
@@ -41,7 +56,7 @@ class PrinterServiceRepository @Inject constructor(
 
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
         try {
-            PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails, this) // Pass this as the listener
+            PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails,alignment, this) // Pass this as the listener
             Log.d(TAG, "Receipt printed successfully.")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to print receipt: ${e.message}")

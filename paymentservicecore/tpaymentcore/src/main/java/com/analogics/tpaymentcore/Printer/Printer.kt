@@ -66,7 +66,7 @@ class Printer constructor() {
 
 
     // To add text
-    fun addText(text: String)
+    fun addText(text: String,alignment: Int)
     {
         // Define default formatting options
         val defaultFont = 1
@@ -80,7 +80,7 @@ class Printer constructor() {
         // Create a Bundle with default values
         val format = Bundle().apply {
             putInt("font", defaultFont)
-            putInt("align", defaultAlign)
+            putInt("align", alignment)
             putString("fontName", defaultFontName)
             putBoolean("fontBold", defaultFontBold)
             putBoolean("newline", defaultNewline)
@@ -165,21 +165,36 @@ class Printer constructor() {
         mPrinter?.startPrint()
     }
 
-    // Print multiple texts
-    fun printMultipleTextsAndStartPrinting(format: Bundle,barcode:String,texts: List<String>) {
+    fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>, alignments: List<Int>) {
         try {
-            // Add each text to the printer
-            for (text in texts) {
-                addText(text)
+            // Ensure that texts and alignment lists are of the same size
+            if (texts.size != alignments.size) {
+                throw IllegalArgumentException("Texts and alignment lists must be of the same size")
             }
-            qrCodePrinting(format,barcode)
+
+            // Add each text to the printer with its corresponding alignment
+            for (i in texts.indices) {
+                val text = texts[i]
+                val alignment = alignments[i]
+
+                // Add the text to the printer with alignment
+                addText(text, alignment)
+            }
+
+            // Print the QR code
+            qrCodePrinting(format, barcode)
+
+            // Feed 3 lines after printing
             feedLine(3)
+
             // Start the printing process
             startPrinting()
+
         } catch (e: Exception) {
             // Handle the exception
             Log.e(TAG, "Error in printMultipleTextsAndStartPrinting: ${e.message}")
         }
     }
+
 
 }
