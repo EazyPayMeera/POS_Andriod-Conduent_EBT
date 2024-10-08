@@ -32,7 +32,7 @@ object PrinterHandler : PrinterListener {
         }
     }
 
-    fun addReceiptDetails(
+    suspend fun addReceiptDetails(
         barcodeFormat: Bundle,
         barcode:String,
         receipt: List<String>,

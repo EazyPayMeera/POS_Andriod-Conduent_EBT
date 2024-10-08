@@ -70,13 +70,12 @@ class Printer constructor() {
     {
         // Define default formatting options
         val defaultFont = 1
-        val defaultAlign = 0
         val defaultFontName = ""
         val defaultFontBold = true
         val defaultNewline = true
         val defaultLineHeight = 0
         val defaultFontSize = 24
-
+        Log.d(TAG, "Text printed successfully: $text with alignment: $alignment")
         // Create a Bundle with default values
         val format = Bundle().apply {
             putInt("font", defaultFont)
@@ -89,11 +88,10 @@ class Printer constructor() {
         }
 
         try {
-            mPrinter?.addText(format, text)
-
-
+            val result = mPrinter?.addText(format, text)
+            Thread.sleep(10)
         } catch (e: Exception) {
-
+            Log.e(TAG, "Failed to add text: '$text'. Error: ${e.message}", e)
         }
     }
 
@@ -167,17 +165,12 @@ class Printer constructor() {
 
     fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>, alignments: List<Int>) {
         try {
-            // Ensure that texts and alignment lists are of the same size
-            if (texts.size != alignments.size) {
-                throw IllegalArgumentException("Texts and alignment lists must be of the same size")
-            }
 
             // Add each text to the printer with its corresponding alignment
             for (i in texts.indices) {
                 val text = texts[i]
                 val alignment = alignments[i]
-
-                // Add the text to the printer with alignment
+                Thread.sleep(200)
                 addText(text, alignment)
             }
 
