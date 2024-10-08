@@ -56,4 +56,26 @@ object PrinterHandler : PrinterListener {
             listener.onPrinterRespHandler("FAILURE")
         }
     }
+
+    suspend fun addLeftCenterRightDetails(
+        Transaction: List<String>,
+        Count: List<String>,
+        Total: List<String>,
+        listener: IPrinterHandlerListener
+    ) {
+        try {
+
+            Printer.getInstance().printLeftCenterRightPrinting(Transaction,Count,Total)
+            Printer.getInstance().feedLine(3)
+            Log.d(TAG, "Receipt details added successfully.")
+
+            // Notify success
+            listener.onPrinterRespHandler("SUCCESS")
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
+
+            // Notify failure
+            listener.onPrinterRespHandler("FAILURE")
+        }
+    }
 }

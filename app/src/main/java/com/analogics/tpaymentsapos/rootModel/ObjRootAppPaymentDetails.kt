@@ -24,6 +24,14 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
+    @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
+    @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
+    @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
+
+    @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
+    @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
+    @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
+
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
@@ -45,4 +53,5 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("txnStatus") var txnStatus: String? = null,
     @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE
 
-    ):Serializable
+
+):Serializable
