@@ -2,15 +2,13 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.utils.BuilderUtils
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -22,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardViewModel @Inject constructor(private  var paymentServiceRepository: PaymentServiceRepository,var dbRepository: TxnDBRepository) : ViewModel() {
+class CardViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
 
     var showProgress = mutableStateOf(false)
 
@@ -40,16 +38,16 @@ class CardViewModel @Inject constructor(private  var paymentServiceRepository: P
 
     fun startPayment(context: Context, navHostController: NavHostController) {
         viewModelScope.launch {
-            paymentServiceRepository.startPayment(context, object :
-                IOnRootAppPaymentListener {
-                override fun onPaymentSuccess(response: Any) {
+            apiServiceRepository.startPayment(context, object :
+                IApiServiceResponseListener {
+                override fun onApiSuccess(response: Any) {
                     if (response == true)
                         navigateToApprovalScreen(navHostController)
                     else
                         navigateToDeclinedScreen(navHostController)
                 }
 
-                override fun onPaymentError(tError: PaymentServiceError) {
+                override fun onApiError(apiServiceError: ApiServiceError) {
                     navigateToDeclinedScreen(navHostController)
                 }
 

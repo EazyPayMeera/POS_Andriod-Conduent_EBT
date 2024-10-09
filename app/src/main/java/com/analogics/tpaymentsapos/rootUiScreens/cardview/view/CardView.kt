@@ -232,7 +232,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
         viewModel.startPayment(context, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.BatchId
-        viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
+      //  viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
+        //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
     }
 
     // QR Code Dialog

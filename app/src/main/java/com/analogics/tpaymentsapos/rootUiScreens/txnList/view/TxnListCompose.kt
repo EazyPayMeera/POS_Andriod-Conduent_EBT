@@ -389,7 +389,7 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel,navHo
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                sharedViewModel.objRootAppPaymentDetail.batchId?.let {
+                sharedViewModel.objPosConfig?.BatchId?.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.caption,

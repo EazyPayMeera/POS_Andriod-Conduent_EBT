@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -91,6 +90,7 @@ import java.util.Locale
 
 @Composable
 fun InputTextField(
+    enabled : Boolean ?= true,
     inputValue: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -110,6 +110,7 @@ fun InputTextField(
         value = inputValue,
         onValueChange = onChange,
         modifier = modifier,
+        enabled = enabled != false,
         leadingIcon = {
             Icon(
                 imageVector = icon,
@@ -916,10 +917,6 @@ fun OutlinedTextField(
     // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
     // Handle value change with length restriction if `amount` flag is true
     val handleValueChange: (TextFieldValue) -> Unit = { newValue ->
         if (amount) {
@@ -972,6 +969,10 @@ fun OutlinedTextField(
         )
 
     )
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 }
 
 

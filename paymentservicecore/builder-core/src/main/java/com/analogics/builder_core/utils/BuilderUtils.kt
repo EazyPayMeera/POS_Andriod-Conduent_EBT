@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object BuilderUtils  {
-     fun prepareAPIRequestBody(requestObj:Any): RequestBody {
+     fun prepareApiRequestBody(requestObj:Any): RequestBody {
         return Gson().toJson(requestObj).toByteArray()
             .toRequestBody("application/json".toMediaTypeOrNull())
     }

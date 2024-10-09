@@ -16,9 +16,6 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -80,6 +77,7 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                     )
 
                     InputTextField(
+                        enabled = viewModel.isLoginEnabled.value,
                         inputValue = viewModel.emailCredentials.value,
                         onChange = { viewModel.onEmailChange(it) },
                         modifier = Modifier.fillMaxWidth(),
@@ -90,6 +88,7 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                     )
 
                     InputTextField(
+                        enabled = viewModel.isLoginEnabled.value,
                         inputValue = viewModel.pwdCredentials.value,
                         onChange = { viewModel.onPasswordChange(it) },
                         modifier = Modifier.fillMaxWidth(),

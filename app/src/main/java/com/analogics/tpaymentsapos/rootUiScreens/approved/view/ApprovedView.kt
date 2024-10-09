@@ -265,7 +265,8 @@ fun ApprovedView(navHostController: NavHostController) {
                         onClick = {
                             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
                             Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
-                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                           viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                            //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
                             Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },

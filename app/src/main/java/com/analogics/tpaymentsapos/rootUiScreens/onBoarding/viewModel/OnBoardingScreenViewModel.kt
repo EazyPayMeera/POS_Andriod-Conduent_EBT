@@ -4,10 +4,9 @@ package com.analogics.tpaymentsapos.rootUiScreens.onBoarding.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OnBoardingScreenViewModel @Inject constructor(private  var paymentServiceRepository: PaymentServiceRepository) : ViewModel() {
+class OnBoardingScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository) : ViewModel() {
     @OptIn(ExperimentalPagerApi::class)
     fun autoScrollPager(pagerState: PagerState) {
         viewModelScope.launch {
