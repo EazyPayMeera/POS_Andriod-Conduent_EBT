@@ -50,7 +50,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.AlertDialogBuilder
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.DateTimePickerDialog
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -73,6 +73,7 @@ fun TransactionListScreen(
     val transactions = viewModel.transactionList.collectAsState().value
     // Initial fetch of transactions (if needed)
     viewModel.fetchTransactions()
+
     val sharedViewModel = localSharedViewModel.current
 
     // State variables
@@ -104,7 +105,7 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel,sharedViewModel)
+                HeaderSection(viewModel,sharedViewModel,navHostController)
                 SummarySection(viewModel)
             }
         }
@@ -228,10 +229,6 @@ fun TransactionListScreen(
         }
     }
 }
-
-
-
-
 
 
 @Composable
@@ -368,9 +365,11 @@ fun TransactionItem(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
+fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel,navHostController: NavHostController) {
     val context = LocalContext.current
     var isDialogVisible by remember { mutableStateOf(false) }
+    var isAlertVisible by remember { mutableStateOf(false) }
+    var isSummaryReport by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -399,7 +398,7 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
                     )
                 }
 
-                Row {
+                Row (){
                     IconButton(onClick = {
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnAmount = formatAmount(
                             viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
@@ -410,7 +409,7 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND))
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
                         Log.d("PrintButton", "Print button clicked")
-                        viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)}) {
+                        /*viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)*/isAlertVisible=true}) {
                         Icon(Icons.Default.Print, contentDescription = "")
                     }
 
@@ -456,36 +455,60 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
                 )
             }
         }
+
         if (isDialogVisible) {
-            val builder = AlertDialogBuilder()
+            CustomDialogBuilder.create()
                 .setTitle("Confirmation")
                 .setSubtitle("Are you sure?")
                 .setSmallText("You want to close the Batch")
-                .setShowCloseButton(true)
-                .setOnClose {
-
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    navHostController.navigate(AppNavigationItems.TxnListScreen.route)
                 }
-                .setOnDismissRequest {
-                    isDialogVisible=false
+                .setOnConfirmAction {
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
                 }
+                .setShowButtons(true)
+                .setAutoOff(false)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
 
-            // Build and show the dialog
-            builder.build()
+        }
+
+        if(isAlertVisible)
+        {
+            CustomDialogBuilder.create()
+                .setTitle("Print?")
+                .setSubtitle("")
+                .setSmallText("Which Report You want")
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelButtonText("Summary")
+                .setConfirmButtonText("Detail")
+                .setCancelable(false)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    viewModel.printReceipt(context, true,false,sharedViewModel.objRootAppPaymentDetail)
+                }
+                .setOnConfirmAction {
+                    viewModel.printReceipt(context, true,true,sharedViewModel.objRootAppPaymentDetail)
+                }
+                .setShowButtons(true)
+                .setAutoOff(false)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isDialogVisible = false })
         }
     }
 }
-
-
-/*
-@Composable
-fun summaryReport(viewModel: TxnViewModel = hiltViewModel())
-{
-    val sharedViewModel = localSharedViewModel.current
-    viewModel.addSummaryText(sharedViewModel.objRootAppPaymentDetail,"Hello",1)
-}
-*/
-
-
 
 @Composable
 fun AlertDialog() {

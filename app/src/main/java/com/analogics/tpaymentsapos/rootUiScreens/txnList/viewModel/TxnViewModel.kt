@@ -19,9 +19,9 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -154,6 +154,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     fun printReceipt(
         context: Context,
         customer: Boolean = false,
+        isSummaryReport: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
     )
     {
@@ -161,7 +162,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         isCustomer.value = customer
 
         GlobalScope.launch {
-            initPrinter(context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+            initPrinter(context,isSummaryReport ,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     isPrinting.value = false
                 }
@@ -175,6 +176,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     suspend fun initPrinter(
         context: Context,
+        isSummaryReport: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     )
@@ -185,7 +187,17 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
-                addReceiptDetails(objRootAppPaymentDetail,iPrinterResultProviderListener)
+                if(isSummaryReport) {
+                    addDetailedReceipt(
+                        objRootAppPaymentDetail,
+                        transactionList.value,
+                        iPrinterResultProviderListener
+                    )
+                }
+                else
+                {
+                    addReceiptDetails(objRootAppPaymentDetail,iPrinterResultProviderListener)
+                }
                 Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
@@ -215,6 +227,44 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
         // Pass the receipt details to the PrinterServiceRepository
         PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(labelList,valueList,descriptionList,iPrinterResultProviderListener)
+    }
+
+    suspend fun addDetailedReceipt(
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+        transactionList: List<ObjRootAppPaymentDetails>, // Assuming this is the input type
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    ) {
+        // Create an instance of ReceiptBuilder
+        val receiptBuilder = ReceiptBuilder()
+
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+
+        // Map ObjRootAppPaymentDetails to TransactionDetails
+        val transactionDetailsList = transactionList.map { paymentDetail ->
+            // Create TransactionDetails based on ObjRootAppPaymentDetails
+            ReceiptBuilder.TransactionDetails(
+                TxnType = paymentDetail.txnType.toString(), // Replace with actual property
+                Status = paymentDetail.txnStatus.toString(), // Replace with actual property
+                InvoiceNo = paymentDetail.invoiceNo.toString(),
+                AuthCode = paymentDetail.hostAuthCode.toString(),
+                txnAmount = paymentDetail.txnAmount.toString(),
+                ttlAmount = paymentDetail.ttlAmount.toString(),
+                timedate = paymentDetail.dateTime.toString()
+            )
+        }
+
+        // Generate the receipt
+        val detailedReport = receiptBuilder.createDetailReport(paymentServiceTxnDetails, transactionDetailsList)
+
+        // Create separate lists for label, value, and description
+        val labelList: List<String> = detailedReport.detailFields.map { it.first }
+        val valueList: List<String> = detailedReport.detailFields.map { it.second }
+        val descriptionList: List<String> = detailedReport.detailFields.map { it.third }
+
+        // Pass the receipt details to the PrinterServiceRepository
+        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(labelList, valueList, descriptionList, iPrinterResultProviderListener)
     }
 
     override fun onDisplayProgress(

@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,14 +43,19 @@ class AlertDialogBuilder {
 
     // Build the dialog
     @Composable
-    fun build() {
+    fun build(
+        cancelButtonText: String = "Cancel", // Default text for Cancel button
+        okButtonText: String = "OK" // Default text for OK button
+    ) {
         CustomAlertDialog(
             title = title,
             subtitle = subtitle,
             smallText = smallText,
             showCloseButton = showCloseButton,
             onClose = onClose ?: {},
-            onDismissRequest = onDismissRequest ?: {}
+            onDismissRequest = onDismissRequest ?: {},
+            cancelButtonText = cancelButtonText,
+            okButtonText = okButtonText
         )
     }
 }
@@ -65,77 +67,83 @@ fun CustomAlertDialog(
     smallText: String,
     showCloseButton: Boolean,
     onDismissRequest: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    cancelButtonText: String = "Cancel", // Default text for Cancel button
+    okButtonText: String = "OK" // Default text for OK button
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
-
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+        ) {
+            GenericCard(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
-            ) {
-                GenericCard (modifier = Modifier
                     .wrapContentHeight() // Wraps content height
                     .fillMaxWidth()
                     .align(Alignment.Center),
-                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),){
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    GenericCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(), // Wraps content height
+                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                        shape = RoundedCornerShape(0.dp),
                     ) {
-                        GenericCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(), // Wraps content height
-                            backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                            shape = RoundedCornerShape(0.dp),
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
-                            ) {
-
-                                // Title
-                                Text(text = title, style = MaterialTheme.typography.titleLarge)
-
-
-                            }
+                            // Title
+                            Text(text = title, style = MaterialTheme.typography.titleLarge)
                         }
-                        // Dialog Content
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = subtitle, style = MaterialTheme.typography.bodyMedium)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = smallText, style = MaterialTheme.typography.bodySmall)
-                        // Action Buttons
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(20.dp),
-                            horizontalArrangement = Arrangement.End,
-
+                    }
+                    // Dialog Content
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = subtitle, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = smallText, style = MaterialTheme.typography.bodySmall)
+                    // Action Buttons
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Button(
+                            modifier = Modifier.weight(1f), // Makes the button fill available space
+                            onClick = { onDismissRequest() }
                         ) {
-                            Button(onClick = { onDismissRequest()}) {
-                                Text("Cancel")
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(onClick =  {} ) {
-                                Text("OK")
-                            }
+                            Text(
+                                text = cancelButtonText,
+                                modifier = Modifier.fillMaxWidth(), // Makes text take full width
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center // Center-align the text
+                            ) // Use the passed text for Cancel button
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            modifier = Modifier.weight(1f), // Makes the button fill available space
+                            onClick = { onClose() } // Handle OK button action
+                        ) {
+                            Text(
+                                text = okButtonText,
+                                modifier = Modifier.fillMaxWidth(), // Makes text take full width
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center // Center-align the text
+                            )
                         }
                     }
                 }
             }
-
+        }
     }
 }
-
-
-
-
-
-
-
 
 @Composable
 fun AlertDialogExample() {
@@ -151,8 +159,11 @@ fun AlertDialogExample() {
             // Handle dismiss on outside touch or back press
         }
 
-    // Build and show the dialog
-    builder.build()
+    // Build and show the dialog with custom button texts
+    builder.build(
+        cancelButtonText = "No", // Custom text for Cancel button
+        okButtonText = "Yes" // Custom text for OK button
+    )
 }
 
 @Composable

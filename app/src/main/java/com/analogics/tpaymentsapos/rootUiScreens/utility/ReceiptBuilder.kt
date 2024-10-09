@@ -53,7 +53,8 @@ class ReceiptBuilder {
         return SummaryReport.Builder()
             .addSummaryField("", "SUMMARY REPORT", "")
             .addSummaryField("Transaction", "Count", "Total")
-            .addSummaryField("Purchase",paymentDetails?.ttlTxnCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
+            .addSummaryField("---------------", "---------------", "---------------")
+            .addSummaryField("Purchase",paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
             .addSummaryField("Refund",paymentDetails?.ttlRefundCount?.toString() ?: "N/A" , paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
             .addSummaryField("Voids", "2", "10.00")
             .addSummaryField("Tip Surcharges", "10", "10.00")
@@ -62,7 +63,7 @@ class ReceiptBuilder {
             .addSummaryField("Transaction Breakdown:", "", "")
             .addSummaryField("Credit Transactions:", "", "")
             .addSummaryField("Debit Transactions:", "", "")
-            .addSummaryField("", "******SUMMARY******", "")
+            .addSummaryField("", "SUMMARY", "")
             .build()
     }
 
@@ -106,6 +107,82 @@ class ReceiptBuilder {
             }
         }
     }
+
+    fun createDetailReport(paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
+        val reportBuilder = DetailedReport.Builder()
+
+        reportBuilder
+            .addDetailField("", "Detail\n Transaction\n Summary", "")
+            .addDetailField("Transaction", "Count", "Total")
+            .addDetailField("---------------", "---------------", "---------------")
+            .addDetailField("Purchase", paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A", paymentDetails?.ttlPurchaseAmount?.toString() ?: "N/A")
+            .addDetailField("Refund", paymentDetails?.ttlRefundCount?.toString() ?: "N/A", paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
+            .addDetailField("---------------", "---------------", "---------------")
+            .addDetailField("", "Transactions\n Details ", "")
+            .addDetailField("TxnType", "", "Status")
+            .addDetailField("InvoiceNo", "", "AuthCode")
+            .addDetailField("TxnAmount", "", "TotalAmount")
+            .addDetailField("----------------", "----------------", "----------------")
+
+        // Add transaction details from the transaction list
+        transactionList.forEach { transaction ->
+            reportBuilder.addDetailField(
+                "",
+                transaction.timedate,
+                ""
+            )
+            reportBuilder.addDetailField(
+                transaction.TxnType,
+                "",
+                transaction.Status
+            )
+            reportBuilder.addDetailField(
+                transaction.InvoiceNo,
+                "",
+                transaction.AuthCode
+            )
+            reportBuilder.addDetailField(
+                transaction.txnAmount,
+                "",
+                transaction.ttlAmount
+            )
+            reportBuilder.addDetailField(
+                "--------------------",
+                "--------------------",
+                "--------------------"
+            )
+        }
+
+        // Build and return the detailed report
+        return reportBuilder.build()
+    }
+
+    // Data class for DetailedReport
+    data class DetailedReport(
+        val detailFields: List<Triple<String, String, String>> // Three fields: label, quantity, price
+    ) {
+        class Builder {
+            private val detailFields: MutableList<Triple<String, String, String>> = mutableListOf()
+
+            fun addDetailField(label: String, quantity: String, price: String) = apply {
+                detailFields.add(Triple(label, quantity, price))
+            }
+
+            fun build(): DetailedReport {
+                return DetailedReport(detailFields)
+            }
+        }
+    }
+
+    data class TransactionDetails(
+        val TxnType: String,
+        val Status: String,
+        val InvoiceNo: String,
+        val AuthCode: String,
+        val txnAmount: String,
+        val ttlAmount: String,
+        val timedate: String
+    )
 
     // Data class for ReceiptItem
     data class ReceiptItem(
