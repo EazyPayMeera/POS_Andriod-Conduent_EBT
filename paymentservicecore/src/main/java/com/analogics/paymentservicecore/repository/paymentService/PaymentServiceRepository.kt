@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.repository.paymentService
 
 
 import android.content.Context
+import android.util.Log
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.IPaymentServiceRequestListener
 import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
@@ -14,8 +15,15 @@ import com.analogics.paymentservicecore.repository.paymentService.login.LoginReq
 import com.analogics.paymentservicecore.repository.paymentService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.reversal.ReversalRequestRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentSDKListener
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PaymentServiceRepository @Inject constructor(
@@ -25,12 +33,14 @@ class PaymentServiceRepository @Inject constructor(
     private val reversalRequestRepository: ReversalRequestRepository,
     private val voidRequestRepository: VoidRequestRepository,
     private val purchaseRequestRepository: PurchaseRequestRepository,
-    private val batchRequestRepository: BatchRequestRepository
+    private val batchRequestRepository: BatchRequestRepository,
+    private val dbRepository: TxnDBRepository
 ) :
     IPaymentServiceRequestListener,
     IPaymentSDKListener {
     lateinit var iOnRootAppPaymentListener: IOnRootAppPaymentListener
     lateinit var context: Context
+
 
     override fun onTPaymentSDKInit(uiData: String) {
         /* Just for testing comparing with uiData value */
@@ -76,7 +86,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
+        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails) {
             onAPIServiceResponse(it)
         }
     }
@@ -85,7 +95,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
+        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails) {
             onAPIServiceResponse(it)
         }
     }
@@ -94,7 +104,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
+        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails) {
             onAPIServiceResponse(it)
         }
     }
@@ -103,12 +113,12 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        if(TxnType.PREAUTH==TxnType.PREAUTH) {
-            authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
+        if (TxnType.PREAUTH == TxnType.PREAUTH) {
+            authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails) {
                 onAPIServiceResponse(it)
             }
-        }else {
-            authCaptureRequestRepository.sendAuthCaptureRequest(paymentServiceTxnDetails){
+        } else {
+            authCaptureRequestRepository.sendAuthCaptureRequest(paymentServiceTxnDetails) {
                 onAPIServiceResponse(it)
             }
         }
@@ -118,7 +128,7 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        reversalRequestRepository.sendReversal(paymentServiceTxnDetails){
+        reversalRequestRepository.sendReversal(paymentServiceTxnDetails) {
             onAPIServiceResponse(it)
         }
     }
@@ -127,15 +137,16 @@ class PaymentServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails){
+        loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails) {
             onAPIServiceResponse(it)
         }
     }
+
     override suspend fun apiServiceBatch(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iOnRootAppPaymentListener: IOnRootAppPaymentListener
     ) {
-        batchRequestRepository.sendBatchRequest(paymentServiceTxnDetails){
+        batchRequestRepository.sendBatchRequest(paymentServiceTxnDetails) {
             onAPIServiceResponse(it)
         }
     }
@@ -143,13 +154,16 @@ class PaymentServiceRepository @Inject constructor(
     override fun onAPIServiceResponse(response: Any) {
         when (response) {
             is PaymentServiceError -> {
+                Log.d("record","success"+PaymentServiceError(response.toString()))
                 iOnRootAppPaymentListener.onPaymentError(PaymentServiceError(response.toString()))
             }
-            else ->
-            {
+
+            else -> {
                 iOnRootAppPaymentListener.onPaymentSuccess(response)
             }
+
         }
+
     }
 
 

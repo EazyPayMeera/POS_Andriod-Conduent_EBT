@@ -1,5 +1,6 @@
 package com.analogics.builder_core.repository
 
+import android.util.Log
 import com.analogics.builder_core.listener.requestListener.IBuildApiRequestListener
 import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
 import com.analogics.networkservicecore.nComponent.IAPIService
@@ -45,6 +46,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
+        Log.d("record","apiPurchase")
         onApiSerivceHandler(NetworkCallProvider.safeApiCall {
             iApiService.getPurchase(requestBody)
         } )
@@ -92,13 +94,18 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
 
 
     override fun onApiSerivceHandler(apiResultProvider: ResultProvider<ResponseBody>) {
+
+        Log.d("record",apiResultProvider.toString())
         when (apiResultProvider) {
             is ResultProvider.Success -> {
                 iApiServiceResponseListener.onApiSuccessRes(apiResultProvider.data.source().buffer.readUtf8())
+                Log.d("record","apiPurchase1")
             }
 
             is ResultProvider.Error -> {
+                Log.d("record","apiPurchase2")
                 iApiServiceResponseListener.onApiFailureRes(apiResultProvider.exception)
+
             }
             else -> Unit
         }
