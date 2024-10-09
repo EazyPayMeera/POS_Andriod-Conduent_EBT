@@ -194,7 +194,7 @@ fun TransactionListScreen(
                 Divider(color = Color.Gray, thickness = 1.dp)
 
                 // If transaction list is empty
-                if (transactions.isNullOrEmpty()) {
+                if (transactions.isEmpty()) {
                     Text(
                         text = "Transaction List is Empty",
                         style = MaterialTheme.typography.body1,
