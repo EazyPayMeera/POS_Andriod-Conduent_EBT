@@ -1,14 +1,12 @@
 package com.analogics.paymentservicecore.repository.paymentService.purchase
 
 import android.util.Log
-import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
+import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
@@ -34,14 +32,14 @@ class PurchaseRequestRepository @Inject constructor(
         paymentServiceTxnDetails1= PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)!!
         Log.d("record insert", requestDetails)
         buildApiRepository.apiPurchase(
-            object :IApiServiceResponseListener{
-                override fun onApiSuccess(response: String) {
+            object :IBuilderServiceResponseListener{
+                override fun onBuilderSuccess(response: String) {
                     onAPIServiceResponse(response)
                     Log.d("record insert", "onApiSuccessRes")
 
                 }
 
-                override fun onApiFailure(error: Any) {
+                override fun onBuilderFailure(error: Any) {
                     Log.d("record insert", "onApiFailureRes")
                     CoroutineScope(Dispatchers.IO).launch {
                         val requestDetails =

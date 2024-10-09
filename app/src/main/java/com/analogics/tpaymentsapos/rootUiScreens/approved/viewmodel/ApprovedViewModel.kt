@@ -13,10 +13,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -33,8 +33,8 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var paymentServiceRepository: PaymentServiceRepository): ViewModel(),
-    IOnRootAppPaymentListener {
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var paymentServiceRepository: ApiServiceRepository): ViewModel(),
+    IApiServiceResponseListener {
 
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
@@ -42,7 +42,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     val isCustomer = mutableStateOf(false)
 
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
+    var userApiErrorHolder = MutableStateFlow(ApiServiceError())
 
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
@@ -198,7 +198,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         }
     }
-    override fun onPaymentSuccess(response: Any) {
+    override fun onApiSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
@@ -207,12 +207,17 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         }
     }
 
-    override fun onPaymentError(paymentError: PaymentServiceError) {
-        Log.d("record1","success2")
-        Log.e("API Response", paymentError.errorMessage)
-        userApiErrorHolder.value = paymentError
+    override fun onApiError(apiServiceError: ApiServiceError) {
+        userApiErrorHolder.value = apiServiceError
     }
 
-
+    override fun onDisplayProgress(
+        show: Boolean,
+        title: String?,
+        subTitle: String?,
+        message: String?
+    ) {
+        
+    }
 
 }

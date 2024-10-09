@@ -1,6 +1,6 @@
 package com.analogics.paymentservicecore.repository.paymentService.login
 
-import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
+import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
@@ -15,12 +15,12 @@ class AccessTokenRequestRepository @Inject constructor(
     suspend fun apiGetAccessToken(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
         buildApiRepository.apiGetAccessToken(
-            object :IApiServiceResponseListener{
-                override fun onApiSuccess(response: String) {
+            object :IBuilderServiceResponseListener{
+                override fun onBuilderSuccess(response: String) {
                     onAPIServiceResponse(response)
                 }
 
-                override fun onApiFailure(error: Any) {
+                override fun onBuilderFailure(error: Any) {
                     onAPIServiceResponse(ApiServiceError(error.toString()))
                 }
             },

@@ -2,21 +2,13 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 
 import android.content.Context
 import android.util.Log
-import android.util.MutableBoolean
 import androidx.compose.runtime.mutableStateOf
-import android.util.MutableBoolean
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
-import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
-import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems

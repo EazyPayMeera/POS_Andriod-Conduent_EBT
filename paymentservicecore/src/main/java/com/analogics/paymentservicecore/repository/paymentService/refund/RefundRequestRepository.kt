@@ -1,6 +1,6 @@
 package com.analogics.paymentservicecore.repository.paymentService.refund
 
-import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
+import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
@@ -16,13 +16,13 @@ class RefundRequestRepository @Inject constructor(
     suspend fun sendRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onApiServiceResponse:(Any)->Unit) {
 
         buildApiRepository.apiRefund(
-            object :IApiServiceResponseListener{
-                override fun onApiSuccess(response: String) {
+            object :IBuilderServiceResponseListener{
+                override fun onBuilderSuccess(response: String) {
                     onApiServiceResponse(response)
 
                 }
 
-                override fun onApiFailure(error: Any) {
+                override fun onBuilderFailure(error: Any) {
                     onApiServiceResponse(ApiServiceError(error.toString()))
                 }
             },
