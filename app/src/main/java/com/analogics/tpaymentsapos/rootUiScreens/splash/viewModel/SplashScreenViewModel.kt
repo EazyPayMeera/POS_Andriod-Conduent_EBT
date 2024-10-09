@@ -1,15 +1,12 @@
 package com.analogics.tpaymentsapos.rootUiScreens.splash.viewModel
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.analogics.paymentservicecore.constants.AppConstants
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -17,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private  var paymentServiceRepository: PaymentServiceRepository) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(private  var paymentServiceRepository: ApiServiceRepository) : ViewModel() {
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             sharedViewModel.objPosConfig = paymentServiceRepository.getPosConfig(navController.context)

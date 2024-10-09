@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -23,15 +23,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private var paymentServiceRepository: PaymentServiceRepository) :
+class LoginViewModel @Inject constructor(private var paymentServiceRepository: ApiServiceRepository) :
     ViewModel(),
-    IOnRootAppPaymentListener {
+    IApiServiceResponseListener {
     var emailCredentials = mutableStateOf("")
     var pwdCredentials = mutableStateOf("")
     val isLoginEnabled = mutableStateOf(true)
     var userApiSuccessHolder = MutableStateFlow(ObjEmployeeResponse())
     var useRootAppPaymentDetails = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
+    var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     lateinit var navHostController: NavHostController
     val isFormValid: Boolean
         get() = emailCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank()
@@ -93,7 +93,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         }
     }
 
-    override fun onPaymentSuccess(response: Any) {
+    override fun onApiSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 useRootAppPaymentDetails.value = response
@@ -110,9 +110,9 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
 
     }
 
-    override fun onPaymentError(paymentError: PaymentServiceError) {
+    override fun onApiError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
-        userApiErrorHolder.value = paymentError
+        userApiServiceErrorHolder.value = paymentError
         setLoginButtonState(true)
     }
 

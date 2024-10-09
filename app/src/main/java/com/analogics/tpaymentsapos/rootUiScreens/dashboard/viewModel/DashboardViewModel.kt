@@ -7,9 +7,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private var paymentServiceRepository:PaymentServiceRepository,val txnDBRepository: TxnDBRepository)  : ViewModel() {
+class DashboardViewModel @Inject constructor(private var paymentServiceRepository:ApiServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
 
@@ -54,8 +54,8 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             coroutineScope.launch {
                 paymentServiceRepository.initPaymentSDK(context, object :
-                    IOnRootAppPaymentListener {
-                    override fun onPaymentSuccess(result: Any) {
+                    IApiServiceResponseListener {
+                    override fun onApiSuccess(result: Any) {
                         if (result == true) {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }?.saveToPrefs()
                             Toast.makeText(
@@ -74,11 +74,11 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
                         }
                     }
 
-                    override fun onPaymentError(tError: PaymentServiceError) {
+                    override fun onApiError(apiServiceError: ApiServiceError) {
                         sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
                         Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
                             .show()
-                        Log.e("EMV_APP", tError.errorMessage)
+                        Log.e("EMV_APP", apiServiceError.errorMessage)
                     }
 
                     override fun onDisplayProgress(

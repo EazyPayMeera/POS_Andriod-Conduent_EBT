@@ -3,9 +3,9 @@ package com.analogics.paymentservicecore.repository.paymentService
 
 import android.content.Context
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.listeners.requestListener.IPaymentServiceRequestListener
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
+import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.paymentservicecore.repository.paymentService.auth_capture.AuthCaptureRequestRepository
@@ -19,7 +19,7 @@ import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 import javax.inject.Inject
 
-class PaymentServiceRepository @Inject constructor(
+class ApiServiceRepository @Inject constructor(
     private val accessTokenRequestRepository: AccessTokenRequestRepository,
     private var refundRequestRepository: RefundRequestRepository,
     private val authCaptureRequestRepository: AuthCaptureRequestRepository,
@@ -29,50 +29,50 @@ class PaymentServiceRepository @Inject constructor(
     private val purchaseRequestRepository: PurchaseRequestRepository,
     private val batchRequestRepository: BatchRequestRepository
 ) :
-    IPaymentServiceRequestListener,
+    IApiServiceRequestListener,
     IPaymentSDKListener {
-    lateinit var iOnRootAppPaymentListener: IOnRootAppPaymentListener
+    lateinit var iApiServiceResponseListener: IApiServiceResponseListener
     lateinit var context: Context
 
     override fun onTPaymentSDKInit(uiData: String) {
         /* Just for testing comparing with uiData value */
         if (uiData == "SUCCESS") {
-            iOnRootAppPaymentListener.onPaymentSuccess(true)
+            iApiServiceResponseListener.onApiSuccess(true)
         } else {
-            iOnRootAppPaymentListener.onPaymentError(PaymentServiceError("Error"))
+            iApiServiceResponseListener.onApiError(ApiServiceError("Error"))
         }
     }
 
     override fun onTPaymentSDKHandler(uiData: String) {
         /* Just for testing comparing with uiData value */
-        iOnRootAppPaymentListener.onDisplayProgress(false)
+        iApiServiceResponseListener.onDisplayProgress(false)
         if (uiData == "SUCCESS")
-            iOnRootAppPaymentListener.onPaymentSuccess(true)
+            iApiServiceResponseListener.onApiSuccess(true)
         else
-            iOnRootAppPaymentListener.onPaymentError(PaymentServiceError("Error"))
+            iApiServiceResponseListener.onApiError(ApiServiceError("Error"))
     }
 
     override fun onTPaymentDisplayMessage(uiData: String?) {
-        iOnRootAppPaymentListener.onDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
+        iApiServiceResponseListener.onDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
     }
 
 
     override fun initPaymentSDK(
         context: Context,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         this.context = context
-        iOnRootAppPaymentListener.onDisplayProgress(false)
+        iApiServiceResponseListener.onDisplayProgress(false)
         PaymentConfigurationHandler.initPaymentSDK(context, this)
     }
 
     override fun startPayment(
         context: Context,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
-        iOnRootAppPaymentListener.onDisplayProgress(false)
+        this.iApiServiceResponseListener = iApiServiceResponseListener
+        iApiServiceResponseListener.onDisplayProgress(false)
         PaymentConfigurationHandler.startPayment(context, this)
     }
 
@@ -82,100 +82,100 @@ class PaymentServiceRepository @Inject constructor(
 
     override suspend fun apiServiceRefund(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
     override suspend fun apiServiceVoid(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
     override suspend fun apiServicePurchase(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
     override suspend fun apiServiceAuthCapture(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         if(TxnType.PREAUTH==TxnType.PREAUTH) {
             authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
-                onAPIServiceResponse(it)
+                onApiServiceResponse(it)
             }
         }else {
             authCaptureRequestRepository.sendAuthCaptureRequest(paymentServiceTxnDetails){
-                onAPIServiceResponse(it)
+                onApiServiceResponse(it)
             }
         }
     }
 
     override suspend fun apiServiceReversal(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         reversalRequestRepository.sendReversal(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
     override suspend fun apiServiceLogin(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
     override suspend fun apiServiceAccessToken(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
-        this.iOnRootAppPaymentListener.onDisplayProgress(true)
+        this.iApiServiceResponseListener = iApiServiceResponseListener
+        this.iApiServiceResponseListener.onDisplayProgress(true)
         accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
     override suspend fun apiServiceBatch(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iOnRootAppPaymentListener: IOnRootAppPaymentListener
+        iApiServiceResponseListener: IApiServiceResponseListener
     ) {
-        this.iOnRootAppPaymentListener = iOnRootAppPaymentListener
+        this.iApiServiceResponseListener = iApiServiceResponseListener
         batchRequestRepository.sendBatchRequest(paymentServiceTxnDetails){
-            onAPIServiceResponse(it)
+            onApiServiceResponse(it)
         }
     }
 
-    override fun onAPIServiceResponse(response: Any) {
-        iOnRootAppPaymentListener.onDisplayProgress(false)
+    override fun onApiServiceResponse(response: Any) {
+        iApiServiceResponseListener.onDisplayProgress(false)
         when (response) {
-            is PaymentServiceError -> {
-                iOnRootAppPaymentListener.onPaymentError(PaymentServiceError(response.toString()))
+            is ApiServiceError -> {
+                iApiServiceResponseListener.onApiError(ApiServiceError(response.toString()))
             }
             else ->
             {
-                iOnRootAppPaymentListener.onPaymentSuccess(response)
+                iApiServiceResponseListener.onApiSuccess(response)
             }
         }
     }

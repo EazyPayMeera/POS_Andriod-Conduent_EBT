@@ -5,8 +5,6 @@ import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import javax.inject.Inject
 
 class PurchaseRequestRepository @Inject constructor(
@@ -17,19 +15,19 @@ class PurchaseRequestRepository @Inject constructor(
 
         buildApiRepository.apiPurchase(
             object :IApiServiceResponseListener{
-                override fun onApiSuccessRes(response: String) {
+                override fun onApiSuccess(response: String) {
                     onAPIServiceResponse(response)
 
                 }
 
-                override fun onApiFailureRes(error: Any) {
+                override fun onApiFailure(error: Any) {
                    // onAPIServiceResponse(PaymentServiceError(error.toString()))
 
                     paymentServiceTxnDetails?.let { onAPIServiceResponse(it) }
 
                 }
             },
-            BuilderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareApiRequestBody(
                 apiServiceRequestBuilder.createPurchaseRequest(paymentServiceTxnDetails)
             )
         )

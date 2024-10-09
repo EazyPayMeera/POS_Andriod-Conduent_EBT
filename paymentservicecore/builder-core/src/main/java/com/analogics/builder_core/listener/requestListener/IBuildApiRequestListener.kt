@@ -16,6 +16,6 @@ interface IBuildApiRequestListener {
     suspend fun apiDeviceLogin(iApiServiceResponseListener: IApiServiceResponseListener,requestBody: RequestBody)
     suspend fun apiGetAccessToken(iApiServiceResponseListener: IApiServiceResponseListener,requestBody: RequestBody)
 
-    fun onApiSerivceHandler(apiResultProvider: ResultProvider<ResponseBody>)
+    fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ResponseBody>)
 
 }

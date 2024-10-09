@@ -7,11 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
+import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnType
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
@@ -29,14 +29,14 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val paymentServiceRepository: PaymentServiceRepository) : ViewModel(),
-    IOnRootAppPaymentListener {
+class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val paymentServiceRepository: ApiServiceRepository) : ViewModel(),
+    IApiServiceResponseListener {
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
      var allTransactionList: List<TxnEntity>? = null
     var selectedDateTime = mutableStateOf(Date())
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
+    var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     private val filterTxn = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
 
     init {
@@ -118,7 +118,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    override fun onPaymentSuccess(response: Any) {
+    override fun onApiSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
@@ -128,9 +128,9 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     }
 
-    override fun onPaymentError(paymentError: PaymentServiceError) {
+    override fun onApiError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
-        userApiErrorHolder.value = paymentError
+        userApiServiceErrorHolder.value = paymentError
     }
 
     override fun onDisplayProgress(

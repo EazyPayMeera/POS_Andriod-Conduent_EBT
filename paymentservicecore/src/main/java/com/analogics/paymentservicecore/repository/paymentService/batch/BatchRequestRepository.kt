@@ -5,8 +5,7 @@ import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuildApiRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
-import com.analogics.paymentservicecore.model.error.PaymentServiceError
-import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
+import com.analogics.paymentservicecore.model.error.ApiServiceError
 import javax.inject.Inject
 
 class BatchRequestRepository @Inject constructor(
@@ -14,21 +13,21 @@ class BatchRequestRepository @Inject constructor(
     private var buildApiRepository: BuildApiRepository
 ) {
 
-    suspend fun sendBatchRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
+    suspend fun sendBatchRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onApiServiceResponse:(Any)->Unit) {
 
         buildApiRepository.apiRefund(
             object :IApiServiceResponseListener{
-                override fun onApiSuccessRes(response: String) {
-                    onAPIServiceResponse(response)
+                override fun onApiSuccess(response: String) {
+                    onApiServiceResponse(response)
                         //call db repo insert query for batch with batch id into batch table
 
                 }
 
-                override fun onApiFailureRes(error: Any) {
-                    onAPIServiceResponse(PaymentServiceError(error.toString()))
+                override fun onApiFailure(error: Any) {
+                    onApiServiceResponse(ApiServiceError(error.toString()))
                 }
             },
-            BuilderUtils.prepareAPIRequestBody(
+            BuilderUtils.prepareApiRequestBody(
                 apiServiceRequestBuilder.createRefundRequest(paymentServiceTxnDetails)
             )
         )

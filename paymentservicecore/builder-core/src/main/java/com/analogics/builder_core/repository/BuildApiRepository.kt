@@ -15,7 +15,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
 
     override suspend fun apiEmployeeDetails(iApiServiceResponseListener: IApiServiceResponseListener) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getEmployeeDetails()
         } )
     }
@@ -25,7 +25,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getRefund(requestBody)
         } )
     }
@@ -35,7 +35,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getVoid(requestBody)
         } )
     }
@@ -45,7 +45,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getPurchase(requestBody)
         } )
     }
@@ -55,7 +55,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getPreAuth(requestBody)
         } )
     }
@@ -65,7 +65,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getAuthCapture(requestBody)
         } )
     }
@@ -75,7 +75,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getReversal(requestBody)
         } )
     }
@@ -85,7 +85,7 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.login(requestBody)
         } )
     }
@@ -95,19 +95,19 @@ class BuildApiRepository @Inject constructor(private val iApiService: IAPIServic
         requestBody: RequestBody
     ) {
         this.iApiServiceResponseListener=iApiServiceResponseListener
-        onApiSerivceHandler(NetworkCallProvider.safeApiCall {
+        onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
             iApiService.getAccessToken(requestBody)
         } )
     }
 
-    override fun onApiSerivceHandler(apiResultProvider: ResultProvider<ResponseBody>) {
+    override fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ResponseBody>) {
         when (apiResultProvider) {
             is ResultProvider.Success -> {
-                iApiServiceResponseListener.onApiSuccessRes(apiResultProvider.data.source().buffer.readUtf8())
+                iApiServiceResponseListener.onApiSuccess(apiResultProvider.data.source().buffer.readUtf8())
             }
 
             is ResultProvider.Error -> {
-                iApiServiceResponseListener.onApiFailureRes(apiResultProvider.exception)
+                iApiServiceResponseListener.onApiFailure(apiResultProvider.exception)
             }
             else -> Unit
         }
