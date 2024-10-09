@@ -1,5 +1,6 @@
 package com.analogics.networkservicecore.nComponent
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Response
@@ -8,7 +9,8 @@ import retrofit2.Response
 
 
 object NetworkCallProvider {
-    suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): ResultProvider<T> {
+    suspend fun <T>
+            safeApiCall(apiCall: suspend () -> Response<T>): ResultProvider<T> {
         return try {
             val response = apiCall.invoke()
             if (response.isSuccessful) {
@@ -18,10 +20,16 @@ object NetworkCallProvider {
                     Exception(
                         response.errorBody()?.source()?.buffer?.readUtf8() ?: "Something went wrong"
                     )
+
                 )
+
             }
         } catch (e: Exception) {
-            ResultProvider.Error(e)
+            Log.d("exception",e.toString())
+            ResultProvider.Error(
+               e
+            )
+//            ResultProvider.Error(e)
         }
     }
 

@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.repository.paymentService
 
 
 import android.content.Context
+import android.util.Log
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
 import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
@@ -15,8 +16,15 @@ import com.analogics.paymentservicecore.repository.paymentService.login.LoginReq
 import com.analogics.paymentservicecore.repository.paymentService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.paymentService.reversal.ReversalRequestRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
 import com.analogics.tpaymentcore.listener.IPaymentSDKListener
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ApiServiceRepository @Inject constructor(
@@ -27,12 +35,14 @@ class ApiServiceRepository @Inject constructor(
     private val reversalRequestRepository: ReversalRequestRepository,
     private val voidRequestRepository: VoidRequestRepository,
     private val purchaseRequestRepository: PurchaseRequestRepository,
-    private val batchRequestRepository: BatchRequestRepository
+    private val batchRequestRepository: BatchRequestRepository,
+    private val dbRepository: TxnDBRepository
 ) :
     IApiServiceRequestListener,
     IPaymentSDKListener {
     lateinit var iApiServiceResponseListener: IApiServiceResponseListener
     lateinit var context: Context
+
 
     override fun onTPaymentSDKInit(uiData: String) {
         /* Just for testing comparing with uiData value */

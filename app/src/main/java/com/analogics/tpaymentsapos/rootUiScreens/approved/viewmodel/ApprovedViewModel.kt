@@ -13,7 +13,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.listeners.rootListener.IOnRootAppPaymentListener
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.model.error.PaymentServiceError
+import com.analogics.paymentservicecore.repository.paymentService.PaymentServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -24,17 +27,22 @@ import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel() {
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var paymentServiceRepository: PaymentServiceRepository): ViewModel(),
+    IOnRootAppPaymentListener {
 
     private val _printStatus = mutableStateOf("")
     val printStatus: MutableState<String> = _printStatus
     val isPrinting = mutableStateOf(false)
     val isCustomer = mutableStateOf(false)
+
+    private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
+    var userApiErrorHolder = MutableStateFlow(PaymentServiceError())
 
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
@@ -178,6 +186,33 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         } ?: Log.d("Record Update", "Invoice No is null")
     }
+    fun onPurchaseApi(objRootAppPaymentDetail: ObjRootAppPaymentDetails) {
+        viewModelScope.launch {
+            try {
+                val requestDetails =
+                    PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+                paymentServiceRepository.apiServicePurchase(
+                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@ApprovedViewModel)
+            } catch (e: Exception) {
+                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
+            }
+        }
+    }
+    override fun onPaymentSuccess(response: Any) {
+        when (response) {
+            is ObjRootAppPaymentDetails -> {
+                objRoot.value = response
+            }
+            //delete entery from db
+        }
+    }
+
+    override fun onPaymentError(paymentError: PaymentServiceError) {
+        Log.d("record1","success2")
+        Log.e("API Response", paymentError.errorMessage)
+        userApiErrorHolder.value = paymentError
+    }
+
 
 
 }

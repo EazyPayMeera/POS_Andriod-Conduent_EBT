@@ -1,5 +1,6 @@
 package com.analogics.builder_core.repository
 
+import android.util.Log
 import com.analogics.builder_core.listener.requestListener.IBuildApiRequestListener
 import com.analogics.builder_core.listener.responseListener.IApiServiceResponseListener
 import com.analogics.networkservicecore.nComponent.IAPIService
