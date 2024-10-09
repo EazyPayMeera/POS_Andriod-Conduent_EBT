@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository.paymentService.auth_capture
+package com.analogics.paymentservicecore.repository.apiService.auth_capture
 
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails

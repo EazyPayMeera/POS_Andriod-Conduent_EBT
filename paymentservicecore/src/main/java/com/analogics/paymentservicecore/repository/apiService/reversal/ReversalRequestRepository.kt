@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository.paymentService.reversal
+package com.analogics.paymentservicecore.repository.apiService.reversal
 
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails

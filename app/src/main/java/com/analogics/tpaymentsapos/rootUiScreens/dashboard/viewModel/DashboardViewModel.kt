@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private var paymentServiceRepository:ApiServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
+class DashboardViewModel @Inject constructor(private var apiServiceRepository:ApiServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
 
@@ -53,7 +53,7 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
     fun initPaymentSDK(context: Context, coroutineScope: CoroutineScope, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             coroutineScope.launch {
-                paymentServiceRepository.initPaymentSDK(context, object :
+                apiServiceRepository.initPaymentSDK(context, object :
                     IApiServiceResponseListener {
                     override fun onApiSuccess(result: Any) {
                         if (result == true) {

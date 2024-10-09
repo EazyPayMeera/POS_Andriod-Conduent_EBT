@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository.paymentService.purchase
+package com.analogics.paymentservicecore.repository.apiService.purchase
 
 import android.util.Log
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener

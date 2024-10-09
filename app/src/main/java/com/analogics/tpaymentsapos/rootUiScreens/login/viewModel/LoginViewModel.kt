@@ -2,7 +2,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.login.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -10,7 +9,7 @@ import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private var paymentServiceRepository: ApiServiceRepository) :
+class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiServiceRepository) :
     ViewModel(),
     IApiServiceResponseListener {
     var emailCredentials = mutableStateOf("")
@@ -73,7 +72,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: A
             try {
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(useRootAppPaymentDetails.value)
-                paymentServiceRepository.apiServiceLogin(
+                apiServiceRepository.apiServiceLogin(
                     PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@LoginViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
@@ -86,7 +85,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: A
             try {
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(useRootAppPaymentDetails.value)
-                paymentServiceRepository.apiServiceAccessToken(
+                apiServiceRepository.apiServiceAccessToken(
                     PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@LoginViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")

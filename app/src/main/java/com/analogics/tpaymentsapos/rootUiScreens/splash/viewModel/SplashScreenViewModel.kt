@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.analogics.paymentservicecore.constants.AppConstants
-import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
@@ -14,10 +14,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private  var paymentServiceRepository: ApiServiceRepository) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository) : ViewModel() {
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            sharedViewModel.objPosConfig = paymentServiceRepository.getPosConfig(navController.context)
+            sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig(navController.context)
             if(sharedViewModel.objPosConfig?.isLoggedIn==true)
                 navController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
             else if(sharedViewModel.objPosConfig?.isOnboardingComplete==true)

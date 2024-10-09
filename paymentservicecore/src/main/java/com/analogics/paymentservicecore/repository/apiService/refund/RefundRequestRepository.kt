@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository.paymentService
+package com.analogics.paymentservicecore.repository.apiService.refund
 
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
@@ -8,27 +8,28 @@ import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import javax.inject.Inject
 
-
-class VoidRequestRepository @Inject constructor(
+class RefundRequestRepository @Inject constructor(
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository
 ) {
-    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
+
+    suspend fun sendRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onApiServiceResponse:(Any)->Unit) {
 
         builderServiceRepository.apiRefund(
             object :IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: String) {
-                    onAPIServiceResponse(response)
+                    onApiServiceResponse(response)
 
                 }
 
                 override fun onBuilderFailure(error: Any) {
-                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                    onApiServiceResponse(ApiServiceError(error.toString()))
                 }
             },
             BuilderUtils.prepareApiRequestBody(
-                apiServiceRequestBuilder.createVoidRequest(paymentServiceTxnDetails)
+                apiServiceRequestBuilder.createRefundRequest(paymentServiceTxnDetails)
             )
         )
     }
+
 }

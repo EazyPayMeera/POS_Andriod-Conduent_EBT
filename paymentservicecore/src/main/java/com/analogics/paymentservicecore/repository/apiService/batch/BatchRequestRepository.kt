@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.repository.paymentService.login
+package com.analogics.paymentservicecore.repository.apiService.batch
 
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
@@ -8,24 +8,27 @@ import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import javax.inject.Inject
 
-class AccessTokenRequestRepository @Inject constructor(
+class BatchRequestRepository @Inject constructor(
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository
 ) {
-    suspend fun apiGetAccessToken(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        builderServiceRepository.apiGetAccessToken(
+    suspend fun sendBatchRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onApiServiceResponse:(Any)->Unit) {
+
+        builderServiceRepository.apiRefund(
             object :IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: String) {
-                    onAPIServiceResponse(response)
+                    onApiServiceResponse(response)
+                        //call db repo insert query for batch with batch id into batch table
+
                 }
 
                 override fun onBuilderFailure(error: Any) {
-                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                    onApiServiceResponse(ApiServiceError(error.toString()))
                 }
             },
             BuilderUtils.prepareApiRequestBody(
-                apiServiceRequestBuilder.createAccessTokenRequest(paymentServiceTxnDetails)
+                apiServiceRequestBuilder.createRefundRequest(paymentServiceTxnDetails)
             )
         )
     }

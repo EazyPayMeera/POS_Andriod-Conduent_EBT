@@ -16,7 +16,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResul
 import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -33,7 +33,7 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var paymentServiceRepository: ApiServiceRepository): ViewModel(),
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var apiServiceRepository: ApiServiceRepository): ViewModel(),
     IApiServiceResponseListener {
 
     private val _printStatus = mutableStateOf("")
@@ -191,7 +191,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             try {
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-                paymentServiceRepository.apiServicePurchase(
+                apiServiceRepository.apiServicePurchase(
                     PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@ApprovedViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")

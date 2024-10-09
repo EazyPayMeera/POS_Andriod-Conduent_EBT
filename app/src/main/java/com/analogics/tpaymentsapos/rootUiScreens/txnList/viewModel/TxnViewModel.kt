@@ -14,7 +14,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResul
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnType
-import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
@@ -36,7 +36,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val paymentServiceRepository: ApiServiceRepository) : ViewModel(),
+class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val apiServiceRepository: ApiServiceRepository) : ViewModel(),
     IApiServiceResponseListener {
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
@@ -126,7 +126,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             try {
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(_transactionList.value)
-                paymentServiceRepository.apiServiceBatch(
+                apiServiceRepository.apiServiceBatch(
                     PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@TxnViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.repository.paymentService.ApiServiceRepository
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -16,12 +16,11 @@ import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardViewModel @Inject constructor(private  var paymentServiceRepository: ApiServiceRepository,var dbRepository: TxnDBRepository) : ViewModel() {
+class CardViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
 
     var showProgress = mutableStateOf(false)
 
@@ -39,7 +38,7 @@ class CardViewModel @Inject constructor(private  var paymentServiceRepository: A
 
     fun startPayment(context: Context, navHostController: NavHostController) {
         viewModelScope.launch {
-            paymentServiceRepository.startPayment(context, object :
+            apiServiceRepository.startPayment(context, object :
                 IApiServiceResponseListener {
                 override fun onApiSuccess(response: Any) {
                     if (response == true)
