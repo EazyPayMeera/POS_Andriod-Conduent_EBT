@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.listeners.rootListener
+package com.analogics.paymentservicecore.listeners.responseListener
 
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 

@@ -6,9 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.model.error.EmvServiceError
+import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
+class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
 
     var showProgress = mutableStateOf(false)
 
@@ -38,16 +39,16 @@ class CardViewModel @Inject constructor(private  var apiServiceRepository: ApiSe
 
     fun startPayment(context: Context, navHostController: NavHostController) {
         viewModelScope.launch {
-            apiServiceRepository.startPayment(context, object :
-                IApiServiceResponseListener {
-                override fun onApiSuccess(response: Any) {
+            emvServiceRepository.startPayment(context, object :
+                IEmvServiceResponseListener {
+                override fun onEmvSuccess(response: Any) {
                     if (response == true)
                         navigateToApprovalScreen(navHostController)
                     else
                         navigateToDeclinedScreen(navHostController)
                 }
 
-                override fun onApiError(apiServiceError: ApiServiceError) {
+                override fun onEmvError(emvServiceError: EmvServiceError) {
                     navigateToDeclinedScreen(navHostController)
                 }
 
