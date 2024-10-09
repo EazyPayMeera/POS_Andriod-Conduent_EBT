@@ -202,8 +202,8 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
+                updateTxnData(objRoot.value)
             }
-            //delete entery from db
         }
     }
 
@@ -217,7 +217,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         subTitle: String?,
         message: String?
     ) {
-        
+
     }
 
 }

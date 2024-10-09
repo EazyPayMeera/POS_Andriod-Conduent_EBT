@@ -2,7 +2,7 @@ package com.analogics.paymentservicecore.repository.paymentService.auth_capture
 
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.builder_core.repository.BuildApiRepository
+import com.analogics.builder_core.repository.BuilderServiceRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.ApiServiceError
@@ -10,13 +10,13 @@ import javax.inject.Inject
 
 class AuthCaptureRequestRepository @Inject constructor(
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository
+    private var builderServiceRepository: BuilderServiceRepository
 ) {
 
 
     suspend fun sendAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        buildApiRepository.apiRefund(
+        builderServiceRepository.apiRefund(
             object :IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: String) {
                     onAPIServiceResponse(response)
@@ -34,7 +34,7 @@ class AuthCaptureRequestRepository @Inject constructor(
     }
     suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        buildApiRepository.apiRefund(
+        builderServiceRepository.apiRefund(
             object :IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: String) {
                     onAPIServiceResponse(response)

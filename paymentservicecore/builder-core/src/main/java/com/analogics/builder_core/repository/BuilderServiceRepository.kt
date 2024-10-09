@@ -1,6 +1,6 @@
 package com.analogics.builder_core.repository
 
-import com.analogics.builder_core.listener.requestListener.IBuildApiRequestListener
+import com.analogics.builder_core.listener.requestListener.IBuilderServiceRequestListener
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.networkservicecore.nComponent.IAPIService
 import com.analogics.networkservicecore.nComponent.NetworkCallProvider
@@ -9,7 +9,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import javax.inject.Inject
 
-class BuildApiRepository @Inject constructor(private val iApiService: IAPIService):IBuildApiRequestListener{
+class BuilderServiceRepository @Inject constructor(private val iApiService: IAPIService):IBuilderServiceRequestListener{
     lateinit var iBuilderServiceResponseListener:IBuilderServiceResponseListener
 
 

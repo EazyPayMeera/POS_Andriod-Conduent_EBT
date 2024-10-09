@@ -3,7 +3,7 @@ package com.analogics.paymentservicecore.repository.paymentService.purchase
 import android.util.Log
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.builder_core.repository.BuildApiRepository
+import com.analogics.builder_core.repository.BuilderServiceRepository
 import com.analogics.builder_core.utils.APIServiceRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.ApiServiceError
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class PurchaseRequestRepository @Inject constructor(
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
-    private var buildApiRepository: BuildApiRepository,
+    private var builderServiceRepository: BuilderServiceRepository,
     var dbRepository: TxnDBRepository
 ) {
     lateinit var paymentServiceTxnDetails1:PaymentServiceTxnDetails
@@ -31,7 +31,7 @@ class PurchaseRequestRepository @Inject constructor(
         }
         paymentServiceTxnDetails1= PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)!!
         Log.d("record insert", requestDetails)
-        buildApiRepository.apiPurchase(
+        builderServiceRepository.apiPurchase(
             object :IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: String) {
                     onAPIServiceResponse(response)

@@ -5,7 +5,7 @@ import com.analogics.networkservicecore.nComponent.ResultProvider
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 
-interface IBuildApiRequestListener {
+interface IBuilderServiceRequestListener {
     suspend fun apiEmployeeDetails(iBuilderServiceResponseListener: IBuilderServiceResponseListener)
     suspend fun apiRefund(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: RequestBody)
     suspend fun apiVoid(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: RequestBody)
