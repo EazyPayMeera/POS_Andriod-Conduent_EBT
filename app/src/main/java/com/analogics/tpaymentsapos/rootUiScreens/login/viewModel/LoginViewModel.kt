@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.login.viewModel
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -55,7 +56,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: A
 
                 setLoginButtonState(false)
                 getAccessToken()
-                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+                //navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 //sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
             } catch (e: Exception) {
                 e.printStackTrace()

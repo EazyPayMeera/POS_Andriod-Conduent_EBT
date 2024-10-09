@@ -91,6 +91,7 @@ import java.util.Locale
 
 @Composable
 fun InputTextField(
+    enabled : Boolean ?= true,
     inputValue: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -110,6 +111,7 @@ fun InputTextField(
         value = inputValue,
         onValueChange = onChange,
         modifier = modifier,
+        enabled = enabled != false,
         leadingIcon = {
             Icon(
                 imageVector = icon,
