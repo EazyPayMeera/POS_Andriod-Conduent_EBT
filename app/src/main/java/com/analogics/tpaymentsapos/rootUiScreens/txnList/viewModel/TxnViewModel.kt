@@ -21,6 +21,7 @@ import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -214,5 +215,14 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
         // Pass the receipt details to the PrinterServiceRepository
         PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(labelList,valueList,descriptionList,iPrinterResultProviderListener)
+    }
+
+    override fun onDisplayProgress(
+        show: Boolean,
+        title: String?,
+        subTitle: String?,
+        message: String?
+    ) {
+        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
     }
 }

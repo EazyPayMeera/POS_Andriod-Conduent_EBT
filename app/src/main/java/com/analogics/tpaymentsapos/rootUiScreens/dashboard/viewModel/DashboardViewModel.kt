@@ -13,6 +13,7 @@ import com.analogics.paymentservicecore.repository.paymentService.PaymentService
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -78,6 +79,15 @@ class DashboardViewModel @Inject constructor(private var paymentServiceRepositor
                         Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
                             .show()
                         Log.e("EMV_APP", tError.errorMessage)
+                    }
+
+                    override fun onDisplayProgress(
+                        show: Boolean,
+                        title: String?,
+                        subTitle: String?,
+                        message: String?
+                    ) {
+                        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
                     }
                 })
             }

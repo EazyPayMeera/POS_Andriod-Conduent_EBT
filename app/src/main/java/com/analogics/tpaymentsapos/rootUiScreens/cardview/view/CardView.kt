@@ -42,6 +42,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -58,9 +59,8 @@ import com.google.zxing.common.BitMatrix
 import java.util.EnumMap
 
 @Composable
-fun CardView(navHostController: NavHostController) {
+fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hiltViewModel()) {
 
-    val viewModel: CardViewModel = hiltViewModel()
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
 
@@ -242,6 +242,8 @@ fun CardView(navHostController: NavHostController) {
             onDismiss = { setShowQRCodeDialog(false) }
         )
     }
+
+    CustomDialogBuilder.ShowProgressDialog(viewModel.showProgress.value)
 }
 
 @Composable

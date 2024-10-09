@@ -14,6 +14,7 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +35,7 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
     lateinit var navHostController: NavHostController
     val isFormValid: Boolean
         get() = emailCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank()
+    var showProgress = mutableStateOf(false)
 
     fun onEmailChange(newEmail: String) {
         emailCredentials.value = newEmail
@@ -112,5 +114,15 @@ class LoginViewModel @Inject constructor(private var paymentServiceRepository: P
         Log.e("API Response", paymentError.errorMessage)
         userApiErrorHolder.value = paymentError
         setLoginButtonState(true)
+    }
+
+    override fun onDisplayProgress(
+        show: Boolean,
+        title: String?,
+        subTitle: String?,
+        message: String?
+    ) {
+        showProgress.value = show
+        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
     }
 }

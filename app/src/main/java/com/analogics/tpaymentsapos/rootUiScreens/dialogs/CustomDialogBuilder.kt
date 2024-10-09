@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
 
+import android.app.Dialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +26,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.analogics.tpaymentsapos.R
@@ -40,10 +44,9 @@ import kotlinx.coroutines.delay
 
 class CustomDialogBuilder private constructor() {
 
-
-    private var title: String = "Title"
-    private var subtitle: String = "Subtitle"
-    private var smallText: String = "Small Text"
+    private var title: String = ""
+    private var subtitle: String = ""
+    private var smallText: String = ""
     private var showCloseButton: Boolean = true
     private var isCancelable: Boolean = true
     private var backgroundColor: Color = dashboardCardBgColor
@@ -54,7 +57,7 @@ class CustomDialogBuilder private constructor() {
     private var onConfirmAction: (() -> Unit)? = null // Action for Confirm button
     private var showButtons: Boolean = false     // New parameter to control the visibility of both buttons
     private var autooff: Boolean = true     // New parameter to control the visibility of both buttons
-
+    private val showDialog = mutableStateOf(true)
 
     fun setTitle(title: String) = apply { this.title = title }
     fun setSubtitle(subtitle: String) = apply { this.subtitle = subtitle }
@@ -69,87 +72,94 @@ class CustomDialogBuilder private constructor() {
     fun setOnConfirmAction(action: () -> Unit) = apply { this.onConfirmAction = action }
     fun setShowButtons(show: Boolean) = apply { this.showButtons = show }    // Method to control the visibility of both buttons
     fun setAutoOff(show: Boolean) = apply { this.autooff = show }    // Method to control the visibility of both buttons
+    fun dismiss() = apply { this.showDialog.value=false }    // Method to control the visibility of both buttons
 
     @Composable
     fun buildDialog(onClose: () -> Unit) {
-        Dialog(onDismissRequest = { if (isCancelable) onClose() }) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
-            ) {
-                GenericCard (modifier = Modifier
-                    .wrapContentHeight() // Wraps content height
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),){
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-
+        if(showDialog.value) {
+            Dialog(onDismissRequest = { if (isCancelable) onClose() }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                ) {
                     GenericCard(
                         modifier = Modifier
+                            .wrapContentHeight() // Wraps content height
                             .fillMaxWidth()
-                            .wrapContentHeight(), // Wraps content height
-                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                        shape = RoundedCornerShape(0.dp),
-                    ){
+                            .align(Alignment.Center),
+                        shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
+                    ) {
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
 
-                            // Title
+                            GenericCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(), // Wraps content height
+                                backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                                shape = RoundedCornerShape(0.dp),
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
+                                ) {
+
+                                    // Title
+                                    Text(
+                                        text = title,
+                                        style = MaterialTheme.typography.h6,
+                                        color = Color.Black,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+
+
+                                }
+
+                            }
+
+                            // Close button
+                            if (showCloseButton) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.TopEnd
+                                ) {
+                                    IconButton(onClick = onClose) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Close",
+                                            tint = Color.Gray
+                                        )
+                                    }
+                                }
+                            }
+                            else{
+                                Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium))
+                            }
+
+
+                            // subTitle
                             Text(
-                                text = smallText,
+                                text = subtitle,
                                 style = MaterialTheme.typography.h6,
                                 color = Color.Black,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
 
+                            // message
+                            Text(
+                                text = smallText,
+                                style = MaterialTheme.typography.h5,
+                                color = Color.Black,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
 
-                        }
-
-                    }
-
-                    // Close button
-                    if (showCloseButton) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                            contentAlignment = Alignment.TopEnd
-                        ) {
-                            IconButton(onClick = onClose) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close",
-                                    tint = Color.Gray
-                                )
-                            }
-                        }
-                    }
-
-
-                    // Title
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.h6,
-                        color = Color.Black,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-
-                    // Subtitle
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.h5,
-                        color = Color.Black,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-
-/*                    // Small text
+                            /*                    // Small text
                     Text(
                         text = smallText,
                         style = MaterialTheme.typography.subtitle2,
@@ -157,74 +167,124 @@ class CustomDialogBuilder private constructor() {
                         modifier = Modifier.padding(bottom = 0.dp)
                     )*/
 
-                    // Conditionally show Progress Indicator
-                    if (showProgressIndicator) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .size(70.dp),
-                            color = progressColor,
-                            strokeWidth = 4.dp,
-                        )
-                    }
-
-                    if (showButtons) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            // Cancel Button
-                            Button(
-                                onClick = {
-                                    onCancelAction?.invoke()
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.grey)),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier
-                                    .weight(1f) // Use weight to make button take equal space
-                                    .height(46.dp) // Set the desired height here
-                            ) {
-                                Text("Cancel", color = Color.Black)
+                            // Conditionally show Progress Indicator
+                            if (showProgressIndicator) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .padding(20.dp)
+                                        .size(70.dp),
+                                    color = progressColor,
+                                    strokeWidth = 4.dp,
+                                )
                             }
 
-                            Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
+                            if (showButtons) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    // Cancel Button
+                                    Button(
+                                        onClick = {
+                                            onCancelAction?.invoke()
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = colorResource(
+                                                R.color.grey
+                                            )
+                                        ),
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier
+                                            .weight(1f) // Use weight to make button take equal space
+                                            .height(46.dp) // Set the desired height here
+                                    ) {
+                                        Text("Cancel", color = Color.Black)
+                                    }
 
-                            // Confirm Button
-                            Button(
-                                onClick = {
-                                    onConfirmAction?.invoke() // Execute confirm action
-                                    onClose()
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.grey)),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier
-                                    .weight(1f) // Use weight to make button take equal space
-                                    .height(46.dp) // Set the desired height here
-                            ) {
-                                Text("Confirm", color = Color.Black)
+                                    Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
+
+                                    // Confirm Button
+                                    Button(
+                                        onClick = {
+                                            onConfirmAction?.invoke() // Execute confirm action
+                                            onClose()
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = colorResource(
+                                                R.color.grey
+                                            )
+                                        ),
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier
+                                            .weight(1f) // Use weight to make button take equal space
+                                            .height(46.dp) // Set the desired height here
+                                    ) {
+                                        Text("Confirm", color = Color.Black)
+                                    }
+                                }
                             }
+
+
                         }
                     }
-
-
-
                 }
+                // Delay and navigate after 2 seconds
+                if (autooff) {
+                    LaunchedEffect(Unit) {
+                        delay(2000) // 2 seconds delay
+                        navAction?.invoke() // Replace "destination_route" with your actual route
                     }
-            }
-            // Delay and navigate after 2 seconds
-            if(autooff) {
-                LaunchedEffect(Unit) {
-                    delay(2000) // 2 seconds delay
-                    navAction?.invoke() // Replace "destination_route" with your actual route
                 }
+
             }
-            
         }
     }
 
     companion object {
+        private var instance: CustomDialogBuilder? = null
+        private var _title: String? = null
+        private var _subtitle: String? = null
+        private var _message: String? = null
+        var show = mutableStateOf(false)
+
         fun create(): CustomDialogBuilder = CustomDialogBuilder()
+
+        @Composable
+        fun ShowProgressDialog(showDialog : Boolean? = true, title: String?=null, subtitle: String?=null, message: String?=null) {
+            instance?.dismiss()
+            showDialog?.let { show.value = it }
+            if (show.value) {
+                instance = create()
+                    .setTitle(title ?: _title?: stringResource(R.string.processing))
+                    .setSubtitle(subtitle ?: _subtitle?: stringResource(R.string.plz_wait))
+                    .setSmallText(message ?: _message?: "")
+                    .setShowProgressIndicator(true)
+                    .setShowCloseButton(false)
+
+                instance?.buildDialog {
+                    show.value=false
+                }
+            }
+        }
+
+        fun SetProgressDialog(title: String?=null, subtitle: String?=null, message: String?=null) {
+            _title = title
+            _subtitle = subtitle
+            _message = message
+        }
+
+        fun ClearText() {
+            _title = null
+            _subtitle = null
+            _message = null
+        }
+
+        fun HideProgress() {
+            show.value = false
+            instance?.dismiss()
+            ClearText()
+        }
     }
 }

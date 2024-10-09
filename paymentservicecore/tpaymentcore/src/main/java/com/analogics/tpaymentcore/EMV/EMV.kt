@@ -78,6 +78,7 @@ class EMV {
         ) {
             Log.d("EMV_APP", "Check Card Result:" + p0.toString())
             Log.d("EMV_APP", "Check Card List:" + p1.toString())
+            iPaymentSDKListener.onTPaymentDisplayMessage("Card Detected")
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
@@ -88,7 +89,7 @@ class EMV {
             Log.d("EMV_APP", "Online PIN Prompt:" + p0.toString())
             //EmvNfcKernelApi.getInstance().sendPinEntry()
             //EmvNfcKernelApi.getInstance().bypassPinEntry()
-
+            iPaymentSDKListener.onTPaymentDisplayMessage("")
             if (p0 == ContantPara.PinEntrySource.KEYPAD) {
                 emv_proc_onlinePin(true)
                 Log.i("EMV_APP", "MainActivity  emv_proc_onlinePin over")
