@@ -16,7 +16,6 @@ import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResul
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
@@ -37,8 +36,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     val isPrinting = mutableStateOf(false)
     val isCustomer = mutableStateOf(false)
 
-    private val printer = Printer.getInstance()
-
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
         var imageData: ByteArray? = null
@@ -58,52 +55,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         val draw = context.resources.getDrawable(id) as BitmapDrawable
         val bitmap = draw.bitmap
         return bitmap
-    }
-
-
-
-/*    fun initPrint(context: Context) {
-        printer.initPrint(context) // Pass the context instance directly
-    }*/
-
-
-/*    fun addTextDetails(texts: List<String>) {
-        printer.printMultipleTextsAndStartPrinting(texts)
-    }*/
-
-    suspend fun addTextLeft(texts:String)  // Add Text on Left Side
-    {
-        printer.addTextOnlyLeft(texts)
-    }
-
-    suspend fun addTextLeftRight(textLeft:String, textRight:String)
-    {
-        printer.addTextLeft_Right(textLeft,textRight)
-    }
-
-    suspend fun addTextLeftCenterRight(textLeft:String, textCenter:String, textRight:String)
-    {
-        printer.addTextLeft_Center_Right(textLeft,textCenter,textRight)
-    }
-
-    fun addImage(format: Bundle, imageData: ByteArray)
-    {
-        printer.addImage(format,imageData)
-    }
-
-    fun addBarcode(format: Bundle,barcode:String)
-    {
-        printer.barCodePrinting(format,barcode)
-    }
-
-    fun addQRCode(format: Bundle,barcode:String)
-    {
-        printer.qrCodePrinting(format,barcode)
-    }
-
-    fun feedLine(lines:Int)
-    {
-        printer.feedLine(lines)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -135,21 +86,19 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         iPrinterResultProviderListener: IPrinterResultProviderListener
     )
     {
-        val receiptBuilder = ReceiptBuilder() // Create an instance of ReceiptBuilder
         viewModelScope.launch {
             try {
                 Log.d(TAG, "Approved View Model to Printer Service Repository 1")
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
+                addReceiptDetails(objRootAppPaymentDetail,iPrinterResultProviderListener)
                 Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }
         }
-/*        Log.d(TAG, "Initializing printer in viewModel...")
-        PrinterServiceRepository(receiptBuilder,).initPrinter(context, iPrinterResultProviderListener)*/
-        addReceiptDetails(objRootAppPaymentDetail,iPrinterResultProviderListener)
+
     }
 
 
@@ -229,14 +178,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         } ?: Log.d("Record Update", "Invoice No is null")
     }
-
-/*    fun ReceiptBuilder(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
-    {
-        ReceiptBuilder.createReceiptFromPaymentDetails(objRootAppPaymentDetails)
-    }*/
-
-
-
 
 
 }

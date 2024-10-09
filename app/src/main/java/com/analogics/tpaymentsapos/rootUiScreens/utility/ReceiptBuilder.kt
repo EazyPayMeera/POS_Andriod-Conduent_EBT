@@ -11,6 +11,7 @@ class ReceiptBuilder {
         RIGHT
     }
 
+    // Function to build a receipt
     fun createReceipt(paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
             .addField("GLOBAL PAYMENTS", "", Alignment.CENTER)
@@ -47,8 +48,27 @@ class ReceiptBuilder {
             .build()
     }
 
+    // Function to build a summary report
+    fun createSummaryReport(paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
+        return SummaryReport.Builder()
+            .addSummaryField("", "SUMMARY REPORT", "")
+            .addSummaryField("Transaction", "Count", "Total")
+            .addSummaryField("Purchase",paymentDetails?.ttlTxnCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
+            .addSummaryField("Refund",paymentDetails?.ttlRefundCount?.toString() ?: "N/A" , paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
+            .addSummaryField("Voids", "2", "10.00")
+            .addSummaryField("Tip Surcharges", "10", "10.00")
+            .addSummaryField("CashBack","5" , "50.00")
+            .addSummaryField("Total", paymentDetails?.ttlTxnCount?.toString() ?: "N/A", paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
+            .addSummaryField("Transaction Breakdown:", "", "")
+            .addSummaryField("Credit Transactions:", "", "")
+            .addSummaryField("Debit Transactions:", "", "")
+            .addSummaryField("", "******SUMMARY******", "")
+            .build()
+    }
+
+    // Data class for Receipt
     data class Receipt(
-        val fields: List<Triple<String, String, Alignment>>, // Use Triple to hold label, value, and alignment
+        val fields: List<Triple<String, String, Alignment>>,
         val items: List<ReceiptItem>,
         val barcode: String? = null,
         val qrcode: String? = null
@@ -63,24 +83,31 @@ class ReceiptBuilder {
                 fields.add(Triple(label, value, alignment))
             }
 
-            fun addItem(item: ReceiptItem) = apply {
-                items.add(item)
-            }
-
-            fun setBarcode(barcode: String?) = apply {
-                this.barcode = barcode
-            }
-
-            fun setQRCode(qrcode: String?) = apply {
-                this.qrcode = qrcode
-            }
-
             fun build(): Receipt {
-                return Receipt(fields, items, barcode, qrcode) // Return the fields directly
+                return Receipt(fields, items, barcode, qrcode)
             }
         }
     }
 
+    // Data class for SummaryReport
+    data class SummaryReport(
+        val summaryFields: List<Triple<String, String, String>> // Now has label, value, and description
+    ) {
+        class Builder {
+            private val summaryFields: MutableList<Triple<String, String, String>> = mutableListOf()
+
+            // Removed alignment and added description as third parameter
+            fun addSummaryField(label: String, value: String, description: String) = apply {
+                summaryFields.add(Triple(label, value, description))
+            }
+
+            fun build(): SummaryReport {
+                return SummaryReport(summaryFields)
+            }
+        }
+    }
+
+    // Data class for ReceiptItem
     data class ReceiptItem(
         val name: String,
         val price: Double

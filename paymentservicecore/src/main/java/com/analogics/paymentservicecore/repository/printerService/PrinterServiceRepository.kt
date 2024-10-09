@@ -15,8 +15,8 @@ class PrinterServiceRepository @Inject constructor(
 ) : PrinterRequestListener, IPrinterHandlerListener {
 
     private val TAG = "PrinterServiceRepo"
-/*    val pdetails = paymentServiceTxnDetails()
-    Log.d("Object Details","Transaction Details ${pdetails}")*/
+    /*    val pdetails = paymentServiceTxnDetails()
+        Log.d("Object Details","Transaction Details ${pdetails}")*/
     private lateinit var iPrinterResultProviderListener: IPrinterResultProviderListener
 
 
@@ -38,6 +38,23 @@ class PrinterServiceRepository @Inject constructor(
         }
     }
 
+    override suspend fun printLeftCenterRightDetails(
+        Transaction: List<String>,
+        Count: List<String>,
+        Total: List<String>, // Assuming alignment is of type Int; adjust as necessary
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    ) {
+        this.iPrinterResultProviderListener = iPrinterResultProviderListener
+        try {
+            // Pass the retrieved arguments to the PrinterHandler
+            PrinterHandler.addLeftCenterRightDetails(Transaction,Count,Total,this) // Pass this as the listener
+            Log.d(TAG, "Receipt printed successfully.")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to print receipt: ${e.message}")
+            iPrinterResultProviderListener.onSuccess(false)
+        }
+    }
+
     override suspend fun initPrinter(
         context: Context,
         iPrinterResultProviderListener: IPrinterResultProviderListener
@@ -52,6 +69,7 @@ class PrinterServiceRepository @Inject constructor(
             iPrinterResultProviderListener.onSuccess(false)
         }
     }
+
 
     override fun onPrinterRespHandler(uiData: String) {
         Log.d(TAG, "Received printer response: $uiData")

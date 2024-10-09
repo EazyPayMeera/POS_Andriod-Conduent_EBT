@@ -17,6 +17,14 @@ data class PaymentServiceTxnDetails(
     @SerializedName("HostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("HostTxnRef") var hostTxnRef: String? = null,
 
+    @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
+    @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
+    @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
+
+    @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
+    @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
+    @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
+
     @SerializedName("RefundableAmount") var refundableAmount: String? = null,
     /* Card Details */
     @SerializedName("EmvData") var emvData: String? = null,

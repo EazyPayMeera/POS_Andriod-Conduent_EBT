@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,7 +72,7 @@ fun TransactionListScreen(
     // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
     // Initial fetch of transactions (if needed)
-   viewModel.fetchTransactions()
+    viewModel.fetchTransactions()
     val sharedViewModel = localSharedViewModel.current
 
     // State variables
@@ -368,7 +369,7 @@ fun TransactionItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
-
+    val context = LocalContext.current
     var isDialogVisible by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -399,7 +400,17 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
                 }
 
                 Row {
-                    IconButton(onClick = { /* Handle print action */ }) {
+                    IconButton(onClick = {
+                        sharedViewModel.objRootAppPaymentDetail.ttlTxnAmount = formatAmount(
+                            viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
+                        )
+                        sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND))
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE))
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE)
+                        sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND))
+                        sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
+                        Log.d("PrintButton", "Print button clicked")
+                        viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)}) {
                         Icon(Icons.Default.Print, contentDescription = "")
                     }
 
@@ -465,6 +476,14 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel) {
 }
 
 
+/*
+@Composable
+fun summaryReport(viewModel: TxnViewModel = hiltViewModel())
+{
+    val sharedViewModel = localSharedViewModel.current
+    viewModel.addSummaryText(sharedViewModel.objRootAppPaymentDetail,"Hello",1)
+}
+*/
 
 
 
