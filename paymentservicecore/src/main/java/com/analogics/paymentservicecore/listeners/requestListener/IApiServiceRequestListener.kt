@@ -6,11 +6,6 @@ import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceRespon
 import com.analogics.paymentservicecore.models.PosConfig
 
 interface IApiServiceRequestListener {
-    fun initPaymentSDK(context: Context, iApiServiceResponseListener: IApiServiceResponseListener)
-    fun startPayment(
-        context: Context,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    )
 
     fun getPosConfig(context: Context): PosConfig
 

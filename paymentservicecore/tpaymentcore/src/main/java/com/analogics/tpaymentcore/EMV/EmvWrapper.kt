@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.os.IInputActionListener
 import android.text.TextUtils
 import android.util.Log
-import com.analogics.tpaymentcore.listener.IPaymentSDKListener
+import com.analogics.tpaymentcore.listener.IEmvSdkResponseListener
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -18,9 +18,9 @@ import com.urovo.sdk.pinpad.listener.PinInputListener
 import java.util.Hashtable
 import java.util.Locale
 
-class EMV {
+class EmvWrapper {
     companion object : EmvListener, PinInputListener {
-        lateinit var iPaymentSDKListener: IPaymentSDKListener
+        lateinit var iEmvSdkResponseListener: IEmvSdkResponseListener
         fun initialize(context: Context) {
             Thread {
                 try {
@@ -40,10 +40,10 @@ class EMV {
             }.start()
         }
 
-        fun startPayment(context: Context, iPaymentSDKListener: IPaymentSDKListener) {
+        fun startPayment(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener) {
             Thread {
                 try {
-                    this.iPaymentSDKListener = iPaymentSDKListener
+                    this.iEmvSdkResponseListener = iEmvSdkResponseListener
                     val data = Hashtable<String, Any>()
                     data["checkCardMode"] = ContantPara.CheckCardMode.INSERT_OR_TAP //
                     data["currencyCode"] = "682" //682
@@ -78,7 +78,7 @@ class EMV {
         ) {
             Log.d("EMV_APP", "Check Card Result:" + p0.toString())
             Log.d("EMV_APP", "Check Card List:" + p1.toString())
-            iPaymentSDKListener.onTPaymentDisplayMessage("Card Detected")
+            iEmvSdkResponseListener.onEmvSdkDisplayMessage("Card Detected")
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
@@ -89,7 +89,7 @@ class EMV {
             Log.d("EMV_APP", "Online PIN Prompt:" + p0.toString())
             //EmvNfcKernelApi.getInstance().sendPinEntry()
             //EmvNfcKernelApi.getInstance().bypassPinEntry()
-            iPaymentSDKListener.onTPaymentDisplayMessage("")
+            iEmvSdkResponseListener.onEmvSdkDisplayMessage("")
             if (p0 == ContantPara.PinEntrySource.KEYPAD) {
                 emv_proc_onlinePin(true)
                 Log.i("EMV_APP", "MainActivity  emv_proc_onlinePin over")
@@ -121,9 +121,9 @@ class EMV {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
             if(p0==ContantPara.TransactionResult.ONLINE_APPROVAL || p0==ContantPara.TransactionResult.OFFLINE_APPROVAL)
-                iPaymentSDKListener.onTPaymentSDKHandler("SUCCESS")
+                iEmvSdkResponseListener.onEmvSdkError("SUCCESS")
             else
-                iPaymentSDKListener.onTPaymentSDKHandler("FAILURE")
+                iEmvSdkResponseListener.onEmvSdkError("FAILURE")
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -178,9 +178,9 @@ class EMV {
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
             if(p0==ContantPara.NfcTransResult.ONLINE_APPROVAL || p0==ContantPara.NfcTransResult.OFFLINE_APPROVAL)
-                iPaymentSDKListener.onTPaymentSDKHandler("SUCCESS")
+                iEmvSdkResponseListener.onEmvSdkError("SUCCESS")
             else
-                iPaymentSDKListener.onTPaymentSDKHandler("FAILURE")
+                iEmvSdkResponseListener.onEmvSdkError("FAILURE")
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {

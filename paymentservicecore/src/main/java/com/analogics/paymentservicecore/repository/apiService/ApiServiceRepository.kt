@@ -16,8 +16,6 @@ import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseR
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.tpaymentcore.handler.PaymentConfigurationHandler
-import com.analogics.tpaymentcore.listener.IPaymentSDKListener
 import javax.inject.Inject
 
 class ApiServiceRepository @Inject constructor(
@@ -30,54 +28,9 @@ class ApiServiceRepository @Inject constructor(
     private val purchaseRequestRepository: PurchaseRequestRepository,
     private val batchRequestRepository: BatchRequestRepository,
     private val dbRepository: TxnDBRepository
-) :
-    IApiServiceRequestListener,
-    IPaymentSDKListener {
+) : IApiServiceRequestListener {
     lateinit var iApiServiceResponseListener: IApiServiceResponseListener
     lateinit var context: Context
-
-
-    override fun onTPaymentSDKInit(uiData: String) {
-        /* Just for testing comparing with uiData value */
-        if (uiData == "SUCCESS") {
-            iApiServiceResponseListener.onApiSuccess(true)
-        } else {
-            iApiServiceResponseListener.onApiError(ApiServiceError("Error"))
-        }
-    }
-
-    override fun onTPaymentSDKHandler(uiData: String) {
-        /* Just for testing comparing with uiData value */
-        iApiServiceResponseListener.onDisplayProgress(false)
-        if (uiData == "SUCCESS")
-            iApiServiceResponseListener.onApiSuccess(true)
-        else
-            iApiServiceResponseListener.onApiError(ApiServiceError("Error"))
-    }
-
-    override fun onTPaymentDisplayMessage(uiData: String?) {
-        iApiServiceResponseListener.onDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
-    }
-
-
-    override fun initPaymentSDK(
-        context: Context,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    ) {
-        this.iApiServiceResponseListener = iApiServiceResponseListener
-        this.context = context
-        iApiServiceResponseListener.onDisplayProgress(false)
-        PaymentConfigurationHandler.initPaymentSDK(context, this)
-    }
-
-    override fun startPayment(
-        context: Context,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    ) {
-        this.iApiServiceResponseListener = iApiServiceResponseListener
-        iApiServiceResponseListener.onDisplayProgress(false)
-        PaymentConfigurationHandler.startPayment(context, this)
-    }
 
     override fun getPosConfig(context: Context): PosConfig {
         return PosConfig(context).loadFromPrefs()
