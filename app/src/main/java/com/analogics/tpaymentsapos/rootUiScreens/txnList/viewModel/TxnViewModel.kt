@@ -9,8 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnType
@@ -45,8 +45,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     private val filterTxn = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
+    val FilteredByDateTxn: StateFlow<List<ObjRootAppPaymentDetails>> = filterTxn
     val isPrinting = mutableStateOf(false)
     val isCustomer = mutableStateOf(false)
+    var isDateAndTime = mutableStateOf(false)
 
     init {
         // Fetch transactions asynchronously
@@ -86,16 +88,18 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }.toString())
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    fun filterTransactionsByDate(selectedDate: LocalDateTime) {
+    fun filterTransactionsByDateRange(startDate: LocalDateTime,endDate: LocalDateTime) {
         viewModelScope.launch {
-            // Filter the transactions that occurred before the selected date
+            // Filter the transactions that occurred between the start date and end date
             val filteredList = _transactionList.value.filter { transaction ->
                 // Parse the transaction dateTime as LocalDateTime
                 val transactionDateTime = LocalDateTime.parse(transaction.dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-
-                // Compare the transaction date and time with the selected date and time
-                transactionDateTime.isBefore(selectedDate)
+                Log.d("TransactionFilter", "Transaction DateTime: $transactionDateTime, Start Date: $startDate, End Date: $endDate")
+                // Check if the transaction date and time is within the specified range
+                transactionDateTime.isAfter(startDate) && transactionDateTime.isBefore(endDate)
             }
+
+            Log.d("TransactionFilter", "Filtered Transactions: $filteredList")
             // Update the filterTxn value with the filtered list
             filterTxn.value = filteredList
         }
