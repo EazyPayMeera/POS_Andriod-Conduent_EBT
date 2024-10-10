@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -22,6 +24,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +59,8 @@ class CustomDialogBuilder private constructor() {
     private val showDialog = mutableStateOf(true)
     private var cancelButtonText: String = ""
     private var confirmButtonText: String = ""
+    var onItemSelected: ((String) -> Unit) ?= null
+    var listItem:List<String> ?= null
 
     fun setTitle(title: String) = apply { this.title = title }
     fun setSubtitle(subtitle: String) = apply { this.subtitle = subtitle }
@@ -73,149 +78,155 @@ class CustomDialogBuilder private constructor() {
     fun dismiss() = apply { this.showDialog.value = false } // Method to control the visibility of both buttons
     fun setCancelButtonText(text: String) = apply { this.cancelButtonText = text }
     fun setConfirmButtonText(text: String) = apply { this.confirmButtonText = text }
-
+    fun onItemSelected(onItemSelected: ((String)) -> Unit) = apply { this.onItemSelected = onItemSelected }
+    fun setListItem(listItem:List<String>)=apply { this.listItem= listItem}
     @Composable
-    fun buildDialog(onClose: () -> Unit) {
+    fun buildDialog(onClose: () -> Unit,onItemSelected:((String)->Unit)?=null) {
         if (showDialog.value) {
             Dialog(onDismissRequest = { if (isCancelable) onClose() }) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
-                ) {
-                    GenericCard(
+                if(listItem!=null)
+                {
+                    CustomListDialog(onClose, items =listItem,onItemSelected=onItemSelected!! )
+
+                }else {
+                    Box(
                         modifier = Modifier
-                            .wrapContentHeight() // Wraps content height
-                            .fillMaxWidth()
-                            .align(Alignment.Center),
-                        shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
+                            .fillMaxSize()
+                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                        GenericCard(
+                            modifier = Modifier
+                                .wrapContentHeight() // Wraps content height
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
+                            shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
                         ) {
-
-                            GenericCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(), // Wraps content height
-                                backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                                shape = RoundedCornerShape(0.dp),
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
-                                Column(
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
-                                ) {
-                                    // Title
-                                    Text(
-                                        text = title,
-                                        style = MaterialTheme.typography.h6,
-                                        color = Color.Black,
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    )
-                                }
-                            }
 
-                            // Close button
-                            if (showCloseButton) {
-                                Box(
+                                GenericCard(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(4.dp),
-                                    contentAlignment = Alignment.TopEnd
+                                        .wrapContentHeight(), // Wraps content height
+                                    backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                                    shape = RoundedCornerShape(0.dp),
                                 ) {
-                                    IconButton(onClick = onClose) {
-                                        Icon(
-                                            imageVector = Icons.Default.Close,
-                                            contentDescription = "Close",
-                                            tint = Color.Gray
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
+                                    ) {
+                                        // Title
+                                        Text(
+                                            text = title,
+                                            style = MaterialTheme.typography.h6,
+                                            color = Color.Black,
+                                            modifier = Modifier.padding(top = 4.dp)
                                         )
                                     }
                                 }
-                            } else {
-                                Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium))
-                            }
 
-                            // Subtitle
-                            Text(
-                                text = subtitle,
-                                style = MaterialTheme.typography.h5,
-                                color = Color.Black,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-
-                            // Message
-                            Text(
-                                text = smallText,
-                                style = MaterialTheme.typography.h6,
-                                color = Color.Black,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-
-                            // Conditionally show Progress Indicator
-                            if (showProgressIndicator) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .padding(20.dp)
-                                        .size(70.dp),
-                                    color = progressColor,
-                                    strokeWidth = 4.dp,
-                                )
-                            }
-
-                            if (showButtons) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    // Cancel Button
-                                    Button(
-                                        onClick = {
-                                            onCancelAction?.invoke()
-                                            onClose() // Close the dialog when the cancel button is clicked
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = colorResource(
-                                                R.color.grey
-                                            )
-                                        ),
-                                        shape = RoundedCornerShape(12.dp),
+                                // Close button
+                                if (showCloseButton) {
+                                    Box(
                                         modifier = Modifier
-                                            .weight(1f) // Use weight to make button take equal space
-                                            .height(46.dp) // Set the desired height here
+                                            .fillMaxWidth()
+                                            .padding(4.dp),
+                                        contentAlignment = Alignment.TopEnd
                                     ) {
-                                        Text(cancelButtonText, color = Color.Black)
+                                        IconButton(onClick = onClose) {
+                                            Icon(
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = "Close",
+                                                tint = Color.Gray
+                                            )
+                                        }
                                     }
+                                } else {
+                                    Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium))
+                                }
 
-                                    Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
+                                // Subtitle
+                                Text(
+                                    text = subtitle,
+                                    style = MaterialTheme.typography.h5,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
 
-                                    // Confirm Button
-                                    Button(
-                                        onClick = {
-                                            onConfirmAction?.invoke() // Execute confirm action
-                                            onClose() // Close the dialog when the confirm button is clicked
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = colorResource(
-                                                R.color.grey
-                                            )
-                                        ),
-                                        shape = RoundedCornerShape(12.dp),
+                                // Message
+                                Text(
+                                    text = smallText,
+                                    style = MaterialTheme.typography.h6,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                )
+
+                                // Conditionally show Progress Indicator
+                                if (showProgressIndicator) {
+                                    CircularProgressIndicator(
                                         modifier = Modifier
-                                            .weight(1f) // Use weight to make button take equal space
-                                            .height(46.dp) // Set the desired height here
+                                            .padding(20.dp)
+                                            .size(70.dp),
+                                        color = progressColor,
+                                        strokeWidth = 4.dp,
+                                    )
+                                }
+
+                                if (showButtons) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
-                                        Text(confirmButtonText, color = Color.Black)
+                                        // Cancel Button
+                                        Button(
+                                            onClick = {
+                                                onCancelAction?.invoke()
+                                                onClose() // Close the dialog when the cancel button is clicked
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = colorResource(
+                                                    R.color.grey
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier
+                                                .weight(1f) // Use weight to make button take equal space
+                                                .height(46.dp) // Set the desired height here
+                                        ) {
+                                            Text(cancelButtonText, color = Color.Black)
+                                        }
+
+                                        Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
+
+                                        // Confirm Button
+                                        Button(
+                                            onClick = {
+                                                onConfirmAction?.invoke() // Execute confirm action
+                                                onClose() // Close the dialog when the confirm button is clicked
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = colorResource(
+                                                    R.color.grey
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier
+                                                .weight(1f) // Use weight to make button take equal space
+                                                .height(46.dp) // Set the desired height here
+                                        ) {
+                                            Text(confirmButtonText, color = Color.Black)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-
                 // Delay and navigate after 2 seconds
                 if (autooff) {
                     LaunchedEffect(Unit) {
@@ -247,10 +258,7 @@ class CustomDialogBuilder private constructor() {
                     .setSmallText(message ?: _message ?: "")
                     .setShowProgressIndicator(true)
                     .setShowCloseButton(false)
-
-                instance?.buildDialog {
-                    show.value = false
-                }
+                instance?.buildDialog(onClose = {show.value = false})
             }
         }
 
@@ -271,5 +279,51 @@ class CustomDialogBuilder private constructor() {
             instance?.dismiss()
             ClearText()
         }
+    }
+
+
+    @Composable
+    fun CustomListDialog(
+        onClose: () -> Unit,
+        items: List<String>?,
+        onItemSelected: (String) -> Unit?
+    ) {
+            Surface(
+                shape = androidx.compose.material3.MaterialTheme.shapes.medium,
+                tonalElevation = 8.dp,
+                modifier = Modifier.fillMaxWidth(0.9f)
+            ) {
+                Column {
+                    androidx.compose.material3.Text(
+                        text = "Select an application id",
+                        style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+
+                    LazyColumn {
+                        items(items!!.size) { index ->
+                            androidx.compose.material3.Text(
+                                text = items[index],
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onItemSelected(items[index])
+                                        onClose() // Close the dialog
+                                    }
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+//
+//                    androidx.compose.material3.Button(
+//                        onClick = onDismissRequest,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(16.dp)
+//                    ) {
+//                        androidx.compose.material3.Text("Close")
+//                    }
+                }
+            }
     }
 }
