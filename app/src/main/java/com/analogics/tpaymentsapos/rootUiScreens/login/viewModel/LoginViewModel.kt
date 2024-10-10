@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository

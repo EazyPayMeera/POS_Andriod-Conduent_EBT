@@ -4,7 +4,7 @@ package com.analogics.paymentservicecore.repository.apiService
 import android.content.Context
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
-import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
@@ -28,7 +28,8 @@ class ApiServiceRepository @Inject constructor(
     private val purchaseRequestRepository: PurchaseRequestRepository,
     private val batchRequestRepository: BatchRequestRepository,
     private val dbRepository: TxnDBRepository
-) : IApiServiceRequestListener {
+) : IApiServiceRequestListener
+ {
     lateinit var iApiServiceResponseListener: IApiServiceResponseListener
     lateinit var context: Context
 
