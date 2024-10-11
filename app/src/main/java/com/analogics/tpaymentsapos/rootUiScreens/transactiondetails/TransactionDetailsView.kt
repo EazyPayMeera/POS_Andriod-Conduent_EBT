@@ -21,7 +21,6 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -34,7 +33,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun TransactionDetailsView(navHostController: NavHostController) {
 
-    val viewModel: CardViewModel = hiltViewModel()
+    val viewModel: TransactionDetailsViewModel = hiltViewModel()
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
 
@@ -71,7 +70,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = "APPROVED",
+                        text = sharedViewModel.objRootAppPaymentDetail.txnStatus.toString(),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -160,10 +159,10 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                             onMenuOptionClick = { option ->
                                 when (option) {
                                     context.resources.getString((R.string.cust_recp)) -> {
-                                        //viewModel.printReceipt(context, true)
+                                        viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)
                                     }
                                     context.resources.getString((R.string.merchant_recp)) -> {
-                                        //viewModel.printReceipt(context)
+                                        viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)
                                     }
                                     context.resources.getString((R.string.e_recp)) -> {
                                         navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
