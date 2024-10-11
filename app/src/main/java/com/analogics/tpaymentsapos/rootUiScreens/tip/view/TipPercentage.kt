@@ -136,10 +136,12 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
 
         if (isDialogVisible) {
             CustomDialogBuilder.create()
-                .setTitle("Are you sure want to Cancel ?")
-                .setSubtitle("")
+                .setTitle("Cancel ?")
+                .setSubtitle("Are you sure want to Cancel ?")
                 .setSmallText("")
-                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setShowCloseButton(false) // Can set to false if you don't want the close button
+                .setCancelButtonText("Confirm")
+                .setConfirmButtonText("Cancel")
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color

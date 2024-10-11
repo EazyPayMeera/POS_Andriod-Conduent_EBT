@@ -145,13 +145,13 @@ class CustomDialogBuilder private constructor() {
                                         }
                                     }
                                 } else {
-                                    Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium))
+                                    Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium))
                                 }
 
                                 // Subtitle
                                 Text(
                                     text = subtitle,
-                                    style = MaterialTheme.typography.h5,
+                                    style = MaterialTheme.typography.h6,
                                     color = Color.Black,
                                     modifier = Modifier.padding(top = 4.dp)
                                 )

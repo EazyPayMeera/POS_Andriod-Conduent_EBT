@@ -104,7 +104,7 @@ fun PasswordView(navHostController: NavHostController) {
                 .setTitle("Are you sure want to Cancel ?")
                 .setSubtitle("")
                 .setSmallText("")
-                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setShowCloseButton(false) // Can set to false if you don't want the close button
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
