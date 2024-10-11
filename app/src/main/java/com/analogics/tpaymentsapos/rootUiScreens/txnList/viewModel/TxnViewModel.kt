@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.paymentservicecore.listeners.rootListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnType
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,14 +40,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
     var allTransactionList: List<TxnEntity>? = null
-    var selectedDateTime = mutableStateOf(Date())
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     private val filterTxn = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val FilteredByDateTxn: StateFlow<List<ObjRootAppPaymentDetails>> = filterTxn
     val isPrinting = mutableStateOf(false)
     val isCustomer = mutableStateOf(false)
-    var isDateAndTime = mutableStateOf(false)
+    private var isFiltered = false
 
     init {
         // Fetch transactions asynchronously
@@ -93,16 +90,17 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             // Filter the transactions that occurred between the start date and end date
             val filteredList = _transactionList.value.filter { transaction ->
-                // Parse the transaction dateTime as LocalDateTime
                 val transactionDateTime = LocalDateTime.parse(transaction.dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                isFiltered = true
                 Log.d("TransactionFilter", "Transaction DateTime: $transactionDateTime, Start Date: $startDate, End Date: $endDate")
                 // Check if the transaction date and time is within the specified range
                 transactionDateTime.isAfter(startDate) && transactionDateTime.isBefore(endDate)
+
             }
 
             Log.d("TransactionFilter", "Filtered Transactions: $filteredList")
             // Update the filterTxn value with the filtered list
-            filterTxn.value = filteredList
+            _transactionList.value = filteredList
         }
     }
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
@@ -112,16 +110,17 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         return gson.fromJson(json, txnDataListType)
     }
 
-    fun totalPurchaseTransactions(txn:TxnType): Double {
-        return allTransactionList
-            ?.filter { it.txnType == txn.toString()  }
-            ?.sumOf { it.ttlAmount?.toDoubleOrNull() ?: 0.0 }  // Handle possible null amounts
-            ?: 0.0  // Return 0.0 if the list is null
+    fun totalPurchaseTransactions(txn: TxnType): Double {
+        return _transactionList.value
+            .filter { it.txnType == txn }
+            .sumOf {
+                it.ttlAmount ?: 0.0
+            }
     }
 
     fun totalTransactionsCount(txn: TxnType): Int {
-        return allTransactionList
-            ?.count { it.txnType == txn.toString() } // Count the transactions of the specified type
+        return _transactionList.value
+            .count { it.txnType == txn} // Count the transactions of the specified type
             ?: 0 // Return 0 if the list is null
     }
 
@@ -279,5 +278,15 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         message: String?
     ) {
         CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+    }
+
+    fun resetTransactionList()
+    {
+        viewModelScope.launch {
+        if (isFiltered) {
+            fetchTransactions() // Re-fetch the full transaction list from the repository
+            isFiltered = false
+            }
+        }
     }
 }

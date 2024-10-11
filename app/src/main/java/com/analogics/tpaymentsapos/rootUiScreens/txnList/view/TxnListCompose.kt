@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +73,7 @@ fun TransactionListScreen(
     val transactions = viewModel.transactionList.collectAsState().value
     val filterByDateTransactions = viewModel.FilteredByDateTxn.collectAsState().value
     // Initial fetch of transactions (if needed)
-    viewModel.fetchTransactions()
+
     val sharedViewModel = localSharedViewModel.current
     var isDateAndTime: Boolean = false
     // State variables
@@ -161,6 +162,7 @@ fun TransactionListScreen(
                             style = MaterialTheme.typography.body2,
                             color = Color.Gray,
                             modifier = Modifier.clickable {
+                                viewModel.fetchTransactions()
                             }
                         )
 
@@ -201,34 +203,9 @@ fun TransactionListScreen(
                     }
                 }
 
-                /*// Display selected dates
-                selectedStartDate.value?.let {
-                    Text(
-                        text = "Selected Start Date: ${it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))}",
-                        style = MaterialTheme.typography.body2,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                    )
-                }
-
-                selectedEndDate.value?.let {
-                    Text(
-                        text = "Selected End Date: ${it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))}",
-                        style = MaterialTheme.typography.body2,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                    )
-                }*/
-
                 Divider(color = Color.Gray, thickness = 1.dp)
-                // Decide which transactions to display based on filter selection
-                val displayTransactions = if (selectedStartDate.value != null && selectedEndDate.value != null) {
-                    filterByDateTransactions
-                } else {
-                    transactions
-                }
                 // If transaction list is empty
-                if (displayTransactions.isEmpty()) {
+                if (transactions.isEmpty()) {
                     Text(
                         text = "Transaction List is Empty",
                         style = MaterialTheme.typography.body1,
@@ -240,18 +217,18 @@ fun TransactionListScreen(
                 } else {
                     // Transaction list
                     LazyColumn {
-                        items(displayTransactions.size) { index ->
+                        items(transactions.size) { index ->
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         sharedViewModel.objRootAppPaymentDetail =
-                                            displayTransactions[index]
+                                            transactions[index]
                                         navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
                                     }
                             ) {
                                 TransactionItem(
-                                    transaction = displayTransactions[index],
+                                    transaction = transactions[index],
                                     navHostController = navHostController,
                                     sharedViewModel = sharedViewModel
                                 )
@@ -261,6 +238,10 @@ fun TransactionListScreen(
                 }
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchTransactions()
     }
 }
 
@@ -441,7 +422,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                         }
 
                         Box(
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterHorizontally  )
                         ) {
                             Text(
                                 text = "To",

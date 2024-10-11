@@ -19,10 +19,16 @@ data class PaymentServiceTxnDetails(
 
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
     @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
+    @SerializedName("ttlVoidAmount") var ttlVoidAmount:String? = null,
+    @SerializedName("ttlPreAuthAmount") var ttlPreAuthAmount:String? = null,
+    @SerializedName("ttlAuthCapAmount") var ttlAuthCapAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
 
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
     @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
+    @SerializedName("ttlVoidCount") var ttlVoidCount:Int? = null,
+    @SerializedName("ttlPreAuthCount") var ttlPreAuthCount:Int? = null,
+    @SerializedName("ttlAuthCapCount") var ttlAuthCapCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
 
     @SerializedName("RefundableAmount") var refundableAmount: String? = null,

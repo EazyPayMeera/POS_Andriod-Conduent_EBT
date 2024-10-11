@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,19 +15,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.decline.viewmodel.DeclineViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun DeclineView(navHostController: NavHostController, totalAmount: String) {
+    val viewModel: DeclineViewModel = hiltViewModel()
+    val sharedViewModel = localSharedViewModel.current
+
     Column {
         // Top App Bar with back button
         CommonTopAppBar(
@@ -115,6 +123,11 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     OkButton(
                         onClick = {
+                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
+                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+                            //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
+                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),
