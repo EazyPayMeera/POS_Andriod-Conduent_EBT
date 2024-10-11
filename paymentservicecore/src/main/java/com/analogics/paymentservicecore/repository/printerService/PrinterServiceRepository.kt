@@ -6,8 +6,8 @@ import android.util.Log
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.PrinterRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.tpaymentcore.handler.PrinterHandler
-import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
+import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
+import com.analogics.tpaymentcore.repository.PrinterHandler
 import javax.inject.Inject
 
 class PrinterServiceRepository @Inject constructor(
