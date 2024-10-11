@@ -202,7 +202,7 @@ fun TrainingView(
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
         dashboardViewModel.clearTransData(sharedViewModel)
-        dashboardViewModel.initPaymentSDK(context, this, sharedViewModel)
+        dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
 }
 

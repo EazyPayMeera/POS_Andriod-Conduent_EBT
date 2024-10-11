@@ -1,11 +1,11 @@
-package com.analogics.tpaymentcore.handler
+package com.analogics.tpaymentcore.repository
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.analogics.tpaymentcore.Scanner.Scanner
-import com.analogics.tpaymentcore.listener.IScannerHandlerListener
-import com.analogics.tpaymentcore.listener.ScannerListener
+import com.analogics.tpaymentcore.listener.responseListener.IScannerHandlerListener
+import com.analogics.tpaymentcore.listener.requestListener.ScannerListener
 
 object ScannerHandler : ScannerListener {
 

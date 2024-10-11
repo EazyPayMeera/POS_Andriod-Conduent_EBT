@@ -3,7 +3,7 @@ package com.analogics.tpaymentcore.Scanner
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import com.analogics.tpaymentcore.listener.IScannerHandlerListener
+import com.analogics.tpaymentcore.listener.responseListener.IScannerHandlerListener
 import com.urovo.file.logfile
 import com.urovo.sdk.scanner.InnerScannerImpl
 import com.urovo.sdk.scanner.listener.ScannerListener

@@ -1,4 +1,4 @@
-package com.analogics.tpaymentcore.EMV
+package com.analogics.tpaymentcore.repository
 
 import android.content.Context
 import android.device.SEManager
@@ -8,7 +8,8 @@ import android.os.Bundle
 import android.os.IInputActionListener
 import android.text.TextUtils
 import android.util.Log
-import com.analogics.tpaymentcore.listener.IEmvSdkResponseListener
+import com.analogics.tpaymentcore.listener.requestListener.IEmvWrapperRequestListener
+import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -17,27 +18,41 @@ import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
 import java.util.Hashtable
 import java.util.Locale
+import javax.inject.Inject
+import kotlin.collections.contentToString
+import kotlin.collections.set
+import kotlin.text.decodeToString
+import kotlin.text.substring
+import kotlin.text.toInt
+import kotlin.text.uppercase
+import kotlin.toString
 
-class EmvWrapper {
+class EmvWrapperRepository @Inject constructor(override var onEmvSdkResponse: (Any) -> Unit) :
+    IEmvWrapperRequestListener {
+    override fun initializeSdk() {
+            try {
+                EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
+                deleteCAPKeys()
+                //Update the parameters required in actual use
+                initEMV_AID_CAPK()
+                //init_NfcAid_CAPK()
+
+                EmvNfcKernelApi.getInstance().updateTerminalParamters(
+                    ContantPara.CardSlot.ICC,
+                    "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
+                )
+                onEmvSdkResponse("SUCCESS")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+    }
+
     companion object : EmvListener, PinInputListener {
         lateinit var iEmvSdkResponseListener: IEmvSdkResponseListener
-        fun initialize(context: Context) {
-            Thread {
-                try {
-                    EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
-                    EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null) //
-                    //Update the parameters required in actual use
-                    initEMV_AID_CAPK()
-                    //init_NfcAid_CAPK()
 
-                    EmvNfcKernelApi.getInstance().updateTerminalParamters(
-                        ContantPara.CardSlot.ICC,
-                        "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
-                    ) //DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }.start()
+        fun deleteCAPKeys()
+        {
+            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null) //
         }
 
         fun startPayment(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener) {

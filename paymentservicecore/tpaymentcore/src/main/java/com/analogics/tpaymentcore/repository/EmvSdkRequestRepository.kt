@@ -1,21 +1,21 @@
-package com.analogics.tpaymentcore.handler
+package com.analogics.tpaymentcore.repository
 
 import android.content.Context
-import com.analogics.tpaymentcore.EMV.EmvWrapper
-import com.analogics.tpaymentcore.listener.IEmvSdkRequestListener
-import com.analogics.tpaymentcore.listener.IEmvSdkResponseListener
+import com.analogics.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
+import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import javax.inject.Inject
+import kotlin.toString
 
 class EmvSdkRequestRepository @Inject constructor() : IEmvSdkRequestListener {
     private var emvSdkResponseListener: IEmvSdkResponseListener? = null
+    private var emvWrapper : EmvWrapperRepository = EmvWrapperRepository { onEmvSdkResponse(it) }
     override fun initPaymentSDK(
         context: Context,
         iEmvSdkResponseListener: IEmvSdkResponseListener
     ) {
         this.emvSdkResponseListener = iEmvSdkResponseListener
         try {
-            EmvWrapper.initialize(context);
-            onEmvSdkResponse("SUCCESS")
+            emvWrapper.initializeSdk()
         } catch (exception: Exception) {
             onEmvSdkResponse(exception.message.toString())
         }
@@ -28,7 +28,7 @@ class EmvSdkRequestRepository @Inject constructor() : IEmvSdkRequestListener {
     ) {
         this.emvSdkResponseListener = iEmvSdkResponseListener
         try {
-            EmvWrapper.startPayment(context,iEmvSdkResponseListener);
+            EmvWrapperRepository.startPayment(context,iEmvSdkResponseListener);
         } catch (exception: Exception) {
             onEmvSdkResponse(exception.message.toString())
         }
