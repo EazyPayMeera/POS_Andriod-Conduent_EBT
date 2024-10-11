@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -345,7 +346,7 @@ fun TransactionItem(
                 verticalAlignment = Alignment.CenterVertically, // Aligns amount and icon vertically
                 modifier = Modifier.padding(start = 8.dp) // Optional padding between details and amount
             ) {
-                val amountColor = if (transaction.txnType == TxnType.REFUND) {
+                val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED) {
                     Color.Red
                 } else {
                     Color(0xFF4CAF50) // Green for other transaction types

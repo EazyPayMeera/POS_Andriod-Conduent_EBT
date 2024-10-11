@@ -50,6 +50,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("CGST") var CGST: String? = null,
     @SerializedName("SGST") var SGST: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
+    @SerializedName("txnStatus") var txnStatus: String? = null,
 
     /* Card Details */
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
