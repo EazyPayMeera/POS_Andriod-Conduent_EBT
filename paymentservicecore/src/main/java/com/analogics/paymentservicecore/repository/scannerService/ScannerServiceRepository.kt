@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import com.analogics.paymentservicecore.listeners.requestListener.ScannerRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
-import com.analogics.tpaymentcore.handler.ScannerHandler
-import com.analogics.tpaymentcore.listener.IScannerHandlerListener
+import com.analogics.tpaymentcore.listener.responseListener.IScannerHandlerListener
+import com.analogics.tpaymentcore.repository.ScannerHandler
 import javax.inject.Inject
 
 class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, IScannerHandlerListener {

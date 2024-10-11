@@ -1,6 +1,7 @@
-package com.analogics.tpaymentcore.listener
+package com.analogics.tpaymentcore.listener.requestListener
 
 import android.content.Context
+import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 
 interface IEmvSdkRequestListener {
     fun initPaymentSDK(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener)

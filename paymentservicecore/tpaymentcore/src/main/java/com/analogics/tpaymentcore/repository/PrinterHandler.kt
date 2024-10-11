@@ -1,11 +1,11 @@
-package com.analogics.tpaymentcore.handler
+package com.analogics.tpaymentcore.repository
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentcore.listener.IPrinterHandlerListener
-import com.analogics.tpaymentcore.listener.PrinterListener
+import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
+import com.analogics.tpaymentcore.listener.requestListener.PrinterListener
 
 
 object PrinterHandler : PrinterListener {

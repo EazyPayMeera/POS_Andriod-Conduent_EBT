@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.error.EmvServiceError
@@ -16,7 +17,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,9 +50,9 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         sharedViewModel.clearTransData()
     }
 
-    fun initPaymentSDK(context: Context, coroutineScope: CoroutineScope, sharedViewModel: SharedViewModel) {
+    fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
-            coroutineScope.launch {
+            viewModelScope.launch {
                 emvServiceRepository.initPaymentSDK(context, object :
                     IEmvServiceResponseListener {
                     override fun onEmvSuccess(result: Any) {

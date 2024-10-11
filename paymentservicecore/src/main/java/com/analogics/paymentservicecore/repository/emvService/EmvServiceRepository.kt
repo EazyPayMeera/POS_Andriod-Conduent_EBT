@@ -4,8 +4,8 @@ import android.content.Context
 import com.analogics.paymentservicecore.listeners.requestListener.IEmvServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.error.EmvServiceError
-import com.analogics.tpaymentcore.handler.EmvSdkRequestRepository
-import com.analogics.tpaymentcore.listener.IEmvSdkResponseListener
+import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
+import com.analogics.tpaymentcore.repository.EmvSdkRequestRepository
 import javax.inject.Inject
 
 class EmvServiceRepository @Inject constructor(
@@ -15,7 +15,6 @@ class EmvServiceRepository @Inject constructor(
     IEmvSdkResponseListener {
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
-
 
     override fun onEmvSdkSuccess(uiData: String) {
         /* Just for testing comparing with uiData value */
