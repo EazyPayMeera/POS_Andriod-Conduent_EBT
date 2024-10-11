@@ -1,7 +1,7 @@
 package com.analogics.tpaymentcore.listener.requestListener
 
-interface IEmvWrapperRequestListener {
-    var onEmvSdkResponse: (Any)->Unit
+import com.analogics.tpaymentcore.listener.responseListener.IEmvWrapperResponseListener
 
-    fun initializeSdk()
+interface IEmvWrapperRequestListener {
+    fun initializeSdk(emvWrapperResponseListener: IEmvWrapperResponseListener)
 }
