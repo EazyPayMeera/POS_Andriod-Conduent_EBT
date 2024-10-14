@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val dbRepository: TxnDBRepository,private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
+class DashboardViewModel @Inject constructor(private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
     var LatestTransaction: TxnEntity? = null
@@ -201,7 +201,7 @@ class DashboardViewModel @Inject constructor(private val dbRepository: TxnDBRepo
 
     fun fetchLastTransactions() {
         viewModelScope.launch {
-            val latestTransaction = dbRepository.fetchLastTransaction()
+            val latestTransaction = txnDBRepository.fetchLastTransaction()
             Log.d("db data", latestTransaction.toString())
 
             latestTransaction?.let {
