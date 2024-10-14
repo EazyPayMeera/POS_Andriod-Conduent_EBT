@@ -40,6 +40,8 @@ dependencies {
     implementation(libs.material)
     implementation(files("libs/urovo_sdk_v1.0.9.aar"))
     implementation("com.google.dagger:hilt-android:2.51")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.code.gson:gson:2.10.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     kapt(libs.androidx.hilt.compiler)

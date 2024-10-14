@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
@@ -25,6 +26,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.rootUtils.miscellaneous.readAsset
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.BarcodeFormat
@@ -34,14 +36,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
-    var showProgress = mutableStateOf(false)
-    var showAlert = mutableStateOf(false)
 
     var LatestTransaction: TxnEntity? = null
     private val _lastTransactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
@@ -217,39 +218,22 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             viewModelScope.launch {
-                emvServiceRepository.initPaymentSDK(context, object :
+                emvServiceRepository.initPaymentSDK(capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),iEmvServiceResponseListener =  object :
                     IEmvServiceResponseListener {
                     override fun onEmvSuccess(result: Any) {
                         if (result == true) {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }?.saveToPrefs()
-                            CustomDialogBuilder.composeAlertDialog(title = "SDK Initialization", subtitle = "SDK Initialization Successful")
-                            showAlert.value = true
-/*                            Toast.makeText(
-                                context,
-                                R.string.emv_sdk_init_success,
-                                Toast.LENGTH_SHORT
-                            ).show()*/
+                            CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_success))
                         }
                         else {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
-                            CustomDialogBuilder.composeAlertDialog(title = "SDK Initialization", subtitle = "SDK Initialization Failed")
-                            showAlert.value = true
-/*                            Toast.makeText(
-                                context,
-                                R.string.emv_sdk_init_failure,
-                                Toast.LENGTH_SHORT
-                            ).show()*/
-                        }
+                            CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_failure))
+                       }
                     }
 
                     override fun onEmvError(emvServiceError: EmvServiceError) {
                         sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
-/*
-                        Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
-                            .show()
-*/
-                        CustomDialogBuilder.composeAlertDialog(title = "SDK Initialization", subtitle = "SDK Initialization Failed")
-                        showAlert.value = true
+                        CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_failure))
                         Log.e("EMV_APP", emvServiceError.errorMessage)
                     }
 
@@ -259,8 +243,6 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         subTitle: String?,
                         message: String?
                     ) {
-                        //showProgress.value = show
-                        //CustomDialogBuilder.setDialogText(title = title, subtitle = subTitle, message = message)
                         CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
                     }
                 })
