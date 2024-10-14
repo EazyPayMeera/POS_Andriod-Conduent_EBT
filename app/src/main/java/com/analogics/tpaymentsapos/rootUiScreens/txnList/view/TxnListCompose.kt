@@ -546,22 +546,22 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
                 .setCancelButtonText("Summary")
                 .setConfirmButtonText("Detail")
-                .setCancelable(false)
+                .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    viewModel.printReceipt(context, true,false,sharedViewModel.objRootAppPaymentDetail)
+                    viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
                 }
                 .setOnConfirmAction {
-                    viewModel.printReceipt(context, true,true,sharedViewModel.objRootAppPaymentDetail)
+                    viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
                 }
                 .setShowButtons(true)
                 .setAutoOff(false)
                 .setNavAction {
                     navHostController.popBackStack()
                 }
-                .buildDialog(onClose = { isDialogVisible = false })
+                .buildDialog(onClose = { isAlertVisible = false })
         }
     }
 }

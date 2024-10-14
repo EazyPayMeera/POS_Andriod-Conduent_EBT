@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.utility
 
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 
 class ReceiptBuilder {
 
@@ -49,10 +50,10 @@ class ReceiptBuilder {
     }
 
     // Function to build a summary report
-    fun createSummaryReport(paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
+    fun createSummaryReport(sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
         return SummaryReport.Builder()
             .addSummaryField("", "SUMMARY REPORT", "")
-            .addSummaryField("Transaction", "Count", "Total")
+            .addSummaryField(sharedViewModel.objPosConfig?.header1.toString(), sharedViewModel.objPosConfig?.header2.toString(), sharedViewModel.objPosConfig?.header3.toString())
             .addSummaryField("---------------", "---------------", "---------------")
             .addSummaryField("Purchase",paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
             .addSummaryField("Refund",paymentDetails?.ttlRefundCount?.toString() ?: "N/A" , paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")

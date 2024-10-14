@@ -19,6 +19,7 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
@@ -159,6 +160,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         context: Context,
         customer: Boolean = false,
         isSummaryReport: Boolean = false,
+        sharedViewModel: SharedViewModel,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
     )
     {
@@ -166,7 +168,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         isCustomer.value = customer
 
         GlobalScope.launch {
-            initPrinter(context,isSummaryReport ,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+            initPrinter(context,sharedViewModel ,isSummaryReport ,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     isPrinting.value = false
                 }
@@ -180,6 +182,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     suspend fun initPrinter(
         context: Context,
+        sharedViewModel: SharedViewModel,
         isSummaryReport: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
@@ -200,7 +203,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 }
                 else
                 {
-                    addReceiptDetails(objRootAppPaymentDetail,iPrinterResultProviderListener)
+                    addReceiptDetails(sharedViewModel,objRootAppPaymentDetail,iPrinterResultProviderListener)
                 }
                 Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
             } catch (e: Exception) {
@@ -211,7 +214,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
 
-    suspend fun addReceiptDetails(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun addReceiptDetails(sharedViewModel: SharedViewModel,objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener)
     {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
@@ -222,7 +225,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
         // Generate the receipt
         // Generate the summary report using ReceiptBuilder
-        val summaryReport = receiptBuilder.createSummaryReport(paymentServiceTxnDetails)
+        val summaryReport = receiptBuilder.createSummaryReport(sharedViewModel,paymentServiceTxnDetails)
 
         // Create separate lists for label, value, and description
         val labelList: List<String> = summaryReport.summaryFields.map { it.first }
