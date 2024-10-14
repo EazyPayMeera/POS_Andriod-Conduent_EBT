@@ -4,7 +4,6 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -41,6 +40,9 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
+    var showProgress = mutableStateOf(false)
+    var showAlert = mutableStateOf(false)
+
     var LatestTransaction: TxnEntity? = null
     private val _lastTransactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val lastTransactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _lastTransactionList
@@ -171,7 +173,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 }
             } ?: -1 // Default or error value if no barcode field is found
 
-    
+
             val format = Bundle().apply {
                 putInt("align", alignment) // Default alignment for text
                 putInt("width", 300)
@@ -220,26 +222,34 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     override fun onEmvSuccess(result: Any) {
                         if (result == true) {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }?.saveToPrefs()
-                            Toast.makeText(
+                            CustomDialogBuilder.composeAlertDialog(title = "SDK Initialization", subtitle = "SDK Initialization Successful")
+                            showAlert.value = true
+/*                            Toast.makeText(
                                 context,
                                 R.string.emv_sdk_init_success,
                                 Toast.LENGTH_SHORT
-                            ).show()
+                            ).show()*/
                         }
                         else {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
-                            Toast.makeText(
+                            CustomDialogBuilder.composeAlertDialog(title = "SDK Initialization", subtitle = "SDK Initialization Failed")
+                            showAlert.value = true
+/*                            Toast.makeText(
                                 context,
                                 R.string.emv_sdk_init_failure,
                                 Toast.LENGTH_SHORT
-                            ).show()
+                            ).show()*/
                         }
                     }
 
                     override fun onEmvError(emvServiceError: EmvServiceError) {
                         sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
+/*
                         Toast.makeText(context, R.string.emv_sdk_init_failure, Toast.LENGTH_SHORT)
                             .show()
+*/
+                        CustomDialogBuilder.composeAlertDialog(title = "SDK Initialization", subtitle = "SDK Initialization Failed")
+                        showAlert.value = true
                         Log.e("EMV_APP", emvServiceError.errorMessage)
                     }
 
@@ -249,7 +259,9 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         subTitle: String?,
                         message: String?
                     ) {
-                        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+                        //showProgress.value = show
+                        //CustomDialogBuilder.setDialogText(title = title, subtitle = subTitle, message = message)
+                        CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
                     }
                 })
             }

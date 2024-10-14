@@ -244,7 +244,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
         )
     }
 
-    CustomDialogBuilder.ShowProgressDialog(viewModel.showProgress.value)
+    CustomDialogBuilder.ShowComposed()
 }
 
 @Composable

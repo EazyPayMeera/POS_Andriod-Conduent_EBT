@@ -277,7 +277,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         subTitle: String?,
         message: String?
     ) {
-        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+        CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 
     fun resetTransactionList()

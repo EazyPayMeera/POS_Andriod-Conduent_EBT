@@ -22,8 +22,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
 
-    var showProgress = mutableStateOf(false)
-
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
@@ -57,8 +55,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                     subTitle: String?,
                     message: String?
                 ) {
-                    showProgress.value = show
-                    CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+                    CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
                 }
 
             })

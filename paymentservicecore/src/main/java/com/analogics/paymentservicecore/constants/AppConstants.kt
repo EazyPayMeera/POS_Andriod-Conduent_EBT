@@ -13,6 +13,7 @@ object AppConstants {
     const val UNIQUE_ID_DATE_TIME_FORMAT = "DHHmmss"
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L
+    const val MIN_DIALOG_SHOW_TIME_MS = 500L
 
     const val NAV_VAL_TAX_TYPE_SGST = "SGST"
     const val NAV_VAL_TAX_TYPE_CGST = "CGST"

@@ -161,6 +161,6 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         subTitle: String?,
         message: String?
     ) {
-        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+        CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 }

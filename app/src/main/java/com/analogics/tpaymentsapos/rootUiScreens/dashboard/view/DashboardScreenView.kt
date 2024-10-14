@@ -210,6 +210,8 @@ fun TrainingView(
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
+
+    CustomDialogBuilder.ShowComposed()
 }
 
 
