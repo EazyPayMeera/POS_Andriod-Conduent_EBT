@@ -6,14 +6,11 @@ import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListe
 import javax.inject.Inject
 import kotlin.toString
 
-class EmvSdkRequestRepository @Inject constructor() : IEmvSdkRequestListener {
-    private var emvSdkResponseListener: IEmvSdkResponseListener? = null
-    private var emvWrapper : EmvWrapperRepository = EmvWrapperRepository { onEmvSdkResponse(it) }
+class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
+    private var emvWrapper : EmvWrapperRepository = EmvWrapperRepository (iEmvSdkResponseListener)
     override fun initPaymentSDK(
-        context: Context,
-        iEmvSdkResponseListener: IEmvSdkResponseListener
+        context: Context
     ) {
-        this.emvSdkResponseListener = iEmvSdkResponseListener
         try {
             emvWrapper.initializeSdk()
         } catch (exception: Exception) {
@@ -23,10 +20,8 @@ class EmvSdkRequestRepository @Inject constructor() : IEmvSdkRequestListener {
     }
 
     override fun startPayment(
-        context: Context,
-        iEmvSdkResponseListener: IEmvSdkResponseListener
+        context: Context
     ) {
-        this.emvSdkResponseListener = iEmvSdkResponseListener
         try {
             EmvWrapperRepository.startPayment(context,iEmvSdkResponseListener);
         } catch (exception: Exception) {
@@ -37,10 +32,10 @@ class EmvSdkRequestRepository @Inject constructor() : IEmvSdkRequestListener {
     override fun onEmvSdkResponse(response: Any) {
         when (response) {
             is String -> {
-                emvSdkResponseListener?.onEmvSdkSuccess(response)
+                iEmvSdkResponseListener?.onEmvSdkSuccess(response)
             }
             else -> {
-                emvSdkResponseListener?.onEmvSdkError(response.toString())
+                iEmvSdkResponseListener?.onEmvSdkError(response.toString())
             }
         }
     }

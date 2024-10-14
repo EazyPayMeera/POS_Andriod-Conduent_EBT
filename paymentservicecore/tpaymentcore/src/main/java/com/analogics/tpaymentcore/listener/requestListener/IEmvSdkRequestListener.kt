@@ -4,7 +4,9 @@ import android.content.Context
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 
 interface IEmvSdkRequestListener {
-    fun initPaymentSDK(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener)
-    fun startPayment(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener)
+    var iEmvSdkResponseListener : IEmvSdkResponseListener
+
+    fun initPaymentSDK(context: Context)
+    fun startPayment(context: Context)
     fun onEmvSdkResponse(response: Any)
 }

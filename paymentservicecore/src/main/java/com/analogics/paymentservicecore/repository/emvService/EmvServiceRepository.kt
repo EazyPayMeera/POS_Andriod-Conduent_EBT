@@ -6,13 +6,13 @@ import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceRe
 import com.analogics.paymentservicecore.model.error.EmvServiceError
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.repository.EmvSdkRequestRepository
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class EmvServiceRepository @Inject constructor(
-    private val emvSdkRequestRepository: EmvSdkRequestRepository
-) :
+class EmvServiceRepository @Inject constructor() :
     IEmvServiceRequestListener,
     IEmvSdkResponseListener {
+    private val emvSdkRequestRepository = EmvSdkRequestRepository(this)
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
 
@@ -39,7 +39,6 @@ class EmvServiceRepository @Inject constructor(
         iEmvServiceResponseListener.onDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
     }
 
-
     override fun initPaymentSDK(
         context: Context,
         iEmvServiceResponseListener: IEmvServiceResponseListener
@@ -47,7 +46,7 @@ class EmvServiceRepository @Inject constructor(
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
         this.context = context
         iEmvServiceResponseListener.onDisplayProgress(false)
-        emvSdkRequestRepository.initPaymentSDK(context, this)
+        emvSdkRequestRepository.initPaymentSDK(context)
     }
 
     override fun startPayment(
@@ -56,7 +55,7 @@ class EmvServiceRepository @Inject constructor(
     ) {
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
         iEmvServiceResponseListener.onDisplayProgress(false)
-        emvSdkRequestRepository.startPayment(context, this)
+        emvSdkRequestRepository.startPayment(context)
     }
 
     override fun onEmvServiceResponse(response: Any) {
