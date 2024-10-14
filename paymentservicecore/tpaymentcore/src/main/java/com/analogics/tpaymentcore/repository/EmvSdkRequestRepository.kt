@@ -3,21 +3,16 @@ package com.analogics.tpaymentcore.repository
 import android.content.Context
 import com.analogics.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
-import com.analogics.tpaymentcore.listener.responseListener.IEmvWrapperResponseListener
 import javax.inject.Inject
 import kotlin.toString
 
-class EmvSdkRequestRepository @Inject constructor( private var emvWrapper : EmvWrapperRepository) :
-    IEmvSdkRequestListener, IEmvWrapperResponseListener {
-    private var emvSdkResponseListener: IEmvSdkResponseListener? = null
-
+class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
+    private var emvWrapper : EmvWrapperRepository = EmvWrapperRepository (iEmvSdkResponseListener)
     override fun initPaymentSDK(
-        context: Context,
-        iEmvSdkResponseListener: IEmvSdkResponseListener
+        context: Context
     ) {
-        this.emvSdkResponseListener = iEmvSdkResponseListener
         try {
-            emvWrapper.initializeSdk(this)
+            emvWrapper.initializeSdk()
         } catch (exception: Exception) {
             onEmvSdkResponse(exception.message.toString())
         }
@@ -25,10 +20,8 @@ class EmvSdkRequestRepository @Inject constructor( private var emvWrapper : EmvW
     }
 
     override fun startPayment(
-        context: Context,
-        iEmvSdkResponseListener: IEmvSdkResponseListener
+        context: Context
     ) {
-        this.emvSdkResponseListener = iEmvSdkResponseListener
         try {
             EmvWrapperRepository.startPayment(context,iEmvSdkResponseListener);
         } catch (exception: Exception) {
@@ -39,23 +32,11 @@ class EmvSdkRequestRepository @Inject constructor( private var emvWrapper : EmvW
     override fun onEmvSdkResponse(response: Any) {
         when (response) {
             is String -> {
-                emvSdkResponseListener?.onEmvSdkSuccess(response)
+                iEmvSdkResponseListener?.onEmvSdkSuccess(response)
             }
             else -> {
-                emvSdkResponseListener?.onEmvSdkError(response.toString())
+                iEmvSdkResponseListener?.onEmvSdkError(response.toString())
             }
         }
-    }
-
-    override fun onEmvWrapperSuccess(uiData: String) {
-        onEmvSdkResponse(uiData)
-    }
-
-    override fun onEmvWrapperError(uiData: String) {
-        onEmvSdkResponse(uiData)
-    }
-
-    override fun onEmvWrapperDisplayMessage(uiData: String?) {
-        onEmvSdkResponse(uiData?:"")
     }
 }
