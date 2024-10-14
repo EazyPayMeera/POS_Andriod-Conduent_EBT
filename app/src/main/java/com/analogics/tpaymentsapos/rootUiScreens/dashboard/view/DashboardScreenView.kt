@@ -21,6 +21,7 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,11 +61,15 @@ import kotlinx.coroutines.launch
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
     val sharedViewModel= localSharedViewModel.current
+
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
         dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel, sharedViewModel)
     ) {}
+    LaunchedEffect(Unit) {
+        dashboardViewModel.fetchLastTransactions()
+    }
 }
 
 @Composable
@@ -188,6 +193,7 @@ fun TrainingView(
                 ) {
                     DashboardContentSurface(
                         sharedViewModel = sharedViewModel,
+                        viewModel = dashboardViewModel,
                         dashboardItemLists = dashboardItemLists,
                         selectedButton = selectedButton,
                         onButtonClick = { text, onClick ->
@@ -210,11 +216,14 @@ fun TrainingView(
 @Composable
 fun DashboardContentSurface(
     sharedViewModel: SharedViewModel,
+    viewModel: DashboardViewModel,
     dashboardItemLists: List<DashboardItemList>,
     selectedButton: String?,
     onButtonClick: (String, () -> Unit) -> Unit
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val transactions = viewModel.lastTransactionList.collectAsState().value
     Surface(
         color = MaterialTheme.colorScheme.onPrimary,
         modifier = Modifier
@@ -299,7 +308,12 @@ fun DashboardContentSurface(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                     AppButton(
-                        onClick = { isDialogVisible = true },
+                        onClick = {
+                            isDialogVisible = true
+                            if (transactions.isNotEmpty()) {
+                                viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)
+                            }
+                        },
                         title = stringResource(id = R.string.print_last_receipt),
                         image = painterResource(id = R.drawable.ic_print)
                     )

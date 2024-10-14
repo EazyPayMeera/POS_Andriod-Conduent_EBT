@@ -1,6 +1,8 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.State
@@ -8,28 +10,41 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.EmvServiceError
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
+class DashboardViewModel @Inject constructor(private val dbRepository: TxnDBRepository,private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
+    var LatestTransaction: TxnEntity? = null
+    private val _lastTransactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
+    val lastTransactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _lastTransactionList
 
-
-
-//    fun insertData(txnDtlsEntity: TxnDtlsEntity)=viewModelScope.launch {
-//        txnDBRepository.insert(txnDtlsEntity)
-//    }
 
 
     fun onButtonClick(text: String, onClick: () -> Unit, sharedViewModel: SharedViewModel) {
@@ -48,6 +63,153 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     fun clearTransData(sharedViewModel: SharedViewModel) {
         _selectedButton.value = false.toString()
         sharedViewModel.clearTransData()
+    }
+
+
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun printReceipt(
+        context: Context,
+        customer: Boolean = false,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails
+    )
+    {
+
+        GlobalScope.launch {
+            initPrinter(context, object : IPrinterResultProviderListener {
+                override fun onSuccess(result: Any?) {
+                }
+
+                override fun onFailure(exception: Exception) {
+                }
+            })
+        }
+    }
+
+    suspend fun initPrinter(
+        context: Context,
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    ) {
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "Approved View Model to Printer Service Repository 1")
+
+                // Retrieve the last transaction from _lastTransactionList
+                val lastTransactionList = _lastTransactionList.value // This is a List<ObjRootAppPaymentDetails>
+                val latestTransaction = lastTransactionList.lastOrNull() // Get the last transaction or null if the list is empty
+
+                // Check if the latest transaction is not null before proceeding
+                latestTransaction?.let {
+                    // Convert the latest transaction to JSON string
+                    val requestDetails = PaymentServiceUtils.objectToJsonString(it)
+
+                    // Pass the transaction details to the PrinterServiceRepository
+                    PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails))
+                        .initPrinter(context, iPrinterResultProviderListener)
+
+                    // Optionally add receipt details
+                    addReceiptDetails(iPrinterResultProviderListener)
+
+                    Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
+                } ?: Log.d(TAG, "No transactions available for printing.")
+            } catch (e: Exception) {
+                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
+            }
+        }
+    }
+
+
+    suspend fun addReceiptDetails(iPrinterResultProviderListener: IPrinterResultProviderListener) {
+        // Create an instance of ReceiptBuilder
+        val receiptBuilder = ReceiptBuilder()
+
+        // Retrieve the last transaction from _lastTransactionList
+        val lastTransactionList = _lastTransactionList.value
+        val latestTransaction = lastTransactionList.lastOrNull() // Get the last transaction
+
+        // Check if the latest transaction is available
+        if (latestTransaction != null) {
+            // Create the receipt using payment details
+            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                PaymentServiceUtils.objectToJsonString(latestTransaction) // Use the latest transaction
+            )
+
+            // Generate the receipt
+            val receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails)
+
+            // Extract the barcode string
+            val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
+
+            // Prepare receipt details for printing
+            val receiptDetails = receipt.fields.map { (label, value) ->
+                if (value.isEmpty()) {
+                    "$label"
+                } else {
+                    "$label: $value"
+                }
+            } + receipt.items.mapIndexed { index, item ->
+                "${index + 1}. ${item.name}              $${item.price}"
+            }
+
+            // Extract alignment information for each field
+            val alignmentText: List<Int> = receipt.fields.map { field ->
+                when (field.third) {
+                    ReceiptBuilder.Alignment.LEFT -> 0
+                    ReceiptBuilder.Alignment.CENTER -> 1
+                    ReceiptBuilder.Alignment.RIGHT -> 2
+                    else -> 0 // Default to left alignment if no match
+                }
+            }
+
+            // Extract alignment for the barcode
+            val alignment: Int = receipt.fields.firstOrNull { it.first == "QR CODE" }?.let { field ->
+                when (field.third) {
+                    ReceiptBuilder.Alignment.LEFT -> 0
+                    ReceiptBuilder.Alignment.CENTER -> 1
+                    ReceiptBuilder.Alignment.RIGHT -> 2
+                    else -> -1 // Default or error value
+                }
+            } ?: -1 // Default or error value if no barcode field is found
+
+    
+            val format = Bundle().apply {
+                putInt("align", alignment) // Default alignment for text
+                putInt("width", 300)
+                putInt("height", 100)
+                putSerializable("barcode_type", BarcodeFormat.CODE_39)
+            }
+
+            PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(
+                format,
+                barcodeString,
+                receiptDetails,
+                alignmentText,
+                iPrinterResultProviderListener
+            )
+        } else {
+            Log.d(TAG, "No transactions available for receipt printing.")
+        }
+    }
+
+
+    private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
+        val gson = Gson()
+        val json = gson.toJson(txnEntityList)
+        val txnDataListType = object : TypeToken<List<ObjRootAppPaymentDetails>>() {}.type
+        return gson.fromJson(json, txnDataListType)
+    }
+
+    fun fetchLastTransactions() {
+        viewModelScope.launch {
+            val latestTransaction = dbRepository.fetchLastTransaction()
+            Log.d("db data", latestTransaction.toString())
+
+            latestTransaction?.let {
+                val txnDataList = convertTxnEntityListToTxnDataList(listOf(it)) // Wrap it in a list
+                _lastTransactionList.value = txnDataList
+                Log.d("latest txn data", _lastTransactionList.value.toString())
+            } ?: Log.d("db data", "No transaction found.")
+        }
     }
 
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
