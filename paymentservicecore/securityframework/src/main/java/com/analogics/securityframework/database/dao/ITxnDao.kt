@@ -28,4 +28,7 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable ORDER BY id DESC LIMIT 1")
     suspend fun getLastTxnEntry(): TxnEntity?
 
+    @Query("SELECT * FROM TxnTable WHERE batchId = :batchId")
+    suspend fun getTrasactionsByBatchId(batchId: String): List<TxnEntity>
+
 }

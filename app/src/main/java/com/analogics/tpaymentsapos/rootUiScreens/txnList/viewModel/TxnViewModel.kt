@@ -44,7 +44,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     private val filterTxn = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
-    val FilteredByDateTxn: StateFlow<List<ObjRootAppPaymentDetails>> = filterTxn
     val isPrinting = mutableStateOf(false)
     val isCustomer = mutableStateOf(false)
     private var isFiltered = false
@@ -102,6 +101,19 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             Log.d("TransactionFilter", "Filtered Transactions: $filteredList")
             // Update the filterTxn value with the filtered list
             _transactionList.value = filteredList
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun filterTransactionsByBatch(batchId: String) {
+        viewModelScope.launch {
+            val latestTransaction = dbRepository.fetchTransactionDetailsByBatchId(batchId)
+            Log.d("db data", latestTransaction.toString())
+
+            val txnDataList = convertTxnEntityListToTxnDataList(latestTransaction) // Pass it directly
+            _transactionList.value = txnDataList
+            Log.d("latest txn by batch data", _transactionList.value.toString())
+
         }
     }
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {

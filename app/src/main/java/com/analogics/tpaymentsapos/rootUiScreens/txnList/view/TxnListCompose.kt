@@ -76,6 +76,7 @@ fun TransactionListScreen(
     val sharedViewModel = localSharedViewModel.current
     // State variables
     val showDateTimePicker = remember { mutableStateOf(false) }
+    val BatchId = remember { mutableStateOf(false) }
     val isSelectingStartDate = remember { mutableStateOf(true) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
@@ -111,6 +112,16 @@ fun TransactionListScreen(
             viewModel.filterTransactionsByDateRange(selectedStartDate.value!!, selectedEndDate.value!!
             )
             showDateTimePicker.value = false
+        }
+    }
+
+    if(BatchId.value)
+    {
+        sharedViewModel.objPosConfig?.BatchId
+
+        if (sharedViewModel.objPosConfig?.BatchId != null) {
+            viewModel.filterTransactionsByBatch(sharedViewModel.objPosConfig?.BatchId!!)
+            BatchId.value = false
         }
     }
     //showDateTimePicker.value = false
@@ -192,6 +203,7 @@ fun TransactionListScreen(
 
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
+                                BatchId.value = true
                                 // Logic for handling batch number filter
                             }) {
                                 Text("Filter by Batch Number")
@@ -201,6 +213,7 @@ fun TransactionListScreen(
                 }
 
                 Divider(color = Color.Gray, thickness = 1.dp)
+                Log.d("Transaction Size", "Size of transactions: ${transactions.size}")
                 // If transaction list is empty
                 if (transactions.isEmpty()) {
                     Text(
