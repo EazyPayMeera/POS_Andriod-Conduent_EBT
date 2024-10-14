@@ -46,7 +46,20 @@ class ReceiptDetailsViewModel(
         }
     }
 
-    fun navigate(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+    fun onLoad(sharedViewModel: SharedViewModel) {
+        /* Headers */
+        sharedViewModel.objPosConfig?.header1?.let { header1.value = it  }
+        sharedViewModel.objPosConfig?.header2?.let { header2.value = it  }
+        sharedViewModel.objPosConfig?.header3?.let { header3.value = it  }
+        sharedViewModel.objPosConfig?.header4?.let { header4.value = it  }
+        /* Footers */
+        sharedViewModel.objPosConfig?.footer1?.let { footer1.value = it  }
+        sharedViewModel.objPosConfig?.footer2?.let { footer2.value = it  }
+        sharedViewModel.objPosConfig?.footer3?.let { footer3.value = it  }
+        sharedViewModel.objPosConfig?.footer4?.let { footer4.value = it  }
+    }
+
+    fun onSave(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objPosConfig?.apply {
             header1 = headerStateFlows[0].value
             header2 = headerStateFlows[1].value

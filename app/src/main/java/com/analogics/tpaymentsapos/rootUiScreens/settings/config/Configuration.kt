@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -97,7 +98,6 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isArrow = false,
             onArrowChange = {}
         ),
-        // Additional items
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
@@ -105,7 +105,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
             isArrow = true,
             onArrowChange = {navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)}
-        )
+        ),
 
     )
 
@@ -129,8 +129,15 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                         item = item
                     )
 
+                    Log.d("Settings", "Size of settingsItems: ${settingsItems.size}")
                     if (index == 4 && item.isChecked) {
                         TippingView(ConfigurableViewType.Percentage, navHostController, viewModel, sharedViewModel)
+                    }
+
+
+
+                    if (index == 5 && item.isChecked) {
+                        TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel)
                     }
 
                     if (index < settingsItems.size - 1) {
@@ -138,10 +145,6 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                             color = MaterialTheme.colorScheme.secondary,
                             thickness = MaterialTheme.dimens.DP_1_CompactMedium
                         )
-                    }
-
-                    if (index == 5 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel)
                     }
                 }
             }
