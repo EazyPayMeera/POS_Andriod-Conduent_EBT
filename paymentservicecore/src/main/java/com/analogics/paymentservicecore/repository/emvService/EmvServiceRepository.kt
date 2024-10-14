@@ -44,7 +44,6 @@ class EmvServiceRepository @Inject constructor() :
     ) {
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
         this.context = context
-        iEmvServiceResponseListener.onDisplayProgress(false)
         emvSdkRequestRepository.initPaymentSDK(context)
     }
 
@@ -57,16 +56,4 @@ class EmvServiceRepository @Inject constructor() :
         emvSdkRequestRepository.startPayment(context)
     }
 
-    override fun onEmvServiceResponse(response: Any) {
-        iEmvServiceResponseListener.onDisplayProgress(false)
-        when (response) {
-            is EmvServiceError -> {
-                iEmvServiceResponseListener.onEmvError(EmvServiceError(response.toString()))
-            }
-            else ->
-            {
-                iEmvServiceResponseListener.onEmvSuccess(response)
-            }
-        }
-    }
 }

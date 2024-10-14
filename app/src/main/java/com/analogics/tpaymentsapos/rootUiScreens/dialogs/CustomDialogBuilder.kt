@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +36,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.ui.theme.dashboardCardBgColor
@@ -57,8 +59,8 @@ class CustomDialogBuilder private constructor() {
     private var showButtons: Boolean = false // New parameter to control the visibility of both buttons
     private var autooff: Boolean = true // New parameter to control the visibility of both buttons
     private val showDialog = mutableStateOf(true)
-    private var cancelButtonText: String = ""
-    private var confirmButtonText: String = ""
+    private var cancelButtonText: String? = null
+    private var confirmButtonText: String? = null
     var onItemSelected: ((String) -> Unit) ?= null
     var listItem:List<String> ?= null
 
@@ -183,43 +185,46 @@ class CustomDialogBuilder private constructor() {
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
                                         // Cancel Button
-                                        Button(
-                                            onClick = {
-                                                onCancelAction?.invoke()
-                                                onClose() // Close the dialog when the cancel button is clicked
-                                            },
-                                            colors = ButtonDefaults.buttonColors(
-                                                backgroundColor = colorResource(
-                                                    R.color.grey
-                                                )
-                                            ),
-                                            shape = RoundedCornerShape(12.dp),
-                                            modifier = Modifier
-                                                .weight(1f) // Use weight to make button take equal space
-                                                .height(46.dp) // Set the desired height here
-                                        ) {
-                                            Text(cancelButtonText, color = Color.Black)
+                                        cancelButtonText?.let {
+                                            Button(
+                                                onClick = {
+                                                    onCancelAction?.invoke()
+                                                    onClose() // Close the dialog when the cancel button is clicked
+                                                },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    backgroundColor = colorResource(
+                                                        R.color.grey
+                                                    )
+                                                ),
+                                                shape = RoundedCornerShape(12.dp),
+                                                modifier = Modifier
+                                                    .weight(1f) // Use weight to make button take equal space
+                                                    .height(46.dp) // Set the desired height here
+                                            ) {
+                                                Text(it, color = Color.Black)
+                                            }
+
+                                            Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
                                         }
-
-                                        Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
-
                                         // Confirm Button
-                                        Button(
-                                            onClick = {
-                                                onConfirmAction?.invoke() // Execute confirm action
-                                                onClose() // Close the dialog when the confirm button is clicked
-                                            },
-                                            colors = ButtonDefaults.buttonColors(
-                                                backgroundColor = colorResource(
-                                                    R.color.grey
-                                                )
-                                            ),
-                                            shape = RoundedCornerShape(12.dp),
-                                            modifier = Modifier
-                                                .weight(1f) // Use weight to make button take equal space
-                                                .height(46.dp) // Set the desired height here
-                                        ) {
-                                            Text(confirmButtonText, color = Color.Black)
+                                        confirmButtonText?.let {
+                                            Button(
+                                                onClick = {
+                                                    onConfirmAction?.invoke() // Execute confirm action
+                                                    onClose() // Close the dialog when the confirm button is clicked
+                                                },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    backgroundColor = colorResource(
+                                                        R.color.grey
+                                                    )
+                                                ),
+                                                shape = RoundedCornerShape(12.dp),
+                                                modifier = Modifier
+                                                    .weight(1f) // Use weight to make button take equal space
+                                                    .height(46.dp) // Set the desired height here
+                                            ) {
+                                                Text(it, color = Color.Black)
+                                            }
                                         }
                                     }
                                 }
@@ -243,41 +248,99 @@ class CustomDialogBuilder private constructor() {
         private var _title: String? = null
         private var _subtitle: String? = null
         private var _message: String? = null
-        var show = mutableStateOf(false)
+        private var _buttonText: String? = null
+        var showProgress = mutableStateOf(false)
+        var showAlert = mutableStateOf(false)
 
         fun create(): CustomDialogBuilder = CustomDialogBuilder()
 
         @Composable
-        fun ShowProgressDialog(showDialog: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null) {
+        fun ShowAlertDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
+            show?.let { showAlert.value = it }
+            title?.let { _title = it }
+            subtitle?.let { _subtitle = it }
+            message?.let { _message = it }
+
+            if (showAlert.value==true) {
+                instance?.dismiss()
+                instance = create()
+                    .setTitle(title ?: _title ?: "")
+                    .setSubtitle(subtitle ?: _subtitle ?: "")
+                    .setSmallText(message ?: _message ?: "")
+                    .setShowProgressIndicator(false)
+                    .setShowCloseButton(false)
+                    .setShowButtons(true)
+                    .setConfirmButtonText(buttonText?:_buttonText?:stringResource(id = R.string.ok))
+                instance?.buildDialog(onClose = { showAlert.value = false })
+
+            }
+            else
+            {
+                instance?.dismiss()
+            }
+        }
+
+        fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
             instance?.dismiss()
-            showDialog?.let { show.value = it }
-            if (show.value) {
+            instance = null
+            showProgress.value = false
+            showAlert.value = show != false
+            _title = title
+            _subtitle = subtitle
+            _message = message
+            _buttonText = buttonText
+        }
+
+        @Composable
+        fun ShowProgressDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null) {
+            show?.let { showProgress.value = it }
+            title?.let { _title = it }
+            subtitle?.let { _subtitle = it }
+            message?.let { _message = it }
+
+            if (showProgress.value==true) {
+                instance?.dismiss()
                 instance = create()
                     .setTitle(title ?: _title ?: stringResource(R.string.processing))
                     .setSubtitle(subtitle ?: _subtitle ?: stringResource(R.string.plz_wait))
                     .setSmallText(message ?: _message ?: "")
                     .setShowProgressIndicator(true)
                     .setShowCloseButton(false)
-                instance?.buildDialog(onClose = {show.value = false})
+                instance?.buildDialog(onClose = { showProgress.value = false })
+            }
+            else
+            {
+                instance?.dismiss()
             }
         }
 
-        fun SetProgressDialog(title: String? = null, subtitle: String? = null, message: String? = null) {
+        fun composeProgressDialog(show: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null) {
+            instance?.dismiss()
+            instance = null
+            showAlert.value = false
+            showProgress.value = show != false
             _title = title
             _subtitle = subtitle
             _message = message
         }
 
-        fun ClearText() {
+        @Composable
+        fun ShowComposed()
+        {
+            ShowProgressDialog()
+            ShowAlertDialog()
+        }
+
+        fun clearText() {
             _title = null
             _subtitle = null
             _message = null
         }
 
-        fun HideProgress() {
-            show.value = false
+        fun hideProgress() {
+            showProgress.value = false
             instance?.dismiss()
-            ClearText()
+            clearText()
         }
     }
 

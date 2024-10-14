@@ -135,7 +135,7 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                 }
             }
 
-            CustomDialogBuilder.ShowProgressDialog(viewModel.showProgress.value)
+            CustomDialogBuilder.ShowComposed()
         }
     )
 }

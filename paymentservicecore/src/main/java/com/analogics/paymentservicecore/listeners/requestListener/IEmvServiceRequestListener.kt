@@ -9,6 +9,4 @@ interface IEmvServiceRequestListener {
         context: Context,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     )
-
-    fun onEmvServiceResponse(response: Any)
 }

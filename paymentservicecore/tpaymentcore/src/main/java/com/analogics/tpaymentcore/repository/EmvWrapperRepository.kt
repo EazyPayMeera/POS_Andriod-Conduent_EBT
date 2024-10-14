@@ -31,6 +31,7 @@ import kotlin.toString
 class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
     override fun initializeSdk() {
+        Thread {
             try {
                 EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
                 deleteCAPKeys()
@@ -46,6 +47,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }.start()
     }
 
     companion object : EmvListener, PinInputListener {

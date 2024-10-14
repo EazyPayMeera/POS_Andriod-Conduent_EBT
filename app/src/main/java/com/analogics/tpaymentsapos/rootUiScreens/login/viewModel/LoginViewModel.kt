@@ -122,7 +122,6 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         subTitle: String?,
         message: String?
     ) {
-        showProgress.value = show
-        CustomDialogBuilder.SetProgressDialog(title = title, subtitle = subTitle, message = message)
+        CustomDialogBuilder.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
     }
 }
