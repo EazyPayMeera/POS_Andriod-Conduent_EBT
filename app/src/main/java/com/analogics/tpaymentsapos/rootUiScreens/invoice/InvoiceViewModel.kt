@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 
 class InvoiceViewModel : ViewModel() {
     private val TAG = "InvoiceViewModel"
-    // State to hold the invoice number
     private val _invoiceno = MutableStateFlow("")
     val invoiceno: StateFlow<String> = _invoiceno
 

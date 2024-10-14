@@ -72,8 +72,6 @@ fun TransactionListScreen(
 ) {
     // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
-    val filterByDateTransactions = viewModel.FilteredByDateTxn.collectAsState().value
-    // Initial fetch of transactions (if needed)
 
     val sharedViewModel = localSharedViewModel.current
     var isDateAndTime: Boolean = false
@@ -189,7 +187,6 @@ fun TransactionListScreen(
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
                                 showDateTimePicker.value = true // Show date picker
-                                isSelectingStartDate.value = true // Start with selecting start date
                             }) {
                                 Text("Select Date")
                             }

@@ -15,10 +15,6 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -65,6 +61,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.TipPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view.OnBoardSlideView
+import com.analogics.tpaymentsapos.rootUiScreens.receiptdetails.view.ReceiptDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
@@ -78,6 +75,7 @@ var localSharedViewModel= compositionLocalOf{SharedViewModel()}
 const val STORAGE_PERMISSION_CODE = 23
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var sharedViewModel:SharedViewModel= ViewModelProvider(this)[SharedViewModel::class.java]
@@ -211,6 +209,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.AmountScreen.route) {
             AmountView(navHostController)
+        }
+        composable(AppNavigationItems.ReceiptDetailsScreen.route) {
+            ReceiptDetailsView(navHostController)
         }
         composable(AppNavigationItems.InvoiceScreen.route) {
             InvoiceView(navHostController)

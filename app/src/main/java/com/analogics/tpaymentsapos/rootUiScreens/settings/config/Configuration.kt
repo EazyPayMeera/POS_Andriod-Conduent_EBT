@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -23,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -47,38 +54,59 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_training_mode,
             text = stringResource(id = R.string.training_mode),
             isChecked = viewModel.isTrainingMode.value,
-            onCheckedChange = { viewModel.onDemoModeChange(it,sharedViewModel) }
+            onCheckedChange = { viewModel.onDemoModeChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {}
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.auto_report_print),
             isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { viewModel.onAutoPrintReportChange(it,sharedViewModel)}
+            onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {}
         ),
         SettingsItem(
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
             isChecked = viewModel.isPromptInvoiceNumber.value,
-            onCheckedChange = { viewModel.onPromptInvoiceNumberChange(it,sharedViewModel) }
+            onCheckedChange = { viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {}
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_m_print,
             text = stringResource(id = R.string.auto_print_merchant),
             isChecked = viewModel.isAutoPrintMerchant.value,
-            onCheckedChange = { viewModel.onAutoPrintMerchantChange(it,sharedViewModel) }
+            onCheckedChange = { viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {}
         ),
         SettingsItem(
             imageRes = R.drawable.config_tipping,
             text = stringResource(id = R.string.enable_tipping),
             isChecked = viewModel.isTippingEnabled.value,
-            onCheckedChange = { viewModel.onTippingEnabledChange(it,sharedViewModel) }
+            onCheckedChange = { viewModel.onTippingEnabledChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {}
         ),
         SettingsItem(
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.taxes),
             isChecked = viewModel.isTaxEnabled.value,
-            onCheckedChange = { viewModel.onTaxEnabledChange(it,sharedViewModel) }
-        )
+            onCheckedChange = { viewModel.onTaxEnabledChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {}
+        ),
+        SettingsItem(
+            imageRes = R.drawable.config_auto_print_report,
+            text = stringResource(id = R.string.receipt_details),
+            isChecked = viewModel.isAutoPrintReport.value,
+            onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
+            isArrow = true,
+            onArrowChange = {navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)}
+        ),
+
     )
 
     Column {
@@ -93,16 +121,23 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                 .padding(MaterialTheme.dimens.DP_24_CompactMedium),
             elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_11_CompactMedium)
         ) {
-            Column {
-                settingsItems.forEachIndexed { index, item ->
+            LazyColumn {
+                items(settingsItems.size) { index ->
+                    val item = settingsItems[index]
                     SettingsSurface(
                         modifier = Modifier.fillMaxWidth(),
                         item = item
                     )
 
-
+                    Log.d("Settings", "Size of settingsItems: ${settingsItems.size}")
                     if (index == 4 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Percentage,navHostController, viewModel, sharedViewModel)
+                        TippingView(ConfigurableViewType.Percentage, navHostController, viewModel, sharedViewModel)
+                    }
+
+
+
+                    if (index == 5 && item.isChecked) {
+                        TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel)
                     }
 
                     if (index < settingsItems.size - 1) {
@@ -110,10 +145,6 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                             color = MaterialTheme.colorScheme.secondary,
                             thickness = MaterialTheme.dimens.DP_1_CompactMedium
                         )
-                    }
-
-                    if (index == 5 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Taxes,navHostController, viewModel, sharedViewModel)
                     }
                 }
             }
@@ -125,11 +156,14 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
     }
 }
 
+
 data class SettingsItem(
     val imageRes: Int,
     val text: String,
     val isChecked: Boolean,
-    val onCheckedChange: (Boolean) -> Unit
+    val onCheckedChange: (Boolean) -> Unit,
+    val isArrow: Boolean,
+    val onArrowChange: () -> Unit // Change to a function without parameters
 )
 
 
@@ -286,15 +320,28 @@ fun SettingsContent(
                     modifier = Modifier.padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
                 )
             }
-
-            CustomSwitch(
-                checked = item.isChecked,
-                onCheckedChange = { newCheckedState ->
-                    item.onCheckedChange(newCheckedState)
-                },
-                checkedImage = R.drawable.switch_checked, // Your checked drawable
-                uncheckedImage = R.drawable.switch_unchecked, // Your unchecked drawable
-            )
+            if(item.isArrow)
+            {
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = "Close",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(40.dp)
+                        .clickable {
+                            item.onArrowChange()
+                        }
+                )
+            }
+            else {
+                CustomSwitch(
+                    checked = item.isChecked,
+                    onCheckedChange = { newCheckedState ->
+                        item.onCheckedChange(newCheckedState)
+                    },
+                    checkedImage = R.drawable.switch_checked, // Your checked drawable
+                    uncheckedImage = R.drawable.switch_unchecked, // Your unchecked drawable
+                )
+            }
         }
     }
 }
