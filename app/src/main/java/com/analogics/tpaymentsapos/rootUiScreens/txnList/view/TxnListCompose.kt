@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -68,31 +70,53 @@ fun TransactionListScreen(
     navHostController: NavHostController,
     viewModel: TxnViewModel = hiltViewModel()
 ) {
-
     // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
+    val filterByDateTransactions = viewModel.FilteredByDateTxn.collectAsState().value
     // Initial fetch of transactions (if needed)
-    viewModel.fetchTransactions()
 
     val sharedViewModel = localSharedViewModel.current
-
+    var isDateAndTime: Boolean = false
     // State variables
     val showDateTimePicker = remember { mutableStateOf(false) }
-    val selectedDateTime = remember { mutableStateOf<LocalDateTime?>(null) }
+    val isSelectingStartDate = remember { mutableStateOf(true) }
+    val isSelectingEndDate = remember { mutableStateOf(true) }
+    val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
+    val selectedEndDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val showMenu = remember { mutableStateOf(false) }
-    val selectedBatch = remember { mutableStateOf("") }
 
     // Date picker logic
     if (showDateTimePicker.value) {
+
+
+        Log.d("DateTimePicker", "Selected End Date: 1")
         DateTimePickerDialog(
             onDismissRequest = { showDateTimePicker.value = false },
             onDateTimeSelected = { selectedDate ->
-                selectedDateTime.value = selectedDate
-                showDateTimePicker.value = false
-                viewModel.filterTransactionsByDate(selectedDate)
+                selectedEndDate.value = selectedDate // Save selected start date
+                isSelectingEndDate.value = true
             }
         )
+
+        if (isSelectingEndDate.value)
+        {
+            Log.d("DateTimePicker", "Selected End Date: 2")
+            DateTimePickerDialog(
+                onDismissRequest = { showDateTimePicker.value = false },
+                onDateTimeSelected = { selectedDate ->
+                    selectedStartDate.value = selectedDate // Save selected start date
+                    isSelectingEndDate.value = false
+                }
+            )
+        }
+
+        if (selectedStartDate.value != null && selectedEndDate.value != null) {
+            viewModel.filterTransactionsByDateRange(selectedStartDate.value!!, selectedEndDate.value!!
+            )
+            showDateTimePicker.value = false
+        }
     }
+    //showDateTimePicker.value = false
 
     Column {
         CommonTopAppBar(
@@ -105,14 +129,13 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel,sharedViewModel,navHostController)
+                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value)
                 SummarySection(viewModel)
             }
         }
 
         // Transaction list section with filter
         GenericCard(
-
             modifier = Modifier.padding(
                 start = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
                 end = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
@@ -140,7 +163,7 @@ fun TransactionListScreen(
                             style = MaterialTheme.typography.body2,
                             color = Color.Gray,
                             modifier = Modifier.clickable {
-                                // Handle see all action here if needed
+                                viewModel.fetchTransactions()
                             }
                         )
 
@@ -166,11 +189,11 @@ fun TransactionListScreen(
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
                                 showDateTimePicker.value = true // Show date picker
+                                isSelectingStartDate.value = true // Start with selecting start date
                             }) {
                                 Text("Select Date")
                             }
 
-                            // Batch number filter (you can add logic to handle this)
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
                                 // Logic for handling batch number filter
@@ -181,18 +204,7 @@ fun TransactionListScreen(
                     }
                 }
 
-                // Display selected date & time (if any)
-                selectedDateTime.value?.let {
-                    Text(
-                        text = "Selected Date & Time: ${it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))}",
-                        style = MaterialTheme.typography.body2,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                    )
-                }
-
                 Divider(color = Color.Gray, thickness = 1.dp)
-
                 // If transaction list is empty
                 if (transactions.isEmpty()) {
                     Text(
@@ -228,7 +240,15 @@ fun TransactionListScreen(
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchTransactions()
+    }
 }
+
+
+
+
 
 
 @Composable
@@ -326,7 +346,7 @@ fun TransactionItem(
                 verticalAlignment = Alignment.CenterVertically, // Aligns amount and icon vertically
                 modifier = Modifier.padding(start = 8.dp) // Optional padding between details and amount
             ) {
-                val amountColor = if (transaction.txnType == TxnType.REFUND) {
+                val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED) {
                     Color.Red
                 } else {
                     Color(0xFF4CAF50) // Green for other transaction types
@@ -365,7 +385,7 @@ fun TransactionItem(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel,navHostController: NavHostController) {
+fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, navHostController: NavHostController, selectedStartDate: LocalDateTime?, selectedEndDate: LocalDateTime?) {
     val context = LocalContext.current
     var isDialogVisible by remember { mutableStateOf(false) }
     var isAlertVisible by remember { mutableStateOf(false) }
@@ -389,13 +409,51 @@ fun HeaderSection(viewModel: TxnViewModel,sharedViewModel: SharedViewModel,navHo
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                sharedViewModel.objPosConfig?.BatchId?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.caption,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
-                    )
+
+                Column {
+
+                    if(selectedEndDate != null && selectedStartDate != null) {
+                        selectedStartDate?.let {
+                            Text(
+                                text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
+                                style = MaterialTheme.typography.caption,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier.align(Alignment.CenterHorizontally  )
+                        ) {
+                            Text(
+                                text = "To",
+                                style = MaterialTheme.typography.caption,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.align(Alignment.Center) // Center the Text within the Box
+                            )
+                        }
+
+
+                        selectedEndDate?.let {
+                            Text(
+                                text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
+                                style = MaterialTheme.typography.caption,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+                    else
+                    {
+                        sharedViewModel.objPosConfig?.BatchId?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.caption,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
+                            )
+                        }
+                    }
+
                 }
 
                 Row (){

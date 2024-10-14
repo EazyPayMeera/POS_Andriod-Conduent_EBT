@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -264,6 +265,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     OkButton(
                         onClick = {
                             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                            sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
                             Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)

@@ -122,6 +122,7 @@ class ReceiptBuilder {
             .addDetailField("TxnType", "", "Status")
             .addDetailField("InvoiceNo", "", "AuthCode")
             .addDetailField("TxnAmount", "", "TotalAmount")
+            .addDetailField("", paymentDetails?.txnStatus.toString(), "")
             .addDetailField("----------------", "----------------", "----------------")
 
         // Add transaction details from the transaction list

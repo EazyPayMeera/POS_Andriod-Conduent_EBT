@@ -16,7 +16,6 @@ class EmvServiceRepository @Inject constructor() :
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
 
-
     override fun onEmvSdkSuccess(uiData: String) {
         /* Just for testing comparing with uiData value */
         if (uiData == "SUCCESS") {

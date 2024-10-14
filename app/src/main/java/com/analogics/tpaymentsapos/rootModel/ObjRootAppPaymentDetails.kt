@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootModel
 
 
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.BuildConfig
 import com.google.gson.annotations.SerializedName
@@ -50,7 +51,7 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("CGST") var CGST: Double? = 0.00,
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
-    @SerializedName("txnStatus") var txnStatus: String? = null,
+    @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
     @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE
 
 
