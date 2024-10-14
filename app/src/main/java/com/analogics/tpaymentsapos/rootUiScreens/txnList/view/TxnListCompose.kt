@@ -74,7 +74,6 @@ fun TransactionListScreen(
     val transactions = viewModel.transactionList.collectAsState().value
 
     val sharedViewModel = localSharedViewModel.current
-    var isDateAndTime: Boolean = false
     // State variables
     val showDateTimePicker = remember { mutableStateOf(false) }
     val isSelectingStartDate = remember { mutableStateOf(true) }

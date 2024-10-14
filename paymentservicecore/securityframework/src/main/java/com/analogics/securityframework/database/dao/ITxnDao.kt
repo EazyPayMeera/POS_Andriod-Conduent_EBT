@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.analogics.securityframework.database.entity.TxnEntity
-import java.util.Date
 
 @Dao
 interface ITxnDao {
@@ -25,5 +24,8 @@ interface ITxnDao {
 
     @Query("SELECT * FROM TxnTable WHERE substr(dateTime, 1, 16) <= :date")
      suspend fun getTransactionDetailsTxnBeforeTime(date: String): List<TxnEntity>
+
+    @Query("SELECT * FROM TxnTable ORDER BY id DESC LIMIT 1")
+    suspend fun getLastTxnEntry(): TxnEntity?
 
 }
