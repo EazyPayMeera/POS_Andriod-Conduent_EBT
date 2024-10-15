@@ -1,0 +1,43 @@
+{
+  "acquirerId" : "112233",
+  "appSelIndicator" : "00",
+  "terminalCountryCode" : "0356",
+  "terminalCapabilities" : "E0F8C8",
+  "terminalFloorLimit" : "00000000",
+  "terminalAppPriority" : "00",
+  "tacDefault" : "0000000000",
+  "tacDenial" : "0000000000",
+  "tacOnline" : "DC4004F800",
+  "defaultDDOL" : "9F3704",
+  "defaultTDOL" : "9F0206",
+  "threshold" : "000000002000",
+  "targetPercentage" : "00",
+  "maxTargetPercentage" : "00",
+  "additionalTags" : "",
+
+  "contact": {
+    "aidList": [
+      {
+        "aid": "A0000000031010",
+        "appVersion": "0002",
+        "tacDenial": "0010000000"
+      },
+      {
+        "aid": "A0000000032010",
+        "appVersion": "0002",
+        "tacDenial": "0010000000"
+      },
+      {
+        "aid": "A0000000041010",
+        "appVersion": "0002"
+      },
+      {
+        "aid": "A0000005241010",
+        "appVersion": "0002"
+      }
+    ]
+  },
+  "contactless": {
+
+  }
+}
