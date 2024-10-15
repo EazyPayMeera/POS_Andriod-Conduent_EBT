@@ -2,12 +2,10 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.analogics.paymentservicecore.model.error.EmvServiceError
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
@@ -38,18 +36,14 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         viewModelScope.launch {
             emvServiceRepository.startPayment(context, object :
                 IEmvServiceResponseListener {
-                override fun onEmvSuccess(response: Any) {
+                override fun onEmvServiceResponse(response: Any) {
                     if (response == true)
                         navigateToApprovalScreen(navHostController)
                     else
                         navigateToDeclinedScreen(navHostController)
                 }
 
-                override fun onEmvError(emvServiceError: EmvServiceError) {
-                    navigateToDeclinedScreen(navHostController)
-                }
-
-                override fun onDisplayProgress(
+                override fun onEmvServiceDisplayProgress(
                     show: Boolean,
                     title: String?,
                     subTitle: String?,

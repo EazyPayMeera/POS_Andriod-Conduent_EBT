@@ -4,6 +4,7 @@ import android.content.Context
 import com.analogics.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.CAPKey
+import com.analogics.tpaymentcore.model.emv.EmvSdkException
 import javax.inject.Inject
 import kotlin.toString
 
@@ -15,7 +16,7 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
         try {
             emvWrapper.initializeSdk(capKeys)
         } catch (exception: Exception) {
-            onEmvSdkResponse(exception.message.toString())
+            iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
     }
 
@@ -25,18 +26,7 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
         try {
             EmvWrapperRepository.startPayment(context,iEmvSdkResponseListener);
         } catch (exception: Exception) {
-            onEmvSdkResponse(exception.message.toString())
-        }
-    }
-
-    override fun onEmvSdkResponse(response: Any) {
-        when (response) {
-            is String -> {
-                iEmvSdkResponseListener.onEmvSdkSuccess(response)
-            }
-            else -> {
-                iEmvSdkResponseListener.onEmvSdkError(response.toString())
-            }
+            iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
     }
 }

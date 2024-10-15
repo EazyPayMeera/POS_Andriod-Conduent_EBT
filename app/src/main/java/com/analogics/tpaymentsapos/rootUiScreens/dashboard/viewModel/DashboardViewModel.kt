@@ -14,7 +14,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.error.EmvServiceError
+import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
@@ -36,7 +36,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -220,7 +219,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
             viewModelScope.launch {
                 emvServiceRepository.initPaymentSDK(capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),iEmvServiceResponseListener =  object :
                     IEmvServiceResponseListener {
-                    override fun onEmvSuccess(result: Any) {
+                    override fun onEmvServiceResponse(result: Any) {
                         if (result == true) {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }?.saveToPrefs()
                             CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_success))
@@ -231,13 +230,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                        }
                     }
 
-                    override fun onEmvError(emvServiceError: EmvServiceError) {
-                        sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
-                        CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_failure))
-                        Log.e("EMV_APP", emvServiceError.errorMessage)
-                    }
-
-                    override fun onDisplayProgress(
+                    override fun onEmvServiceDisplayProgress(
                         show: Boolean,
                         title: String?,
                         subTitle: String?,

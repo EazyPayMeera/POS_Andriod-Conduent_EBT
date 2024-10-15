@@ -9,5 +9,4 @@ interface IEmvSdkRequestListener {
 
     fun initPaymentSDK(capKeys: List<CAPKey>?)
     fun startPayment(context: Context)
-    fun onEmvSdkResponse(response: Any)
 }
