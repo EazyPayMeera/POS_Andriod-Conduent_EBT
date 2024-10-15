@@ -217,7 +217,10 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             viewModelScope.launch {
-                emvServiceRepository.initPaymentSDK(capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),iEmvServiceResponseListener =  object :
+                emvServiceRepository.initPaymentSDK(
+                    aidConfig = readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH),
+                    capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),
+                    iEmvServiceResponseListener =  object :
                     IEmvServiceResponseListener {
                     override fun onEmvServiceResponse(result: Any) {
                         if (result == true) {

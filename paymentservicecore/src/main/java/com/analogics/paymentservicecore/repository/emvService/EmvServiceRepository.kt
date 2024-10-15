@@ -5,6 +5,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.constants.ConfigConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IEmvServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
 import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
@@ -42,20 +43,28 @@ class EmvServiceRepository @Inject constructor() :
     }
 
     override fun initPaymentSDK(
+        aidConfig: String?,
         capKeys: String?,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
         try {
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
-            val jsonObject = JSONObject(capKeys?:"").getJSONArray(AppConstants.EMV_CAP_KEY_ARRAY_FIELD_NAME).toString()
+            val jsonCapKeys = JSONObject(capKeys?:"").getJSONArray(AppConstants.EMV_CAP_KEY_ARRAY_FIELD_NAME).toString()
+
+            var sdkAidConfig : com.analogics.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(aidConfig?:"",
+                    com.analogics.tpaymentcore.model.emv.AidConfig::class.java
+                )
+                else -> {null}
+            }
 
             var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(jsonObject,
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(jsonCapKeys,
                     Array<com.analogics.tpaymentcore.model.emv.CAPKey>::class.java
                 ).toList()
                 else -> {null}
             }
-            emvSdkRequestRepository.initPaymentSDK(sdkCapKeys)
+            emvSdkRequestRepository.initPaymentSDK(sdkAidConfig,sdkCapKeys)
         }catch (e : Exception)
         {
             iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(e.message.toString()))
@@ -63,11 +72,18 @@ class EmvServiceRepository @Inject constructor() :
     }
 
     override fun initPaymentSDK(
+        aidConfig: AidConfig?,
         capKeys: List<CAPKey>,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
         try {
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
+            var sdkAidConfig : com.analogics.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(Gson().toJson(aidConfig),
+                    com.analogics.tpaymentcore.model.emv.AidConfig::class.java
+                )
+                else -> {null}
+            }
             var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.DEVICE.uppercase()) {
                 ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(
                     Gson().toJson(capKeys),
@@ -75,7 +91,7 @@ class EmvServiceRepository @Inject constructor() :
                 ).toList()
                 else -> {null}
             }
-            emvSdkRequestRepository.initPaymentSDK(sdkCapKeys)
+            emvSdkRequestRepository.initPaymentSDK(sdkAidConfig,sdkCapKeys)
         }catch (e : Exception)
         {
             iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(e.message.toString()))
