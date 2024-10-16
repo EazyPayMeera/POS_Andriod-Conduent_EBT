@@ -56,5 +56,13 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getDistinctBatchIds()
     }
 
+    suspend fun getStartDate(batchId: String): List<String?> {
+        return iTxnDao.getStartDateByBatchIds(batchId)
+    }
+
+    suspend fun getEndDate(batchId: String): List<String?> {
+        return iTxnDao.getEndDateByBatchIds(batchId)
+    }
+
 
 }

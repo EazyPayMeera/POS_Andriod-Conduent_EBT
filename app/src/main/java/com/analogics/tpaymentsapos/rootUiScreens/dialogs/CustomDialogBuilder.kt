@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -378,17 +377,17 @@ class CustomDialogBuilder private constructor() {
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium),
+                                    .padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium),
                                 elevation = CardDefaults.elevatedCardElevation(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
                             ) {
                                 Column {
                                     BatchSurface(item = item)
 
-                                    Divider(
+/*                                    Divider(
                                         modifier = Modifier.fillMaxWidth(),
                                         thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
                                         color = Color.Gray
-                                    )
+                                    )*/
                                 }
                             }
                         }
@@ -438,11 +437,11 @@ class CustomDialogBuilder private constructor() {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    androidx.compose.material3.Icon(
+/*                    androidx.compose.material3.Icon(
                         imageVector = Icons.Default.Close,  // Use Icon for ImageVector
                         contentDescription = "",
                         modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_28_CompactMedium)
-                    )
+                    )*/
 
                     androidx.compose.material3.Text(
                         text = item,
