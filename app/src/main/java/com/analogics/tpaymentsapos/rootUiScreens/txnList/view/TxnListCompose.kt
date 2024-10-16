@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -43,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -72,15 +76,18 @@ fun TransactionListScreen(
 ) {
     // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
+    val batchId = viewModel.batchList.collectAsState().value
 
     val sharedViewModel = localSharedViewModel.current
     // State variables
     val showDateTimePicker = remember { mutableStateOf(false) }
-    val isSelectingStartDate = remember { mutableStateOf(true) }
+    val BatchId = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val selectedEndDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val showMenu = remember { mutableStateOf(false) }
+
+    var isBatchId by remember { mutableStateOf(false) }
 
     // Date picker logic
     if (showDateTimePicker.value) {
@@ -113,7 +120,16 @@ fun TransactionListScreen(
             showDateTimePicker.value = false
         }
     }
-    //showDateTimePicker.value = false
+
+/*    if(BatchId.value)
+    {
+        sharedViewModel.objPosConfig?.BatchId
+
+        if (sharedViewModel.objPosConfig?.BatchId != null) {
+            viewModel.filterTransactionsByBatch(sharedViewModel.objPosConfig?.BatchId!!)
+            BatchId.value = false
+        }
+    }*/
 
     Column {
         CommonTopAppBar(
@@ -192,7 +208,8 @@ fun TransactionListScreen(
 
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
-                                // Logic for handling batch number filter
+                                BatchId.value = true
+                                isBatchId = true
                             }) {
                                 Text("Filter by Batch Number")
                             }
@@ -201,6 +218,7 @@ fun TransactionListScreen(
                 }
 
                 Divider(color = Color.Gray, thickness = 1.dp)
+                Log.d("Transaction Size", "Size of transactions: ${transactions.size}")
                 // If transaction list is empty
                 if (transactions.isEmpty()) {
                     Text(
@@ -237,8 +255,22 @@ fun TransactionListScreen(
         }
     }
 
+    if (isBatchId) {
+        CustomDialogBuilder.create()
+            .CustomListDialog(
+                onClose = { isBatchId = false },
+                items = batchId, // Ensure this is List<String>
+                onItemSelected = { selectedId ->
+                    viewModel.filterTransactionsByBatchId(selectedId)
+                    Log.d("Selected Item", selectedId) // Logging selectedId should not cause any issues now
+                }
+
+            )
+
+    }
     LaunchedEffect(Unit) {
         viewModel.fetchTransactions()
+        viewModel.filterTransactionsForBatch()
     }
 }
 
@@ -569,4 +601,77 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
 @Composable
 fun AlertDialog() {
 
+}
+
+
+@Composable
+fun CustomListDialog(
+    onClose: () -> Unit,
+    items: List<String>?,
+    onItemSelected: (String) -> Unit
+) {
+    Dialog(onDismissRequest = onClose) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
+        ) {
+            GenericCard(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                shape = RoundedCornerShape(18.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Title (if required)
+                    Text(text = "Select an Option", style = MaterialTheme.typography.h6)
+
+                    // Spacer for separation
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // List of options
+                    items?.let {
+                        LazyColumn {
+                            items(it.size) { index ->
+                                val item = it[index]
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            // When item is clicked, trigger the onItemSelected callback
+                                            onItemSelected(item)
+                                            onClose() // Close the dialog after selection
+                                        }
+                                        .padding(vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = item,
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .weight(1f),
+                                        style = MaterialTheme.typography.body1
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Spacer for separation
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Close button
+                    Button(onClick = onClose) {
+                        Text(text = "Close")
+                    }
+                }
+            }
+        }
+    }
 }
