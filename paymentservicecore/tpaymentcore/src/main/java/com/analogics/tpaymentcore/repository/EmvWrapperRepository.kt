@@ -217,6 +217,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     aidData["terminalFloorLimit"] =
                         aid.terminalFloorLimit ?: config.contact?.terminalFloorLimit
                                 ?: config.terminalFloorLimit ?: ""
+                    aidData["terminalFloorLimitCheck"] =
+                        aid.terminalFloorLimitCheck ?: config.contact?.terminalFloorLimitCheck
+                                ?: config.terminalFloorLimitCheck ?: ""
                     aidData["contactTACDefault"] =
                         aid.tacDefault ?: config.contact?.tacDefault ?: config.tacDefault ?: ""
                     aidData["contactTACDenial"] =
@@ -249,6 +252,15 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     aidData["terminalCountryCode"] =
                         aid.terminalCountryCode ?: config.contact?.terminalCountryCode
                                 ?: config.terminalCountryCode ?: ""
+                    aidData["contactlessCVMRequiredLimit"] =
+                        aid.rdrCVMRequiredLimit ?: config.contact?.rdrCVMRequiredLimit
+                                ?: config.rdrCVMRequiredLimit ?: ""
+                    aidData["contactlessFloorLimit"] =
+                        aid.rdrCtlsFloorLimit ?: config.contact?.rdrCtlsFloorLimit
+                                ?: config.rdrCtlsFloorLimit ?: ""
+                    aidData["contactlessTransactionLimit"] =
+                        aid.rdrCtlsTransLimit ?: config.contact?.rdrCtlsTransLimit
+                                ?: config.rdrCtlsTransLimit ?: ""
 
                     result = result && EmvNfcKernelApi.getInstance()
                         .updateAID(ContantPara.Operation.ADD, aidData) //master
@@ -269,45 +281,110 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 /* Add Contactless Configuration */
                 for (aid in config.contactless?.aidList ?: emptyList()) {
                     val aidData = Hashtable<String, String>()
-                    aidData["aid"] = aid.aid ?: config.contactless?.aid ?: config.aid ?: ""
-                    aidData["CardType"] = getCardType(aidData["aid"] ?: "")
-                    aidData["appVersion"] =
-                        aid.appVersion ?: config.contactless?.appVersion ?: config.appVersion ?: ""
-                    aidData["terminalFloorLimit"] =
-                        aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit
-                                ?: config.terminalFloorLimit ?: ""
-                    aidData["contactTACDefault"] =
-                        aid.tacDefault ?: config.contactless?.tacDefault ?: config.tacDefault ?: ""
-                    aidData["contactTACDenial"] =
-                        aid.tacDenial ?: config.contactless?.tacDenial ?: config.tacDenial ?: ""
-                    aidData["contactTACOnline"] =
-                        aid.tacOnline ?: config.contactless?.tacOnline ?: config.tacOnline ?: ""
-                    aidData["defaultDDOL"] =
-                        aid.defaultDDOL ?: config.contactless?.defaultDDOL ?: config.defaultDDOL ?: ""
-                    aidData["defaultTDOL"] =
-                        aid.defaultTDOL ?: config.contactless?.defaultTDOL ?: config.defaultTDOL ?: ""
+                    aidData["ApplicationIdentifier"] = aid.aid ?: config.contactless?.aid ?: config.aid ?: ""
+                    aidData["CardType"] = getCardType(aidData["ApplicationIdentifier"] ?: "")
+                    aidData["TransactionType"] =
+                        aid.transactionType ?: config.contactless?.transactionType ?: config.transactionType ?: ""
                     aidData["AcquirerIdentifier"] =
                         aid.acquirerId ?: config.contactless?.acquirerId ?: config.acquirerId ?: ""
+                    aidData["AdditionalTerminalCapabilities"] =
+                        aid.addlTerminalCapabilities ?: config.contactless?.addlTerminalCapabilities ?: config.addlTerminalCapabilities ?: ""
+                    aidData["ApplicationVersionNumber"] =
+                        aid.appVersion ?: config.contactless?.appVersion ?: config.appVersion ?: ""
+                    aidData["CardDataInputCapability"] =
+                        aid.cardDataInputCapability ?: config.contactless?.cardDataInputCapability ?: config.cardDataInputCapability ?: ""
+                    aidData["KernelConfiguration"] =
+                        aid.kernelConfiguration ?: config.contactless?.kernelConfiguration ?: config.kernelConfiguration ?: ""
+                    aidData["CVMCapabilityPerCVMRequired"] =
+                        aid.cvmCapabilityCVMRequired ?: config.contactless?.cvmCapabilityCVMRequired ?: config.cvmCapabilityCVMRequired ?: ""
+                    aidData["CVMCapabilityNoCVMRequired"] =
+                        aid.cvmCapabilityNoCVMRequired ?: config.contactless?.cvmCapabilityNoCVMRequired ?: config.cvmCapabilityNoCVMRequired ?: ""
+                    aidData["MagStripeCVMCapabilityCVMRequired"] =
+                        aid.magCVMCapabilityCVMRequired ?: config.contactless?.magCVMCapabilityCVMRequired ?: config.magCVMCapabilityCVMRequired ?: ""
+                    aidData["MagStripeCVMCapabilityPerNoCVMRequired"] =
+                        aid.magCVMCapabilityNoCVMRequired ?: config.contactless?.magCVMCapabilityNoCVMRequired ?: config.magCVMCapabilityNoCVMRequired ?: ""
+                    aidData["SecurityCapability"] =
+                        aid.securityCapability ?: config.contactless?.securityCapability ?: config.securityCapability ?: ""
+                    aidData["IFDsn"] =
+                        aid.ifdSerialNumber ?: config.contactless?.ifdSerialNumber ?: config.ifdSerialNumber ?: ""
+                    aidData["MerchantCategoryCode"] =
+                        aid.merchantCategoryCode ?: config.contactless?.merchantCategoryCode ?: config.merchantCategoryCode ?: ""
+                    aidData["MerchantIdentifier"] =
+                        aid.merchantIdentifier ?: config.contactless?.merchantIdentifier ?: config.merchantIdentifier ?: ""
+                    aidData["MerchantNameAndLocation"] =
+                        aid.merchantNameLocation ?: config.contactless?.merchantNameLocation ?: config.merchantNameLocation ?: ""
+                    aidData["DefaultUDOL"] =
+                        aid.defaultUDOL ?: config.contactless?.defaultUDOL ?: config.defaultUDOL ?: ""
+                    aidData["FloorLimit"] =
+                        aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit ?: config.terminalFloorLimit ?: ""
+                    aidData["ReaderContactlessFloorLimit"] =
+                        aid.rdrCtlsFloorLimit ?: config.contactless?.rdrCtlsFloorLimit ?: config.rdrCtlsFloorLimit ?: ""
+                    aidData["NoOnDeviceCVM"] =
+                        aid.rdrCtlsTransLimitNoODCVM ?: config.contactless?.rdrCtlsTransLimitNoODCVM ?: config.rdrCtlsTransLimitNoODCVM ?: ""
+                    aidData["OnDeviceCVM"] =
+                        aid.rdrCtlsTransLimitODCVM ?: config.contactless?.rdrCtlsTransLimitODCVM ?: config.rdrCtlsTransLimitODCVM ?: ""
+                    aidData["ReaderCVMRequiredLimit"] =
+                        aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit ?: config.rdrCVMRequiredLimit ?: ""
+                    aidData["TerminalActionCodesDefault"] =
+                        aid.tacDefault ?: config.contactless?.tacDefault ?: config.tacDefault ?: ""
+                    aidData["TerminalActionCodesDenial"] =
+                        aid.tacDenial ?: config.contactless?.tacDenial ?: config.tacDenial ?: ""
+                    aidData["TerminalActionCodesOnLine"] =
+                        aid.tacOnline ?: config.contactless?.tacOnline ?: config.tacOnline ?: ""
+                    aidData["TerminalRiskManagement"] =
+                        aid.riskManagementData ?: config.contactless?.riskManagementData ?: config.riskManagementData ?: ""
+                    aidData["TerminalCountryCode"] =
+                        aid.terminalCountryCode ?: config.contactless?.terminalCountryCode ?: config.terminalCountryCode ?: ""
+                    aidData["TerminalType"] =
+                        aid.terminalType ?: config.contactless?.terminalType ?: config.terminalType ?: ""
+                    aidData["DSVNTerm"] =
+                        aid.dsvnTerm ?: config.contactless?.dsvnTerm ?: config.dsvnTerm ?: ""
+                    aidData["AppSelIndicator"] =
+                        aid.appSelIndicator ?: config.contactless?.appSelIndicator ?: config.appSelIndicator ?: ""
+                    aidData["DefaultDDOL"] =
+                        aid.defaultDDOL ?: config.contactless?.defaultDDOL ?: config.defaultDDOL ?: ""
+                    aidData["DefaultTDOL"] =
+                        aid.defaultTDOL ?: config.contactless?.defaultTDOL ?: config.defaultTDOL ?: ""
+
+                    /* Visa Specific */
+                    aidData["TerminalTransactionQualifiers"] =
+                        aid.ttq ?: config.contactless?.ttq ?: config.ttq ?: ""
+                    aidData["CvmRequiredLimit"] =
+                        aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit ?: config.rdrCVMRequiredLimit ?: ""
+                    aidData["TransactionLimit"] =
+                        aid.rdrCtlsTransLimit ?: config.contactless?.rdrCtlsTransLimit ?: config.rdrCtlsTransLimit ?: ""
+                    aidData["ProRestrictionDisable"] =
+                        aid.disableProcRestrictions ?: config.contactless?.disableProcRestrictions ?: config.disableProcRestrictions ?: ""
+                    aidData["LimitSwitch"] =
+                        aid.limitSwitch ?: config.contactless?.limitSwitch ?: config.limitSwitch ?: ""
+                    aidData["ProgramID"] =
+                        aid.programID ?: config.contactless?.programID ?: config.programID ?: ""
+                    aidData["TerminalCapabilities"] =
+                        aid.terminalCapabilities ?: config.contactless?.terminalCapabilities ?: config.terminalCapabilities ?: ""
+
+                    /* Amex Specific */
+                    aidData["ContactlessReaderCapabilities"] =
+                        aid.ctlsRdrCapabilities ?: config.contactless?.ctlsRdrCapabilities ?: config.ctlsRdrCapabilities ?: ""
+
+                    /* Rupay Specific */
+                    aidData["AdditionalTerminalCapabilitiesExtension"] =
+                        aid.addlTerminalCapabilitiesExtension ?: config.contactless?.addlTerminalCapabilitiesExtension ?: config.addlTerminalCapabilitiesExtension ?: ""
+                    aidData["ServiceFormatData"] =
+                        aid.serviceDataFormat ?: config.contactless?.serviceDataFormat ?: config.serviceDataFormat ?: ""
                     aidData["ThresholdValue"] =
                         aid.threshold ?: config.contactless?.threshold ?: config.threshold ?: ""
                     aidData["TargetPercentage"] =
-                        aid.targetPercentage ?: config.contactless?.targetPercentage ?: config.targetPercentage
-                                ?: ""
+                        aid.targetPercentage ?: config.contactless?.targetPercentage ?: config.targetPercentage ?: ""
                     aidData["MaxTargetPercentage"] =
-                        aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage
-                                ?: config.maxTargetPercentage ?: ""
-                    aidData["AppSelIndicator"] =
-                        aid.appSelIndicator ?: config.contactless?.appSelIndicator ?: config.appSelIndicator
-                                ?: ""
-                    aidData["TerminalAppPriority"] =
-                        aid.terminalAppPriority ?: config.contactless?.terminalAppPriority
-                                ?: config.terminalAppPriority ?: ""
-                    aidData["TerminalCapabilities"] =
-                        aid.terminalCapabilities ?: config.contactless?.terminalCapabilities
-                                ?: config.terminalCapabilities ?: ""
-                    aidData["terminalCountryCode"] =
-                        aid.terminalCountryCode ?: config.contactless?.terminalCountryCode
-                                ?: config.terminalCountryCode ?: ""
+                        aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage ?: config.maxTargetPercentage ?: ""
+
+                    /* Entry Point Specific */
+                    aidData["ZeroAmountCheckFlag"] =
+                        aid.zeroAmountAllowed ?: config.contactless?.zeroAmountAllowed ?: config.zeroAmountAllowed ?: ""
+                    aidData["ZeroAmountAllowedOfflineFlag"] =
+                        aid.zeroAmountOfflineAllowed ?: config.contactless?.zeroAmountOfflineAllowed ?: config.zeroAmountOfflineAllowed ?: ""
+                    aidData["StatusCheckFlag"] =
+                        aid.statusCheckSupported ?: config.contactless?.statusCheckSupported ?: config.statusCheckSupported ?: ""
 
                     result = result && EmvNfcKernelApi.getInstance()
                         .updateAID(ContantPara.Operation.ADD, aidData) //master
@@ -323,11 +400,11 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         fun initAidConfig(aidConfig: AidConfig?): Boolean {
-            var result = true
+            var result = false
             /* Clear Aid Config first */
             EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
             aidConfig?.let {
-                result = result && addContactAid(it)
+                result = addContactAid(it) && addContactlessAid(it)
             }
             return result
         }
