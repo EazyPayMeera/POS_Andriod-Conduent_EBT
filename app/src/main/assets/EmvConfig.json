@@ -38,6 +38,17 @@
     ]
   },
   "contactless": {
-
+    "aidList": [
+      {
+        "aid": "A0000000031010",
+        "appVersion": "0002",
+        "ttq": "36004000",
+        "rdrCtlsTransLimit": "999999999999",
+        "terminalFloorLimit" : "000000000000",
+        "rdrCVMRequiredLimit" : "000000500000",
+        "limitSwitch" : "FE00",
+        "disableProcRestrictions" : "01"
+      }
+    ]
   }
 }
