@@ -39,11 +39,12 @@ import javax.inject.Inject
 class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val apiServiceRepository: ApiServiceRepository) : ViewModel(),
     IApiServiceResponseListener {
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
+    private val _batchList = MutableStateFlow<List<String>>(emptyList())
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
+    val batchList: StateFlow<List<String>> = _batchList
     var allTransactionList: List<TxnEntity>? = null
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
-    private val filterTxn = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val isPrinting = mutableStateOf(false)
     val isCustomer = mutableStateOf(false)
     private var isFiltered = false
@@ -105,17 +106,31 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun filterTransactionsByBatch(batchId: String) {
+    fun filterTransactionsForBatch() {
         viewModelScope.launch {
-            val latestTransaction = dbRepository.fetchTransactionDetailsByBatchId(batchId)
-            Log.d("db data", latestTransaction.toString())
-
-            val txnDataList = convertTxnEntityListToTxnDataList(latestTransaction) // Pass it directly
-            _transactionList.value = txnDataList
-            Log.d("latest txn by batch data", _transactionList.value.toString())
-
+            val batchIds = dbRepository.fetchTransactionDetailsByBatchId()
+            _batchList.value = batchIds
+            Log.d("db  batch data", batchIds.toString())
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun filterTransactionsByBatchId(batchId:String) {
+        viewModelScope.launch {
+            allTransactionList = dbRepository.fetchTransactionByBatch(batchId)
+            Log.d("db data", allTransactionList.toString())
+            allTransactionList?.let {
+                val txnDataList = convertTxnEntityListToTxnDataList(it)
+                _transactionList.value = txnDataList
+            }
+
+            Log.d("all data", allTransactionList?.let {
+                val txnDataList = convertTxnEntityListToTxnDataList(it)
+                _transactionList.value = txnDataList
+            }.toString())
+        }
+    }
+
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
         val gson = Gson()
         val json = gson.toJson(txnEntityList)

@@ -48,8 +48,12 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getLastTxnEntry()
     }
 
-    suspend fun fetchTransactionDetailsByBatchId(batchId: String): List<TxnEntity> {
+    suspend fun fetchTransactionByBatch(batchId:String): List<TxnEntity> {
         return iTxnDao.getTrasactionsByBatchId(batchId)
+    }
+
+    suspend fun fetchTransactionDetailsByBatchId(): List<String> {
+        return iTxnDao.getDistinctBatchIds()
     }
 
 

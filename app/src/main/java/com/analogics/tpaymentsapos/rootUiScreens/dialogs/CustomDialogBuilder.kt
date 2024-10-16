@@ -14,21 +14,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +38,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.ui.theme.dashboardCardBgColor
@@ -349,44 +350,121 @@ class CustomDialogBuilder private constructor() {
     fun CustomListDialog(
         onClose: () -> Unit,
         items: List<String>?,
-        onItemSelected: (String) -> Unit?
+        onItemSelected: (String) -> Unit
     ) {
-            Surface(
-                shape = androidx.compose.material3.MaterialTheme.shapes.medium,
-                tonalElevation = 8.dp,
-                modifier = Modifier.fillMaxWidth(0.9f)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+        ) {
+            GenericCard(
+                modifier = Modifier
+                    .wrapContentHeight() // Wraps content height
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
             ) {
-                Column {
-                    androidx.compose.material3.Text(
-                        text = "Select an application id",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
-
-                    LazyColumn {
-                        items(items!!.size) { index ->
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    GenericCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(), // Wraps content height
+                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                        shape = RoundedCornerShape(0.dp),
+                    ) {
+                        Column {
                             androidx.compose.material3.Text(
-                                text = items[index],
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onItemSelected(items[index])
-                                        onClose() // Close the dialog
-                                    }
-                                    .padding(16.dp)
+                                text = "Select an application id",
+                                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(16.dp)
                             )
                         }
                     }
-//
-//                    androidx.compose.material3.Button(
-//                        onClick = onDismissRequest,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(16.dp)
-//                    ) {
-//                        androidx.compose.material3.Text("Close")
-//                    }
+                    LazyColumn {
+                        items(items ?: emptyList()) { item -> // Safely handle null items
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium),
+                                elevation = CardDefaults.elevatedCardElevation(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
+                            ) {
+                                Column {
+                                    BatchSurface(item = item)
+
+                                    Divider(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                 }
+
+
             }
+        }
     }
+
+    @Composable
+    fun BatchSurface(
+        item: String,
+    ) {
+        androidx.compose.material3.Surface(
+            modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium),
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
+        ) {
+            BatchContent(
+                item = item
+            )
+        }
+    }
+
+    @Composable
+    fun BatchContent(
+        item: String
+    ) {
+        // Handle the click event to toggle the switch
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                .clickable {
+
+                }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium), // Added padding for better touch area
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    androidx.compose.material3.Icon(
+                        imageVector = Icons.Default.Close,  // Use Icon for ImageVector
+                        contentDescription = "",
+                        modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_28_CompactMedium)
+                    )
+
+                    androidx.compose.material3.Text(
+                        text = item,
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                    )
+                }
+
+            }
+        }
+    }
+
+
+
 }

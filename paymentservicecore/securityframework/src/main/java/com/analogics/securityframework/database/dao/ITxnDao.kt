@@ -31,4 +31,8 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable WHERE batchId = :batchId")
     suspend fun getTrasactionsByBatchId(batchId: String): List<TxnEntity>
 
+    @Query("SELECT DISTINCT batchId FROM TxnTable")
+    suspend fun getDistinctBatchIds(): List<String>
+
+
 }
