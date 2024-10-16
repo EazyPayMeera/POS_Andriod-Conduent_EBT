@@ -1,12 +1,18 @@
 package com.analogics.paymentservicecore.repository.emvService
 
 import android.content.Context
+import com.analogics.paymentservicecore.constants.AppConstants
+import com.analogics.paymentservicecore.constants.ConfigConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IEmvServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.analogics.paymentservicecore.model.error.EmvServiceError
+import com.analogics.paymentservicecore.model.emv.AidConfig
+import com.analogics.paymentservicecore.model.emv.CAPKey
+import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
+import com.analogics.tpaymentcore.model.emv.EmvSdkException
 import com.analogics.tpaymentcore.repository.EmvSdkRequestRepository
-import kotlinx.coroutines.delay
+import com.google.gson.Gson
+import org.json.JSONObject
 import javax.inject.Inject
 
 class EmvServiceRepository @Inject constructor() :
@@ -16,35 +22,80 @@ class EmvServiceRepository @Inject constructor() :
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
 
-    override fun onEmvSdkSuccess(uiData: String) {
+    override fun onEmvSdkResponse(response: Any) {
+        iEmvServiceResponseListener.onEmvServiceDisplayProgress(false)
         /* Just for testing comparing with uiData value */
-        if (uiData == "SUCCESS") {
-            iEmvServiceResponseListener.onEmvSuccess(true)
-        } else {
-            iEmvServiceResponseListener.onEmvError(EmvServiceError("Error"))
+        when(response)
+        {
+            is String ->if (response == "SUCCESS") {
+                iEmvServiceResponseListener.onEmvServiceResponse(true)
+            } else {
+                iEmvServiceResponseListener.onEmvServiceResponse(false)
+            }
+            is EmvSdkException ->
+                iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(errorMessage = response.errorMessage))
+            else -> iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(errorMessage = "Unknown SDK Error"))
         }
     }
 
-    override fun onEmvSdkError(uiData: String) {
-        /* Just for testing comparing with uiData value */
-        iEmvServiceResponseListener.onDisplayProgress(false)
-        if (uiData == "SUCCESS")
-            iEmvServiceResponseListener.onEmvSuccess(true)
-        else
-            iEmvServiceResponseListener.onEmvError(EmvServiceError("Error"))
-    }
-
     override fun onEmvSdkDisplayMessage(uiData: String?) {
-        iEmvServiceResponseListener.onDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
+        iEmvServiceResponseListener.onEmvServiceDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
     }
 
     override fun initPaymentSDK(
-        context: Context,
+        aidConfig: String?,
+        capKeys: String?,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
-        this.iEmvServiceResponseListener = iEmvServiceResponseListener
-        this.context = context
-        emvSdkRequestRepository.initPaymentSDK(context)
+        try {
+            this.iEmvServiceResponseListener = iEmvServiceResponseListener
+            val jsonCapKeys = JSONObject(capKeys?:"").getJSONArray(AppConstants.EMV_CAP_KEY_ARRAY_FIELD_NAME).toString()
+
+            var sdkAidConfig : com.analogics.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(aidConfig?:"",
+                    com.analogics.tpaymentcore.model.emv.AidConfig::class.java
+                )
+                else -> {null}
+            }
+
+            var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(jsonCapKeys,
+                    Array<com.analogics.tpaymentcore.model.emv.CAPKey>::class.java
+                ).toList()
+                else -> {null}
+            }
+            emvSdkRequestRepository.initPaymentSDK(sdkAidConfig,sdkCapKeys)
+        }catch (e : Exception)
+        {
+            iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(e.message.toString()))
+        }
+    }
+
+    override fun initPaymentSDK(
+        aidConfig: AidConfig?,
+        capKeys: List<CAPKey>,
+        iEmvServiceResponseListener: IEmvServiceResponseListener
+    ) {
+        try {
+            this.iEmvServiceResponseListener = iEmvServiceResponseListener
+            var sdkAidConfig : com.analogics.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(Gson().toJson(aidConfig),
+                    com.analogics.tpaymentcore.model.emv.AidConfig::class.java
+                )
+                else -> {null}
+            }
+            var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.DEVICE.uppercase()) {
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(
+                    Gson().toJson(capKeys),
+                    Array<com.analogics.tpaymentcore.model.emv.CAPKey>::class.java
+                ).toList()
+                else -> {null}
+            }
+            emvSdkRequestRepository.initPaymentSDK(sdkAidConfig,sdkCapKeys)
+        }catch (e : Exception)
+        {
+            iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(e.message.toString()))
+        }
     }
 
     override fun startPayment(
@@ -52,7 +103,7 @@ class EmvServiceRepository @Inject constructor() :
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
-        iEmvServiceResponseListener.onDisplayProgress(false)
+        iEmvServiceResponseListener.onEmvServiceDisplayProgress(false)
         emvSdkRequestRepository.startPayment(context)
     }
 

@@ -10,13 +10,14 @@ import android.text.TextUtils
 import android.util.Log
 import com.analogics.tpaymentcore.listener.requestListener.IEmvWrapperRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
+import com.analogics.tpaymentcore.model.emv.AidConfig
+import com.analogics.tpaymentcore.model.emv.CAPKey
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
-import kotlinx.coroutines.delay
 import java.util.Hashtable
 import java.util.Locale
 import javax.inject.Inject
@@ -30,20 +31,23 @@ import kotlin.toString
 
 class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
-    override fun initializeSdk() {
+    override fun initializeSdk(aidConfig : AidConfig?, capKeys: List<CAPKey>?) {
         Thread {
+            var result = true
             try {
-                EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
-                deleteCAPKeys()
-                //Update the parameters required in actual use
-                initEMV_AID_CAPK()
-                //init_NfcAid_CAPK()
+                aidConfig?.let { result = result && initAidConfig(it) }
+                capKeys?.let { result = result && initCAPKeys(it) }
 
                 EmvNfcKernelApi.getInstance().updateTerminalParamters(
                     ContantPara.CardSlot.ICC,
                     "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
                 )
-                iEmvSdkResponseListener.onEmvSdkSuccess("SUCCESS")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                when(result) {
+                    true->
+                        iEmvSdkResponseListener.onEmvSdkResponse("SUCCESS")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                    else ->
+                        iEmvSdkResponseListener.onEmvSdkResponse("FAILURE")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -52,11 +56,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
-
-        fun deleteCAPKeys()
-        {
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null) //
-        }
 
         fun startPayment(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener) {
             Thread {
@@ -99,8 +98,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             Log.d("EMV_APP", "Check Card List:" + p1.toString())
             if(p0==ContantPara.CheckCardResult.INSERTED_CARD)
                 iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Card Detected")
-            else
-                iEmvSdkResponseListener?.onEmvSdkError("TIMEOUT")
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
@@ -109,8 +106,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestPinEntry(p0: ContantPara.PinEntrySource?) {
             Log.d("EMV_APP", "Online PIN Prompt:" + p0.toString())
-            //EmvNfcKernelApi.getInstance().sendPinEntry()
-            //EmvNfcKernelApi.getInstance().bypassPinEntry()
             iEmvSdkResponseListener?.onEmvSdkDisplayMessage("")
             if (p0 == ContantPara.PinEntrySource.KEYPAD) {
                 emv_proc_onlinePin(true)
@@ -143,9 +138,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
             if(p0==ContantPara.TransactionResult.ONLINE_APPROVAL || p0==ContantPara.TransactionResult.OFFLINE_APPROVAL)
-                iEmvSdkResponseListener?.onEmvSdkError("SUCCESS")
+                iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
             else
-                iEmvSdkResponseListener?.onEmvSdkError("FAILURE")
+                iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -200,184 +195,64 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
             if(p0==ContantPara.NfcTransResult.ONLINE_APPROVAL || p0==ContantPara.NfcTransResult.OFFLINE_APPROVAL)
-                iEmvSdkResponseListener?.onEmvSdkError("SUCCESS")
+                iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
             else
-                iEmvSdkResponseListener?.onEmvSdkError("FAILURE")
+                iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
             Log.d("EMV_APP", "NFC Trans Error:" + p0.toString())
         }
 
+        fun initAidConfig(aidConfig: AidConfig?) : Boolean {
+            var result = true
+            /* Clear Aid Config first */
+            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
+            aidConfig?.let {
+                /* Add Contact Configuration */
+                for (aid in it.contact?.aidList?:emptyList()) {
+                    val data = Hashtable<String, String>()
+                    data["CardType"] = "IcCard"
+                    data["aid"] = aid.aid?:it.contact?.aid?:it.aid?:""
+                    data["appVersion"] = aid.appVersion?:it.contact?.appVersion?:it.appVersion?:""
+                    data["terminalFloorLimit"] = aid.terminalFloorLimit?:it.contact?.terminalFloorLimit?:it.terminalFloorLimit?:""
+                    data["contactTACDefault"] = aid.tacDefault?:it.contact?.tacDefault?:it.tacDefault?:""
+                    data["contactTACDenial"] = aid.tacDenial?:it.contact?.tacDenial?:it.tacDenial?:""
+                    data["contactTACOnline"] = aid.tacOnline?:it.contact?.tacOnline?:it.tacOnline?:""
+                    data["defaultDDOL"] = aid.defaultDDOL?:it.contact?.defaultDDOL?:it.defaultDDOL?:""
+                    data["defaultTDOL"] = aid.defaultTDOL?:it.contact?.defaultTDOL?:it.defaultTDOL?:""
+                    data["AcquirerIdentifier"] = aid.acquirerId?:it.contact?.acquirerId?:it.acquirerId?:""
+                    data["ThresholdValue"] = aid.threshold?:it.contact?.threshold?:it.threshold?:""
+                    data["TargetPercentage"] = aid.targetPercentage?:it.contact?.targetPercentage?:it.targetPercentage?:""
+                    data["MaxTargetPercentage"] = aid.maxTargetPercentage?:it.contact?.maxTargetPercentage?:it.maxTargetPercentage?:""
+                    data["AppSelIndicator"] = aid.appSelIndicator?:it.contact?.appSelIndicator?:it.appSelIndicator?:""
+                    data["TerminalAppPriority"] = aid.terminalAppPriority?:it.contact?.terminalAppPriority?:it.terminalAppPriority?:""
+                    data["TerminalCapabilities"] = aid.terminalCapabilities?:it.contact?.terminalCapabilities?:it.terminalCapabilities?:""
+                    data["terminalCountryCode"] = aid.terminalCountryCode?:it.contact?.terminalCountryCode?:it.terminalCountryCode?:""
 
-        fun initEMV_AID_CAPK() {
-            addCAPK_visa()
-            addCAPK_master()
-            addCAPK_rupay()
-            addEMV_AID_Paramters()
+                    result = result && EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data) //master
+                }
+            }
+            return result
         }
 
-        private fun addCAPK_visa() {
-            val capk: Hashtable<String?, String?> = Hashtable<String?, String?>()
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "08"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "D9FD6ED75D51D0E30664BD157023EAA1FFA871E4DA65672B863D255E81E137A51DE4F72BCC9E44ACE12127F87E263D3AF9DD9CF35CA4A7B01E907000BA85D24954C2FCA3074825DDD4C0C8F186CB020F683E02F2DEAD3969133F06F7845166ACEB57CA0FC2603445469811D293BFEFBAFAB57631B3DD91E796BF850A25012F1AE38F05AA5C4D6D03B1DC2E568612785938BBC9B3CD3A910C1DA55A5A9218ACE0F7A21287752682F15832A678D6E1ED0B"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "53"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "BCD83721BE52CCCC4B6457321F22A7DC769F54EB8025913BE804D9EABBFA19B3D7C5D3CA658D768CAF57067EEC83C7E6E9F81D0586703ED9DDDADD20675D63424980B10EB364E81EB37DB40ED100344C928886FF4CCC37203EE6106D5B59D1AC102E2CD2D7AC17F4D96C398E5FD993ECB4FFDF79B17547FF9FA2AA8EEFD6CBDA124CBB17A0F8528146387135E226B005A474B9062FF264D2FF8EFA36814AA2950065B1B04C0A1AE9B2F69D4A4AA979D6CE95FEE9485ED0A03AEE9BD953E81CFD1EF6E814DFD3C2CE37AEFA38C1F9877371E91D6A5EB59FDEDF75D3325FA3CA66CDFBA0E57146CC789818FF06BE5FCC50ABD362AE4B80996D"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "09"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "9D912248DE0A4E39C1A7DDE3F6D2588992C1A4095AFBD1824D1BA74847F2BC4926D2EFD904B4B54954CD189A54C5D1179654F8F9B0D2AB5F0357EB642FEDA95D3912C6576945FAB897E7062CAA44A4AA06B8FE6E3DBA18AF6AE3738E30429EE9BE03427C9D64F695FA8CAB4BFE376853EA34AD1D76BFCAD15908C077FFE6DC5521ECEF5D278A96E26F57359FFAEDA19434B937F1AD999DC5C41EB11935B44C18100E857F431A4A5A6BB65114F174C2D7B59FDF237D6BB1DD0916E644D709DED56481477C75D95CDD68254615F7740EC07F330AC5D67BCD75BF23D28A140826C026DBDE971A37CD3EF9B8DF644AC385010501EFC6509D7A41"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "57"
-            capk["Exponent"] = "010001"
-            capk["Modulus"] =
-                "942B7F2BA5EA307312B63DF77C5243618ACC2002BD7ECB74D821FE7BDC78BF28F49F74190AD9B23B9713B140FFEC1FB429D93F56BDC7ADE4AC075D75532C1E590B21874C7952F29B8C0F0C1CE3AEEDC8DA25343123E71DCF86C6998E15F756E3"
-            capk["Checksum"] = "429C954A3859CEF91295F663C963E582ED6EB253"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "92"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "996AF56F569187D09293C14810450ED8EE3357397B18A2458EFAA92DA3B6DF6514EC060195318FD43BE9B8F0CC669E3F844057CBDDF8BDA191BB64473BC8DC9A730DB8F6B4EDE3924186FFD9B8C7735789C23A36BA0B8AF65372EB57EA5D89E7D14E9C7B6B557460F10885DA16AC923F15AF3758F0F03EBD3C5C2C949CBA306DB44E6A2C076C5F67E281D7EF56785DC4D75945E491F01918800A9E2DC66F60080566CE0DAF8D17EAD46AD8E30A247C9F"
-            capk["Checksum"] = "429C954A3859CEF91295F663C963E582ED6EB253"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "94"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "ACD2B12302EE644F3F835ABD1FC7A6F62CCE48FFEC622AA8EF062BEF6FB8BA8BC68BBF6AB5870EED579BC3973E121303D34841A796D6DCBC41DBF9E52C4609795C0CCF7EE86FA1D5CB041071ED2C51D2202F63F1156C58A92D38BC60BDF424E1776E2BC9648078A03B36FB554375FC53D57C73F5160EA59F3AFC5398EC7B67758D65C9BFF7828B6B82D4BE124A416AB7301914311EA462C19F771F31B3B57336000DFF732D3B83DE07052D730354D297BEC72871DCCF0E193F171ABA27EE464C6A97690943D59BDABB2A27EB71CEEBDAFA1176046478FD62FEC452D5CA393296530AA3F41927ADFE434A2DF2AE3054F8840657A26E0FC617"
-            capk["Checksum"] = "C4A3C43CCF87327D136B804160E47D43B60E6E0F"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000003"
-            capk["Index"] = "96"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "B74586D19A207BE6627C5B0AAFBC44A2ECF5A2942D3A26CE19C4FFAEEE920521868922E893E7838225A3947A2614796FB2C0628CE8C11E3825A56D3B1BBAEF783A5C6A81F36F8625395126FA983C5216D3166D48ACDE8A431212FF763A7F79D9EDB7FED76B485DE45BEB829A3D4730848A366D3324C3027032FF8D16A1E44D8D"
-            capk["Checksum"] = "C63D0D8598AA7A5AA342FB80489C39A2A6E5A5F7"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-        }
-
-        private fun addCAPK_master() {
-            val capk: Hashtable<String?, String?> = Hashtable<String?, String?>()
-            capk["Rid"] = "A000000004"
-            capk["Index"] = "04"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "A6DA428387A502D7DDFB7A74D3F412BE762627197B25435B7A81716A700157DDD06F7CC99D6CA28C2470527E2C03616B9C59217357C2674F583B3BA5C7DCF2838692D023E3562420B4615C439CA97C44DC9A249CFCE7B3BFB22F68228C3AF13329AA4A613CF8DD853502373D62E49AB256D2BC17120E54AEDCED6D96A4287ACC5C04677D4A5A320DB8BEE2F775E5FEC5"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Rid"] = "A000000004"
-            capk["Index"] = "05"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "B8048ABC30C90D976336543E3FD7091C8FE4800DF820ED55E7E94813ED00555B573FECA3D84AF6131A651D66CFF4284FB13B635EDD0EE40176D8BF04B7FD1C7BACF9AC7327DFAA8AA72D10DB3B8E70B2DDD811CB4196525EA386ACC33C0D9D4575916469C4E4F53E8E1C912CC618CB22DDE7C3568E90022E6BBA770202E4522A2DD623D180E215BD1D1507FE3DC90CA310D27B3EFCCD8F83DE3052CAD1E48938C68D095AAC91B5F37E28BB49EC7ED597"
-            capk["Checksum"] = "EBFA0D5D06D8CE702DA3EAE890701D45E274C845"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "06"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "CB26FC830B43785B2BCE37C81ED334622F9622F4C89AAE641046B2353433883F307FB7C974162DA72F7A4EC75D9D657336865B8D3023D3D645667625C9A07A6B7A137CF0C64198AE38FC238006FB2603F41F4F3BB9DA1347270F2F5D8C606E420958C5F7D50A71DE30142F70DE468889B5E3A08695B938A50FC980393A9CBCE44AD2D64F630BB33AD3F5F5FD495D31F37818C1D94071342E07F1BEC2194F6035BA5DED3936500EB82DFDA6E8AFB655B1EF3D0D7EBF86B66DD9F29F6B1D324FE8B26CE38AB2013DD13F611E7A594D675C4432350EA244CC34F3873CBA06592987A1D7E852ADC22EF5A2EE28132031E48F74037E3B34AB747F"
-            capk["Checksum"] = "F910A1504D5FFB793D94F3B500765E1ABCAD72D9"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "EF"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "A191CB87473F29349B5D60A88B3EAEE0973AA6F1A082F358D849FDDFF9C091F899EDA9792CAF09EF28F5D22404B88A2293EEBBC1949C43BEA4D60CFD879A1539544E09E0F09F60F065B2BF2A13ECC705F3D468B9D33AE77AD9D3F19CA40F23DCF5EB7C04DC8F69EBA565B1EBCB4686CD274785530FF6F6E9EE43AA43FDB02CE00DAEC15C7B8FD6A9B394BABA419D3F6DC85E16569BE8E76989688EFEA2DF22FF7D35C043338DEAA982A02B866DE5328519EBBCD6F03CDD686673847F84DB651AB86C28CF1462562C577B853564A290C8556D818531268D25CC98A4CC6A0BDFFFDA2DCCA3A94C998559E307FDDF915006D9A987B07DDAEB3B"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "F1"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "A0DCF4BDE19C3546B4B6F0414D174DDE294AABBB828C5A834D73AAE27C99B0B053A90278007239B6459FF0BBCD7B4B9C6C50AC02CE91368DA1BD21AAEADBC65347337D89B68F5C99A09D05BE02DD1F8C5BA20E2F13FB2A27C41D3F85CAD5CF6668E75851EC66EDBF98851FD4E42C44C1D59F5984703B27D5B9F21B8FA0D93279FBBF69E090642909C9EA27F898959541AA6757F5F624104F6E1D3A9532F2A6E51515AEAD1B43B3D7835088A2FAFA7BE7"
-            capk["Checksum"] = "D8E68DA167AB5A85D8C3D55ECB9B0517A1A5B4BB"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "F3"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "98F0C770F23864C2E766DF02D1E833DFF4FFE92D696E1642F0A88C5694C6479D16DB1537BFE29E4FDC6E6E8AFD1B0EB7EA0124723C333179BF19E93F10658B2F776E829E87DAEDA9C94A8B3382199A350C077977C97AFF08FD11310AC950A72C3CA5002EF513FCCC286E646E3C5387535D509514B3B326E1234F9CB48C36DDD44B416D23654034A66F403BA511C5EFA3"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "F8"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "A1F5E1C9BD8650BD43AB6EE56B891EF7459C0A24FA84F9127D1A6C79D4930F6DB1852E2510F18B61CD354DB83A356BD190B88AB8DF04284D02A4204A7B6CB7C5551977A9B36379CA3DE1A08E69F301C95CC1C20506959275F41723DD5D2925290579E5A95B0DF6323FC8E9273D6F849198C4996209166D9BFC973C361CC826E1"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "FA"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "A90FCD55AA2D5D9963E35ED0F440177699832F49C6BAB15CDAE5794BE93F934D4462D5D12762E48C38BA83D8445DEAA74195A301A102B2F114EADA0D180EE5E7A5C73E0C4E11F67A43DDAB5D55683B1474CC0627F44B8D3088A492FFAADAD4F42422D0E7013536C3C49AD3D0FAE96459B0F6B1B6056538A3D6D44640F94467B108867DEC40FAAECD740C00E2B7A8852D"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-
-            capk["Index"] = "FE"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "A653EAC1C0F786C8724F737F172997D63D1C3251C44402049B865BAE877D0F398CBFBE8A6035E24AFA086BEFDE9351E54B95708EE672F0968BCD50DCE40F783322B2ABA04EF137EF18ABF03C7DBC5813AEAEF3AA7797BA15DF7D5BA1CBAF7FD520B5A482D8D3FEE105077871113E23A49AF3926554A70FE10ED728CF793B62A1"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-        }
-
-        fun addCAPK_rupay() {
-            val capk: Hashtable<String?, String?> = Hashtable<String?, String?>()
-            capk["Rid"] = "A000000524"
-            capk["Index"] = "05"
-            capk["Exponent"] = "03"
-            capk["Modulus"] =
-                "C04E80180369898AAEF6EE7741EDED25239D765301614B5B41A008CA3009358D626D828BC5F1B1E04A2DC1367101266905D262003BE747FD231C9B0011F2F2B21BA8E4C0F4CA5E93ED9DBB2E92ABC450576A4EB59AD00DCA59C8BF3230E4B19D43452871C6215D837663310DF43CAEA1B9B08C1F500AF1B550F62E18D70EEE9E9475321BCD1799AB193E0BC849DACE892A0E6A1F42FE0786DB30345AE1A0E7E4C4B71640E03BFD2832C491A7D83F3B4EF4D388CDDBB748C2FD1D9D4A9BF52FC856CBA088D4B274846002C23CDA722C5CFF3B1F8218A1843B0426474BDC92F2F5E31FBF321CC17480AD069DF55381F2E601D5CBA7B871253F"
-            capk["Checksum"] = "00000000000000000000000000000000000000"
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capk)
-        }
-
-        fun addNSICCS_AID_Paramters() {
-            val data = Hashtable<String, String>()
-            data["CardType"] = "IcCard"
-            data["aid"] = "A0000006021010"
-            data["appVersion"] = "0100"
-            //data.put("terminalFloorLimit", "00000000");
-            //data.put("terminalFloorLimit", Funs.DecNumStrToHexNumStr("000000010000"));
-            //data.put("contactTACDefault", "D84000A800");
-            data["contactTACDefault"] = "0000000000"
-            data["contactTACDenial"] = "0000000000"
-            data["contactTACOnline"] = "DC4004F800"
-            data["defaultDDOL"] = "9F3704"
-            data["AcquirerIdentifier"] = "112233" // 9f01
-            data["defaultTDOL"] = "9F0206"
-            data["ThresholdValue"] = "000000002000"
-            data["TargetPercentage"] = "00"
-            data["MaxTargetPercentage"] = "00"
-            data["AppSelIndicator"] = "00" //default 00 -part match 01 -full match
-            data["TerminalAppPriority"] = "00" //TerminalCapabilities
-            data["TerminalCapabilities"] = "E0C0B0"
-            data["terminalCountryCode"] = "0360"
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
+        fun initCAPKeys(capKeys: List<CAPKey>?) : Boolean {
+            var result = true
+            capKeys?.let {
+                /* Clear CAP Keys first */
+                EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null)
+                /* Add CAP Keys */
+                for (key in it) {
+                    val capKey: Hashtable<String?, String?> = Hashtable<String?, String?>()
+                    capKey["Rid"] = key.rid
+                    capKey["Index"] = key.index
+                    capKey["Exponent"] = key.exponent
+                    capKey["Modulus"] = key.modulus
+                    capKey["Checksum"] = key.checksum
+                    result = result && EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capKey)
+                }
+            }
+            return result
         }
 
         fun addEMV_AID_Paramters() {

@@ -142,6 +142,7 @@
     <string name="is_correct">Is this information correct?</string>
 	
 	<!-- Payment SDK Strings -->
+    <string name="emv_sdk_init_title">Initialization</string>
     <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
     <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
     <string name="processing">Processing</string>

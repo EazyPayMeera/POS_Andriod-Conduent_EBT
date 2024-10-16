@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.analogics.tpaymentsapos.R
@@ -126,6 +127,7 @@ class CustomDialogBuilder private constructor() {
                                             text = title,
                                             style = MaterialTheme.typography.h6,
                                             color = Color.Black,
+                                            textAlign = TextAlign.Center,
                                             modifier = Modifier.padding(top = 4.dp)
                                         )
                                     }
@@ -156,6 +158,7 @@ class CustomDialogBuilder private constructor() {
                                     text = subtitle,
                                     style = MaterialTheme.typography.h6,
                                     color = Color.Black,
+                                    textAlign = TextAlign.Center,
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
 
@@ -164,6 +167,7 @@ class CustomDialogBuilder private constructor() {
                                     text = smallText,
                                     style = MaterialTheme.typography.h6,
                                     color = Color.Black,
+                                    textAlign = TextAlign.Center,
                                     modifier = Modifier.padding(vertical = 4.dp)
                                 )
 
@@ -263,7 +267,6 @@ class CustomDialogBuilder private constructor() {
             message?.let { _message = it }
 
             if (showAlert.value==true) {
-                instance?.dismiss()
                 instance = create()
                     .setTitle(title ?: _title ?: "")
                     .setSubtitle(subtitle ?: _subtitle ?: "")
@@ -275,15 +278,9 @@ class CustomDialogBuilder private constructor() {
                 instance?.buildDialog(onClose = { showAlert.value = false })
 
             }
-            else
-            {
-                instance?.dismiss()
-            }
         }
 
         fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
-            instance?.dismiss()
-            instance = null
             showProgress.value = false
             showAlert.value = show != false
             _title = title
@@ -300,7 +297,6 @@ class CustomDialogBuilder private constructor() {
             message?.let { _message = it }
 
             if (showProgress.value==true) {
-                instance?.dismiss()
                 instance = create()
                     .setTitle(title ?: _title ?: stringResource(R.string.processing))
                     .setSubtitle(subtitle ?: _subtitle ?: stringResource(R.string.plz_wait))
@@ -309,15 +305,9 @@ class CustomDialogBuilder private constructor() {
                     .setShowCloseButton(false)
                 instance?.buildDialog(onClose = { showProgress.value = false })
             }
-            else
-            {
-                instance?.dismiss()
-            }
         }
 
         fun composeProgressDialog(show: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null) {
-            instance?.dismiss()
-            instance = null
             showAlert.value = false
             showProgress.value = show != false
             _title = title

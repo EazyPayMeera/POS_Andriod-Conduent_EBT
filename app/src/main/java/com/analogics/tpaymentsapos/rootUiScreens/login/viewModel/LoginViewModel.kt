@@ -33,6 +33,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
     var useRootAppPaymentDetails = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     lateinit var navHostController: NavHostController
+    var sharedViewModel : SharedViewModel? = null
     val isFormValid: Boolean
         get() = emailCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank()
     var showProgress = mutableStateOf(false)
@@ -49,6 +50,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
 
     fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
+        this.sharedViewModel = sharedViewModel
 
         viewModelScope.launch {
             try {
@@ -102,6 +104,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
             else -> {
                 //userApiSuccessHolder.value = response as ObjEmployeeResponse
                 if (isFormValid) {
+                    sharedViewModel?.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
                     navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 }
                 Log.e("API Response", response.toString())

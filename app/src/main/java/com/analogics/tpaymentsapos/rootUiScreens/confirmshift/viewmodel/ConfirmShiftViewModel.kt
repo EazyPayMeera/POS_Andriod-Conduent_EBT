@@ -24,7 +24,7 @@ class ConfirmShiftViewModel @Inject constructor(private val apiServiceRepository
     fun onShiftEnd(navController: NavController, sharedViewModel: SharedViewModel) {
         try {
             navController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-            sharedViewModel.objPosConfig?.apply { isLoggedIn=false }?.saveToPrefs()
+            sharedViewModel.objPosConfig?.apply { isLoggedIn=false;isPaymentSDKInit=false }?.saveToPrefs()
         }catch (e:Exception)
         {
             AppLogger.e(AppLogger.MODULE.APP_LOGIC,e.message.toString())
