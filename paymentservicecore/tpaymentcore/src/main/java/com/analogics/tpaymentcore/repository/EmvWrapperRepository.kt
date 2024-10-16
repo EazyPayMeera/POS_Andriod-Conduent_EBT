@@ -96,7 +96,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         ) {
             Log.d("EMV_APP", "Check Card Result:" + p0.toString())
             Log.d("EMV_APP", "Check Card List:" + p1.toString())
-            if(p0==ContantPara.CheckCardResult.INSERTED_CARD)
+            if (p0 == ContantPara.CheckCardResult.INSERTED_CARD)
                 iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Card Detected")
         }
 
@@ -137,7 +137,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         override fun onReturnTransactionResult(p0: ContantPara.TransactionResult?) {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
-            if(p0==ContantPara.TransactionResult.ONLINE_APPROVAL || p0==ContantPara.TransactionResult.OFFLINE_APPROVAL)
+            if (p0 == ContantPara.TransactionResult.ONLINE_APPROVAL || p0 == ContantPara.TransactionResult.OFFLINE_APPROVAL)
                 iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
             else
                 iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
@@ -163,7 +163,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     proc_offlinePin(p1, false, p2!!)
                 }
             }
-/*
+            /*
             if (p0 == ContantPara.PinEntrySource.KEYPAD)
                 promptPin(null, false, 3, null, false);
 */
@@ -194,7 +194,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
-            if(p0==ContantPara.NfcTransResult.ONLINE_APPROVAL || p0==ContantPara.NfcTransResult.OFFLINE_APPROVAL)
+            if (p0 == ContantPara.NfcTransResult.ONLINE_APPROVAL || p0 == ContantPara.NfcTransResult.OFFLINE_APPROVAL)
                 iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
             else
                 iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
@@ -204,52 +204,163 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             Log.d("EMV_APP", "NFC Trans Error:" + p0.toString())
         }
 
-        fun initAidConfig(aidConfig: AidConfig?) : Boolean {
+        fun addContactAid(config: AidConfig) : Boolean {
+            var result = true
+            try {
+                /* Add Contact Configuration */
+                for (aid in config.contact?.aidList ?: emptyList()) {
+                    val aidData = Hashtable<String, String>()
+                    aidData["CardType"] = "IcCard"
+                    aidData["aid"] = aid.aid ?: config.contact?.aid ?: config.aid ?: ""
+                    aidData["appVersion"] =
+                        aid.appVersion ?: config.contact?.appVersion ?: config.appVersion ?: ""
+                    aidData["terminalFloorLimit"] =
+                        aid.terminalFloorLimit ?: config.contact?.terminalFloorLimit
+                                ?: config.terminalFloorLimit ?: ""
+                    aidData["contactTACDefault"] =
+                        aid.tacDefault ?: config.contact?.tacDefault ?: config.tacDefault ?: ""
+                    aidData["contactTACDenial"] =
+                        aid.tacDenial ?: config.contact?.tacDenial ?: config.tacDenial ?: ""
+                    aidData["contactTACOnline"] =
+                        aid.tacOnline ?: config.contact?.tacOnline ?: config.tacOnline ?: ""
+                    aidData["defaultDDOL"] =
+                        aid.defaultDDOL ?: config.contact?.defaultDDOL ?: config.defaultDDOL ?: ""
+                    aidData["defaultTDOL"] =
+                        aid.defaultTDOL ?: config.contact?.defaultTDOL ?: config.defaultTDOL ?: ""
+                    aidData["AcquirerIdentifier"] =
+                        aid.acquirerId ?: config.contact?.acquirerId ?: config.acquirerId ?: ""
+                    aidData["ThresholdValue"] =
+                        aid.threshold ?: config.contact?.threshold ?: config.threshold ?: ""
+                    aidData["TargetPercentage"] =
+                        aid.targetPercentage ?: config.contact?.targetPercentage ?: config.targetPercentage
+                                ?: ""
+                    aidData["MaxTargetPercentage"] =
+                        aid.maxTargetPercentage ?: config.contact?.maxTargetPercentage
+                                ?: config.maxTargetPercentage ?: ""
+                    aidData["AppSelIndicator"] =
+                        aid.appSelIndicator ?: config.contact?.appSelIndicator ?: config.appSelIndicator
+                                ?: ""
+                    aidData["TerminalAppPriority"] =
+                        aid.terminalAppPriority ?: config.contact?.terminalAppPriority
+                                ?: config.terminalAppPriority ?: ""
+                    aidData["TerminalCapabilities"] =
+                        aid.terminalCapabilities ?: config.contact?.terminalCapabilities
+                                ?: config.terminalCapabilities ?: ""
+                    aidData["terminalCountryCode"] =
+                        aid.terminalCountryCode ?: config.contact?.terminalCountryCode
+                                ?: config.terminalCountryCode ?: ""
+
+                    result = result && EmvNfcKernelApi.getInstance()
+                        .updateAID(ContantPara.Operation.ADD, aidData) //master
+                    aidData.clear()
+                }
+            }catch (exception : Exception)
+            {
+                result = false
+                exception.printStackTrace()
+            }
+
+            return result
+        }
+
+        fun addContactlessAid(config: AidConfig) : Boolean {
+            var result = true
+            try {
+                /* Add Contactless Configuration */
+                for (aid in config.contactless?.aidList ?: emptyList()) {
+                    val aidData = Hashtable<String, String>()
+                    aidData["aid"] = aid.aid ?: config.contactless?.aid ?: config.aid ?: ""
+                    aidData["CardType"] = getCardType(aidData["aid"] ?: "")
+                    aidData["appVersion"] =
+                        aid.appVersion ?: config.contactless?.appVersion ?: config.appVersion ?: ""
+                    aidData["terminalFloorLimit"] =
+                        aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit
+                                ?: config.terminalFloorLimit ?: ""
+                    aidData["contactTACDefault"] =
+                        aid.tacDefault ?: config.contactless?.tacDefault ?: config.tacDefault ?: ""
+                    aidData["contactTACDenial"] =
+                        aid.tacDenial ?: config.contactless?.tacDenial ?: config.tacDenial ?: ""
+                    aidData["contactTACOnline"] =
+                        aid.tacOnline ?: config.contactless?.tacOnline ?: config.tacOnline ?: ""
+                    aidData["defaultDDOL"] =
+                        aid.defaultDDOL ?: config.contactless?.defaultDDOL ?: config.defaultDDOL ?: ""
+                    aidData["defaultTDOL"] =
+                        aid.defaultTDOL ?: config.contactless?.defaultTDOL ?: config.defaultTDOL ?: ""
+                    aidData["AcquirerIdentifier"] =
+                        aid.acquirerId ?: config.contactless?.acquirerId ?: config.acquirerId ?: ""
+                    aidData["ThresholdValue"] =
+                        aid.threshold ?: config.contactless?.threshold ?: config.threshold ?: ""
+                    aidData["TargetPercentage"] =
+                        aid.targetPercentage ?: config.contactless?.targetPercentage ?: config.targetPercentage
+                                ?: ""
+                    aidData["MaxTargetPercentage"] =
+                        aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage
+                                ?: config.maxTargetPercentage ?: ""
+                    aidData["AppSelIndicator"] =
+                        aid.appSelIndicator ?: config.contactless?.appSelIndicator ?: config.appSelIndicator
+                                ?: ""
+                    aidData["TerminalAppPriority"] =
+                        aid.terminalAppPriority ?: config.contactless?.terminalAppPriority
+                                ?: config.terminalAppPriority ?: ""
+                    aidData["TerminalCapabilities"] =
+                        aid.terminalCapabilities ?: config.contactless?.terminalCapabilities
+                                ?: config.terminalCapabilities ?: ""
+                    aidData["terminalCountryCode"] =
+                        aid.terminalCountryCode ?: config.contactless?.terminalCountryCode
+                                ?: config.terminalCountryCode ?: ""
+
+                    result = result && EmvNfcKernelApi.getInstance()
+                        .updateAID(ContantPara.Operation.ADD, aidData) //master
+                    aidData.clear()
+                }
+            }catch (exception : Exception)
+            {
+                result = false
+                exception.printStackTrace()
+            }
+
+            return result
+        }
+
+        fun initAidConfig(aidConfig: AidConfig?): Boolean {
             var result = true
             /* Clear Aid Config first */
             EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
             aidConfig?.let {
-                /* Add Contact Configuration */
-                for (aid in it.contact?.aidList?:emptyList()) {
-                    val data = Hashtable<String, String>()
-                    data["CardType"] = "IcCard"
-                    data["aid"] = aid.aid?:it.contact?.aid?:it.aid?:""
-                    data["appVersion"] = aid.appVersion?:it.contact?.appVersion?:it.appVersion?:""
-                    data["terminalFloorLimit"] = aid.terminalFloorLimit?:it.contact?.terminalFloorLimit?:it.terminalFloorLimit?:""
-                    data["contactTACDefault"] = aid.tacDefault?:it.contact?.tacDefault?:it.tacDefault?:""
-                    data["contactTACDenial"] = aid.tacDenial?:it.contact?.tacDenial?:it.tacDenial?:""
-                    data["contactTACOnline"] = aid.tacOnline?:it.contact?.tacOnline?:it.tacOnline?:""
-                    data["defaultDDOL"] = aid.defaultDDOL?:it.contact?.defaultDDOL?:it.defaultDDOL?:""
-                    data["defaultTDOL"] = aid.defaultTDOL?:it.contact?.defaultTDOL?:it.defaultTDOL?:""
-                    data["AcquirerIdentifier"] = aid.acquirerId?:it.contact?.acquirerId?:it.acquirerId?:""
-                    data["ThresholdValue"] = aid.threshold?:it.contact?.threshold?:it.threshold?:""
-                    data["TargetPercentage"] = aid.targetPercentage?:it.contact?.targetPercentage?:it.targetPercentage?:""
-                    data["MaxTargetPercentage"] = aid.maxTargetPercentage?:it.contact?.maxTargetPercentage?:it.maxTargetPercentage?:""
-                    data["AppSelIndicator"] = aid.appSelIndicator?:it.contact?.appSelIndicator?:it.appSelIndicator?:""
-                    data["TerminalAppPriority"] = aid.terminalAppPriority?:it.contact?.terminalAppPriority?:it.terminalAppPriority?:""
-                    data["TerminalCapabilities"] = aid.terminalCapabilities?:it.contact?.terminalCapabilities?:it.terminalCapabilities?:""
-                    data["terminalCountryCode"] = aid.terminalCountryCode?:it.contact?.terminalCountryCode?:it.terminalCountryCode?:""
-
-                    result = result && EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data) //master
-                }
+                result = result && addContactAid(it)
             }
             return result
         }
 
-        fun initCAPKeys(capKeys: List<CAPKey>?) : Boolean {
+        fun addCapKey(key : CAPKey) : Boolean
+        {
+            var result = true
+            try {
+                val capKey: Hashtable<String?, String?> = Hashtable<String?, String?>()
+                capKey["Rid"] = key.rid
+                capKey["Index"] = key.index
+                capKey["Exponent"] = key.exponent
+                capKey["Modulus"] = key.modulus
+                capKey["Checksum"] = key.checksum
+                result = result && EmvNfcKernelApi.getInstance()
+                    .updateCAPK(ContantPara.Operation.ADD, capKey)
+                capKey.clear()
+            }catch (exception : Exception)
+            {
+                result = false
+                exception.printStackTrace()
+            }
+            return result
+        }
+
+        fun initCAPKeys(capKeys: List<CAPKey>?): Boolean {
             var result = true
             capKeys?.let {
                 /* Clear CAP Keys first */
                 EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null)
                 /* Add CAP Keys */
                 for (key in it) {
-                    val capKey: Hashtable<String?, String?> = Hashtable<String?, String?>()
-                    capKey["Rid"] = key.rid
-                    capKey["Index"] = key.index
-                    capKey["Exponent"] = key.exponent
-                    capKey["Modulus"] = key.modulus
-                    capKey["Checksum"] = key.checksum
-                    result = result && EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.ADD, capKey)
+                    result = result && addCapKey(key)
                 }
             }
             return result
@@ -330,6 +441,20 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             data["terminalCountryCode"] = "0682"
             data["aid"] = "A0000002282010" //mada
             EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
+        }
+
+        fun getCardType(aid : String) : String
+        {
+            return when(aid.substring(0,10))
+            {
+                "A000000003" -> "VisaCard"
+                "A000000004" -> "MasterCard"
+                "A000000524" -> "RupayCard"
+                "A000000025" -> "AmexCard"
+                "A000000065" -> "JcbCard"
+                "A000000152" -> "DiscoverCard"
+                else -> ""
+            }
         }
 
         fun init_NfcAid_CAPK() {
