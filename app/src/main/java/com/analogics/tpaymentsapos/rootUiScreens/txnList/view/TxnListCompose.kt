@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -46,7 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -56,6 +52,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.BatchDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.DateTimePickerDialog
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
@@ -77,7 +74,8 @@ fun TransactionListScreen(
     // Fetching transactions to display
     val transactions = viewModel.transactionList.collectAsState().value
     val batchId = viewModel.batchList.collectAsState().value
-
+    val startDate = viewModel.startDateList.collectAsState().value
+    val endDate = viewModel.endDateList.collectAsState().value
     val sharedViewModel = localSharedViewModel.current
     // State variables
     val showDateTimePicker = remember { mutableStateOf(false) }
@@ -256,10 +254,15 @@ fun TransactionListScreen(
     }
 
     if (isBatchId) {
-        CustomDialogBuilder.create()
+        viewModel.fetchStartDates(batchId)
+        viewModel.fetchEndDates(batchId)
+        BatchDialogueBuilder.create()
+            .setTitle("Select Batch Id")
             .CustomListDialog(
                 onClose = { isBatchId = false },
-                items = batchId, // Ensure this is List<String>
+                batchIds = batchId, // Ensure this is List<String>
+                startDates = startDate,
+                endDates = endDate,
                 onItemSelected = { selectedId ->
                     viewModel.filterTransactionsByBatchId(selectedId)
                     Log.d("Selected Item", selectedId) // Logging selectedId should not cause any issues now
@@ -604,7 +607,7 @@ fun AlertDialog() {
 }
 
 
-@Composable
+/*@Composable
 fun CustomListDialog(
     onClose: () -> Unit,
     items: List<String>?,
@@ -674,4 +677,4 @@ fun CustomListDialog(
             }
         }
     }
-}
+}*/

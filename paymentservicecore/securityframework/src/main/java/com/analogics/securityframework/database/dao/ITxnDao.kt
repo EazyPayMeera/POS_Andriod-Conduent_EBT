@@ -34,5 +34,10 @@ interface ITxnDao {
     @Query("SELECT DISTINCT batchId FROM TxnTable")
     suspend fun getDistinctBatchIds(): List<String>
 
+    @Query("SELECT MIN(DateTime) FROM TxnTable WHERE batchId = :batchId")
+    suspend fun getStartDateByBatchIds(batchId: String): List<String?>
+
+    @Query("SELECT MAX(DateTime) FROM TxnTable WHERE batchId = :batchId")
+    suspend fun getEndDateByBatchIds(batchId: String): List<String?>
 
 }

@@ -40,8 +40,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     IApiServiceResponseListener {
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     private val _batchList = MutableStateFlow<List<String>>(emptyList())
+    private val _startDateList = MutableStateFlow<List<String>>(emptyList())
+    private val _endDateList = MutableStateFlow<List<String>>(emptyList())
+
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
     val batchList: StateFlow<List<String>> = _batchList
+    val startDateList: StateFlow<List<String>> = _startDateList
+    val endDateList: StateFlow<List<String>> = _endDateList
     var allTransactionList: List<TxnEntity>? = null
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
@@ -128,6 +133,41 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
             }.toString())
+        }
+    }
+
+    fun fetchStartDates(batchIds: List<String>) {
+        viewModelScope.launch {
+            try {
+                val startDates = mutableListOf<String>()
+                batchIds.forEach { batchId ->
+                    val minStartDate = dbRepository.getStartDate(batchId)
+                    minStartDate.let {
+                        startDates.add(it.toString()) // Add the non-null start date to the list
+                    }
+                }
+                _startDateList.value = startDates
+            } catch (e: Exception) {
+                Log.e("FetchStartDates", "Error fetching start dates: ${e.message}")
+            }
+        }
+    }
+
+
+    fun fetchEndDates(batchIds: List<String>) {
+        viewModelScope.launch {
+            try {
+                val endDates = mutableListOf<String>()
+                batchIds.forEach { batchId ->
+                    val minStartDate = dbRepository.getEndDate(batchId)
+                    minStartDate.let {
+                        endDates.add(it.toString()) // Add the non-null start date to the list
+                    }
+                    _endDateList.value = endDates
+                }
+            } catch (e: Exception) {
+                Log.e("FetchMinStartDates", "Error fetching minimum start dates: ${e.message}")
+            }
         }
     }
 
