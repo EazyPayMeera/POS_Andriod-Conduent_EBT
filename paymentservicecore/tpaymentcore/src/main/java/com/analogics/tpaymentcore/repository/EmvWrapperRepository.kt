@@ -183,6 +183,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCrequestOnline() {
             Log.d("EMV_APP", "NFC Process Online:")
+            EmvNfcKernelApi.getInstance().sendOnlineProcessResult(true, "8A023030")
         }
 
         override fun onNFCrequestImportPin(p0: Int, p1: Int, p2: String?) {
@@ -211,44 +212,28 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 for (aid in config.contact?.aidList ?: emptyList()) {
                     val aidData = Hashtable<String, String>()
                     aidData["CardType"] = "IcCard"
-                    aidData["aid"] = aid.aid ?: config.contact?.aid ?: config.aid ?: ""
-                    aidData["appVersion"] =
-                        aid.appVersion ?: config.contact?.appVersion ?: config.appVersion ?: ""
-                    aidData["terminalFloorLimit"] =
-                        aid.terminalFloorLimit ?: config.contact?.terminalFloorLimit
-                                ?: config.terminalFloorLimit ?: ""
-                    aidData["contactTACDefault"] =
-                        aid.tacDefault ?: config.contact?.tacDefault ?: config.tacDefault ?: ""
-                    aidData["contactTACDenial"] =
-                        aid.tacDenial ?: config.contact?.tacDenial ?: config.tacDenial ?: ""
-                    aidData["contactTACOnline"] =
-                        aid.tacOnline ?: config.contact?.tacOnline ?: config.tacOnline ?: ""
-                    aidData["defaultDDOL"] =
-                        aid.defaultDDOL ?: config.contact?.defaultDDOL ?: config.defaultDDOL ?: ""
-                    aidData["defaultTDOL"] =
-                        aid.defaultTDOL ?: config.contact?.defaultTDOL ?: config.defaultTDOL ?: ""
-                    aidData["AcquirerIdentifier"] =
-                        aid.acquirerId ?: config.contact?.acquirerId ?: config.acquirerId ?: ""
-                    aidData["ThresholdValue"] =
-                        aid.threshold ?: config.contact?.threshold ?: config.threshold ?: ""
-                    aidData["TargetPercentage"] =
-                        aid.targetPercentage ?: config.contact?.targetPercentage ?: config.targetPercentage
-                                ?: ""
-                    aidData["MaxTargetPercentage"] =
-                        aid.maxTargetPercentage ?: config.contact?.maxTargetPercentage
-                                ?: config.maxTargetPercentage ?: ""
-                    aidData["AppSelIndicator"] =
-                        aid.appSelIndicator ?: config.contact?.appSelIndicator ?: config.appSelIndicator
-                                ?: ""
-                    aidData["TerminalAppPriority"] =
-                        aid.terminalAppPriority ?: config.contact?.terminalAppPriority
-                                ?: config.terminalAppPriority ?: ""
-                    aidData["TerminalCapabilities"] =
-                        aid.terminalCapabilities ?: config.contact?.terminalCapabilities
-                                ?: config.terminalCapabilities ?: ""
-                    aidData["terminalCountryCode"] =
-                        aid.terminalCountryCode ?: config.contact?.terminalCountryCode
-                                ?: config.terminalCountryCode ?: ""
+                    (aid.aid ?: config.contact?.aid ?: config.aid)?.let {  aidData["aid"] = it }
+                    (aid.appVersion ?: config.contact?.appVersion ?: config.appVersion)?.let { aidData["appVersion"] = it }
+                    (aid.terminalFloorLimit ?: config.contact?.terminalFloorLimit
+                                ?: config.terminalFloorLimit)?.let { aidData["terminalFloorLimit"] = it }
+                    (aid.terminalFloorLimitCheck ?: config.contact?.terminalFloorLimitCheck
+                                ?: config.terminalFloorLimitCheck)?.let { aidData["terminalFloorLimitCheck"] = it }
+                    (aid.tacDefault ?: config.contact?.tacDefault ?: config.tacDefault)?.let { aidData["contactTACDefault"] = it }
+                    (aid.tacDenial ?: config.contact?.tacDenial ?: config.tacDenial)?.let { aidData["contactTACDenial"] = it }
+                    (aid.tacOnline ?: config.contact?.tacOnline ?: config.tacOnline)?.let { aidData["contactTACOnline"] = it }
+                    (aid.defaultDDOL ?: config.contact?.defaultDDOL ?: config.defaultDDOL)?.let { aidData["defaultDDOL"] = it }
+                    (aid.defaultTDOL ?: config.contact?.defaultTDOL ?: config.defaultTDOL)?.let{ aidData["defaultTDOL"] = it }
+                    (aid.acquirerId ?: config.contact?.acquirerId ?: config.acquirerId)?.let{ aidData["AcquirerIdentifier"] = it }
+                    (aid.threshold ?: config.contact?.threshold ?: config.threshold)?.let{ aidData["ThresholdValue"] = it }
+                    (aid.targetPercentage ?: config.contact?.targetPercentage ?: config.targetPercentage)?.let{ aidData["TargetPercentage"] = it }
+                    (aid.maxTargetPercentage ?: config.contact?.maxTargetPercentage?: config.maxTargetPercentage)?.let{ aidData["MaxTargetPercentage"] = it }
+                    (aid.appSelIndicator ?: config.contact?.appSelIndicator ?: config.appSelIndicator)?.let{ aidData["AppSelIndicator"] = it }
+                    (aid.terminalAppPriority ?: config.contact?.terminalAppPriority?: config.terminalAppPriority)?.let{ aidData["TerminalAppPriority"] = it }
+                    (aid.terminalCapabilities ?: config.contact?.terminalCapabilities ?: config.terminalCapabilities)?.let{ aidData["TerminalCapabilities"] = it }
+                    (aid.terminalCountryCode ?: config.contact?.terminalCountryCode ?: config.terminalCountryCode)?.let{ aidData["terminalCountryCode"] = it }
+                    (aid.rdrCVMRequiredLimit ?: config.contact?.rdrCVMRequiredLimit ?: config.rdrCVMRequiredLimit)?.let{ aidData["contactlessCVMRequiredLimit"] = it }
+                    (aid.rdrCtlsFloorLimit ?: config.contact?.rdrCtlsFloorLimit ?: config.rdrCtlsFloorLimit)?.let{ aidData["contactlessFloorLimit"] = it }
+                    (aid.rdrCtlsTransLimit ?: config.contact?.rdrCtlsTransLimit ?: config.rdrCtlsTransLimit)?.let{ aidData["contactlessTransactionLimit"] = it }
 
                     result = result && EmvNfcKernelApi.getInstance()
                         .updateAID(ContantPara.Operation.ADD, aidData) //master
@@ -269,51 +254,71 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 /* Add Contactless Configuration */
                 for (aid in config.contactless?.aidList ?: emptyList()) {
                     val aidData = Hashtable<String, String>()
-                    aidData["aid"] = aid.aid ?: config.contactless?.aid ?: config.aid ?: ""
-                    aidData["CardType"] = getCardType(aidData["aid"] ?: "")
-                    aidData["appVersion"] =
-                        aid.appVersion ?: config.contactless?.appVersion ?: config.appVersion ?: ""
-                    aidData["terminalFloorLimit"] =
-                        aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit
-                                ?: config.terminalFloorLimit ?: ""
-                    aidData["contactTACDefault"] =
-                        aid.tacDefault ?: config.contactless?.tacDefault ?: config.tacDefault ?: ""
-                    aidData["contactTACDenial"] =
-                        aid.tacDenial ?: config.contactless?.tacDenial ?: config.tacDenial ?: ""
-                    aidData["contactTACOnline"] =
-                        aid.tacOnline ?: config.contactless?.tacOnline ?: config.tacOnline ?: ""
-                    aidData["defaultDDOL"] =
-                        aid.defaultDDOL ?: config.contactless?.defaultDDOL ?: config.defaultDDOL ?: ""
-                    aidData["defaultTDOL"] =
-                        aid.defaultTDOL ?: config.contactless?.defaultTDOL ?: config.defaultTDOL ?: ""
-                    aidData["AcquirerIdentifier"] =
-                        aid.acquirerId ?: config.contactless?.acquirerId ?: config.acquirerId ?: ""
-                    aidData["ThresholdValue"] =
-                        aid.threshold ?: config.contactless?.threshold ?: config.threshold ?: ""
-                    aidData["TargetPercentage"] =
-                        aid.targetPercentage ?: config.contactless?.targetPercentage ?: config.targetPercentage
-                                ?: ""
-                    aidData["MaxTargetPercentage"] =
-                        aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage
-                                ?: config.maxTargetPercentage ?: ""
-                    aidData["AppSelIndicator"] =
-                        aid.appSelIndicator ?: config.contactless?.appSelIndicator ?: config.appSelIndicator
-                                ?: ""
-                    aidData["TerminalAppPriority"] =
-                        aid.terminalAppPriority ?: config.contactless?.terminalAppPriority
-                                ?: config.terminalAppPriority ?: ""
-                    aidData["TerminalCapabilities"] =
-                        aid.terminalCapabilities ?: config.contactless?.terminalCapabilities
-                                ?: config.terminalCapabilities ?: ""
-                    aidData["terminalCountryCode"] =
-                        aid.terminalCountryCode ?: config.contactless?.terminalCountryCode
-                                ?: config.terminalCountryCode ?: ""
+
+                    (aid.aid ?: config.contactless?.aid ?: config.aid)?.let{ aidData["ApplicationIdentifier"] = it }
+                    getCardType(aidData["ApplicationIdentifier"]?:"").let{ aidData["CardType"] = it }
+                    (aid.transactionType ?: config.contactless?.transactionType ?: config.transactionType)?.let{ aidData["TransactionType"] = it }
+                    (aid.acquirerId ?: config.contactless?.acquirerId ?: config.acquirerId)?.let{ aidData["AcquirerIdentifier"] = it }
+                    (aid.addlTerminalCapabilities ?: config.contactless?.addlTerminalCapabilities ?: config.addlTerminalCapabilities)?.let{ aidData["AdditionalTerminalCapabilities"] = it }
+                    (aid.appVersion ?: config.contactless?.appVersion ?: config.appVersion)?.let{ aidData["ApplicationVersionNumber"] = it }
+                    (aid.cardDataInputCapability ?: config.contactless?.cardDataInputCapability ?: config.cardDataInputCapability)?.let{ aidData["CardDataInputCapability"] = it }
+                    (aid.kernelConfiguration ?: config.contactless?.kernelConfiguration ?: config.kernelConfiguration)?.let{ aidData["KernelConfiguration"] = it }
+                    (aid.cvmCapabilityCVMRequired ?: config.contactless?.cvmCapabilityCVMRequired ?: config.cvmCapabilityCVMRequired)?.let{ aidData["CVMCapabilityPerCVMRequired"] = it }
+                    (aid.cvmCapabilityNoCVMRequired ?: config.contactless?.cvmCapabilityNoCVMRequired ?: config.cvmCapabilityNoCVMRequired)?.let{ aidData["CVMCapabilityNoCVMRequired"] = it }
+                    (aid.magCVMCapabilityCVMRequired ?: config.contactless?.magCVMCapabilityCVMRequired ?: config.magCVMCapabilityCVMRequired)?.let{ aidData["MagStripeCVMCapabilityCVMRequired"] = it }
+                    (aid.magCVMCapabilityNoCVMRequired ?: config.contactless?.magCVMCapabilityNoCVMRequired ?: config.magCVMCapabilityNoCVMRequired)?.let{ aidData["MagStripeCVMCapabilityPerNoCVMRequired"] = it }
+                    (aid.securityCapability ?: config.contactless?.securityCapability ?: config.securityCapability)?.let{ aidData["SecurityCapability"] = it }
+                    (aid.ifdSerialNumber ?: config.contactless?.ifdSerialNumber ?: config.ifdSerialNumber)?.let{ aidData["IFDsn"] = it }
+                    (aid.merchantCategoryCode ?: config.contactless?.merchantCategoryCode ?: config.merchantCategoryCode)?.let{ aidData["MerchantCategoryCode"] = it }
+                    (aid.merchantIdentifier ?: config.contactless?.merchantIdentifier ?: config.merchantIdentifier)?.let{ aidData["MerchantIdentifier"] = it }
+                    (aid.merchantNameLocation ?: config.contactless?.merchantNameLocation ?: config.merchantNameLocation)?.let{ aidData["MerchantNameAndLocation"] = it }
+                    (aid.defaultUDOL ?: config.contactless?.defaultUDOL ?: config.defaultUDOL)?.let{ aidData["DefaultUDOL"] = it }
+                    (aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit ?: config.terminalFloorLimit)?.let{ aidData["FloorLimit"] = it }
+                    (aid.rdrCtlsFloorLimit ?: config.contactless?.rdrCtlsFloorLimit ?: config.rdrCtlsFloorLimit)?.let{ aidData["ReaderContactlessFloorLimit"] = it }
+                    (aid.rdrCtlsTransLimitNoODCVM ?: config.contactless?.rdrCtlsTransLimitNoODCVM ?: config.rdrCtlsTransLimitNoODCVM)?.let{ aidData["NoOnDeviceCVM"] = it }
+                    (aid.rdrCtlsTransLimitODCVM ?: config.contactless?.rdrCtlsTransLimitODCVM ?: config.rdrCtlsTransLimitODCVM)?.let{ aidData["OnDeviceCVM"] = it }
+                    (aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit ?: config.rdrCVMRequiredLimit)?.let{ aidData["ReaderCVMRequiredLimit"] = it }
+                    (aid.tacDefault ?: config.contactless?.tacDefault ?: config.tacDefault)?.let{ aidData["TerminalActionCodesDefault"] = it }
+                    (aid.tacDenial ?: config.contactless?.tacDenial ?: config.tacDenial)?.let{ aidData["TerminalActionCodesDenial"] = it }
+                    (aid.tacOnline ?: config.contactless?.tacOnline ?: config.tacOnline)?.let{ aidData["TerminalActionCodesOnLine"] = it }
+                    (aid.riskManagementData ?: config.contactless?.riskManagementData ?: config.riskManagementData)?.let{ aidData["TerminalRiskManagement"] = it }
+                    (aid.terminalCountryCode ?: config.contactless?.terminalCountryCode ?: config.terminalCountryCode)?.let{ aidData["TerminalCountryCode"] = it }
+                    (aid.terminalType ?: config.contactless?.terminalType ?: config.terminalType)?.let{ aidData["TerminalType"] = it }
+                    (aid.dsvnTerm ?: config.contactless?.dsvnTerm ?: config.dsvnTerm)?.let{ aidData["DSVNTerm"] = it }
+                    (aid.appSelIndicator ?: config.contactless?.appSelIndicator ?: config.appSelIndicator)?.let{ aidData["AppSelIndicator"] = it }
+                    (aid.defaultDDOL ?: config.contactless?.defaultDDOL ?: config.defaultDDOL)?.let{ aidData["DefaultDDOL"] = it }
+                    (aid.defaultTDOL ?: config.contactless?.defaultTDOL ?: config.defaultTDOL)?.let{ aidData["DefaultTDOL"] = it }
+
+                    /* Visa Specific */
+                    (aid.ttq ?: config.contactless?.ttq ?: config.ttq)?.let{ aidData["TerminalTransactionQualifiers"] = it }
+                    (aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit ?: config.rdrCVMRequiredLimit)?.let{ aidData["CvmRequiredLimit"] = it }
+                    (aid.rdrCtlsTransLimit ?: config.contactless?.rdrCtlsTransLimit ?: config.rdrCtlsTransLimit)?.let{ aidData["TransactionLimit"] = it }
+                    (aid.disableProcRestrictions ?: config.contactless?.disableProcRestrictions ?: config.disableProcRestrictions)?.let{ aidData["ProRestrictionDisable"] = it }
+                    (aid.limitSwitch ?: config.contactless?.limitSwitch ?: config.limitSwitch)?.let{ aidData["LimitSwitch"] = it }
+                    (aid.programID ?: config.contactless?.programID ?: config.programID)?.let{ aidData["ProgramID"] = it }
+                    (aid.terminalCapabilities ?: config.contactless?.terminalCapabilities ?: config.terminalCapabilities)?.let{ aidData["TerminalCapabilities"] = it }
+
+                    /* Amex Specific */
+                    (aid.ctlsRdrCapabilities ?: config.contactless?.ctlsRdrCapabilities ?: config.ctlsRdrCapabilities)?.let{ aidData["ContactlessReaderCapabilities"] = it }
+
+                    /* Rupay Specific */
+                    (aid.addlTerminalCapabilitiesExtension ?: config.contactless?.addlTerminalCapabilitiesExtension ?: config.addlTerminalCapabilitiesExtension)?.let{ aidData["AdditionalTerminalCapabilitiesExtension"] = it }
+                    (aid.serviceDataFormat ?: config.contactless?.serviceDataFormat ?: config.serviceDataFormat)?.let{ aidData["ServiceFormatData"] = it }
+                    (aid.threshold ?: config.contactless?.threshold ?: config.threshold)?.let{ aidData["ThresholdValue"] = it }
+                    (aid.targetPercentage ?: config.contactless?.targetPercentage ?: config.targetPercentage)?.let{ aidData["TargetPercentage"] = it }
+                    (aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage ?: config.maxTargetPercentage)?.let{ aidData["MaxTargetPercentage"] = it }
+
+                    /* Entry Point Specific */
+                    (aid.zeroAmountAllowed ?: config.contactless?.zeroAmountAllowed ?: config.zeroAmountAllowed)?.let{ aidData["ZeroAmountCheckFlag"] = it }
+                    (aid.zeroAmountOfflineAllowed ?: config.contactless?.zeroAmountOfflineAllowed ?: config.zeroAmountOfflineAllowed)?.let{ aidData["ZeroAmountAllowedOfflineFlag"] = it }
+                    (aid.statusCheckSupported ?: config.contactless?.statusCheckSupported ?: config.statusCheckSupported)?.let{ aidData["StatusCheckFlag"] = it }
 
                     result = result && EmvNfcKernelApi.getInstance()
                         .updateAID(ContantPara.Operation.ADD, aidData) //master
                     aidData.clear()
                 }
-            }catch (exception : Exception)
+            }
+            catch (exception : Exception)
             {
                 result = false
                 exception.printStackTrace()
@@ -323,11 +328,11 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         fun initAidConfig(aidConfig: AidConfig?): Boolean {
-            var result = true
+            var result = false
             /* Clear Aid Config first */
             EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
             aidConfig?.let {
-                result = result && addContactAid(it)
+                result = addContactAid(it) && addContactlessAid(it)
             }
             return result
         }
