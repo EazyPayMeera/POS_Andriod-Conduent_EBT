@@ -533,13 +533,17 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                     style = MaterialTheme.typography.h5,
                     color = Color.Gray
                 )
+                val amount = formatAmount(
+                    viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
+                        TxnType.REFUND
+                    ))
                 Text(
-                    text = formatAmount(
-                        viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
-                            TxnType.REFUND
-                        )
-                    ),
-                    style = MaterialTheme.typography.h4,
+                    text = amount,
+                    style = when(amount.length) {
+                        in 0..7 -> MaterialTheme.typography.h4
+                        in 8..13 -> MaterialTheme.typography.h5
+                        else -> MaterialTheme.typography.h6
+                        },
                     color = androidx.compose.material3.MaterialTheme.colorScheme.primary
                 )
             }
