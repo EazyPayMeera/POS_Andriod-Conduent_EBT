@@ -7,6 +7,7 @@ import com.analogics.paymentservicecore.listeners.requestListener.IEmvServiceReq
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
+import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
@@ -43,6 +44,7 @@ class EmvServiceRepository @Inject constructor() :
     }
 
     override fun initPaymentSDK(
+        termConfig: TermConfig?,
         aidConfig: String?,
         capKeys: String?,
         iEmvServiceResponseListener: IEmvServiceResponseListener
@@ -64,6 +66,18 @@ class EmvServiceRepository @Inject constructor() :
                 ).toList()
                 else -> {null}
             }
+
+            /* Override Terminal Specific Parameters */
+            termConfig?.let {
+                it.terminalIdentifier?.let { sdkAidConfig?.terminalIdentifier = it }
+                it.merchantIdentifier?.let { sdkAidConfig?.merchantIdentifier = it }
+                it.merchantCategoryCode?.let { sdkAidConfig?.merchantCategoryCode = it }
+                it.merchantNameLocation?.let { sdkAidConfig?.merchantNameLocation = it }
+                it.ifdSerialNumber?.let { sdkAidConfig?.ifdSerialNumber = it }
+                it.cardCheckTimeout?.let { sdkAidConfig?.cardCheckTimeout = it }
+                it.enableBeeper?.let { sdkAidConfig?.enableBeeper = it }
+            }
+
             emvSdkRequestRepository.initPaymentSDK(sdkAidConfig,sdkCapKeys)
         }catch (e : Exception)
         {
@@ -72,6 +86,7 @@ class EmvServiceRepository @Inject constructor() :
     }
 
     override fun initPaymentSDK(
+        termConfig: TermConfig?,
         aidConfig: AidConfig?,
         capKeys: List<CAPKey>,
         iEmvServiceResponseListener: IEmvServiceResponseListener
@@ -91,6 +106,18 @@ class EmvServiceRepository @Inject constructor() :
                 ).toList()
                 else -> {null}
             }
+
+            /* Override Terminal Specific Parameters */
+            termConfig?.let {
+                it.terminalIdentifier?.let { sdkAidConfig?.terminalIdentifier = it }
+                it.merchantIdentifier?.let { sdkAidConfig?.merchantIdentifier = it }
+                it.merchantCategoryCode?.let { sdkAidConfig?.merchantCategoryCode = it }
+                it.merchantNameLocation?.let { sdkAidConfig?.merchantNameLocation = it }
+                it.ifdSerialNumber?.let { sdkAidConfig?.ifdSerialNumber = it }
+                it.cardCheckTimeout?.let { sdkAidConfig?.cardCheckTimeout = it }
+                it.enableBeeper?.let { sdkAidConfig?.enableBeeper = it }
+            }
+
             emvSdkRequestRepository.initPaymentSDK(sdkAidConfig,sdkCapKeys)
         }catch (e : Exception)
         {

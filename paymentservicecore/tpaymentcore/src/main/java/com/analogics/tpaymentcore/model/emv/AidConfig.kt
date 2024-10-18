@@ -3,9 +3,20 @@ package com.analogics.tpaymentcore.model.emv
 import com.google.gson.annotations.SerializedName
 
 data class AidConfig(
-    /* Common */
+    /* Terminal Configuration */
+    @SerializedName("merchantIdentifier")   var merchantIdentifier : String? = null,
+    @SerializedName("merchantCategoryCode") var merchantCategoryCode : String? = null,
+    @SerializedName("merchantNameLocation") var merchantNameLocation : String? = null,
+    @SerializedName("terminalIdentifier")   var terminalIdentifier : String? = null,
+    @SerializedName("ifdSerialNumber")      var ifdSerialNumber : String? = null,
+    @SerializedName("cardCheckTimeout")     var cardCheckTimeout : String? = null,
+    @SerializedName("enableBeeper")         var enableBeeper : Boolean? = null,
+
+    /* Common EMV Parameters */
     @SerializedName("acquirerId")           val acquirerId : String?=null,
     @SerializedName("appSelIndicator")      val appSelIndicator : String? = null,
+    @SerializedName("currencyCode")         val currencyCode : String? = null,
+    @SerializedName("currencyExponent")     val currencyExponent : String? = null,
     @SerializedName("terminalCountryCode")  val terminalCountryCode : String? = null,
     @SerializedName("terminalType")         val terminalType : String? = null,
     @SerializedName("terminalCapabilities") val terminalCapabilities : String? = null,
@@ -22,17 +33,12 @@ data class AidConfig(
     @SerializedName("targetPercentage")     val targetPercentage : String? = null,
     @SerializedName("maxTargetPercentage")  val maxTargetPercentage : String? = null,
     @SerializedName("transactionType")      val transactionType : String? = null,
-    @SerializedName("ifdSerialNumber")      val ifdSerialNumber : String? = null,
-    @SerializedName("merchantCategoryCode") val merchantCategoryCode : String? = null,
-    @SerializedName("merchantIdentifier")   val merchantIdentifier : String? = null,
-    @SerializedName("merchantNameLocation") val merchantNameLocation : String? = null,
-    @SerializedName("currencyCode")         val currencyCode : String? = null,
-
-    /* Terminal Configuration */
-    @SerializedName("cardCheckTimeout")     val cardCheckTimeout : String? = null,
     @SerializedName("supportFallback")      val supportFallback : Boolean? = null,
     @SerializedName("supportDRL")           val supportDRL : Boolean? = null,
-    @SerializedName("enableBeeper")         val enableBeeper : Boolean? = null,
+    @SerializedName("supportRandomTrans")   val enableRandomTrans : Boolean? = null,
+    @SerializedName("supportExceptionFile") val supportExceptionFile : Boolean? = null,
+    @SerializedName("supportSM")            val supportSM : Boolean? = null,
+    @SerializedName("supportVelocityCheck") val supportVelocityCheck : Boolean? = null,
     @SerializedName("enableRefundCVM")      val enableRefundCVM : Boolean? = null,
     @SerializedName("forceInputPIN")        val forceInputPIN : Boolean? = null,
 

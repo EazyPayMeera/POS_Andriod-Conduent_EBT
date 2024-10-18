@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.os.IInputActionListener
 import android.text.TextUtils
 import android.util.Log
+import com.analogics.paymentservicecore.constants.EmvConstants
 import com.analogics.tpaymentcore.listener.requestListener.IEmvWrapperRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.AidConfig
 import com.analogics.tpaymentcore.model.emv.CAPKey
+import com.analogics.tpaymentcore.utils.TlvUtils
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -37,11 +39,34 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             try {
                 aidConfig?.let { result = result && initAidConfig(it) }
                 capKeys?.let { result = result && initCAPKeys(it) }
+                var termTlvParams = TlvUtils()
+                    .addTagValAscii(EmvConstants.EMV_TAG_MERCH_ID, aidConfig?.merchantIdentifier,15,15)
+                    .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier,8,8)
+                    .addTagValAscii(EmvConstants.EMV_TAG_MERCH_NAME_LOC, aidConfig?.merchantNameLocation,0,40)
+                    .addTagValHex(EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE, aidConfig?.merchantCategoryCode,2,2)
+                    .addTagValHex(EmvConstants.EMV_TAG_IFD_SERIAL_NO, aidConfig?.ifdSerialNumber,8,8)
+                    .addTagValHex(EmvConstants.EMV_TAG_TERM_CAP, aidConfig?.terminalCapabilities,3,3)
+                    .addTagValHex(EmvConstants.EMV_TAG_ADDL_TERM_CAP, aidConfig?.addlTerminalCapabilities,5,5)
+                    .addTagValHex(EmvConstants.EMV_TAG_TERM_COUNTRY_CODE, aidConfig?.terminalCountryCode,2,2)
+                    .addTagValHex(EmvConstants.EMV_TAG_TERM_TYPE, aidConfig?.terminalType,1,1)
+                    .addTagValHex(EmvConstants.EMV_TAG_TRANS_CURRENCY_EXPONENT, aidConfig?.currencyExponent,1,1)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_RANDOM_TRANS, aidConfig?.enableRandomTrans)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_EXCEP_FILE_CHECK, aidConfig?.supportExceptionFile)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_SM, aidConfig?.supportSM)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_VELOCITY_CHECK, aidConfig?.supportVelocityCheck)
+                    .toTlvString()
 
                 EmvNfcKernelApi.getInstance().updateTerminalParamters(
-                    ContantPara.CardSlot.ICC,
-                    "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
+                    ContantPara.CardSlot.UNKNOWN,
+                    termTlvParams
                 )
+
+                Log.d("EMV_APP", "termTlvParams: $termTlvParams")
+/*
+                "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
+
+                TlvUtils().parseTlv("9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100")
+*/
                 when(result) {
                     true->
                         iEmvSdkResponseListener.onEmvSdkResponse("SUCCESS")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
