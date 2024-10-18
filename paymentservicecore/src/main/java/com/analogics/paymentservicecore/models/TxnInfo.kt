@@ -3,6 +3,15 @@ package com.analogics.paymentservicecore.models
 import com.google.gson.annotations.SerializedName
 
 enum class TxnType { PURCHASE, REFUND, PREAUTH, AUTHCAP, VOID ,TXNLIST}
+fun TxnType.toEmvTransType() : String
+{
+    return when(this)
+    {
+        TxnType.REFUND -> "09"
+        TxnType.VOID -> "20"
+        else -> "00"
+    }
+}
 enum class TxnStatus { INITIATED, APPROVED, DECLINED, ERROR, REVERSED, VOIDED, REFUNDED }
 
 object TxnInfo {

@@ -13,6 +13,8 @@ import com.analogics.tpaymentcore.listener.requestListener.IEmvWrapperRequestLis
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.AidConfig
 import com.analogics.tpaymentcore.model.emv.CAPKey
+import com.analogics.tpaymentcore.model.emv.CardCheckMode
+import com.analogics.tpaymentcore.model.emv.TransConfig
 import com.analogics.tpaymentcore.utils.TlvUtils
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
@@ -95,31 +97,42 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
+        var thread : Thread? = null
 
-        fun startPayment(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener) {
-            Thread {
+        fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
+            thread = Thread {
                 try {
                     this.iEmvSdkResponseListener = iEmvSdkResponseListener
                     val data = Hashtable<String, Any>()
-                    data["checkCardMode"] = ContantPara.CheckCardMode.INSERT_OR_TAP //
-                    data["currencyCode"] = "682" //682
-                    data["emvOption"] = ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
-                    data["amount"] = "0.01"
-                    data["cashbackAmount"] = "0"
-                    data["checkCardTimeout"] = "30" // Check Card time out .Second
-                    data["transactionType"] = "00" //00-goods 01-cash 09-cashback 20-refund
-                    data["isEnterAmtAfterReadRecord"] = false
-                    data["FallbackSwitch"] = "0" //0- close fallback 1-open fallback
-                    data["supportDRL"] = false // support Visa DRL?
+                    transConfig?.let {
+                        it.amount?.let { data["amount"] = it }
+                        it.cashbackAmount?.let { data["cashbackAmount"] = it }
+                        it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
+                        it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
+                        (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.value }
+                        it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
+                        it.enableBeeper?.let { data["enableBeeper"] = it }
+                        it.supportFallback?.let { if(it == true) data["FallbackSwitch"] = "1" else data["FallbackSwitch"] = "0"}
+                        it.supportDRL?.let { data["supportDRL"] = it }
+                        data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
+                        data["isEnterAmtAfterReadRecord"] = false
+                    }
 
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
                     EmvNfcKernelApi.getInstance().startKernel(data)
-                    //EmvNfcKernelApi.getInstance().getEMVLibVers(ContantPara.CardSlot.ICC)
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    this.iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
                 }
-            }.start()
+            }
+            thread?.start()
+        }
+
+        fun abortPayment()
+        {
+            thread?.interrupt()
+            EmvNfcKernelApi.getInstance().abortKernel()
         }
 
         override fun onRequestSetAmount() {

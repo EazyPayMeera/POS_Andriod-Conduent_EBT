@@ -56,7 +56,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         val currentDateTime = getCurrentDateTime()
         val formattedDate = currentDateTime.substring(0, 10).replace("-", "") // Extracts "20241005"
 
-        sharedViewModel.objPosConfig?.apply { BatchId = formattedDate }?.saveToPrefs()
+        sharedViewModel.objPosConfig?.apply { batchId = formattedDate }?.saveToPrefs()
     }
 
     fun navigateTo(navHostController: NavHostController, route: String) {

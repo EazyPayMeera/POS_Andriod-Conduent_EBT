@@ -8,6 +8,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceRe
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
 import com.analogics.paymentservicecore.model.emv.TermConfig
+import com.analogics.paymentservicecore.model.emv.TransConfig
 import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
@@ -99,7 +100,7 @@ class EmvServiceRepository @Inject constructor() :
                 )
                 else -> {null}
             }
-            var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.DEVICE.uppercase()) {
+            var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
                 ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(
                     Gson().toJson(capKeys),
                     Array<com.analogics.tpaymentcore.model.emv.CAPKey>::class.java
@@ -127,11 +128,23 @@ class EmvServiceRepository @Inject constructor() :
 
     override fun startPayment(
         context: Context,
+        transConfig: TransConfig?,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
         iEmvServiceResponseListener.onEmvServiceDisplayProgress(false)
-        emvSdkRequestRepository.startPayment(context)
+
+        var sdkTransConfig : com.analogics.tpaymentcore.model.emv.TransConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
+            ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(
+                Gson().toJson(transConfig),
+                com.analogics.tpaymentcore.model.emv.TransConfig::class.java
+            )
+            else -> {null}
+        }
+        emvSdkRequestRepository.startPayment(context, sdkTransConfig)
     }
 
+    override fun abortPayment() {
+        emvSdkRequestRepository.abortPayment()
+    }
 }
