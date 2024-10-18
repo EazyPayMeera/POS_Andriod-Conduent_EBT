@@ -17,6 +17,7 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
@@ -39,6 +40,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
 
     fun printReceipt(
+        sharedViewModel: SharedViewModel,
         context: Context,
         customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
@@ -64,7 +66,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+                                initPrinter(sharedViewModel,context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -90,6 +92,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
     }
 
     suspend fun initPrinter(
+        sharedViewModel: SharedViewModel,
         context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
@@ -105,7 +108,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
-                addReceiptDetails(context,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
+                addReceiptDetails(sharedViewModel,context,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
                     override fun onSuccess(result: Any?) {
                         if(result == true)
                         {
@@ -126,6 +129,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
 
 
     suspend fun addReceiptDetails(
+        sharedViewModel: SharedViewModel,
         context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
@@ -141,7 +145,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
             )
 
             // Generate the receipt
-            val receipt = receiptBuilder.createReceipt(context,paymentServiceTxnDetails)
+            val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
 
             val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
 

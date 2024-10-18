@@ -15,10 +15,10 @@ class ReceiptBuilder {
     }
 
     // Function to build a receipt
-    fun createReceipt(context: Context,paymentDetails: PaymentServiceTxnDetails?): Receipt {
+    fun createReceipt(context: Context,sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
-            .addField(context.getString(R.string.receipt_header), "", Alignment.CENTER)
-            .addField(context.getString(R.string.receipt_address), "1234 Market St, San Francisco, CA", Alignment.LEFT)
+            .addField(sharedViewModel.objPosConfig?.header1.toString(), "", Alignment.CENTER)
+            .addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), Alignment.LEFT)
             .addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId ?: "N/A", Alignment.LEFT)
             .addField(context.getString(R.string.receipt_terminal_id), paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
             .addField(context.getString(R.string.receipt_gray_line), "", Alignment.LEFT)
@@ -41,10 +41,10 @@ class ReceiptBuilder {
             .addField(context.getString(R.string.receipt_total), paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
             .addField(context.getString(R.string.receipt_payment), paymentDetails?.accountType.toString(), Alignment.LEFT)
             .addField(context.getString(R.string.receipt_authorization), paymentDetails?.hostAuthCode.toString(), Alignment.LEFT)
-            .addField("I AGREE TO PAY ABOVE TOTAL", "\n" + "AMOUNT ACCORDING TO CARD\n" + "ISSUER AGREEMENT", Alignment.CENTER)
+            .addField(sharedViewModel.objPosConfig?.footer1.toString(),"", Alignment.CENTER)
             .addField("CUSTOMER SUPPORT", "", Alignment.LEFT)
-            .addField("SUPPORT PHONE:", "(987) 654-3210", Alignment.LEFT)
-            .addField("SUPPORT EMAIL:", "support@example.com", Alignment.LEFT)
+            .addField("SUPPORT PHONE:", sharedViewModel.objPosConfig?.footer2.toString(), Alignment.LEFT)
+            .addField("SUPPORT EMAIL:", sharedViewModel.objPosConfig?.footer3.toString(), Alignment.LEFT)
             .addField("BARCODE", paymentDetails?.hostTxnRef ?: "N/A", Alignment.LEFT)
             .addField("QR CODE", "https://example.com/qrcode", Alignment.CENTER)
             .addField("******CUSTOMER COPY******", "", Alignment.CENTER)
@@ -54,6 +54,7 @@ class ReceiptBuilder {
     // Function to build a summary report
     fun createSummaryReport(context: Context,sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
         return SummaryReport.Builder()
+            .addSummaryField("", sharedViewModel.objPosConfig?.header1.toString(), "")
             .addSummaryField("", context.getString(R.string.summary_header), "")
             .addSummaryField("", sharedViewModel.objPosConfig?.header2.toString(), sharedViewModel.objPosConfig?.header3.toString())
             .addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
@@ -112,10 +113,11 @@ class ReceiptBuilder {
     }
 
 
-    fun createDetailReport(context: Context, paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
+    fun createDetailReport(context: Context,sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
         val reportBuilder = DetailedReport.Builder()
 
         reportBuilder
+            .addDetailField("", sharedViewModel.objPosConfig?.header1.toString(), "")
             .addDetailField("", context.getString(R.string.summary_debit_txn), "")
             .addDetailField(context.getString(R.string.detail_txn), context.getString(R.string.detail_count), context.getString(R.string.summary_total))
             .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))

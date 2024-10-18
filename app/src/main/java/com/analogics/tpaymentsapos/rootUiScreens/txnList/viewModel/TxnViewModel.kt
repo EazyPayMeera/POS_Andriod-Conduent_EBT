@@ -255,6 +255,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
                 if(isSummaryReport) {
                     addDetailedReceipt(
+                        sharedViewModel,
                         context,
                         objRootAppPaymentDetail,
                         transactionList.value,
@@ -319,6 +320,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
     suspend fun addDetailedReceipt(
+        sharedViewModel: SharedViewModel,
         context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         transactionList: List<ObjRootAppPaymentDetails>, // Assuming this is the input type
@@ -340,7 +342,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                     timedate = paymentDetail.dateTime.toString()
                 )
             }
-            val detailedReport = receiptBuilder.createDetailReport(context,paymentServiceTxnDetails, transactionDetailsList)
+            val detailedReport = receiptBuilder.createDetailReport(context,sharedViewModel,paymentServiceTxnDetails, transactionDetailsList)
             val labelList: List<String> = detailedReport.detailFields.map { it.first }
             val valueList: List<String> = detailedReport.detailFields.map { it.second }
             val descriptionList: List<String> = detailedReport.detailFields.map { it.third }

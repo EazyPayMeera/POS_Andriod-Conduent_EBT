@@ -238,10 +238,11 @@ fun ApprovedView(navHostController: NavHostController) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
-                                    viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)
+                                    viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
                                     viewModel.printReceipt(
+                                        sharedViewModel,
                                         context,
                                         objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
                                     )

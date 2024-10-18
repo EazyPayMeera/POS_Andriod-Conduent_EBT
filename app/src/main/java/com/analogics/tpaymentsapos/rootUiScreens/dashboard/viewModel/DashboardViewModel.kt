@@ -71,6 +71,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
     @OptIn(DelicateCoroutinesApi::class)
     fun printReceipt(
+        sharedViewModel: SharedViewModel,
         context: Context,
         customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
@@ -96,7 +97,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(context, object : IPrinterResultProviderListener {
+                                initPrinter(sharedViewModel,context, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -123,6 +124,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
 
     suspend fun initPrinter(
+        sharedViewModel: SharedViewModel,
         context: Context,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
@@ -147,7 +149,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         .initPrinter(context, iPrinterResultProviderListener)
 
                     // Optionally add receipt details
-                    addReceiptDetails(context,object : IPrinterResultProviderListener {
+                    addReceiptDetails(context,sharedViewModel,object : IPrinterResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if(result == true)
                             {
@@ -180,7 +182,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
-    suspend fun addReceiptDetails(context: Context,iPrinterResultProviderListener: IPrinterResultProviderListener) {
+    suspend fun addReceiptDetails(context: Context,sharedViewModel: SharedViewModel,iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
 
@@ -198,7 +200,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 )
 
                 // Generate the receipt
-                val receipt = receiptBuilder.createReceipt(context,paymentServiceTxnDetails)
+                val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
 
                 // Proceed if the receipt was created successfully
                 if (receipt != null) {
