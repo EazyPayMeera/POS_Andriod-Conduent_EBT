@@ -71,7 +71,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     data["transactionType"] = "00" //00-goods 01-cash 09-cashback 20-refund
                     data["isEnterAmtAfterReadRecord"] = false
                     data["FallbackSwitch"] = "0" //0- close fallback 1-open fallback
-                    data["supportDRL"] = true // support Visa DRL?
+                    data["supportDRL"] = false // support Visa DRL?
 
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)

@@ -13,6 +13,12 @@
   "threshold" : "000000002000",
   "targetPercentage" : "00",
   "maxTargetPercentage" : "00",
+  "cardCheckTimeout" : "30",
+  "supportFallback" : "1",
+  "supportDRL": "0",
+  "enableBeeper" : "1",
+  "enableRefundCVM" : "1",
+  "forceInputPIN" : "0",
   "additionalTags" : "",
 
   "contact": {
@@ -38,16 +44,51 @@
     ]
   },
   "contactless": {
+    "ttq": "36004000",
+    "terminalFloorLimit" : "000000000000",
+    "rdrCtlsTransLimit": "999999999999",
+    "rdrCVMRequiredLimit" : "000000500000",
+    "limitSwitch" : "FE00",
+    "disableProcRestrictions" : "01",
+    "rdrCtlsTransLimitODCVM": "999999999999",
+    "rdrCtlsTransLimitNoODCVM": "999999999999",
+    "defaultUDOL": "9F6A04",
+    "cardDataInputCapability": "60",
+    "cvmCapabilityCVMRequired": "60",
+    "cvmCapabilityNoCVMRequired": "08",
+    "magCVMCapabilityCVMRequired" : "10",
+    "magCVMCapabilityNoCVMRequired" : "00",
+    "securityCapability": "08",
     "aidList": [
       {
         "aid": "A0000000031010",
+        "appVersion": "0002"
+      },
+      {
+        "aid": "A0000000032010",
+        "appVersion": "0002"
+      },
+      {
+        "aid": "A0000000033010",
+        "appVersion": "0002"
+      },
+      {
+        "aid": "A0000000041010",
         "appVersion": "0002",
-        "ttq": "36004000",
-        "rdrCtlsTransLimit": "999999999999",
-        "terminalFloorLimit" : "000000000000",
-        "rdrCVMRequiredLimit" : "000000500000",
-        "limitSwitch" : "FE00",
-        "disableProcRestrictions" : "01"
+        "tacDefault" :"F45084800C",
+        "tacDenial" :"0000000000",
+        "tacOnline" :"F45084800C",
+        "riskManagementData": "007A800000000000",
+        "kernelConfiguration": "30"
+      },
+      {
+        "aid": "A0000000043060",
+        "appVersion": "0002",
+        "tacDefault" :"F45004800C",
+        "tacDenial" :"0000800000",
+        "tacOnline" :"F45004800C",
+        "riskManagementData": "4C7A800000000000",
+        "kernelConfiguration": "B0"
       }
     ]
   }

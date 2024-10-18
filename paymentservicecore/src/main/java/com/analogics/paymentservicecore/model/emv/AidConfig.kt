@@ -21,12 +21,20 @@ data class AidConfig(
     @SerializedName("threshold")            val threshold : String? = null,
     @SerializedName("targetPercentage")     val targetPercentage : String? = null,
     @SerializedName("maxTargetPercentage")  val maxTargetPercentage : String? = null,
-    @SerializedName("additionalTags")       val additionalTags : String? = null,
     @SerializedName("transactionType")      val transactionType : String? = null,
     @SerializedName("ifdSerialNumber")      val ifdSerialNumber : String? = null,
     @SerializedName("merchantCategoryCode") val merchantCategoryCode : String? = null,
     @SerializedName("merchantIdentifier")   val merchantIdentifier : String? = null,
     @SerializedName("merchantNameLocation") val merchantNameLocation : String? = null,
+    @SerializedName("currencyCode")         val currencyCode : String? = null,
+
+    /* Terminal Configuration */
+    @SerializedName("cardCheckTimeout")     val cardCheckTimeout : String? = null,
+    @SerializedName("supportFallback")      val supportFallback : Boolean? = null,
+    @SerializedName("supportDRL")           val supportDRL : Boolean? = null,
+    @SerializedName("enableBeeper")         val enableBeeper : Boolean? = null,
+    @SerializedName("enableRefundCVM")      val enableRefundCVM : Boolean? = null,
+    @SerializedName("forceInputPIN")        val forceInputPIN : Boolean? = null,
 
     /* AID Specific */
     @SerializedName("aid")                  val aid : String? = null,
@@ -69,8 +77,10 @@ data class AidConfig(
     @SerializedName("ctlsRdrCapabilities")          val ctlsRdrCapabilities : String? = null,
     @SerializedName("enhancedCtlsRdrCapabilities")  val enhancedCtlsRdrCapabilities : String? = null,
 
-
     /* Rupay Specific */
     @SerializedName("addlTerminalCapabilitiesExtension") val addlTerminalCapabilitiesExtension : String? = null,
     @SerializedName("serviceDataFormat")                  val serviceDataFormat : String? = null,
+
+    /* Supply additional EMV tags */
+    @SerializedName("additionalTags")               val additionalTags : String? = null
 )

@@ -533,13 +533,17 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                     style = MaterialTheme.typography.h5,
                     color = Color.Gray
                 )
+                val amount = formatAmount(
+                    viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
+                        TxnType.REFUND
+                    ))
                 Text(
-                    text = formatAmount(
-                        viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
-                            TxnType.REFUND
-                        )
-                    ),
-                    style = MaterialTheme.typography.h4,
+                    text = amount,
+                    style = when(amount.length) {
+                        in 0..7 -> MaterialTheme.typography.h4
+                        in 8..13 -> MaterialTheme.typography.h5
+                        else -> MaterialTheme.typography.h6
+                        },
                     color = androidx.compose.material3.MaterialTheme.colorScheme.primary
                 )
             }
@@ -605,76 +609,3 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
 fun AlertDialog() {
 
 }
-
-
-/*@Composable
-fun CustomListDialog(
-    onClose: () -> Unit,
-    items: List<String>?,
-    onItemSelected: (String) -> Unit
-) {
-    Dialog(onDismissRequest = onClose) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
-        ) {
-            GenericCard(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                shape = RoundedCornerShape(18.dp),
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Title (if required)
-                    Text(text = "Select an Option", style = MaterialTheme.typography.h6)
-
-                    // Spacer for separation
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // List of options
-                    items?.let {
-                        LazyColumn {
-                            items(it.size) { index ->
-                                val item = it[index]
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            // When item is clicked, trigger the onItemSelected callback
-                                            onItemSelected(item)
-                                            onClose() // Close the dialog after selection
-                                        }
-                                        .padding(vertical = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = item,
-                                        modifier = Modifier
-                                            .padding(start = 8.dp)
-                                            .weight(1f),
-                                        style = MaterialTheme.typography.body1
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    // Spacer for separation
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Close button
-                    Button(onClick = onClose) {
-                        Text(text = "Close")
-                    }
-                }
-            }
-        }
-    }
-}*/
