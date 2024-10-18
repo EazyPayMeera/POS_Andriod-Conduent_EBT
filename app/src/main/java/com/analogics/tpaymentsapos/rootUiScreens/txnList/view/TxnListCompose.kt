@@ -77,7 +77,7 @@ fun TransactionListScreen(
     val startDate = viewModel.startDateList.collectAsState().value
     val endDate = viewModel.endDateList.collectAsState().value
     val sharedViewModel = localSharedViewModel.current
-    // State variables
+
     val showDateTimePicker = remember { mutableStateOf(false) }
     val BatchId = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
@@ -87,7 +87,6 @@ fun TransactionListScreen(
 
     var isBatchId by remember { mutableStateOf(false) }
 
-    // Date picker logic
     if (showDateTimePicker.value) {
 
 
@@ -118,16 +117,7 @@ fun TransactionListScreen(
             showDateTimePicker.value = false
         }
     }
-
-/*    if(BatchId.value)
-    {
-        sharedViewModel.objPosConfig?.BatchId
-
-        if (sharedViewModel.objPosConfig?.BatchId != null) {
-            viewModel.filterTransactionsByBatch(sharedViewModel.objPosConfig?.BatchId!!)
-            BatchId.value = false
-        }
-    }*/
+    
 
     Column {
         CommonTopAppBar(

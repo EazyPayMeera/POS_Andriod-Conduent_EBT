@@ -152,6 +152,63 @@
     <string name="printer_error_title">Printing Error</string>
     <string name="printer_out_of_paper">Printer is Out Paper</string>
     <string name="printer_busy">Printer is Busy</string>
+
+
+    <!-- Receipt Builder -->
+    <string name="receipt_header">GLOBAL PAYMENTS</string>
+    <string name="receipt_address">STORE ADDRESS:</string>
+    <string name="receipt_merchant_id">Merchant Id:</string>
+    <string name="receipt_terminal_id">Terminal Id:</string>
+    <string name="receipt_gray_line">-----------------------</string>
+    <string name="receipt_card_type">CARD TYPE:</string>
+    <string name="receipt_card_no">CARD No:</string>
+    <string name="receipt_trans_type">TRANS TYPE:</string>
+    <string name="receipt_batch_no">BATCH NO:</string>
+    <string name="receipt_trace_no">TRACE NO:</string>
+    <string name="receipt_date_time">DATE/TIME:</string>
+    <string name="receipt_ref_no">REF NO:</string>
+    <string name="receipt_aap_code">APP CODE:</string>
+    <string name="receipt_txn_id">Txn ID:</string>
+    <string name="receipt_app">APP:</string>
+    <string name="receipt_subtotal">SUBTOTAL:</string>
+    <string name="receipt_sale_tax">SALES TAX:</string>
+    <string name="receipt_pos_terminal">POS TERMINAL:</string>
+    <string name="receipt_card_entry_mode">Card Entry Mode:</string>
+    <string name="receipt_aid">AID:</string>
+    <string name="receipt_tc">TC:</string>
+    <string name="receipt_total">TOTAL:</string>
+    <string name="receipt_payment">PAYMENT::</string>
+    <string name="receipt_authorization">AUTHORIZATION:</string>
+
+    <!-- Summary Report -->
+    <string name="summary_header">SUMMARY REPORT</string>
+    <string name="summary_dot_line">---------------</string>
+    <string name="summary_purchase">Purchase</string>
+    <string name="summary_refund">Refund</string>
+    <string name="summary_void">Void</string>
+    <string name="summary_tip">Tip Surcharges</string>
+    <string name="summary_cashback">CashBack</string>
+    <string name="summary_total">Total</string>
+    <string name="summary_txn_breakdown">Transaction Breakdown:</string>
+    <string name="summary_credit_txn">Credit Transactions:</string>
+    <string name="summary_debit_txn">Debit Transactions:</string>
+    <string name="summary_footer">SUMMARY</string>
+
+    <!-- Detail Report -->
+    <string name="detail_header">Detail Transaction Summary</string>
+    <string name="detail_txn">Transaction</string>
+    <string name="detail_count">Count</string>
+    <string name="detail_txn_details">Transactions Details</string>
+    <string name="detail_txn_Type">TxnType</string>
+    <string name="detail_txn_Status">Status</string>
+    <string name="detail_invoice_no">Invoice No</string>
+    <string name="detail_txn_amt">Txn_Amount</string>
+    <string name="detail_total_amt">TotalAmount</string>
+    <string name="detail_auth_code">AuthCode</string>
+
+
+
+
 <!--
     &lt;!&ndash;Configuration&ndash;&gt;
     <string name="ten">10%</string>-->

@@ -147,7 +147,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         .initPrinter(context, iPrinterResultProviderListener)
 
                     // Optionally add receipt details
-                    addReceiptDetails(object : IPrinterResultProviderListener {
+                    addReceiptDetails(context,object : IPrinterResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if(result == true)
                             {
@@ -180,7 +180,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
-    suspend fun addReceiptDetails(iPrinterResultProviderListener: IPrinterResultProviderListener) {
+    suspend fun addReceiptDetails(context: Context,iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
 
@@ -198,7 +198,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 )
 
                 // Generate the receipt
-                val receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails)
+                val receipt = receiptBuilder.createReceipt(context,paymentServiceTxnDetails)
 
                 // Proceed if the receipt was created successfully
                 if (receipt != null) {

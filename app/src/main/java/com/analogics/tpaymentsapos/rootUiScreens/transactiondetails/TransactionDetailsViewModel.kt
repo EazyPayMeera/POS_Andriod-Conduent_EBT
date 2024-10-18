@@ -105,7 +105,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
-                addReceiptDetails(objRootAppPaymentDetail,object : IPrinterResultProviderListener {
+                addReceiptDetails(context,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
                     override fun onSuccess(result: Any?) {
                         if(result == true)
                         {
@@ -126,6 +126,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
 
 
     suspend fun addReceiptDetails(
+        context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
@@ -140,7 +141,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
             )
 
             // Generate the receipt
-            val receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails)
+            val receipt = receiptBuilder.createReceipt(context,paymentServiceTxnDetails)
 
             val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
 

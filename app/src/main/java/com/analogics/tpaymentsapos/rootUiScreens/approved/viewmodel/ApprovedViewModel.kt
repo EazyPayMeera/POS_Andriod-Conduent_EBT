@@ -134,7 +134,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
-                addReceiptDetails(objRootAppPaymentDetail,object : IPrinterResultProviderListener {
+                addReceiptDetails(context,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
                     override fun onSuccess(result: Any?) {
                         if(result == true)
                         {
@@ -155,7 +155,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     }
 
 
-    suspend fun addReceiptDetails(objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
+    suspend fun addReceiptDetails(context: Context,objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
 
@@ -167,7 +167,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             )
 
             // Generate the receipt
-            val receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails)
+            val receipt = receiptBuilder.createReceipt(context,paymentServiceTxnDetails)
 
             // Proceed if the receipt was created successfully
             if (receipt != null) {
