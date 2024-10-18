@@ -140,6 +140,11 @@ class Printer constructor() {
 
     }
 
+    fun getStatusOfPrinter()
+    {
+        mPrinter?.status
+    }
+
     // To add Barcode
     fun barCodePrinting(format: Bundle,barcode:String)
     {

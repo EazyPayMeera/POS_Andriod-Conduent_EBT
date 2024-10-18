@@ -18,4 +18,6 @@ interface PrinterRequestListener {
         Total: List<String>, // Assuming alignment is of type Int; adjust as necessary
         iPrinterResultProviderListener: IPrinterResultProviderListener
     )
+
+    suspend fun getStatus(iPrinterResultProviderListener: IPrinterResultProviderListener)
 }

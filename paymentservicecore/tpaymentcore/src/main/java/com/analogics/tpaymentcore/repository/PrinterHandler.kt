@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.analogics.tpaymentcore.Printer.Printer
-import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
 import com.analogics.tpaymentcore.listener.requestListener.PrinterListener
+import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 object PrinterHandler : PrinterListener {
@@ -32,7 +34,21 @@ object PrinterHandler : PrinterListener {
         }
     }
 
-    suspend fun addReceiptDetails(
+    suspend fun getStatus(printerHandlerListener: IPrinterHandlerListener): Int? {
+        return withContext(Dispatchers.IO) { // Switch to IO context for blocking calls
+            try {
+                // Get the printer status
+                val response = Printer.getInstance().getPrinterStatus()
+                response // Return the response here (Int?)
+            } catch (e: Exception) {
+                printerHandlerListener.onPrinterRespHandler("FAILURE")
+                null // Return null or a failure status if an exception occurs
+            }
+        }
+    }
+
+
+    fun addReceiptDetails(
         barcodeFormat: Bundle,
         barcode:String,
         receipt: List<String>,
@@ -57,7 +73,7 @@ object PrinterHandler : PrinterListener {
         }
     }
 
-    suspend fun addLeftCenterRightDetails(
+    fun addLeftCenterRightDetails(
         Transaction: List<String>,
         Count: List<String>,
         Total: List<String>,

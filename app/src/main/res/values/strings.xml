@@ -146,6 +146,12 @@
     <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
     <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
     <string name="processing">Processing</string>
+
+
+    <!-- Printer Strings -->
+    <string name="printer_error_title">Printing Error</string>
+    <string name="printer_out_of_paper">Printer is Out Paper</string>
+    <string name="printer_busy">Printer is Busy</string>
 <!--
     &lt;!&ndash;Configuration&ndash;&gt;
     <string name="ten">10%</string>-->

@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -171,6 +172,8 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                             }
                         )
                     }
+
+                    CustomDialogBuilder.ShowComposed()
                 }
             }
         }

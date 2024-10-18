@@ -571,7 +571,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                 .buildDialog(onClose = { isDialogVisible = false })
 
         }
-
+        CustomDialogBuilder.ShowComposed()
         if(isAlertVisible)
         {
             CustomDialogBuilder.create()
