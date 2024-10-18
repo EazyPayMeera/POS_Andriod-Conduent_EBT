@@ -263,7 +263,8 @@ fun CommonTopAppBar(
 fun OkButton(
     onClick: () -> Unit,
     title: String,
-    maxsizebutton: Boolean = true // New parameter to control button size
+    maxsizebutton: Boolean = true, // New parameter to control button size,
+    enabled: Boolean?=false
 ) {
     Button(
         modifier = Modifier
@@ -281,7 +282,7 @@ fun OkButton(
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium), // Keep the shape here
         colors = buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary,
-            containerColor = colorResource(R.color.grey) // Keep or change as needed
+            containerColor = if(enabled==true) MaterialTheme.colorScheme.primary else colorResource(R.color.grey) // Keep or change as needed
         ),
         onClick = onClick
     ) {
