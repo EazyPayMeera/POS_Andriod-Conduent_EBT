@@ -14,7 +14,6 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
@@ -32,10 +31,11 @@ import com.google.gson.reflect.TypeToken
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -71,31 +71,70 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
     @OptIn(DelicateCoroutinesApi::class)
     fun printReceipt(
+        sharedViewModel: SharedViewModel,
         context: Context,
         customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
-    )
-    {
-
-        GlobalScope.launch {
-            initPrinter(context, object : IPrinterResultProviderListener {
+    ) {
+        viewModelScope.launch {
+            // Call getPrinterStatus with a callback
+            getPrinterStatus(objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
+                    Log.d(TAG, "Printer status retrieved: $result")
+
+                    val subtitleText = when (result) {
+                        -1 -> context.resources.getString(R.string.printer_out_of_paper) // Example error for result -1
+                        else -> context.resources.getString(R.string.printer_busy) // Default error for other cases
+                    }
+
+                    if (result != 0) {
+                        Log.d(TAG, "Printer status retrieved inside result not equal to zero: $result")
+                        CustomDialogBuilder.composeAlertDialog(
+                            title = context.resources.getString(R.string.printer_error_title),
+                            subtitle = subtitleText // Dynamic subtitle based on result
+                        )
+                    } else {
+                        // If the printer status is OK, call initPrinter
+                        launch { // Start a new coroutine to call initPrinter
+                            try {
+                                initPrinter(sharedViewModel,context, object : IPrinterResultProviderListener {
+                                    override fun onSuccess(result: Any?) {
+                                        Log.d(TAG, "Printer initialized successfully.")
+                                    }
+
+                                    override fun onFailure(exception: Exception) {
+                                        Log.e(TAG, "Failed to initialize printer: ${exception.message}")
+                                        // Handle failure for printer initialization here
+                                    }
+                                })
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error during printer initialization: ${e.message}")
+                            }
+                        }
+                    }
                 }
 
                 override fun onFailure(exception: Exception) {
+                    Log.e(TAG, "Failed to get printer status: ${exception.message}")
+                    // Handle failure for getting printer status here
                 }
             })
         }
     }
 
+
     suspend fun initPrinter(
+        sharedViewModel: SharedViewModel,
         context: Context,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         viewModelScope.launch {
             try {
                 Log.d(TAG, "Approved View Model to Printer Service Repository 1")
-
+                CustomDialogBuilder.composeProgressDialog(
+                    title = context.resources.getString(R.string.printing),
+                    subtitle = context.resources.getString(R.string.plz_wait)
+                )
                 // Retrieve the last transaction from _lastTransactionList
                 val lastTransactionList = _lastTransactionList.value // This is a List<ObjRootAppPaymentDetails>
                 val latestTransaction = lastTransactionList.lastOrNull() // Get the last transaction or null if the list is empty
@@ -110,7 +149,17 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         .initPrinter(context, iPrinterResultProviderListener)
 
                     // Optionally add receipt details
-                    addReceiptDetails(iPrinterResultProviderListener)
+                    addReceiptDetails(context,sharedViewModel,object : IPrinterResultProviderListener {
+                        override fun onSuccess(result: Any?) {
+                            if(result == true)
+                            {
+                                CustomDialogBuilder.hideProgress()
+                            }
+                        }
+                        override fun onFailure(exception: Exception) {
+
+                        }
+                    })
 
                     Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
                 } ?: Log.d(TAG, "No transactions available for printing.")
@@ -120,76 +169,97 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
+    suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
+        try {
 
-    suspend fun addReceiptDetails(iPrinterResultProviderListener: IPrinterResultProviderListener) {
+            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+            )
+            PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get printer status: ${e.message}")
+        }
+    }
+
+    suspend fun addReceiptDetails(context: Context,sharedViewModel: SharedViewModel,iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
 
-        // Retrieve the last transaction from _lastTransactionList
-        val lastTransactionList = _lastTransactionList.value
-        val latestTransaction = lastTransactionList.lastOrNull() // Get the last transaction
+        // Switch to IO context for background processing
+        withContext(Dispatchers.IO) {
+            // Retrieve the last transaction from _lastTransactionList
+            val lastTransactionList = _lastTransactionList.value
+            val latestTransaction = lastTransactionList.lastOrNull() // Get the last transaction
 
-        // Check if the latest transaction is available
-        if (latestTransaction != null) {
-            // Create the receipt using payment details
-            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-                PaymentServiceUtils.objectToJsonString(latestTransaction) // Use the latest transaction
-            )
+            // Check if the latest transaction is available
+            if (latestTransaction != null) {
+                // Create the receipt using payment details
+                val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                    PaymentServiceUtils.objectToJsonString(latestTransaction) // Use the latest transaction
+                )
 
-            // Generate the receipt
-            val receipt = receiptBuilder.createReceipt(paymentServiceTxnDetails)
+                // Generate the receipt
+                val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
 
-            // Extract the barcode string
-            val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
+                // Proceed if the receipt was created successfully
+                if (receipt != null) {
+                    // Extract the barcode string
+                    val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
 
-            // Prepare receipt details for printing
-            val receiptDetails = receipt.fields.map { (label, value) ->
-                if (value.isEmpty()) {
-                    "$label"
+                    // Prepare receipt details for printing
+                    val receiptDetails = receipt.fields.map { (label, value) ->
+                        if (value.isEmpty()) {
+                            "$label"
+                        } else {
+                            "$label: $value"
+                        }
+                    } + receipt.items.mapIndexed { index, item ->
+                        "${index + 1}. ${item.name}              $${item.price}"
+                    }
+
+                    // Extract alignment information for each field
+                    val alignmentText: List<Int> = receipt.fields.map { field ->
+                        when (field.third) {
+                            ReceiptBuilder.Alignment.LEFT -> 0
+                            ReceiptBuilder.Alignment.CENTER -> 1
+                            ReceiptBuilder.Alignment.RIGHT -> 2
+                            else -> 0 // Default to left alignment if no match
+                        }
+                    }
+
+                    // Extract alignment for the barcode
+                    val alignment: Int = receipt.fields.firstOrNull { it.first == "QR CODE" }?.let { field ->
+                        when (field.third) {
+                            ReceiptBuilder.Alignment.LEFT -> 0
+                            ReceiptBuilder.Alignment.CENTER -> 1
+                            ReceiptBuilder.Alignment.RIGHT -> 2
+                            else -> -1 // Default or error value
+                        }
+                    } ?: -1 // Default or error value if no barcode field is found
+
+                    // Prepare the printing format
+                    val format = Bundle().apply {
+                        putInt("align", alignment) // Default alignment for text
+                        putInt("width", 300)
+                        putInt("height", 100)
+                        putSerializable("barcode_type", BarcodeFormat.CODE_39)
+                    }
+
+                    // Pass the receipt details to the PrinterServiceRepository
+                    PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(
+                        format,
+                        barcodeString,
+                        receiptDetails,
+                        alignmentText,
+                        iPrinterResultProviderListener
+                    )
                 } else {
-                    "$label: $value"
+                    Log.d("ReceiptBuilder", "Failed to create receipt.")
                 }
-            } + receipt.items.mapIndexed { index, item ->
-                "${index + 1}. ${item.name}              $${item.price}"
+            } else {
+                Log.d("TAG", "No transactions available for receipt printing.")
             }
-
-            // Extract alignment information for each field
-            val alignmentText: List<Int> = receipt.fields.map { field ->
-                when (field.third) {
-                    ReceiptBuilder.Alignment.LEFT -> 0
-                    ReceiptBuilder.Alignment.CENTER -> 1
-                    ReceiptBuilder.Alignment.RIGHT -> 2
-                    else -> 0 // Default to left alignment if no match
-                }
-            }
-
-            // Extract alignment for the barcode
-            val alignment: Int = receipt.fields.firstOrNull { it.first == "QR CODE" }?.let { field ->
-                when (field.third) {
-                    ReceiptBuilder.Alignment.LEFT -> 0
-                    ReceiptBuilder.Alignment.CENTER -> 1
-                    ReceiptBuilder.Alignment.RIGHT -> 2
-                    else -> -1 // Default or error value
-                }
-            } ?: -1 // Default or error value if no barcode field is found
-
-
-            val format = Bundle().apply {
-                putInt("align", alignment) // Default alignment for text
-                putInt("width", 300)
-                putInt("height", 100)
-                putSerializable("barcode_type", BarcodeFormat.CODE_39)
-            }
-
-            PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(
-                format,
-                barcodeString,
-                receiptDetails,
-                alignmentText,
-                iPrinterResultProviderListener
-            )
-        } else {
-            Log.d(TAG, "No transactions available for receipt printing.")
         }
     }
 

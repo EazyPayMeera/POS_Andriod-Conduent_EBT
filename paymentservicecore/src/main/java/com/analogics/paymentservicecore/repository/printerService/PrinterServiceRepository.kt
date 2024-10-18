@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -28,15 +29,24 @@ class PrinterServiceRepository @Inject constructor(
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
-        try {
-            // Pass the retrieved arguments to the PrinterHandler
-            PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails, alignment, this) // Pass this as the listener
-            Log.d(TAG, "Receipt printed successfully.")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to print receipt: ${e.message}")
-            iPrinterResultProviderListener.onSuccess(false)
-        }
+
+        // Create a new thread for printing receipt details
+        Thread {
+            try {
+                // Pass the retrieved arguments to the PrinterHandler
+                PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails, alignment, this) // Pass this as the listener
+                Log.d(TAG, "Receipt printed successfully.")
+
+                iPrinterResultProviderListener.onSuccess(true)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to print receipt: ${e.message}")
+                iPrinterResultProviderListener.onSuccess(false)
+
+            }
+        }.start() // Start the thread
     }
+
 
     override suspend fun printLeftCenterRightDetails(
         Transaction: List<String>,
@@ -45,15 +55,22 @@ class PrinterServiceRepository @Inject constructor(
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
-        try {
-            // Pass the retrieved arguments to the PrinterHandler
-            PrinterHandler.addLeftCenterRightDetails(Transaction,Count,Total,this) // Pass this as the listener
-            Log.d(TAG, "Receipt printed successfully.")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to print receipt: ${e.message}")
-            iPrinterResultProviderListener.onSuccess(false)
-        }
+
+        // Create a new thread for printing left, center, right details
+        Thread {
+            try {
+                // Pass the retrieved arguments to the PrinterHandler
+                PrinterHandler.addLeftCenterRightDetails(Transaction, Count, Total, this) // Pass this as the listener
+                Log.d(TAG, "Receipt printed successfully.")
+                iPrinterResultProviderListener.onSuccess(true)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to print receipt: ${e.message}")
+                iPrinterResultProviderListener.onSuccess(false)
+            }
+        }.start() // Start the thread
     }
+
 
     override suspend fun initPrinter(
         context: Context,
@@ -61,11 +78,38 @@ class PrinterServiceRepository @Inject constructor(
     ) {
         Log.d(TAG, "Initializing printer in Payment Service Repository...")
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
+
+        // Create a new thread for printer initialization
+        Thread {
+            try {
+                PrinterHandler.initPrinter(context, this) // Pass this as the listener
+                Log.d(TAG, "Printer initialized successfully in Payment Service Repository...")
+                // Notify success on the main thread
+                // If you need to update UI or callback, use runOnUiThread or Handler
+                (context as? Activity)?.runOnUiThread {
+                    iPrinterResultProviderListener.onSuccess(true)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to initialize printer: ${e.message}")
+                // Notify failure on the main thread
+                (context as? Activity)?.runOnUiThread {
+                    iPrinterResultProviderListener.onSuccess(false)
+                }
+            }
+        }.start() // Start the thread
+    }
+
+
+    override suspend fun getStatus(iPrinterResultProviderListener: IPrinterResultProviderListener) {
+        Log.d(TAG, "Get Status in Payment Service Repository...")
+        this.iPrinterResultProviderListener = iPrinterResultProviderListener
         try {
-            PrinterHandler.initPrinter(context, this) // Pass this as the listener
-            Log.d(TAG, "Printer initialized successfully in Payment Service Repository...")
+            // Assuming PrinterHandler has a method to get status
+            val status = PrinterHandler.getStatus(this) // Replace with the actual method to get status
+            Log.d(TAG, "Printer status retrieved: $status")
+            iPrinterResultProviderListener.onSuccess(status)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to initialize printer: ${e.message}")
+            Log.e(TAG, "Failed to get printer status: ${e.message}")
             iPrinterResultProviderListener.onSuccess(false)
         }
     }

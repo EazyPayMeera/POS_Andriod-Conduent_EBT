@@ -1,6 +1,8 @@
 package com.analogics.tpaymentsapos.rootUiScreens.utility
 
+import android.content.Context
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 
 class ReceiptBuilder {
@@ -13,36 +15,36 @@ class ReceiptBuilder {
     }
 
     // Function to build a receipt
-    fun createReceipt(paymentDetails: PaymentServiceTxnDetails?): Receipt {
+    fun createReceipt(context: Context,sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
-            .addField("GLOBAL PAYMENTS", "", Alignment.CENTER)
-            .addField("STORE ADDRESS:", "1234 Market St, San Francisco, CA", Alignment.LEFT)
-            .addField("Merchant Id:", paymentDetails?.merchantId ?: "N/A", Alignment.LEFT)
-            .addField("Terminal Id:", paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
-            .addField("-----------------------", "", Alignment.LEFT)
-            .addField("CARD TYPE:  ", "CREDIT", Alignment.LEFT)
-            .addField("CARD:", "**** **** **** 1234", Alignment.LEFT)
-            .addField("TRANS TYPE:", "\n" + (paymentDetails?.txnType ?: "N/A"), Alignment.LEFT)
-            .addField("BATCH NO:", (paymentDetails?.batchId ?: "N/A"), Alignment.LEFT)
-            .addField("TRACE NO:", "123456", Alignment.LEFT)
-            .addField("DATE/TIME:", paymentDetails?.dateTime ?: "N/A", Alignment.LEFT)
-            .addField("REF NO:", "56789", Alignment.LEFT)
-            .addField("APP CODE:", "1112", Alignment.LEFT)
-            .addField("Txn ID:", paymentDetails?.invoiceNo ?: "N/A", Alignment.LEFT)
-            .addField("APP:", paymentDetails?.cardBrand ?: "N/A", Alignment.LEFT)
-            .addField("SUBTOTAL:", paymentDetails?.txnAmount.toString(), Alignment.LEFT)
-            .addField("SALES TAX:", paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
-            .addField("POS TERMINAL #:", paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
-            .addField("Card Entry Mode:", paymentDetails?.cardEntryMode ?: "N/A", Alignment.LEFT)
-            .addField("AID:", "123456789123456", Alignment.LEFT)
-            .addField("TC:", paymentDetails?.purchaseOrderNo ?: "N/A", Alignment.LEFT)
-            .addField("TOTAL:", paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
-            .addField("PAYMENT:", paymentDetails?.accountType.toString(), Alignment.LEFT)
-            .addField("AUTHORIZATION:", paymentDetails?.hostAuthCode.toString(), Alignment.LEFT)
-            .addField("I AGREE TO PAY ABOVE TOTAL", "\n" + "AMOUNT ACCORDING TO CARD\n" + "ISSUER AGREEMENT", Alignment.CENTER)
+            .addField(sharedViewModel.objPosConfig?.header1.toString(), "", Alignment.CENTER)
+            .addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_terminal_id), paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_gray_line), "", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_card_type), "CREDIT", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_card_no), "**** **** **** 1234", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_trans_type), "\n" + (paymentDetails?.txnType ?: "N/A"), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_batch_no), (paymentDetails?.batchId ?: "N/A"), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_trace_no), "123456", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_date_time), paymentDetails?.dateTime ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_ref_no), "56789", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_aap_code), "1112", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_txn_id), paymentDetails?.invoiceNo ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_app), paymentDetails?.cardBrand ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_subtotal), paymentDetails?.txnAmount.toString(), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_sale_tax), paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_pos_terminal), paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_card_entry_mode), paymentDetails?.cardEntryMode ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_aid), "123456789123456", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_tc), paymentDetails?.purchaseOrderNo ?: "N/A", Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_total), paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_payment), paymentDetails?.accountType.toString(), Alignment.LEFT)
+            .addField(context.getString(R.string.receipt_authorization), paymentDetails?.hostAuthCode.toString(), Alignment.LEFT)
+            .addField(sharedViewModel.objPosConfig?.footer1.toString(),"", Alignment.CENTER)
             .addField("CUSTOMER SUPPORT", "", Alignment.LEFT)
-            .addField("SUPPORT PHONE:", "(987) 654-3210", Alignment.LEFT)
-            .addField("SUPPORT EMAIL:", "support@example.com", Alignment.LEFT)
+            .addField("SUPPORT PHONE:", sharedViewModel.objPosConfig?.footer2.toString(), Alignment.LEFT)
+            .addField("SUPPORT EMAIL:", sharedViewModel.objPosConfig?.footer3.toString(), Alignment.LEFT)
             .addField("BARCODE", paymentDetails?.hostTxnRef ?: "N/A", Alignment.LEFT)
             .addField("QR CODE", "https://example.com/qrcode", Alignment.CENTER)
             .addField("******CUSTOMER COPY******", "", Alignment.CENTER)
@@ -50,21 +52,22 @@ class ReceiptBuilder {
     }
 
     // Function to build a summary report
-    fun createSummaryReport(sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
+    fun createSummaryReport(context: Context,sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
         return SummaryReport.Builder()
-            .addSummaryField("", "SUMMARY REPORT", "")
-            .addSummaryField(sharedViewModel.objPosConfig?.header1.toString(), sharedViewModel.objPosConfig?.header2.toString(), sharedViewModel.objPosConfig?.header3.toString())
-            .addSummaryField("---------------", "---------------", "---------------")
-            .addSummaryField("Purchase",paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
-            .addSummaryField("Refund",paymentDetails?.ttlRefundCount?.toString() ?: "N/A" , paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
-            .addSummaryField("Voids", "2", "10.00")
-            .addSummaryField("Tip Surcharges", "10", "10.00")
-            .addSummaryField("CashBack","5" , "50.00")
-            .addSummaryField("Total", paymentDetails?.ttlTxnCount?.toString() ?: "N/A", paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
-            .addSummaryField("Transaction Breakdown:", "", "")
-            .addSummaryField("Credit Transactions:", "", "")
-            .addSummaryField("Debit Transactions:", "", "")
-            .addSummaryField("", "SUMMARY", "")
+            .addSummaryField("", sharedViewModel.objPosConfig?.header1.toString(), "")
+            .addSummaryField("", context.getString(R.string.summary_header), "")
+            .addSummaryField("", sharedViewModel.objPosConfig?.header2.toString(), sharedViewModel.objPosConfig?.header3.toString())
+            .addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
+            .addSummaryField(context.getString(R.string.summary_purchase),paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
+            .addSummaryField(context.getString(R.string.summary_refund),paymentDetails?.ttlRefundCount?.toString() ?: "N/A" , paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
+            .addSummaryField(context.getString(R.string.summary_void), "2", "10.00")
+            .addSummaryField(context.getString(R.string.summary_tip), "10", "10.00")
+            .addSummaryField(context.getString(R.string.summary_cashback),"5" , "50.00")
+            .addSummaryField(context.getString(R.string.summary_total), paymentDetails?.ttlTxnCount?.toString() ?: "N/A", paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
+            .addSummaryField(context.getString(R.string.summary_txn_breakdown), "", "")
+            .addSummaryField(context.getString(R.string.summary_credit_txn), "", "")
+            .addSummaryField(context.getString(R.string.summary_debit_txn), "", "")
+            .addSummaryField("", context.getString(R.string.summary_footer), "")
             .build()
     }
 
@@ -109,22 +112,24 @@ class ReceiptBuilder {
         }
     }
 
-    fun createDetailReport(paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
+
+    fun createDetailReport(context: Context,sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
         val reportBuilder = DetailedReport.Builder()
 
         reportBuilder
-            .addDetailField("", "Detail\n Transaction\n Summary", "")
-            .addDetailField("Transaction", "Count", "Total")
-            .addDetailField("---------------", "---------------", "---------------")
-            .addDetailField("Purchase", paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A", paymentDetails?.ttlPurchaseAmount?.toString() ?: "N/A")
-            .addDetailField("Refund", paymentDetails?.ttlRefundCount?.toString() ?: "N/A", paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
-            .addDetailField("---------------", "---------------", "---------------")
-            .addDetailField("", "Transactions\n Details ", "")
-            .addDetailField("TxnType", "", "Status")
-            .addDetailField("InvoiceNo", "", "AuthCode")
-            .addDetailField("TxnAmount", "", "TotalAmount")
+            .addDetailField("", sharedViewModel.objPosConfig?.header1.toString(), "")
+            .addDetailField("", context.getString(R.string.summary_debit_txn), "")
+            .addDetailField(context.getString(R.string.detail_txn), context.getString(R.string.detail_count), context.getString(R.string.summary_total))
+            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
+            .addDetailField(context.getString(R.string.summary_purchase), paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A", paymentDetails?.ttlPurchaseAmount?.toString() ?: "N/A")
+            .addDetailField(context.getString(R.string.summary_refund), paymentDetails?.ttlRefundCount?.toString() ?: "N/A", paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
+            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
+            .addDetailField("", context.getString(R.string.detail_txn_details), "")
+            .addDetailField(context.getString(R.string.detail_txn_Type), "", context.getString(R.string.detail_txn_Status))
+            .addDetailField(context.getString(R.string.detail_invoice_no), "", context.getString(R.string.detail_auth_code))
+            .addDetailField(context.getString(R.string.detail_txn_amt), "", context.getString(R.string.detail_total_amt))
             .addDetailField("", paymentDetails?.txnStatus.toString(), "")
-            .addDetailField("----------------", "----------------", "----------------")
+            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
 
         // Add transaction details from the transaction list
         transactionList.forEach { transaction ->
@@ -149,9 +154,9 @@ class ReceiptBuilder {
                 transaction.ttlAmount
             )
             reportBuilder.addDetailField(
-                "--------------------",
-                "--------------------",
-                "--------------------"
+                context.getString(R.string.summary_dot_line),
+                context.getString(R.string.summary_dot_line),
+                context.getString(R.string.summary_dot_line)
             )
         }
 

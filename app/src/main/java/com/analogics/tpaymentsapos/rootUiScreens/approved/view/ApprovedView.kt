@@ -45,7 +45,6 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel.ApprovedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.updated_amt
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -167,8 +166,6 @@ fun ApprovedView(navHostController: NavHostController) {
     val context = LocalContext.current
     //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
     val viewModel: ApprovedViewModel = hiltViewModel()
-    val printStatus by viewModel.printStatus
-    val updatedAmount = updated_amt
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
     val sharedViewModel = localSharedViewModel.current
@@ -241,10 +238,11 @@ fun ApprovedView(navHostController: NavHostController) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
-                                    viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)
+                                    viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
                                     viewModel.printReceipt(
+                                        sharedViewModel,
                                         context,
                                         objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
                                     )
@@ -276,18 +274,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     )
                 }
 
-                if (viewModel.isPrinting.value) {
-                    CustomDialogBuilder.create()
-                        .setTitle(stringResource(id = R.string.printing))
-                        .setSubtitle(stringResource(id = R.string.plz_wait))
-                        .setSmallText(stringResource(id = if(viewModel.isCustomer.value) R.string.cust_recp else R.string.merchant_recp))
-                        .setShowCloseButton(true) // Can set to false if you don't want the close button
-                        .setCancelable(true)
-                        .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                        .setProgressColor(MaterialTheme.colorScheme.primary) // Orange color
-                        .buildDialog(onClose = { viewModel.isPrinting.value = false })
-                }
-
+                CustomDialogBuilder.ShowComposed()
             }
         }
     }

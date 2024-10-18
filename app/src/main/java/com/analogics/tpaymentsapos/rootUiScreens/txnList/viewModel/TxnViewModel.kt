@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
@@ -18,6 +17,7 @@ import com.analogics.paymentservicecore.repository.apiService.ApiServiceReposito
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -26,11 +26,11 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -50,12 +50,9 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     var allTransactionList: List<TxnEntity>? = null
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
-    val isPrinting = mutableStateOf(false)
-    val isCustomer = mutableStateOf(false)
     private var isFiltered = false
 
     init {
-        // Fetch transactions asynchronously
         viewModelScope.launch {
             fetchTransactions()
         }
@@ -64,20 +61,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     fun fetchTransactions() {
         viewModelScope.launch {
             allTransactionList = dbRepository.getAllTxnListData()
-            Log.d("db data", allTransactionList.toString())
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
             }
-
-            Log.d("all data", allTransactionList?.let {
-                val txnDataList = convertTxnEntityListToTxnDataList(it)
-                _transactionList.value = txnDataList
-            }.toString())
         }
     }
     fun fetchTransactionDetailsTxnByDate(date: String){
-        Log.d("filter viewmodel1",date)
         viewModelScope.launch {
             allTransactionList =dbRepository.fetchTransactionDetailsTxnByDate(date)
             allTransactionList?.let {
@@ -85,27 +75,16 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 _transactionList.value = txnDataList
             }
         }
-
-        Log.d("filter by date", allTransactionList?.let {
-            val txnDataList = convertTxnEntityListToTxnDataList(it)
-            _transactionList.value = txnDataList
-        }.toString())
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun filterTransactionsByDateRange(startDate: LocalDateTime,endDate: LocalDateTime) {
         viewModelScope.launch {
-            // Filter the transactions that occurred between the start date and end date
             val filteredList = _transactionList.value.filter { transaction ->
                 val transactionDateTime = LocalDateTime.parse(transaction.dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 isFiltered = true
-                Log.d("TransactionFilter", "Transaction DateTime: $transactionDateTime, Start Date: $startDate, End Date: $endDate")
-                // Check if the transaction date and time is within the specified range
                 transactionDateTime.isAfter(startDate) && transactionDateTime.isBefore(endDate)
 
             }
-
-            Log.d("TransactionFilter", "Filtered Transactions: $filteredList")
-            // Update the filterTxn value with the filtered list
             _transactionList.value = filteredList
         }
     }
@@ -115,7 +94,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             val batchIds = dbRepository.fetchTransactionDetailsByBatchId()
             _batchList.value = batchIds
-            Log.d("db  batch data", batchIds.toString())
         }
     }
 
@@ -123,16 +101,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     fun filterTransactionsByBatchId(batchId:String) {
         viewModelScope.launch {
             allTransactionList = dbRepository.fetchTransactionByBatch(batchId)
-            Log.d("db data", allTransactionList.toString())
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                 _transactionList.value = txnDataList
             }
-
-            Log.d("all data", allTransactionList?.let {
-                val txnDataList = convertTxnEntityListToTxnDataList(it)
-                _transactionList.value = txnDataList
-            }.toString())
         }
     }
 
@@ -188,8 +160,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun totalTransactionsCount(txn: TxnType): Int {
         return _transactionList.value
-            .count { it.txnType == txn} // Count the transactions of the specified type
-            ?: 0 // Return 0 if the list is null
+            .count { it.txnType == txn}
     }
 
 
@@ -211,7 +182,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
             }
-            //delete entery from db
         }
 
     }
@@ -222,26 +192,45 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun printReceipt(
         context: Context,
         customer: Boolean = false,
         isSummaryReport: Boolean = false,
         sharedViewModel: SharedViewModel,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
-    )
-    {
-        isPrinting.value = true
-        isCustomer.value = customer
-
-        GlobalScope.launch {
-            initPrinter(context,sharedViewModel ,isSummaryReport ,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+    ) {
+        viewModelScope.launch {
+            // Call getPrinterStatus with a callback
+            getPrinterStatus(objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
-                    isPrinting.value = false
+                    val subtitleText = when (result) {
+                        -1 -> context.resources.getString(R.string.printer_out_of_paper) // Example error for result -1
+                        else -> context.resources.getString(R.string.printer_busy) // Default error for other cases
+                    }
+
+                    if (result != 0) {
+                        CustomDialogBuilder.composeAlertDialog(
+                            title = context.resources.getString(R.string.printer_error_title),
+                            subtitle = subtitleText // Dynamic subtitle based on result
+                        )
+                    } else {
+                        launch {
+                            try {
+                                initPrinter(context,sharedViewModel ,isSummaryReport ,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+                                    override fun onSuccess(result: Any?) {
+                                    }
+                                    override fun onFailure(exception: Exception) {
+                                    }
+                                })
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error during printer initialization: ${e.message}")
+                            }
+                        }
+                    }
                 }
 
                 override fun onFailure(exception: Exception) {
-                    isPrinting.value = false
+                    Log.e(TAG, "Failed to get printer status: ${exception.message}")
                 }
             })
         }
@@ -257,22 +246,46 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     {
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Approved View Model to Printer Service Repository 1")
+                CustomDialogBuilder.composeProgressDialog(
+                    title = context.resources.getString(R.string.printing),
+                    subtitle = context.resources.getString(R.string.plz_wait)
+                )
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
                 if(isSummaryReport) {
                     addDetailedReceipt(
+                        sharedViewModel,
+                        context,
                         objRootAppPaymentDetail,
                         transactionList.value,
-                        iPrinterResultProviderListener
+                        object : IPrinterResultProviderListener {
+                            override fun onSuccess(result: Any?) {
+                                if(result == true)
+                                {
+                                    CustomDialogBuilder.hideProgress()
+                                }
+                            }
+                            override fun onFailure(exception: Exception) {
+
+                            }
+                        }
                     )
                 }
                 else
                 {
-                    addReceiptDetails(sharedViewModel,objRootAppPaymentDetail,iPrinterResultProviderListener)
+                    addReceiptDetails(context,sharedViewModel,objRootAppPaymentDetail,object : IPrinterResultProviderListener{
+                        override fun onSuccess(result: Any?) {
+                            if(result == true)
+                            {
+                                CustomDialogBuilder.hideProgress()
+                            }
+                        }
+                        override fun onFailure(exception: Exception) {
+
+                        }
+                    })
                 }
-                Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }
@@ -281,64 +294,78 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
 
-    suspend fun addReceiptDetails(sharedViewModel: SharedViewModel,objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener)
-    {
-        // Create an instance of ReceiptBuilder
+    suspend fun addReceiptDetails(
+        context: Context,
+        sharedViewModel: SharedViewModel,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    ) {
         val receiptBuilder = ReceiptBuilder()
+        withContext(Dispatchers.IO) {
+            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+            )
+            val summaryReport = receiptBuilder.createSummaryReport(context,sharedViewModel, paymentServiceTxnDetails)
 
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-
-        // Generate the receipt
-        // Generate the summary report using ReceiptBuilder
-        val summaryReport = receiptBuilder.createSummaryReport(sharedViewModel,paymentServiceTxnDetails)
-
-        // Create separate lists for label, value, and description
-        val labelList: List<String> = summaryReport.summaryFields.map { it.first }
-        val valueList: List<String> = summaryReport.summaryFields.map { it.second }
-        val descriptionList: List<String> = summaryReport.summaryFields.map { it.third }
-
-        // Pass the receipt details to the PrinterServiceRepository
-        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(labelList,valueList,descriptionList,iPrinterResultProviderListener)
+            val labelList: List<String> = summaryReport.summaryFields.map { it.first }
+            val valueList: List<String> = summaryReport.summaryFields.map { it.second }
+            val descriptionList: List<String> = summaryReport.summaryFields.map { it.third }
+            PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
+                labelList,
+                valueList,
+                descriptionList,
+                iPrinterResultProviderListener
+            )
+        }
     }
 
     suspend fun addDetailedReceipt(
+        sharedViewModel: SharedViewModel,
+        context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         transactionList: List<ObjRootAppPaymentDetails>, // Assuming this is the input type
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
-        // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
-
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-
-        // Map ObjRootAppPaymentDetails to TransactionDetails
-        val transactionDetailsList = transactionList.map { paymentDetail ->
-            // Create TransactionDetails based on ObjRootAppPaymentDetails
-            ReceiptBuilder.TransactionDetails(
-                TxnType = paymentDetail.txnType.toString(), // Replace with actual property
-                Status = paymentDetail.txnStatus.toString(), // Replace with actual property
-                InvoiceNo = paymentDetail.invoiceNo.toString(),
-                AuthCode = paymentDetail.hostAuthCode.toString(),
-                txnAmount = paymentDetail.txnAmount.toString(),
-                ttlAmount = paymentDetail.ttlAmount.toString(),
-                timedate = paymentDetail.dateTime.toString()
+        withContext(Dispatchers.IO) {
+            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+            )
+            val transactionDetailsList = transactionList.map { paymentDetail ->
+                ReceiptBuilder.TransactionDetails(
+                    TxnType = paymentDetail.txnType.toString(), // Replace with actual property
+                    Status = paymentDetail.txnStatus.toString(), // Replace with actual property
+                    InvoiceNo = paymentDetail.invoiceNo.toString(),
+                    AuthCode = paymentDetail.hostAuthCode.toString(),
+                    txnAmount = paymentDetail.txnAmount.toString(),
+                    ttlAmount = paymentDetail.ttlAmount.toString(),
+                    timedate = paymentDetail.dateTime.toString()
+                )
+            }
+            val detailedReport = receiptBuilder.createDetailReport(context,sharedViewModel,paymentServiceTxnDetails, transactionDetailsList)
+            val labelList: List<String> = detailedReport.detailFields.map { it.first }
+            val valueList: List<String> = detailedReport.detailFields.map { it.second }
+            val descriptionList: List<String> = detailedReport.detailFields.map { it.third }
+            PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
+                labelList,
+                valueList,
+                descriptionList,
+                iPrinterResultProviderListener
             )
         }
+    }
 
-        // Generate the receipt
-        val detailedReport = receiptBuilder.createDetailReport(paymentServiceTxnDetails, transactionDetailsList)
+    suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
+        try {
 
-        // Create separate lists for label, value, and description
-        val labelList: List<String> = detailedReport.detailFields.map { it.first }
-        val valueList: List<String> = detailedReport.detailFields.map { it.second }
-        val descriptionList: List<String> = detailedReport.detailFields.map { it.third }
+            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+            )
+            PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
 
-        // Pass the receipt details to the PrinterServiceRepository
-        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(labelList, valueList, descriptionList, iPrinterResultProviderListener)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get printer status: ${e.message}")
+        }
     }
 
     override fun onDisplayProgress(
@@ -350,13 +377,4 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 
-    fun resetTransactionList()
-    {
-        viewModelScope.launch {
-        if (isFiltered) {
-            fetchTransactions() // Re-fetch the full transaction list from the repository
-            isFiltered = false
-            }
-        }
-    }
 }
