@@ -10,7 +10,7 @@ class TlvUtils {
     @OptIn(ExperimentalStdlibApi::class)
     fun addTagValAscii(tag: String, value: String?, minLen: Int=0, maxLen: Int=255) : TlvUtils {
         try {
-            value?.padEnd(minLen)?.toByteArray()?.toHexString()?.take(maxLen)?.let { tlvMap[tag.uppercase()] = it.uppercase() }
+            value?.padEnd(minLen)?.toByteArray()?.toHexString()?.take(maxLen*2)?.let { tlvMap[tag.uppercase()] = it.uppercase() }
         }catch (exception : Exception)
         {
             Log.e(TAG_TLV_UTILS, ""+exception.message)
@@ -23,7 +23,7 @@ class TlvUtils {
         try {
             value?.let {
                 var hexBytes = (if(it.length % 2 == 0) it else "${it}F").hexToByteArray()
-                var hexString = hexBytes.toHexString().padStart(minLen*2, '0').take(maxLen)
+                var hexString = hexBytes.toHexString().padStart(minLen*2, '0').take(maxLen*2)
                 tlvMap[tag.uppercase()] = hexString.uppercase()
             }
         }catch (exception : Exception)

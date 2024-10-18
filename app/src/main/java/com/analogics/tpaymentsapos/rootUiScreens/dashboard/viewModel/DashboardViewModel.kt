@@ -14,6 +14,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
@@ -288,6 +289,10 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             viewModelScope.launch {
                 emvServiceRepository.initPaymentSDK(
+                    termConfig = TermConfig(
+                        terminalIdentifier = sharedViewModel.objPosConfig?.terminalId,
+                        merchantIdentifier = sharedViewModel.objPosConfig?.merchantId
+                    ),
                     aidConfig = readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH),
                     capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),
                     iEmvServiceResponseListener =  object :

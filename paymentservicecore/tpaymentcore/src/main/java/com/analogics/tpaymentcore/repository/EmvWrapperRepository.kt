@@ -33,12 +33,12 @@ import kotlin.toString
 
 class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
-    override fun initializeSdk(aidConfig : AidConfig?, capKeys: List<CAPKey>?) {
-        Thread {
-            var result = true
+
+        fun overrideTerminalConfig(aidConfig: AidConfig?) : Boolean
+        {
+            var result = false
             try {
-                aidConfig?.let { result = result && initAidConfig(it) }
-                capKeys?.let { result = result && initCAPKeys(it) }
+
                 var termTlvParams = TlvUtils()
                     .addTagValAscii(EmvConstants.EMV_TAG_MERCH_ID, aidConfig?.merchantIdentifier,15,15)
                     .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier,8,8)
@@ -56,12 +56,26 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_VELOCITY_CHECK, aidConfig?.supportVelocityCheck)
                     .toTlvString()
 
-                EmvNfcKernelApi.getInstance().updateTerminalParamters(
+                result = EmvNfcKernelApi.getInstance().updateTerminalParamters(
                     ContantPara.CardSlot.UNKNOWN,
                     termTlvParams
                 )
+                Log.d("EMV_APP", "TermConfigOverride: $termTlvParams")
+            }catch (exception : Exception)
+            {
+                Log.e("EMV_APP", exception.message.toString())
+            }
 
-                Log.d("EMV_APP", "termTlvParams: $termTlvParams")
+            return result
+        }
+
+    override fun initializeSdk(aidConfig : AidConfig?, capKeys: List<CAPKey>?) {
+        Thread {
+            var result = true
+            try {
+                aidConfig?.let { result = result && initAidConfig(it) && overrideTerminalConfig(it) }
+                capKeys?.let { result = result && initCAPKeys(it) }
+
 /*
                 "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
 
