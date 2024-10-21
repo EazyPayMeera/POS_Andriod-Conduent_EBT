@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,12 +14,14 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +35,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import com.analogics.tpaymentsapos.R
 
 @Composable
 fun ReceiptDetailsView(navHostController: NavHostController) {
@@ -57,10 +61,12 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
         )
     }
 
+    val configChanged = remember { mutableStateOf(false) }
+
     Log.d("ReceiptDetailsView", "Header 1 Value: ${sharedViewModel.objPosConfig?.header1}")
 
     Column {
-        CommonTopAppBar(onBackButtonClick = { navHostController.popBackStack() })
+        CommonTopAppBar(title = stringResource(id = R.string.receipt_details),onBackButtonClick = { navHostController.popBackStack() })
 
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium),
@@ -71,7 +77,7 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
-                TextView(
+                /*TextView(
                     text = "Headers & Footers",
                     fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
@@ -79,7 +85,7 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                     modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold
-                )
+                )*/
 
                 // LazyColumn to display headers and footers
                 LazyColumn {
@@ -94,6 +100,7 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                             label = label,
                             value = currentValue.value,
                             onValueChange = { newValue ->
+                                configChanged.value = true
                                 currentValue.value = newValue
                                 if (isHeader) {
                                     viewModel.updateHeader(index, newValue)
@@ -115,8 +122,10 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                             OkButton(
                                 onClick = {
                                     viewModel.onSave(navHostController, sharedViewModel)
+                                    configChanged.value = false
                                 },
-                                title = "SAVE"
+                                title = stringResource(id = R.string.save_btn),
+                                enabled = configChanged.value
                             )
                         }
                     }
@@ -135,31 +144,34 @@ fun HeaderFooterRow(label: String, value: String, onValueChange: (String) -> Uni
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+            .fillMaxHeight()
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        TextView(
+        /*TextView(
             text = label,
             fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
             color = MaterialTheme.colorScheme.tertiary,
             maxLines = 1,
-            modifier = Modifier.padding(top = 15.dp),
-            textAlign = TextAlign.Start
-        )
+            //modifier = Modifier.padding(top = 15.dp),
+            textAlign = TextAlign.Start,
+
+        )*/
 
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
-                .padding(start = MaterialTheme.dimens.DP_20_CompactMedium)
-                .height(MaterialTheme.dimens.DP_50_CompactMedium)
-                .fillMaxWidth(),
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                //.padding(MaterialTheme.dimens.DP_5_CompactMedium)
+                //.height(MaterialTheme.dimens.DP_50_CompactMedium)
+                .fillMaxWidth().fillMaxHeight(),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.tertiary
             ),
-            placeholder = {},
+            placeholder = {Text(label,modifier = Modifier.fillMaxWidth() ,textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSecondary)},
             singleLine = true
         )
     }

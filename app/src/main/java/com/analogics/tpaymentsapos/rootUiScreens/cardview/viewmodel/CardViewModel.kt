@@ -5,13 +5,21 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.model.emv.CardCheckMode
+import com.analogics.paymentservicecore.model.emv.TransConfig
+import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BaseConstant
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -32,9 +40,37 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
-    fun startPayment(context: Context, navHostController: NavHostController) {
+    fun onUpiClick(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems. BarcodeScreen.route)
         viewModelScope.launch {
-            emvServiceRepository.startPayment(context, object :
+            emvServiceRepository.abortPayment()
+        }
+    }
+
+    fun onCancelClick(navHostController: NavHostController) {
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+        viewModelScope.launch {
+            emvServiceRepository.abortPayment()
+        }
+    }
+
+    fun startPayment(
+        context: Context,
+        objRootAppPaymentDetails: ObjRootAppPaymentDetails,
+        navHostController: NavHostController
+    ) {
+        viewModelScope.launch {
+            emvServiceRepository.startPayment(context,
+                transConfig = TransConfig(
+                    amount = objRootAppPaymentDetails.ttlAmount.toDecimalFormat(),
+                    cashbackAmount = objRootAppPaymentDetails.cashback.toDecimalFormat(),
+                    currencyCode = objRootAppPaymentDetails.txnCurrencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
+                    transactionType = objRootAppPaymentDetails.txnType?.toEmvTransType().toString(),
+                    cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
+                    cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
+                    supportDRL = false
+                ),
+                object :
                 IEmvServiceResponseListener {
                 override fun onEmvServiceResponse(response: Any) {
                     if (response == true)
@@ -51,7 +87,6 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                 ) {
                     CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
                 }
-
             })
         }
     }

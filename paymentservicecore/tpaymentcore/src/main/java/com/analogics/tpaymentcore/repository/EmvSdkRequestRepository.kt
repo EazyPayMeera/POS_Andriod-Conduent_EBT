@@ -6,6 +6,7 @@ import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListe
 import com.analogics.tpaymentcore.model.emv.AidConfig
 import com.analogics.tpaymentcore.model.emv.CAPKey
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
+import com.analogics.tpaymentcore.model.emv.TransConfig
 import javax.inject.Inject
 import kotlin.toString
 
@@ -23,10 +24,19 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
     }
 
     override fun startPayment(
-        context: Context
+        context: Context,
+        transConfig: TransConfig?
     ) {
         try {
-            EmvWrapperRepository.startPayment(context,iEmvSdkResponseListener);
+            EmvWrapperRepository.startPayment(context,transConfig,iEmvSdkResponseListener);
+        } catch (exception: Exception) {
+            iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
+        }
+    }
+
+    override fun abortPayment() {
+        try {
+            EmvWrapperRepository.abortPayment()
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }

@@ -191,7 +191,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                         Button(
-                            onClick = { navHostController.navigate(AppNavigationItems. BarcodeScreen.route) }, // Show QR code dialog on button click
+                            onClick = { viewModel.onUpiClick(navHostController) }, // Show QR code dialog on button click
                             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                             modifier = Modifier
@@ -205,33 +205,18 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                 modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium)
                             )
                         }
-
-                        /*Box(
-                            modifier = Modifier
-                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                                .align(Alignment.CenterHorizontally),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            OkButton(
-                                onClick = {
-                                    navHostController.navigateAndClean(AppNavigationItems.DashboardScreen.route)
-                                },
-                                title = stringResource(id = R.string.cancel),
-                                maxsizebutton = false
-                            )
-                        }*/
                     }
                 }
             }
         }
     }
 
-    FooterButtons(stringResource(id = R.string.cancel),{navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)})
+    FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)})
 
     LaunchedEffect(Unit) {
-        viewModel.startPayment(context, navHostController)
+        viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-        sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.BatchId
+        sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.batchId
       //  viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
         //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
     }

@@ -8,10 +8,14 @@ import android.os.Bundle
 import android.os.IInputActionListener
 import android.text.TextUtils
 import android.util.Log
+import com.analogics.paymentservicecore.constants.EmvConstants
 import com.analogics.tpaymentcore.listener.requestListener.IEmvWrapperRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.AidConfig
 import com.analogics.tpaymentcore.model.emv.CAPKey
+import com.analogics.tpaymentcore.model.emv.CardCheckMode
+import com.analogics.tpaymentcore.model.emv.TransConfig
+import com.analogics.tpaymentcore.utils.TlvUtils
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -31,17 +35,54 @@ import kotlin.toString
 
 class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
+
+        fun overrideTerminalConfig(aidConfig: AidConfig?) : Boolean
+        {
+            var result = false
+            try {
+
+                var termTlvParams = TlvUtils()
+                    .addTagValAscii(EmvConstants.EMV_TAG_MERCH_ID, aidConfig?.merchantIdentifier,15,15)
+                    .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier,8,8)
+                    .addTagValAscii(EmvConstants.EMV_TAG_MERCH_NAME_LOC, aidConfig?.merchantNameLocation,0,40)
+                    .addTagValHex(EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE, aidConfig?.merchantCategoryCode,2,2)
+                    .addTagValHex(EmvConstants.EMV_TAG_IFD_SERIAL_NO, aidConfig?.ifdSerialNumber,8,8)
+                    .addTagValHex(EmvConstants.EMV_TAG_TERM_CAP, aidConfig?.terminalCapabilities,3,3)
+                    .addTagValHex(EmvConstants.EMV_TAG_ADDL_TERM_CAP, aidConfig?.addlTerminalCapabilities,5,5)
+                    .addTagValHex(EmvConstants.EMV_TAG_TERM_COUNTRY_CODE, aidConfig?.terminalCountryCode,2,2)
+                    .addTagValHex(EmvConstants.EMV_TAG_TERM_TYPE, aidConfig?.terminalType,1,1)
+                    .addTagValHex(EmvConstants.EMV_TAG_TRANS_CURRENCY_EXPONENT, aidConfig?.currencyExponent,1,1)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_RANDOM_TRANS, aidConfig?.enableRandomTrans)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_EXCEP_FILE_CHECK, aidConfig?.supportExceptionFile)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_SM, aidConfig?.supportSM)
+                    .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_VELOCITY_CHECK, aidConfig?.supportVelocityCheck)
+                    .toTlvString()
+
+                result = EmvNfcKernelApi.getInstance().updateTerminalParamters(
+                    ContantPara.CardSlot.UNKNOWN,
+                    termTlvParams
+                )
+                Log.d("EMV_APP", "TermConfigOverride: $termTlvParams")
+            }catch (exception : Exception)
+            {
+                Log.e("EMV_APP", exception.message.toString())
+            }
+
+            return result
+        }
+
     override fun initializeSdk(aidConfig : AidConfig?, capKeys: List<CAPKey>?) {
         Thread {
             var result = true
             try {
-                aidConfig?.let { result = result && initAidConfig(it) }
+                aidConfig?.let { result = result && initAidConfig(it) && overrideTerminalConfig(it) }
                 capKeys?.let { result = result && initCAPKeys(it) }
 
-                EmvNfcKernelApi.getInstance().updateTerminalParamters(
-                    ContantPara.CardSlot.ICC,
-                    "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
-                )
+/*
+                "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
+
+                TlvUtils().parseTlv("9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100")
+*/
                 when(result) {
                     true->
                         iEmvSdkResponseListener.onEmvSdkResponse("SUCCESS")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
@@ -56,31 +97,42 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
+        var thread : Thread? = null
 
-        fun startPayment(context: Context, iEmvSdkResponseListener: IEmvSdkResponseListener) {
-            Thread {
+        fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
+            thread = Thread {
                 try {
                     this.iEmvSdkResponseListener = iEmvSdkResponseListener
                     val data = Hashtable<String, Any>()
-                    data["checkCardMode"] = ContantPara.CheckCardMode.INSERT_OR_TAP //
-                    data["currencyCode"] = "682" //682
-                    data["emvOption"] = ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
-                    data["amount"] = "0.01"
-                    data["cashbackAmount"] = "0"
-                    data["checkCardTimeout"] = "30" // Check Card time out .Second
-                    data["transactionType"] = "00" //00-goods 01-cash 09-cashback 20-refund
-                    data["isEnterAmtAfterReadRecord"] = false
-                    data["FallbackSwitch"] = "0" //0- close fallback 1-open fallback
-                    data["supportDRL"] = false // support Visa DRL?
+                    transConfig?.let {
+                        it.amount?.let { data["amount"] = it }
+                        it.cashbackAmount?.let { data["cashbackAmount"] = it }
+                        it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
+                        it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
+                        (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.value }
+                        it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
+                        it.enableBeeper?.let { data["enableBeeper"] = it }
+                        it.supportFallback?.let { if(it == true) data["FallbackSwitch"] = "1" else data["FallbackSwitch"] = "0"}
+                        it.supportDRL?.let { data["supportDRL"] = it }
+                        data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
+                        data["isEnterAmtAfterReadRecord"] = false
+                    }
 
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
                     EmvNfcKernelApi.getInstance().startKernel(data)
-                    //EmvNfcKernelApi.getInstance().getEMVLibVers(ContantPara.CardSlot.ICC)
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    this.iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
                 }
-            }.start()
+            }
+            thread?.start()
+        }
+
+        fun abortPayment()
+        {
+            thread?.interrupt()
+            EmvNfcKernelApi.getInstance().abortKernel()
         }
 
         override fun onRequestSetAmount() {

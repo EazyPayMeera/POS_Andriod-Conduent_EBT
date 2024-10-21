@@ -102,7 +102,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
             isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
+            onCheckedChange = { navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) },
             isArrow = true,
             onArrowChange = {navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)}
         ),

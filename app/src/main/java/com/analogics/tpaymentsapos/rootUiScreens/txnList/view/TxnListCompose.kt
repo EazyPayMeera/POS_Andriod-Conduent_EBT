@@ -465,7 +465,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                     }
                     else
                     {
-                        sharedViewModel.objPosConfig?.BatchId?.let {
+                        sharedViewModel.objPosConfig?.batchId?.let {
                             Text(
                                 text = it,
                                 style = MaterialTheme.typography.caption,

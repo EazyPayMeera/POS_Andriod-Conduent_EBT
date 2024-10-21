@@ -51,7 +51,7 @@ fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol()
         val dAmount: Double = amount.toDoubleOrNull()?:0.00
         val currency = symbol?.get()?:""
         val separator : String = if(withSeparator) "," else ""
-        val spaceChar : String = if(symbol?.noSpace==true) "" else " "
+        val spaceChar : String = if(symbol?.noSpace==true || symbol?.type==Symbol.Type.NONE) "" else " "
         return when(symbol?.position) {
             Symbol.Position.START -> "$currency$spaceChar%${separator}.${decimalPlaces}f".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
             Symbol.Position.END -> "%.${decimalPlaces}f$spaceChar$currency".format(Locale.ENGLISH, dAmount / 10.0.pow(decimalPlaces))
@@ -61,6 +61,11 @@ fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol()
         AppLogger.e(AppLogger.MODULE.APP_UI, e.message.toString())
     }
     return ""
+}
+
+fun Double?.toDecimalFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(type = Symbol.Type.NONE), withSeparator: Boolean = false): String
+{
+    return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }
 
 fun Double?.toAmountFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String

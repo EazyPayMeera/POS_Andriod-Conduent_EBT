@@ -137,6 +137,7 @@
     <string name="enable_tipping">Enable Tipping</string>
     <string name="taxes">Taxes</string>
     <string name="receipt_details">Receipt Details</string>
+    <string name="save_btn">SAVE</string>
     <string name="adjust_per">--------Adjust %--------</string>
 	
     <string name="is_correct">Is this information correct?</string>
