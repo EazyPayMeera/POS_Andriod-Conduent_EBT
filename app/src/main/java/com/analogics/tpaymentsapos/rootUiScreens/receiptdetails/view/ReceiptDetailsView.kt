@@ -88,7 +88,7 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                     items(headerFooterPairs.size) { index ->
                         val isHeader = index < headerValues.size
                         val currentValue = if (isHeader) headerValues[index] else footerValues[index - headerValues.size]
-                        val label = if (isHeader) "Header ${index + 1}" else "Footer ${index - headerValues.size + 1}"
+                        val label = if (isHeader) "Header ${index + 1}" else "Footer  ${index - headerValues.size + 1}"
 
                         HeaderFooterRow(
                             label = label,

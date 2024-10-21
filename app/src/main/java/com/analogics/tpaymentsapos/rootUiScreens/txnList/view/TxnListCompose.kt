@@ -545,17 +545,17 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                 .setSubtitle("Are you sure?")
                 .setSmallText("You want to close the Batch")
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
-                .setCancelButtonText("Confirm")
-                .setConfirmButtonText("Cancel")
+                .setCancelButtonText("Yes")
+                .setConfirmButtonText("No")
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                    navHostController.navigate(AppNavigationItems.TxnListScreen.route)
                 }
                 .setOnConfirmAction {
-                    viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                    navHostController.navigate(AppNavigationItems.TxnListScreen.route)
                 }
                 .setShowButtons(true)
                 .setAutoOff(false)
