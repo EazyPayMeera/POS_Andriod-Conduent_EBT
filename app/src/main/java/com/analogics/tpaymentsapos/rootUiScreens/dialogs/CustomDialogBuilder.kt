@@ -113,8 +113,8 @@ class CustomDialogBuilder private constructor() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .wrapContentHeight(), // Wraps content height
-                                    backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                                    shape = RoundedCornerShape(0.dp),
+                                    backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary, // Replace with any color you want
+                                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_0_CompactMedium),
                                 ) {
                                     Column(
                                         verticalArrangement = Arrangement.Center,
@@ -361,7 +361,7 @@ class CustomDialogBuilder private constructor() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(), // Wraps content height
-                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
+                        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary, // Replace with any color you want
                         shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium),
                     ) {
                         Column {

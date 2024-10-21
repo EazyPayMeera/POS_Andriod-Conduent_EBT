@@ -56,10 +56,12 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -867,6 +869,34 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
 }
 
 @Composable
+fun ImageViewColor(
+    imageId: Int,
+    size: Dp,
+    shape: Shape,
+    alignment: Alignment,
+    contentDescription: String,
+    tint: Color? = null, // Add tint parameter with optional color
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop // Optional content scale
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(shape),
+        contentAlignment = alignment
+    ) {
+        androidx.compose.foundation.Image(
+            painter = painterResource(id = imageId),
+            contentDescription = contentDescription,
+            colorFilter = tint?.let { ColorFilter.tint(it) }, // Apply tint if provided
+            contentScale = contentScale,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+    }
+}
+
+@Composable
 fun ImageView(
     imageId: Int,
     size: Dp = MaterialTheme.dimens.DP_70_CompactMedium,
@@ -890,6 +920,9 @@ fun ImageView(
         )
     }
 }
+
+
+
 val passwordTransform = object : PasswordTransformationMethod() {
     override fun getTransformation(source: CharSequence, view: View?): CharSequence {
         val transformed = super.getTransformation(source, view)

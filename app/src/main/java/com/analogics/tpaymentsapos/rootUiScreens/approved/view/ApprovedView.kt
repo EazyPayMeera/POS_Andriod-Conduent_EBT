@@ -61,12 +61,13 @@ import kotlin.math.sin
 
 @Composable
 fun CircularMenu(
-    onMenuOptionClick: @Composable (String) -> Unit
+    onMenuOptionClick: (String) -> Unit
 ) {
     val menuOptions = listOf(
-        stringResource(id = R.string.cust_recp), stringResource(id = R.string.merchant_recp), stringResource(
-        id = R.string.e_recp
-    ))
+        stringResource(id = R.string.cust_recp),
+        stringResource(id = R.string.merchant_recp),
+        stringResource(id = R.string.e_recp)
+    )
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -113,7 +114,7 @@ fun CircularMenu(
                         }
                     }
             ) {
-                TextView(
+                Text(
                     text = option,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
@@ -130,7 +131,7 @@ fun CircularMenu(
                 .shadow(
                     MaterialTheme.dimens.DP_4_CompactMedium,
                     shape = CircleShape
-                ) // Add shadow with circular shape
+                )
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
                     scope.launch {
@@ -143,7 +144,7 @@ fun CircularMenu(
                     expanded = !expanded
                 }
         ) {
-            TextView(
+            Text(
                 text = stringResource(id = R.string.print),
                 color = MaterialTheme.colorScheme.tertiary,
                 fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
@@ -153,6 +154,7 @@ fun CircularMenu(
         }
     }
 }
+
 
 
 

@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val OrangeThemeColor = Color(0xFFF7931E)
+val BlueThemeColor = Color(0xFF2196F3)
 val White = Color(0xFFF0EEEE)
 val OnPrimary = Color(0xFFFFFFFF)
 val PrimaryContainer = Color(0xFFCCCCCC)
@@ -25,3 +26,4 @@ val viewLineColor=Color(0XFFB3B3B3)
 val tipBgColor=Color(0XFFDADADA)
 val tipBColor =Color(0xFFF8F7F3)
 val BgColor = Color(0xFFFFFFFF)
+

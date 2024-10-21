@@ -44,7 +44,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
-import com.analogics.tpaymentsapos.ui.theme.dashboardOrangeColor
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.analogics.tpaymentsapos.ui.theme.tipBColor
 
@@ -152,7 +151,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT1 && isTipEnabled) {
-                                    dashboardOrangeColor
+                                    MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                                 },
@@ -175,7 +174,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT2 && isTipEnabled) {
-                                    dashboardOrangeColor
+                                    MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                                 },
@@ -199,7 +198,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT3 && isTipEnabled) {
-                                    dashboardOrangeColor
+                                    MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                                 },
@@ -222,7 +221,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = if (viewModel.selectedButton.value == TipButton.CUSTOM && isTipEnabled) {
-                                    dashboardOrangeColor
+                                    MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
                                 },
@@ -388,7 +387,7 @@ fun TransactionSummaryItem(
             Icon(
                 painter = painterResource(id = R.drawable.orange_bullet), // Replace with your orange bullet drawable resource
                 contentDescription = null,
-                tint = dashboardOrangeColor, // Adjust the color to match the bullet color
+                tint = MaterialTheme.colorScheme.primary, // Adjust the color to match the bullet color
                 modifier = Modifier
                     .size(MaterialTheme.dimens.DP_25_CompactMedium) // Adjust size as needed
                     .padding(end = MaterialTheme.dimens.DP_10_CompactMedium) // Spacing between bullet and text

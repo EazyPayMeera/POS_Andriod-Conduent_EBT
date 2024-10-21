@@ -35,6 +35,11 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: DeclineViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
 
+    // Resolve the string resources here in the composable context
+    val custRecp = stringResource(id = R.string.cust_recp)
+    val merchantRecp = stringResource(id = R.string.merchant_recp)
+    val eRecp = stringResource(id = R.string.e_recp)
+
     Column {
         // Top App Bar with back button
         CommonTopAppBar(
@@ -86,18 +91,18 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     CircularMenu(
                         onMenuOptionClick = { option ->
-                            when (option) {
-                                stringResource(id = R.string.cust_recp) -> {
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
-                                stringResource(id = R.string.merchant_recp) -> {
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
-                                stringResource(id = R.string.merchant_recp) -> {
 
+                            when (option) {
+                                custRecp -> {
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                                merchantRecp -> {
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                                eRecp -> {
+                                    // Handle e receipt click or any specific action here
                                 }
                             }
-                            navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                         }
                     )
                 }

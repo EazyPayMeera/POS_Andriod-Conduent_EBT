@@ -562,30 +562,30 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
         CustomDialogBuilder.ShowComposed()
         if(isAlertVisible)
         {
+            CustomDialogBuilder.create()
+                .setTitle(stringResource(id = R.string.print_dialogue))
+                .setSubtitle("")
+                .setSmallText(stringResource(id = R.string.which_report))
+                .setShowCloseButton(true) // Can set to false if you don't want the close button
+                .setCancelButtonText(stringResource(id = R.string.summary))
+                .setConfirmButtonText(stringResource(id = R.string.detail))
+                .setCancelable(true)
+                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
+                .setShowProgressIndicator(false)
+                .setOnCancelAction {
+                    viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                }
+                .setOnConfirmAction {
+                    viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                }
+                .setShowButtons(true)
+                .setAutoOff(false)
+                .setNavAction {
+                    navHostController.popBackStack()
+                }
+                .buildDialog(onClose = { isAlertVisible = false })
         }
-        CustomDialogBuilder.create()
-            .setTitle(stringResource(id = R.string.print_dialogue))
-            .setSubtitle("")
-            .setSmallText(stringResource(id = R.string.which_report))
-            .setShowCloseButton(true) // Can set to false if you don't want the close button
-            .setCancelButtonText(stringResource(id = R.string.summary))
-            .setConfirmButtonText(stringResource(id = R.string.detail))
-            .setCancelable(true)
-            .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-            .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
-            .setShowProgressIndicator(false)
-            .setOnCancelAction {
-                viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
-            }
-            .setOnConfirmAction {
-                viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
-            }
-            .setShowButtons(true)
-            .setAutoOff(false)
-            .setNavAction {
-                navHostController.popBackStack()
-            }
-            .buildDialog(onClose = { isAlertVisible = false })
     }
 }
 

@@ -23,7 +23,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = OrangeThemeColor,
+    primary = BlueThemeColor,
     onPrimary = OnPrimary,
     primaryContainer = PrimaryContainer,
     secondary = White,
@@ -105,3 +105,5 @@ fun TPaymentsAPOSTheme(
 val MaterialTheme.dimens
     @Composable
     get() = LocalAppDimens.current
+
+
