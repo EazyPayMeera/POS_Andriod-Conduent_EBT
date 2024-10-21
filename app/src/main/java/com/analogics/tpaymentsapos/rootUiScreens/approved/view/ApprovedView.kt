@@ -2,7 +2,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -62,7 +61,7 @@ import kotlin.math.sin
 
 @Composable
 fun CircularMenu(
-    onMenuOptionClick: (String) -> Unit
+    onMenuOptionClick: @Composable (String) -> Unit
 ) {
     val menuOptions = listOf(
         stringResource(id = R.string.cust_recp), stringResource(id = R.string.merchant_recp), stringResource(
@@ -264,10 +263,7 @@ fun ApprovedView(navHostController: NavHostController) {
                         onClick = {
                             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
                             sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
-                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
-                            //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
-                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),

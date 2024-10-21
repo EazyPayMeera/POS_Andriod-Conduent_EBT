@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.password.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -101,10 +100,12 @@ fun PasswordView(navHostController: NavHostController) {
 
         if (isDialogVisible) {
             CustomDialogBuilder.create()
-                .setTitle("Are you sure want to Cancel ?")
-                .setSubtitle("")
+                .setTitle(stringResource(id = R.string.cancel_dialogue))
+                .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
                 .setSmallText("")
                 .setShowCloseButton(false) // Can set to false if you don't want the close button
+                .setCancelButtonText(stringResource(id = R.string.yes))
+                .setConfirmButtonText(stringResource(id = R.string.no))
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
@@ -130,5 +131,4 @@ fun PasswordView(navHostController: NavHostController) {
     )
     sharedViewModel.objRootAppPaymentDetail = updatedDetails
 
-    Log.d("password1", sharedViewModel.objRootAppPaymentDetail.toString())
 }

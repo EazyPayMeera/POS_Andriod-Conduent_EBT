@@ -255,12 +255,12 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
 
         if (isDialogVisible) {
             CustomDialogBuilder.create()
-                .setTitle("Cancel ?")
-                .setSubtitle("Are you sure want to Cancel ?")
+                .setTitle(stringResource(id = R.string.cancel_dialogue))
+                .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
                 .setSmallText("")
                 .setShowCloseButton(false) // Can set to false if you don't want the close button
-                .setCancelButtonText("Confirm")
-                .setConfirmButtonText("Cancel")
+                .setCancelButtonText(stringResource(id = R.string.yes))
+                .setConfirmButtonText(stringResource(id = R.string.no))
                 .setCancelable(true)
                 .setAutoOff(false)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)

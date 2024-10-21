@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.sp
 
 data class Dimens(
     val extraSmall: Dp = 0.dp,
+    val DP_0_CompactMedium: Dp = 0.dp,
     val DP_1_CompactMedium: Dp = 0.dp,
     val DP_3_CompactMedium: Dp = 0.dp,
     val DP_4_CompactMedium: Dp = 0.dp,
@@ -26,8 +27,10 @@ data class Dimens(
     val DP_31_CompactMedium: Dp = 0.dp,
     val DP_34_CompactMedium: Dp = 0.dp,
     val DP_35_CompactMedium: Dp = 0.dp,
+    val DP_36_CompactMedium: Dp = 0.dp,
     val DP_65_CompactMedium: Dp = 0.dp,
     val DP_45_CompactMedium: Dp = 40.dp,
+    val DP_46_CompactMedium: Dp = 0.dp,
     val DP_48_CompactMedium: Dp = 0.dp,
     val DP_55_CompactMedium: Dp = 42.dp,
 
@@ -111,6 +114,7 @@ data class Dimens(
 )
 
 val CompactSmallDimens = Dimens(
+    DP_0_CompactMedium = 0.dp,
     DP_1_CompactMedium = 1.dp,
     DP_3_CompactMedium = 3.dp,
     DP_4_CompactMedium = 4.dp,
@@ -130,8 +134,10 @@ val CompactSmallDimens = Dimens(
     DP_31_CompactMedium = 31.dp,
     DP_34_CompactMedium = 34.dp,
     DP_35_CompactMedium = 25.dp,
+    DP_36_CompactMedium = 36.dp,
     DP_65_CompactMedium = 49.dp,
     DP_45_CompactMedium = 30.dp,
+    DP_46_CompactMedium = 46.dp,
     DP_55_CompactMedium = 45.dp,
     DP_2_CompactMedium = 2.dp,
 

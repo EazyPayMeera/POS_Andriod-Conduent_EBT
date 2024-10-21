@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +11,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -46,8 +44,8 @@ class AlertDialogBuilder {
     // Build the dialog
     @Composable
     fun build(
-        cancelButtonText: String = "Cancel", // Default text for Cancel button
-        okButtonText: String = "OK" // Default text for OK button
+        cancelButtonText: String = stringResource(id = R.string.cancel_btn), // Default text for Cancel button
+        okButtonText: String = stringResource(id = R.string.ok) // Default text for OK button
     ) {
             CustomAlertDialog(
                 title = title,
@@ -71,21 +69,21 @@ fun CustomAlertDialog(
     showCloseButton: Boolean,
     onDismissRequest: () -> Unit,
     onClose: () -> Unit,
-    cancelButtonText: String = "Cancel", // Default text for Cancel button
-    okButtonText: String = "OK" // Default text for OK button
+    cancelButtonText: String = stringResource(id = R.string.cancel_btn), // Default text for Cancel button
+    okButtonText: String = stringResource(id = R.string.ok) // Default text for OK button
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
         ) {
             GenericCard(
                 modifier = Modifier
                     .wrapContentHeight() // Wraps content height
                     .fillMaxWidth()
                     .align(Alignment.Center),
-                shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -101,23 +99,23 @@ fun CustomAlertDialog(
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_30_CompactMedium)
+                            modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
                             // Title
                             Text(text = title, style = MaterialTheme.typography.titleLarge)
                         }
                     }
                     // Dialog Content
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
                     Text(text = subtitle, style = MaterialTheme.typography.bodyMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
                     Text(text = smallText, style = MaterialTheme.typography.bodySmall)
                     // Action Buttons
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(MaterialTheme.dimens.DP_21_CompactMedium),
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Button(
@@ -130,7 +128,7 @@ fun CustomAlertDialog(
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center // Center-align the text
                             ) // Use the passed text for Cancel button
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium))
                         Button(
                             modifier = Modifier.weight(1f), // Makes the button fill available space
                             onClick = { onClose() } // Handle OK button action

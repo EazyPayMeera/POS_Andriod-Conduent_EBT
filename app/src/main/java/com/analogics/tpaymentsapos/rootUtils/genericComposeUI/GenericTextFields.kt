@@ -76,7 +76,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.analogics.paymentservicecore.models.TxnType
@@ -246,10 +245,10 @@ fun CommonTopAppBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = "",
                         modifier = Modifier
                             .align(Alignment.Center) // Center the icon in the Box
-                            .size(24.dp) // Keep the icon size unchanged
+                            .size(MaterialTheme.dimens.DP_23_CompactMedium) // Keep the icon size unchanged
                     )
                 }
             }
@@ -299,7 +298,7 @@ fun OkButton(
 @Composable
 fun SettingsUpperSurface(
     modifier: Modifier = Modifier,
-    elevation: Dp = 0.dp,
+    elevation: Dp = MaterialTheme.dimens.DP_0_CompactMedium,
     color: Color = MaterialTheme.colorScheme.background,
     height: Dp, // Added customizable height parameter
     content: @Composable () -> Unit
@@ -324,7 +323,7 @@ fun SettingsUpperSurface(
 @Composable
 fun SettingsMiddleSurface(
     modifier: Modifier = Modifier,
-    elevation: Dp = 0.dp,
+    elevation: Dp = MaterialTheme.dimens.DP_0_CompactMedium,
     color: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit
 ) {
@@ -342,7 +341,7 @@ fun SettingsMiddleSurface(
 @Composable
 fun SettingsLowerSurface(
     modifier: Modifier = Modifier,
-    elevation: Dp = 0.dp,
+    elevation: Dp = MaterialTheme.dimens.DP_0_CompactMedium,
     color: Color = MaterialTheme.colorScheme.background,
     height: Dp, // Customizable height parameter
     bottomStartRadius: Dp = MaterialTheme.dimens.DP_24_CompactMedium,
@@ -593,7 +592,7 @@ fun FooterButtons(
                             .width(MaterialTheme.dimens.DP_145_CompactMedium)
                             .height(MaterialTheme.dimens.DP_48_CompactMedium)
                             .border(
-                                width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                                width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else MaterialTheme.dimens.DP_0_CompactMedium,
                                 color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
                                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                             ),
@@ -631,7 +630,7 @@ fun FooterButtons(
                             isSecondButtonPressed = true
                             secondButtonOnClick?.invoke()
                         }
-                        .padding(8.dp) // Increase padding to enlarge touchable area
+                        .padding(MaterialTheme.dimens.DP_20_CompactMedium) // Increase padding to enlarge touchable area
                         .shadow(
                             MaterialTheme.dimens.DP_4_CompactMedium,
                             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
@@ -650,7 +649,7 @@ fun FooterButtons(
                             .width(MaterialTheme.dimens.DP_145_CompactMedium)
                             .height(MaterialTheme.dimens.DP_48_CompactMedium)
                             .border(
-                                width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
+                                width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else MaterialTheme.dimens.DP_0_CompactMedium,
                                 color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
                                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
                             ),
@@ -803,10 +802,10 @@ fun AppHeader(
                 ) {
                     Image(
                         painter = painterResource(id = icon1),
-                        contentDescription = "icon1",
+                        contentDescription = "",
                         modifier = Modifier
                             .align(Alignment.Center) // Center the icon in the Box
-                            .size(24.dp) // Set the icon size
+                            .size(MaterialTheme.dimens.DP_23_CompactMedium) // Set the icon size
                     )
                 }
             }
@@ -820,10 +819,10 @@ fun AppHeader(
                 ) {
                     Image(
                         painter = painterResource(id = icon2),
-                        contentDescription = "icon2",
+                        contentDescription = "",
                         modifier = Modifier
                             .align(Alignment.Center) // Center the icon in the Box
-                            .size(24.dp) // Set the icon size
+                            .size(MaterialTheme.dimens.DP_23_CompactMedium) // Set the icon size
                     )
                 }
             }

@@ -41,7 +41,6 @@
     <string name="purchase_amt">Enter the Transaction Amount</string>
     <string name="purchase">Purchase</string>
     <string name="pre_auth">Pre-Auth</string>
-    <string name="transactions">Transactions</string>
     <string name="void_trans">Void</string>
     <string name="enter_Pin">Please Enter The Pin</string>
     <string name="pin">Pin</string>
@@ -57,19 +56,22 @@
     <string name="chip_detect">Chip Detected</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
+    <string name="cancel_dialogue">Cancel ?</string>
     <string name="yes">YES</string>
-    <string name="add_tip">Add Tip:</string>
+    <string name="add_tip">Add Tip:</string> Select an application id
     <string name="txn_sum">Transaction Summary:</string>
     <string name="total_amt">Total Amount:</string>
     <string name="refund_amt_data">Refund Amount:</string>
     <string name="custom">Custom</string>
     <string name="end_shift_title">End your shift?</string>
     <string name="end_shift_message">Are you sure you want to\n       end your shift?</string>
+    <string name="dialogue_cancel_request">Are you sure want to Cancel ?</string>
     <string name="print_shift_report">Print Shift Report</string>
     <string name="print_last_receipt">Print Last Receipt</string>
     <string name="decline">Decline</string>
     <string name="decline_u">DECLINE</string>
     <string name="done">Done</string>
+    <string name="open">Open</string>
     <string name="training">Training</string>
     <string name="printing">Printing</string>
     <string name="merchant_recp">Merchant Receipt</string>
@@ -141,6 +143,32 @@
     <string name="adjust_per">--------Adjust %--------</string>
 	
     <string name="is_correct">Is this information correct?</string>
+
+    <!-- Custom Dialogue Builder -->
+    <string name="sel_app_id">Select an application id</string>
+
+    <!-- Transaction Details Screen -->
+    <string name="transactions">Transactions</string>
+
+    <!-- Transaction List Screen -->
+    <string name="select_date">Select Date</string>Filter by Batch Number
+    <string name="filter_by_batch">Filter by Batch Number</string>
+    <string name="empty_list">Transaction List is Empty</string>
+    <string name="sel_batch_id">Select the Batch Id</string>
+    <string name="to">To</string>
+    <string name="close_batch">Close Batch</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="are_you_sure">Are You Sure ? </string>
+    <string name="want_to_close_batch">You want to close the Batch</string>
+    <string name="print_dialogue">Print ?</string>
+    <string name="which_report">Which Report You want</string>
+    <string name="summary">Summary</string>
+    <string name="detail">Detail</string>
+
+
+    <!-- Sucess Screen -->
+    <string name="payment">Payment</string>
+    <string name="sucessful">Sucessful</string>
 	
 	<!-- Payment SDK Strings -->
     <string name="emv_sdk_init_title">Initialization</string>

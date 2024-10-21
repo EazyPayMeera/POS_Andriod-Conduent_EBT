@@ -173,12 +173,12 @@ fun InvoiceView(navHostController: NavHostController) {
 
     if (isDialogVisible) {
         CustomDialogBuilder.create()
-            .setTitle("Cancel ?")
-            .setSubtitle("Are you sure want to Cancel ?")
+            .setTitle(stringResource(id = R.string.cancel_dialogue))
+            .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
             .setSmallText("")
             .setShowCloseButton(false) // Can set to false if you don't want the close button
-            .setCancelButtonText("Confirm")
-            .setConfirmButtonText("Cancel")
+            .setCancelButtonText(stringResource(id = R.string.yes))
+            .setConfirmButtonText(stringResource(id = R.string.no))
             .setCancelable(true)
             .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
             .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
@@ -214,7 +214,6 @@ fun openScanner(context: Context, viewModel: InvoiceViewModel) {
             object : IScannerResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     if (result is String) {
-                        Log.d(TAG, "Scanner result: $result")
                         viewModel.updateInvoiceNo(result)
                     } else {
                         Log.d(TAG, "Scanner failed to return a string result")

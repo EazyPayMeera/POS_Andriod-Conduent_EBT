@@ -99,7 +99,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Leading image
                 Image(
                     painter = painterResource(id = R.drawable.password), // Replace with your image resource
-                    contentDescription = "Language Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // need to change here
                 )
 
@@ -143,7 +143,7 @@ fun SettingsView(navHostController: NavHostController) {
                 // Leading image
                 Image(
                     painter = painterResource(id = R.drawable.settings), // Replace with your image resource
-                    contentDescription = "Language Icon",
+                    contentDescription = "",
                     modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed Need to change here 24.dp
                 )
 
