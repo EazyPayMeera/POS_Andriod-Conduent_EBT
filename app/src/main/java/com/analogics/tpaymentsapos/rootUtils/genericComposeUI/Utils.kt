@@ -2,6 +2,9 @@
 
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.text.AnnotatedString
@@ -17,6 +20,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.google.gson.Gson
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -146,4 +150,25 @@ fun NavHostController.navigateAndClean(route: String) {
 
 fun navigateToDashboard(navHostController: NavHostController) {
     navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+}
+
+
+fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
+    var imageData: ByteArray? = null
+    try {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        imageData = baos.toByteArray()
+    } catch (e: Exception) {
+        // TODO: handle exception
+        e.printStackTrace()
+        return null
+    }
+    return imageData
+}
+
+fun getLogoBitmap(context: Context, id: Int): Bitmap {
+    val draw = context.resources.getDrawable(id) as BitmapDrawable
+    val bitmap = draw.bitmap
+    return bitmap
 }

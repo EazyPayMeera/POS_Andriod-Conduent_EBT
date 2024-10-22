@@ -73,6 +73,22 @@ object PrinterHandler : PrinterListener {
         }
     }
 
+
+    fun addImage(
+        format: Bundle,imageData: ByteArray,
+        listener: IPrinterHandlerListener
+    ) {
+        try {
+
+            Printer.getInstance().addImage(format,imageData)
+            Log.d(TAG, "Receipt details added successfully.")
+            listener.onPrinterRespHandler("SUCCESS")
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
+            listener.onPrinterRespHandler("FAILURE")
+        }
+    }
+
     fun addLeftCenterRightDetails(
         Transaction: List<String>,
         Count: List<String>,
