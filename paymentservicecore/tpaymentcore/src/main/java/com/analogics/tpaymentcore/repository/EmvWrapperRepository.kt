@@ -1,6 +1,7 @@
 package com.analogics.tpaymentcore.repository
 
 import android.content.Context
+import android.device.DeviceManager
 import android.device.SEManager
 import android.graphics.Color
 import android.os.Build
@@ -98,6 +99,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
         var thread : Thread? = null
+        var _amount : Long = 0L
+        var _cashbackAmount : Long = 0L
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
             thread = Thread {
@@ -105,8 +108,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     this.iEmvSdkResponseListener = iEmvSdkResponseListener
                     val data = Hashtable<String, Any>()
                     transConfig?.let {
-                        it.amount?.let { data["amount"] = it }
-                        it.cashbackAmount?.let { data["cashbackAmount"] = it }
+                        it.amount?.let { data["amount"] = it; _amount = it.toLongOrNull()?:0L }
+                        it.cashbackAmount?.let { data["cashbackAmount"] = it; _cashbackAmount = it.toLongOrNull()?:0L }
                         it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
                         it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
                         (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.value }
@@ -137,9 +140,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestSetAmount() {
             Log.d("EMV_APP", "Request Amount:")
-
-//            Log.e(TAG, TAG + "===onRequestSetAmount");
-            EmvNfcKernelApi.getInstance().setAmountEx(1L, 0L)
+            EmvNfcKernelApi.getInstance().setAmountEx(_amount, _cashbackAmount)
         }
 
         override fun onReturnCheckCardResult(
@@ -728,7 +729,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             param.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12") // "4,4");   //
             param.putString("title", "Security PINPAD")
             param.putString(
-                "message", "Please Enter PIN, \n $0.01"
+                "message", "Please Enter your PIN"
             ) // use your real amount
 
 /*            param.putBoolean("ShowLine", false)
