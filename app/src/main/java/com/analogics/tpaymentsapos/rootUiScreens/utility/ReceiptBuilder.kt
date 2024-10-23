@@ -41,7 +41,7 @@ class ReceiptBuilder {
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
                 addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT)
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
-                addField(" TRANSACTIONACCEPTED&LIABILITY" + " OFCARDHOLDERTOPAYIS" + " CONFIRMED", "", "", Alignment.CENTER)
+                addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER)
                 addField("BANK DISCLAIMER", "", "", Alignment.CENTER)
                 addField("******MERCHANT COPY******", "", "", Alignment.CENTER)
 
