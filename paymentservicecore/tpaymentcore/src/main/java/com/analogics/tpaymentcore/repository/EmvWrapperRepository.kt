@@ -148,8 +148,10 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         ) {
             Log.d("EMV_APP", "Check Card Result:" + p0.toString())
             Log.d("EMV_APP", "Check Card List:" + p1.toString())
+/*
             if (p0 == ContantPara.CheckCardResult.INSERTED_CARD)
                 iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Card Detected")
+*/
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
@@ -158,7 +160,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestPinEntry(p0: ContantPara.PinEntrySource?) {
             Log.d("EMV_APP", "Online PIN Prompt:" + p0.toString())
-            iEmvSdkResponseListener?.onEmvSdkDisplayMessage("")
             if (p0 == ContantPara.PinEntrySource.KEYPAD) {
                 emv_proc_onlinePin(true)
                 Log.i("EMV_APP", "MainActivity  emv_proc_onlinePin over")

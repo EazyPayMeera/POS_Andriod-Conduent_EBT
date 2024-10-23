@@ -45,6 +45,7 @@ sealed class EmvServiceResult(
             DEVICE_BUSY
     }
     enum class DisplayMsgId {
+        NONE,   /* Clear display */
 
         /* NFC Tip Messages */
         CARD_READ_OK,

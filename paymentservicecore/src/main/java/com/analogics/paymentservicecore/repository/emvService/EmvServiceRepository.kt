@@ -8,6 +8,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceRe
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.InitResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransStatus
@@ -60,6 +61,40 @@ class EmvServiceRepository @Inject constructor() :
         }
     }
 
+    fun sdkToEmvDisplayMsgId(value: EmvSdkResult.DisplayMsgId) : DisplayMsgId
+    {
+        return when (value) {
+            EmvSdkResult.DisplayMsgId.NONE -> DisplayMsgId.NONE
+            EmvSdkResult.DisplayMsgId.CARD_READ_OK -> DisplayMsgId.CARD_READ_OK
+            EmvSdkResult.DisplayMsgId.REMOVE_CARD -> DisplayMsgId.REMOVE_CARD
+            EmvSdkResult.DisplayMsgId.USE_CONTACT_IC_CARD -> DisplayMsgId.USE_CONTACT_IC_CARD
+            EmvSdkResult.DisplayMsgId.USE_MAG_STRIPE -> DisplayMsgId.USE_MAG_STRIPE
+            EmvSdkResult.DisplayMsgId.INSERT_SWIPE_OR_TRY_ANOTHER_CARD -> DisplayMsgId.INSERT_SWIPE_OR_TRY_ANOTHER_CARD
+            EmvSdkResult.DisplayMsgId.SEE_PHONE_AND_PRESENT_CARD_AGAIN -> DisplayMsgId.SEE_PHONE_AND_PRESENT_CARD_AGAIN
+            EmvSdkResult.DisplayMsgId.NEED_SIGNATURE -> DisplayMsgId.NEED_SIGNATURE
+            EmvSdkResult.DisplayMsgId.END_APPLICATION -> DisplayMsgId.END_APPLICATION
+            EmvSdkResult.DisplayMsgId.DISPLAY_BALANCE -> DisplayMsgId.DISPLAY_BALANCE
+            EmvSdkResult.DisplayMsgId.TAP_CARD_AGAIN -> DisplayMsgId.TAP_CARD_AGAIN
+            EmvSdkResult.DisplayMsgId.APP_BLOCKED -> DisplayMsgId.APP_BLOCKED
+            EmvSdkResult.DisplayMsgId.TERMINATED -> DisplayMsgId.TERMINATED
+
+            EmvSdkResult.DisplayMsgId.ERR_CARD_READ -> DisplayMsgId.ERR_CARD_READ
+            EmvSdkResult.DisplayMsgId.ERR_PROCESSING -> DisplayMsgId.ERR_PROCESSING
+            EmvSdkResult.DisplayMsgId.ERR_LOAD_CALLBACK -> DisplayMsgId.ERR_LOAD_CALLBACK
+            EmvSdkResult.DisplayMsgId.ERR_ICS_PARAM_NOT_FOUND -> DisplayMsgId.ERR_ICS_PARAM_NOT_FOUND
+            EmvSdkResult.DisplayMsgId.ERR_KERNEL -> DisplayMsgId.ERR_KERNEL
+            EmvSdkResult.DisplayMsgId.ERR_PIN_LENGTH -> DisplayMsgId.ERR_PIN_LENGTH
+            EmvSdkResult.DisplayMsgId.ERR_MULTI_CARD -> DisplayMsgId.ERR_MULTI_CARD
+            EmvSdkResult.DisplayMsgId.ERR_CHECK_CARD -> DisplayMsgId.ERR_CHECK_CARD
+            EmvSdkResult.DisplayMsgId.ERR_AID_PARAM_NOT_FIND -> DisplayMsgId.ERR_AID_PARAM_NOT_FIND
+            EmvSdkResult.DisplayMsgId.ERR_CAPK_PARAM_NOT_FIND -> DisplayMsgId.ERR_CAPK_PARAM_NOT_FIND
+            EmvSdkResult.DisplayMsgId.ERR_GET_KERNEL_DATA_FAILED -> DisplayMsgId.ERR_GET_KERNEL_DATA_FAILED
+            EmvSdkResult.DisplayMsgId.ERR_QPBOC_APPLICATION -> DisplayMsgId.ERR_QPBOC_APPLICATION
+            EmvSdkResult.DisplayMsgId.ERR_QPBOC_FDDA_FAILED -> DisplayMsgId.ERR_QPBOC_FDDA_FAILED
+            EmvSdkResult.DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS -> DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS
+        }
+    }
+
     fun sdkToEmvService(response: Any) : Any
     {
         return when(response) {
@@ -83,12 +118,11 @@ class EmvServiceRepository @Inject constructor() :
     }
 
     override fun onEmvSdkResponse(response: Any) {
-        iEmvServiceResponseListener.onEmvServiceDisplayProgress(false)
         iEmvServiceResponseListener.onEmvServiceResponse(sdkToEmvService(response))
     }
 
-    override fun onEmvSdkDisplayMessage(uiData: String?) {
-        iEmvServiceResponseListener.onEmvServiceDisplayProgress(!uiData.isNullOrBlank(), message = uiData)
+    override fun onEmvSdkDisplayMessage(displayMsgId: EmvSdkResult.DisplayMsgId) {
+        iEmvServiceResponseListener.onEmvServiceDisplayMessage(sdkToEmvDisplayMsgId(displayMsgId))
     }
 
     override fun initPaymentSDK(
@@ -179,7 +213,7 @@ class EmvServiceRepository @Inject constructor() :
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
-        iEmvServiceResponseListener.onEmvServiceDisplayProgress(false)
+        iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
 
         var sdkTransConfig : com.analogics.tpaymentcore.model.emv.TransConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
             ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(

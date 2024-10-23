@@ -74,9 +74,10 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         navHostController: NavHostController
     ) {
         viewModelScope.launch {
-            emvServiceRepository.startPayment(context,
+            emvServiceRepository.startPayment(
+                context = context,
                 transConfig = getTransConfig(objRootAppPaymentDetails),
-                object :
+                iEmvServiceResponseListener = object :
                 IEmvServiceResponseListener {
                 override fun onEmvServiceResponse(response: Any) {
                     if (response is EmvServiceResult &&
@@ -87,13 +88,10 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                         navigateToDeclinedScreen(navHostController)
                 }
 
-                override fun onEmvServiceDisplayProgress(
-                    show: Boolean,
-                    title: String?,
-                    subTitle: String?,
-                    message: String?
+                override fun onEmvServiceDisplayMessage(
+                    displayMsgId: EmvServiceResult.DisplayMsgId
                 ) {
-                    CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
+
                 }
             })
         }

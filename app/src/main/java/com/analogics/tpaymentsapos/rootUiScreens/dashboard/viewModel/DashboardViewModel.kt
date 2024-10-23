@@ -351,13 +351,10 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                        }
                     }
 
-                    override fun onEmvServiceDisplayProgress(
-                        show: Boolean,
-                        title: String?,
-                        subTitle: String?,
-                        message: String?
+                    override fun onEmvServiceDisplayMessage(
+                        displayMsgId: EmvServiceResult.DisplayMsgId
                     ) {
-                        CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
+                        //CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
                     }
                 })
             }

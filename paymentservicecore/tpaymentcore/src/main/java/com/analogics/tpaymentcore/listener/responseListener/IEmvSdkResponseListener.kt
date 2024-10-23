@@ -1,6 +1,8 @@
 package com.analogics.tpaymentcore.listener.responseListener
 
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult
+
 interface IEmvSdkResponseListener {
       fun onEmvSdkResponse(response: Any)
-      fun onEmvSdkDisplayMessage(uiData: String?)
+      fun onEmvSdkDisplayMessage(displayMsgId: EmvSdkResult.DisplayMsgId)
 }
