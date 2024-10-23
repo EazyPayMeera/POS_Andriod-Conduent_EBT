@@ -31,6 +31,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.receiptdetails.viewmodel.Receip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -72,6 +73,15 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
+                TextView(
+                    text = stringResource(id = R.string.header_footer),
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    1,
+                    Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                    textAlign = TextAlign.Center
+                )
                 LazyColumn {
                     // Iterate over headers and footers
                     val headerFooterPairs = headerValues + footerValues

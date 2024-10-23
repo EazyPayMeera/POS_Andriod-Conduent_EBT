@@ -127,6 +127,9 @@
     <string name="cgst_amt">CGST Amount:</string>
     <string name="igst_amt">IGST Amount:</string>
 
+    <!-- Transaction Receipt Details Screen -->
+    <string name="header_footer">Headers and Footers</string>
+
 
     <string name="auth_capture">Auth-Capture</string>
     <string name="settings">Settings</string>

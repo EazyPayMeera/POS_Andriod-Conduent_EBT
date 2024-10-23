@@ -23,7 +23,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = BlueThemeColor,
+    primary = OrangeThemeColor,
     onPrimary = OnPrimary,
     primaryContainer = PrimaryContainer,
     secondary = White,
