@@ -125,6 +125,16 @@ class Printer constructor() {
         mPrinter?.addTextLeft_Right(defaultFormat, textLeft, textRight)
     }
 
+    fun addRightLeftDetails(label: List<String>,description: List<String>)
+    {
+        for (i in label.indices) {
+            val leftText = label[i]
+            val rightText = description[i]
+            //Thread.sleep(200)
+            addTextLeft_Right(leftText, rightText)
+        }
+    }
+
     // Add Text On Left Center And Right Align
     fun addTextLeft_Center_Right(textLeft: String?, textCenter: String?, textRight: String?) {
         // Call the original method with default formatting
@@ -169,15 +179,23 @@ class Printer constructor() {
         mPrinter?.startPrint()
     }
 
-    fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>, alignments: List<Int>) {
+    fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>,descriptions: List<String>, alignments: List<Int>) {
         try {
 
             // Add each text to the printer with its corresponding alignment
             for (i in texts.indices) {
                 val text = texts[i]
                 val alignment = alignments[i]
-                //Thread.sleep(200)
-                addText(text, alignment)
+                val description = descriptions[i]
+
+                Log.d("PRINTING TAGS", "Printing Text: '$text', Alignment: $alignment, Description: '$description'")
+                if(alignment == -1) {
+                    addTextLeft_Right(text,description)
+                }
+                else
+                {
+                    addText(text, alignment)
+                }
             }
 
             // Print the QR code

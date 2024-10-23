@@ -71,7 +71,7 @@ fun TransactionListScreen(
     navHostController: NavHostController,
     viewModel: TxnViewModel = hiltViewModel()
 ) {
-    // Fetching transactions to display
+
     val transactions = viewModel.transactionList.collectAsState().value
     val batchId = viewModel.batchList.collectAsState().value
     val startDate = viewModel.startDateList.collectAsState().value
@@ -88,9 +88,7 @@ fun TransactionListScreen(
     var isBatchId by remember { mutableStateOf(false) }
 
     if (showDateTimePicker.value) {
-
-
-        Log.d("DateTimePicker", "Selected End Date: 1")
+        
         DateTimePickerDialog(
             onDismissRequest = { showDateTimePicker.value = false },
             onDateTimeSelected = { selectedDate ->
@@ -101,7 +99,6 @@ fun TransactionListScreen(
 
         if (isSelectingEndDate.value)
         {
-            Log.d("DateTimePicker", "Selected End Date: 2")
             DateTimePickerDialog(
                 onDismissRequest = { showDateTimePicker.value = false },
                 onDateTimeSelected = { selectedDate ->
@@ -141,7 +138,7 @@ fun TransactionListScreen(
                 start = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
                 end = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
                 bottom = androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium,
-                top = 8.dp
+                top = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium
             )
         ) {
             Column {
@@ -168,14 +165,14 @@ fun TransactionListScreen(
                             }
                         )
 
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium))
 
                         // Menu Trigger Icon for filters
                         Image(
                             painter = painterResource(id = R.drawable.filter_image),
-                            contentDescription = "Filter",
+                            contentDescription = "",
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium)
                                 .clickable {
                                     showMenu.value = true
                                 }
@@ -191,7 +188,7 @@ fun TransactionListScreen(
                                 showMenu.value = false
                                 showDateTimePicker.value = true // Show date picker
                             }) {
-                                Text("Select Date")
+                                Text(stringResource(id = R.string.select_date))
                             }
 
                             DropdownMenuItem(onClick = {
@@ -199,18 +196,18 @@ fun TransactionListScreen(
                                 BatchId.value = true
                                 isBatchId = true
                             }) {
-                                Text("Filter by Batch Number")
+                                Text(stringResource(id = R.string.filter_by_batch))
                             }
                         }
                     }
                 }
 
                 Divider(color = Color.Gray, thickness = 1.dp)
-                Log.d("Transaction Size", "Size of transactions: ${transactions.size}")
+                
                 // If transaction list is empty
                 if (transactions.isEmpty()) {
                     Text(
-                        text = "Transaction List is Empty",
+                        text = stringResource(id = R.string.empty_list),
                         style = MaterialTheme.typography.body1,
                         color = Color.Gray,
                         modifier = Modifier
@@ -247,7 +244,7 @@ fun TransactionListScreen(
         viewModel.fetchStartDates(batchId)
         viewModel.fetchEndDates(batchId)
         BatchDialogueBuilder.create()
-            .setTitle("Select Batch Id")
+            .setTitle(stringResource(id = R.string.sel_batch_id))
             .CustomListDialog(
                 onClose = { isBatchId = false },
                 batchIds = batchId, // Ensure this is List<String>
@@ -255,7 +252,6 @@ fun TransactionListScreen(
                 endDates = endDate,
                 onItemSelected = { selectedId ->
                     viewModel.filterTransactionsByBatchId(selectedId)
-                    Log.d("Selected Item", selectedId) // Logging selectedId should not cause any issues now
                 }
 
             )
@@ -274,7 +270,7 @@ fun TransactionListScreen(
 
 @Composable
 fun SummarySection(viewModel: TxnViewModel) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -289,8 +285,8 @@ fun SummarySection(viewModel: TxnViewModel) {
                     contentDescription = "",
                     modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed
                 )
-                Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between image and text
-                Text("Purchase", style = MaterialTheme.typography.body2, color = Color.Gray)
+                Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between image and text
+                Text(stringResource(id = R.string.purchase), style = MaterialTheme.typography.body2, color = Color.Gray)
             }
 
             Text(
@@ -313,8 +309,8 @@ fun SummarySection(viewModel: TxnViewModel) {
                     contentDescription = "",
                     modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed
                 )
-                Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between image and text
-                Text("Refund", style = MaterialTheme.typography.body2, color = Color.Gray)
+                Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between image and text
+                Text(stringResource(id = R.string.refund), style = MaterialTheme.typography.body2, color = Color.Gray)
             }
 
             Text(
@@ -338,12 +334,11 @@ fun TransactionItem(
                 .fillMaxWidth()
                 .padding(
                     horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium,
-                    vertical = 8.dp
+                    vertical = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium
                 ), // Match header padding
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Log.d("TransactionDateTime", "DateTime: ${transaction.invoiceNo}")
                 transaction.dateTime.toString().let {
                     TextView(
                         it,
@@ -359,13 +354,12 @@ fun TransactionItem(
                     modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
                     fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
                 )
-                Log.d("TransactionDateTime", "TxnType: ${transaction.txnType}")
             }
 
             // Create a Row for amount and icon
             Row(
                 verticalAlignment = Alignment.CenterVertically, // Aligns amount and icon vertically
-                modifier = Modifier.padding(start = 8.dp) // Optional padding between details and amount
+                modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Optional padding between details and amount
             ) {
                 val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED) {
                     Color.Red
@@ -381,7 +375,7 @@ fun TransactionItem(
                         fontWeight = FontWeight.Bold,
                         fontFamily = Roboto,
                         fontSize =androidx.compose.material3.MaterialTheme.dimens.SP_17_CompactMedium,
-                        modifier = Modifier.padding(end = 4.dp) // Optional spacing before the icon
+                        modifier = Modifier.padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium) // Optional spacing before the icon
                     )
                 }
 
@@ -439,7 +433,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                                 text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
                                 style = MaterialTheme.typography.caption,
                                 color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
+                                modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
                             )
                         }
 
@@ -447,7 +441,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                             modifier = Modifier.align(Alignment.CenterHorizontally  )
                         ) {
                             Text(
-                                text = "To",
+                                text = stringResource(id = R.string.to),
                                 style = MaterialTheme.typography.caption,
                                 color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.align(Alignment.Center) // Center the Text within the Box
@@ -492,18 +486,18 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                         Icon(Icons.Default.Print, contentDescription = "")
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between icon and button
+                    Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between icon and button
 
                     Button(
                         onClick = { isDialogVisible=true },
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .height(36.dp),
-                        contentPadding = PaddingValues(8.dp) // Smaller padding for compact button
+                            .height(androidx.compose.material3.MaterialTheme.dimens.DP_36_CompactMedium),
+                        contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
                     ) {
                         TextView(
                             fontWeight = FontWeight.Bold,
-                            text = "Close Batch",
+                            text = stringResource(id = R.string.close_batch),
                             fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_14_CompactMedium
                         )
                     }
@@ -541,12 +535,12 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
 
         if (isDialogVisible) {
             CustomDialogBuilder.create()
-                .setTitle("Confirmation")
-                .setSubtitle("Are you sure?")
-                .setSmallText("You want to close the Batch")
+                .setTitle(stringResource(id = R.string.confirmation))
+                .setSubtitle(stringResource(id = R.string.are_you_sure))
+                .setSmallText(stringResource(id = R.string.want_to_close_batch))
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
-                .setCancelButtonText("Yes")
-                .setConfirmButtonText("No")
+                .setCancelButtonText(stringResource(id = R.string.yes))
+                .setConfirmButtonText(stringResource(id = R.string.no))
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
@@ -569,12 +563,12 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
         if(isAlertVisible)
         {
             CustomDialogBuilder.create()
-                .setTitle("Print?")
+                .setTitle(stringResource(id = R.string.print_dialogue))
                 .setSubtitle("")
-                .setSmallText("Which Report You want")
+                .setSmallText(stringResource(id = R.string.which_report))
                 .setShowCloseButton(true) // Can set to false if you don't want the close button
-                .setCancelButtonText("Summary")
-                .setConfirmButtonText("Detail")
+                .setCancelButtonText(stringResource(id = R.string.summary))
+                .setConfirmButtonText(stringResource(id = R.string.detail))
                 .setCancelable(true)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color

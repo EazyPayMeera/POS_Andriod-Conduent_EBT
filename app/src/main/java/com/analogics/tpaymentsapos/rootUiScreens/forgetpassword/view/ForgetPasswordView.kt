@@ -146,7 +146,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.callcenter), // Replace with your icon resource
-                            contentDescription = "MID Icon",
+                            contentDescription = "",
                             modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium)
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text

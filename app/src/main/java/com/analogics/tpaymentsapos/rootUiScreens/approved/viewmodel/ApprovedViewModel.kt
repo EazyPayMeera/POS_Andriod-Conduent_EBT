@@ -69,6 +69,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     }
 
     fun printReceipt(
+        logoResId: Int,
         sharedViewModel: SharedViewModel,
         context: Context,
         customer: Boolean = false,
@@ -79,6 +80,8 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             getPrinterStatus(objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     Log.d(TAG, "Printer status retrieved: $result")
+                    Log.d("PaymentDetail", "Transaction Amount: ${objRootAppPaymentDetail.txnAmount}")
+                    Log.d("PaymentDetail", "Transaction Amount: ${objRootAppPaymentDetail.ttlAmount}")
 
                     val subtitleText = when (result) {
                         -1 -> context.resources.getString(R.string.printer_out_of_paper) // Example error for result -1
@@ -95,7 +98,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(sharedViewModel,context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+                                initPrinter(logoResId,sharedViewModel,context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -121,6 +124,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     }
 
     suspend fun initPrinter(
+        logoResId: Int,
         sharedViewModel: SharedViewModel,
         context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
@@ -137,6 +141,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
+                addLogo(context,objRootAppPaymentDetail,iPrinterResultProviderListener,logoResId)
                 addReceiptDetails(sharedViewModel,context,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
                     override fun onSuccess(result: Any?) {
                         if(result == true)
@@ -157,6 +162,33 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     }
 
+    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
+    {
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+        val logoBitmap = getLogoBitmap(context, logoResId)
+
+        // Convert the bitmap to ByteArray
+        val imageData = getBitmapBytes(logoBitmap)
+
+        // Ensure the imageData is not null
+        if (imageData != null) {
+            // Prepare the format Bundle for the printer
+            val format = Bundle().apply {
+                putInt("align", 1)  // Example alignment: Center
+                putInt("width", 100)  // Width of the image
+                putInt("height", 100)  // Height of the image
+            }
+
+            // Call the addImage function with format and image data
+            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
+        } else {
+            // Handle the case where the image data is null
+            Log.e("ImageError", "Failed to get image bytes")
+        }
+    }
+
 
     suspend fun addReceiptDetails(sharedViewModel: SharedViewModel, context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
@@ -171,13 +203,15 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
             // Generate the receipt
             val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
-
+            val labelList: List<String> = receipt.fields.map { it.label.toString() }
+            val descriptionList: List<String> = receipt.fields.map { it.description.toString() }
+            val aligment: List<String> = receipt.fields.map { it.alignment.toString() }
             // Proceed if the receipt was created successfully
             if (receipt != null) {
-                val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
+                val barcodeString = receipt.fields.find { it.label == "BARCODE" }?.value ?: ""
 
                 val receiptDetails = receipt.fields.map { (label, value) ->
-                    if (value.isEmpty()) {
+                    if (value?.isEmpty() == true) {
                         "$label"
                     } else {
                         "$label: $value"
@@ -187,17 +221,18 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                 }
 
                 val alignmentText: List<Int> = receipt.fields.map { field ->
-                    when (field.third) {
+                    when (field.alignment) {
                         ReceiptBuilder.Alignment.LEFT -> 0
                         ReceiptBuilder.Alignment.CENTER -> 1
                         ReceiptBuilder.Alignment.RIGHT -> 2
+                        ReceiptBuilder.Alignment.NONE -> -1
                         else -> 0 // Default to left alignment if no match
                     }
                 }
 
                 // Extract the alignment for the barcode
-                val alignment: Int = receipt.fields.firstOrNull { it.first == "QR CODE" }?.let { field ->
-                    when (field.third) {
+                val alignment: Int = receipt.fields.firstOrNull { it.label == "QR CODE" }?.let { field ->
+                    when (field.alignment) {
                         ReceiptBuilder.Alignment.LEFT -> 0
                         ReceiptBuilder.Alignment.CENTER -> 1
                         ReceiptBuilder.Alignment.RIGHT -> 2
@@ -212,12 +247,12 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     putInt("height", 100)
                     putSerializable("barcode_type", BarcodeFormat.CODE_39)
                 }
-
                 // Pass the receipt details to the PrinterServiceRepository
                 PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(
                     format,
                     barcodeString,
                     receiptDetails,
+                    descriptionList,
                     alignmentText,
                     iPrinterResultProviderListener
                 )

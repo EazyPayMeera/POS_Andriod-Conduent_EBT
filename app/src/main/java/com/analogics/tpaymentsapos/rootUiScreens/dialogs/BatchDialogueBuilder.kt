@@ -24,9 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.Roboto
@@ -107,24 +109,24 @@ class BatchDialogueBuilder private constructor() {
             if (showAlert.value) {
                 Dialog(onDismissRequest = { showAlert.value = false }) {
                     Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = 8.dp,
+                        shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
+                        elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
                         color = Color.White
                     ) {
                         Column(
                             modifier = Modifier
-                                .padding(16.dp)
+                                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                                 .fillMaxWidth()
                         ) {
                             Text(
                                 text = _title ?: "",
                                 style = MaterialTheme.typography.h6,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
                             )
                             Text(text = _subtitle ?: "")
                             Text(text = _message ?: "")
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium))
                             Button(
                                 onClick = { showAlert.value = false },
                                 modifier = Modifier.fillMaxWidth()
@@ -166,12 +168,12 @@ class BatchDialogueBuilder private constructor() {
                         GenericCard(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(0.dp),
-                            elevation = 8.dp,
+                            elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
                             backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .padding(16.dp)
+                                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                                     .fillMaxWidth()
                             ) {
                                 // Header text
@@ -179,7 +181,8 @@ class BatchDialogueBuilder private constructor() {
                                     text = title, // Change title if needed
                                     style = MaterialTheme.typography.h6,
                                     fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    modifier = Modifier
+                                        .padding(bottom = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
                                         .align(Alignment.CenterHorizontally)
                                 )
                             }
@@ -212,7 +215,7 @@ class BatchDialogueBuilder private constructor() {
                                 if (index < batchIds.size - 1) {
                                     Divider(
                                         modifier = Modifier.fillMaxWidth(),
-                                        thickness = 1.dp,
+                                        thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
                                         color = Color.Gray
                                     )
                                 }
@@ -235,7 +238,7 @@ class BatchDialogueBuilder private constructor() {
     ) {
         Surface(
             modifier = Modifier
-                .height(60.dp)
+                .height(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
                 .clickable { onItemSelected() }, // Call the onItemSelected when clicked
             color = MaterialTheme.colors.surface
         ) {
@@ -256,7 +259,7 @@ class BatchDialogueBuilder private constructor() {
                     .fillMaxWidth()
                     .padding(
                         horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium,
-                        vertical = 8.dp
+                        vertical = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium
                     ), // Padding around the content
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -274,7 +277,7 @@ class BatchDialogueBuilder private constructor() {
 
                     // "Open" Text
                     TextView(
-                        text = "Open",
+                        text = stringResource(id = R.string.open),
                         color = Color(0xFF4CAF50),
                         fontWeight = FontWeight.Bold,
                         fontFamily = Roboto,

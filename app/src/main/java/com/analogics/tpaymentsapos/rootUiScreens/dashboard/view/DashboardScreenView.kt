@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
@@ -189,7 +187,7 @@ fun TrainingView(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(10.dp)
+                        .padding(MaterialTheme.dimens.DP_11_CompactMedium)
                 ) {
                     DashboardContentSurface(
                         sharedViewModel = sharedViewModel,
@@ -242,7 +240,6 @@ fun DashboardContentSurface(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val isDemoMode = sharedViewModel.objPosConfig?.isDemoMode
-            Log.d("DashboardContentSurface", "isDemoMode: $isDemoMode")
 
             var visibility by remember { mutableStateOf(true) }
 
@@ -290,7 +287,6 @@ fun DashboardContentSurface(
                             imageResId = config.iconResId,
                             isSelected = selectedButton == config.text,
                             onClick = {
-                                Log.d("CardWithImageText", "Card clicked: ")
                                 onButtonClick(config.text, config.onClick) },
                             modifier = Modifier
                                 .weight(1f)
@@ -313,7 +309,7 @@ fun DashboardContentSurface(
                         onClick = {
                             isDialogVisible = true
                             if (transactions.isNotEmpty()) {
-                                viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                             }
                         },
                         title = stringResource(id = R.string.print_last_receipt),

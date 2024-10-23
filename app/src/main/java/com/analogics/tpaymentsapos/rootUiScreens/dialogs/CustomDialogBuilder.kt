@@ -113,8 +113,8 @@ class CustomDialogBuilder private constructor() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .wrapContentHeight(), // Wraps content height
-                                    backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                                    shape = RoundedCornerShape(0.dp),
+                                    backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary, // Replace with any color you want
+                                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_0_CompactMedium),
                                 ) {
                                     Column(
                                         verticalArrangement = Arrangement.Center,
@@ -127,7 +127,7 @@ class CustomDialogBuilder private constructor() {
                                             style = MaterialTheme.typography.h6,
                                             color = Color.Black,
                                             textAlign = TextAlign.Center,
-                                            modifier = Modifier.padding(top = 4.dp)
+                                            modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium)
                                         )
                                     }
                                 }
@@ -137,7 +137,7 @@ class CustomDialogBuilder private constructor() {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(4.dp),
+                                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium),
                                         contentAlignment = Alignment.TopEnd
                                     ) {
                                         IconButton(onClick = onClose) {
@@ -158,7 +158,7 @@ class CustomDialogBuilder private constructor() {
                                     style = MaterialTheme.typography.h6,
                                     color = Color.Black,
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(top = 4.dp)
+                                    modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium)
                                 )
 
                                 // Message
@@ -167,17 +167,17 @@ class CustomDialogBuilder private constructor() {
                                     style = MaterialTheme.typography.h6,
                                     color = Color.Black,
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(vertical = 4.dp)
+                                    modifier = Modifier.padding(vertical = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium)
                                 )
 
                                 // Conditionally show Progress Indicator
                                 if (showProgressIndicator) {
                                     CircularProgressIndicator(
                                         modifier = Modifier
-                                            .padding(20.dp)
-                                            .size(70.dp),
+                                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_21_CompactMedium)
+                                            .size(androidx.compose.material3.MaterialTheme.dimens.DP_70_CompactMedium),
                                         color = progressColor,
-                                        strokeWidth = 4.dp,
+                                        strokeWidth = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium,
                                     )
                                 }
 
@@ -185,7 +185,7 @@ class CustomDialogBuilder private constructor() {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(16.dp),
+                                            .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
                                         // Cancel Button
@@ -203,12 +203,12 @@ class CustomDialogBuilder private constructor() {
                                                 shape = RoundedCornerShape(12.dp),
                                                 modifier = Modifier
                                                     .weight(1f) // Use weight to make button take equal space
-                                                    .height(46.dp) // Set the desired height here
+                                                    .height(androidx.compose.material3.MaterialTheme.dimens.DP_46_CompactMedium) // Set the desired height here
                                             ) {
                                                 Text(it, color = Color.Black)
                                             }
 
-                                            Spacer(modifier = Modifier.width(8.dp)) // Optional spacing between buttons
+                                            Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between buttons
                                         }
                                         // Confirm Button
                                         confirmButtonText?.let {
@@ -222,10 +222,10 @@ class CustomDialogBuilder private constructor() {
                                                         R.color.grey
                                                     )
                                                 ),
-                                                shape = RoundedCornerShape(12.dp),
+                                                shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_13_CompactMedium),
                                                 modifier = Modifier
                                                     .weight(1f) // Use weight to make button take equal space
-                                                    .height(46.dp) // Set the desired height here
+                                                    .height(androidx.compose.material3.MaterialTheme.dimens.DP_46_CompactMedium) // Set the desired height here
                                             ) {
                                                 Text(it, color = Color.Black)
                                             }
@@ -361,14 +361,14 @@ class CustomDialogBuilder private constructor() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(), // Wraps content height
-                        backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                        shape = RoundedCornerShape(0.dp),
+                        backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary, // Replace with any color you want
+                        shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium),
                     ) {
                         Column {
                             androidx.compose.material3.Text(
-                                text = "Select an application id",
+                                text = stringResource(id = R.string.sel_app_id),
                                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                             )
                         }
                     }
@@ -377,7 +377,7 @@ class CustomDialogBuilder private constructor() {
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium),
+                                    .padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_0_CompactMedium),
                                 elevation = CardDefaults.elevatedCardElevation(androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
                             ) {
                                 Column {

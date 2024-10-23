@@ -52,12 +52,13 @@ object PrinterHandler : PrinterListener {
         barcodeFormat: Bundle,
         barcode:String,
         receipt: List<String>,
+        descriptionList: List<String>,
         alignment: List<Int>,
         listener: IPrinterHandlerListener
     ) {
         try {
 
-            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt,alignment)
+            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt,descriptionList,alignment)
             Printer.getInstance().feedLine(3)
             //Printer.getInstance().qrCodePrinting(barcodeFormat,"123456")
 
@@ -69,6 +70,22 @@ object PrinterHandler : PrinterListener {
             Log.e(TAG, "Failed to add receipt details: ${exception.message}")
 
             // Notify failure
+            listener.onPrinterRespHandler("FAILURE")
+        }
+    }
+
+
+    fun addImage(
+        format: Bundle,imageData: ByteArray,
+        listener: IPrinterHandlerListener
+    ) {
+        try {
+
+            Printer.getInstance().addImage(format,imageData)
+            Log.d(TAG, "Receipt details added successfully.")
+            listener.onPrinterRespHandler("SUCCESS")
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
             listener.onPrinterRespHandler("FAILURE")
         }
     }
@@ -86,6 +103,24 @@ object PrinterHandler : PrinterListener {
             Log.d(TAG, "Receipt details added successfully.")
 
             // Notify success
+            listener.onPrinterRespHandler("SUCCESS")
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
+
+            // Notify failure
+            listener.onPrinterRespHandler("FAILURE")
+        }
+    }
+
+    fun addLeftRightDetails(
+        label: List<String>,
+        description: List<String>,
+        listener: IPrinterHandlerListener
+    ) {
+        try {
+
+            Printer.getInstance().addRightLeftDetails(label,description)
+            Log.d(TAG, "Receipt details added successfully.")
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
             Log.e(TAG, "Failed to add receipt details: ${exception.message}")

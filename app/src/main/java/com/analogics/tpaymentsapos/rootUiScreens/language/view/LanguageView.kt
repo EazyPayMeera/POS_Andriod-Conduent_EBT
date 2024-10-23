@@ -15,10 +15,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -104,9 +100,9 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                     Icon(
                         painter = painterResource(id = R.drawable.orange_bullet), // Replace with your orange bullet drawable resource
                         contentDescription = null,
-                        tint = dashboardOrangeColor, // Adjust the color to match the bullet color
+                        tint = MaterialTheme.colorScheme.primary, // Adjust the color to match the bullet color
                         modifier = Modifier
-                            .size(15.dp) // Adjust size as needed
+                            .size(MaterialTheme.dimens.DP_25_CompactMedium) // Adjust size as needed
                             .padding(end = MaterialTheme.dimens.DP_10_CompactMedium) // Spacing between bullet and text
                     )
 
@@ -125,7 +121,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                         selected = viewModel.uiLanguage.value == UiLanguage.ENGLISH,
                         onClick = { viewModel.onLanguageChange(UiLanguage.ENGLISH, sharedViewModel) },
                         colors = RadioButtonDefaults.colors(
-                            selectedColor = dashboardOrangeColor,
+                            selectedColor = MaterialTheme.colorScheme.primary,
                             unselectedColor = MaterialTheme.colorScheme.onSecondary
                         )
                     )
@@ -138,7 +134,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                     thickness = MaterialTheme.dimens.DP_1_CompactMedium,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 0.dp)
+                        .padding(horizontal = MaterialTheme.dimens.DP_0_CompactMedium)
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -154,9 +150,9 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                     Icon(
                         painter = painterResource(id = R.drawable.orange_bullet), // Replace with your orange bullet drawable resource
                         contentDescription = null,
-                        tint = dashboardOrangeColor, // Adjust the color to match the bullet color
+                        tint = MaterialTheme.colorScheme.primary, // Adjust the color to match the bullet color
                         modifier = Modifier
-                            .size(15.dp) // Adjust size as needed
+                            .size(MaterialTheme.dimens.DP_25_CompactMedium) // Adjust size as needed
                             .padding(end = MaterialTheme.dimens.DP_10_CompactMedium) // Spacing between bullet and text
                     )
                     TextView(

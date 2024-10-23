@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,20 +35,17 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
     val viewModel: DeclineViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
 
+    // Resolve the string resources here in the composable context
+    val custRecp = stringResource(id = R.string.cust_recp)
+    val merchantRecp = stringResource(id = R.string.merchant_recp)
+    val eRecp = stringResource(id = R.string.e_recp)
+
     Column {
         // Top App Bar with back button
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
-
-        // Outer Surface with background color, padding, and rounded corners
         BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
         ) {
             Column(
                 modifier = Modifier
@@ -95,25 +91,21 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     CircularMenu(
                         onMenuOptionClick = { option ->
-                            when (option) {
-                                "Customer Receipt" -> {
-                                    // Handle E-RECEIPT click, e.g., navigate to a different screen
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
-                                "Merchant Receipt" -> {
-                                    // Handle Merchant Receipt click
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
-                                "E-RECEIPT" -> {
 
+                            when (option) {
+                                custRecp -> {
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                                merchantRecp -> {
+                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                                }
+                                eRecp -> {
+                                    // Handle e receipt click or any specific action here
                                 }
                             }
-                            navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                         }
                     )
                 }
-
-                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space
 
                 // Done button at the bottom
                 Box(
@@ -126,10 +118,7 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                         onClick = {
                             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
                             sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.DECLINED
-                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
-                            //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
-                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),

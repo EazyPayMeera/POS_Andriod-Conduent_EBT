@@ -2,7 +2,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.login
 
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -65,9 +64,10 @@ fun CircularMenu(
     onMenuOptionClick: (String) -> Unit
 ) {
     val menuOptions = listOf(
-        stringResource(id = R.string.cust_recp), stringResource(id = R.string.merchant_recp), stringResource(
-        id = R.string.e_recp
-    ))
+        stringResource(id = R.string.cust_recp),
+        stringResource(id = R.string.merchant_recp),
+        stringResource(id = R.string.e_recp)
+    )
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -114,7 +114,7 @@ fun CircularMenu(
                         }
                     }
             ) {
-                TextView(
+                Text(
                     text = option,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
@@ -131,7 +131,7 @@ fun CircularMenu(
                 .shadow(
                     MaterialTheme.dimens.DP_4_CompactMedium,
                     shape = CircleShape
-                ) // Add shadow with circular shape
+                )
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
                     scope.launch {
@@ -144,7 +144,7 @@ fun CircularMenu(
                     expanded = !expanded
                 }
         ) {
-            TextView(
+            Text(
                 text = stringResource(id = R.string.print),
                 color = MaterialTheme.colorScheme.tertiary,
                 fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
@@ -154,6 +154,7 @@ fun CircularMenu(
         }
     }
 }
+
 
 
 
@@ -238,10 +239,11 @@ fun ApprovedView(navHostController: NavHostController) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
-                                    viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                    viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
                                     viewModel.printReceipt(
+                                        R.drawable.master_mono,
                                         sharedViewModel,
                                         context,
                                         objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
@@ -264,10 +266,7 @@ fun ApprovedView(navHostController: NavHostController) {
                         onClick = {
                             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
                             sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
-                            Log.d("StoredDateTime", "Stored Date and Time: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
-                            //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
-                            Log.d("StoredDateTime", "Stored Date and Time after db entry: ${sharedViewModel.objRootAppPaymentDetail.dateTime}")
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),

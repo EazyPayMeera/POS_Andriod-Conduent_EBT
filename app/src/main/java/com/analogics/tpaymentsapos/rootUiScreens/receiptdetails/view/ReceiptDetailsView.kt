@@ -1,12 +1,10 @@
 package com.analogics.tpaymentsapos.rootUiScreens.receiptdetails.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,9 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.receiptdetails.viewmodel.ReceiptDetailsViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -35,7 +33,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import com.analogics.tpaymentsapos.R
 
 @Composable
 fun ReceiptDetailsView(navHostController: NavHostController) {
@@ -63,7 +60,6 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
 
     val configChanged = remember { mutableStateOf(false) }
 
-    Log.d("ReceiptDetailsView", "Header 1 Value: ${sharedViewModel.objPosConfig?.header1}")
 
     Column {
         CommonTopAppBar(title = stringResource(id = R.string.receipt_details),onBackButtonClick = { navHostController.popBackStack() })
@@ -77,17 +73,15 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
-                /*TextView(
-                    text = "Headers & Footers",
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    maxLines = 1,
-                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold
-                )*/
-
-                // LazyColumn to display headers and footers
+                TextView(
+                    text = stringResource(id = R.string.header_footer),
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    1,
+                    Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                    textAlign = TextAlign.Center
+                )
                 LazyColumn {
                     // Iterate over headers and footers
                     val headerFooterPairs = headerValues + footerValues
@@ -148,15 +142,6 @@ fun HeaderFooterRow(label: String, value: String, onValueChange: (String) -> Uni
             .padding(MaterialTheme.dimens.DP_20_CompactMedium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        /*TextView(
-            text = label,
-            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-            color = MaterialTheme.colorScheme.tertiary,
-            maxLines = 1,
-            //modifier = Modifier.padding(top = 15.dp),
-            textAlign = TextAlign.Start,
-
-        )*/
 
         OutlinedTextField(
             value = value,

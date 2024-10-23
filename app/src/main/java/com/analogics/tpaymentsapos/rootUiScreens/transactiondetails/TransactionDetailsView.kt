@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,7 +42,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
     Column {
 
         CommonTopAppBar(
-            title = "Transactions",
+            title = stringResource(id = R.string.transactions),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -66,7 +67,8 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
                     )
 
@@ -75,7 +77,8 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
                     )
 
@@ -84,14 +87,16 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
                     )
 
                     ImageView(
                         imageId = R.drawable.txn_aprove,
                         shape = RectangleShape,
-                        modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium)
+                        modifier = Modifier
+                            .size(MaterialTheme.dimens.DP_50_CompactMedium)
                             .padding(top = MaterialTheme.dimens.DP_15_CompactMedium),
                         contentDescription = ""
                     )
@@ -101,53 +106,59 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = 10.dp)
                     )
 
                     TextView(
-                        text = "Card: Visa **** **** **** 1234",
+                        text = stringResource(id = R.string.card)+"Visa **** **** **** 1234",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start)
+                        modifier = Modifier
+                            .align(Alignment.Start)
                             .padding(top = 30.dp, start = 34.dp)
                     )
 
                     TextView(
-                        text = "Auth Code: Auth 1234",
+                        text = stringResource(id = R.string.auth_code) + " Auth 1234",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start)
-                            .padding(top = 10.dp,start = 34.dp)
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(top = 10.dp, start = 34.dp)
                     )
 
                     TextView(
-                        text = "No.:100034345364633",
+                        text = stringResource(id = R.string.no) + " 100034345364633",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start)
-                            .padding(top = 10.dp,start = 34.dp)
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(top = 10.dp, start = 34.dp)
                     )
 
                     TextView(
-                        text = "Invoice number: " + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
+                        text = stringResource(id = R.string.inc_no) + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start)
-                            .padding(top = 10.dp,start = 34.dp)
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(top = 10.dp, start = 34.dp)
                     )
 
                     TextView(
-                        text = "POS Entry: Contactless",
+                        text = stringResource(id = R.string.pos_entry)+ " Contactless",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.Start)
-                            .padding(top = 10.dp,start = 34.dp)
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(top = 10.dp, start = 34.dp)
                     )
 
                     Box(
@@ -160,10 +171,10 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                             onMenuOptionClick = { option ->
                                 when (option) {
                                     context.resources.getString((R.string.cust_recp)) -> {
-                                        viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                        viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                     }
                                     context.resources.getString((R.string.merchant_recp)) -> {
-                                        viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                        viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                     }
                                     context.resources.getString((R.string.e_recp)) -> {
                                         navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
