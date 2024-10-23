@@ -81,7 +81,7 @@ fun PleaseWaitView(navHostController: NavHostController) {
         CustomDialogBuilder.create()
             .setTitle(stringResource(id = R.string.processing))
             .setSubtitle(stringResource(id = R.string.plz_wait))
-            .setSmallText("")
+            .setSmallText(stringResource(id = R.string.processing))
             .setShowCloseButton(true) // Can set to false if you don't want the close button
             .setCancelable(true)
             .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)

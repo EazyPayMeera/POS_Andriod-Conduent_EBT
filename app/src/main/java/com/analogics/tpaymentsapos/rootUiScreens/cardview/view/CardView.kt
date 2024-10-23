@@ -3,6 +3,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.cardview.view
 
 import android.graphics.Bitmap
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,7 +50,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
@@ -63,6 +63,11 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
+
+    // Disable the hardware back button
+    BackHandler(enabled = true) {
+        // Do nothing or handle custom behavior here
+    }
 
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }

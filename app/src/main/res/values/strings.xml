@@ -48,6 +48,7 @@
     <string name="card">Card:</string> Auth Code:
     <string name="auth_code">Auth Code:</string>
     <string name="no">No.:</string>
+    <string name="cancel_no">No</string>
     <string name="inc_no">Invoice Number:</string> POS Entry:
     <string name="pos_entry">POS Entry:</string>
     <string name="print">PRINT</string> CANCEL

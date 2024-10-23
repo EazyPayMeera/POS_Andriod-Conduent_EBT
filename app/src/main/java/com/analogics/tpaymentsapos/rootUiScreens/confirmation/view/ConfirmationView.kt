@@ -259,17 +259,17 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                 .setSmallText("")
                 .setShowCloseButton(false) // Can set to false if you don't want the close button
                 .setCancelButtonText(stringResource(id = R.string.yes))
-                .setConfirmButtonText(stringResource(id = R.string.no))
+                .setConfirmButtonText(stringResource(id = R.string.cancel_no))
                 .setCancelable(true)
                 .setAutoOff(false)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
                 }
                 .setOnConfirmAction {
-                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
                 }
                 .setShowButtons(true)
                 .setNavAction {
