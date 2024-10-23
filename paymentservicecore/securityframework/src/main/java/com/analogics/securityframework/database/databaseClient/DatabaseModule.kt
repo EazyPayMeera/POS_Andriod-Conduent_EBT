@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
+import com.analogics.securityframework.database.dao.IUserManagementDao
 import com.analogics.securityframework.database.dbConstant.DBConstant
 import dagger.Module
 import dagger.Provides
@@ -35,5 +36,9 @@ object DatabaseModule {
     @Provides
     fun provideTxnDao(database: AppDatabaseClient): ITxnDao {
         return database.getTxnDao()
+    }
+    @Provides
+    fun provideUserManagement(database: AppDatabaseClient): IUserManagementDao {
+        return database.getUserManagement()
     }
 }

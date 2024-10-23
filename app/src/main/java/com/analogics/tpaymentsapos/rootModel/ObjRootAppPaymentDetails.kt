@@ -9,7 +9,7 @@ import java.io.Serializable
 import javax.inject.Singleton
 
 @Singleton
-data class ObjRootAppPaymentDetails (
+data class ObjRootAppPaymentDetails(
     @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
@@ -52,7 +52,8 @@ data class ObjRootAppPaymentDetails (
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE
+    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE,
+    @SerializedName("objUserDetails") var objUserDetails: ObjUserDetails? =null
 
 
 ):Serializable

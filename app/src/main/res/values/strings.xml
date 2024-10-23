@@ -23,8 +23,10 @@
     <string name="forget_pswd">Forgot Password?</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="placehldr_username">Please Enter Username</string>
     <string name="placehldr_password">Please Enter Password</string>
+    <string name="placehldr_Confirm_password">Enter Confirm Password</string>
     <string name="placehldr_new_password">Please Enter New Password</string>
     <string name="cred_not_to_be_empty">Email and password should not be empty</string>
 
@@ -216,6 +218,14 @@
 <!--//txnlist -->
     <string name="recentActivity">Recent Activity</string>
     <string name="see_all">See All</string>
+    <string name="plz_enter_tid">Please Enter TID and MID to Activate Device</string>
+    <string name="activate">Activate Now</string>
+    <string name="please_enter_tid">Please Enter TID</string>
+    <string name="please_enter_Mid">Please Enter MID</string>
+    <string name="please_register_clerk">Please register Clerk</string>
+    <string name="cred_not_to_be_empty_tid">TID and MID should not be empty</string>
+
+
 
 
 </resources>

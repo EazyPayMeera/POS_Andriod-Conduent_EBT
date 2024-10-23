@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.securityframework.database.entity.UserManagementEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
@@ -115,6 +116,10 @@ fun createAmountTransformation(symbol: Symbol?=Symbol(),decimalPlaces: Int=2): V
 fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
     val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
     return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
+}
+fun convertObjRootToUserManagementEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): UserManagementEntity {
+    val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
+    return Gson().fromJson(json, UserManagementEntity::class.java) // Convert JSON to TxnEntity
 }
 
 

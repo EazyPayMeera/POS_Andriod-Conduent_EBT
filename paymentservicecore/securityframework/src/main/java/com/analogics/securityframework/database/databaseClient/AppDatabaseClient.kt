@@ -4,8 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
+import com.analogics.securityframework.database.dao.IUserManagementDao
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.securityframework.database.entity.UserManagementEntity
 
 
 //@Database(entities = [TxnDtlsEntity::class], version = 1)
@@ -33,8 +35,9 @@ import com.analogics.securityframework.database.entity.TxnEntity
 //    }
 //}
 
-@Database(entities = [BatchEntity::class,TxnEntity::class], version = 1.toInt())
+@Database(entities = [BatchEntity::class,TxnEntity::class, UserManagementEntity::class], version = 1.1.toInt())
 abstract class AppDatabaseClient : RoomDatabase() {
     abstract fun getBatchDao(): IBatchDao
     abstract fun getTxnDao(): ITxnDao
+    abstract  fun getUserManagement():IUserManagementDao
 }

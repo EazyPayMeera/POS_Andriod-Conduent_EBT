@@ -57,6 +57,7 @@ class PosConfig @Inject constructor(val context: Context) {
     @SerializedName("IsLoggedIn") var isLoggedIn: Boolean? = false
     @SerializedName("IsPaymentSDKInit") var isPaymentSDKInit: Boolean? = false
     @SerializedName("IsOnboardingComplete") var isOnboardingComplete: Boolean? = false
+    @SerializedName("IsActivationDone") var isActivationDone: Boolean? = false
             
     fun loadFromPrefs() : PosConfig
     {

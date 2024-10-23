@@ -36,22 +36,22 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activationScreen.ClerkLoginScreen
 import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.barcode.BarcodeView
+import com.analogics.tpaymentsapos.rootUiScreens.carddetect.view.CardDetectView
+import com.analogics.tpaymentsapos.rootUiScreens.cardview.view.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.changepassword.ChangePasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.invoice.InvoiceView
 import com.analogics.tpaymentsapos.rootUiScreens.isinfo.InfoConfirmView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ApprovedView
-import com.analogics.tpaymentsapos.rootUiScreens.carddetect.view.CardDetectView
-import com.analogics.tpaymentsapos.rootUiScreens.cardview.view.CardView
 import com.analogics.tpaymentsapos.rootUiScreens.login.ConfirmShiftView
 import com.analogics.tpaymentsapos.rootUiScreens.login.DeclineView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.EnterEmailView
 import com.analogics.tpaymentsapos.rootUiScreens.login.LanguageView
-import com.analogics.tpaymentsapos.rootUiScreens.password.view.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PinView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PleaseWaitView
 import com.analogics.tpaymentsapos.rootUiScreens.login.PreauthView
@@ -61,15 +61,18 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.TipPercentageView
 import com.analogics.tpaymentsapos.rootUiScreens.login.TipView
 import com.analogics.tpaymentsapos.rootUiScreens.login.view.LoginScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.onBoarding.view.OnBoardSlideView
+import com.analogics.tpaymentsapos.rootUiScreens.password.view.PasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.receiptdetails.view.ReceiptDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
+import com.analogics.tpaymentsapos.rootUiScreens.tid.view.TidScreen
 import com.analogics.tpaymentsapos.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
+
 var localSharedViewModel= compositionLocalOf{SharedViewModel()}
 
 const val STORAGE_PERMISSION_CODE = 23
@@ -297,6 +300,12 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.TransactionDetailsScreen.route) {
             TransactionDetailsView(navHostController)
+        }
+        composable(AppNavigationItems.ClerkLoginScreen.route) {
+            ClerkLoginScreen(navHostController)
+        }
+        composable(AppNavigationItems.TidScreen.route) {
+            TidScreen(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,
