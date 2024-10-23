@@ -83,11 +83,24 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             val filteredList = _transactionList.value.filter { transaction ->
                 val transactionDateTime = LocalDateTime.parse(transaction.dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                isFiltered = true
                 transactionDateTime.isAfter(startDate) && transactionDateTime.isBefore(endDate)
 
             }
             _transactionList.value = filteredList
+            Log.d("Date Time Picker", "Updated Filter Transaction By Date ")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun filterTransactionsByStartEndDate(startDate: LocalDateTime,endDate: LocalDateTime) {
+        viewModelScope.launch {
+            allTransactionList = dbRepository.getTransactionsByDateRange(startDate.toString(),
+                endDate.toString()
+            )
+            allTransactionList?.let {
+                val txnDataList = convertTxnEntityListToTxnDataList(it)
+                _transactionList.value = txnDataList
+            }
         }
     }
 
@@ -96,6 +109,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             val batchIds = dbRepository.fetchTransactionDetailsByBatchId()
             _batchList.value = batchIds
+            Log.d("FilterTransactions", "Fetched Batch IDs: $batchIds")
         }
     }
 
@@ -118,9 +132,11 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                     val minStartDate = dbRepository.getStartDate(batchId)
                     minStartDate.let {
                         startDates.add(it.toString()) // Add the non-null start date to the list
+                        Log.d("FetchStartDates", "Batch ID: $batchId, Start Date: ${it.toString()}")
                     }
                 }
                 _startDateList.value = startDates
+                 // Print batch ID and start date
             } catch (e: Exception) {
                 Log.e("FetchStartDates", "Error fetching start dates: ${e.message}")
             }
@@ -136,6 +152,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                     val minStartDate = dbRepository.getEndDate(batchId)
                     minStartDate.let {
                         endDates.add(it.toString()) // Add the non-null start date to the list
+                        Log.d("FetchStartDates", "Batch ID: $batchId, End Date: ${it.toString()}")
                     }
                     _endDateList.value = endDates
                 }

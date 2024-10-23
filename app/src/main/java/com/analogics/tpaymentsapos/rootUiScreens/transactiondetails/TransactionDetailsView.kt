@@ -49,7 +49,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                .padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             GenericCard(
                 modifier = Modifier

@@ -88,7 +88,7 @@ fun TransactionListScreen(
     var isBatchId by remember { mutableStateOf(false) }
 
     if (showDateTimePicker.value) {
-        
+        Log.d("Date Time Picker", "Prompt DATE PICKER")
         DateTimePickerDialog(
             onDismissRequest = { showDateTimePicker.value = false },
             onDateTimeSelected = { selectedDate ->
@@ -99,20 +99,26 @@ fun TransactionListScreen(
 
         if (isSelectingEndDate.value)
         {
+            Log.d("Date Time Picker", "Go For start Date")
             DateTimePickerDialog(
                 onDismissRequest = { showDateTimePicker.value = false },
                 onDateTimeSelected = { selectedDate ->
                     selectedStartDate.value = selectedDate // Save selected start date
                     isSelectingEndDate.value = false
                 }
+
             )
         }
 
         if (selectedStartDate.value != null && selectedEndDate.value != null) {
-            viewModel.filterTransactionsByDateRange(selectedStartDate.value!!, selectedEndDate.value!!
+            Log.d("Date Time Picker", "Go for Filter Transaction By Date ")
+            viewModel.filterTransactionsByStartEndDate(selectedStartDate.value!!, selectedEndDate.value!!
             )
             showDateTimePicker.value = false
+            Log.d("Date Time Picker", "showDateTimePicker.value = false")
+
         }
+
     }
     
 
@@ -187,6 +193,11 @@ fun TransactionListScreen(
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
                                 showDateTimePicker.value = true // Show date picker
+                                Log.d("Date Time Picker", "Select Date is Clicked")
+                                //viewModel.fetchTransactions()
+                                selectedStartDate.value = null
+                                selectedEndDate.value = null
+                                Log.d("Date Time Picker", "Selected dates cleared")
                             }) {
                                 Text(stringResource(id = R.string.select_date))
                             }
@@ -240,9 +251,13 @@ fun TransactionListScreen(
         }
     }
 
+
     if (isBatchId) {
         viewModel.fetchStartDates(batchId)
         viewModel.fetchEndDates(batchId)
+        if(startDate.isEmpty() && endDate.isEmpty()) {
+            Log.d("Start Ad End Date", "Start and End Date Is Empty")
+        }
         BatchDialogueBuilder.create()
             .setTitle(stringResource(id = R.string.sel_batch_id))
             .CustomListDialog(
@@ -255,9 +270,9 @@ fun TransactionListScreen(
                 }
 
             )
-
     }
     LaunchedEffect(Unit) {
+        Log.d("Date Time Picker", "Fetch All the Transactions")
         viewModel.fetchTransactions()
         viewModel.filterTransactionsForBatch()
     }

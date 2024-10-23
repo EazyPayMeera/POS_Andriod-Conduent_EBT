@@ -40,4 +40,7 @@ interface ITxnDao {
     @Query("SELECT MAX(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getEndDateByBatchIds(batchId: String): List<String?>
 
+    @Query("SELECT * FROM TxnTable WHERE DateTime BETWEEN :startDate AND :endDate")
+    suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity>
+
 }
