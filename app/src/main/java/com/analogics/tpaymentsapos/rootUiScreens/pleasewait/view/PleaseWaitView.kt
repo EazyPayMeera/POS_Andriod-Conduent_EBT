@@ -79,11 +79,9 @@ fun PleaseWaitView(navHostController: NavHostController) {
 
     /*if (isMerchantReceipt || isCustomerReceipt) {*/
         CustomDialogBuilder.create()
-            .setTitle(stringResource(id = R.string.printing))
+            .setTitle(stringResource(id = R.string.processing))
             .setSubtitle(stringResource(id = R.string.plz_wait))
-            .setSmallText(if(isCustomerReceipt) stringResource(id = R.string.cust_recp) else stringResource(
-                id = R.string.merchant_recp
-            ))
+            .setSmallText("")
             .setShowCloseButton(true) // Can set to false if you don't want the close button
             .setCancelable(true)
             .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)

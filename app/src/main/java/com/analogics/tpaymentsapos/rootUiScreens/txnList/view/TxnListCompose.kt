@@ -563,10 +563,10 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    /*navHostController.navigate(AppNavigationItems.TxnListScreen.route)*/
+
                 }
                 .setOnConfirmAction {
-                    /*navHostController.navigate(AppNavigationItems.TxnListScreen.route)*/
+
                 }
                 .setShowButtons(true)
                 .setAutoOff(false)
