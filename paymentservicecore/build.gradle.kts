@@ -60,7 +60,7 @@ dependencies {
 
     implementation ("com.google.mlkit:barcode-scanning:17.0.0")
 
-    api(project(":paymentservicecore:tpaymentcore"))
+    implementation(project(":paymentservicecore:tpaymentcore"))
     api(project(":paymentservicecore:builder-core"))
     api(project(":paymentservicecore:securityframework"))
     kapt(libs.androidx.hilt.compiler)
