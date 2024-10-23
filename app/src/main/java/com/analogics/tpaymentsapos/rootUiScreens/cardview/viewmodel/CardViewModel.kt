@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.emv.CardCheckMode
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TransConfig
 import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
@@ -54,38 +55,43 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
+    fun getTransConfig(objRootAppPaymentDetails: ObjRootAppPaymentDetails) : TransConfig
+    {
+        return TransConfig(
+            amount = objRootAppPaymentDetails.ttlAmount.toDecimalFormat(),
+            cashbackAmount = objRootAppPaymentDetails.cashback.toDecimalFormat(),
+            currencyCode = objRootAppPaymentDetails.txnCurrencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
+            transactionType = objRootAppPaymentDetails.txnType?.toEmvTransType().toString(),
+            cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
+            cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
+            supportDRL = false
+        )
+    }
+
     fun startPayment(
         context: Context,
         objRootAppPaymentDetails: ObjRootAppPaymentDetails,
         navHostController: NavHostController
     ) {
         viewModelScope.launch {
-            emvServiceRepository.startPayment(context,
-                transConfig = TransConfig(
-                    amount = objRootAppPaymentDetails.ttlAmount.toDecimalFormat(),
-                    cashbackAmount = objRootAppPaymentDetails.cashback.toDecimalFormat(),
-                    currencyCode = objRootAppPaymentDetails.txnCurrencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
-                    transactionType = objRootAppPaymentDetails.txnType?.toEmvTransType().toString(),
-                    cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
-                    cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
-                    supportDRL = false
-                ),
-                object :
+            emvServiceRepository.startPayment(
+                context = context,
+                transConfig = getTransConfig(objRootAppPaymentDetails),
+                iEmvServiceResponseListener = object :
                 IEmvServiceResponseListener {
                 override fun onEmvServiceResponse(response: Any) {
-                    if (response == true)
+                    if (response is EmvServiceResult &&
+                        (response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
+                                response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE))
                         navigateToApprovalScreen(navHostController)
                     else
                         navigateToDeclinedScreen(navHostController)
                 }
 
-                override fun onEmvServiceDisplayProgress(
-                    show: Boolean,
-                    title: String?,
-                    subTitle: String?,
-                    message: String?
+                override fun onEmvServiceDisplayMessage(
+                    displayMsgId: EmvServiceResult.DisplayMsgId
                 ) {
-                    CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
+
                 }
             })
         }
