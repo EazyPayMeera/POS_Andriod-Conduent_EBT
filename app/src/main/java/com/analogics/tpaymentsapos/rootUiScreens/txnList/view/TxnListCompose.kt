@@ -206,6 +206,8 @@ fun TransactionListScreen(
                                 showMenu.value = false
                                 BatchId.value = true
                                 isBatchId = true
+                                selectedStartDate.value = null
+                                selectedEndDate.value = null
                             }) {
                                 Text(stringResource(id = R.string.filter_by_batch))
                             }
