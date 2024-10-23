@@ -62,7 +62,9 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             allTransactionList = dbRepository.getAllTxnListData()
             allTransactionList?.let {
+                // Convert the list to TxnDataList and sort in descending order (assuming there's a timestamp or ID to sort by)
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
+                    .sortedByDescending { txnData -> txnData.dateTime }  // Replace transactionDate with your sorting field
                 _transactionList.value = txnDataList
             }
         }
