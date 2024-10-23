@@ -25,7 +25,9 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.analogics.tpaymentsapos.rootUtils.miscellaneous.readAsset
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -72,6 +74,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
     @OptIn(DelicateCoroutinesApi::class)
     fun printReceipt(
+        logoResId: Int,
         sharedViewModel: SharedViewModel,
         context: Context,
         customer: Boolean = false,
@@ -98,7 +101,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(sharedViewModel,context, object : IPrinterResultProviderListener {
+                                initPrinter(logoResId,sharedViewModel,objRootAppPaymentDetail,context, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -125,7 +128,9 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
 
     suspend fun initPrinter(
+        logoResId: Int,
         sharedViewModel: SharedViewModel,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         context: Context,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
@@ -149,7 +154,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails))
                         .initPrinter(context, iPrinterResultProviderListener)
 
-                    // Optionally add receipt details
+                    addLogo(context,objRootAppPaymentDetail,iPrinterResultProviderListener,logoResId)
                     addReceiptDetails(context,sharedViewModel,object : IPrinterResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if(result == true)
@@ -202,15 +207,17 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
                 // Generate the receipt
                 val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
-
+                val labelList: List<String> = receipt.fields.map { it.label.toString() }
+                val descriptionList: List<String> = receipt.fields.map { it.description.toString() }
+                val aligment: List<String> = receipt.fields.map { it.alignment.toString() }
                 // Proceed if the receipt was created successfully
                 if (receipt != null) {
                     // Extract the barcode string
-                    val barcodeString = receipt.fields.find { it.first == "BARCODE" }?.second ?: ""
+                    val barcodeString = receipt.fields.find { it.label == "BARCODE" }?.value ?: ""
 
                     // Prepare receipt details for printing
                     val receiptDetails = receipt.fields.map { (label, value) ->
-                        if (value.isEmpty()) {
+                        if (value?.isEmpty() == true) {
                             "$label"
                         } else {
                             "$label: $value"
@@ -221,17 +228,18 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
 
                     // Extract alignment information for each field
                     val alignmentText: List<Int> = receipt.fields.map { field ->
-                        when (field.third) {
+                        when (field.alignment) {
                             ReceiptBuilder.Alignment.LEFT -> 0
                             ReceiptBuilder.Alignment.CENTER -> 1
                             ReceiptBuilder.Alignment.RIGHT -> 2
+                            ReceiptBuilder.Alignment.NONE -> -1
                             else -> 0 // Default to left alignment if no match
                         }
                     }
 
                     // Extract alignment for the barcode
-                    val alignment: Int = receipt.fields.firstOrNull { it.first == "QR CODE" }?.let { field ->
-                        when (field.third) {
+                    val alignment: Int = receipt.fields.firstOrNull { it.label == "QR CODE" }?.let { field ->
+                        when (field.alignment) {
                             ReceiptBuilder.Alignment.LEFT -> 0
                             ReceiptBuilder.Alignment.CENTER -> 1
                             ReceiptBuilder.Alignment.RIGHT -> 2
@@ -252,6 +260,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         format,
                         barcodeString,
                         receiptDetails,
+                        descriptionList,
                         alignmentText,
                         iPrinterResultProviderListener
                     )
@@ -261,6 +270,33 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
             } else {
                 Log.d("TAG", "No transactions available for receipt printing.")
             }
+        }
+    }
+
+    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
+    {
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+        val logoBitmap = getLogoBitmap(context, logoResId)
+
+        // Convert the bitmap to ByteArray
+        val imageData = getBitmapBytes(logoBitmap)
+
+        // Ensure the imageData is not null
+        if (imageData != null) {
+            // Prepare the format Bundle for the printer
+            val format = Bundle().apply {
+                putInt("align", 1)  // Example alignment: Center
+                putInt("width", 100)  // Width of the image
+                putInt("height", 100)  // Height of the image
+            }
+
+            // Call the addImage function with format and image data
+            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
+        } else {
+            // Handle the case where the image data is null
+            Log.e("ImageError", "Failed to get image bytes")
         }
     }
 

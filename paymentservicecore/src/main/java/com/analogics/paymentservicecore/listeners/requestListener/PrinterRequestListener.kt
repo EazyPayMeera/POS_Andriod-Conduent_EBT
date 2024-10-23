@@ -9,6 +9,7 @@ interface PrinterRequestListener {
     suspend fun printReceiptDetails(format: Bundle,
                                     barcodeString: String,
                                     receiptDetails: List<String>,
+                                    descriptionList: List<String>,
                                     alignment: List<Int>, // Assuming alignment is of type Int; adjust as necessary
                                     iPrinterResultProviderListener: IPrinterResultProviderListener)
 
@@ -19,5 +20,6 @@ interface PrinterRequestListener {
         iPrinterResultProviderListener: IPrinterResultProviderListener
     )
     suspend fun printImage(format: Bundle,imageData: ByteArray, iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun printLeftRightDetails(label: List<String>, description: List<String>, iPrinterResultProviderListener: IPrinterResultProviderListener)
     suspend fun getStatus(iPrinterResultProviderListener: IPrinterResultProviderListener)
 }

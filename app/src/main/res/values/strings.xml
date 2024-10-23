@@ -186,20 +186,21 @@
     <!-- Receipt Builder -->
     <string name="receipt_header">GLOBAL PAYMENTS</string>
     <string name="receipt_address">STORE ADDRESS:</string>
-    <string name="receipt_merchant_id">Merchant Id:</string>
-    <string name="receipt_terminal_id">Terminal Id:</string>
-    <string name="receipt_gray_line">-----------------------</string>
+    <string name="receipt_merchant_id">MID:</string>
+    <string name="receipt_terminal_id">TID:</string>
+    <string name="receipt_gray_line">---------------------------------</string>
     <string name="receipt_card_type">CARD TYPE:</string>
     <string name="receipt_card_no">CARD No:</string>
     <string name="receipt_trans_type">TRANS TYPE:</string>
     <string name="receipt_batch_no">BATCH NO:</string>
     <string name="receipt_trace_no">TRACE NO:</string>
-    <string name="receipt_date_time">DATE/TIME:</string>
+    <string name="receipt_date">DATE</string>
+    <string name="receipt_time">TIME</string>
     <string name="receipt_ref_no">REF NO:</string>
     <string name="receipt_aap_code">APP CODE:</string>
     <string name="receipt_txn_id">Txn ID:</string>
     <string name="receipt_app">APP:</string>
-    <string name="receipt_subtotal">SUBTOTAL:</string>
+    <string name="receipt_subtotal">AMT:</string>
     <string name="receipt_sale_tax">SALES TAX:</string>
     <string name="receipt_pos_terminal">POS TERMINAL:</string>
     <string name="receipt_card_entry_mode">Card Entry Mode:</string>
@@ -208,6 +209,10 @@
     <string name="receipt_total">TOTAL:</string>
     <string name="receipt_payment">PAYMENT::</string>
     <string name="receipt_authorization">AUTHORIZATION:</string>
+    <string name="receipt_invoice_no">INV:</string>
+    <string name="receipt_auth_code">AUTH Code</string>
+    <string name="receipt_tip">TIP</string>
+    <string name="receipt_sign">SIGN</string>
 
     <!-- Summary Report -->
     <string name="summary_header">SUMMARY REPORT</string>

@@ -25,6 +25,7 @@ class PrinterServiceRepository @Inject constructor(
         format: Bundle,
         barcodeString: String,
         receiptDetails: List<String>,
+        descriptionList: List<String>,
         alignment: List<Int>, // Assuming alignment is of type Int; adjust as necessary
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
@@ -34,7 +35,7 @@ class PrinterServiceRepository @Inject constructor(
         Thread {
             try {
                 // Pass the retrieved arguments to the PrinterHandler
-                PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails, alignment, this) // Pass this as the listener
+                PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails,descriptionList, alignment, this) // Pass this as the listener
                 Log.d(TAG, "Receipt printed successfully.")
 
                 iPrinterResultProviderListener.onSuccess(true)
@@ -61,6 +62,28 @@ class PrinterServiceRepository @Inject constructor(
             try {
                 // Pass the retrieved arguments to the PrinterHandler
                 PrinterHandler.addLeftCenterRightDetails(Transaction, Count, Total, this) // Pass this as the listener
+                Log.d(TAG, "Receipt printed successfully.")
+                iPrinterResultProviderListener.onSuccess(true)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to print receipt: ${e.message}")
+                iPrinterResultProviderListener.onSuccess(false)
+            }
+        }.start() // Start the thread
+    }
+
+    override suspend fun printLeftRightDetails(
+        label: List<String>,
+        description: List<String>, // Assuming alignment is of type Int; adjust as necessary
+        iPrinterResultProviderListener: IPrinterResultProviderListener
+    ) {
+        this.iPrinterResultProviderListener = iPrinterResultProviderListener
+
+        // Create a new thread for printing left, center, right details
+        Thread {
+            try {
+                // Pass the retrieved arguments to the PrinterHandler
+                PrinterHandler.addLeftRightDetails(label, description, this) // Pass this as the listener
                 Log.d(TAG, "Receipt printed successfully.")
                 iPrinterResultProviderListener.onSuccess(true)
 

@@ -309,7 +309,7 @@ fun DashboardContentSurface(
                         onClick = {
                             isDialogVisible = true
                             if (transactions.isNotEmpty()) {
-                                viewModel.printReceipt(sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                             }
                         },
                         title = stringResource(id = R.string.print_last_receipt),

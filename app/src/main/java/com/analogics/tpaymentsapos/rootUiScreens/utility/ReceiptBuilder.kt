@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.utility
 
 import android.content.Context
+import android.util.Log
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -11,43 +12,40 @@ class ReceiptBuilder {
     enum class Alignment {
         LEFT,
         CENTER,
-        RIGHT
+        RIGHT,
+        NONE
     }
 
     // Function to build a receipt
-    fun createReceipt(context: Context,sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): Receipt {
+    fun createReceipt(context: Context, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
-            .addField(sharedViewModel.objPosConfig?.header1.toString(), "", Alignment.CENTER)
-            .addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_terminal_id), paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_gray_line), "", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_card_type), "CREDIT", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_card_no), "**** **** **** 1234", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_trans_type), "\n" + (paymentDetails?.txnType ?: "N/A"), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_batch_no), (paymentDetails?.batchId ?: "N/A"), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_trace_no), "123456", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_date_time), paymentDetails?.dateTime ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_ref_no), "56789", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_aap_code), "1112", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_txn_id), paymentDetails?.invoiceNo ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_app), paymentDetails?.cardBrand ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_subtotal), paymentDetails?.txnAmount.toString(), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_sale_tax), paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_pos_terminal), paymentDetails?.terminalId ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_card_entry_mode), paymentDetails?.cardEntryMode ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_aid), "123456789123456", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_tc), paymentDetails?.purchaseOrderNo ?: "N/A", Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_total), paymentDetails?.ttlAmount.toString(), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_payment), paymentDetails?.accountType.toString(), Alignment.LEFT)
-            .addField(context.getString(R.string.receipt_authorization), paymentDetails?.hostAuthCode.toString(), Alignment.LEFT)
-            .addField(sharedViewModel.objPosConfig?.footer1.toString(),"", Alignment.CENTER)
-            .addField("CUSTOMER SUPPORT", "", Alignment.LEFT)
-            .addField("SUPPORT PHONE:", sharedViewModel.objPosConfig?.footer2.toString(), Alignment.LEFT)
-            .addField("SUPPORT EMAIL:", sharedViewModel.objPosConfig?.footer3.toString(), Alignment.LEFT)
-            .addField("BARCODE", paymentDetails?.hostTxnRef ?: "N/A", Alignment.LEFT)
-            .addField("QR CODE", "https://example.com/qrcode", Alignment.CENTER)
-            .addField("******CUSTOMER COPY******", "", Alignment.CENTER)
+            .apply {
+
+                Log.d("PaymentDetail hello", "Transaction Amount: ${paymentDetails?.ttlAmount}")
+                addField(sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT)
+                addField("", "", "", Alignment.CENTER)
+                addField("", "", "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT)
+                addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId, context.getString(R.string.receipt_terminal_id) + paymentDetails?.merchantId, Alignment.NONE)
+                addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE)
+                addField(paymentDetails?.txnType,"" , "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_card_no), "**** **** **** 1234", "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE)
+                addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE)
+                addField(context.getString(R.string.receipt_ref_no), "", "56789", Alignment.NONE)
+                addField(context.getString(R.string.receipt_subtotal), "", paymentDetails?.txnAmount, Alignment.NONE)
+                addField(context.getString(R.string.receipt_tip), "", paymentDetails?.tip, Alignment.NONE)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_total), "", paymentDetails?.ttlAmount, Alignment.NONE)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
+                addField(" TRANSACTIONACCEPTED&LIABILITY" + " OFCARDHOLDERTOPAYIS" + " CONFIRMED", "", "", Alignment.CENTER)
+                addField("BANK DISCLAIMER", "", "", Alignment.CENTER)
+                addField("******MERCHANT COPY******", "", "", Alignment.CENTER)
+
+            }
             .build()
     }
 
@@ -71,28 +69,48 @@ class ReceiptBuilder {
             .build()
     }
 
-    // Data class for Receipt
     data class Receipt(
-        val fields: List<Triple<String, String, Alignment>>,
+        val fields: List<Field>,  // Replace Triple with Field class for four parameters
         val items: List<ReceiptItem>,
         val barcode: String? = null,
         val qrcode: String? = null
     ) {
+        // Define a class to hold four parameters
+        data class Field(
+            val label: String?,
+            val value: String?,
+            val description: String?,
+            val alignment: Alignment
+        )
+
         class Builder {
-            private val fields: MutableList<Triple<String, String, Alignment>> = mutableListOf()
+            private val fields: MutableList<Field> = mutableListOf()
             private val items: MutableList<ReceiptItem> = mutableListOf()
             private var barcode: String? = null
             private var qrcode: String? = null
 
-            fun addField(label: String, value: String, alignment: Alignment) = apply {
-                fields.add(Triple(label, value, alignment))
+            // Add method to accept nullable label, value, description, and alignment
+            fun addField(label: String? = null, value: String? = null, description: String? = null, alignment: Alignment) = apply {
+                fields.add(Field(label, value, description, alignment))
             }
 
+            // Method to add barcode
+            fun addBarcode(barcode: String?) = apply {
+                this.barcode = barcode
+            }
+
+            // Method to add QR code
+            fun addQrCode(qrcode: String?) = apply {
+                this.qrcode = qrcode
+            }
+
+            // Build method to create the final Receipt object
             fun build(): Receipt {
                 return Receipt(fields, items, barcode, qrcode)
             }
         }
     }
+
 
     // Data class for SummaryReport
     data class SummaryReport(
