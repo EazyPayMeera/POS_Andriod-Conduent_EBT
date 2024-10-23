@@ -7,11 +7,16 @@ import com.analogics.paymentservicecore.listeners.requestListener.IEmvServiceReq
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.InitResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.model.emv.TransConfig
 import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult
 import com.analogics.tpaymentcore.repository.EmvSdkRequestRepository
 import com.google.gson.Gson
 import org.json.JSONObject
@@ -24,20 +29,62 @@ class EmvServiceRepository @Inject constructor() :
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
 
+    fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) :EmvServiceResult.InitStatus {
+        return when (value) {
+            EmvSdkResult.InitStatus.SUCCESS -> EmvServiceResult.InitStatus.SUCCESS
+            else -> EmvServiceResult.InitStatus.FAILURE
+        }
+    }
+
+    fun sdkToEmvTransStatus(value: EmvSdkResult.TransStatus) :TransStatus {
+        return when (value) {
+            EmvSdkResult.TransStatus.APPROVED_ONLINE -> TransStatus.APPROVED_ONLINE
+            EmvSdkResult.TransStatus.DECLINED_ONLINE -> TransStatus.DECLINED_ONLINE
+            EmvSdkResult.TransStatus.APPROVED_OFFLINE -> TransStatus.APPROVED_OFFLINE
+            EmvSdkResult.TransStatus.DECLINED_OFFLINE -> TransStatus.DECLINED_OFFLINE
+            EmvSdkResult.TransStatus.CANCELED -> TransStatus.CANCELED
+            EmvSdkResult.TransStatus.TIMEOUT -> TransStatus.TIMEOUT
+            EmvSdkResult.TransStatus.TERMINATED -> TransStatus.TERMINATED
+            EmvSdkResult.TransStatus.CARD_BLOCKED -> TransStatus.CARD_BLOCKED
+            EmvSdkResult.TransStatus.APP_BLOCKED -> TransStatus.APP_BLOCKED
+            EmvSdkResult.TransStatus.NO_EMV_APPS -> TransStatus.NO_EMV_APPS
+            EmvSdkResult.TransStatus.APP_SELECTION_FAILED -> TransStatus.APP_SELECTION_FAILED
+            EmvSdkResult.TransStatus.TRY_ANOTHER_INTERFACE -> TransStatus.TRY_ANOTHER_INTERFACE
+            EmvSdkResult.TransStatus.INVALID_ICC_CARD -> TransStatus.INVALID_ICC_CARD
+            EmvSdkResult.TransStatus.RETRY -> TransStatus.RETRY
+            EmvSdkResult.TransStatus.CARD_REMOVED -> TransStatus.CARD_REMOVED
+            EmvSdkResult.TransStatus.ISSUER_SCRIPT_UPDATE_SUCCESSFUL -> TransStatus.ISSUER_SCRIPT_UPDATE_SUCCESSFUL
+            EmvSdkResult.TransStatus.ISSUER_SCRIPT_UPDATE_FAILED -> TransStatus.ISSUER_SCRIPT_UPDATE_FAILED
+
+            else -> TransStatus.ERROR
+        }
+    }
+
+    fun sdkToEmvService(response: Any) : Any
+    {
+        return when(response) {
+            is EmvSdkResult.InitResult -> {
+                InitResult(
+                    status = sdkToEmvInitStatus(response.status as EmvSdkResult.InitStatus)
+                )
+            }
+            is EmvSdkResult.TransResult -> {
+                TransResult(
+                    status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
+                )
+            }
+            is EmvSdkException ->{
+                EmvServiceException(errorMessage = response.errorMessage)
+            }
+            else -> {
+                EmvServiceException(errorMessage = "Unknown SDK Error")
+            }
+        }
+    }
+
     override fun onEmvSdkResponse(response: Any) {
         iEmvServiceResponseListener.onEmvServiceDisplayProgress(false)
-        /* Just for testing comparing with uiData value */
-        when(response)
-        {
-            is String ->if (response == "SUCCESS") {
-                iEmvServiceResponseListener.onEmvServiceResponse(true)
-            } else {
-                iEmvServiceResponseListener.onEmvServiceResponse(false)
-            }
-            is EmvSdkException ->
-                iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(errorMessage = response.errorMessage))
-            else -> iEmvServiceResponseListener.onEmvServiceResponse(EmvServiceException(errorMessage = "Unknown SDK Error"))
-        }
+        iEmvServiceResponseListener.onEmvServiceResponse(sdkToEmvService(response))
     }
 
     override fun onEmvSdkDisplayMessage(uiData: String?) {

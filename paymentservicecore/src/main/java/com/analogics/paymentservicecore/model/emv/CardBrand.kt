@@ -1,14 +1,14 @@
 package com.analogics.paymentservicecore.model.emv
 
 enum class CardBrand {
-    MasterCard,
-    Visa,
-    Amex,
-    Jcb,
-    Discover,
-    Pure,
-    Rupay,
-    Mir,
-    Upi,
-    Error
+    MASTERCARD,
+    VISA,
+    AMEX,
+    JCB,
+    DISCOVER,
+    PURE,
+    RUPAY,
+    MIR,
+    UPI,
+    ERROR
 }

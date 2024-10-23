@@ -14,6 +14,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
@@ -297,10 +298,16 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),
                     iEmvServiceResponseListener =  object :
                     IEmvServiceResponseListener {
-                    override fun onEmvServiceResponse(result: Any) {
-                        if (result == true) {
-                            sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }?.saveToPrefs()
-                            CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_success))
+                    override fun onEmvServiceResponse(response: Any) {
+                        if (response is EmvServiceResult.InitResult && response.status == EmvServiceResult.InitStatus.SUCCESS) {
+                                    sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }
+                                        ?.saveToPrefs()
+                                    CustomDialogBuilder.composeAlertDialog(
+                                        title = context.resources.getString(
+                                            R.string.emv_sdk_init_title
+                                        ),
+                                        subtitle = context.resources.getString(R.string.emv_sdk_init_success)
+                                    )
                         }
                         else {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()

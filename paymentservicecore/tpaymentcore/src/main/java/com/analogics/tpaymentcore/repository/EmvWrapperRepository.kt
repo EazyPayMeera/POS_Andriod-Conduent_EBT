@@ -1,7 +1,6 @@
 package com.analogics.tpaymentcore.repository
 
 import android.content.Context
-import android.device.DeviceManager
 import android.device.SEManager
 import android.graphics.Color
 import android.os.Build
@@ -15,6 +14,11 @@ import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListe
 import com.analogics.tpaymentcore.model.emv.AidConfig
 import com.analogics.tpaymentcore.model.emv.CAPKey
 import com.analogics.tpaymentcore.model.emv.CardCheckMode
+import com.analogics.tpaymentcore.model.emv.EmvSdkException
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult.InitResult
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult.InitStatus
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult.TransStatus
 import com.analogics.tpaymentcore.model.emv.TransConfig
 import com.analogics.tpaymentcore.utils.TlvUtils
 import com.urovo.i9000s.api.emv.ContantPara
@@ -63,12 +67,11 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     ContantPara.CardSlot.UNKNOWN,
                     termTlvParams
                 )
-                Log.d("EMV_APP", "TermConfigOverride: $termTlvParams")
+                Log.d("EMV_APP", "Term Config Override: $termTlvParams")
             }catch (exception : Exception)
             {
                 Log.e("EMV_APP", exception.message.toString())
             }
-
             return result
         }
 
@@ -79,19 +82,15 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 aidConfig?.let { result = result && initAidConfig(it) && overrideTerminalConfig(it) }
                 capKeys?.let { result = result && initCAPKeys(it) }
 
-/*
-                "9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100" + "9F1E08" + "1122334455667788"
-
-                TlvUtils().parseTlv("9F4E1755524F564F5F544553545F4D454348414E545F4E414D459F150211229F160F1234567890123451234567890123459F1C0831323334353637389F4005F000F0A0019F1A0206829F3303E068009F3501225F360102DF020101DF030101DF050100")
-*/
                 when(result) {
                     true->
-                        iEmvSdkResponseListener.onEmvSdkResponse("SUCCESS")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                        iEmvSdkResponseListener.onEmvSdkResponse(InitResult(InitStatus.SUCCESS))//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
                     else ->
-                        iEmvSdkResponseListener.onEmvSdkResponse("FAILURE")//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                        iEmvSdkResponseListener.onEmvSdkResponse(InitResult(InitStatus.FAILURE))//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(e.message.toString()))
             }
         }.start()
     }
@@ -112,7 +111,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                         it.cashbackAmount?.let { data["cashbackAmount"] = it; _cashbackAmount = it.toLongOrNull()?:0L }
                         it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
                         it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
-                        (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.value }
+                        (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.sdkValue }
                         it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
                         it.enableBeeper?.let { data["enableBeeper"] = it }
                         it.supportFallback?.let { if(it == true) data["FallbackSwitch"] = "1" else data["FallbackSwitch"] = "0"}
@@ -126,7 +125,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     EmvNfcKernelApi.getInstance().startKernel(data)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    this.iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
+                    this.iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkException(errorMessage = e.message.toString()))
                 }
             }
             thread?.start()
@@ -190,10 +189,13 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         override fun onReturnTransactionResult(p0: ContantPara.TransactionResult?) {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
-            if (p0 == ContantPara.TransactionResult.ONLINE_APPROVAL || p0 == ContantPara.TransactionResult.OFFLINE_APPROVAL)
-                iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
-            else
-                iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
+            iEmvSdkResponseListener?.onEmvSdkResponse(
+                EmvSdkResult.TransResult(
+            when (p0) {
+                ContantPara.TransactionResult.ONLINE_APPROVAL ->  TransStatus.APPROVED_ONLINE
+                ContantPara.TransactionResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
+                else -> TransStatus.ERROR
+            }))
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -216,10 +218,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     proc_offlinePin(p1, false, p2!!)
                 }
             }
-            /*
-            if (p0 == ContantPara.PinEntrySource.KEYPAD)
-                promptPin(null, false, 3, null, false);
-*/
         }
 
         override fun onReturnIssuerScriptResult(p0: ContantPara.IssuerScriptResult?, p1: String?) {
@@ -241,8 +239,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCrequestImportPin(p0: Int, p1: Int, p2: String?) {
             Log.d("EMV_APP", "NFC Import PIN:" + p2.toString())
-
-//            Log.e(TAG, TAG + "===onNFCrequestImportPin, type:" + type + ", lasttimeFlag:" + lasttimeFlag + ", amt:" + amt);
             EmvNfcKernelApi.getInstance().sendPinEntry()
         }
 
@@ -309,7 +305,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     val aidData = Hashtable<String, String>()
 
                     (aid.aid ?: config.contactless?.aid ?: config.aid)?.let{ aidData["ApplicationIdentifier"] = it }
-                    getCardType(aidData["ApplicationIdentifier"]?:"").let{ aidData["CardType"] = it }
+                    getSdkCardType(aidData["ApplicationIdentifier"]?:"").let{ aidData["CardType"] = it }
                     (aid.transactionType ?: config.contactless?.transactionType ?: config.transactionType)?.let{ aidData["TransactionType"] = it }
                     (aid.acquirerId ?: config.contactless?.acquirerId ?: config.acquirerId)?.let{ aidData["AcquirerIdentifier"] = it }
                     (aid.addlTerminalCapabilities ?: config.contactless?.addlTerminalCapabilities ?: config.addlTerminalCapabilities)?.let{ aidData["AdditionalTerminalCapabilities"] = it }
@@ -424,289 +420,18 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             return result
         }
 
-        fun addEMV_AID_Paramters() {
-            val data = Hashtable<String, String>()
-            data["CardType"] = "IcCard"
-            data["aid"] = "A0000000041010"
-            data["appVersion"] = "0002"
-            data["terminalFloorLimit"] = "00000000"
-            //data.put("terminalFloorLimit", Funs.DecNumStrToHexNumStr("000000010000"));
-            //data.put("contactTACDefault", "D84000A800");
-            data["contactTACDefault"] = "0000000000"
-            data["contactTACDenial"] = "0000000000"
-            data["contactTACOnline"] = "DC4004F800"
-            data["defaultDDOL"] = "9F3704"
-            data["AcquirerIdentifier"] = "112233" // 9f01
-            data["defaultTDOL"] = "9F0206"
-            data["ThresholdValue"] = "000000002000"
-            data["TargetPercentage"] = "00"
-            data["MaxTargetPercentage"] = "00"
-            data["AppSelIndicator"] = "00" //default 00 -part match 01 -full match
-            data["TerminalAppPriority"] = "00" //TerminalCapabilities
-            data["TerminalCapabilities"] = "E0F8C8"
-
-            data["terminalCountryCode"] = "0356"
-
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data) //master
-
-            data["aid"] = "A0000000043060" //Maestro
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A00000002501" //amex
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["terminalFloorLimit"] = "000003E0"
-            data["aid"] = "A0000000651010" //jcb
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["terminalFloorLimit"] = "00000000"
-            data["aid"] = "A0000000046000" //Cirrus
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A0000001523010" // Diners Club/Discover
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A0000006581010" // Mir
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A0860001000001" //humo card
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A0000001523010" // Diners Club/Discover
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["contactTACDenial"] = "0010000000"
-            data["aid"] = "A0000000031010" //visa
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A0000000032010"
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A0000005241010" //
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["aid"] = "A000000054480001" //TBD citizen
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["terminalCountryCode"] = "0608"
-            data["aid"] = "A0000006351010" //BancNet 菲律宾
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["terminalCountryCode"] = "0682"
-            data["aid"] = "A0000002281010" //Mada
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-
-            data["terminalCountryCode"] = "0682"
-            data["aid"] = "A0000002282010" //mada
-            EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, data)
-        }
-
-        fun getCardType(aid : String) : String
+        fun getSdkCardType(aid : String) : String
         {
             return when(aid.substring(0,10))
             {
-                "A000000003" -> "VisaCard"
-                "A000000004" -> "MasterCard"
-                "A000000524" -> "RupayCard"
-                "A000000025" -> "AmexCard"
-                "A000000065" -> "JcbCard"
-                "A000000152" -> "DiscoverCard"
-                else -> ""
+                "A000000003" -> ContantPara.NfcCardType.VisaCard.name
+                "A000000004" -> ContantPara.NfcCardType.MasterCard.name
+                "A000000524" -> ContantPara.NfcCardType.RupayCard.name
+                "A000000025" -> ContantPara.NfcCardType.AmexCard.name
+                "A000000065" -> ContantPara.NfcCardType.JcbCard.name
+                "A000000152" -> ContantPara.NfcCardType.DiscoverCard.name
+                else -> ContantPara.NfcCardType.ErrorType.name
             }
-        }
-
-        fun init_NfcAid_CAPK() {
-            var bret: Boolean
-
-
-            val aidData = Hashtable<String, String>()
-            //-------------------------------------------------
-            //------------MasterCard----------------
-            //-------------------------------------------------
-            aidData.clear()
-            aidData["CardType"] = "MasterCard"
-            aidData["ApplicationIdentifier"] = "A0000000041010" //9F06
-            aidData["ApplicationVersionNumber"] = "0002" //9F09 or "ApplicationVersion"
-            aidData["FloorLimit"] = "000000000000" //DF8123
-            aidData["NoOnDeviceCVM"] = "999999999999" //contactless transaction limit DF8124
-            aidData["OnDeviceCVM"] = "999999999999" // contactless transaction limit
-            aidData["ReaderCVMRequiredLimit"] = "000000500000" //DF8126 or "CvmRequiredLimit"
-            aidData["DefaultUDOL"] = "9F6A04" //DF811A
-            aidData["TerminalActionCodesOnLine"] = "F45084800C" //DF8122 F45084800C
-            aidData["TerminalActionCodesDenial"] = "0000000000" //DF8121
-            aidData["TerminalActionCodesDefault"] = "F45084800C" //DF8120
-            aidData["TerminalRiskManagement"] = "007A800000000000" //9F1D
-            aidData["KernelConfiguration"] = "30" //  20 normal // 30 for RRP support
-            aidData["CardDataInputCapability"] = "60" //DF8117  // 60
-            aidData["CVMCapabilityPerCVMRequired"] = "60" //DF8118 //60 support online pin
-            aidData["CVMCapabilityNoCVMRequired"] = "08" //DF8119
-            aidData["MagStripeCVMCapabilityCVMRequired"] = "10" // DF811E = "10";
-            aidData["SecurityCapability"] = "08" //DF811F
-            aidData["MagStripeCVMCapabilityPerNoCVMRequired"] = "00" // DF812C = "00";
-            //aidData.put("TerminalCountryCode", "0840");
-            //aidData.put("IFDsn", "3030303030303030");
-            bret = EmvNfcKernelApi.getInstance()
-                .updateAID(ContantPara.Operation.ADD, aidData) //MasterCard
-
-
-            Log.d("applog", "updateAID MasterCard:$bret")
-
-            aidData["CVMCapabilityPerCVMRequired"] = "60"
-            aidData["TerminalActionCodesOnLine"] = "F45004800C" //DF8122
-            aidData["TerminalActionCodesDenial"] = "0000800000" //DF8121
-            aidData["TerminalActionCodesDefault"] = "F45004800C" //DF8120
-            aidData["TerminalRiskManagement"] = "4C7A800000000000" //9F1D
-            aidData["ApplicationIdentifier"] = "A0000000043060" //9F06
-            aidData["KernelConfiguration"] = "B0" //Maestro card not support MS mode
-
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "updateAID Maestro:$bret")
-
-
-            //-------------------------------------------------------
-            //--------------VISACARD-----------------------------
-            // -------------------------------------------------
-            aidData.clear()
-            aidData["CardType"] = "VisaCard"
-            aidData["ApplicationIdentifier"] = "A0000000031010" //9F06
-            aidData["TerminalTransactionQualifiers"] =
-                "36004000" //9F66  //36004000    // 32204000 not support online PIN
-
-            aidData["TransactionLimit"] = "999999999999" //9F92810D
-            aidData["FloorLimit"] = "000000000000" //9F92810F  //000000040000
-            aidData["CvmRequiredLimit"] = "000000500000" //9F92810E   //000000030000
-
-            aidData["LimitSwitch"] = "FE00" //9F92810A
-            aidData["EmvTerminalFloorLimit"] = "00000000" //9F1B
-            aidData["ProRestrictionDisable"] = "01"
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "VisaCard updateAID1 $bret")
-
-            aidData["ApplicationIdentifier"] = "A0000000032010" //9F06
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "VisaCard updateAID2 $bret")
-            aidData["ApplicationIdentifier"] = "A0000000033010" //9F06
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "VisaCard updateAID3 $bret")
-
-            aidData["ApplicationIdentifier"] = "A0000006351010" //BancNet 菲律宾
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "Visa-BancNet updateAID4 $bret")
-
-
-            //init_Visa_DRL();// need update it after default paramters
-
-
-            //--------------------------------------------------------------
-            //------------AMEXCARD--------------------------
-            //------------------------------------------------------
-            aidData.clear()
-            aidData["CardType"] = "AmexCard"
-            aidData["ApplicationIdentifier"] = "A00000002501" //9F06
-            aidData["TerminalTransactionQualifiers"] =
-                "DCE00003" //9F6E  //58E00003  // D8E00003 support contact // Enhanced Contactless Reader Capabilities
-            aidData["TransactionLimit"] = "999999999999" //9F92810D
-            aidData["FloorLimit"] = "000000000000" //9F92810F   //000000001200
-            aidData["CvmRequiredLimit"] = "000000500000" //9F92810E
-            aidData["LimitSwitch"] = "6800" //9F92810A
-            aidData["EmvTerminalFloorLimit"] = "00000000" //9F1B
-            aidData["ApplicationVersion"] = "0001" //9f09
-            aidData["TerminalActionCodesOnLine"] = "DE00FC9800" //DF8122 //DE00FC9800
-            aidData["TerminalActionCodesDenial"] = "0010000000" //DF8121 //0010000000
-            aidData["TerminalActionCodesDefault"] = "DC50840000" //DF8120 //DC50FC9800
-
-
-            /*
-        ////////////////Dynamic Limit Set default//////////////////// if not support DRL set ,you need not set
-        String defaultDRL="";
-        String DRLset="";
-        AmexDRL amexDRL=new AmexDRL();
-        amexDRL.setCVMLimit("000000001000");
-        amexDRL.setFloorLimit("000000000000");
-        amexDRL.setTransLimit("000000001500");
-        amexDRL.setIndex("00");
-        amexDRL.setDefault(true);
-        defaultDRL+=amexDRL.formTLVFormat();
-        aidData.put("DefaultDRL", defaultDRL);
-        Log.d("applog", "DefaultDRL:"+defaultDRL);
-        ///////////Dynamic Limit Set 11////////////
-        amexDRL.setCVMLimit("000000000200");
-        amexDRL.setFloorLimit("000000000000");
-        amexDRL.setTransLimit("000000000300");
-        amexDRL.setIndex("0B");
-        amexDRL.setDefault(false);
-        DRLset+=amexDRL.formTLVFormat();
-        ///////////Dynamic Limit Set 6////////////
-        amexDRL.setCVMLimit("000000000200");
-        amexDRL.setFloorLimit("000000000000");
-        amexDRL.setTransLimit("000000000700");
-        amexDRL.setIndex("06");
-        amexDRL.setDefault(false);
-        DRLset+=amexDRL.formTLVFormat();
-        aidData.put("DRLSet", DRLset);
-        Log.d("applog", "DRLSet:"+DRLset);
-        ////////////////////////////Dynamic Limit Set ///////////////////
-*/
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "AmexCard updateAID $bret")
-            //----------------------------------------------------------
-            //-----------------JCBCARD-------------------------------
-            //-------------------------------------------------------
-            aidData.clear()
-            aidData["CardType"] = "JcbCard"
-            aidData["ApplicationIdentifier"] = "A0000000651010" //9F06
-            aidData["ConfigurationCombinationOptions"] = "7B00" //
-            aidData["StaticTerminalInterchangeProfile"] = "708000" //
-
-            aidData["TransactionLimit"] = "999999999999" //9F92810D
-            aidData["FloorLimit"] = "000000000000" //9F92810F   //000000001200
-            aidData["CvmRequiredLimit"] = "000000500000" //9F92810E
-
-            aidData["EmvTerminalFloorLimit"] = "00004E20" //9F1B
-            aidData["ApplicationVersion"] = "0200" //9f09
-            aidData["TerminalActionCodesOnLine"] = "FC60ACF800" //DF8122
-            aidData["TerminalActionCodesDenial"] = "0010000000" //DF8121
-            aidData["TerminalActionCodesDefault"] = "FC6024A800" //DF8120
-
-            aidData["ThresholdValue"] = "000000002000"
-            aidData["TargetPercentage"] = "00"
-            aidData["MaxTargetPercentage"] = "00"
-
-            aidData["AcquirerIdentifier"] = "000000000010"
-            //aidData.put("MerchantCategoryCode", "7032");
-            //aidData.put("MerchantNameAndLocation", "5858204D45524348414E54205959204C4F434154494F4E");
-            aidData["TerminalCapabilities"] = "E068C8"
-
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "JcbCard updateAID $bret")
-
-
-            //-------------------------------------------------
-            //--------------DISCOVERCARD-----------------------
-            //-------------------------------------------------
-            aidData.clear()
-            aidData["CardType"] = "DiscoverCard"
-            aidData["ApplicationIdentifier"] = "A000000152301002" //9F06
-            aidData["TerminalTransactionQualifiers"] = "3600C000" // TTQ
-            aidData["TransactionLimit"] = "999999999999" //9F92810D
-            aidData["FloorLimit"] = "000000000000" //9F92810F   //000000000000
-            aidData["CvmRequiredLimit"] = "000000500000" //9F92810E
-            aidData["EmvTerminalFloorLimit"] = "00000000" //9F1B
-            aidData["ApplicationVersion"] = "0001" //9f09
-            aidData["TerminalActionCodesOnLine"] = "0000000000" //DF8122 FC60ACF800
-            aidData["TerminalActionCodesDenial"] = "0000000000" //DF8121 0010000000
-            aidData["TerminalActionCodesDefault"] = "0000000000" //DF8120 FC6024A800
-
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "DiscoverCard updateAID $bret") //A0000003241010
-            aidData["ApplicationIdentifier"] = "A0000001523010" //9F06
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-
-
-            aidData["ApplicationIdentifier"] = "A0000003241010" //9F06
-            bret = EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.ADD, aidData)
-            Log.d("applog", "DinnerCard updateAID $bret")
-
         }
 
         fun emv_proc_onlinePin(isDUKPT: Boolean) {
@@ -717,7 +442,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             if (isDUKPT) param.putInt("PINKeyNo", 3)
             else param.putInt("PINKeyNo", 10)
             val cardno: String = "1122334455667788"
-
 
             Log.i("applog", "emv_proc_onlinePin cardno $cardno")
             param.putString("cardNo", cardno)
@@ -731,43 +455,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             param.putString(
                 "message", "Please Enter your PIN"
             ) // use your real amount
-
-/*            param.putBoolean("ShowLine", false)
-            param.putShortArray("textSize", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
-            param.putShortArray("leftMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
-            param.putShortArray("topMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
-            param.putShortArray("rightMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
-            param.putShortArray("bottomMargin", shortArrayOf(20, 30, 40, 50, 40, 30, 20))
-            param.putStringArray(
-                "numberText",
-                arrayOf<String>(
-                    "zero",
-                    "one",
-                    "two",
-                    "three",
-                    "four",
-                    "five",
-                    "six",
-                    "seven",
-                    "eight",
-                    "nine"
-                )
-            )
-            param.putIntArray(
-                "backgroundColor",
-                intArrayOf(
-                    Color.BLUE,
-                    Color.YELLOW,
-                    Color.GREEN,
-                    MaterialTheme.colorScheme.onSecondary,
-                    Color.RED,
-                    MaterialTheme.colorScheme.tertiary,
-                    Color.LTGRAY
-                )
-            )
-            param.putString("deleteText", "Delete1")
-            param.putString("cancelText", "Cancel")
-            param.putString("okText", "OK1")*/
 
             param.putBoolean("randomKeyboard", true)
 
@@ -801,15 +488,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 param.putIntArray("backgroundColor", backgroundColor)
                 param.putIntArray("textColor", textColor)
 
-                //    textSize, margin
-                //    each index(0-6):
-                //    public static final int SECURITY_KEYBOARD_TITLE = 0;
-                //    public static final int SECURITY_KEYBOARD_INFO = 1;
-                //    public static final int SECURITY_KEYBOARD_PASSWORD = 2;
-                //    public static final int SECURITY_KEYBOARD_KEY_NUMBER = 3;
-                //    public static final int SECURITY_KEYBOARD_KEY_CANCEL = 4;
-                //    public static final int SECURITY_KEYBOARD_KEY_DELETE = 5;
-                //    public static final int SECURITY_KEYBOARD_KEY_OK = 6;
                 val leftMargin = shortArrayOf(0, 0, 50, 0, 0, 0, 0)
                 val rightMargin = shortArrayOf(0, 0, 50, 0, 0, 0, 0)
                 val topMargin = shortArrayOf(0, 0, 10, 0, 0, 0, 0)
