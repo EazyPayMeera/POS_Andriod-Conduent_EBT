@@ -120,7 +120,6 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                             modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
                             textAlign = TextAlign.Center,
                             maxLines = 1,
-                            //overflow = TextOverflow.Ellipsis // Ellipsize long text
                         )
                     }
 
@@ -175,7 +174,6 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                             modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
                             textAlign = TextAlign.Center,
                             maxLines = 1,
-                            //overflow = TextOverflow.Ellipsis // Ellipsize long text
                         )
                     }
 

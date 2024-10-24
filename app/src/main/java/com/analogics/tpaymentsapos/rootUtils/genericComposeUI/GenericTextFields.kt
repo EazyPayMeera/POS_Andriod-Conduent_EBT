@@ -57,12 +57,10 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -296,8 +294,6 @@ fun OkButton(
 
 
 
-
-
 @Composable
 fun SettingsUpperSurface(
     modifier: Modifier = Modifier,
@@ -371,147 +367,6 @@ fun SettingsLowerSurface(
     }
 }
 
-/*@Composable
-fun FooterButtons(
-    firstButtonTitle: String,
-    firstButtonOnClick: () -> Unit,
-    secondButtonTitle: String,
-    secondButtonOnClick: () -> Unit,
-    alignment: Alignment = Alignment.BottomCenter // Default alignment
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed // need to change
-    ) {
-        Row(
-            modifier = Modifier
-                .align(alignment)
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            var isFirstButtonPressed by remember { mutableStateOf(false) }
-            var isSecondButtonPressed by remember { mutableStateOf(false) }
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                    .shadow(
-                        MaterialTheme.dimens.DP_4_CompactMedium,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-            ) {
-                Button(
-                    onClick = {
-                        isFirstButtonPressed = true
-                        firstButtonOnClick()
-                    },
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                    modifier = Modifier
-                        .width(*//*MaterialTheme.dimens.DP_130_CompactMedium*//*130.dp)
-                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
-                        .border(
-                            width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
-                            color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        ),
-                    colors = buttonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        containerColor = colorResource(R.color.grey)
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
-                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                    )
-                ) {
-
-                    TextView(
-                        text = firstButtonTitle.uppercase(),
-                        fontSize = *//*MaterialTheme.dimens.SP_21_CompactMedium*//*15.sp,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        1,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            LaunchedEffect(isFirstButtonPressed) {
-                if (isFirstButtonPressed) {
-                    //kotlinx.coroutines.delay(100)
-                    isFirstButtonPressed = false
-                }
-            }
-
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-                modifier = Modifier
-                    .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                    .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                    .shadow(
-                        MaterialTheme.dimens.DP_4_CompactMedium,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                    )
-            ) {
-                Button(
-                    onClick = {
-                        isSecondButtonPressed = true
-                        secondButtonOnClick()
-                    },
-                    modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
-                        .height(MaterialTheme.dimens.DP_48_CompactMedium)
-                        .border(
-                            width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else 0.dp,
-                            color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        ),
-                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                    colors = buttonColors(
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        containerColor = colorResource(R.color.grey)
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
-                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                    )
-                ) {
-
-                    TextView(
-                        text = secondButtonTitle.uppercase(),
-                        fontSize = *//*MaterialTheme.dimens.SP_21_CompactMedium*//*15.sp,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        1,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            LaunchedEffect(isSecondButtonPressed) {
-                if (isSecondButtonPressed) {
-                    kotlinx.coroutines.delay(100)
-                    isSecondButtonPressed = false
-                }
-            }
-        }
-    }
-}*/
 
 @Composable
 fun FooterButtons(
@@ -874,33 +729,6 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     }
 }
 
-@Composable
-fun ImageViewColor(
-    imageId: Int,
-    size: Dp,
-    shape: Shape,
-    alignment: Alignment,
-    contentDescription: String,
-    tint: Color? = null, // Add tint parameter with optional color
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop // Optional content scale
-) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(shape),
-        contentAlignment = alignment
-    ) {
-        androidx.compose.foundation.Image(
-            painter = painterResource(id = imageId),
-            contentDescription = contentDescription,
-            colorFilter = tint?.let { ColorFilter.tint(it) }, // Apply tint if provided
-            contentScale = contentScale,
-            modifier = Modifier
-                .fillMaxSize()
-        )
-    }
-}
 
 @Composable
 fun ImageView(
