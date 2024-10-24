@@ -42,7 +42,8 @@ sealed class EmvServiceResult(
             MULTIPLE_CARDS,
             TIMEOUT,
             CANCEL,
-            DEVICE_BUSY
+            DEVICE_BUSY,
+            ERROR
     }
     enum class DisplayMsgId {
         NONE,   /* Clear display */

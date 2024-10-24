@@ -8,8 +8,11 @@ import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceRe
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckStatus
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.InitResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.InitStatus
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.analogics.paymentservicecore.model.emv.TermConfig
@@ -30,10 +33,28 @@ class EmvServiceRepository @Inject constructor() :
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
 
-    fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) :EmvServiceResult.InitStatus {
+    fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) : InitStatus {
         return when (value) {
             EmvSdkResult.InitStatus.SUCCESS -> EmvServiceResult.InitStatus.SUCCESS
             else -> EmvServiceResult.InitStatus.FAILURE
+        }
+    }
+
+    fun sdkToEmvCardCheckStatus(value: EmvSdkResult.CardCheckStatus) : CardCheckStatus {
+        return when (value) {
+            EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED -> CardCheckStatus.NO_CARD_DETECTED
+            EmvSdkResult.CardCheckStatus.CARD_INSERTED -> CardCheckStatus.CARD_INSERTED
+            EmvSdkResult.CardCheckStatus.CARD_TAPPED -> CardCheckStatus.CARD_TAPPED
+            EmvSdkResult.CardCheckStatus.CARD_SWIPED -> CardCheckStatus.CARD_SWIPED
+            EmvSdkResult.CardCheckStatus.NOT_ICC_CARD -> CardCheckStatus.NOT_ICC_CARD
+            EmvSdkResult.CardCheckStatus.USE_ICC_CARD -> CardCheckStatus.USE_ICC_CARD
+            EmvSdkResult.CardCheckStatus.BAD_SWIPE -> CardCheckStatus.BAD_SWIPE
+            EmvSdkResult.CardCheckStatus.NEED_FALLBACK -> CardCheckStatus.NEED_FALLBACK
+            EmvSdkResult.CardCheckStatus.MULTIPLE_CARDS -> CardCheckStatus.MULTIPLE_CARDS
+            EmvSdkResult.CardCheckStatus.TIMEOUT -> CardCheckStatus.TIMEOUT
+            EmvSdkResult.CardCheckStatus.CANCEL -> CardCheckStatus.CANCEL
+            EmvSdkResult.CardCheckStatus.DEVICE_BUSY -> CardCheckStatus.DEVICE_BUSY
+            else -> CardCheckStatus.ERROR
         }
     }
 
@@ -101,6 +122,11 @@ class EmvServiceRepository @Inject constructor() :
             is EmvSdkResult.InitResult -> {
                 InitResult(
                     status = sdkToEmvInitStatus(response.status as EmvSdkResult.InitStatus)
+                )
+            }
+            is EmvSdkResult.CardCheckResult -> {
+                CardCheckResult(
+                    status = sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)
                 )
             }
             is EmvSdkResult.TransResult -> {

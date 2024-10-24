@@ -173,18 +173,10 @@
     <string name="payment">Payment</string>
     <string name="sucessful">Sucessful</string>
 	
-	<!-- Payment SDK Strings -->
-    <string name="emv_sdk_init_title">Initialization</string>
-    <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
-    <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
-    <string name="processing">Processing</string>
-
-
     <!-- Printer Strings -->
     <string name="printer_error_title">Printing Error</string>
     <string name="printer_out_of_paper">Printer is Out Paper</string>
     <string name="printer_busy">Printer is Busy</string>
-
 
     <!-- Receipt Builder -->
     <string name="receipt_header">GLOBAL PAYMENTS</string>
@@ -253,5 +245,40 @@
     <string name="recentActivity">Recent Activity</string>
     <string name="see_all">See All</string>
 
+    <!-- Payment SDK Strings -->
+    <string name="emv_sdk_init_title">Initialization</string>
+    <string name="emv_sdk_init_success">Payment SDK Initialized !!</string>
+    <string name="emv_sdk_init_failure">Payment SDK Initialization Failed !!</string>
+    <string name="processing">Processing</string>
+
+    <!-- EMV Display Messages -->
+    <string name="emv_msg_id_card_read_ok">Card Read OK</string>
+    <string name="emv_msg_id_remove_card">Please Remove Your Card</string>
+    <string name="emv_msg_id_use_ic_card">Use Contact Chip Card</string>
+    <string name="emv_msg_id_use_magstripe">Use MagStripe</string>
+    <string name="emv_msg_id_insert_swipe_try_another">Insert Swipe or Try Another Card</string>
+    <string name="emv_msg_id_see_phone">See Your Phone and Present Card Again</string>
+    <string name="emv_msg_id_need_signature">Need Signature</string>
+    <string name="emv_msg_id_end_application">End Application</string>
+    <string name="emv_msg_id_tap_again">Tap You Card Again</string>
+    <string name="emv_msg_id_app_blocked">Application Blocked</string>
+    <string name="emv_msg_id_card_blocked">Card Blocked</string>
+    <string name="emv_msg_id_terminated">Terminated</string>
+
+    <!-- EMV Display Messages (Errors)-->
+    <string name="emv_msg_id_err_card_read">Card Read Error</string>
+    <string name="emv_msg_id_err_processing">Processing Error</string>
+    <string name="emv_msg_id_err_load_callback">Callback Error</string>
+    <string name="emv_msg_id_err_ics_param_not_found">ICS Param Missing</string>
+    <string name="emv_msg_id_err_kernel">EMV Kernel Error</string>
+    <string name="emv_msg_id_err_pin_length">PIN Length Error</string>
+    <string name="emv_msg_id_err_multiple_cards">Multiple Cards Presented</string>
+    <string name="emv_msg_id_err_check_card">Card Read Error</string>
+    <string name="emv_msg_id_err_aid_param_not_found">AID Param Missing</string>
+    <string name="emv_msg_id_err_capk_param_not_found">CAP Key Param Missing</string>
+    <string name="emv_msg_id_err_get_kernel_data">Kernel Data Error</string>
+    <string name="emv_msg_id_err_qpboc_app">QPBOC App Error</string>
+    <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA Failed</string>
+    <string name="emv_msg_id_err_pure_cash_card_no_online">PURE Cash Card Not Allowed for Online Transactions</string>
 
 </resources>

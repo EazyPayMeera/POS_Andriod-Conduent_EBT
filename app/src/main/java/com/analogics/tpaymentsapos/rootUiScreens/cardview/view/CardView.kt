@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +50,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getEmvMsgIdString
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.google.zxing.BarcodeFormat
@@ -66,6 +67,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
+    val displayInfoMsgId = remember { viewModel.displayInfoMsgId }
 
     Column {
 
@@ -178,32 +180,66 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.PURCHASE) {
-                        TextView(
-                            text = stringResource(id = R.string.or),
-                            fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                        )
-
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-
-                        Button(
-                            onClick = { viewModel.onUpiClick(navHostController) }, // Show QR code dialog on button click
-                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-                            modifier = Modifier
-                                .width(MaterialTheme.dimens.DP_200_CompactMedium)
-                                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
-                                .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(MaterialTheme.dimens.DP_160_CompactMedium)
+                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.upi_icon),
-                                contentDescription = null,
-                                modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium)
-                            )
+                            if (viewModel.emvInProgress.value == false) {
+                                if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE) {
+                                    TextView(
+                                        text = stringResource(id = R.string.or),
+                                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                    )
+
+                                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
+
+                                    Button(
+                                        onClick = { viewModel.onUpiClick(navHostController) }, // Show QR code dialog on button click
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
+                                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                                        modifier = Modifier
+                                            .width(MaterialTheme.dimens.DP_200_CompactMedium)
+                                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
+                                            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.upi_icon),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium)
+                                        )
+                                    }
+                                }
+                            } else {
+                                    TextView(
+                                        text = getEmvMsgIdString(displayMsgId = displayInfoMsgId.value),
+                                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier
+                                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                                            .align(Alignment.CenterHorizontally)
+                                    )
+                                viewModel.showProgressVar.value.takeIf { it == true }?.let {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .padding(MaterialTheme.dimens.DP_21_CompactMedium)
+                                            .size(MaterialTheme.dimens.DP_70_CompactMedium),
+                                        color = MaterialTheme.colorScheme.primary,
+                                        strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -211,7 +247,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
         }
     }
 
-    FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)})
+    FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
+
 
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, navHostController)
