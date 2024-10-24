@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -73,7 +74,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
     // State to manage QR code dialog visibility
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
-    val displayInfoMsgId = remember { viewModel.displayInfoMsgId }
 
     Column {
 
@@ -228,18 +228,19 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                 }
                             } else {
                                     TextView(
-                                        text = getEmvMsgIdString(displayMsgId = displayInfoMsgId.value),
+                                        text = getEmvMsgIdString(displayMsgId = viewModel.displayInfoMsgId.value),
                                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center,
                                         modifier = Modifier
-                                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                                            .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                                             .align(Alignment.CenterHorizontally)
                                     )
                                 viewModel.showProgressVar.value.takeIf { it == true }?.let {
                                     CircularProgressIndicator(
                                         modifier = Modifier
-                                            .padding(MaterialTheme.dimens.DP_21_CompactMedium)
+                                            .padding(MaterialTheme.dimens.DP_10_CompactMedium)
                                             .size(MaterialTheme.dimens.DP_70_CompactMedium),
                                         color = MaterialTheme.colorScheme.primary,
                                         strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,

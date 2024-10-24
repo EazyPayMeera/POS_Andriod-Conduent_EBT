@@ -48,6 +48,9 @@ sealed class EmvSdkResult(
         NONE, /* Clear Display */
 
         /* NFC Tip Messages */
+        CARD_INSERTED,
+        CARD_TAPPED,
+        CARD_SWIPED,
         CARD_READ_OK,
         REMOVE_CARD,
         USE_CONTACT_IC_CARD,

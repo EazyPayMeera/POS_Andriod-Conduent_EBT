@@ -248,6 +248,16 @@
     <string name="processing">Processing</string>
 
     <!-- EMV Display Messages -->
+    <string name="emv_msg_id_card_inserted">Chip Card Processing\nDo not remove</string>
+    <string name="emv_msg_id_card_swiped">Card Swiped</string>
+    <string name="emv_msg_id_card_tapped">Card Tapped</string>
+    <string name="emv_msg_id_no_card_detected">No Card Detected</string>
+    <string name="emv_msg_id_not_ic_card">Not an IC Card</string>
+    <string name="emv_msg_id_bad_swipe">Card Read Error, Swipe Again</string>
+    <string name="emv_msg_id_swipe_card">Swipe Your Card</string>
+    <string name="emv_msg_id_timeout">Card Read Timeout</string>
+    <string name="emv_msg_id_cancelled">Card Read Cancelled</string>
+    <string name="emv_msg_id_device_busy">Device Busy</string>
     <string name="emv_msg_id_card_read_ok">Card Read OK</string>
     <string name="emv_msg_id_remove_card">Please Remove Your Card</string>
     <string name="emv_msg_id_use_ic_card">Use Contact Chip Card</string>

@@ -245,6 +245,16 @@
     <string name="processing">प्रसंस्करण</string>
 
     <!-- EMV Display Messages -->
+    <string name="emv_msg_id_card_inserted">चिप कार्ड प्रोसेस हो रहा है\nकृपया न निकालें</string>
+    <string name="emv_msg_id_card_swiped">कार्ड स्वाइप किया गया</string>
+    <string name="emv_msg_id_card_tapped">कार्ड टैप किया गया</string>
+    <string name="emv_msg_id_no_card_detected">कोई कार्ड नहीं मिला</string>
+    <string name="emv_msg_id_not_ic_card">यह IC कार्ड नहीं है</string>
+    <string name="emv_msg_id_bad_swipe">कार्ड पढ़ने में त्रुटि, फिर से स्वाइप करें</string>
+    <string name="emv_msg_id_swipe_card">अपना कार्ड स्वाइप करें</string>
+    <string name="emv_msg_id_timeout">कार्ड पढ़ने का समय समाप्त</string>
+    <string name="emv_msg_id_cancelled">कार्ड पढ़ना रद्द किया गया</string>
+    <string name="emv_msg_id_device_busy">डिवाइस व्यस्त है</string>
     <string name="emv_msg_id_card_read_ok">कार्ड पढ़ा गया</string>
     <string name="emv_msg_id_remove_card">कृपया अपना कार्ड निकालें</string>
     <string name="emv_msg_id_use_ic_card">संपर्क चिप कार्ड का उपयोग करें</string>

@@ -17,10 +17,8 @@ import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BaseConstant
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -94,8 +92,22 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                             else
                                 navigateToDeclinedScreen(navHostController)
                         }
-                        is EmvServiceResult.CardCheckResult ->{
-                            emvInProgress.value = response.status == EmvServiceResult.CardCheckStatus.CARD_INSERTED
+
+                        is EmvServiceResult.CardCheckResult -> {
+                            when (response.status) {
+                                EmvServiceResult.CardCheckStatus.CARD_INSERTED,
+                                EmvServiceResult.CardCheckStatus.CARD_SWIPED,
+                                EmvServiceResult.CardCheckStatus.CARD_TAPPED -> {
+                                    emvInProgress.value = true
+                                    showProgressVar.value = true
+                                    displayInfoMsgId.value = emvCardCheckStatusToMsgId(response.status as EmvServiceResult.CardCheckStatus)
+                                }
+                                else -> {
+                                    emvInProgress.value = false
+                                    showProgressVar.value = false
+                                    displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.NONE
+                                }
+                            }
                         }
                     }
                 }

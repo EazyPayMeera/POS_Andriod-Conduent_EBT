@@ -86,6 +86,9 @@ class EmvServiceRepository @Inject constructor() :
     {
         return when (value) {
             EmvSdkResult.DisplayMsgId.NONE -> DisplayMsgId.NONE
+            EmvSdkResult.DisplayMsgId.CARD_INSERTED -> DisplayMsgId.CARD_INSERTED
+            EmvSdkResult.DisplayMsgId.CARD_SWIPED -> DisplayMsgId.CARD_SWIPED
+            EmvSdkResult.DisplayMsgId.CARD_TAPPED -> DisplayMsgId.CARD_TAPPED
             EmvSdkResult.DisplayMsgId.CARD_READ_OK -> DisplayMsgId.CARD_READ_OK
             EmvSdkResult.DisplayMsgId.REMOVE_CARD -> DisplayMsgId.REMOVE_CARD
             EmvSdkResult.DisplayMsgId.USE_CONTACT_IC_CARD -> DisplayMsgId.USE_CONTACT_IC_CARD
