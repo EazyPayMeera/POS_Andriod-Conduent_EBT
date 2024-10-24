@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -728,11 +729,15 @@ fun CardWithImageText(
 ) {
     GenericCard(
         modifier = modifier
-            .clickable(onClick = onClick)
             .border(
                 width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, // Orange color if selected, otherwise transparent
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
+            )
+            .clickable(
+                onClick = onClick,
+                indication = null, // Disable the default ripple effect if not needed
+                interactionSource = remember { MutableInteractionSource() }
             ),
         backgroundColor = MaterialTheme.colorScheme.secondary,
         elevation = MaterialTheme.dimens.DP_5_CompactMedium,
@@ -762,6 +767,7 @@ fun CardWithImageText(
         }
     }
 }
+
 
 
 @Composable

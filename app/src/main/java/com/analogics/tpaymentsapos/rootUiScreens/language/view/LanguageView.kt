@@ -15,6 +15,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -40,6 +41,9 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewModel = hiltViewModel()) {
     val context = LocalContext.current // Get the context here
     val sharedViewModel = localSharedViewModel.current
+
+    // Retain the selected language without triggering UI changes
+    val selectedLanguage = remember { viewModel.uiLanguage }
 
     Column {
         CommonTopAppBar(
@@ -113,8 +117,10 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                     Spacer(modifier = Modifier.weight(1f))
 
                     RadioButton(
-                        selected = viewModel.uiLanguage.value == UiLanguage.ENGLISH,
-                        onClick = { viewModel.onLanguageChange(UiLanguage.ENGLISH, sharedViewModel, context) },
+                        selected = selectedLanguage.value == UiLanguage.ENGLISH,
+                        onClick = {
+                            viewModel.onLanguageChange(UiLanguage.ENGLISH, sharedViewModel, context)
+                        },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = MaterialTheme.colorScheme.primary,
                             unselectedColor = MaterialTheme.colorScheme.onSecondary
@@ -159,8 +165,10 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                     Spacer(modifier = Modifier.weight(1f))
 
                     RadioButton(
-                        selected = viewModel.uiLanguage.value == UiLanguage.HINDI,
-                        onClick = { viewModel.onLanguageChange(UiLanguage.HINDI, sharedViewModel, context) },
+                        selected = selectedLanguage.value == UiLanguage.HINDI,
+                        onClick = {
+                            viewModel.onLanguageChange(UiLanguage.HINDI, sharedViewModel, context)
+                        },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = dashboardOrangeColor,
                             unselectedColor = MaterialTheme.colorScheme.onSecondary
@@ -171,6 +179,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
         }
     }
 
+    // Trigger language loading logic without re-rendering the UI
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
     }
