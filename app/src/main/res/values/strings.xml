@@ -249,5 +249,17 @@
     <string name="recentActivity">Recent Activity</string>
     <string name="see_all">See All</string>
 
+    <!--Receipt Details -->
+
+    <string name="header1_placeholder">Enter Header 1</string>
+    <string name="header2_placeholder">Enter Header 2</string>
+    <string name="header3_placeholder">Enter Header 3</string>
+    <string name="header4_placeholder">Enter Header 4</string>
+    <string name="footer1_placeholder">Enter Footer 1</string>
+    <string name="footer2_placeholder">Enter Footer 2</string>
+    <string name="footer3_placeholder">Enter Footer 3</string>
+    <string name="footer4_placeholder">Enter Footer 4</string>
+    <string name="default_placeholder">Enter Text</string>
+
 
 </resources>

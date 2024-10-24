@@ -29,8 +29,6 @@ class LanguageViewModel @Inject constructor() : ViewModel() {
         config.setLocale(locale)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
 
-        // Restart the activity to apply the new language (if applicable)
-        // You may need to trigger a restart of your activity or navigate to a different one.
     }
 
 }

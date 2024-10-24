@@ -60,9 +60,11 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
 
     val configChanged = remember { mutableStateOf(false) }
 
-
     Column {
-        CommonTopAppBar(title = stringResource(id = R.string.receipt_details),onBackButtonClick = { navHostController.popBackStack() })
+        CommonTopAppBar(
+            title = stringResource(id = R.string.receipt_details),
+            onBackButtonClick = { navHostController.popBackStack() }
+        )
 
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium),
@@ -90,6 +92,25 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                         val currentValue = if (isHeader) headerValues[index] else footerValues[index - headerValues.size]
                         val label = if (isHeader) "Header ${index + 1}" else "Footer  ${index - headerValues.size + 1}"
 
+                        // Placeholder resource IDs can be defined in strings.xml
+                        val placeholderResId = if (isHeader) {
+                            when (index) {
+                                0 -> R.string.header1_placeholder
+                                1 -> R.string.header2_placeholder
+                                2 -> R.string.header3_placeholder
+                                3 -> R.string.header4_placeholder
+                                else -> R.string.default_placeholder
+                            }
+                        } else {
+                            when (index - headerValues.size) {
+                                0 -> R.string.footer1_placeholder
+                                1 -> R.string.footer2_placeholder
+                                2 -> R.string.footer3_placeholder
+                                3 -> R.string.footer4_placeholder
+                                else -> R.string.default_placeholder
+                            }
+                        }
+
                         HeaderFooterRow(
                             label = label,
                             value = currentValue.value,
@@ -101,7 +122,8 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                                 } else {
                                     viewModel.updateFooter(index - headerValues.size, newValue)
                                 }
-                            }
+                            },
+                            placeholderResId = placeholderResId // Pass the placeholder resource ID
                         )
                     }
 
@@ -134,7 +156,7 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
 }
 
 @Composable
-fun HeaderFooterRow(label: String, value: String, onValueChange: (String) -> Unit) {
+fun HeaderFooterRow(label: String, value: String, onValueChange: (String) -> Unit, placeholderResId: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -142,21 +164,30 @@ fun HeaderFooterRow(label: String, value: String, onValueChange: (String) -> Uni
             .padding(MaterialTheme.dimens.DP_20_CompactMedium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
-                //.padding(MaterialTheme.dimens.DP_5_CompactMedium)
-                //.height(MaterialTheme.dimens.DP_50_CompactMedium)
-                .fillMaxWidth().fillMaxHeight(),
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal),
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.Center,
+                fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                fontWeight = FontWeight.Normal
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.tertiary
             ),
-            placeholder = {Text(label,modifier = Modifier.fillMaxWidth() ,textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSecondary)},
+            placeholder = {
+                Text(
+                    text = stringResource(id = placeholderResId),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            },
             singleLine = true
         )
     }

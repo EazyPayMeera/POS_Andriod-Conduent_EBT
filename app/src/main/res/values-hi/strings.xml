@@ -245,4 +245,15 @@
     <string name="see_all">सभी देखें</string>
 
 
+    <string name="header1_placeholder">हेडर 1 दर्ज करें</string>
+    <string name="header2_placeholder">हेडर 2 दर्ज करें</string>
+    <string name="header3_placeholder">हेडर 3 दर्ज करें</string>
+    <string name="header4_placeholder">हेडर 4 दर्ज करें</string>
+    <string name="footer1_placeholder">फुटर 1 दर्ज करें</string>
+    <string name="footer2_placeholder">फुटर 2 दर्ज करें</string>
+    <string name="footer3_placeholder">फुटर 3 दर्ज करें</string>
+    <string name="footer4_placeholder">फुटर 4 दर्ज करें</string>
+    <string name="default_placeholder">पाठ दर्ज करें</string>
+
+
 </resources>
