@@ -59,7 +59,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                    .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                     .fillMaxWidth()
                     .height(MaterialTheme.dimens.DP_250_CompactMedium)
             ) {
