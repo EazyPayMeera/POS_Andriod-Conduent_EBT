@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -84,8 +86,8 @@ fun CircularMenu(
 
     Box(
         modifier = Modifier
-            .size(MaterialTheme.dimens.DP_120_CompactMedium)
-            .padding(MaterialTheme.dimens.DP_21_CompactMedium),
+            .size(MaterialTheme.dimens.DP_100_CompactMedium)
+            .padding(0.dp),
         contentAlignment = Alignment.Center
     ) {
         menuOptions.forEachIndexed { index, option ->
@@ -127,7 +129,7 @@ fun CircularMenu(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(MaterialTheme.dimens.DP_200_CompactMedium)
+                .size(MaterialTheme.dimens.DP_60_CompactMedium)
                 .shadow(
                     MaterialTheme.dimens.DP_4_CompactMedium,
                     shape = CircleShape
@@ -144,12 +146,10 @@ fun CircularMenu(
                     expanded = !expanded
                 }
         ) {
-            Text(
-                text = stringResource(id = R.string.print),
-                color = MaterialTheme.colorScheme.tertiary,
-                fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+            Image(
+                painter = painterResource(id = R.drawable.printer_logo), // Replace with your image resource
+                contentDescription = stringResource(id = R.string.print), // Provide a content description for accessibility
+                modifier = Modifier.size(MaterialTheme.dimens.DP_60_CompactMedium) // Adjust size as needed
             )
         }
     }
@@ -223,7 +223,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     size = MaterialTheme.dimens.DP_126_CompactMedium,
                     alignment = Alignment.Center,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     contentDescription = ""
                 )
@@ -258,7 +258,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 }
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_70_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
                 ) {

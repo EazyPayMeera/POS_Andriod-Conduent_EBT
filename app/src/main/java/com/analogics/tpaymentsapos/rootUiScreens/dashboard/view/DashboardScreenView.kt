@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,7 +42,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
+import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
@@ -191,6 +189,7 @@ fun TrainingView(
                         .padding(MaterialTheme.dimens.DP_11_CompactMedium)
                 ) {
                     DashboardContentSurface(
+                        navHostController = navHostController,
                         sharedViewModel = sharedViewModel,
                         viewModel = dashboardViewModel,
                         dashboardItemLists = dashboardItemLists,
@@ -216,6 +215,7 @@ fun TrainingView(
 
 @Composable
 fun DashboardContentSurface(
+    navHostController: NavHostController,
     sharedViewModel: SharedViewModel,
     viewModel: DashboardViewModel,
     dashboardItemLists: List<DashboardItemList>,
@@ -299,14 +299,14 @@ fun DashboardContentSurface(
 
             Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
 
-            Row(
+            /*Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    /*.padding(top = MaterialTheme.dimens.DP_25_CompactMedium)*/,
+                    *//*.padding(top = MaterialTheme.dimens.DP_25_CompactMedium)*//*,
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                    AppButton(
+                    *//*AppButton(
                         onClick = {
                             Log.d("Print Last Receipt ","Last Receipt Clicked ")
                             viewModel.fetchLastTransactions(sharedViewModel,context)
@@ -314,10 +314,39 @@ fun DashboardContentSurface(
                         },
                         title = stringResource(id = R.string.print_last_receipt),
                         image = painterResource(id = R.drawable.ic_print)
-                    )
+                    )*//*
+
+
+            }*/
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularMenu(
+                    onMenuOptionClick = { option ->
+                        when (option) {
+                            context.resources.getString((R.string.cust_recp)) -> {
+                                viewModel.fetchLastTransactions(sharedViewModel,context)
+                                isDialogVisible = true
+                            }
+                            context.resources.getString((R.string.merchant_recp)) -> {
+                                viewModel.fetchLastTransactions(sharedViewModel,context)
+                                isDialogVisible = true
+                            }
+                            context.resources.getString((R.string.e_recp)) -> {
+                                navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
+                            }
+                        }
+                    }
+                )
             }
             CustomDialogBuilder.ShowComposed()
 
         }
     }
 }
+
+
+
