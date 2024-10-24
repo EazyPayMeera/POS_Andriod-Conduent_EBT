@@ -42,9 +42,9 @@ fun ChangePasswordView(navHostController: NavHostController?) {
         topBar = {
             AppHeader(
                 title = stringResource(id = R.string.change_password),
-                onBackButtonClick = { navHostController?.popBackStack() },
+                onBackButtonClick = { /*navHostController?.popBackStack()*/ },
                 icon1 = R.drawable.baseline_arrow_back_24,
-                onIcon1Click = {  },
+                onIcon1Click = { navHostController?.popBackStack() },
                 backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
             )

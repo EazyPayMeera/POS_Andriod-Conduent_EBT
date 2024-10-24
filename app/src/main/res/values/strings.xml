@@ -48,6 +48,7 @@
     <string name="card">Card:</string> Auth Code:
     <string name="auth_code">Auth Code:</string>
     <string name="no">No.:</string>
+    <string name="cancel_no">No</string>
     <string name="inc_no">Invoice Number:</string> POS Entry:
     <string name="pos_entry">POS Entry:</string>
     <string name="print">PRINT</string> CANCEL
@@ -172,7 +173,7 @@
     <!-- Sucess Screen -->
     <string name="payment">Payment</string>
     <string name="sucessful">Sucessful</string>
-	
+
     <!-- Printer Strings -->
     <string name="printer_error_title">Printing Error</string>
     <string name="printer_out_of_paper">Printer is Out Paper</string>
@@ -236,12 +237,7 @@
     <string name="detail_auth_code">AuthCode</string>
 
 
-
-
-<!--
-    &lt;!&ndash;Configuration&ndash;&gt;
-    <string name="ten">10%</string>-->
-<!--//txnlist -->
+    <!--//txnlist -->
     <string name="recentActivity">Recent Activity</string>
     <string name="see_all">See All</string>
 
@@ -280,5 +276,17 @@
     <string name="emv_msg_id_err_qpboc_app">QPBOC App Error</string>
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA Failed</string>
     <string name="emv_msg_id_err_pure_cash_card_no_online">PURE Cash Card Not Allowed for Online Transactions</string>
+    <!--Receipt Details -->
+
+    <string name="header1_placeholder">Enter Header 1</string>
+    <string name="header2_placeholder">Enter Header 2</string>
+    <string name="header3_placeholder">Enter Header 3</string>
+    <string name="header4_placeholder">Enter Header 4</string>
+    <string name="footer1_placeholder">Enter Footer 1</string>
+    <string name="footer2_placeholder">Enter Footer 2</string>
+    <string name="footer3_placeholder">Enter Footer 3</string>
+    <string name="footer4_placeholder">Enter Footer 4</string>
+    <string name="default_placeholder">Enter Text</string>
+
 
 </resources>

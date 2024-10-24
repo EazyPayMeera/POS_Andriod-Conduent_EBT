@@ -202,7 +202,7 @@ class Printer constructor() {
             qrCodePrinting(format, barcode)
 
             // Feed 3 lines after printing
-            feedLine(3)
+            feedLine(1)
 
             // Start the printing process
             startPrinting()

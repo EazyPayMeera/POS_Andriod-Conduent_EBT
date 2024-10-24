@@ -1,0 +1,259 @@
+<resources>
+    <string name="app_name">ईज़ी पेमेंट्स</string>
+    <string name="top_back">वापस</string>
+    <!-- splash -->
+    <string name="welcome">स्वागत है</string>
+
+    <!-- onBoardScreen -->
+    <string name="safe_fast_txn">सुरक्षित और तेज़ लेन-देन</string>
+    <string name="single_use_pass">एकल उपयोग पासवर्ड जो दोबारा काम नहीं करेगा, आपके विवरण को सुरक्षित रखेगा चाहे वे उजागर हो जाएं</string>
+    <string name="analysis_data">डेटा का विश्लेषण</string>
+    <string name="improving_customer">डेटा एनालिटिक्स के माध्यम से ग्राहक प्रतिधारण में सुधार, कई महत्वपूर्ण बातें ध्यान में रखनी चाहिए</string>
+    <string name="quick_and_easy_payments">तेज़ और आसान भुगतान</string>
+    <string name="creating_pay">एक सहज भुगतान अनुभव बनाना उपयोगकर्ता संतुष्टि और रूपांतरण के लिए महत्वपूर्ण है</string>
+    <string name="get_started">शुरू करें</string>
+    <string name="skip">छोड़ें</string>
+
+    <!-- Login -->
+    <string name="plz_login">जारी रखने के लिए कृपया लॉगिन करें</string>
+    <string name="plz_ent_new_pass">कृपया अपना नया पासवर्ड दर्ज करें</string>
+    <string name="login">लॉगिन</string>
+    <string name="log_out">लॉगआउट</string>
+    <string name="change_password">पासवर्ड बदलें</string>
+    <string name="forget_pswd">पासवर्ड भूल गए?</string>
+    <string name="username">उपयोगकर्ता नाम</string>
+    <string name="password">पासवर्ड</string>
+    <string name="placehldr_username">कृपया उपयोगकर्ता नाम दर्ज करें</string>
+    <string name="placehldr_password">कृपया पासवर्ड दर्ज करें</string>
+    <string name="placehldr_new_password">कृपया नया पासवर्ड दर्ज करें</string>
+    <string name="cred_not_to_be_empty">ईमेल और पासवर्ड खाली नहीं होना चाहिए</string>
+
+    <!-- Dashboard -->
+    <string name="refund">रिफंड</string>
+    <string name="net_total">कुल शुद्ध राशि</string>
+    <string name="refund_amt">रिफंड राशि दर्ज करें</string>
+    <string name="enter_invoice">इनवॉइस नंबर दर्ज करें</string>
+    <string name="enter_email">ईमेल आईडी दर्ज करें</string>
+    <string name="invoice_no">इनवॉइस नंबर</string>
+    <string name="auth_amt">प्राधिकरण राशि दर्ज करें</string>
+    <string name="authcap_amt">प्राधिकरण की गई राशि दर्ज करें</string>
+    <string name="void_pur">खरीद रद्द करें</string>
+    <string name="purchase_amt">लेन-देन राशि दर्ज करें</string>
+    <string name="purchase">खरीद</string>
+    <string name="pre_auth">पूर्व-अधिकार</string>
+    <string name="void_trans">रद्द करें</string>
+    <string name="enter_Pin">कृपया पिन दर्ज करें</string>
+    <string name="pin">पिन</string>
+    <string name="org_amt">मूल राशि</string>
+    <string name="card">कार्ड:</string> प्रमाण कोड:
+    <string name="auth_code">प्रमाण कोड:</string>
+    <string name="no">संख्या:</string>
+    <string name="cancel_no">नहीं</string>
+    <string name="inc_no">इनवॉइस नंबर:</string> पीओएस प्रविष्टि:
+    <string name="pos_entry">पीओएस प्रविष्टि:</string>
+    <string name="print">प्रिंट</string> रद्द करें
+    <string name="cancel">रद्द करें</string>
+    <string name="tap_swipe_insert">टैप/स्वाइप/इंसर्ट करें</string>
+    <string name="chip_detect">चिप का पता चला</string>
+    <string name="confirm_btn">पुष्टि करें</string>
+    <string name="cancel_btn">रद्द करें</string>
+    <string name="cancel_dialogue">रद्द करें?</string>
+    <string name="yes">हाँ</string>
+    <string name="add_tip">टिप जोड़ें:</string> एक एप्लिकेशन आईडी का चयन करें
+    <string name="txn_sum">लेन-देन सारांश:</string>
+    <string name="total_amt">कुल राशि:</string>
+    <string name="refund_amt_data">रिफंड राशि:</string>
+    <string name="custom">कस्टम</string>
+    <string name="end_shift_title">अपना शिफ्ट समाप्त करें?</string>
+    <string name="end_shift_message">क्या आप वाकई अपना शिफ्ट समाप्त करना चाहते हैं?</string>
+    <string name="dialogue_cancel_request">क्या आप वाकई रद्द करना चाहते हैं?</string>
+    <string name="print_shift_report">शिफ्ट रिपोर्ट प्रिंट करें</string>
+    <string name="print_last_receipt">अंतिम रसीद प्रिंट करें</string>
+    <string name="decline">अस्वीकृत करें</string>
+    <string name="decline_u">अस्वीकृत</string>
+    <string name="done">समाप्त</string>
+    <string name="open">खोलें</string>
+    <string name="training">प्रशिक्षण</string>
+    <string name="printing">प्रिंटिंग</string>
+    <string name="merchant_recp">विक्रेता रसीद</string>
+    <string name="e_recp">ई-रसीद</string>
+    <string name="cust_recp">ग्राहक रसीद</string>
+    <string name="enter_tip_amount">टिप राशि दर्ज करें</string>
+    <string name="amount">राशि</string>
+    <string name="adjust">समायोजित करें</string>
+    <string name="enter_the_percentage">प्रतिशत दर्ज करें</string>
+    <string name="percentage">प्रतिशत</string>
+    <string name="application_name">ईज़ी पेमेंट्स</string>
+    <string name="plz_wait">कृपया प्रतीक्षा करें</string>
+    <string name="enter_password">अपना पासवर्ड दर्ज करें</string>
+    <string name="set_lang">भाषा सेट करें</string>
+    <string name="select_lang">अपनी भाषा चुनें</string>
+    <string name="hindi">हिन्दी</string>
+    <string name="home">होम</string>
+    <string name="english">अंग्रेज़ी</string>
+    <string name="scan_qr">क्यूआर/बारकोड स्कैन करें</string>
+    <string name="password_">पासवर्ड भूल गए?</string>
+    <string name="call_customercare">पासवर्ड के लिए ग्राहक सेवा को कॉल करें</string>
+    <string name="mid">एमआईडी:</string>
+    <string name="tid">टीआईडी:</string>
+    <string name="sr_no">क्रमांक</string>
+    <string name="call_center">कॉल सेंटर:</string>
+    <string name="email">ईमेल</string>
+    <string name="sucess">सफलता</string>
+    <string name="sent_email">ईमेल भेजा गया</string>
+    <string name="ereceipt_sent">ई-रसीद सफलतापूर्वक भेजी गई</string>
+    <string name="ok">ठीक है</string>
+    <string name="ten">10%</string>
+    <string name="tax_label_sgst">एसजीएसटी</string>
+    <string name="tax_label_cgst">सीजीएसटी</string>
+    <string name="tip_percent_change_prompt">टिप प्रतिशत दर्ज करें</string>
+    <string name="tip_current_value">वर्तमान टिप</string>
+    <string name="tax_percent_change_prompt_sgst">एसजीएसटी प्रतिशत दर्ज करें</string>
+    <string name="tax_percent_change_prompt_cgst">सीजीएसटी प्रतिशत दर्ज करें</string>
+    <string name="tax_current_value">वर्तमान कर</string>
+    <string name="fifteen">15%</string>
+    <string name="twenty">20%</string>
+    <string name="or">---------------या---------------</string>
+    <string name="close">बंद करें</string>
+    <string name="chip_detected">चिप का पता चला</string>
+    <string name="approved">स्वीकृत</string>
+    <string name="original_amount">मूल राशि :</string>
+    <string name="date">लेन-देन की तारीख:</string>
+    <string name="sel_pre_auth">पूर्व-अधिकार प्रकार चुनें</string>
+    <string name="new_auth">नया-प्राधिकरण</string>
+    <string name="auth_cap">प्राधिकरण-कैप्चर</string>
+    <string name="tnx_amount">लेन-देन राशि:</string>
+    <string name="tip_amt">टिप राशि:</string>
+    <string name="sgst_amt">एसजीएसटी राशि:</string>
+    <string name="cgst_amt">सीजीएसटी राशि:</string>
+    <string name="igst_amt">आईजीएसटी राशि:</string>
+
+    <!-- Transaction Receipt Details Screen -->
+    <string name="header_footer">हेडर और फूटर</string>
+
+    <string name="auth_capture">ऑथ-कैप्चर</string>
+    <string name="settings">सेटिंग्स</string>
+
+    <string name="Configuration">कॉन्फ़िगरेशन</string>
+    <string name="training_mode">प्रशिक्षण मोड</string>
+    <string name="auto_report_print">साइन आउट पर ऑटो प्रिंट रिपोर्ट</string>
+    <string name="prompt_invoice_no">इनवॉइस नंबर के लिए प्रॉम्प्ट</string>
+    <string name="auto_print_merchant">ऑटो प्रिंट मर्चेंट रसीद</string>
+    <string name="enable_tipping">टिपिंग सक्षम करें</string>
+    <string name="taxes">कर</string>
+    <string name="receipt_details">रसीद विवरण</string>
+    <string name="save_btn">सहेजें</string>
+    <string name="adjust_per">-------- % समायोजित करें --------</string>
+
+    <string name="is_correct">क्या यह जानकारी सही है?</string>
+
+    <!-- Custom Dialogue Builder -->
+    <string name="sel_app_id">एक एप्लिकेशन आईडी चुनें</string>
+
+    <!-- Transaction Details Screen -->
+    <string name="transactions">लेनदेन</string>
+
+    <!-- Transaction List Screen -->
+    <string name="select_date">तारीख चुनें</string>
+    <string name="filter_by_batch">बैच नंबर द्वारा फ़िल्टर करें</string>
+    <string name="empty_list">लेनदेन सूची खाली है</string>
+    <string name="sel_batch_id">बैच आईडी चुनें</string>
+    <string name="to">से</string>
+    <string name="close_batch">बैच बंद करें</string>
+    <string name="confirmation">पुष्टिकरण</string>
+    <string name="are_you_sure">क्या आप सुनिश्चित हैं?</string>
+    <string name="want_to_close_batch">क्या आप बैच बंद करना चाहते हैं</string>
+    <string name="print_dialogue">प्रिंट करें?</string>
+    <string name="which_report">आप कौन सा रिपोर्ट चाहते हैं</string>
+    <string name="summary">सारांश</string>
+    <string name="detail">विवरण</string>
+
+    <!-- Success Screen -->
+    <string name="payment">भुगतान</string>
+    <string name="sucessful">सफल</string>
+
+    <!-- Payment SDK Strings -->
+    <string name="emv_sdk_init_title">आरंभिककरण</string>
+    <string name="emv_sdk_init_success">भुगतान SDK सफलतापूर्वक आरंभ किया गया!!</string>
+    <string name="emv_sdk_init_failure">भुगतान SDK आरंभिककरण विफल हुआ!!</string>
+    <string name="processing">प्रसंस्करण</string>
+
+    <!-- Printer Strings -->
+    <string name="printer_error_title">प्रिंटिंग त्रुटि</string>
+    <string name="printer_out_of_paper">प्रिंटर में कागज समाप्त हो गया है</string>
+    <string name="printer_busy">प्रिंटर व्यस्त है</string>
+
+    <!-- Receipt Builder -->
+    <string name="receipt_header">ग्लोबल पेमेंट्स</string>
+    <string name="receipt_address">स्टोर का पता:</string>
+    <string name="receipt_merchant_id">MID:</string>
+    <string name="receipt_terminal_id">TID:</string>
+    <string name="receipt_gray_line">---------------------------------</string>
+    <string name="receipt_card_type">कार्ड प्रकार:</string>
+    <string name="receipt_card_no">कार्ड संख्या:</string>
+    <string name="receipt_trans_type">लेनदेन प्रकार:</string>
+    <string name="receipt_batch_no">बैच संख्या:</string>
+    <string name="receipt_trace_no">ट्रेस संख्या:</string>
+    <string name="receipt_date">तारीख</string>
+    <string name="receipt_time">समय</string>
+    <string name="receipt_ref_no">संदर्भ संख्या:</string>
+    <string name="receipt_aap_code">ऐप कोड:</string>
+    <string name="receipt_txn_id">लेनदेन ID:</string>
+    <string name="receipt_app">ऐप:</string>
+    <string name="receipt_subtotal">राशि:</string>
+    <string name="receipt_sale_tax">बिक्री कर:</string>
+    <string name="receipt_pos_terminal">POS टर्मिनल:</string>
+    <string name="receipt_card_entry_mode">कार्ड प्रविष्टि मोड:</string>
+    <string name="receipt_aid">AID:</string>
+    <string name="receipt_tc">TC:</string>
+    <string name="receipt_total">कुल:</string>
+    <string name="receipt_payment">भुगतान:</string>
+    <string name="receipt_authorization">अधिकारिता:</string>
+    <string name="receipt_invoice_no">इनवॉइस:</string>
+    <string name="receipt_auth_code">अधिकार कोड</string>
+    <string name="receipt_tip">टिप</string>
+    <string name="receipt_sign">हस्ताक्षर</string>
+
+    <!-- Summary Report -->
+    <string name="summary_header">सारांश रिपोर्ट</string>
+    <string name="summary_dot_line">---------------</string>
+    <string name="summary_purchase">खरीद</string>
+    <string name="summary_refund">रिफंड</string>
+    <string name="summary_void">रद्द</string>
+    <string name="summary_tip">टिप अधिभार</string>
+    <string name="summary_cashback">कैशबैक</string>
+    <string name="summary_total">कुल</string>
+    <string name="summary_txn_breakdown">लेनदेन का विवरण:</string>
+    <string name="summary_credit_txn">क्रेडिट लेनदेन:</string>
+    <string name="summary_debit_txn">डेबिट लेनदेन:</string>
+    <string name="summary_footer">सारांश</string>
+
+    <!-- Detail Report -->
+    <string name="detail_header">विवरण लेनदेन सारांश</string>
+    <string name="detail_txn">लेनदेन</string>
+    <string name="detail_count">गिनती</string>
+    <string name="detail_txn_details">लेनदेन का विवरण</string>
+    <string name="detail_txn_Type">लेनदेन प्रकार</string>
+    <string name="detail_txn_Status">स्थिति</string>
+    <string name="detail_invoice_no">चालान संख्या</string>
+    <string name="detail_txn_amt">लेनदेन राशि</string>
+    <string name="detail_total_amt">कुल राशि</string>
+    <string name="detail_auth_code">अधिकार कोड</string>
+
+    <!-- Recent Activity -->
+    <string name="recentActivity">हाल की गतिविधि</string>
+    <string name="see_all">सभी देखें</string>
+
+
+    <string name="header1_placeholder">हेडर 1 दर्ज करें</string>
+    <string name="header2_placeholder">हेडर 2 दर्ज करें</string>
+    <string name="header3_placeholder">हेडर 3 दर्ज करें</string>
+    <string name="header4_placeholder">हेडर 4 दर्ज करें</string>
+    <string name="footer1_placeholder">फुटर 1 दर्ज करें</string>
+    <string name="footer2_placeholder">फुटर 2 दर्ज करें</string>
+    <string name="footer3_placeholder">फुटर 3 दर्ज करें</string>
+    <string name="footer4_placeholder">फुटर 4 दर्ज करें</string>
+    <string name="default_placeholder">पाठ दर्ज करें</string>
+
+
+</resources>

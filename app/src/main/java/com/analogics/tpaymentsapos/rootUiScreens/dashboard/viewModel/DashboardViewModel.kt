@@ -155,7 +155,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails))
                         .initPrinter(context, iPrinterResultProviderListener)
 
-                    addLogo(context,objRootAppPaymentDetail,iPrinterResultProviderListener,logoResId)
+                    //addLogo(context,objRootAppPaymentDetail,iPrinterResultProviderListener,logoResId)
                     addReceiptDetails(context,sharedViewModel,object : IPrinterResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if(result == true)
@@ -309,15 +309,20 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         return gson.fromJson(json, txnDataListType)
     }
 
-    fun fetchLastTransactions() {
-        viewModelScope.launch {
+    fun fetchLastTransactions(sharedViewModel: SharedViewModel,context: Context) {
+        Log.d("Print Last Receipt", "Last Receipt Clicked")
+
+        viewModelScope.launch(Dispatchers.IO) { // Use Dispatchers.IO for database operations
             val latestTransaction = txnDBRepository.fetchLastTransaction()
-            Log.d("db data", latestTransaction.toString())
+            Log.d("Print Last Receipt", latestTransaction.toString())
 
             latestTransaction?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(listOf(it)) // Wrap it in a list
-                _lastTransactionList.value = txnDataList
-                Log.d("latest txn data", _lastTransactionList.value.toString())
+                withContext(Dispatchers.Main) {
+                    _lastTransactionList.value = txnDataList // Switch back to Main thread to update LiveData
+                    printReceipt(0,sharedViewModel,context,true,sharedViewModel.objRootAppPaymentDetail)
+                }
+                Log.d("Print Last Receipt", _lastTransactionList.value.toString())
             } ?: Log.d("db data", "No transaction found.")
         }
     }

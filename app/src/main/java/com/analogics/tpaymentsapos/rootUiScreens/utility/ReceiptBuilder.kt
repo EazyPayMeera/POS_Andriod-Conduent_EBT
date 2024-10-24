@@ -147,7 +147,7 @@ class ReceiptBuilder {
             .addDetailField(context.getString(R.string.detail_invoice_no), "", context.getString(R.string.detail_auth_code))
             .addDetailField(context.getString(R.string.detail_txn_amt), "", context.getString(R.string.detail_total_amt))
             .addDetailField("", paymentDetails?.txnStatus.toString(), "")
-            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
+
 
         // Add transaction details from the transaction list
         transactionList.forEach { transaction ->

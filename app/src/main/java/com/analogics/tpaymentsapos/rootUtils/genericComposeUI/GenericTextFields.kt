@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -292,8 +293,6 @@ fun OkButton(
         )
     }
 }
-
-
 
 
 
@@ -719,11 +718,15 @@ fun CardWithImageText(
 ) {
     GenericCard(
         modifier = modifier
-            .clickable(onClick = onClick)
             .border(
                 width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, // Orange color if selected, otherwise transparent
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
+            )
+            .clickable(
+                onClick = onClick,
+                indication = null, // Disable the default ripple effect if not needed
+                interactionSource = remember { MutableInteractionSource() }
             ),
         backgroundColor = MaterialTheme.colorScheme.secondary,
         elevation = MaterialTheme.dimens.DP_5_CompactMedium,
@@ -753,6 +756,7 @@ fun CardWithImageText(
         }
     }
 }
+
 
 
 @Composable
@@ -859,33 +863,6 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     }
 }
 
-@Composable
-fun ImageViewColor(
-    imageId: Int,
-    size: Dp,
-    shape: Shape,
-    alignment: Alignment,
-    contentDescription: String,
-    tint: Color? = null, // Add tint parameter with optional color
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop // Optional content scale
-) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(shape),
-        contentAlignment = alignment
-    ) {
-        androidx.compose.foundation.Image(
-            painter = painterResource(id = imageId),
-            contentDescription = contentDescription,
-            colorFilter = tint?.let { ColorFilter.tint(it) }, // Apply tint if provided
-            contentScale = contentScale,
-            modifier = Modifier
-                .fillMaxSize()
-        )
-    }
-}
 
 @Composable
 fun ImageView(

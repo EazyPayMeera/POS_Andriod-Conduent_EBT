@@ -187,37 +187,50 @@ class BatchDialogueBuilder private constructor() {
                                 )
                             }
                         }
+                        // Check if batchIds is empty
+                        if (batchIds.isEmpty()) {
+                            // Display "Batch list Empty" message
+                            Text(
+                                text = "Batch list Empty",
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier
+                                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        } else {
+                            // List of items displayed in a column
+                            Column {
+                                batchIds.forEachIndexed { index, batchId ->
+                                    // Get the corresponding start date (null if not available)
+                                    val startDates =
+                                        if (index < startDates.size) startDates[index] else null
+                                    val endDates =
+                                        if (index < endDates.size) endDates[index] else null
+                                    val startdate =
+                                        startDates?.replace("[", "")?.replace("]", "")?.trim()
+                                    val enddate =
+                                        endDates?.replace("[", "")?.replace("]", "")?.trim()
 
-                        // List of items displayed in a column
-                        Column {
-                            batchIds.forEachIndexed { index, batchId ->
-                                // Get the corresponding start date (null if not available)
-                                val startDates =
-                                    if (index < startDates.size) startDates[index] else null
-                                val endDates = if (index < endDates.size) endDates[index] else null
-                                val startdate =
-                                    startDates?.replace("[", "")?.replace("]", "")?.trim()
-                                val enddate = endDates?.replace("[", "")?.replace("]", "")?.trim()
-
-                                DrawersSurface(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    batchId = batchId, // Pass the combined String to DrawersSurface,
-                                    startDate = startdate.toString(),
-                                    endDate = enddate.toString(),
-                                    onItemSelected = {
-                                        onItemSelected(batchId) // Pass only batchId for selection
-                                        onClose()
-                                    }
-                                )
-
-
-                                // Divider between items, but not after the last item
-                                if (index < batchIds.size - 1) {
-                                    Divider(
+                                    DrawersSurface(
                                         modifier = Modifier.fillMaxWidth(),
-                                        thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
-                                        color = Color.Gray
+                                        batchId = batchId, // Pass the combined String to DrawersSurface,
+                                        startDate = startdate.toString(),
+                                        endDate = enddate.toString(),
+                                        onItemSelected = {
+                                            onItemSelected(batchId) // Pass only batchId for selection
+                                            onClose()
+                                        }
                                     )
+
+
+                                    // Divider between items, but not after the last item
+                                    if (index < batchIds.size - 1) {
+                                        Divider(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
+                                            color = Color.Gray
+                                        )
+                                    }
                                 }
                             }
                         }
