@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.view
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,7 +67,7 @@ fun DashboardView(navHostController: NavHostController) {
         dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel, sharedViewModel)
     ) {}
     LaunchedEffect(Unit) {
-        dashboardViewModel.fetchLastTransactions()
+
     }
 }
 
@@ -307,10 +308,9 @@ fun DashboardContentSurface(
             ) {
                     AppButton(
                         onClick = {
+                            Log.d("Print Last Receipt ","Last Receipt Clicked ")
+                            viewModel.fetchLastTransactions(sharedViewModel,context)
                             isDialogVisible = true
-                            if (transactions.isNotEmpty()) {
-                                viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
-                            }
                         },
                         title = stringResource(id = R.string.print_last_receipt),
                         image = painterResource(id = R.drawable.ic_print)
