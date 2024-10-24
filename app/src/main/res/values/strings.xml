@@ -276,8 +276,8 @@
     <string name="emv_msg_id_err_qpboc_app">QPBOC App Error</string>
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA Failed</string>
     <string name="emv_msg_id_err_pure_cash_card_no_online">PURE Cash Card Not Allowed for Online Transactions</string>
-    <!--Receipt Details -->
 
+    <!--Receipt Details -->
     <string name="header1_placeholder">Enter Header 1</string>
     <string name="header2_placeholder">Enter Header 2</string>
     <string name="header3_placeholder">Enter Header 3</string>

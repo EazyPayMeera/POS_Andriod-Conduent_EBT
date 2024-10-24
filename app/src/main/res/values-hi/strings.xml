@@ -172,12 +172,6 @@
     <string name="payment">भुगतान</string>
     <string name="sucessful">सफल</string>
 
-    <!-- Payment SDK Strings -->
-    <string name="emv_sdk_init_title">आरंभिककरण</string>
-    <string name="emv_sdk_init_success">भुगतान SDK सफलतापूर्वक आरंभ किया गया!!</string>
-    <string name="emv_sdk_init_failure">भुगतान SDK आरंभिककरण विफल हुआ!!</string>
-    <string name="processing">प्रसंस्करण</string>
-
     <!-- Printer Strings -->
     <string name="printer_error_title">प्रिंटिंग त्रुटि</string>
     <string name="printer_out_of_paper">प्रिंटर में कागज समाप्त हो गया है</string>
@@ -244,7 +238,43 @@
     <string name="recentActivity">हाल की गतिविधि</string>
     <string name="see_all">सभी देखें</string>
 
+    <!-- Payment SDK Strings -->
+    <string name="emv_sdk_init_title">आरंभिककरण</string>
+    <string name="emv_sdk_init_success">भुगतान SDK सफलतापूर्वक आरंभ किया गया!!</string>
+    <string name="emv_sdk_init_failure">भुगतान SDK आरंभिककरण विफल हुआ!!</string>
+    <string name="processing">प्रसंस्करण</string>
 
+    <!-- EMV Display Messages -->
+    <string name="emv_msg_id_card_read_ok">कार्ड पढ़ा गया</string>
+    <string name="emv_msg_id_remove_card">कृपया अपना कार्ड निकालें</string>
+    <string name="emv_msg_id_use_ic_card">संपर्क चिप कार्ड का उपयोग करें</string>
+    <string name="emv_msg_id_use_magstripe">मैगस्ट्राइप का उपयोग करें</string>
+    <string name="emv_msg_id_insert_swipe_try_another">कार्ड डालें, स्वाइप करें या दूसरा कार्ड आज़माएं</string>
+    <string name="emv_msg_id_see_phone">अपने फ़ोन को देखें और कार्ड फिर से प्रस्तुत करें</string>
+    <string name="emv_msg_id_need_signature">हस्ताक्षर की आवश्यकता है</string>
+    <string name="emv_msg_id_end_application">आवेदन समाप्त करें</string>
+    <string name="emv_msg_id_tap_again">फिर से टैप करें</string>
+    <string name="emv_msg_id_app_blocked">एप्लिकेशन ब्लॉक किया गया</string>
+    <string name="emv_msg_id_card_blocked">कार्ड ब्लॉक किया गया</string>
+    <string name="emv_msg_id_terminated">समाप्त</string>
+
+    <!-- EMV Display Messages (Errors) -->
+    <string name="emv_msg_id_err_card_read">कार्ड पढ़ने में त्रुटि</string>
+    <string name="emv_msg_id_err_processing">प्रोसेसिंग त्रुटि</string>
+    <string name="emv_msg_id_err_load_callback">कॉलबैक त्रुटि</string>
+    <string name="emv_msg_id_err_ics_param_not_found">ICS पैरामीटर गायब है</string>
+    <string name="emv_msg_id_err_kernel">EMV कर्नेल त्रुटि</string>
+    <string name="emv_msg_id_err_pin_length">PIN लंबाई त्रुटि</string>
+    <string name="emv_msg_id_err_multiple_cards">कई कार्ड प्रस्तुत किए गए</string>
+    <string name="emv_msg_id_err_check_card">कार्ड पढ़ने में त्रुटि</string>
+    <string name="emv_msg_id_err_aid_param_not_found">AID पैरामीटर गायब है</string>
+    <string name="emv_msg_id_err_capk_param_not_found">CAP कुंजी पैरामीटर गायब है</string>
+    <string name="emv_msg_id_err_get_kernel_data">कर्नेल डेटा त्रुटि</string>
+    <string name="emv_msg_id_err_qpboc_app">QPBOC ऐप त्रुटि</string>
+    <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA विफल</string>
+    <string name="emv_msg_id_err_pure_cash_card_no_online">PURE कैश कार्ड ऑनलाइन लेनदेन के लिए अनुमति नहीं है</string>
+
+    <!--Receipt Details -->
     <string name="header1_placeholder">हेडर 1 दर्ज करें</string>
     <string name="header2_placeholder">हेडर 2 दर्ज करें</string>
     <string name="header3_placeholder">हेडर 3 दर्ज करें</string>
@@ -254,6 +284,5 @@
     <string name="footer3_placeholder">फुटर 3 दर्ज करें</string>
     <string name="footer4_placeholder">फुटर 4 दर्ज करें</string>
     <string name="default_placeholder">पाठ दर्ज करें</string>
-
 
 </resources>
