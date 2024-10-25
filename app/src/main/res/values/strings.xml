@@ -67,7 +67,8 @@
     <string name="refund_amt_data">Refund Amount:</string>
     <string name="custom">Custom</string>
     <string name="end_shift_title">End your shift?</string>
-    <string name="end_shift_message">Are you sure you want to\n       end your shift?</string>
+    <string name="end_shift_message_1">Are you sure you want to</string>
+    <string name="end_shift_message_2">end your shift?</string>
     <string name="dialogue_cancel_request">Are you sure want to Cancel ?</string>
     <string name="print_shift_report">Print Shift Report</string>
     <string name="print_last_receipt">Print Last Receipt</string>

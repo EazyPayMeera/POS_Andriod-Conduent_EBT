@@ -67,7 +67,8 @@
     <string name="refund_amt_data">रिफंड राशि:</string>
     <string name="custom">कस्टम</string>
     <string name="end_shift_title">अपना शिफ्ट समाप्त करें?</string>
-    <string name="end_shift_message">क्या आप वाकई अपना शिफ्ट समाप्त करना चाहते हैं?</string>
+    <string name="end_shift_message_1">क्या आप वाकई</string>
+    <string name="end_shift_message_2">अपना शिफ्ट समाप्त करना चाहते हैं?</string>
     <string name="dialogue_cancel_request">क्या आप वाकई रद्द करना चाहते हैं?</string>
     <string name="print_shift_report">शिफ्ट रिपोर्ट प्रिंट करें</string>
     <string name="print_last_receipt">अंतिम रसीद प्रिंट करें</string>

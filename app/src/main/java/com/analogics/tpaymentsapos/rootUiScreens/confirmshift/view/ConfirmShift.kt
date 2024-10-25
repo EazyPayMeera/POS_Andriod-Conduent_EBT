@@ -51,7 +51,9 @@ fun ConfirmShiftView(navHostController: NavHostController) {
 
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
+                    .padding(top = MaterialTheme.dimens.DP_24_CompactMedium,
+                        start = MaterialTheme.dimens.DP_0_CompactMedium,
+                        end = MaterialTheme.dimens.DP_0_CompactMedium) // Padding for the content inside the inner Surface
                     .fillMaxSize(), // Fill the entire available space
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start // Align content to the start
@@ -59,7 +61,7 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
                 Text(
                     text = stringResource(id = R.string.confirm_btn),
-                    fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -71,18 +73,28 @@ fun ConfirmShiftView(navHostController: NavHostController) {
                     painter = painterResource(id = R.drawable.logout), // Replace with your image resource
                     contentDescription = null, // Decorative image
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                        .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_100_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_33_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Center the image
                 )
 
                 Text(
-                    text = stringResource(id = R.string.end_shift_message),
+                    text = stringResource(id = R.string.end_shift_message_1),
                     fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                     color = MaterialTheme.colorScheme.onSecondary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         //.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .align(Alignment.CenterHorizontally) // Center the subheader text
+                )
+
+                Text(
+                    text = stringResource(id = R.string.end_shift_message_2),
+                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_180_CompactMedium)
                         .align(Alignment.CenterHorizontally) // Center the subheader text
                 )
 
