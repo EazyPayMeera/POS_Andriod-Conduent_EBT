@@ -65,10 +65,6 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         }
     }
 
-    /*
-       * Call any API like bellow and it will return the dummy data in ObjRootAppPaymnet Details
-       *
-       * */
     fun onApiDeviceLogin() {
         viewModelScope.launch {
             try {

@@ -309,23 +309,31 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         return gson.fromJson(json, txnDataListType)
     }
 
-    fun fetchLastTransactions(sharedViewModel: SharedViewModel,context: Context) {
+    fun fetchLastTransactions(sharedViewModel: SharedViewModel, context: Context) {
         Log.d("Print Last Receipt", "Last Receipt Clicked")
 
-        viewModelScope.launch(Dispatchers.IO) { // Use Dispatchers.IO for database operations
+        viewModelScope.launch(Dispatchers.IO) {
             val latestTransaction = txnDBRepository.fetchLastTransaction()
             Log.d("Print Last Receipt", latestTransaction.toString())
 
-            latestTransaction?.let {
-                val txnDataList = convertTxnEntityListToTxnDataList(listOf(it)) // Wrap it in a list
+            if (latestTransaction != null) {
+                val txnDataList = convertTxnEntityListToTxnDataList(listOf(latestTransaction))
                 withContext(Dispatchers.Main) {
-                    _lastTransactionList.value = txnDataList // Switch back to Main thread to update LiveData
-                    printReceipt(0,sharedViewModel,context,true,sharedViewModel.objRootAppPaymentDetail)
+                    _lastTransactionList.value = txnDataList
+                    printReceipt(0, sharedViewModel, context, true, sharedViewModel.objRootAppPaymentDetail)
                 }
-                Log.d("Print Last Receipt", _lastTransactionList.value.toString())
-            } ?: Log.d("db data", "No transaction found.")
+            } else {
+                withContext(Dispatchers.Main) {
+                    Log.d("db data", "No transaction found.")
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.resources.getString(R.string.printer_Alert),
+                        subtitle = context.resources.getString(R.string.printer_no_record)
+                    )
+                }
+            }
         }
     }
+
 
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {

@@ -187,6 +187,8 @@
     <string name="printer_error_title">Printing Error</string>
     <string name="printer_out_of_paper">Printer is Out Paper</string>
     <string name="printer_busy">Printer is Busy</string>
+    <string name="printer_Alert">Alert</string>
+    <string name="printer_no_record">No Record Found</string>
 
 
     <!-- Receipt Builder -->

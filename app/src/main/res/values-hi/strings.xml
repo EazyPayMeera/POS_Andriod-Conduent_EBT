@@ -182,6 +182,8 @@
     <string name="printer_error_title">प्रिंटिंग त्रुटि</string>
     <string name="printer_out_of_paper">प्रिंटर में कागज समाप्त हो गया है</string>
     <string name="printer_busy">प्रिंटर व्यस्त है</string>
+    <string name="printer_Alert">अलर्ट</string>
+    <string name="printer_no_record">कोई रिकॉर्ड नहीं मिला</string>
 
     <!-- Receipt Builder -->
     <string name="receipt_header">ग्लोबल पेमेंट्स</string>
