@@ -23,8 +23,10 @@
     <string name="forget_pswd">पासवर्ड भूल गए?</string>
     <string name="username">उपयोगकर्ता नाम</string>
     <string name="password">पासवर्ड</string>
+    <string name="confirm_password">पासवर्ड की पुष्टि करें</string>
     <string name="placehldr_username">कृपया उपयोगकर्ता नाम दर्ज करें</string>
     <string name="placehldr_password">कृपया पासवर्ड दर्ज करें</string>
+    <string name="placehldr_Confirm_password">कृपया पासवर्ड की पुष्टि दर्ज करें</string>
     <string name="placehldr_new_password">कृपया नया पासवर्ड दर्ज करें</string>
     <string name="cred_not_to_be_empty">ईमेल और पासवर्ड खाली नहीं होना चाहिए</string>
 
@@ -239,6 +241,13 @@
     <!-- Recent Activity -->
     <string name="recentActivity">हाल की गतिविधि</string>
     <string name="see_all">सभी देखें</string>
+    <string name="plz_enter_tid">कृपया डिवाइस सक्रिय करने के लिए TID और MID दर्ज करें</string>
+    <string name="activate">अभी सक्रिय करें</string>
+    <string name="please_enter_tid">कृपया TID दर्ज करें</string>
+    <string name="please_enter_Mid">कृपया MID दर्ज करें</string>
+    <string name="please_register_clerk">कृपया क्लर्क पंजीकृत करें</string>
+    <string name="cred_not_to_be_empty_tid">TID और MID खाली नहीं होना चाहिए</string>
+
 
     <!-- Payment SDK Strings -->
     <string name="emv_sdk_init_title">आरंभिककरण</string>
