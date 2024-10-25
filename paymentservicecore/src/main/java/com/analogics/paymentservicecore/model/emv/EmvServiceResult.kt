@@ -42,12 +42,16 @@ sealed class EmvServiceResult(
             MULTIPLE_CARDS,
             TIMEOUT,
             CANCEL,
-            DEVICE_BUSY
+            DEVICE_BUSY,
+            ERROR
     }
     enum class DisplayMsgId {
         NONE,   /* Clear display */
 
         /* NFC Tip Messages */
+        CARD_INSERTED,
+        CARD_TAPPED,
+        CARD_SWIPED,
         CARD_READ_OK,
         REMOVE_CARD,
         USE_CONTACT_IC_CARD,

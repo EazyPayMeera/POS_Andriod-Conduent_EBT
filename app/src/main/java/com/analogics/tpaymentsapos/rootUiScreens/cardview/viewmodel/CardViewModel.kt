@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -16,10 +17,8 @@ import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BaseConstant
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +27,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
+
+    var emvInProgress = mutableStateOf(false)
+    var showProgressVar = mutableStateOf(true)
+    var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -80,12 +83,33 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                 iEmvServiceResponseListener = object :
                 IEmvServiceResponseListener {
                 override fun onEmvServiceResponse(response: Any) {
-                    if (response is EmvServiceResult &&
-                        (response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
-                                response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE))
-                        navigateToApprovalScreen(navHostController)
-                    else
-                        navigateToDeclinedScreen(navHostController)
+                    when (response) {
+                        is EmvServiceResult.TransResult -> {
+                            if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
+                                        response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
+                            )
+                                navigateToApprovalScreen(navHostController)
+                            else
+                                navigateToDeclinedScreen(navHostController)
+                        }
+
+                        is EmvServiceResult.CardCheckResult -> {
+                            when (response.status) {
+                                EmvServiceResult.CardCheckStatus.CARD_INSERTED,
+                                EmvServiceResult.CardCheckStatus.CARD_SWIPED,
+                                EmvServiceResult.CardCheckStatus.CARD_TAPPED -> {
+                                    emvInProgress.value = true
+                                    showProgressVar.value = true
+                                    displayInfoMsgId.value = emvCardCheckStatusToMsgId(response.status as EmvServiceResult.CardCheckStatus)
+                                }
+                                else -> {
+                                    emvInProgress.value = false
+                                    showProgressVar.value = false
+                                    displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.NONE
+                                }
+                            }
+                        }
+                    }
                 }
 
                 override fun onEmvServiceDisplayMessage(

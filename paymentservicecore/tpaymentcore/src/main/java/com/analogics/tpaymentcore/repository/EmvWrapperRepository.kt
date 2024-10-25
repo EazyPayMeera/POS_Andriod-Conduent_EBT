@@ -148,10 +148,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         ) {
             Log.d("EMV_APP", "Check Card Result:" + p0.toString())
             Log.d("EMV_APP", "Check Card List:" + p1.toString())
-/*
+
             if (p0 == ContantPara.CheckCardResult.INSERTED_CARD)
-                iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Card Detected")
-*/
+                iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.CardCheckResult(status = EmvSdkResult.CardCheckStatus.CARD_INSERTED))
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {

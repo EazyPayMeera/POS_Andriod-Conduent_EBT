@@ -57,10 +57,12 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -367,7 +369,138 @@ fun SettingsLowerSurface(
     }
 }
 
+@Composable
+fun FooterButtons(
+    firstButtonTitle: String?=null,
+    firstButtonOnClick: (() -> Unit)?={},
+    secondButtonTitle: String?=null,
+    secondButtonOnClick: (() -> Unit)?={},
+    alignment: Alignment = Alignment.BottomCenter, // Default alignment
+    enabled: Boolean?=true
+) {
+    val isKeyboardVisible = remember { mutableStateOf(false) }
 
+    fun updateKeyboardState(view: View) {
+        val isKeyboardOpen =
+            ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) != false
+        isKeyboardVisible.value = isKeyboardOpen
+    }
+    // Get the current view
+    val rootView = LocalView.current
+    val view = LocalView.current
+    // Use DisposableEffect to set up a listener for layout changes
+    DisposableEffect(view) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            updateKeyboardState(view)
+        }
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+
+    LaunchedEffect(view) {
+        updateKeyboardState(view)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed
+    ) {
+        Row(
+            modifier = Modifier
+                .align(if (isKeyboardVisible.value) Alignment.TopCenter else alignment)
+                .fillMaxWidth()
+                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            var isFirstButtonPressed by remember { mutableStateOf(false) }
+            var isSecondButtonPressed by remember { mutableStateOf(false) }
+
+            // First Button
+            firstButtonTitle?.let {
+                Button(
+                    enabled = enabled!=false,
+                    onClick = {
+                        isFirstButtonPressed = true
+                        firstButtonOnClick?.invoke()
+                    },
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+                    modifier = Modifier
+                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                        .border(
+                            width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else MaterialTheme.dimens.DP_0_CompactMedium,
+                            color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                        ),
+                    colors = buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
+                    )
+                ) {
+                    TextView(
+                        text = firstButtonTitle.uppercase(),
+                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            // Second Button
+            secondButtonTitle?.let {
+                Button(
+                    enabled = enabled!=false,
+                    onClick = {
+                        isSecondButtonPressed = true
+                        secondButtonOnClick?.invoke()
+                    },
+                    modifier = Modifier
+                        .width(MaterialTheme.dimens.DP_145_CompactMedium)
+                        .height(MaterialTheme.dimens.DP_50_CompactMedium)
+                        .border(
+                            width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else MaterialTheme.dimens.DP_0_CompactMedium,
+                            color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
+                        ),
+                    shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+                    colors = buttonColors(
+                        contentColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = colorResource(R.color.grey)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                        pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
+                        hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
+                        focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
+                    )
+                ) {
+                    TextView(
+                        text = secondButtonTitle.uppercase(),
+                        fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        1,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+/*
 @Composable
 fun FooterButtons(
     firstButtonTitle: String?=null,
@@ -537,6 +670,7 @@ fun FooterButtons(
         }
     }
 }
+*/
 
 @Composable
 fun ScannerButton(
