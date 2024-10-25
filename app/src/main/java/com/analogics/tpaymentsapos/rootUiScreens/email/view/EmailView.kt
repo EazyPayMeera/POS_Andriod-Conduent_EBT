@@ -19,6 +19,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.enteremail.viewmodel.globalVariable
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -73,12 +74,22 @@ fun EmailView(navHostController: NavHostController, email: String) {
                         .align(Alignment.CenterHorizontally) // Center the subheader text
                 )
 
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_55_CompactMedium)) // Blank space added here
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Blank space added here
+
+                ImageView(
+                    imageId = R.drawable.approve,
+                    size = MaterialTheme.dimens.DP_125_CompactMedium,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
+                        .align(Alignment.CenterHorizontally),
+                    contentDescription = ""
+                )
 
                 TextView(
                     text = stringResource(id = R.string.ereceipt_sent),
-                    fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -87,8 +98,8 @@ fun EmailView(navHostController: NavHostController, email: String) {
 
                 TextView(
                     text = "on $updated_email",
-                    fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                    fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -97,7 +108,7 @@ fun EmailView(navHostController: NavHostController, email: String) {
 
 
                 Box(
-                    modifier = Modifier.padding(top = MaterialTheme.dimens.DP_160_CompactMedium)
+                    modifier = Modifier.padding(top = MaterialTheme.dimens.DP_70_CompactMedium)
                 ) {
                     OkButton(
                         onClick = {
