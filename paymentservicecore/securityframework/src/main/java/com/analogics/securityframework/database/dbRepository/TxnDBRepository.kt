@@ -3,11 +3,13 @@ package com.analogics.securityframework.database.dbRepository
 import android.util.Log
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
+import com.analogics.securityframework.database.dao.IUserManagementDao
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.securityframework.database.entity.UserManagementEntity
 import javax.inject.Inject
 
-class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao) {
+class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao,private val iUserManagementDao: IUserManagementDao) {
     suspend fun  insertBatch(batchEntity: BatchEntity){
         iBatchDao.insert(batchEntity)
     }
@@ -64,6 +66,16 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getEndDateByBatchIds(batchId)
     }
 
+    suspend fun  insertUser(userManagementEntity: UserManagementEntity){
+        iUserManagementDao.insert(userManagementEntity)
+    }
+    suspend fun  updateUser(userManagementEntity: UserManagementEntity){
+        iUserManagementDao.update(userManagementEntity)
+    }
+    // Get Transaction Details From Batch Using Merchant-Id
+    suspend fun getUserDetails(userId: String): UserManagementEntity? {
+        return iUserManagementDao.getUserDetails(userId)
+    }
     suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity> {
         return iTxnDao.getTransactionsByDateRange(startDate, endDate)
     }

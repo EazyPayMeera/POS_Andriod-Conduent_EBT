@@ -22,6 +22,8 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
                 navController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
             else if(sharedViewModel.objPosConfig?.isOnboardingComplete==true)
                 navController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+            else if(sharedViewModel.objPosConfig?.isActivationDone==true)
+                navController.navigateAndClean(AppNavigationItems.ClerkLoginScreen.route)
             else {
                 delay(AppConstants.SPLASH_SCREEN_TIMEOUT_MS) //  delay for splash screen
                 navController.navigateAndClean(AppNavigationItems.OnBoardingScreen.route)
