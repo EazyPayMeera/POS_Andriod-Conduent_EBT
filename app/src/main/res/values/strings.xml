@@ -50,10 +50,21 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="placehldr_username">Please Enter Username</string>
     <string name="placehldr_password">Please Enter Password</string>
-    <string name="placehldr_Confirm_password">Enter Confirm Password</string>
-    <string name="placehldr_new_password">Please Enter New Password</string>
+    <string name="placehldr_Confirm_password">Please Confirm Password</string>
+    <string name="prompt_new_password">Please Enter New Password</string>
     <string name="cred_not_to_be_empty">Username and password should not be empty</string>
     <string name="login_invalid_cred">Invalid credentials</string>
+
+    <!-- Change Password -->
+    <string name="label_current_pwd">Current</string>
+    <string name="label_new_pwd">New</string>
+    <string name="label_confirm_pwd">Confirm</string>
+    <string name="placehldr_current_pwd">Enter Current Password</string>
+    <string name="placehldr_new_pwd">Enter New Password</string>
+    <string name="current_password_empty">Please enter your current password</string>
+    <string name="password_change_success">Password was changed</string>
+    <string name="password_change_failed">Password change failed</string>
+    <string name="invalid_current_password">Invalid current password</string>
 
     <!-- Dashboard -->
     <string name="refund">Refund</string>

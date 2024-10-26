@@ -41,7 +41,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.barcode.BarcodeView
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.view.CardDetectView
 import com.analogics.tpaymentsapos.rootUiScreens.cardview.view.CardView
-import com.analogics.tpaymentsapos.rootUiScreens.changepassword.ChangePasswordView
+import com.analogics.tpaymentsapos.rootUiScreens.changepassword.view.ChangePasswordView
 import com.analogics.tpaymentsapos.rootUiScreens.confirmation.view.ConfirmationView
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.view.DashboardView
 import com.analogics.tpaymentsapos.rootUiScreens.invoice.InvoiceView

@@ -51,9 +51,20 @@
     <string name="placehldr_username">कृपया उपयोगकर्ता नाम दर्ज करें</string>
     <string name="placehldr_password">कृपया पासवर्ड दर्ज करें</string>
     <string name="placehldr_Confirm_password">कृपया पासवर्ड की पुष्टि दर्ज करें</string>
-    <string name="placehldr_new_password">कृपया नया पासवर्ड दर्ज करें</string>
+    <string name="prompt_new_password">कृपया नया पासवर्ड दर्ज करें</string>
     <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होना चाहिए</string>
     <string name="login_invalid_cred">अमान्य प्रमाण-पत्र</string>
+
+    <!-- Change Password -->
+    <string name="label_current_pwd">वर्तमान</string>
+    <string name="label_new_pwd">नया</string>
+    <string name="label_confirm_pwd">पुष्टि करें</string>
+    <string name="placehldr_current_pwd">वर्तमान पासवर्ड</string>
+    <string name="placehldr_new_pwd">नया पासवर्ड</string>
+    <string name="current_password_empty">कृपया अपना वर्तमान पासवर्ड दर्ज करें</string>
+    <string name="password_change_success">पासवर्ड बदल दिया गया</string>
+    <string name="password_change_failed">पासवर्ड बदलना असफल रहा</string>
+    <string name="invalid_current_password">अमान्य वर्तमान पासवर्ड</string>
 
     <!-- Dashboard -->
     <string name="refund">रिफंड</string>

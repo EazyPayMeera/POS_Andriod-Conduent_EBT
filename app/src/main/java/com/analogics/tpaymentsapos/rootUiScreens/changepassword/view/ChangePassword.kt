@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.changepassword
+package com.analogics.tpaymentsapos.rootUiScreens.changepassword.view
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.changepassword.viewmodel.ChangePasswordViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -33,8 +33,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
-fun ChangePasswordView(navHostController: NavHostController?) {
-    val viewModel: LoginViewModel = hiltViewModel()
+fun ChangePasswordView(navHostController: NavHostController?, viewModel: ChangePasswordViewModel = hiltViewModel()) {
+    //val viewModel: LoginViewModel = hiltViewModel()
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
 
@@ -75,47 +75,54 @@ fun ChangePasswordView(navHostController: NavHostController?) {
                     )
 
                     InputTextField(
-                        inputValue = viewModel.emailCredentials.value,
-                        onChange = { viewModel.onEmailChange(it) },
+                        inputValue = viewModel.currentPassword.value,
+                        onChange = { viewModel.onCurrentChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(id = R.string.username),
-                        placeHolder = stringResource(id = R.string.placehldr_username),
-                        icon = Icons.Outlined.Person,
-                        keyboardType = KeyboardType.Uri
+                        label = stringResource(id = R.string.label_current_pwd),
+                        placeHolder = stringResource(id = R.string.placehldr_current_pwd),
+                        icon = Icons.Outlined.Lock,
+                        keyboardType = KeyboardType.Number,
+                        isPasswordField = true,
+                        keyboardActions = KeyboardActions.Default.onDone
                     )
 
                     InputTextField(
-                        inputValue = viewModel.pwdCredentials.value,
-                        onChange = { viewModel.onPasswordChange(it) },
+                        inputValue = viewModel.newPassword.value,
+                        onChange = { viewModel.onNewChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(id = R.string.password),
-                        placeHolder = stringResource(id = R.string.placehldr_new_password),
+                        label = stringResource(id = R.string.label_new_pwd),
+                        placeHolder = stringResource(id = R.string.placehldr_new_pwd),
                         icon = Icons.Outlined.Lock,
-                        keyboardType = KeyboardType.Uri,
+                        keyboardType = KeyboardType.Number,
                         isPasswordField = true,
-                        keyboardActions = KeyboardActions.Default.onDone,
-                        onActionDone = {
-                            viewModel.onLoginClick(navHostController,sharedViewModel)
-                        }
+                        keyboardActions = KeyboardActions.Default.onDone
+                    )
+
+                    InputTextField(
+                        inputValue = viewModel.confirmPassword.value,
+                        onChange = { viewModel.onConfirmChange(it) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(id = R.string.label_confirm_pwd),
+                        placeHolder = stringResource(id = R.string.placehldr_Confirm_password),
+                        icon = Icons.Outlined.Lock,
+                        keyboardType = KeyboardType.Number,
+                        isPasswordField = true,
+                        keyboardActions = KeyboardActions.Default.onDone
                     )
 
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
                     ) {
-                        val message = stringResource(id = R.string.cred_not_to_be_empty)
                         AppButton(
                             onClick = {
-                                if (viewModel.isFormValid) {
-                                    viewModel.onLoginClick(navHostController,sharedViewModel)
-                                } else {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
+                                    viewModel.onChangePasswordClick(navHostController,sharedViewModel)
                             },
-                            title = stringResource(id = R.string.login)
+                            title = stringResource(id = R.string.change_password)
                         )
                     }
                 }
             }
         }
     )
+    CustomDialogBuilder.ShowComposed()
 }
