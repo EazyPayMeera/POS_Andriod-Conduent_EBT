@@ -297,6 +297,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             return result
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
         fun addContactlessAid(config: AidConfig) : Boolean {
             var result = true
             try {
@@ -317,10 +318,10 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     (aid.magCVMCapabilityCVMRequired ?: config.contactless?.magCVMCapabilityCVMRequired ?: config.magCVMCapabilityCVMRequired)?.let{ aidData["MagStripeCVMCapabilityCVMRequired"] = it }
                     (aid.magCVMCapabilityNoCVMRequired ?: config.contactless?.magCVMCapabilityNoCVMRequired ?: config.magCVMCapabilityNoCVMRequired)?.let{ aidData["MagStripeCVMCapabilityPerNoCVMRequired"] = it }
                     (aid.securityCapability ?: config.contactless?.securityCapability ?: config.securityCapability)?.let{ aidData["SecurityCapability"] = it }
-                    (aid.ifdSerialNumber ?: config.contactless?.ifdSerialNumber ?: config.ifdSerialNumber)?.let{ aidData["IFDsn"] = it }
+                    (aid.ifdSerialNumber ?: config.contactless?.ifdSerialNumber ?: config.ifdSerialNumber)?.let{ aidData["IFDsn"] = it.toByteArray().toHexString() }
                     (aid.merchantCategoryCode ?: config.contactless?.merchantCategoryCode ?: config.merchantCategoryCode)?.let{ aidData["MerchantCategoryCode"] = it }
-                    (aid.merchantIdentifier ?: config.contactless?.merchantIdentifier ?: config.merchantIdentifier)?.let{ aidData["MerchantIdentifier"] = it }
-                    (aid.merchantNameLocation ?: config.contactless?.merchantNameLocation ?: config.merchantNameLocation)?.let{ aidData["MerchantNameAndLocation"] = it }
+                    (aid.merchantIdentifier ?: config.contactless?.merchantIdentifier ?: config.merchantIdentifier)?.let{ aidData["MerchantIdentifier"] = it.toByteArray().toHexString() }
+                    (aid.merchantNameLocation ?: config.contactless?.merchantNameLocation ?: config.merchantNameLocation)?.let{ aidData["MerchantNameAndLocation"] = it.toByteArray().toHexString() }
                     (aid.defaultUDOL ?: config.contactless?.defaultUDOL ?: config.defaultUDOL)?.let{ aidData["DefaultUDOL"] = it }
                     (aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit ?: config.terminalFloorLimit)?.let{ aidData["FloorLimit"] = it }
                     (aid.rdrCtlsFloorLimit ?: config.contactless?.rdrCtlsFloorLimit ?: config.rdrCtlsFloorLimit)?.let{ aidData["ReaderContactlessFloorLimit"] = it }
