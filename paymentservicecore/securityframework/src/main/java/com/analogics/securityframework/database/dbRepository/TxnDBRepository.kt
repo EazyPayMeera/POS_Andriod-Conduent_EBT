@@ -66,19 +66,23 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getEndDateByBatchIds(batchId)
     }
 
+    suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity> {
+        return iTxnDao.getTransactionsByDateRange(startDate, endDate)
+    }
+
+    /* Clerk/User Management */
     suspend fun  insertUser(userManagementEntity: UserManagementEntity){
         iUserManagementDao.insert(userManagementEntity)
     }
     suspend fun  updateUser(userManagementEntity: UserManagementEntity){
         iUserManagementDao.update(userManagementEntity)
     }
-    // Get Transaction Details From Batch Using Merchant-Id
+
     suspend fun getUserDetails(userId: String): UserManagementEntity? {
         return iUserManagementDao.getUserDetails(userId)
     }
-    suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity> {
-        return iTxnDao.getTransactionsByDateRange(startDate, endDate)
+
+    suspend fun getUserCount(): Int {
+        return iUserManagementDao.getUserCount()
     }
-
-
 }

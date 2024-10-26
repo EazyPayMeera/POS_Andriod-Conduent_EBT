@@ -17,6 +17,9 @@ object AppConstants {
     const val MIN_DIALOG_SHOW_TIME_MS = 500L
     const val CARD_CHECK_TIMEOUT_S = 30L
 
+    const val MAX_LENGTH_TID = 8
+    const val MAX_LENGTH_MID = 15
+
     const val NAV_VAL_TAX_TYPE_SGST = "SGST"
     const val NAV_VAL_TAX_TYPE_CGST = "CGST"
 

@@ -11,11 +11,13 @@ import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.R
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiServiceRepository) :
+class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository) :
     ViewModel(),
     IApiServiceResponseListener {
     var emailCredentials = mutableStateOf("")
@@ -51,14 +53,22 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
     fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel
-
+        setLoginButtonState(false)
         viewModelScope.launch {
             try {
-
-                setLoginButtonState(false)
-                getAccessToken()
-                //navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                //sharedViewModel.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
+                if(dbRepository.getUserDetails(emailCredentials.value).takeIf { it?.password==pwdCredentials.value }?.let { true } == true) {
+                    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+                    sharedViewModel.objPosConfig?.apply {
+                        loginId = emailCredentials.value
+                        /* Do not store password separately in config. Verify runtime from DB */
+                        isLoggedIn = true
+                    }?.saveToPrefs()
+                }
+                else
+                {
+                    CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.login), subtitle = navHost.context.resources.getString(R.string.login_invalid_cred))
+                    setLoginButtonState(true)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

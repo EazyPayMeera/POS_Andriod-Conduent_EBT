@@ -36,7 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.activationScreen.ClerkLoginScreen
+import com.analogics.tpaymentsapos.rootUiScreens.addClerk.view.AddClerkScreen
 import com.analogics.tpaymentsapos.rootUiScreens.amount.view.AmountView
 import com.analogics.tpaymentsapos.rootUiScreens.barcode.BarcodeView
 import com.analogics.tpaymentsapos.rootUiScreens.carddetect.view.CardDetectView
@@ -67,7 +67,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component.ForgetPass
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
-import com.analogics.tpaymentsapos.rootUiScreens.tid.view.TidScreen
+import com.analogics.tpaymentsapos.rootUiScreens.activationScreen.view.ActivationScreen
 import com.analogics.tpaymentsapos.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
@@ -301,11 +301,11 @@ fun AppNavigationGraph(
         composable(AppNavigationItems.TransactionDetailsScreen.route) {
             TransactionDetailsView(navHostController)
         }
-        composable(AppNavigationItems.ClerkLoginScreen.route) {
-            ClerkLoginScreen(navHostController)
+        composable(AppNavigationItems.AddClerkScreen.route) {
+            AddClerkScreen(navHostController)
         }
-        composable(AppNavigationItems.TidScreen.route) {
-            TidScreen(navHostController)
+        composable(AppNavigationItems.ActivationScreen.route) {
+            ActivationScreen(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

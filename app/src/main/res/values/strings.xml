@@ -14,6 +14,27 @@
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
 
+    <!-- Activation Screen -->
+    <string name="act_title">Activate Now</string>
+    <string name="act_prompt_activate">Please Enter TID and MID to Activate Device</string>
+    <string name="act_label_enter_tid">Please Enter TID</string>
+    <string name="act_label_enter_Mid">Please Enter MID</string>
+    <string name="act_empty_tid_mid">TID and MID should not be empty</string>
+    <string name="act_tid_length">TID length should be 8</string>
+    <string name="act_mid_length">MID length should be 15</string>
+
+    <!-- Add Clerk Screen -->
+    <string name="clerk_register_title">Register User</string>
+    <string name="clerk_register_clerk_prompt">Please enter username and password</string>
+    <string name="clerk_type">User Type</string>
+    <string name="clerk_type_admin">Admin</string>
+    <string name="clerk_type_clerk">Clerk</string>
+    <string name="clerk_register_btn">Register</string>
+    <string name="clerk_register_done_btn">Done</string>
+    <string name="clerk_registration_success">User Added</string>
+    <string name="clerk_registration_failed">User Registration Failed</string>
+    <string name="clerk_already_exists">User Exists</string>
+
     <!-- Login -->
     <string name="plz_login">Please login to continue</string>
     <string name="plz_ent_new_pass">Please Enter Your New Password</string>
@@ -29,6 +50,7 @@
     <string name="placehldr_Confirm_password">Enter Confirm Password</string>
     <string name="placehldr_new_password">Please Enter New Password</string>
     <string name="cred_not_to_be_empty">Email and password should not be empty</string>
+    <string name="login_invalid_cred">Invalid credentials</string>
 
     <!-- Dashboard -->
     <string name="refund">Refund</string>
@@ -153,6 +175,8 @@
 
     <!-- Custom Dialogue Builder -->
     <string name="sel_app_id">Select an application id</string>
+    <string name="default_alert_title_error">OOPS!</string>
+    <string name="default_alert_title_success">SUCCESS!</string>
 
     <!-- Transaction Details Screen -->
     <string name="transactions">Transactions</string>
@@ -245,14 +269,6 @@
     <!--//txnlist -->
     <string name="recentActivity">Recent Activity</string>
     <string name="see_all">See All</string>
-    <string name="plz_enter_tid">Please Enter TID and MID to Activate Device</string>
-    <string name="activate">Activate Now</string>
-    <string name="please_enter_tid">Please Enter TID</string>
-    <string name="please_enter_Mid">Please Enter MID</string>
-    <string name="please_register_clerk">Please register Clerk</string>
-    <string name="cred_not_to_be_empty_tid">TID and MID should not be empty</string>
-
-
 
     <!-- Payment SDK Strings -->
     <string name="emv_sdk_init_title">Initialization</string>

@@ -30,7 +30,7 @@ class OnBoardingScreenViewModel @Inject constructor(private  var apiServiceRepos
 
     fun onOnboardingCompleted(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            navController.navigate(AppNavigationItems.TidScreen.route)
+            navController.navigate(AppNavigationItems.ActivationScreen.route)
             sharedViewModel.objPosConfig?.apply { isOnboardingComplete=true }?.saveToPrefs()
         }
     }

@@ -15,6 +15,9 @@ interface IUserManagementDao {
     @Update
     suspend fun update(vararg userManagementEntity: UserManagementEntity)
 
-    @Query("SELECT * FROM TxnTable WHERE MerchantId = :userId")
+    @Query("SELECT * FROM UserTable WHERE userId = :userId")
     suspend fun getUserDetails(userId: String): UserManagementEntity?
+
+    @Query("SELECT COUNT(userId) FROM UserTable")
+    suspend fun getUserCount(): Int
 }
