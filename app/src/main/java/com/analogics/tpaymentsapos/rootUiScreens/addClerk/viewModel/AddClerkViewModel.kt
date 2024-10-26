@@ -1,22 +1,22 @@
 package com.analogics.tpaymentsapos.rootUiScreens.addClerk.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.UserManagementEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToUserManagementEntity
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootModel.UserType
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.apply
 import kotlin.text.isNotBlank
-import kotlin.toString
 
 @HiltViewModel
 class AddClerkViewModel @Inject constructor(
@@ -28,11 +28,13 @@ class AddClerkViewModel @Inject constructor(
     var pwdCredentials = mutableStateOf("")
     var cnfPwdCredentials = mutableStateOf("")
     val isRegisterBtnEnabled = mutableStateOf(true)
+    val isDoneBtnEnabled = mutableStateOf(false)
     lateinit var navHostController: NavHostController
     var sharedViewModel: SharedViewModel? = null
     val isFormValid: Boolean
-        get() = userCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank() && cnfPwdCredentials.value.isNotBlank() && (pwdCredentials.value == cnfPwdCredentials.value)
-
+        get() = userCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank() && pwdCredentials.value.length>=AppConstants.MIN_LENGTH_PASSWORD && cnfPwdCredentials.value.isNotBlank() && (pwdCredentials.value == cnfPwdCredentials.value)
+    var userType = mutableStateOf(UserType.CLERK)
+    val allowClerks = mutableStateOf(false)
 
     fun onEmailChange(newEmail: String) {
         userCredentials.value = newEmail
@@ -50,6 +52,18 @@ class AddClerkViewModel @Inject constructor(
         isRegisterBtnEnabled.value = enabled
     }
 
+    private fun setDoneBtnState(enabled: Boolean) {
+        isDoneBtnEnabled.value = enabled
+    }
+
+    fun onDoneClick(navHost: NavHostController?, sharedViewModel: SharedViewModel)
+    {
+        if(sharedViewModel.objPosConfig?.isLoggedIn == true)
+            navHost?.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+        else
+            navHost?.navigateAndClean(AppNavigationItems.LoginScreen.route)
+    }
+
     fun onRegisterClick(navHost: NavHostController?, sharedViewModel: SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel
@@ -58,16 +72,25 @@ class AddClerkViewModel @Inject constructor(
             try {
                 val userEntity = UserManagementEntity(
                     userId = userCredentials.value,
-                    password = pwdCredentials.value
+                    password = pwdCredentials.value,
+                    userType = userType.value.toString()
                 )
 
                 if (isFormValid) {
-                    dbRepository.insertUser(userEntity).let {
-                        if(sharedViewModel.objPosConfig?.isLoggedIn == true)
-                            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                        else
-                            navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+                    dbRepository.getUserDetails(userCredentials.value)?.let {
+                        CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_already_exists))
+                    }?:dbRepository.insertUser(userEntity).let {
+                        CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_registration_success))
+                        onLoad()
                     }
+                }
+                else{
+                    if(userCredentials.value.isBlank())
+                        CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_username_empty))
+                    else if(pwdCredentials.value != cnfPwdCredentials.value)
+                        CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_password_mismatch))
+                    else
+                        CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_min_password_length))
                 }
 
             } catch (e: Exception) {
@@ -76,5 +99,21 @@ class AddClerkViewModel @Inject constructor(
         }
     }
 
-
+    fun onLoad()
+    {
+        viewModelScope.launch{
+            dbRepository.getUserCount().takeIf { it>0 }?.let {
+                userType.value = UserType.CLERK
+                allowClerks.value = true
+                setDoneBtnState(true)
+            }?:let {
+                userType.value = UserType.ADMIN
+                allowClerks.value = false
+                setDoneBtnState(false)
+            }
+            userCredentials.value = ""
+            pwdCredentials.value = ""
+            cnfPwdCredentials.value = ""
+        }
+    }
 }

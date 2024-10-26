@@ -4,9 +4,11 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -14,30 +16,89 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootModel.UserType
 import com.analogics.tpaymentsapos.rootUiScreens.addClerk.viewModel.AddClerkViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import org.intellij.lang.annotations.JdkConstants
 
 
 @Composable
 fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
+
+    @Composable
+    fun displayUserType()
+    {
+        val radioOptions = mapOf<UserType,String>(UserType.ADMIN to stringResource(id = R.string.clerk_type_admin), UserType.CLERK to stringResource(id = R.string.clerk_type_clerk))
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(MaterialTheme.dimens.DP_10_CompactMedium),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text =stringResource(id = R.string.clerk_type),
+                fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                color = MaterialTheme.colorScheme.tertiary,
+                textAlign = TextAlign.Left,
+            )
+            radioOptions.forEach { (type, text) ->
+                Column(
+                    Modifier
+                        .selectable(
+                            selected = viewModel.userType.value == type,
+                            onClick = { viewModel.userType.value  = type },
+                            enabled = !(type == UserType.CLERK && viewModel.allowClerks.value != true)
+                        )
+                        /*.padding(horizontal = MaterialTheme.dimens.DP_10_CompactMedium)*/,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically)
+                    {
+                        RadioButton(
+                            selected = viewModel.userType.value == type,
+                            onClick = { viewModel.userType.value  = type },
+                            enabled = !(type == UserType.CLERK && viewModel.allowClerks.value != true)
+                        )
+                        Text(
+                            text = text,
+                            fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            textAlign = TextAlign.Left
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -115,28 +176,29 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                         }
                     )
 
+                    displayUserType()
+
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {
-                        val message = stringResource(id = R.string.cred_not_to_be_empty)
                         AppButton(
                             onClick = {
-                                if (viewModel.isFormValid) {
-                                    val updatedUserDetails = sharedViewModel.objRootAppPaymentDetail.objUserDetails?.copy(
-                                        userId = viewModel.userCredentials.value
-                                    )
-
-                                    sharedViewModel.objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail.copy(
-                                        objUserDetails = updatedUserDetails
-                                    )
-
-                                    viewModel.onRegisterClick(navHostController,sharedViewModel)
-                                } else {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
+                                viewModel.onRegisterClick(navHostController,sharedViewModel)
                             },
                             title = stringResource(id = R.string.clerk_register_btn),
                             enabled = viewModel.isRegisterBtnEnabled.value
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
+                    ) {
+                        AppButton(
+                            onClick = {
+                                viewModel.onDoneClick(navHostController,sharedViewModel)
+                            },
+                            title = stringResource(id = R.string.clerk_register_done_btn),
+                            enabled = viewModel.isDoneBtnEnabled.value
                         )
                     }
                 }
@@ -145,5 +207,9 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
             CustomDialogBuilder.ShowComposed()
         }
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad()
+    }
 }
 

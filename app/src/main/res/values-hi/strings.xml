@@ -26,7 +26,7 @@
     <!-- Add Clerk Screen -->
     <string name="clerk_register_title">उपयोगकर्ता पंजीकरण</string>
     <string name="clerk_register_clerk_prompt">कृपया उपयोगकर्ता नाम और पासवर्ड दर्ज करें</string>
-    <string name="clerk_type">उपयोगकर्ता प्रकार</string>
+    <string name="clerk_type">प्रकार:</string>
     <string name="clerk_type_admin">प्रशासक</string>
     <string name="clerk_type_clerk">क्लर्क</string>
     <string name="clerk_register_btn">पंजीकरण करें</string>
@@ -34,6 +34,9 @@
     <string name="clerk_registration_success">उपयोगकर्ता जोड़ा गया</string>
     <string name="clerk_registration_failed">उपयोगकर्ता पंजीकरण असफल</string>
     <string name="clerk_already_exists">उपयोगकर्ता मौजूद है</string>
+    <string name="clerk_username_empty">उपयोगकर्ता नाम खाली नहीं होना चाहिए</string>
+    <string name="clerk_min_password_length">पासवर्ड की लंबाई 6 होनी चाहिए</string>
+    <string name="clerk_password_mismatch">पासवर्ड मेल नहीं खाता</string>
 
     <!-- Login -->
     <string name="plz_login">जारी रखने के लिए कृपया लॉगिन करें</string>
@@ -49,7 +52,7 @@
     <string name="placehldr_password">कृपया पासवर्ड दर्ज करें</string>
     <string name="placehldr_Confirm_password">कृपया पासवर्ड की पुष्टि दर्ज करें</string>
     <string name="placehldr_new_password">कृपया नया पासवर्ड दर्ज करें</string>
-    <string name="cred_not_to_be_empty">ईमेल और पासवर्ड खाली नहीं होना चाहिए</string>
+    <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होना चाहिए</string>
     <string name="login_invalid_cred">अमान्य प्रमाण-पत्र</string>
 
     <!-- Dashboard -->

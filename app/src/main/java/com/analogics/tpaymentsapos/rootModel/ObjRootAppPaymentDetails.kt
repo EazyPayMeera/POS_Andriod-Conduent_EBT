@@ -52,8 +52,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE,
-    @SerializedName("objUserDetails") var objUserDetails: ObjUserDetails? =null
+    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE
 
 
 ):Serializable

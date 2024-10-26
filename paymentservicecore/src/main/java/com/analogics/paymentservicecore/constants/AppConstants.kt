@@ -17,6 +17,7 @@ object AppConstants {
     const val MIN_DIALOG_SHOW_TIME_MS = 500L
     const val CARD_CHECK_TIMEOUT_S = 30L
 
+    const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8
     const val MAX_LENGTH_MID = 15
 

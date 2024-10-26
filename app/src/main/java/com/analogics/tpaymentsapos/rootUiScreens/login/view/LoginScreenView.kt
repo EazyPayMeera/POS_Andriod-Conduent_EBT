@@ -95,7 +95,7 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                         label = stringResource(id = R.string.password),
                         placeHolder = stringResource(id = R.string.placehldr_password),
                         icon = Icons.Outlined.Lock,
-                        keyboardType = KeyboardType.Uri,
+                        keyboardType = KeyboardType.Number,
                         isPasswordField = true,
                         keyboardActions = KeyboardActions.Default.onDone,
                         onActionDone = {
