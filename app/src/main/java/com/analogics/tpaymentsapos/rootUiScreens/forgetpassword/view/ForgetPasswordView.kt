@@ -51,11 +51,11 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
                     Text(
                         text = stringResource(id = R.string.password_),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                             .align(Alignment.CenterHorizontally) // Center the header text
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium)) // Blank space added here
@@ -65,15 +65,15 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         contentDescription = null, // Decorative image
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_70_CompactMedium)
-                            .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
+                            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                             .align(Alignment.CenterHorizontally) // Center the image
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_10_CompactMedium)) // Blank space added here
 
                     Text(
                         text = stringResource(id = R.string.call_customercare),
-                        fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
@@ -85,7 +85,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     // Aligning the following text to the start (left) of the inner Surface
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_22_CompactMedium)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.user), // Replace with your icon resource
@@ -104,7 +104,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     // Aligning the following text to the start (left) of the inner Surface
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_22_CompactMedium)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.terminal), // Replace with your icon resource
@@ -123,7 +123,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     // Aligning the following text to the start (left) of the inner Surface
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_22_CompactMedium)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.list), // Replace with your icon resource
@@ -142,7 +142,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                     // Aligning the following text to the start (left) of the inner Surface
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        modifier = Modifier.padding(bottom = MaterialTheme.dimens.DP_22_CompactMedium)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.callcenter), // Replace with your icon resource
