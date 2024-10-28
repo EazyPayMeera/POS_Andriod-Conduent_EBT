@@ -27,7 +27,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.analogics.tpaymentsapos.rootUtils.miscellaneous.readAsset
 import com.google.gson.Gson
@@ -56,10 +55,10 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     fun onButtonClick(text: String, onClick: () -> Unit, sharedViewModel: SharedViewModel) {
         _selectedButton.value = text
         onClick()
-        val currentDateTime = getCurrentDateTime()
+        /*val currentDateTime = getCurrentDateTime()
         val formattedDate = currentDateTime.substring(0, 10).replace("-", "") // Extracts "20241005"
 
-        sharedViewModel.objPosConfig?.apply { batchId = formattedDate }?.saveToPrefs()
+        sharedViewModel.objPosConfig?.apply { batchId = formattedDate }?.saveToPrefs()*/
     }
 
     fun navigateTo(navHostController: NavHostController, route: String) {

@@ -209,10 +209,11 @@ fun ApprovedView(navHostController: NavHostController) {
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .height(MaterialTheme.dimens.DP_40_CompactMedium) // Fixed height
                     )
-
-                }
+                } ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium)) // Spacer when Text is not shown
 
                 ImageView(
                     imageId = R.drawable.approve,
@@ -228,7 +229,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
+                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
@@ -262,10 +263,13 @@ fun ApprovedView(navHostController: NavHostController) {
                         onClick = {
                             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
                             sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
+                            //sharedViewModel.objRootAppPaymentDetail.batchId = viewModel.createBatchId().toString()
+                            sharedViewModel.objPosConfig?.apply { batchId = viewModel.createBatchId().toString() }?.saveToPrefs()
                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),
+                        maxsizebutton = true
                     )
                 }
 

@@ -327,4 +327,15 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     }
 
+    fun createBatchId(): () -> String {
+        var currentNumber = 1
+        return {
+            if (currentNumber <= 999999) {
+                String.format("%06d", currentNumber++)
+            } else {
+                "999999" // Stops at "999999" if maximum is reached
+            }
+        }
+    }
+
 }
