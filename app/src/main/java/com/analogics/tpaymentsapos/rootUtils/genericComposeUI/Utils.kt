@@ -18,12 +18,13 @@ import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
-import com.analogics.tpaymentsapos.R
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -32,6 +33,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
+
+var currentNumber = 1
 
 fun calculateTax(amount: Double): Double {
     return amount * 0.15
@@ -125,6 +128,12 @@ fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails
     val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
     return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
 }
+
+fun convertBatchToBatchEntity(batchEntity: BatchEntity): BatchEntity {
+    val json = Gson().toJson(batchEntity) // Convert ObjRootAppPaymentDetails to JSON
+    return Gson().fromJson(json, BatchEntity::class.java) // Convert JSON to TxnEntity
+}
+
 fun convertObjRootToUserManagementEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): UserManagementEntity {
     val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
     return Gson().fromJson(json, UserManagementEntity::class.java) // Convert JSON to TxnEntity
@@ -160,6 +169,7 @@ fun NavHostController.navigateAndClean(route: String) {
 fun navigateToDashboard(navHostController: NavHostController) {
     navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
 }
+
 
 
 fun getBitmapBytes(bitmap: Bitmap): ByteArray? {

@@ -3,7 +3,10 @@
 package com.analogics.tpaymentsapos.rootUiScreens.cardview.view
 
 import android.graphics.Bitmap
+import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +29,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -61,12 +65,15 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import java.util.EnumMap
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
-
+    val openBatchId = viewModel.openBatch.collectAsState().value
+    val isAnyBatchPresent = viewModel.isBatchPresent.collectAsState().value
+    Log.d("Batch Id","Present Batch Id $isAnyBatchPresent")
     // Disable the hardware back button
     BackHandler(enabled = true) {
         // Do nothing or handle custom behavior here
@@ -151,7 +158,32 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
-                        onClick = {navHostController.navigate(AppNavigationItems. CardDetectScreen.route)}
+                        onClick = {
+                            if(isAnyBatchPresent.isEmpty())
+                            {
+                                Log.d("Batch Id","Initial Batch Id Inserted")
+                                sharedViewModel.batchEntity.batchId = "000001"
+                                sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
+                                sharedViewModel.batchEntity.batchStatus = "open"
+                                viewModel.insertBatchData(sharedViewModel.batchEntity)
+                            }
+                            else
+                            {
+                                if(openBatchId.isNullOrBlank())
+                                {
+                                   val newBatchId = openBatchId?.toIntOrNull()?.let { it + 1 }?.toString()
+                                    sharedViewModel.batchEntity.batchId = newBatchId
+                                    sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
+                                    sharedViewModel.batchEntity.batchId = "open"
+                                    viewModel.insertBatchData(sharedViewModel.batchEntity)
+                                }
+                                else {
+                                    Log.d("Batch Id", "Open Batch Id Found and set same Batch Id")
+                                    sharedViewModel.objRootAppPaymentDetail.batchId = openBatchId
+                                }
+                            }
+                            navHostController.navigate(AppNavigationItems. CardDetectScreen.route)
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -258,6 +290,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
 
     LaunchedEffect(Unit) {
+        viewModel.openBatchPresent()
+        viewModel.isBatchPresent()
         viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.batchId

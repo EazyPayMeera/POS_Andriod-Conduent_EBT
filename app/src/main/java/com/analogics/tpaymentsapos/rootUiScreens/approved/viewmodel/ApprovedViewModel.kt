@@ -18,13 +18,16 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertBatchToBatchEntity
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -293,6 +296,27 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         } ?: Log.d("Record Update", "Invoice No is null")
     }
+
+    fun updateBatchData(batchEntity: BatchEntity) = viewModelScope.launch {
+        // Convert ObjRootAppPaymentDetails to JSON or entity object
+        val batchEntity = convertBatchToBatchEntity(batchEntity)
+        Log.d("Batch Id","Inside Update Batch Table")
+        batchEntity.id?.let { id ->
+            // Check if the entity exists in the database using the primary key (invoice no)
+            val existingEntity = dbRepository.fetchBatchDetailsTxn(id)
+
+            if (existingEntity != null) {
+                // Entry found, proceed with update
+                dbRepository.insertBatch(batchEntity)
+                Log.d("Record Update", "Record update successful for invoice no: $id")
+            } else {
+                Log.d("Batch Id","Inside Insert Batch Table")
+                // Entry not found, log the message
+                dbRepository.insertBatch(batchEntity)
+            }
+        } ?: Log.d("Record Update", "Invoice No is null")
+    }
+
     fun onPurchaseApi(objRootAppPaymentDetail: ObjRootAppPaymentDetails) {
         viewModelScope.launch {
             try {
@@ -327,15 +351,8 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     }
 
-    fun createBatchId(): () -> String {
-        var currentNumber = 1
-        return {
-            if (currentNumber <= 999999) {
-                String.format("%06d", currentNumber++)
-            } else {
-                "999999" // Stops at "999999" if maximum is reached
-            }
-        }
-    }
+
+
+
 
 }

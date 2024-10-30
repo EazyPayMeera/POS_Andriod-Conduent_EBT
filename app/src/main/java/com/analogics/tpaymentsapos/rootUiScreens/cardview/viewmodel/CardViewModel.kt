@@ -1,7 +1,9 @@
 package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +16,7 @@ import com.analogics.paymentservicecore.model.emv.TransConfig
 import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -22,6 +25,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +36,13 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
     var emvInProgress = mutableStateOf(false)
     var showProgressVar = mutableStateOf(true)
     var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
+
+    private val _isBatchPresent = MutableStateFlow<List<String>>(emptyList())
+    val isBatchPresent: StateFlow<List<String>> = _isBatchPresent
+
+    private val _openBatch = MutableStateFlow<String?>(null)
+    val openBatch: StateFlow<String?> = _openBatch
+
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -129,4 +141,64 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                 "record insert suc", Gson().fromJson(json, TxnEntity::class.java).toString())
 
     }
+
+    /*@RequiresApi(Build.VERSION_CODES.O)
+    fun fetchOpenBatches() {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of BatchEntity
+                val batches: List<BatchEntity> = dbRepository.getOpenBatchId()
+
+                // Map BatchEntity to String (using batchId for this example)
+                val batchIds: List<String> = batches.mapNotNull { it.batchId } // Ensure no nulls if batchId can be null
+
+                // Assign the transformed list to _openBatchId
+                _openBatchId.value = batchIds
+                Log.d("BatchViewModel", "Fetched Open Batches: $batchIds")
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error fetching open batches", e)
+            }
+        }
+    }*/
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun isBatchPresent() {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of BatchEntity
+                val batches: List<String> = dbRepository.isBatchPresent()
+                Log.d("Batch Id", "Fetched batches: $batches")
+                // Assign the transformed list to _openBatchId
+                _isBatchPresent.value = batches
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error fetching open batches", e)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun openBatchPresent() {
+        viewModelScope.launch {
+            try {
+                // Fetch the open batch ID (or null if no open batch exists)
+                val batchId: String? = dbRepository.openBatchId()
+                Log.d("Batch Id", "Open batch ID: $batchId")
+
+                // Update the value of _openBatch
+                _openBatch.value = batchId
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error fetching open batch ID", e)
+            }
+        }
+    }
+
+    fun insertBatchData(batchEntity: BatchEntity)=viewModelScope.launch{
+        val json = Gson().toJson(batchEntity) // Convert ObjRootAppPaymentDetails to JSON
+
+        dbRepository.insertBatch(Gson().fromJson(json, batchEntity::class.java))
+        Log.d("password " +
+                "record insert suc", Gson().fromJson(json, batchEntity::class.java).toString())
+
+    }
+
 }

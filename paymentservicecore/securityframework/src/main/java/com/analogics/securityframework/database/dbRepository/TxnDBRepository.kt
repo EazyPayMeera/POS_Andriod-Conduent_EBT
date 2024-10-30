@@ -16,10 +16,15 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     suspend fun  updateBatch(batchEntity: BatchEntity){
         iBatchDao.update(batchEntity)
     }
-    // Get Transaction Details From Batch Using Merchant-Id
-    suspend fun fetchTransactionDetailsBatch(merchantId: String): TxnEntity? {
-        return iBatchDao.getTransactionDetailsTxnBatch(merchantId)
+
+    suspend fun isBatchPresent(): List<String> {
+        return iBatchDao.isBatchPresent() // Ensure this returns List<BatchEntity>
     }
+
+    suspend fun openBatchId(): String? {
+        return iBatchDao.getOpenBatchId()
+    }
+
 
     suspend fun  insertTxn(txnEntity: TxnEntity){
         try {
@@ -30,12 +35,21 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         }
 
     }
+
+
     suspend fun  updateTxn(txnEntity: TxnEntity){
         iTxnDao.update(txnEntity)
     }
+
+
     // Get Transaction Details From Transaction Using Merchant-Id
     suspend fun fetchTransactionDetailsTxn(id: Long): TxnEntity? {
         return iTxnDao.getTransactionDetailsTxn(id)
+    }
+
+    // Get Transaction Details From Transaction Using Merchant-Id
+    suspend fun fetchBatchDetailsTxn(id: Long): BatchEntity? {
+        return iTxnDao.getBatchDetailsTxn(id)
     }
 
     suspend fun getAllTxnListData(): List<TxnEntity>{

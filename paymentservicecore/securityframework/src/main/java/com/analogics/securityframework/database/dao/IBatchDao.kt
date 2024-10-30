@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.analogics.securityframework.database.entity.BatchEntity
-import com.analogics.securityframework.database.entity.TxnEntity
 
 @Dao
 interface IBatchDao {
@@ -17,6 +16,11 @@ interface IBatchDao {
     suspend fun update(vararg batchEntity: BatchEntity)
 
     // Query to fetch a transaction by MerchantId
-    @Query("SELECT * FROM TxnTable WHERE MerchantId = :merchantId")
-    suspend fun getTransactionDetailsTxnBatch(merchantId: String): TxnEntity?
+    @Query("SELECT DISTINCT BatchId FROM BatchTable WHERE BatchStatus = 'open' LIMIT 1")
+    suspend fun getOpenBatchId(): String?
+
+
+    @Query("SELECT BatchId FROM BatchTable")
+    suspend fun isBatchPresent(): List<String> // This returns all BatchId values
+
 }

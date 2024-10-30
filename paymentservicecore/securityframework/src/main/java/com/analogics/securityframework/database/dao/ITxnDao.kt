@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 
 @Dao
@@ -18,6 +19,10 @@ interface ITxnDao {
     // Query to fetch a transaction by MerchantId
     @Query("SELECT * FROM TxnTable WHERE Id = :id")
     suspend fun getTransactionDetailsTxn(id: Long): TxnEntity?
+
+    // Query to fetch a transaction by MerchantId
+    @Query("SELECT * FROM TxnTable WHERE Id = :id")
+    suspend fun getBatchDetailsTxn(id: Long): BatchEntity?
 
     @Query("SELECT * FROM TxnTable")
     suspend fun getAllTxnListData(): List<TxnEntity>
