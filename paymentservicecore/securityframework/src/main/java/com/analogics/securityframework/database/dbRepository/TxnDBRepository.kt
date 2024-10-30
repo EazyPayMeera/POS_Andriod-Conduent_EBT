@@ -21,8 +21,16 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.isBatchPresent() // Ensure this returns List<BatchEntity>
     }
 
+    suspend fun getLastBatch(): String? {
+        return iBatchDao.getLastBatchId()
+    }
+
     suspend fun openBatchId(): String? {
         return iBatchDao.getOpenBatchId()
+    }
+
+    suspend fun closeBatch(): Int {
+        return iBatchDao.closeOpenBatches() // Returns the count of rows updated
     }
 
 

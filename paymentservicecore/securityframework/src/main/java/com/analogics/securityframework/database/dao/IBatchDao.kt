@@ -19,8 +19,13 @@ interface IBatchDao {
     @Query("SELECT DISTINCT BatchId FROM BatchTable WHERE BatchStatus = 'open' LIMIT 1")
     suspend fun getOpenBatchId(): String?
 
+    @Query("SELECT BatchId FROM BatchTable ORDER BY BatchId DESC LIMIT 1")
+    suspend fun getLastBatchId(): String?
 
     @Query("SELECT BatchId FROM BatchTable")
     suspend fun isBatchPresent(): List<String> // This returns all BatchId values
+
+    @Query("UPDATE BatchTable SET BatchStatus = 'close' WHERE BatchStatus = 'open'")
+    suspend fun closeOpenBatches(): Int // This returns the number of rows affected
 
 }
