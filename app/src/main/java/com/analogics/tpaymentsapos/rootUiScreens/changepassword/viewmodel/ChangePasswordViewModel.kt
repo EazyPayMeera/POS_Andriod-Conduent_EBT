@@ -63,7 +63,7 @@ class ChangePasswordViewModel @Inject constructor(
                             it.password = newPassword.value
                             dbRepository.updateUser(it).let {
                                 CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.change_password), subtitle = navHost.context.resources.getString(R.string.password_change_success))
-                                clearFields()
+                                navHostController.popBackStack()
                             }
                         }
                     }?:let {
@@ -84,5 +84,4 @@ class ChangePasswordViewModel @Inject constructor(
             }
         }
     }
-
 }

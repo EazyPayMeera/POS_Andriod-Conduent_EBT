@@ -111,7 +111,8 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     }
 
     override fun onApiError(apiServiceError: ApiServiceError) {
-       //
+        setActivationButtonState(true)
+        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceError.errorMessage)
     }
 
     override fun onDisplayProgress(
