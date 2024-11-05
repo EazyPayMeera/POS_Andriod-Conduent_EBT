@@ -25,7 +25,8 @@ class AccessTokenRequestRepository @Inject constructor(
                 }
             },
             BuilderUtils.prepareApiRequestBody(
-                apiServiceRequestBuilder.createAccessTokenRequest(paymentServiceTxnDetails)
+                //apiServiceRequestBuilder.createAccessTokenRequest(paymentServiceTxnDetails)
+                apiServiceRequestBuilder.createRklRequest(paymentServiceTxnDetails).toString()
             )
         )
     }

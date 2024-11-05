@@ -559,7 +559,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                 .setCancelButtonText(stringResource(id = R.string.yes))
                 .setConfirmButtonText(stringResource(id = R.string.cancel_no))
                 .setCancelable(true)
-                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+                .setBackgroundColor(MaterialTheme.colors.surface)
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {

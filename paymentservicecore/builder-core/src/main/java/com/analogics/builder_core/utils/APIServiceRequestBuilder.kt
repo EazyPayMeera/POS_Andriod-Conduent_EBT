@@ -10,9 +10,57 @@ import com.analogics.builder_core.model.reund.RefundRequest
 import com.analogics.builder_core.model.reversal.ReversalReqeust
 import com.analogics.builder_core.model.void.VoidReqeust
 import com.analogics.networkservicecore.serviceutils.NetworkConstants
+import com.github.kpavlov.jreactive8583.iso.ISO8583Version
+import com.github.kpavlov.jreactive8583.iso.J8583MessageFactory
+import com.github.kpavlov.jreactive8583.iso.MessageClass
+import com.github.kpavlov.jreactive8583.iso.MessageFactory
+import com.github.kpavlov.jreactive8583.iso.MessageFunction
+import com.github.kpavlov.jreactive8583.iso.MessageOrigin
+import com.solab.iso8583.IsoMessage
+import com.solab.iso8583.IsoType
 import javax.inject.Inject
 
 class APIServiceRequestBuilder @Inject constructor() {
+    var messageFactory = J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
+
+    fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray? {
+        var message = messageFactory.newMessage(
+            messageClass = MessageClass.NETWORK_MANAGEMENT,
+            messageFunction = MessageFunction.REQUEST,
+            messageOrigin = MessageOrigin.ACQUIRER
+        )
+
+        /* Field 3, Processing Code, N6, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_PROC_CODE, NetworkConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_PROC_CODE_LENGTH)
+
+        /* Field 11, STAN, N6, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_STAN, 1, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_STAN_LENGTH)
+
+        /* Field 12, Time, N6, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_TIME, 130500, IsoType.TIME,NetworkConstants.ISO_FIELD_TIME_LENGTH)
+
+        /* Field 13, Date, N4, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_DATE, 1105, IsoType.DATE4,NetworkConstants.ISO_FIELD_DATE_LENGTH)
+
+        /* Field 24, NII, N3, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_NII, 10, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_NII_LENGTH)
+
+        /* Field 41, TID, ANS8, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_TID, paymentServiceTxnDetails?.terminalId, IsoType.ALPHA,NetworkConstants.ISO_FIELD_TID_LENGTH)
+
+        /* Field 42, MID, ANS15, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_MID, paymentServiceTxnDetails?.merchantId, IsoType.ALPHA,NetworkConstants.ISO_FIELD_MID_LENGTH)
+
+        /* Field 60, Serial No, ANS...999, Mandatory */
+        message.setValue(NetworkConstants.ISO_FIELD_TERM_SR_NO, paymentServiceTxnDetails?.deviceSN, IsoType.LLLVAR,paymentServiceTxnDetails?.deviceSN?.length?:0)
+
+        /* Field 62, Working Key, ANS...999, Mandatory */
+        BuilderUtils.generateRsaKey().let {
+            message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, it.public.toString(), IsoType.LLLVAR,it.public.toString().length)
+        }
+
+        return message.writeData()
+    }
 
     fun createAccessTokenRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): AuthTokenRequest {
         var appId = "pcAz2HwAompQWPEF4MXUJt91ldqEnzQR"

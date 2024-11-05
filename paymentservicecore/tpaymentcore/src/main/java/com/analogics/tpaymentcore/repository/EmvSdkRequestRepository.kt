@@ -11,13 +11,13 @@ import javax.inject.Inject
 import kotlin.toString
 
 class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
-    private var emvWrapper = EmvWrapperRepository (iEmvSdkResponseListener)
+    private var emvWrapper = EmvWrapperRepository(iEmvSdkResponseListener)
     override fun initPaymentSDK(
-        aidConfig : AidConfig?,
+        aidConfig: AidConfig?,
         capKeys: List<CAPKey>?
     ) {
         try {
-            emvWrapper.initializeSdk(aidConfig,capKeys)
+            emvWrapper.initializeSdk(aidConfig, capKeys)
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
@@ -28,7 +28,7 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
         transConfig: TransConfig?
     ) {
         try {
-            EmvWrapperRepository.startPayment(context,transConfig,iEmvSdkResponseListener);
+            EmvWrapperRepository.startPayment(context, transConfig, iEmvSdkResponseListener);
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
@@ -41,4 +41,5 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
     }
+
 }
