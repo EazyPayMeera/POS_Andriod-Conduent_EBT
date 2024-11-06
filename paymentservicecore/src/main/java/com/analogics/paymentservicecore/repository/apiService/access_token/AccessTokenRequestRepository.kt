@@ -12,7 +12,8 @@ class AccessTokenRequestRepository @Inject constructor(
     var apiServiceRequestBuilder: APIServiceRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository
 ) {
-    suspend fun apiGetAccessToken(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
+    @OptIn(ExperimentalStdlibApi::class)
+    suspend fun apiGetAccessToken(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
 
         builderServiceRepository.apiGetAccessToken(
             object :IBuilderServiceResponseListener{
@@ -26,7 +27,7 @@ class AccessTokenRequestRepository @Inject constructor(
             },
             BuilderUtils.prepareApiRequestBody(
                 //apiServiceRequestBuilder.createAccessTokenRequest(paymentServiceTxnDetails)
-                apiServiceRequestBuilder.createRklRequest(paymentServiceTxnDetails).toString()
+                apiServiceRequestBuilder.createRklRequest(paymentServiceTxnDetails)?.toHexString()?:""
             )
         )
     }

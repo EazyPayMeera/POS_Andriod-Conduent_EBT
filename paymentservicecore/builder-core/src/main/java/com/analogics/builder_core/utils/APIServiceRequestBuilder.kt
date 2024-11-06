@@ -19,10 +19,13 @@ import com.github.kpavlov.jreactive8583.iso.MessageOrigin
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import javax.inject.Inject
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class APIServiceRequestBuilder @Inject constructor() {
     var messageFactory = J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
 
+    @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray? {
         var message = messageFactory.newMessage(
             messageClass = MessageClass.NETWORK_MANAGEMENT,
@@ -30,20 +33,23 @@ class APIServiceRequestBuilder @Inject constructor() {
             messageOrigin = MessageOrigin.ACQUIRER
         )
 
+        message.setBinary(true)
+        //message.setEncodeVariableLengthFieldsInHex(false)
+
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_PROC_CODE, NetworkConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
         /* Field 11, STAN, N6, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_STAN, 1, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_STAN_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_STAN, "1", IsoType.NUMERIC,NetworkConstants.ISO_FIELD_STAN_LENGTH)
 
         /* Field 12, Time, N6, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_TIME, 130500, IsoType.TIME,NetworkConstants.ISO_FIELD_TIME_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_TIME, "130500", IsoType.TIME,NetworkConstants.ISO_FIELD_TIME_LENGTH)
 
         /* Field 13, Date, N4, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_DATE, 1105, IsoType.DATE4,NetworkConstants.ISO_FIELD_DATE_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_DATE, "1105", IsoType.DATE4,NetworkConstants.ISO_FIELD_DATE_LENGTH)
 
         /* Field 24, NII, N3, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_NII, 10, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_NII_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_NII, "10", IsoType.NUMERIC,NetworkConstants.ISO_FIELD_NII_LENGTH)
 
         /* Field 41, TID, ANS8, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_TID, paymentServiceTxnDetails?.terminalId, IsoType.ALPHA,NetworkConstants.ISO_FIELD_TID_LENGTH)
@@ -56,7 +62,8 @@ class APIServiceRequestBuilder @Inject constructor() {
 
         /* Field 62, Working Key, ANS...999, Mandatory */
         BuilderUtils.generateRsaKey().let {
-            message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, it.public.toString(), IsoType.LLLVAR,it.public.toString().length)
+            var encodedKey = Base64.encode(it.public.encoded).toByteArray()
+            message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, encodedKey, IsoType.LLLBIN,encodedKey.size)
         }
 
         return message.writeData()
