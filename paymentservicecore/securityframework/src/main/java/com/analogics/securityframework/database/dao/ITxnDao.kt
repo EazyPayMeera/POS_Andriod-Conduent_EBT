@@ -42,6 +42,9 @@ interface ITxnDao {
     @Query("SELECT MIN(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getStartDateByBatchIds(batchId: String): List<String?>
 
+    @Query("SELECT BatchStatus FROM BatchTable WHERE batchId = :batchId")
+    suspend fun getBatchStatus(batchId: String): List<String?>
+
     @Query("SELECT MAX(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getEndDateByBatchIds(batchId: String): List<String?>
 

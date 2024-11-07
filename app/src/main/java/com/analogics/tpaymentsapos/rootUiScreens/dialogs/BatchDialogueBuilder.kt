@@ -67,6 +67,7 @@ class BatchDialogueBuilder private constructor() {
                 listItem?.let {
                     CustomListDialog(
                         onClose,
+                        status = it,
                         batchIds = it,
                         startDates = it,
                         endDates = it,
@@ -143,6 +144,7 @@ class BatchDialogueBuilder private constructor() {
     @Composable
     fun CustomListDialog(
         onClose: () -> Unit,
+        status: List<String>,
         batchIds: List<String>, // List of batch IDs
         startDates: List<String?>, // List of start dates (nullable)
         endDates: List<String>,
@@ -206,13 +208,17 @@ class BatchDialogueBuilder private constructor() {
                                         if (index < startDates.size) startDates[index] else null
                                     val endDates =
                                         if (index < endDates.size) endDates[index] else null
+                                    val batchStatus =
+                                        if (index < status.size) status[index] else null
                                     val startdate =
                                         startDates?.replace("[", "")?.replace("]", "")?.trim()
                                     val enddate =
                                         endDates?.replace("[", "")?.replace("]", "")?.trim()
+                                    val status =  batchStatus?.replace("[", "")?.replace("]", "")?.trim()
 
                                     DrawersSurface(
                                         modifier = Modifier.fillMaxWidth(),
+                                        status = status.toString(),
                                         batchId = batchId, // Pass the combined String to DrawersSurface,
                                         startDate = startdate.toString(),
                                         endDate = enddate.toString(),
@@ -244,6 +250,7 @@ class BatchDialogueBuilder private constructor() {
     @Composable
     fun DrawersSurface(
         modifier: Modifier = Modifier,
+        status:String,
         batchId: String, // Change to String
         startDate: String, // Change to String
         endDate: String, // Change to String
@@ -255,12 +262,13 @@ class BatchDialogueBuilder private constructor() {
                 .clickable { onItemSelected() }, // Call the onItemSelected when clicked
             color = MaterialTheme.colors.surface
         ) {
-            DrawersContent(batchId, startDate, endDate)
+            DrawersContent(status,batchId, startDate, endDate)
         }
     }
 
     @Composable
     fun DrawersContent(
+        status:String,
         batchId: String, // Changed to String
         startDate: String, // Changed to String
         endDate: String // Changed to String
@@ -290,7 +298,7 @@ class BatchDialogueBuilder private constructor() {
 
                     // "Open" Text
                     TextView(
-                        text = stringResource(id = R.string.open),
+                        text = status/*stringResource(id = R.string.open)*/,
                         color = Color(0xFF4CAF50),
                         fontWeight = FontWeight.Bold,
                         fontFamily = Roboto,

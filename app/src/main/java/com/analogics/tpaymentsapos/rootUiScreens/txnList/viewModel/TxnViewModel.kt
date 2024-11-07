@@ -41,11 +41,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     private val _batchList = MutableStateFlow<List<String>>(emptyList())
     private val _startDateList = MutableStateFlow<List<String>>(emptyList())
+    private val _batchStatusList = MutableStateFlow<List<String>>(emptyList())
     private val _endDateList = MutableStateFlow<List<String>>(emptyList())
 
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
     val batchList: StateFlow<List<String>> = _batchList
     val startDateList: StateFlow<List<String>> = _startDateList
+    val batchStatusList: StateFlow<List<String>> = _batchStatusList
     val endDateList: StateFlow<List<String>> = _endDateList
     var allTransactionList: List<TxnEntity>? = null
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
@@ -137,6 +139,25 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 }
                 _startDateList.value = startDates
                  // Print batch ID and start date
+            } catch (e: Exception) {
+                Log.e("FetchStartDates", "Error fetching start dates: ${e.message}")
+            }
+        }
+    }
+
+    fun fetchBatchStatus(batchIds: List<String>) {
+        viewModelScope.launch {
+            try {
+                val batchStatus = mutableListOf<String>()
+                batchIds.forEach { batchId ->
+                    val BatchStatus = dbRepository.getBatchStatus(batchId)
+                    BatchStatus.let {
+                        batchStatus.add(it.toString()) // Add the non-null start date to the list
+                        Log.d("Batch Status", "Batch STATUS: $batchId, Start Date: ${it.toString()}")
+                    }
+                }
+                _batchStatusList.value = batchStatus
+                // Print batch ID and start date
             } catch (e: Exception) {
                 Log.e("FetchStartDates", "Error fetching start dates: ${e.message}")
             }
