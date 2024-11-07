@@ -43,6 +43,9 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
     private val _openBatch = MutableStateFlow<String?>(null)
     val openBatch: StateFlow<String?> = _openBatch
 
+    private val _lastBatch = MutableStateFlow<String?>(null)
+    val lastBatch: StateFlow<String?> = _lastBatch
+
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -199,6 +202,21 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         Log.d("password " +
                 "record insert suc", Gson().fromJson(json, batchEntity::class.java).toString())
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getLastBatchId() {
+        viewModelScope.launch {
+            try {
+                // Fetch the list of BatchEntity
+                val lastBatch: String? = dbRepository.getLastBatch()
+                Log.d("Batch Id", "Fetched batches: $lastBatch")
+                // Assign the transformed list to _openBatchId
+                _lastBatch.value = lastBatch
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error fetching open batches", e)
+            }
+        }
     }
 
 }

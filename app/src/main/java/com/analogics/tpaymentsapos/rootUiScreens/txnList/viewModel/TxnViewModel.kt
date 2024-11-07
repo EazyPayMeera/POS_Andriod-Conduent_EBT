@@ -396,4 +396,15 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 
+    fun closeOpenBatches() {
+        viewModelScope.launch {
+            try {
+                val closedCount = dbRepository.closeBatch()
+                Log.d("BatchViewModel", "Closed $closedCount open batches")
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error closing open batches", e)
+            }
+        }
+    }
+
 }

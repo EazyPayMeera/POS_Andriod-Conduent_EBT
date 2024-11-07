@@ -2,6 +2,7 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.cardview.view
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
@@ -65,6 +66,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import java.util.EnumMap
 
+@SuppressLint("DefaultLocale")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hiltViewModel()) {
@@ -72,6 +74,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
     val openBatchId = viewModel.openBatch.collectAsState().value
+    val lastBatchId = viewModel.lastBatch.collectAsState().value
     val isAnyBatchPresent = viewModel.isBatchPresent.collectAsState().value
     Log.d("Batch Id","Present Batch Id $isAnyBatchPresent")
     // Disable the hardware back button
@@ -171,10 +174,12 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                             {
                                 if(openBatchId.isNullOrBlank())
                                 {
-                                   val newBatchId = openBatchId?.toIntOrNull()?.let { it + 1 }?.toString()
+                                   val newBatchId = lastBatchId?.toIntOrNull()?.let { String.format("%06d", it + 1) }
+                                    Log.d("BatchViewModel", "Last batch ID Present: $lastBatchId")
+                                    Log.d("BatchViewModel", "Generated new batch ID: $newBatchId")
                                     sharedViewModel.batchEntity.batchId = newBatchId
                                     sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
-                                    sharedViewModel.batchEntity.batchId = "open"
+                                    sharedViewModel.batchEntity.batchStatus = "open"
                                     viewModel.insertBatchData(sharedViewModel.batchEntity)
                                 }
                                 else {
@@ -292,6 +297,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
     LaunchedEffect(Unit) {
         viewModel.openBatchPresent()
         viewModel.isBatchPresent()
+        viewModel.getLastBatchId()
         viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.batchId
