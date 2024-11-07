@@ -212,7 +212,7 @@
 
     <!-- Success Screen -->
     <string name="payment">भुगतान</string>
-    <string name="sucessful">सफल</string>
+    <string name="successful">सफल</string>
 
     <!-- Printer Strings -->
     <string name="printer_error_title">प्रिंटिंग त्रुटि</string>

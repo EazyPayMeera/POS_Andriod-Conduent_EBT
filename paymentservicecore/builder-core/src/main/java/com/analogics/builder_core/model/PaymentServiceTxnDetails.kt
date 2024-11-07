@@ -8,14 +8,16 @@ data class PaymentServiceTxnDetails(
     @SerializedName("loginId") var loginId: String? = null,
     @SerializedName("loginPassword") var loginPassword: String? = null,
     @SerializedName("deviceSN") var deviceSN: String? = null,
-    @SerializedName("DeviceMake") var deviceMake: String? = null,
-    @SerializedName("DeviceModel") var deviceModel: String? = null,
+    @SerializedName("deviceMake") var deviceMake: String? = null,
+    @SerializedName("deviceModel") var deviceModel: String? = null,
+    @SerializedName("devicePublicKey") var devicePublicKey: String? = null,
+    @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,
 
-    @SerializedName("AuthAmount") var authAmount: String? = null,
-    @SerializedName("HostAuthCode") var hostAuthCode: String? = null,
-    @SerializedName("HostRespCode") var hostRespCode: String? = null,
-    @SerializedName("HostAuthResult") var hostAuthResult: String? = null,
-    @SerializedName("HostTxnRef") var hostTxnRef: String? = null,
+    @SerializedName("authAmount") var authAmount: String? = null,
+    @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
+    @SerializedName("hostRespCode") var hostRespCode: String? = null,
+    @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
+    @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
     @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
@@ -31,14 +33,14 @@ data class PaymentServiceTxnDetails(
     @SerializedName("ttlAuthCapCount") var ttlAuthCapCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
 
-    @SerializedName("RefundableAmount") var refundableAmount: String? = null,
+    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     /* Card Details */
-    @SerializedName("EmvData") var emvData: String? = null,
+    @SerializedName("emvData") var emvData: String? = null,
 
 
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
-    @SerializedName("PurchaseOrderNo") var purchaseOrderNo: String? = null,
+    @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
     @SerializedName("dateTime") var dateTime: String? = null,
     @SerializedName("timeZone") var timeZone: String? = null,
     @SerializedName("txnType") var txnType: String? = null,

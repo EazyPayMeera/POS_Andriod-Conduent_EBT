@@ -20,10 +20,11 @@ import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.apply
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.text.isNotBlank
 
 @HiltViewModel
@@ -32,9 +33,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     IApiServiceResponseListener {
     var tidInput = mutableStateOf("")
     var midInput = mutableStateOf("")
-    val isActivationEnabled = mutableStateOf(true)
-    var useRootAppPaymentDetails = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
+    val isActivationBtnEnabled = mutableStateOf(true)
     lateinit var navHostController: NavHostController
     var sharedViewModel : SharedViewModel? = null
     val isFormValid: Boolean
@@ -48,7 +47,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     fun onMidChange(mid: String) {
         midInput.value = mid
     }
-    fun setActivationButtonState(enabled: Boolean)  { isActivationEnabled.value = enabled }
+    fun setActivationButtonState(enabled: Boolean)  { isActivationBtnEnabled.value = enabled }
     fun onActivationClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel
@@ -62,6 +61,22 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 e.printStackTrace()
             }
         }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    fun collectActivationData()
+    {
+        var activationKey = PaymentServiceUtils.generateRsaKey()
+        sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey = Base64.encode(activationKey.public.encoded)
+        sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey = Base64.encode(activationKey.private.encoded)
+        sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
+        sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
+        sharedViewModel?.objPosConfig?.apply {
+            terminalId = tidInput.value
+            merchantId = midInput.value
+            devicePublicKey = sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey
+            devicePrivateKey = sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey
+        }?.saveToPrefs()
     }
 
     fun onInvalidFormData(context: Context) {
@@ -80,10 +95,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     fun startActivateProcess() {
         viewModelScope.launch {
             try {
-                val requestDetails =
-                    PaymentServiceUtils.objectToJsonString(useRootAppPaymentDetails.value)
+                collectActivationData()
                 apiServiceRepository.apiServiceAccessToken(
-                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@ActivationViewModel)
+                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel?.objRootAppPaymentDetail), this@ActivationViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }
@@ -93,15 +107,13 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     override fun onApiSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
-                useRootAppPaymentDetails.value = response
+                sharedViewModel?.objRootAppPaymentDetail = response
             }
 
             else -> {
                 //userApiSuccessHolder.value = response as ObjEmployeeResponse
                 if (isFormValid) {
                     sharedViewModel?.objPosConfig?.apply {
-                        terminalId = tidInput.value
-                        merchantId = midInput.value
                         isActivationDone = true }?.saveToPrefs()
                     navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
                 }
@@ -111,7 +123,8 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     }
 
     override fun onApiError(apiServiceError: ApiServiceError) {
-       //
+        setActivationButtonState(true)
+        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceError.errorMessage)
     }
 
     override fun onDisplayProgress(
@@ -121,5 +134,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         message: String?
     ) {
         CustomDialogBuilder.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
+    }
+
+    fun onLoad(sharedViewModel : SharedViewModel)
+    {
+        sharedViewModel.objPosConfig?.terminalId?.let { tidInput.value = it }
+        sharedViewModel.objPosConfig?.merchantId?.let { midInput.value = it }
     }
 }

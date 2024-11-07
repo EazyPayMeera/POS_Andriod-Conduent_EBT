@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Numbers
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -78,7 +79,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                     )
 
                     InputTextField(
-                        enabled = viewModel.isActivationEnabled.value,
+                        enabled = viewModel.isActivationBtnEnabled.value,
                         inputValue = viewModel.tidInput.value,
                         onChange = { viewModel.onTidChange(it) },
                         modifier = Modifier.fillMaxWidth(),
@@ -88,7 +89,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                         keyboardType = KeyboardType.Ascii
                     )
                     InputTextField(
-                        enabled = viewModel.isActivationEnabled.value,
+                        enabled = viewModel.isActivationBtnEnabled.value,
                         inputValue = viewModel.midInput.value,
                         onChange = { viewModel.onMidChange(it) },
                         modifier = Modifier.fillMaxWidth(),
@@ -109,7 +110,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                                 }
                             },
                             title = stringResource(id = R.string.act_title),
-                            enabled = viewModel.isActivationEnabled.value
+                            enabled = viewModel.isActivationBtnEnabled.value
                         )
                     }
                 }
@@ -118,5 +119,9 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
             CustomDialogBuilder.ShowComposed()
         }
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(sharedViewModel)
+    }
 }
 

@@ -53,7 +53,7 @@ fun SucessView(navHostController: NavHostController) {
                 )
 
                 TextView(
-                    text = stringResource(id = R.string.sucessful),
+                    text = stringResource(id = R.string.successful),
                     fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,

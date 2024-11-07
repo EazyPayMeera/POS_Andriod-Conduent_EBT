@@ -2,6 +2,8 @@ package com.analogics.paymentservicecore.utils
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 
 object PaymentServiceUtils {
 
@@ -14,6 +16,10 @@ object PaymentServiceUtils {
         return gson.toJson(response, object : TypeToken<T>() {}.type)
     }
 
+    inline fun <reified T>transformObject(input: Any?): T? {
+        return Gson().fromJson(Gson().toJson(input), object : TypeToken<T>() {}.type)
+    }
+
     fun String.batchClosingTtlAmt():String{
 
 
@@ -21,5 +27,10 @@ object PaymentServiceUtils {
     }
     inline fun <reified T> jsonStringToObjectList(response: String): List<T> {
         return Gson().fromJson(response, object : TypeToken<T>() {}.type)
+    }
+
+    fun generateRsaKey(): KeyPair {
+        var keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
+        return keyPair
     }
 }
