@@ -11,8 +11,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 object BuilderUtils {
 
@@ -71,5 +74,10 @@ object BuilderUtils {
         }
 
         return stan
+    }
+
+    fun getCurrentDateTime(format : String?=BuilderConstants.DEFAULT_ISO8583_DATE_TIME_FORMAT): String {
+        val sdf = SimpleDateFormat(format, Locale.getDefault())
+        return sdf.format(Date())
     }
 }

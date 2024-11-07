@@ -1,6 +1,7 @@
 package com.analogics.builder_core.utils
 
 import android.content.Context
+import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.model.auth_capture.PostAuthRequest
 import com.analogics.builder_core.model.auth_capture.PreAuthRequest
@@ -46,13 +47,15 @@ class APIServiceRequestBuilder @Inject constructor(@ApplicationContext val conte
             BuilderUtils.getSTAN(context), IsoType.NUMERIC,NetworkConstants.ISO_FIELD_STAN_LENGTH)
 
         /* Field 12, Time, N6, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_TIME, "130500", IsoType.TIME,NetworkConstants.ISO_FIELD_TIME_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_TIME,
+            BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT), IsoType.TIME,NetworkConstants.ISO_FIELD_TIME_LENGTH)
 
         /* Field 13, Date, N4, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_DATE, "1105", IsoType.DATE4,NetworkConstants.ISO_FIELD_DATE_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_DATE,
+            BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_DATE_FORMAT), IsoType.DATE4,NetworkConstants.ISO_FIELD_DATE_LENGTH)
 
         /* Field 24, NII, N3, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_NII, "10", IsoType.NUMERIC,NetworkConstants.ISO_FIELD_NII_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_NII_LENGTH)
 
         /* Field 41, TID, ANS8, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_TID, paymentServiceTxnDetails?.terminalId, IsoType.ALPHA,NetworkConstants.ISO_FIELD_TID_LENGTH)
