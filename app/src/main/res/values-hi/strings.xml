@@ -168,7 +168,8 @@
     <string name="igst_amt">आईजीएसटी राशि:</string>
 
     <!-- Transaction Receipt Details Screen -->
-    <string name="header_footer">हेडर और फूटर</string>
+    <string name="header">हेडर</string> फूटर
+    <string name="footer">फूटर</string>
 
     <string name="auth_capture">ऑथ-कैप्चर</string>
     <string name="settings">सेटिंग्स</string>
@@ -244,6 +245,7 @@
     <string name="receipt_aid">AID:</string>
     <string name="receipt_tc">TC:</string>
     <string name="receipt_total">कुल:</string>
+    <string name="receipt_txn_status">लेन-देन की स्थिति:</string>
     <string name="receipt_payment">भुगतान:</string>
     <string name="receipt_authorization">अधिकारिता:</string>
     <string name="receipt_invoice_no">इनवॉइस:</string>

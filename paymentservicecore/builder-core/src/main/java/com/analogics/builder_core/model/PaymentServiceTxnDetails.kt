@@ -36,7 +36,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("EmvData") var emvData: String? = null,
 
 
-    @SerializedName("BatchId") var batchId: String? = null,
+    @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
     @SerializedName("PurchaseOrderNo") var purchaseOrderNo: String? = null,
     @SerializedName("dateTime") var dateTime: String? = null,

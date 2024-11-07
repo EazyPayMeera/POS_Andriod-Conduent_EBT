@@ -149,7 +149,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 latestTransaction?.let {
                     // Convert the latest transaction to JSON string
                     val requestDetails = PaymentServiceUtils.objectToJsonString(it)
-
+                    Log.d("YourTag", "Batch ID: $requestDetails")
                     // Pass the transaction details to the PrinterServiceRepository
                     PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails))
                         .initPrinter(context, iPrinterResultProviderListener)
@@ -204,7 +204,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
                     PaymentServiceUtils.objectToJsonString(latestTransaction) // Use the latest transaction
                 )
-
+                Log.d("YourTag", "Latest: $paymentServiceTxnDetails")
                 // Generate the receipt
                 val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
                 val labelList: List<String> = receipt.fields.map { it.label.toString() }

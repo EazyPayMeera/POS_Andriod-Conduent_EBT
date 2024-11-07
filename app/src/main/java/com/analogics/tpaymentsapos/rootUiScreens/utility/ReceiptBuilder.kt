@@ -21,7 +21,7 @@ class ReceiptBuilder {
         return Receipt.Builder()
             .apply {
 
-                Log.d("PaymentDetail hello", "Transaction Amount: ${paymentDetails?.ttlAmount}")
+                Log.d("PaymentDetail hello", "Batch Id: ${sharedViewModel.objRootAppPaymentDetail.batchId}")
                 addField(sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER)
                 addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT)
                 addField("", "", "", Alignment.CENTER)
@@ -41,6 +41,7 @@ class ReceiptBuilder {
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
                 addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT)
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
+                addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE)
                 addField("CARDHOLDER NAME", "", "", Alignment.CENTER)
                 addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER)
                 addField("******MERCHANT COPY******", "", "", Alignment.CENTER)
