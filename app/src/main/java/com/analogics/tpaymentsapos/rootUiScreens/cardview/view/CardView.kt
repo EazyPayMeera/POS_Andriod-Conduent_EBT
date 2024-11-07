@@ -135,7 +135,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                             // Display the totalAmount here
                             Text(
                                 text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
-                                fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
+                                fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier

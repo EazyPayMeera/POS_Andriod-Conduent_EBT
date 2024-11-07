@@ -61,11 +61,13 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
     val configChanged = remember { mutableStateOf(false) }
 
     Column {
+        // Top AppBar
         CommonTopAppBar(
             title = stringResource(id = R.string.receipt_details),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
+        // Card for content
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium),
             elevation = MaterialTheme.dimens.DP_10_CompactMedium
@@ -75,59 +77,83 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
-                TextView(
-                    text = stringResource(id = R.string.header_footer),
-                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    1,
-                    Modifier.padding(MaterialTheme.dimens.DP_24_CompactMedium),
-                    textAlign = TextAlign.Center
-                )
+                // LazyColumn to list header and footer fields
                 LazyColumn {
-                    // Iterate over headers and footers
-                    val headerFooterPairs = headerValues + footerValues
-                    items(headerFooterPairs.size) { index ->
-                        val isHeader = index < headerValues.size
-                        val currentValue = if (isHeader) headerValues[index] else footerValues[index - headerValues.size]
-                        val label = if (isHeader) "Header ${index + 1}" else "Footer  ${index - headerValues.size + 1}"
+                    // Header Text
+                    item {
+                        TextView(
+                            text = stringResource(id = R.string.header),
+                            fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                                .fillMaxWidth(), // Ensure it fills the available width
+                            textAlign = TextAlign.Center // Ensure the text is centered
+                        )
+                    }
 
-                        // Placeholder resource IDs can be defined in strings.xml
-                        val placeholderResId = if (isHeader) {
-                            when (index) {
+                    // Header Fields (4 fields for Header)
+                    items(headerValues.size) { index ->
+                        val headerValue = headerValues[index]
+                        val label = "Header ${index + 1}"
+
+                        HeaderFooterRow(
+                            label = label,
+                            value = headerValue.value,
+                            onValueChange = { newValue ->
+                                configChanged.value = true
+                                headerValue.value = newValue
+                                viewModel.updateHeader(index, newValue)
+                            },
+                            placeholderResId = when (index) {
                                 0 -> R.string.header1_placeholder
                                 1 -> R.string.header2_placeholder
                                 2 -> R.string.header3_placeholder
                                 3 -> R.string.header4_placeholder
                                 else -> R.string.default_placeholder
                             }
-                        } else {
-                            when (index - headerValues.size) {
+                        )
+                    }
+
+                    // Footer Label (Centered)
+                    item {
+                        TextView(
+                            text = stringResource(id = R.string.footer),
+                            fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                                .fillMaxWidth(), // Ensure it fills the available width
+                            textAlign = TextAlign.Center // Ensure the text is centered
+                        )
+                    }
+
+                    // Footer Fields (4 fields for Footer)
+                    items(footerValues.size) { index ->
+                        val footerValue = footerValues[index]
+                        val label = "Footer ${index + 1}"
+
+                        HeaderFooterRow(
+                            label = label,
+                            value = footerValue.value,
+                            onValueChange = { newValue ->
+                                configChanged.value = true
+                                footerValue.value = newValue
+                                viewModel.updateFooter(index, newValue)
+                            },
+                            placeholderResId = when (index) {
                                 0 -> R.string.footer1_placeholder
                                 1 -> R.string.footer2_placeholder
                                 2 -> R.string.footer3_placeholder
                                 3 -> R.string.footer4_placeholder
                                 else -> R.string.default_placeholder
                             }
-                        }
-
-                        HeaderFooterRow(
-                            label = label,
-                            value = currentValue.value,
-                            onValueChange = { newValue ->
-                                configChanged.value = true
-                                currentValue.value = newValue
-                                if (isHeader) {
-                                    viewModel.updateHeader(index, newValue)
-                                } else {
-                                    viewModel.updateFooter(index - headerValues.size, newValue)
-                                }
-                            },
-                            placeholderResId = placeholderResId // Pass the placeholder resource ID
                         )
                     }
 
-                    // Center align the OK button
+                    // Save button (centered)
                     item {
                         Row(
                             modifier = Modifier
@@ -154,6 +180,7 @@ fun ReceiptDetailsView(navHostController: NavHostController) {
         viewModel.onLoad(sharedViewModel)
     }
 }
+
 
 @Composable
 fun HeaderFooterRow(label: String, value: String, onValueChange: (String) -> Unit, placeholderResId: Int) {

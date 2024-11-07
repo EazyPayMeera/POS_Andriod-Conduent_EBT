@@ -91,7 +91,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                 )
                 TextView(
                     text = formatAmount(totalAmount),
-                    fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start),
