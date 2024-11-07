@@ -3,14 +3,14 @@ package com.analogics.paymentservicecore.repository.apiService
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuilderServiceRepository
-import com.analogics.builder_core.utils.APIServiceRequestBuilder
+import com.analogics.builder_core.requestBuilder.ApiRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import javax.inject.Inject
 
 
 class VoidRequestRepository @Inject constructor(
-    var apiServiceRequestBuilder: APIServiceRequestBuilder,
+    var apiRequestBuilder: ApiRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository
 ) {
     suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
@@ -27,7 +27,7 @@ class VoidRequestRepository @Inject constructor(
                 }
             },
             BuilderUtils.prepareApiRequestBody(
-                apiServiceRequestBuilder.createVoidRequest(paymentServiceTxnDetails)
+                apiRequestBuilder.createVoidRequest(paymentServiceTxnDetails)
             )
         )
     }

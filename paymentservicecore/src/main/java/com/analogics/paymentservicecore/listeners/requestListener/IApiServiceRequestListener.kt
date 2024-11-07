@@ -44,6 +44,11 @@ interface IApiServiceRequestListener {
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
+    suspend fun apiServiceRklRequest(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iApiServiceResponseListener: IApiServiceResponseListener
+    )
+
     suspend fun apiServiceBatch(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener

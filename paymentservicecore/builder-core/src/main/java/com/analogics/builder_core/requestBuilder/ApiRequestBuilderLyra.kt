@@ -1,4 +1,4 @@
-package com.analogics.builder_core.utils
+package com.analogics.builder_core.requestBuilder
 
 import android.content.Context
 import com.analogics.builder_core.constants.BuilderConstants
@@ -11,22 +11,22 @@ import com.analogics.builder_core.model.purchase.PurchaseRequest
 import com.analogics.builder_core.model.reund.RefundRequest
 import com.analogics.builder_core.model.reversal.ReversalReqeust
 import com.analogics.builder_core.model.void.VoidReqeust
+import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.networkservicecore.serviceutils.NetworkConstants
 import com.github.kpavlov.jreactive8583.iso.ISO8583Version
 import com.github.kpavlov.jreactive8583.iso.J8583MessageFactory
 import com.github.kpavlov.jreactive8583.iso.MessageClass
-import com.github.kpavlov.jreactive8583.iso.MessageFactory
 import com.github.kpavlov.jreactive8583.iso.MessageFunction
 import com.github.kpavlov.jreactive8583.iso.MessageOrigin
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-class APIServiceRequestBuilder @Inject constructor(@ApplicationContext val context: Context) {
-    var messageFactory = J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
+class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context) {
+    var messageFactory =
+        J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray? {
@@ -294,6 +294,4 @@ class APIServiceRequestBuilder @Inject constructor(@ApplicationContext val conte
             originalTxnRef = paymentServiceTxnDetails?.originalTxnRef
         )
     }
-
-
 }

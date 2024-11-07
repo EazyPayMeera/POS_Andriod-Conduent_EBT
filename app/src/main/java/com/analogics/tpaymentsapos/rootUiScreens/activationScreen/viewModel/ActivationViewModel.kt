@@ -96,7 +96,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         viewModelScope.launch {
             try {
                 collectActivationData()
-                apiServiceRepository.apiServiceAccessToken(
+                apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel?.objRootAppPaymentDetail), this@ActivationViewModel)
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")

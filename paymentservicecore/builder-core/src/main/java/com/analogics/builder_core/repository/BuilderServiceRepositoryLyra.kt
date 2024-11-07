@@ -9,7 +9,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import javax.inject.Inject
 
-class BuilderServiceRepository @Inject constructor(private val iApiService: IAPIService):IBuilderServiceRequestListener{
+class BuilderServiceRepositoryLyra @Inject constructor(private val iApiService: IAPIService):IBuilderServiceRequestListener{
     lateinit var iBuilderServiceResponseListener:IBuilderServiceResponseListener
 
     override suspend fun apiEmployeeDetails(iBuilderServiceResponseListener: IBuilderServiceResponseListener) {
