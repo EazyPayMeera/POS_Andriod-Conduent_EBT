@@ -29,7 +29,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
-    fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray? {
+    fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray {
         var message = messageFactory.newMessage(
             messageClass = MessageClass.NETWORK_MANAGEMENT,
             messageFunction = MessageFunction.REQUEST,

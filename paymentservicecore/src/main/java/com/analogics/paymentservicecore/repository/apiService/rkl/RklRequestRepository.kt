@@ -1,23 +1,22 @@
 package com.analogics.paymentservicecore.repository.apiService.rkl
 
-import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
+import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
-import com.analogics.builder_core.repository.BuilderServiceRepository
-import com.analogics.builder_core.requestBuilder.ApiRequestBuilder
-import com.analogics.builder_core.utils.BuilderUtils
+import com.analogics.builder_core.repository.BuilderServiceRepositoryLyra
+import com.analogics.builder_core.requestBuilder.ApiRequestBuilderLyra
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import javax.inject.Inject
 
 class RklRequestRepository@Inject constructor(
-    var apiRequestBuilder: ApiRequestBuilder,
-    private var builderServiceRepository: BuilderServiceRepository
+    var apiRequestBuilder: ApiRequestBuilderLyra,
+    private var builderServiceRepository: BuilderServiceRepositoryLyra
 )  {
         @OptIn(ExperimentalStdlibApi::class)
         suspend fun apiRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
 
-            builderServiceRepository.apiGetAccessToken(
-                object :IBuilderServiceResponseListener{
-                    override fun onBuilderSuccess(response: String) {
+            builderServiceRepository.networkServiceRequest(
+                object : IBuilderServiceResponseListenerLyra{
+                    override fun onBuilderSuccess(response: ByteArray) {
                         onAPIServiceResponse(response)
                     }
 
@@ -25,10 +24,7 @@ class RklRequestRepository@Inject constructor(
                         onAPIServiceResponse(ApiServiceError(error.toString()))
                     }
                 },
-                BuilderUtils.prepareApiRequestBody(
-                    //apiServiceRequestBuilder.createAccessTokenRequest(paymentServiceTxnDetails)
-                    apiRequestBuilder.createRklRequest(paymentServiceTxnDetails)?.toHexString()?:""
-                )
+                apiRequestBuilder.createRklRequest(paymentServiceTxnDetails)
             )
         }
 }
