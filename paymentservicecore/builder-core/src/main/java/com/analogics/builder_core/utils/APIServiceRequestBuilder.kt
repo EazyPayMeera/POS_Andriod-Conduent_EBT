@@ -33,8 +33,8 @@ class APIServiceRequestBuilder @Inject constructor() {
             messageOrigin = MessageOrigin.ACQUIRER
         )
 
+        /* Set binary encoding instead of ASCII encoding */
         message.setBinary(true)
-        //message.setEncodeVariableLengthFieldsInHex(false)
 
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_PROC_CODE, NetworkConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_PROC_CODE_LENGTH)
@@ -61,10 +61,7 @@ class APIServiceRequestBuilder @Inject constructor() {
         message.setValue(NetworkConstants.ISO_FIELD_TERM_SR_NO, paymentServiceTxnDetails?.deviceSN, IsoType.LLLVAR,paymentServiceTxnDetails?.deviceSN?.length?:0)
 
         /* Field 62, Working Key, ANS...999, Mandatory */
-        BuilderUtils.generateRsaKey().let {
-            var encodedKey = Base64.encode(it.public.encoded).toByteArray()
-            message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, encodedKey, IsoType.LLLBIN,encodedKey.size)
-        }
+        message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, paymentServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,paymentServiceTxnDetails?.devicePublicKey?.length?:0)
 
         return message.writeData()
     }

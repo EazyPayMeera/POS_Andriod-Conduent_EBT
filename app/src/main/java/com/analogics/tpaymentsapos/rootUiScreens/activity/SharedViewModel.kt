@@ -25,5 +25,9 @@ class SharedViewModel:ViewModel() {
       isTipButtonEnabled = objPosConfig?.isTipEnabled == true
       selectedTipButton = TipButton.NONE
       tipAmount = 0.00
+
+      /* Copy Config Data */
+      objRootAppPaymentDetail.terminalId = objPosConfig?.terminalId
+      objRootAppPaymentDetail.merchantId = objPosConfig?.merchantId
    }
 }

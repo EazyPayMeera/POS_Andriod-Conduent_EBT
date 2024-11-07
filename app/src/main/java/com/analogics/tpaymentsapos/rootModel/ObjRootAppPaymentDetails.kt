@@ -18,6 +18,8 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("deviceSN") var deviceSN: String? = null,
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
+    @SerializedName("devicePublicKey") var devicePublicKey: String? = null,
+    @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,
 
     @SerializedName("authAmount") var authAmount: Double? = 0.00,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,

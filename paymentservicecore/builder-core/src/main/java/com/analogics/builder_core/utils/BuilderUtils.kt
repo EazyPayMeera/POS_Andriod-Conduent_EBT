@@ -46,9 +46,4 @@ object BuilderUtils  {
             .map { if (it.length < 2) "0$it" else it }
             .fold("", { acc, d -> acc + d })
     }
-
-    fun generateRsaKey(): KeyPair {
-    var keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
-        return keyPair
-    }
 }
