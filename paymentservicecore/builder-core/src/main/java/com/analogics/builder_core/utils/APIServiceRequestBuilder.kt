@@ -1,5 +1,6 @@
 package com.analogics.builder_core.utils
 
+import android.content.Context
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.model.auth_capture.PostAuthRequest
 import com.analogics.builder_core.model.auth_capture.PreAuthRequest
@@ -18,11 +19,12 @@ import com.github.kpavlov.jreactive8583.iso.MessageFunction
 import com.github.kpavlov.jreactive8583.iso.MessageOrigin
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-class APIServiceRequestBuilder @Inject constructor() {
+class APIServiceRequestBuilder @Inject constructor(@ApplicationContext val context: Context) {
     var messageFactory = J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
@@ -40,7 +42,8 @@ class APIServiceRequestBuilder @Inject constructor() {
         message.setValue(NetworkConstants.ISO_FIELD_PROC_CODE, NetworkConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
         /* Field 11, STAN, N6, Mandatory */
-        message.setValue(NetworkConstants.ISO_FIELD_STAN, "1", IsoType.NUMERIC,NetworkConstants.ISO_FIELD_STAN_LENGTH)
+        message.setValue(NetworkConstants.ISO_FIELD_STAN,
+            BuilderUtils.getSTAN(context), IsoType.NUMERIC,NetworkConstants.ISO_FIELD_STAN_LENGTH)
 
         /* Field 12, Time, N6, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_TIME, "130500", IsoType.TIME,NetworkConstants.ISO_FIELD_TIME_LENGTH)

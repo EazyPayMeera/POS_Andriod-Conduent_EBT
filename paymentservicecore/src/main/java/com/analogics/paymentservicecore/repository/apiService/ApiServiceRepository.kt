@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseR
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ApiServiceRepository @Inject constructor(
@@ -27,14 +28,14 @@ class ApiServiceRepository @Inject constructor(
     private val voidRequestRepository: VoidRequestRepository,
     private val purchaseRequestRepository: PurchaseRequestRepository,
     private val batchRequestRepository: BatchRequestRepository,
-    private val dbRepository: TxnDBRepository
+    private val dbRepository: TxnDBRepository,
+    private val posConfig: PosConfig
 ) : IApiServiceRequestListener
  {
     lateinit var iApiServiceResponseListener: IApiServiceResponseListener
-    lateinit var context: Context
 
-    override fun getPosConfig(context: Context): PosConfig {
-        return PosConfig(context).loadFromPrefs()
+    override fun getPosConfig(): PosConfig {
+        return posConfig.loadFromPrefs()
     }
 
     override suspend fun apiServiceRefund(
