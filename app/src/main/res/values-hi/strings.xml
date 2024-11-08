@@ -175,6 +175,7 @@
     <string name="settings">सेटिंग्स</string>
 
     <string name="Configuration">कॉन्फ़िगरेशन</string>
+    <string name="user_man">उपयोगकर्ता प्रबंधन</string>
     <string name="training_mode">प्रशिक्षण मोड</string>
     <string name="auto_report_print">साइन आउट पर ऑटो प्रिंट रिपोर्ट</string>
     <string name="prompt_invoice_no">इनवॉइस नंबर के लिए प्रॉम्प्ट</string>
@@ -339,5 +340,7 @@
     <string name="footer3_placeholder">फुटर 3 दर्ज करें</string>
     <string name="footer4_placeholder">फुटर 4 दर्ज करें</string>
     <string name="default_placeholder">पाठ दर्ज करें</string>
+
+    <string name="sel_user">उपयोगकर्ता का चयन करें</string>
 
 </resources>

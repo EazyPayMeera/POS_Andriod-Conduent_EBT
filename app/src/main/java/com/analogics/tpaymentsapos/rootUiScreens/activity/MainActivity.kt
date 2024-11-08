@@ -70,6 +70,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
 import com.analogics.tpaymentsapos.rootUiScreens.activationScreen.view.ActivationScreen
 import com.analogics.tpaymentsapos.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.view.TransactionListScreen
+import com.analogics.tpaymentsapos.rootUiScreens.usermanagement.view.UserManagementView
 import com.analogics.tpaymentsapos.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -306,6 +307,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.ActivationScreen.route) {
             ActivationScreen(navHostController)
+        }
+        composable(AppNavigationItems.UserManagementScreen.route) {
+            UserManagementView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

@@ -176,6 +176,7 @@
     <string name="settings">Settings</string>
 
     <string name="Configuration">Configuration</string>
+    <string name="user_man">User Management</string>
     <string name="training_mode">Training Mode</string>
     <string name="auto_report_print">Auto Print Report on Sign Out</string>
     <string name="prompt_invoice_no">Prompt Invoice Number</string>
@@ -342,6 +343,9 @@
     <string name="footer3_placeholder">Enter Footer 3</string>
     <string name="footer4_placeholder">Enter Footer 4</string>
     <string name="default_placeholder">Enter Text</string>
+
+
+    <string name="sel_user">Select the User</string>
 
 
 </resources>
