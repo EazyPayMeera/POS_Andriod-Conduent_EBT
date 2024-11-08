@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -291,9 +292,9 @@ class BatchDialogueBuilder private constructor() {
                                 )
                             }
                         }
+
                         // Check if users list is empty
                         if (users.isEmpty()) {
-                            // Display "User list Empty" message
                             Text(
                                 text = "User list Empty",
                                 style = MaterialTheme.typography.body1,
@@ -302,37 +303,47 @@ class BatchDialogueBuilder private constructor() {
                                     .align(Alignment.CenterHorizontally)
                             )
                         } else {
-                            // List of items displayed in a column
+                            // Display each user ID with a divider after each full entry in the users list
                             Column {
                                 users.forEachIndexed { index, userId ->
-                                    // Clean userId of any brackets
-                                    val cleanUserId = userId.replace("[", "").replace("]", "").trim()
+                                    // Clean userId (ensure there are no unwanted characters)
+                                    val cleanUserIds = userId.replace("[", "").replace("]", "").split(",") // Split by comma if there are multiple IDs in a single entry
 
-                                    UserSurface(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        user = cleanUserId,
-                                        onItemSelected = {
-                                            onItemSelected(cleanUserId) // Pass cleaned userId for selection
-                                            onClose()
-                                        }
-                                    )
+                                    // Process each clean userId and display it
+                                    cleanUserIds.forEach { cleanUserId ->
+                                        val trimmedUserId = cleanUserId.trim() // Ensure no extra spaces
+                                        Log.d("UserListDialog", "CleanUserID: $trimmedUserId")
 
-                                    // Divider between items, but not after the last item
-                                    if (index < users.size - 1) {
-                                        Divider(
+                                        // Display the user in a UserSurface
+                                        UserSurface(
                                             modifier = Modifier.fillMaxWidth(),
-                                            thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
-                                            color = Color.Gray
+                                            user = trimmedUserId, // Pass cleaned user ID to UserSurface
+                                            onItemSelected = {
+                                                Log.d("UserSelection", "Selected User ID: $trimmedUserId")
+                                                onItemSelected(trimmedUserId) // Pass cleaned ID for selection
+                                                onClose()
+                                            }
                                         )
+
+                                        // Add divider after each user, except for the last one
+                                        if (index < users.size - 1 || cleanUserIds.indexOf(cleanUserId) < cleanUserIds.size - 1) {
+                                            Divider(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
+                                                color = Color.Gray
+                                            )
+                                        }
                                     }
                                 }
                             }
+
                         }
                     }
                 }
             }
         }
     }
+
 
 
 
@@ -367,6 +378,7 @@ class BatchDialogueBuilder private constructor() {
                 .clickable { onItemSelected() }, // Call the onItemSelected when clicked
             color = MaterialTheme.colors.surface
         ) {
+            Log.d("UserSurface", "Selected User ID: $user")
             UsersContent(user)
         }
     }
@@ -432,6 +444,7 @@ class BatchDialogueBuilder private constructor() {
                 }
             }
         }
+
     }
 
     @Composable
@@ -445,7 +458,7 @@ class BatchDialogueBuilder private constructor() {
                     .fillMaxWidth()
                     .padding(
                         horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium,
-                        vertical = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium
+                        vertical = androidx.compose.material3.MaterialTheme.dimens.DP_22_CompactMedium
                     ), // Padding around the content
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -458,7 +471,7 @@ class BatchDialogueBuilder private constructor() {
                         fontWeight = FontWeight.Bold,
                         fontFamily = Roboto,
                         modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium),
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_21_CompactMedium
+                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_27_CompactMedium
                     )
 
                 }

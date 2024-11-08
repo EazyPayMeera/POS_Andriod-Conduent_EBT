@@ -183,9 +183,13 @@
     <string name="auto_print_merchant">Auto Print Merchant Receipt</string>
     <string name="enable_tipping">Enable Tipping</string>
     <string name="taxes">Taxes</string>
+    <string name="inactivity_timeout">Inactivity Timeout</string>
+    <string name="enter_timeout">Timeout (sec)</string>
+    <string name="timeout">Timeout</string>
     <string name="receipt_details">Receipt Details</string>
     <string name="save_btn">SAVE</string>
     <string name="adjust_per">--------Adjust %--------</string>
+    <string name="set_timeout">Set Timeout</string>
 	
     <string name="is_correct">Is this information correct?</string>
 

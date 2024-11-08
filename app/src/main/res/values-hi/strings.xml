@@ -182,9 +182,13 @@
     <string name="auto_print_merchant">ऑटो प्रिंट मर्चेंट रसीद</string>
     <string name="enable_tipping">टिपिंग सक्षम करें</string>
     <string name="taxes">कर</string>
+    <string name="inactivity_timeout">निष्क्रियता समय सीमा</string>
+    <string name="enter_timeout">समय सीमा (सेकंड)</string>
+    <string name="timeout">समय सीमा</string>
     <string name="receipt_details">रसीद विवरण</string>
     <string name="save_btn">सहेजें</string>
     <string name="adjust_per">-------- % समायोजित करें --------</string>
+    <string name="set_timeout">समय सीमा सेट करें</string>
 
     <string name="is_correct">क्या यह जानकारी सही है?</string>
 
