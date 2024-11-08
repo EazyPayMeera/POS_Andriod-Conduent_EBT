@@ -33,6 +33,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.closeOpenBatches() // Returns the count of rows updated
     }
 
+    suspend fun isBatchOpen(): List<String> {
+        return iBatchDao.isBatchOpen() // Returns the count of rows updated
+    }
+
 
     suspend fun  insertTxn(txnEntity: TxnEntity){
         try {

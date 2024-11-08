@@ -30,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigViewModel
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -58,13 +60,16 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigViewModel = hiltViewModel()) {
     var sharedViewModel = localSharedViewModel.current
-
+    val isBatchOpen = viewModel.isOpenBatch.collectAsState().value
     val settingsItems = listOf(
         SettingsItem(
             imageRes = R.drawable.config_training_mode,
             text = stringResource(id = R.string.training_mode),
             isChecked = viewModel.isTrainingMode.value,
-            onCheckedChange = { viewModel.onDemoModeChange(it, sharedViewModel) },
+            onCheckedChange = {
+                if(isBatchOpen.size == 0) {
+                    viewModel.onDemoModeChange(it, sharedViewModel)
+                }},
             isArrow = false,
             onArrowChange = {}
         ),
@@ -173,6 +178,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
+        viewModel.isBatchOpen()
     }
 }
 
