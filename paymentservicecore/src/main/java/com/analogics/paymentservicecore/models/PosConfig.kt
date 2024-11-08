@@ -5,9 +5,10 @@ import android.os.Build
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.securityframework.handler.SharedPrefHandler
 import com.google.gson.annotations.SerializedName
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class PosConfig @Inject constructor(val context: Context) {
+class PosConfig @Inject constructor(@ApplicationContext val context: Context,) {
 
     /* Merchant & Cashier Info */
     @SerializedName("merchantId") var merchantId: String? = null

@@ -15,6 +15,7 @@ interface IBuilderServiceRequestListener {
     suspend fun apiReversal(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: RequestBody)
     suspend fun apiDeviceLogin(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: RequestBody)
     suspend fun apiGetAccessToken(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: RequestBody)
+    suspend fun apiRklRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: ByteArray)
 
     fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ResponseBody>)
 

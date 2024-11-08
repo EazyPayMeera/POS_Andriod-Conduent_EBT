@@ -99,6 +99,16 @@ class BuilderServiceRepository @Inject constructor(private val iApiService: IAPI
         } )
     }
 
+    override suspend fun apiRklRequest(
+        iBuilderServiceResponseListener: IBuilderServiceResponseListener,
+        requestBody: ByteArray
+    ) {
+        this.iBuilderServiceResponseListener=iBuilderServiceResponseListener
+        /*onNetworkServiceResponse(NetworkCallProvider.safeApiCall {
+            iApiService.getAccessToken(requestBody)
+        } )*/
+    }
+
     override fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ResponseBody>) {
         when (apiResultProvider) {
             is ResultProvider.Success -> {

@@ -1,20 +1,20 @@
 package com.analogics.paymentservicecore.repository.apiService
 
 
-import android.content.Context
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.repository.apiService.access_token.AccessTokenRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.auth_capture.AuthCaptureRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.batch.BatchRequestRepository
-import com.analogics.paymentservicecore.repository.apiService.login.AccessTokenRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.login.LoginRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
+import com.analogics.paymentservicecore.repository.apiService.rkl.RklRequestRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import javax.inject.Inject
 
@@ -27,14 +27,15 @@ class ApiServiceRepository @Inject constructor(
     private val voidRequestRepository: VoidRequestRepository,
     private val purchaseRequestRepository: PurchaseRequestRepository,
     private val batchRequestRepository: BatchRequestRepository,
-    private val dbRepository: TxnDBRepository
+    private val rklRequestRepository: RklRequestRepository,
+    private val dbRepository: TxnDBRepository,
+    private val posConfig: PosConfig
 ) : IApiServiceRequestListener
  {
     lateinit var iApiServiceResponseListener: IApiServiceResponseListener
-    lateinit var context: Context
 
-    override fun getPosConfig(context: Context): PosConfig {
-        return PosConfig(context).loadFromPrefs()
+    override fun getPosConfig(): PosConfig {
+        return posConfig.loadFromPrefs()
     }
 
     override suspend fun apiServiceRefund(
@@ -113,6 +114,17 @@ class ApiServiceRepository @Inject constructor(
             onApiServiceResponse(it)
         }
     }
+
+     override suspend fun apiServiceRklRequest(
+         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+         iApiServiceResponseListener: IApiServiceResponseListener
+     ) {
+         this.iApiServiceResponseListener = iApiServiceResponseListener
+         this.iApiServiceResponseListener.onDisplayProgress(true)
+         rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){
+             onApiServiceResponse(it)
+         }
+     }
 
     override suspend fun apiServiceBatch(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,

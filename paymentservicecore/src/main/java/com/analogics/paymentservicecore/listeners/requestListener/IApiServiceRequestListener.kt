@@ -7,7 +7,7 @@ import com.analogics.paymentservicecore.models.PosConfig
 
 interface IApiServiceRequestListener {
 
-    fun getPosConfig(context: Context): PosConfig
+    fun getPosConfig(): PosConfig
 
     suspend fun apiServiceRefund(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -40,6 +40,11 @@ interface IApiServiceRequestListener {
     )
 
     suspend fun apiServiceAccessToken(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iApiServiceResponseListener: IApiServiceResponseListener
+    )
+
+    suspend fun apiServiceRklRequest(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     )

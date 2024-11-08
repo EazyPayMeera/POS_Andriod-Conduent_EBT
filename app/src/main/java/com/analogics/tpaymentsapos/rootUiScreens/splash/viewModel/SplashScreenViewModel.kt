@@ -18,7 +18,7 @@ import javax.inject.Inject
 class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository) : ViewModel() {
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig(navController.context)
+            sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig()
 
             /* Check if onboarding carousel is shown */
             if(sharedViewModel.objPosConfig?.isOnboardingComplete!=true)
