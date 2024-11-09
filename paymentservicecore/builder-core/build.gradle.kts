@@ -55,5 +55,5 @@ dependencies {
     api(project(":paymentservicecore:networkservicecore"))
     implementation(files("libs/netty-iso8583.jar"))
     implementation(files("libs/j8583-2.0.0.jar"))
-    implementation(files("libs/slf4j-api-2.0.16.jar"))
+    //implementation(files("libs/slf4j-api-2.0.16.jar"))
 }

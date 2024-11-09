@@ -25,8 +25,16 @@ import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context) {
-    var messageFactory =
-        J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
+    var messageFactory = J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
+
+    private fun appendIsoLength(request : ByteArray?) : ByteArray
+    {
+        var isoPacket = ByteArray(request?.size?.plus(2)?:2)
+        isoPacket[0] = ((request?.size?:0)/256).toByte()
+        isoPacket[1] = ((request?.size?:0)%256).toByte()
+        request?.copyInto(isoPacket,2,0, request.size)
+        return isoPacket
+    }
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray {
@@ -38,6 +46,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         /* Set binary encoding instead of ASCII encoding */
         message.setBinary(true)
+
+        /* TPDU, N10, Mandatory */
+        message.binaryIsoHeader = NetworkConstants.ISO_HEADER
 
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_PROC_CODE, NetworkConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,NetworkConstants.ISO_FIELD_PROC_CODE_LENGTH)
@@ -69,7 +80,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         /* Field 62, Working Key, ANS...999, Mandatory */
         message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, paymentServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,paymentServiceTxnDetails?.devicePublicKey?.length?:0)
 
-        return message.writeData()
+        return appendIsoLength(message.writeData())
     }
 
     fun createAccessTokenRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): AuthTokenRequest {

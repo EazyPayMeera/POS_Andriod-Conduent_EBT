@@ -12,6 +12,13 @@ object NetworkConstants {
 
         const val DIGEST_ALGORITHM = "SHA-512"
 
+        /* HOST Address */
+        const val HOST_ADDRESS = "124.153.66.37"
+        const val HOST_PORT = 5191
+
+        /* TPDU */
+        val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x03.toByte(),0x00.toByte(),0x00.toByte())
+
         /* Processing Code */
         const val ISO_FIELD_PROC_CODE = 3
         const val ISO_FIELD_PROC_CODE_LENGTH = 6
