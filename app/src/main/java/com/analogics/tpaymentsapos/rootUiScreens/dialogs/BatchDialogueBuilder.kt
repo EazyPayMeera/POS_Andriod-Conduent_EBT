@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dialogs
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,6 +68,7 @@ class BatchDialogueBuilder private constructor() {
                 listItem?.let {
                     CustomListDialog(
                         onClose,
+                        status = it,
                         batchIds = it,
                         startDates = it,
                         endDates = it,
@@ -143,6 +145,7 @@ class BatchDialogueBuilder private constructor() {
     @Composable
     fun CustomListDialog(
         onClose: () -> Unit,
+        status: List<String>,
         batchIds: List<String>, // List of batch IDs
         startDates: List<String?>, // List of start dates (nullable)
         endDates: List<String>,
@@ -206,13 +209,17 @@ class BatchDialogueBuilder private constructor() {
                                         if (index < startDates.size) startDates[index] else null
                                     val endDates =
                                         if (index < endDates.size) endDates[index] else null
+                                    val batchStatus =
+                                        if (index < status.size) status[index] else null
                                     val startdate =
                                         startDates?.replace("[", "")?.replace("]", "")?.trim()
                                     val enddate =
                                         endDates?.replace("[", "")?.replace("]", "")?.trim()
+                                    val status =  batchStatus?.replace("[", "")?.replace("]", "")?.trim()
 
                                     DrawersSurface(
                                         modifier = Modifier.fillMaxWidth(),
+                                        status = status.toString(),
                                         batchId = batchId, // Pass the combined String to DrawersSurface,
                                         startDate = startdate.toString(),
                                         endDate = enddate.toString(),
@@ -240,10 +247,110 @@ class BatchDialogueBuilder private constructor() {
         }
     }
 
+    @Composable
+    fun UserListDialog(
+        onClose: () -> Unit,
+        users: List<String>,
+        onItemSelected: (String) -> Unit // Callback for item selection
+    ) {
+        Dialog(onDismissRequest = { onClose() }) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+            ) {
+                GenericCard(
+                    modifier = Modifier
+                        .wrapContentHeight() // Wraps content height
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        GenericCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
+                            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
+                                    .fillMaxWidth()
+                            ) {
+                                // Header text
+                                Text(
+                                    text = "Select User", // Update with appropriate title if needed
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .padding(bottom = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                                        .align(Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
+
+                        // Check if users list is empty
+                        if (users.isEmpty()) {
+                            Text(
+                                text = "User list Empty",
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier
+                                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        } else {
+                            // Display each user ID with a divider after each full entry in the users list
+                            Column {
+                                users.forEachIndexed { index, userId ->
+                                    // Clean userId (ensure there are no unwanted characters)
+                                    val cleanUserIds = userId.replace("[", "").replace("]", "").split(",") // Split by comma if there are multiple IDs in a single entry
+
+                                    // Process each clean userId and display it
+                                    cleanUserIds.forEach { cleanUserId ->
+                                        val trimmedUserId = cleanUserId.trim() // Ensure no extra spaces
+                                        Log.d("UserListDialog", "CleanUserID: $trimmedUserId")
+
+                                        // Display the user in a UserSurface
+                                        UserSurface(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            user = trimmedUserId, // Pass cleaned user ID to UserSurface
+                                            onItemSelected = {
+                                                Log.d("UserSelection", "Selected User ID: $trimmedUserId")
+                                                onItemSelected(trimmedUserId) // Pass cleaned ID for selection
+                                                onClose()
+                                            }
+                                        )
+
+                                        // Add divider after each user, except for the last one
+                                        if (index < users.size - 1 || cleanUserIds.indexOf(cleanUserId) < cleanUserIds.size - 1) {
+                                            Divider(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
+                                                color = Color.Gray
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
 
     @Composable
     fun DrawersSurface(
         modifier: Modifier = Modifier,
+        status:String,
         batchId: String, // Change to String
         startDate: String, // Change to String
         endDate: String, // Change to String
@@ -255,12 +362,30 @@ class BatchDialogueBuilder private constructor() {
                 .clickable { onItemSelected() }, // Call the onItemSelected when clicked
             color = MaterialTheme.colors.surface
         ) {
-            DrawersContent(batchId, startDate, endDate)
+            DrawersContent(status,batchId, startDate, endDate)
+        }
+    }
+
+    @Composable
+    fun UserSurface(
+        modifier: Modifier = Modifier,
+        user:String,
+        onItemSelected: () -> Unit // Keep the click handler as before
+    ) {
+        Surface(
+            modifier = Modifier
+                .height(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
+                .clickable { onItemSelected() }, // Call the onItemSelected when clicked
+            color = MaterialTheme.colors.surface
+        ) {
+            Log.d("UserSurface", "Selected User ID: $user")
+            UsersContent(user)
         }
     }
 
     @Composable
     fun DrawersContent(
+        status:String,
         batchId: String, // Changed to String
         startDate: String, // Changed to String
         endDate: String // Changed to String
@@ -290,7 +415,7 @@ class BatchDialogueBuilder private constructor() {
 
                     // "Open" Text
                     TextView(
-                        text = stringResource(id = R.string.open),
+                        text = status/*stringResource(id = R.string.open)*/,
                         color = Color(0xFF4CAF50),
                         fontWeight = FontWeight.Bold,
                         fontFamily = Roboto,
@@ -317,6 +442,40 @@ class BatchDialogueBuilder private constructor() {
                         modifier = Modifier.padding(top = 4.dp, end = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Padding between dates
                     )
                 }
+            }
+        }
+
+    }
+
+    @Composable
+    fun UsersContent(
+        user:String,
+    ) {
+        Column {
+            // Row to align two columns horizontally
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium,
+                        vertical = androidx.compose.material3.MaterialTheme.dimens.DP_22_CompactMedium
+                    ), // Padding around the content
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left column for batchId and "Open"
+                Column(modifier = Modifier.weight(1f)) {
+                    // Batch ID Text
+                    TextView(
+                        text = user,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Roboto,
+                        modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium),
+                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_27_CompactMedium
+                    )
+
+                }
+
             }
         }
     }

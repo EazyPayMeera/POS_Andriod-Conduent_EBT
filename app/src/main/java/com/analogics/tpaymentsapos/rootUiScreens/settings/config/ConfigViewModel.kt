@@ -18,6 +18,7 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
     var isAutoPrintMerchant = mutableStateOf(false)
     var isTippingEnabled = mutableStateOf(false)
     var isTaxEnabled = mutableStateOf(false)
+    var isInactivity = mutableStateOf(false)
 
     private fun loadPreferences(sharedViewModel: SharedViewModel)
     {
@@ -27,6 +28,7 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
         isAutoPrintMerchant.value = sharedViewModel.objPosConfig?.isAutoPrintMerchant == true
         isTippingEnabled.value = sharedViewModel.objPosConfig?.isTipEnabled == true
         isTaxEnabled.value = sharedViewModel.objPosConfig?.isTaxEnabled == true
+        isInactivity.value = sharedViewModel.objPosConfig?.isInactivity == true
     }
 
     private fun getTipPercent(button: TipButton, sharedViewModel: SharedViewModel) : Double
@@ -72,6 +74,14 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
     fun onTaxEnabledChange(value: Boolean, sharedViewModel: SharedViewModel) {
         isTaxEnabled.value = value
         sharedViewModel.objPosConfig?.apply { this.isTaxEnabled = value }?.saveToPrefs()
+    }
+
+    fun onInactivityChange(value: Boolean) {
+        isInactivity.value = value
+    }
+
+    fun onInactivityTimeoutChange(timeout: Int,sharedViewModel: SharedViewModel) {
+        sharedViewModel.objPosConfig?.apply { this.isInactivityTimeout = timeout }?.saveToPrefs()
     }
 
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {

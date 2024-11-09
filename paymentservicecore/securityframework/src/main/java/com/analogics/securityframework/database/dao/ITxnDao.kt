@@ -36,11 +36,20 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable WHERE batchId = :batchId")
     suspend fun getTrasactionsByBatchId(batchId: String): List<TxnEntity>
 
+    @Query("DELETE FROM UserTable WHERE userId = :userId")
+    suspend fun deleteTransactionsByUserId(userId: String)
+
     @Query("SELECT DISTINCT batchId FROM TxnTable")
     suspend fun getDistinctBatchIds(): List<String>
 
     @Query("SELECT MIN(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getStartDateByBatchIds(batchId: String): List<String?>
+
+    @Query("SELECT userId FROM UserTable")
+    suspend fun getUserList(): List<String?>
+
+    @Query("SELECT BatchStatus FROM BatchTable WHERE batchId = :batchId")
+    suspend fun getBatchStatus(batchId: String): List<String?>
 
     @Query("SELECT MAX(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getEndDateByBatchIds(batchId: String): List<String?>

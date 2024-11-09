@@ -33,6 +33,7 @@ sealed class AppNavigationItems(val route: String) {
  object ReceiptDetailsScreen:AppNavigationItems(NavScreensEnum.ReceiptDetailsView.name)
  object AddClerkScreen:AppNavigationItems(NavScreensEnum.AddClerkScreen.name)
  object ActivationScreen:AppNavigationItems(NavScreensEnum.ActivationScreen.name)
+ object UserManagementScreen:AppNavigationItems(NavScreensEnum.UserManagementView.name)
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
 

@@ -76,12 +76,24 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getTrasactionsByBatchId(batchId)
     }
 
+    suspend fun removeUser(user: String) {
+        iTxnDao.deleteTransactionsByUserId(user)
+    }
+
     suspend fun fetchTransactionDetailsByBatchId(): List<String> {
         return iTxnDao.getDistinctBatchIds()
     }
 
     suspend fun getStartDate(batchId: String): List<String?> {
         return iTxnDao.getStartDateByBatchIds(batchId)
+    }
+
+    suspend fun getUserList(): List<String?> {
+        return iTxnDao.getUserList()
+    }
+
+    suspend fun getBatchStatus(batchId: String): List<String?> {
+        return iTxnDao.getBatchStatus(batchId)
     }
 
     suspend fun getEndDate(batchId: String): List<String?> {

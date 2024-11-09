@@ -176,15 +176,20 @@
     <string name="settings">Settings</string>
 
     <string name="Configuration">Configuration</string>
+    <string name="user_man">User Management</string>
     <string name="training_mode">Training Mode</string>
     <string name="auto_report_print">Auto Print Report on Sign Out</string>
     <string name="prompt_invoice_no">Prompt Invoice Number</string>
     <string name="auto_print_merchant">Auto Print Merchant Receipt</string>
     <string name="enable_tipping">Enable Tipping</string>
     <string name="taxes">Taxes</string>
+    <string name="inactivity_timeout">Inactivity Timeout</string>
+    <string name="enter_timeout">Timeout (sec)</string>
+    <string name="timeout">Timeout</string>
     <string name="receipt_details">Receipt Details</string>
     <string name="save_btn">SAVE</string>
     <string name="adjust_per">--------Adjust %--------</string>
+    <string name="set_timeout">Set Timeout</string>
 	
     <string name="is_correct">Is this information correct?</string>
 
@@ -342,6 +347,9 @@
     <string name="footer3_placeholder">Enter Footer 3</string>
     <string name="footer4_placeholder">Enter Footer 4</string>
     <string name="default_placeholder">Enter Text</string>
+
+
+    <string name="sel_user">Select the User</string>
 
 
 </resources>

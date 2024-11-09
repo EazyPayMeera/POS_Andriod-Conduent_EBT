@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Logout
@@ -108,6 +109,12 @@ fun CustomDrawerContent(
                 text = stringResource(id = R.string.Configuration),
                 isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) }
+            ),
+            DrawerItem(
+                imageRes = Icons.Default.AccountCircle,
+                text = stringResource(id = R.string.user_man),
+                isChecked = false,
+                onCheckedChange = { navHostController.navigate(AppNavigationItems.UserManagementScreen.route) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,
