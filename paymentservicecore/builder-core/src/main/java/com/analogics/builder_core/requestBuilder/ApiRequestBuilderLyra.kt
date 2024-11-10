@@ -26,6 +26,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context) {
     var messageFactory = J8583MessageFactory<IsoMessage>(ISO8583Version.V1987, MessageOrigin.ACQUIRER)
+    lateinit var message :  IsoMessage
 
     private fun appendIsoLength(request : ByteArray?) : ByteArray
     {
@@ -36,9 +37,20 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return isoPacket
     }
 
+    private fun extractIsoPayload(response : ByteArray?) : ByteArray?
+    {
+        var isoPacketLength : Int = if((response?.size ?: 0) > 2) response?.size?.minus(2)?:0 else 0
+        var isoPacket = ByteArray(isoPacketLength)
+        if(response?.get(0) == (isoPacketLength/256).toByte() &&
+            response.get(1) == (isoPacketLength%256).toByte()) {
+            response.copyInto(isoPacket, 0, 2, response.size)
+        }
+        return isoPacket
+    }
+
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray {
-        var message = messageFactory.newMessage(
+        message = messageFactory.newMessage(
             messageClass = MessageClass.NETWORK_MANAGEMENT,
             messageFunction = MessageFunction.REQUEST,
             messageOrigin = MessageOrigin.ACQUIRER
@@ -81,6 +93,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         message.setValue(NetworkConstants.ISO_FIELD_WORKING_KEY, paymentServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,paymentServiceTxnDetails?.devicePublicKey?.length?:0)
 
         return appendIsoLength(message.writeData())
+    }
+
+    @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
+    fun parseRklRequest(response: ByteArray): PaymentServiceTxnDetails {
+       var paymentServiceTxnDetails = PaymentServiceTxnDetails()
+        var isoPacket = extractIsoPayload(response)?:ByteArray(0)
+        messageFactory.createResponse(message)
+        
+        messageFactory.parseMessage(isoPacket,5)
+        return paymentServiceTxnDetails
     }
 
     fun createAccessTokenRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): AuthTokenRequest {
