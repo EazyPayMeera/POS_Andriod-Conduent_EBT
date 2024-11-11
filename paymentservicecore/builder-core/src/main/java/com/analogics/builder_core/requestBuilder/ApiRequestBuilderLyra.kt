@@ -1,6 +1,7 @@
 package com.analogics.builder_core.requestBuilder
 
 import android.content.Context
+import android.renderscript.Element
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.model.auth_capture.PostAuthRequest
@@ -13,10 +14,13 @@ import com.analogics.builder_core.model.reversal.ReversalReqeust
 import com.analogics.builder_core.model.void.VoidReqeust
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.networkservicecore.serviceutils.NetworkConstants
+import com.solab.iso8583.CustomField
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
+import com.solab.iso8583.parse.LllvarParseInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.time.temporal.IsoFields
 import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -98,6 +102,19 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         return PaymentServiceTxnDetails().apply {
             message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)?.let { hostRespCode = it }
+            message.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN)?.let {
+                if(it.slice(0 until BuilderConstants.ISO_FIELD_KSN_TAG.length) == BuilderConstants.ISO_FIELD_KSN_TAG) {
+                    var length = it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length until BuilderConstants.ISO_FIELD_KSN_TAG.length+3).toInt()
+                    if(it.length == length+BuilderConstants.ISO_FIELD_KSN_TAG.length+3)
+                        ksn = it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length+3 until it.length)
+                }
+            }
+            message.getObjectValue<String>(BuilderConstants.ISO_FIELD_WORKING_KEY)?.let {
+                if(it.length > BuilderConstants.ISO_FIELD_KCV_LENGTH) {
+                    kcv = it.slice(0 until BuilderConstants.ISO_FIELD_KCV_LENGTH)
+                    encryptedIpek = it.slice(BuilderConstants.ISO_FIELD_KCV_LENGTH until it.length)
+                }
+            }
         }
     }
 

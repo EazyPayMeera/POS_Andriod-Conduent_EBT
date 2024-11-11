@@ -51,11 +51,16 @@ object BuilderConstants {
     const val ISO_FIELD_MID = 42
     const val ISO_FIELD_MID_LENGTH = 15
 
+    /* ADDITIONAL DATA */
+    const val ISO_FIELD_ADDL_DATA_KSN = 48
+    const val ISO_FIELD_KSN_TAG = "4801"
+
     /* TERM SR NO */
     const val ISO_FIELD_TERM_SR_NO = 60
 
     /* WORKING KEY */
     const val ISO_FIELD_WORKING_KEY = 62
+    const val ISO_FIELD_KCV_LENGTH = 6
 
     const val MIN_STAN_VAL = 1
     const val MAX_STAN_VAL = 999999

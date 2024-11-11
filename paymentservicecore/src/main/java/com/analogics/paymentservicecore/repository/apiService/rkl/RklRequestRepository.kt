@@ -7,6 +7,7 @@ import com.analogics.builder_core.requestBuilder.ApiRequestBuilderLyra
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.securityframework.handler.SecureKeyHandler
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -29,9 +30,14 @@ class RklRequestRepository@Inject constructor(
                     override fun onBuilderSuccess(response: ByteArray) {
                         /* Parse Response Packet to Object */
                         var resPaymentServiceTxnDetails = apiRequestBuilder.parseRklResponse(response)
+                        resPaymentServiceTxnDetails.let {
+                            var ipek = SecureKeyHandler.decryptRSA(it.encryptedIpek,paymentServiceTxnDetails?.devicePrivateKey)
+                            PaymentServiceUtils.injectTMK(ipek, it.ksn,it.kcv)
+                        }
 
                         paymentServiceTxnDetails?.let {
                             it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+
                             onAPIServiceResponse(it)
                         }
                     }

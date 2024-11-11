@@ -10,8 +10,6 @@ data class PaymentServiceTxnDetails(
     @SerializedName("deviceSN") var deviceSN: String? = null,
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
-    @SerializedName("devicePublicKey") var devicePublicKey: String? = null,
-    @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,
 
     @SerializedName("authAmount") var authAmount: String? = null,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
@@ -36,7 +34,6 @@ data class PaymentServiceTxnDetails(
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
-
 
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
@@ -75,5 +72,12 @@ data class PaymentServiceTxnDetails(
     @SerializedName("originalCGST") var originalCGST: String? = null,
     @SerializedName("originalSGST") var originalSGST: String? = null,
     @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null
+    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null,
+
+    /* Remote Key Injection. Only to be used in Payment Service */
+    var devicePublicKey: String? = null,
+    var devicePrivateKey: String? = null,
+    var encryptedIpek: String? = null,
+    var ksn: String? = null,
+    var kcv: String? = null
 )
