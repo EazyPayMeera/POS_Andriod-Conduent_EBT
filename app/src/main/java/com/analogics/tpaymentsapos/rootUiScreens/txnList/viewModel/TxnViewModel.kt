@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
@@ -43,6 +44,11 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _startDateList = MutableStateFlow<List<String>>(emptyList())
     private val _batchStatusList = MutableStateFlow<List<String>>(emptyList())
     private val _endDateList = MutableStateFlow<List<String>>(emptyList())
+
+    val isClosedBatchEnabled = mutableStateOf(false)
+
+    private val _openBatch = MutableStateFlow<String?>(null)
+    val openBatch: StateFlow<String?> = _openBatch
 
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
     val batchList: StateFlow<List<String>> = _batchList
@@ -181,6 +187,24 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 Log.e("FetchMinStartDates", "Error fetching minimum start dates: ${e.message}")
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun openBatchPresent() {
+        viewModelScope.launch {
+            try {
+                // Fetch the open batch ID (or null if no open batch exists)
+                val batchId: String? = dbRepository.openBatchId()
+                Log.d("Batch Id", "Open batch ID: $batchId")
+
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error fetching open batch ID", e)
+            }
+        }
+    }
+
+    private fun setCloseBatchBtnState(enabled: Boolean) {
+        isClosedBatchEnabled.value = enabled
     }
 
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {

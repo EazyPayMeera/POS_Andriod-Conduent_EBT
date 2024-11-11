@@ -89,6 +89,9 @@ fun TransactionListScreen(
     val batchStatus = viewModel.batchStatusList.collectAsState().value
     val endDate = viewModel.endDateList.collectAsState().value
     val sharedViewModel = localSharedViewModel.current
+    val openBatchId = viewModel.openBatch.collectAsState().value
+    Log.d("Inside Header Section", "Open $openBatchId open batches")
+
 
     val showDateTimePicker = remember { mutableStateOf(false) }
     val BatchId = remember { mutableStateOf(false) }
@@ -289,6 +292,7 @@ fun TransactionListScreen(
     }
     LaunchedEffect(Unit) {
         Log.d("Date Time Picker", "Fetch All the Transactions")
+        viewModel.openBatchPresent()
         viewModel.fetchTransactions()
         viewModel.filterTransactionsForBatch()
     }
@@ -436,6 +440,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
     var isDialogVisible by remember { mutableStateOf(false) }
     var isAlertVisible by remember { mutableStateOf(false) }
     var isSummaryReport by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -524,7 +529,8 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .height(androidx.compose.material3.MaterialTheme.dimens.DP_36_CompactMedium),
-                        contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
+                        /*enabled = openBatchId != null, // Enable if openBatch is not null
+*/                        contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
                     ) {
                         TextView(
                             fontWeight = FontWeight.Bold,
