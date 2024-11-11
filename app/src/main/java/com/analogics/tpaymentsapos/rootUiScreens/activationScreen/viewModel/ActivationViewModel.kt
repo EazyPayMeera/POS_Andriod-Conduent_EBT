@@ -58,7 +58,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             try {
                 setActivationButtonState(false)
                 startActivateProcess()
-                //navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -68,24 +67,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     @OptIn(ExperimentalEncodingApi::class)
     fun collectActivationData()
     {
-/*
-        var activationKey = PaymentServiceUtils.generateRsaKey()
-        sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey = Base64.encode(activationKey.public.encoded)
-        sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey = Base64.encode(activationKey.private.encoded)
-*/
         sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
-/*
-        sharedViewModel?.objRootAppPaymentDetail?.deviceSN = PaymentServiceUtils.getDeviceSN()
-*/
         sharedViewModel?.objPosConfig?.apply {
             terminalId = tidInput.value
             merchantId = midInput.value
-/*
-            devicePublicKey = sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey
-            devicePrivateKey = sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey
-            deviceSN = sharedViewModel?.objRootAppPaymentDetail?.deviceSN
-*/
         }?.saveToPrefs()
     }
 
@@ -136,7 +122,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             }
 
             else -> {
-                //userApiSuccessHolder.value = response as ObjEmployeeResponse
                 if (isFormValid) {
                     sharedViewModel?.objPosConfig?.apply {
                         isActivationDone = true }?.saveToPrefs()
