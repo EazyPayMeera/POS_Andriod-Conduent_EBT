@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -13,17 +14,20 @@ import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
-import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.apply
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.text.isNotBlank
 
 @HiltViewModel
 class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository) :
@@ -54,7 +58,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             try {
                 setActivationButtonState(false)
                 startActivateProcess()
-                //navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -64,18 +67,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     @OptIn(ExperimentalEncodingApi::class)
     fun collectActivationData()
     {
-        var activationKey = PaymentServiceUtils.generateRsaKey()
-        sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey = Base64.encode(activationKey.public.encoded)
-        sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey = Base64.encode(activationKey.private.encoded)
         sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
-        sharedViewModel?.objRootAppPaymentDetail?.deviceSN = PaymentServiceUtils.getDeviceSN()
         sharedViewModel?.objPosConfig?.apply {
             terminalId = tidInput.value
             merchantId = midInput.value
-            devicePublicKey = sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey
-            devicePrivateKey = sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey
-            deviceSN = sharedViewModel?.objRootAppPaymentDetail?.deviceSN
         }?.saveToPrefs()
     }
 
@@ -106,27 +102,26 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     override fun onApiSuccess(response: Any) {
         when (response) {
-            /*is PaymentServiceTxnDetails ->{
-                var obj = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
-                if(obj?.hostRespCode== BuilderConstants.ISO_RESP_CODE_APPROVED)
-                    sharedViewModel?.objPosConfig?.apply {
-                        isActivationDone = true }?.saveToPrefs()
+            is PaymentServiceTxnDetails ->{
+                var objRootAppPaymentDetails = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
+                if(objRootAppPaymentDetails?.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+                    activateDevice(objRootAppPaymentDetails)
+                }
                 else {
                     CustomDialogBuilder.composeAlertDialog(
                         title = navHostController.context.resources?.getString(
                             R.string.default_alert_title_error
                         ),
-                        message = getIsoResponseCodeString(navHostController.context,obj?.hostRespCode)
+                        message = getIsoResponseCodeString(navHostController.context,objRootAppPaymentDetails?.hostRespCode)
                     )
                     setActivationButtonState(true)
                 }
-            }*/
+            }
             is ObjRootAppPaymentDetails -> {
                 sharedViewModel?.objRootAppPaymentDetail = response
             }
 
             else -> {
-                //userApiSuccessHolder.value = response as ObjEmployeeResponse
                 if (isFormValid) {
                     sharedViewModel?.objPosConfig?.apply {
                         isActivationDone = true }?.saveToPrefs()
@@ -135,6 +130,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 Log.e("API Response", response.toString())
             }
         }
+    }
+
+    fun activateDevice(objRootAppPaymentDetails: ObjRootAppPaymentDetails) {
+        sharedViewModel?.objPosConfig?.apply { isActivationDone = true }?.saveToPrefs()
+        navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
     }
 
     override fun onApiError(apiServiceError: ApiServiceError) {

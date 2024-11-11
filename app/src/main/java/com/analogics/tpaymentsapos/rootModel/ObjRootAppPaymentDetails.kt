@@ -18,8 +18,6 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("deviceSN") var deviceSN: String? = null,
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
-    @SerializedName("devicePublicKey") var devicePublicKey: String? = null,
-    @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,
 
     @SerializedName("authAmount") var authAmount: Double? = 0.00,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
@@ -30,12 +28,12 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
     @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
+    @SerializedName("refundableAmount") var refundableAmount: String? = null,
 
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
     @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
 
-    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
 
