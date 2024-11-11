@@ -347,13 +347,22 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             )
             val summaryReport = receiptBuilder.createSummaryReport(context,sharedViewModel, paymentServiceTxnDetails)
 
-            val labelList: List<String> = summaryReport.summaryFields.map { it.first }
-            val valueList: List<String> = summaryReport.summaryFields.map { it.second }
-            val descriptionList: List<String> = summaryReport.summaryFields.map { it.third }
+            val labelList: List<String> = summaryReport.summaryFields.map { it.label }
+            val valueList: List<String> = summaryReport.summaryFields.map { it.value }
+            val descriptionList: List<String> = summaryReport.summaryFields.map { it.description }
+            val fontsize: List<Int> = summaryReport.summaryFields.map { field ->
+                when (field.fontsize) { // Accessing the fourth element (the font size)
+                    ReceiptBuilder.FontSize.Small -> 24
+                    ReceiptBuilder.FontSize.Medium -> 28
+                    ReceiptBuilder.FontSize.Big -> 32
+                    else -> 24 // Default font size if no match
+                }
+            }
             PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
                 labelList,
                 valueList,
                 descriptionList,
+                fontsize,
                 iPrinterResultProviderListener
             )
         }
@@ -383,13 +392,22 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 )
             }
             val detailedReport = receiptBuilder.createDetailReport(context,sharedViewModel,paymentServiceTxnDetails, transactionDetailsList)
-            val labelList: List<String> = detailedReport.detailFields.map { it.first }
-            val valueList: List<String> = detailedReport.detailFields.map { it.second }
-            val descriptionList: List<String> = detailedReport.detailFields.map { it.third }
+            val labelList: List<String> = detailedReport.detailFields.map { it.label }
+            val valueList: List<String> = detailedReport.detailFields.map { it.quantity }
+            val descriptionList: List<String> = detailedReport.detailFields.map { it.price }
+            val fontsize: List<Int> = detailedReport.detailFields.map { field ->
+                when (field.discount) { // Accessing the fourth element (the font size)
+                    ReceiptBuilder.FontSize.Small -> 24
+                    ReceiptBuilder.FontSize.Medium -> 28
+                    ReceiptBuilder.FontSize.Big -> 32
+                    else -> 24 // Default font size if no match
+                }
+            }
             PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
                 labelList,
                 valueList,
                 descriptionList,
+                fontsize,
                 iPrinterResultProviderListener
             )
         }

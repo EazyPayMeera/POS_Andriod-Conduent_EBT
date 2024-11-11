@@ -66,7 +66,7 @@ class Printer constructor() {
 
 
     // To add text
-    fun addText(text: String,alignment: Int)
+    fun addText(text: String,alignment: Int,fontSize:Int)
     {
         // Define default formatting options
         val defaultFont = 1
@@ -74,7 +74,7 @@ class Printer constructor() {
         val defaultFontBold = true
         val defaultNewline = true
         val defaultLineHeight = 0
-        val defaultFontSize = 24
+        val defaultFontSize = fontSize
         Log.d(TAG, "Text printed successfully: $text with alignment: $alignment")
         // Create a Bundle with default values
         val format = Bundle().apply {
@@ -112,37 +112,43 @@ class Printer constructor() {
     }
 
     // Add Text on Left and Right
-    fun addTextLeft_Right(textLeft: String?, textRight: String?) {
+    fun addTextLeft_Right(textLeft: String?, textRight: String?, fontSize: Int) {
         // Create a default Bundle with predefined formatting
         val defaultFormat = Bundle()
         defaultFormat.putInt("font", 1) // Default font type
         defaultFormat.putString("fontName", fontName_default) // Default font name
         defaultFormat.putBoolean("fontBold", false) // Default to non-bold font
         defaultFormat.putInt("lineHeight", 5) // Default line height
+        defaultFormat.putInt("fontSize", fontSize)
 
 
         // Call the existing method with the default formatting Bundle
         mPrinter?.addTextLeft_Right(defaultFormat, textLeft, textRight)
     }
 
-    fun addRightLeftDetails(label: List<String>,description: List<String>)
+    fun addRightLeftDetails(label: List<String>,description: List<String>,fontsize: List<Int>)
     {
         for (i in label.indices) {
             val leftText = label[i]
             val rightText = description[i]
+            val fontSize = fontsize[i]
             //Thread.sleep(200)
-            addTextLeft_Right(leftText, rightText)
+            addTextLeft_Right(leftText, rightText,fontSize)
         }
     }
 
     // Add Text On Left Center And Right Align
-    fun addTextLeft_Center_Right(textLeft: String?, textCenter: String?, textRight: String?) {
+    fun addTextLeft_Center_Right(
+        textLeft: String?, textCenter: String?, textRight: String?,
+        fontSize: Int
+    ) {
         // Call the original method with default formatting
         val defaultFormat = Bundle()
         defaultFormat.putInt("font", 1) // Default font type
         defaultFormat.putString("fontName", fontName_default) // Default font name
         defaultFormat.putBoolean("fontBold", false) // Default font bold setting
         defaultFormat.putInt("lineHeight", 5) // Default line height
+        defaultFormat.putInt("fontSize", fontSize)
 
 
         // Invoke the original method with default settings
@@ -179,7 +185,7 @@ class Printer constructor() {
         mPrinter?.startPrint()
     }
 
-    fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>,descriptions: List<String>, alignments: List<Int>) {
+    fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>,descriptions: List<String>, alignments: List<Int>,fontsize: List<Int>) {
         try {
 
             // Add each text to the printer with its corresponding alignment
@@ -187,14 +193,15 @@ class Printer constructor() {
                 val text = texts[i]
                 val alignment = alignments[i]
                 val description = descriptions[i]
+                val fontsize = fontsize[i]
 
                 Log.d("PRINTING TAGS", "Printing Text: '$text', Alignment: $alignment, Description: '$description'")
                 if(alignment == -1) {
-                    addTextLeft_Right(text,description)
+                    addTextLeft_Right(text,description,fontsize)
                 }
                 else
                 {
-                    addText(text, alignment)
+                    addText(text, alignment,fontsize)
                 }
             }
 
@@ -213,14 +220,26 @@ class Printer constructor() {
         }
     }
 
-    fun printLeftCenterRightPrinting(Trasaction: List<String>,Count: List<String>, Total: List<String>) {
+    fun printLeftCenterRightPrinting(
+        Trasaction: List<String>,
+        Count: List<String>, Total: List<String>,
+        fontsize: List<Int>
+    ) {
         try {
 
             for (i in Trasaction.indices) {
                 val trasaction = Trasaction[i]
                 val count = Count[i]
                 val total = Total[i]
-                addTextLeft_Center_Right(trasaction, count,total)
+                val FontSize = fontsize[i]
+                if(FontSize == 32)
+                {
+                    addText(count,1,FontSize)
+                }
+                else
+                {
+                    addTextLeft_Center_Right(trasaction, count, total, FontSize)
+                }
             }
 
             // Feed 3 lines after printing

@@ -27,7 +27,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertBatchToBatchEntity
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
-import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -243,6 +242,15 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     }
                 } ?: -1 // Default or error value if no barcode field is found
 
+                val fontsize: List<Int> = receipt.fields.map { field ->
+                    when (field.fontsize) {
+                        ReceiptBuilder.FontSize.Small -> 24
+                        ReceiptBuilder.FontSize.Medium -> 28
+                        ReceiptBuilder.FontSize.Big -> 32
+                        else -> 1 // Default to left alignment if no match
+                    }
+                }
+
                 // Prepare the printing format
                 val format = Bundle().apply {
                     putInt("align", alignment) // Default alignment for text
@@ -257,6 +265,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     receiptDetails,
                     descriptionList,
                     alignmentText,
+                    fontsize,
                     iPrinterResultProviderListener
                 )
             } else {

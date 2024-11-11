@@ -11,15 +11,17 @@ interface PrinterRequestListener {
                                     receiptDetails: List<String>,
                                     descriptionList: List<String>,
                                     alignment: List<Int>, // Assuming alignment is of type Int; adjust as necessary
+                                    fontsize: List<Int>,
                                     iPrinterResultProviderListener: IPrinterResultProviderListener)
 
     suspend fun printLeftCenterRightDetails(
         Transaction: List<String>,
         Count: List<String>,
         Total: List<String>, // Assuming alignment is of type Int; adjust as necessary
+        fontsize: List<Int>,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     )
     suspend fun printImage(format: Bundle,imageData: ByteArray, iPrinterResultProviderListener: IPrinterResultProviderListener)
-    suspend fun printLeftRightDetails(label: List<String>, description: List<String>, iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun printLeftRightDetails(label: List<String>, description: List<String>,fontsize: List<Int>, iPrinterResultProviderListener: IPrinterResultProviderListener)
     suspend fun getStatus(iPrinterResultProviderListener: IPrinterResultProviderListener)
 }

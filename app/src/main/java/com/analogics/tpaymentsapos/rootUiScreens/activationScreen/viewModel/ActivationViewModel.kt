@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -14,20 +13,17 @@ import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.apply
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.text.isNotBlank
 
 @HiltViewModel
 class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository) :
@@ -110,7 +106,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     override fun onApiSuccess(response: Any) {
         when (response) {
-            is PaymentServiceTxnDetails ->{
+            /*is PaymentServiceTxnDetails ->{
                 var obj = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
                 if(obj?.hostRespCode== BuilderConstants.ISO_RESP_CODE_APPROVED)
                     sharedViewModel?.objPosConfig?.apply {
@@ -124,7 +120,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                     )
                     setActivationButtonState(true)
                 }
-            }
+            }*/
             is ObjRootAppPaymentDetails -> {
                 sharedViewModel?.objRootAppPaymentDetail = response
             }

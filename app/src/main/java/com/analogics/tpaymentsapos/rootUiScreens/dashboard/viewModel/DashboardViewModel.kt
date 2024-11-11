@@ -237,6 +237,15 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         }
                     }
 
+                    val fontsize: List<Int> = receipt.fields.map { field ->
+                        when (field.fontsize) {
+                            ReceiptBuilder.FontSize.Small -> 24
+                            ReceiptBuilder.FontSize.Medium -> 28
+                            ReceiptBuilder.FontSize.Big -> 32
+                            else -> 1 // Default to left alignment if no match
+                        }
+                    }
+
                     // Extract alignment for the barcode
                     val alignment: Int = receipt.fields.firstOrNull { it.label == "QR CODE" }?.let { field ->
                         when (field.alignment) {
@@ -262,6 +271,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         receiptDetails,
                         descriptionList,
                         alignmentText,
+                        fontsize,
                         iPrinterResultProviderListener
                     )
                 } else {

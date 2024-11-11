@@ -54,11 +54,12 @@ object PrinterHandler : PrinterListener {
         receipt: List<String>,
         descriptionList: List<String>,
         alignment: List<Int>,
+        fontsize: List<Int>,
         listener: IPrinterHandlerListener
     ) {
         try {
 
-            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt,descriptionList,alignment)
+            Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt,descriptionList,alignment,fontsize)
             Printer.getInstance().feedLine(3)
             //Printer.getInstance().qrCodePrinting(barcodeFormat,"123456")
 
@@ -94,11 +95,12 @@ object PrinterHandler : PrinterListener {
         Transaction: List<String>,
         Count: List<String>,
         Total: List<String>,
+        fontsize: List<Int>,
         listener: IPrinterHandlerListener
     ) {
         try {
 
-            Printer.getInstance().printLeftCenterRightPrinting(Transaction,Count,Total)
+            Printer.getInstance().printLeftCenterRightPrinting(Transaction,Count,Total,fontsize)
             Printer.getInstance().feedLine(3)
             Log.d(TAG, "Receipt details added successfully.")
 
@@ -115,11 +117,12 @@ object PrinterHandler : PrinterListener {
     fun addLeftRightDetails(
         label: List<String>,
         description: List<String>,
+        fontsize: List<Int>,
         listener: IPrinterHandlerListener
     ) {
         try {
 
-            Printer.getInstance().addRightLeftDetails(label,description)
+            Printer.getInstance().addRightLeftDetails(label,description,fontsize)
             Log.d(TAG, "Receipt details added successfully.")
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
