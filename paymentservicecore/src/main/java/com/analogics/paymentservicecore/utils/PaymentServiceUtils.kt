@@ -1,15 +1,10 @@
 package com.analogics.paymentservicecore.utils
 
-import android.content.Context
-import android.util.Log
-import com.analogics.paymentservicecore.constants.ConfigConstants
-import com.analogics.securityframework.preferences.SecuredSharedPrefManager
+import com.analogics.securityframework.handler.SecureKeyHandler
 import com.analogics.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.security.KeyPair
-import java.security.KeyPairGenerator
 
 object PaymentServiceUtils {
 
@@ -36,7 +31,7 @@ object PaymentServiceUtils {
     }
 
     fun generateRsaKey(): KeyPair {
-        var keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
+        var keyPair = SecureKeyHandler.generateRsaKey()
         return keyPair
     }
 

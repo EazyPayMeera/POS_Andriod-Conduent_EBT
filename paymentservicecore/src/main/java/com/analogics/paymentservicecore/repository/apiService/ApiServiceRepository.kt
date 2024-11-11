@@ -15,8 +15,11 @@ import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseR
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.rkl.RklRequestRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import javax.inject.Inject
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ApiServiceRepository @Inject constructor(
     private val accessTokenRequestRepository: AccessTokenRequestRepository,
@@ -115,12 +118,14 @@ class ApiServiceRepository @Inject constructor(
         }
     }
 
+     @OptIn(ExperimentalEncodingApi::class)
      override suspend fun apiServiceRklRequest(
          paymentServiceTxnDetails: PaymentServiceTxnDetails?,
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onDisplayProgress(true)
+
          rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){
              onApiServiceResponse(it)
          }

@@ -68,18 +68,24 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     @OptIn(ExperimentalEncodingApi::class)
     fun collectActivationData()
     {
+/*
         var activationKey = PaymentServiceUtils.generateRsaKey()
         sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey = Base64.encode(activationKey.public.encoded)
         sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey = Base64.encode(activationKey.private.encoded)
+*/
         sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
+/*
         sharedViewModel?.objRootAppPaymentDetail?.deviceSN = PaymentServiceUtils.getDeviceSN()
+*/
         sharedViewModel?.objPosConfig?.apply {
             terminalId = tidInput.value
             merchantId = midInput.value
+/*
             devicePublicKey = sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey
             devicePrivateKey = sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey
             deviceSN = sharedViewModel?.objRootAppPaymentDetail?.deviceSN
+*/
         }?.saveToPrefs()
     }
 
@@ -111,16 +117,16 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     override fun onApiSuccess(response: Any) {
         when (response) {
             is PaymentServiceTxnDetails ->{
-                var obj = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
-                if(obj?.hostRespCode== BuilderConstants.ISO_RESP_CODE_APPROVED)
-                    sharedViewModel?.objPosConfig?.apply {
-                        isActivationDone = true }?.saveToPrefs()
+                var objRootAppPaymentDetails = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
+                if(objRootAppPaymentDetails?.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+                    activateDevice(objRootAppPaymentDetails)
+                }
                 else {
                     CustomDialogBuilder.composeAlertDialog(
                         title = navHostController.context.resources?.getString(
                             R.string.default_alert_title_error
                         ),
-                        message = getIsoResponseCodeString(navHostController.context,obj?.hostRespCode)
+                        message = getIsoResponseCodeString(navHostController.context,objRootAppPaymentDetails?.hostRespCode)
                     )
                     setActivationButtonState(true)
                 }
@@ -139,6 +145,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 Log.e("API Response", response.toString())
             }
         }
+    }
+
+    fun activateDevice(objRootAppPaymentDetails: ObjRootAppPaymentDetails) {
+        sharedViewModel?.objPosConfig?.apply { isActivationDone = true }?.saveToPrefs()
+        navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
     }
 
     override fun onApiError(apiServiceError: ApiServiceError) {
