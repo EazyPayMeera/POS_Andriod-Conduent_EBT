@@ -53,7 +53,5 @@ dependencies {
     //   implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     api(project(":paymentservicecore:networkservicecore"))
-    implementation(files("libs/netty-iso8583.jar"))
     implementation(files("libs/j8583-2.0.0.jar"))
-    implementation(files("libs/slf4j-api-2.0.16.jar"))
 }

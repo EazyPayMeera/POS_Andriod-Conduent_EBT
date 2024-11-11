@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -19,6 +20,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,11 +73,13 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey = Base64.encode(activationKey.private.encoded)
         sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
+        sharedViewModel?.objRootAppPaymentDetail?.deviceSN = PaymentServiceUtils.getDeviceSN()
         sharedViewModel?.objPosConfig?.apply {
             terminalId = tidInput.value
             merchantId = midInput.value
             devicePublicKey = sharedViewModel?.objRootAppPaymentDetail?.devicePublicKey
             devicePrivateKey = sharedViewModel?.objRootAppPaymentDetail?.devicePrivateKey
+            deviceSN = sharedViewModel?.objRootAppPaymentDetail?.deviceSN
         }?.saveToPrefs()
     }
 
@@ -106,6 +110,21 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     override fun onApiSuccess(response: Any) {
         when (response) {
+            is PaymentServiceTxnDetails ->{
+                var obj = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
+                if(obj?.hostRespCode== BuilderConstants.ISO_RESP_CODE_APPROVED)
+                    sharedViewModel?.objPosConfig?.apply {
+                        isActivationDone = true }?.saveToPrefs()
+                else {
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = navHostController.context.resources?.getString(
+                            R.string.default_alert_title_error
+                        ),
+                        message = getIsoResponseCodeString(navHostController.context,obj?.hostRespCode)
+                    )
+                    setActivationButtonState(true)
+                }
+            }
             is ObjRootAppPaymentDetails -> {
                 sharedViewModel?.objRootAppPaymentDetail = response
             }

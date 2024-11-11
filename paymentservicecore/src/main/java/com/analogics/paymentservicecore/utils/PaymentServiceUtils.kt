@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.analogics.paymentservicecore.constants.ConfigConstants
 import com.analogics.securityframework.preferences.SecuredSharedPrefManager
+import com.analogics.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -37,5 +38,10 @@ object PaymentServiceUtils {
     fun generateRsaKey(): KeyPair {
         var keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair()
         return keyPair
+    }
+
+    fun getDeviceSN() : String
+    {
+        return HardwareUtils.getDeviceSN()
     }
 }

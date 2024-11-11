@@ -17,7 +17,7 @@ class RklRequestRepository@Inject constructor(
             builderServiceRepository.networkServiceRequest(
                 object : IBuilderServiceResponseListenerLyra{
                     override fun onBuilderSuccess(response: ByteArray) {
-                        onAPIServiceResponse(response)
+                        onAPIServiceResponse(apiRequestBuilder.parseRklResponse(response))
                     }
 
                     override fun onBuilderFailure(error: Any) {

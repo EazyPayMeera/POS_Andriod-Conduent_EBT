@@ -22,6 +22,7 @@
     <string name="act_empty_tid_mid">TID और MID खाली नहीं होना चाहिए</string>
     <string name="act_tid_length">TID की लंबाई 8 होनी चाहिए</string>
     <string name="act_mid_length">MID की लंबाई 15 होनी चाहिए</string>
+    <string name="act_failed">सक्रियण विफल</string>
 
     <!-- Add Clerk Screen -->
     <string name="clerk_register_title">उपयोगकर्ता पंजीकरण</string>
@@ -346,5 +347,94 @@
     <string name="default_placeholder">पाठ दर्ज करें</string>
 
     <string name="sel_user">उपयोगकर्ता का चयन करें</string>
+
+    <!-- ISO Response Codes -->
+    <string name="iso_resp_code_approved">स्वीकृत</string>
+    <string name="iso_resp_code_call_issuer">आयोजक से संपर्क करें - कार्ड जारी करने वाले से संपर्क करें</string>
+    <string name="iso_resp_code_call_issuer_special">आयोजक से संपर्क करें - कार्ड जारी करने वाले से संपर्क करें, विशेष स्थिति</string>
+    <string name="iso_resp_code_invalid_merchant">अमान्य व्यापारी - LYRA # 03 से संपर्क करें</string>
+    <string name="iso_resp_code_declined_pickup_card">कार्ड को अस्वीकृत करें - कार्ड प्राप्त करें</string>
+    <string name="iso_resp_code_do_not_honor">लेन-देन अस्वीकृत, सम्मान न करें</string>
+    <string name="iso_resp_code_error_merchant">त्रुटि/व्यापारी त्रुटि - LYRA # 06 से संपर्क करें</string>
+    <string name="iso_resp_code_pickup_special">कार्ड प्राप्त करें # 07 - विशेष स्थिति (खोया हुआ/चोरी हुआ कार्ड नहीं)</string>
+    <string name="iso_resp_code_approved_verify_id">स्वीकृत, पहचान और हस्ताक्षर सत्यापित करें - पहचान के साथ सम्मान करें</string>
+    <string name="iso_resp_code_approved_partial">आंशिक रूप से स्वीकृत - आंशिक स्वीकृति</string>
+    <string name="iso_resp_code_invalid_txn">अमान्य लेन-देन - अमान्य लेन-देन</string>
+    <string name="iso_resp_code_invalid_amount">अमान्य राशि - अमान्य राशि</string>
+    <string name="iso_resp_code_declined_invalid_card">अस्वीकृत # 14 - अमान्य कार्ड संख्या</string>
+    <string name="iso_resp_code_declined_invalid_issuer">अस्वीकृत # 15 - अमान्य जारीकर्ता</string>
+    <string name="iso_resp_code_declined_customer_cancel">अस्वीकृत # 17 - ग्राहक द्वारा रद्द</string>
+    <string name="iso_resp_code_declined_reenter_txn">अस्वीकृत # 19 - लेन-देन को पुनः दर्ज करें</string>
+    <string name="iso_resp_code_invalid_response">अमान्य प्रतिक्रिया - अमान्य प्रतिक्रिया</string>
+    <string name="iso_resp_code_retry_no_action">पुनः प्रयास # 21 - कोई कार्रवाई नहीं की गई</string>
+    <string name="iso_resp_code_retry_suspected_malfunction">पुनः प्रयास # 22 - संदेहित दोष</string>
+    <string name="iso_resp_code_retry_unable_locate_record">पुनः प्रयास # 25 - रिकॉर्ड नहीं मिल सका</string>
+    <string name="iso_resp_code_retry_file_update_field_error">पुनः प्रयास # 27 - फ़ाइल अपडेट क्षेत्र संपादन त्रुटि</string>
+    <string name="iso_resp_code_retry_record_already_exists">पुनः प्रयास # 28 - रिकॉर्ड पहले से फ़ाइल में मौजूद है</string>
+    <string name="iso_resp_code_retry_file_update_not_successful">पुनः प्रयास # 29 - फ़ाइल अपडेट सफल नहीं</string>
+    <string name="iso_resp_code_format_error">फ़ॉर्मेट त्रुटि - पैकेट / फ़ॉर्मेट त्रुटि (आवश्यक फ़ील्ड अनुपस्थित या अमान्य वर्ण)</string>
+    <string name="iso_resp_code_retry_unsupported_bank">पुनः प्रयास # 31 - बैंक स्विच द्वारा समर्थित नहीं</string>
+    <string name="iso_resp_code_retry_partial_reversal">पुनः प्रयास # 32 - आंशिक पलटाव</string>
+    <string name="iso_resp_code_expired_card">समाप्त कार्ड # 33 - समाप्त कार्ड, कैप्चर करें</string>
+    <string name="iso_resp_code_declined_suspected_fraud">अस्वीकृत # 34 - संदेहित धोखाधड़ी, कैप्चर करें</string>
+    <string name="iso_resp_code_restricted_card">सीमित कार्ड - सीमित कार्ड, कैप्चर करें</string>
+    <string name="iso_resp_code_excess_pin_tries">अधिक PIN प्रयास - अनुमत PIN प्रयास सीमा पार, कैप्चर करें</string>
+    <string name="iso_resp_code_declined_no_credit_account">अस्वीकृत # 39 - कोई क्रेडिट खाता नहीं</string>
+    <string name="iso_resp_code_declined_unsupported_function">अस्वीकृत # 40 - अनुरोधित फ़ंक्शन समर्थित नहीं</string>
+    <string name="iso_resp_code_pickup_lost_card">कार्ड प्राप्त करें # 41 - खोया हुआ कार्ड, कैप्चर करें</string>
+    <string name="iso_resp_code_declined_no_universal_account">अस्वीकृत # 42 - कोई सार्वभौमिक खाता नहीं</string>
+    <string name="iso_resp_code_pickup_stolen_card">कार्ड प्राप्त करें # 43 - चोरी हुआ कार्ड, कैप्चर करें</string>
+    <string name="iso_resp_code_declined_insufficient_funds">अस्वीकृत # 51 - अपर्याप्त निधि/अधिक क्रेडिट सीमा</string>
+    <string name="iso_resp_code_no_checking_account">कोई चेकिंग खाता नहीं - कोई चेकिंग खाता नहीं</string>
+    <string name="iso_resp_code_no_savings_account">कोई बचत खाता नहीं - कोई बचत खाता नहीं</string>
+    <string name="iso_resp_code_expired_card_check">समाप्त कार्ड - समाप्त कार्ड (यदि BIN सीमा के लिए समाप्ति तिथि जांच सक्षम है)</string>
+    <string name="iso_resp_code_incorrect_pin">गलत PIN - अमान्य PIN</string>
+    <string name="iso_resp_code_declined_not_permitted_to_cardholder">अस्वीकृत # 57 - कार्डधारक के लिए लेन-देन अनुमत नहीं</string>
+    <string name="iso_resp_code_declined_not_permitted_to_terminal">अस्वीकृत # 58 - टर्मिनल के लिए लेन-देन अनुमत नहीं</string>
+    <string name="iso_resp_code_declined_suspected_fraud_alt">अस्वीकृत # 59 - संदेहित धोखाधड़ी</string>
+    <string name="iso_resp_code_contact_acquirer_decline">अस्वीकृत # 60 - कार्ड स्वीकारकर्ता से संपर्क करें, अस्वीकृत</string>
+    <string name="iso_resp_code_exceeds_withdrawal_limit">सीमा से अधिक राशि - निकासी राशि सीमा से अधिक</string>
+    <string name="iso_resp_code_restricted_card_capture">सीमित कार्ड - सीमित कार्ड, कैप्चर करें</string>
+    <string name="iso_resp_code_security_violation">सुरक्षा त्रुटि # 63 - सुरक्षा उल्लंघन</string>
+    <string name="iso_resp_code_retry_aml_requirement">पुनः प्रयास # 64 - लेन-देन AML आवश्यकता पूरी नहीं करता (Stand-In प्रोसेसिंग)</string>
+    <string name="iso_resp_code_exceeds_withdrawal_frequency">सीमा से अधिक प्रयास - निकासी आवृत्ति सीमा से अधिक</string>
+    <string name="iso_resp_code_declined_contact_acquirer">अस्वीकृत # 66 - कार्ड स्वीकारकर्ता से संपर्क करें</string>
+    <string name="iso_resp_code_pickup_hard_capture">कार्ड प्राप्त करें # 67 - कठिन कैप्चर (ATM पर कार्ड प्राप्त करना आवश्यक)</string>
+    <string name="iso_resp_code_retry_acquirer_timeout">पुनः प्रयास # 68 - अधिग्रहणकर्ता समय-सीमा समाप्त</string>
+    <string name="iso_resp_code_retry_mobile_record_not_found">पुनः प्रयास # 69 - मोबाइल नंबर रिकॉर्ड नहीं मिला/मिलान नहीं</string>
+    <string name="iso_resp_code_retry_contact_card_issuer">पुनः प्रयास # 70 - कार्ड जारीकर्ता से संपर्क करें</string>
+    <string name="iso_resp_code_retry_deemed_acceptance">पुनः प्रयास # 71 - स्वीकृति मानी गई / PIN बदला नहीं गया</string>
+    <string name="iso_resp_code_retry_issuer_risk_decline">पुनः प्रयास # 74 - जोखिम स्कोर के आधार पर जारीकर्ता द्वारा अस्वीकृत</string>
+    <string name="iso_resp_code_exceeded_pin_tries">अधिक PIN प्रयास # 75 - अनुमत PIN प्रयासों की संख्या पार की गई</string>
+    <string name="iso_resp_code_pvt_error_to_account">PVT त्रुटि # 76 - MC: अमान्य/अस्तित्वहीन "To Account"; VISA: पुनः प्राप्ति संदर्भ संख्या पर मेल नहीं</string>
+    <string name="iso_resp_code_pvt_error_from_account">PVT त्रुटि # 77 - MC: अमान्य/अस्तित्वहीन "From Account"; VISA: असंगत पुनरावृत्ति/पलटाव डेटा</string>
+    <string name="iso_resp_code_pvt_error_general_account">PVT त्रुटि # 78 - MC: अमान्य/अस्तित्वहीन खाता; VISA: "ब्लॉक्ड, पहली बार उपयोग हुआ"</string>
+    <string name="iso_resp_code_transaction_reversed">लेन-देन पलटाव - लेन-देन पहले ही पलट चुका है</string>
+    <string name="iso_resp_code_duplicate_batch">खराब बैच संख्या # 80 - डुप्लिकेट बैच</string>
+    <string name="iso_resp_code_pvt_error_domestic_debit">PVT त्रुटि # 81 - MC: घरेलू डेबिट अनुमति नहीं; VISA: PIN क्रिप्टोग्राफिक त्रुटि (Stand-In प्रोसेसिंग)</string>
+    <string name="iso_resp_code_timeout_at_issuer">आयोजक पर समय-सीमा समाप्त - आयोजक पर समय-सीमा समाप्त</string>
+    <string name="iso_resp_code_hsm_key_error">HSM कुंजी त्रुटि - कुंजी त्रुटि। कुंजी इंजेक्शन प्रारंभ करें</string>
+    <string name="iso_resp_code_declined_invalid_auth_life_cycle">अस्वीकृत # 84 - अमान्य प्राधिकरण जीवन चक्र</string>
+    <string name="iso_resp_code_pvt_error_zero_amount">PVT त्रुटि # 85 - अस्वीकृत नहीं, सभी शून्य राशि लेन-देन के लिए वैध</string>
+    <string name="iso_resp_code_pvt_error_pin_validation">PVT त्रुटि # 86 - PIN सत्यापन संभव नहीं</string>
+    <string name="iso_resp_code_pvt_error_no_cashback">PVT त्रुटि # 87 - केवल खरीद राशि, कैश बैक की अनुमति नहीं</string>
+    <string name="iso_resp_code_cryptographic_failure">क्रिप्टोग्राफिक त्रुटि - क्रिप्टोग्राफिक त्रुटि</string>
+    <string name="iso_resp_code_pvt_error_unacceptable_pin">PVT त्रुटि # 89 - अस्वीकार्य PIN - लेन-देन अस्वीकृत पुनः प्रयास करें</string>
+    <string name="iso_resp_code_cut_off_in_process">कट-ऑफ प्रक्रिया में है - कट-ऑफ प्रक्रिया में है</string>
+    <string name="iso_resp_code_try_after_5min_auth_sys_inoperative">5 मिनट बाद प्रयास करें # 91 - प्राधिकरण प्रणाली या आयोजक प्रणाली कार्यरत नहीं</string>
+    <string name="iso_resp_code_try_after_5min_unable_route">5 मिनट बाद प्रयास करें # 92 - लेन-देन रूट करने में सक्षम नहीं</string>
+    <string name="iso_resp_code_declined_violation_of_law">अस्वीकृत # 93 - लेन-देन पूरा नहीं किया जा सकता; कानून का उल्लंघन</string>
+    <string name="iso_resp_code_pvt_error_duplicate_trans">PVT त्रुटि # 94 - डुप्लिकेट ट्रांसमिशन</string>
+    <string name="iso_resp_code_totals_mismatch">कुल मिलाकर मेल नहीं खाते - कुल मिलाकर मेल नहीं खाते (केवल निपटान के लिए); सुलह त्रुटि</string>
+    <string name="iso_resp_code_system_error">सिस्टम त्रुटि - सिस्टम दोष</string>
+    <string name="iso_resp_code_cvv2_failure">CVV2 त्रुटि - CVV2 त्रुटि के लिए अस्वीकृत</string>
+    <string name="iso_resp_code_offline_approved_1">ऑफ़लाइन स्वीकृत 1 - EMV लेन-देन ऑफलाइन स्वीकृत</string>
+    <string name="iso_resp_code_offline_approved_3">ऑफ़लाइन स्वीकृत 3 - EMV लेन-देन ऑनलाइन नहीं जा सका; टर्मिनल द्वारा ऑफलाइन स्वीकृत</string>
+    <string name="iso_resp_code_offline_declined_1">ऑफ़लाइन अस्वीकृत 1 - EMV लेन-देन टर्मिनल पर ऑफलाइन अस्वीकृत</string>
+    <string name="iso_resp_code_offline_declined_3">ऑफ़लाइन अस्वीकृत 3 - EMV लेन-देन ऑनलाइन नहीं जा सका; टर्मिनल पर ऑफलाइन अस्वीकृत</string>
+    <string name="iso_resp_code_aac_generated_by_chip">AAC चिप द्वारा उत्पन्न - AAC चिप कार्ड द्वारा उत्पन्न</string>
+    <string name="iso_resp_code_reversal_response_code">पलटाव प्रतिक्रिया कोड - टर्मिनल को चिप से अंतिम आवेदन क्रिप्टोग्राम प्राप्त नहीं हुआ</string>
+    <string name="iso_resp_code_unknown_error">अज्ञात त्रुटि</string>
+
 
 </resources>

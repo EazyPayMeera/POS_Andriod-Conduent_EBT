@@ -1,8 +1,20 @@
 package com.analogics.networkservicecore.nComponent
 
 import android.util.Log
+import com.analogics.networkservicecore.serviceutils.NetworkConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.availableForRead
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.writeFully
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 
@@ -29,7 +41,41 @@ object NetworkCallProvider {
             ResultProvider.Error(
                e
             )
-//            ResultProvider.Error(e)
+        }
+    }
+
+    suspend fun
+            safeApiCall(request : ByteArray): ResultProvider<ByteArray> {
+        return try {
+            withContext(Dispatchers.IO)
+            {
+                val socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
+                    .connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT))
+                val input = socket.openReadChannel()
+                val output = socket.openWriteChannel(autoFlush = true)
+                var response = ByteArray(0)
+                var packetLength : Int
+                output.writeFully(request)
+                do {
+                    delay(100)
+                    if (input.isClosedForRead) break
+                    var chunk = ByteArray(input.availableForRead)
+                    input.readAvailable(chunk,0,chunk.size)
+                    response += chunk
+                    packetLength = (response[0]*256) + (response[1]%256)
+                }while (input.isClosedForRead.not() && response.size<packetLength)
+                socket.close()
+
+                if(response.isNotEmpty())
+                    ResultProvider.Success(response)
+                else
+                    ResultProvider.Error(Exception("No Response"))
+            }
+        } catch (e: Exception) {
+            Log.d("exception",e.toString())
+            ResultProvider.Error(
+                e
+            )
         }
     }
 
