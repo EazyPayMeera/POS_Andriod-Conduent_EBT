@@ -104,7 +104,7 @@ fun dashboardItemListData(
         createDashboardItem(
             titleId = R.string.purchase,
             iconId = R.drawable.purchase,
-            route = AppNavigationItems.InvoiceScreen.route,
+            route = if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { AppNavigationItems.InvoiceScreen.route} else {AppNavigationItems.AmountScreen.route},
             onClickState = { setTransactionType(TxnType.PURCHASE) }
         ),
         createDashboardItem(
@@ -116,13 +116,13 @@ fun dashboardItemListData(
         createDashboardItem(
             titleId = R.string.pre_auth,
             iconId = R.drawable.dashboard_preauth,
-            route = AppNavigationItems.InvoiceScreen.route,
+            route = if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { AppNavigationItems.InvoiceScreen.route} else {AppNavigationItems.AmountScreen.route},
             onClickState = { setTransactionType(TxnType.PREAUTH) }
         ),
         createDashboardItem(
             titleId = R.string.auth_capture,
             iconId = R.drawable.dashboard_auth_capture,
-            route = AppNavigationItems.InvoiceScreen.route,
+            route = if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { AppNavigationItems.InvoiceScreen.route} else {AppNavigationItems.AmountScreen.route},
             onClickState = { setTransactionType(TxnType.AUTHCAP) }
         ),
         createDashboardItem(

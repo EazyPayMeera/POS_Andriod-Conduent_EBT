@@ -92,6 +92,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getStartDateByBatchIds(batchId)
     }
 
+    suspend fun fetchPassword(user: String): String? {
+        return iTxnDao.fetchPassword(user)
+    }
+
     suspend fun getUserList(): List<String?> {
         return iTxnDao.getUserList()
     }

@@ -39,6 +39,9 @@ interface ITxnDao {
     @Query("DELETE FROM UserTable WHERE userId = :userId")
     suspend fun deleteTransactionsByUserId(userId: String)
 
+    @Query("SELECT password FROM UserTable WHERE userId = :userId")
+    suspend fun fetchPassword(userId: String): String?
+
     @Query("SELECT DISTINCT batchId FROM TxnTable")
     suspend fun getDistinctBatchIds(): List<String>
 

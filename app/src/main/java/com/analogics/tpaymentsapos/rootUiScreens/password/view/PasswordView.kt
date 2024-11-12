@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun PasswordView(navHostController: NavHostController) {
     // Get ViewModel instance
+    val context = LocalContext.current
     val viewModel: PasswordViewModel = hiltViewModel()
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
@@ -60,7 +62,7 @@ fun PasswordView(navHostController: NavHostController) {
             ) {
                 TextView(
                     text = stringResource(id = R.string.enter_password),
-                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     1,
@@ -76,13 +78,14 @@ fun PasswordView(navHostController: NavHostController) {
 
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { newValue -> viewModel.updatePassword(newValue) },
+                    onValueChange = { newValue -> viewModel.updatePassword(
+                        newValue) },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.enter_password),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
                     keyboardType = KeyboardType.Password,
                     onDoneAction = {
-                        viewModel.navigateToInvoiceScreen(navHostController)
+                        viewModel.checkPassword(sharedViewModel,context,sharedViewModel.objPosConfig?.loginId.toString(),password,navHostController)
                     },
                     isPassword = true,
                 )
@@ -95,7 +98,9 @@ fun PasswordView(navHostController: NavHostController) {
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.navigateToTrainingScreen(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.navigateToInvoiceScreen(navHostController) }
+            secondButtonOnClick = {
+                viewModel.checkPassword(sharedViewModel,context,sharedViewModel.objPosConfig?.loginId.toString(),password,navHostController)
+            }
         )
 
         if (isDialogVisible) {
@@ -124,6 +129,7 @@ fun PasswordView(navHostController: NavHostController) {
                 .buildDialog(onClose = { isDialogVisible = false })
 
         }
+        CustomDialogBuilder.ShowComposed()
 
     }
     val updatedDetails = sharedViewModel.objRootAppPaymentDetail.copy(
