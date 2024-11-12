@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -54,10 +55,9 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
                 val Password = dbRepository.fetchPassword(loggedUser)
                 if(Password != enteredPassword)
                 {
-                    Log.d("PassWordMissMatch","Password Entered is Incorrect")
                     CustomDialogBuilder.composeProgressDialog(
-                        title = "Alert",
-                        subtitle = "Wrong Password"
+                        title = context.resources.getString((R.string.default_alert_title_error)),
+                        subtitle = context.resources.getString(R.string.default_alert_subtitle_wrong_password)
                     )
                 }
                 else
