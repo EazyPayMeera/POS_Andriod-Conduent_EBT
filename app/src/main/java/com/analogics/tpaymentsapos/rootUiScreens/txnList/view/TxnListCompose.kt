@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -31,7 +32,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,12 +83,16 @@ fun TransactionListScreen(
     viewModel: TxnViewModel = hiltViewModel()
 ) {
 
+    val context = LocalContext.current
     val transactions = viewModel.transactionList.collectAsState().value
     val batchId = viewModel.batchList.collectAsState().value
     val startDate = viewModel.startDateList.collectAsState().value
     val batchStatus = viewModel.batchStatusList.collectAsState().value
     val endDate = viewModel.endDateList.collectAsState().value
     val sharedViewModel = localSharedViewModel.current
+    val openBatchId = viewModel.openBatch.collectAsState().value
+    Log.d("Inside Header Section", "Open $openBatchId")
+
 
     val showDateTimePicker = remember { mutableStateOf(false) }
     val BatchId = remember { mutableStateOf(false) }
@@ -98,6 +102,7 @@ fun TransactionListScreen(
     val showMenu = remember { mutableStateOf(false) }
 
     var isBatchId by remember { mutableStateOf(false) }
+
 
     if (showDateTimePicker.value) {
         Log.d("Date Time Picker", "Prompt DATE PICKER")
@@ -132,7 +137,7 @@ fun TransactionListScreen(
         }
 
     }
-    
+
 
     Column {
         CommonTopAppBar(
@@ -145,7 +150,7 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value)
+                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value)
                 SummarySection(viewModel)
             }
         }
@@ -215,6 +220,9 @@ fun TransactionListScreen(
                             }
 
                             DropdownMenuItem(onClick = {
+                                viewModel.fetchStartDates(batchId)
+                                viewModel.fetchEndDates(batchId)
+                                viewModel.fetchBatchStatus(batchId)
                                 showMenu.value = false
                                 BatchId.value = true
                                 isBatchId = true
@@ -228,7 +236,7 @@ fun TransactionListScreen(
                 }
 
                 Divider(color = Color.Gray, thickness = 1.dp)
-                
+
                 // If transaction list is empty
                 if (transactions.isEmpty()) {
                     Text(
@@ -262,14 +270,49 @@ fun TransactionListScreen(
                     }
                 }
             }
-        }
+
+            // Floating Circular Menu (Replacing FAB)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp), // Add padding as necessary
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                CircularMenu(
+                    onMenuOptionClick = { selectedOption ->
+                        when(selectedOption)
+                        {
+                            context.resources.getString((R.string.summary)) -> {
+                                viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                            }
+                            context.resources.getString((R.string.detail)) -> {
+                                viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                            }
+                        }
+
+                    },
+                    onPrintClick = {
+                        Log.d("Print","Clicked on Print Image")
+                        sharedViewModel.objRootAppPaymentDetail.ttlTxnAmount = formatAmount(
+                            viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
+                        )
+                        sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND))
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE))
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE)
+                        sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (
+                                viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND)
+                                )
+                        sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
+                    }
+                )
+            }
+            CustomDialogBuilder.ShowComposed()
+    }
     }
 
 
+
     if (isBatchId) {
-        viewModel.fetchStartDates(batchId)
-        viewModel.fetchEndDates(batchId)
-        viewModel.fetchBatchStatus(batchId)
         if(startDate.isEmpty() && endDate.isEmpty()) {
             Log.d("Start Ad End Date", "Start and End Date Is Empty")
         }
@@ -291,6 +334,10 @@ fun TransactionListScreen(
         Log.d("Date Time Picker", "Fetch All the Transactions")
         viewModel.fetchTransactions()
         viewModel.filterTransactionsForBatch()
+    }
+
+    LaunchedEffect(viewModel.isClosedBatchEnabled) {
+        viewModel.isBatchOpen()
     }
 }
 
@@ -431,11 +478,19 @@ fun TransactionItem(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, navHostController: NavHostController, selectedStartDate: LocalDateTime?, selectedEndDate: LocalDateTime?) {
+fun HeaderSection(
+    viewModel: TxnViewModel,
+    sharedViewModel: SharedViewModel,
+    navHostController: NavHostController,
+    selectedStartDate: LocalDateTime?,
+    selectedEndDate: LocalDateTime?,
+    isBatchCloseEnabled : Boolean
+) {
     val context = LocalContext.current
     var isDialogVisible by remember { mutableStateOf(false) }
     var isAlertVisible by remember { mutableStateOf(false) }
     var isSummaryReport by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -502,20 +557,8 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
 
                 }
 
-                Row (){
-                    IconButton(onClick = {
-                        sharedViewModel.objRootAppPaymentDetail.ttlTxnAmount = formatAmount(
-                            viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
-                        )
-                        sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND))
-                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE))
-                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE)
-                        sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND))
-                        sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
-                        Log.d("PrintButton", "Print button clicked")
-                        /*viewModel.printReceipt(context, true,sharedViewModel.objRootAppPaymentDetail)*/isAlertVisible=true}) {
-                        Icon(Icons.Default.Print, contentDescription = "")
-                    }
+                Row ()
+                {
 
                     Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between icon and button
 
@@ -524,6 +567,7 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .height(androidx.compose.material3.MaterialTheme.dimens.DP_36_CompactMedium),
+                        enabled = isBatchCloseEnabled,
                         contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
                     ) {
                         TextView(
@@ -590,33 +634,6 @@ fun HeaderSection(viewModel: TxnViewModel, sharedViewModel: SharedViewModel, nav
                 .buildDialog(onClose = { isDialogVisible = false })
 
         }
-        CustomDialogBuilder.ShowComposed()
-        if(isAlertVisible)
-        {
-            CustomDialogBuilder.create()
-                .setTitle(stringResource(id = R.string.print_dialogue))
-                .setSubtitle("")
-                .setSmallText(stringResource(id = R.string.which_report))
-                .setShowCloseButton(true) // Can set to false if you don't want the close button
-                .setCancelButtonText(stringResource(id = R.string.summary))
-                .setConfirmButtonText(stringResource(id = R.string.detail))
-                .setCancelable(true)
-                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
-                .setShowProgressIndicator(false)
-                .setOnCancelAction {
-                    viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
-                }
-                .setOnConfirmAction {
-                    viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
-                }
-                .setShowButtons(true)
-                .setAutoOff(false)
-                .setNavAction {
-                    navHostController.popBackStack()
-                }
-                .buildDialog(onClose = { isAlertVisible = false })
-        }
     }
 }
 
@@ -628,12 +645,12 @@ fun AlertDialog() {
 
 @Composable
 fun CircularMenu(
-    onMenuOptionClick: (String) -> Unit
+    onMenuOptionClick: (String) -> Unit,
+    onPrintClick: () -> Unit // Add a new parameter for the print click action
 ) {
     val menuOptions = listOf(
-        stringResource(id = R.string.cust_recp),
-        stringResource(id = R.string.merchant_recp),
-        stringResource(id = R.string.e_recp)
+        stringResource(id = R.string.summary),
+        stringResource(id = R.string.detail)
     )
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
@@ -657,9 +674,8 @@ fun CircularMenu(
     ) {
         menuOptions.forEachIndexed { index, option ->
             val angle = when (index) {
-                0 -> 0f // Right
-                1 -> 180f // Left
-                2 -> -90f // Up
+                0 -> -30f // Right
+                1 -> 210f // Left
                 else -> 0f
             }
 
@@ -671,8 +687,14 @@ fun CircularMenu(
                         y = (distance.value * sin(Math.toRadians(angle.toDouble()))).dp
                     )
                     .size(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
-                    .shadow(androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape)
-                    .background(color = androidx.compose.material3.MaterialTheme.colorScheme.primary, shape = CircleShape)
+                    .shadow(
+                        androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium,
+                        shape = CircleShape
+                    )
+                    .background(
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    )
                     .clickable {
                         onMenuOptionClick(option)
                         expanded = false
@@ -684,7 +706,7 @@ fun CircularMenu(
                 Text(
                     text = option,
                     color = androidx.compose.material3.MaterialTheme.colorScheme.tertiary,
-                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_8_CompactMedium,
+                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_13_CompactMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -701,6 +723,7 @@ fun CircularMenu(
                 )
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
+                    onPrintClick()
                     scope.launch {
                         printButtonColor = if (expanded) {
                             Color.Gray

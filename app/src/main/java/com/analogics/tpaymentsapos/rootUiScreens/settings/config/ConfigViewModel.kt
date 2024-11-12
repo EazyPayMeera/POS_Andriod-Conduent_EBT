@@ -1,16 +1,27 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+@HiltViewModel
+class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel(){
 
-class ConfigViewModel @Inject constructor() : ViewModel(){
+    private val _isOpenBatch = MutableStateFlow<List<String>>(emptyList())
+
+    val isOpenBatch: StateFlow<List<String>> = _isOpenBatch
 
     var isTrainingMode = mutableStateOf(false)
     var isAutoPrintReport = mutableStateOf(false)
@@ -101,5 +112,17 @@ class ConfigViewModel @Inject constructor() : ViewModel(){
 
     fun onBack(navHostController: NavHostController) {
         navHostController.popBackStack()
+    }
+
+    fun isBatchOpen() {
+        viewModelScope.launch {
+            try {
+                val isBatchOpen = dbRepository.isBatchOpen()
+                _isOpenBatch.value = isBatchOpen
+                Log.d("BatchViewModel", "Closed ${isBatchOpen.size}")
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error closing open batches", e)
+            }
+        }
     }
 }

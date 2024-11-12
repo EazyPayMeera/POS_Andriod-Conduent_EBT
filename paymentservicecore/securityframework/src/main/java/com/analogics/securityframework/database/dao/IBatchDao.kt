@@ -28,4 +28,8 @@ interface IBatchDao {
     @Query("UPDATE BatchTable SET BatchStatus = 'close' WHERE BatchStatus = 'open'")
     suspend fun closeOpenBatches(): Int // This returns the number of rows affected
 
+    @Query("SELECT BatchStatus FROM BatchTable WHERE BatchStatus = 'open'")
+    suspend fun isBatchOpen(): List<String> // This returns all BatchId values
+
+
 }

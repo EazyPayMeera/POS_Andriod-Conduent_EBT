@@ -7,7 +7,6 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 
 class ReceiptBuilder {
-
     // Define alignment options
     enum class Alignment {
         LEFT,
@@ -16,59 +15,84 @@ class ReceiptBuilder {
         NONE
     }
 
+    enum class FontSize {
+        Small,
+        Medium,
+        Big
+    }
+
     // Function to build a receipt
     fun createReceipt(context: Context, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
             .apply {
 
                 Log.d("PaymentDetail hello", "Batch Id: ${sharedViewModel.objRootAppPaymentDetail.batchId}")
-                addField(sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT)
-                addField("", "", "", Alignment.CENTER)
-                addField("", "", "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT)
-                addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId, context.getString(R.string.receipt_terminal_id) + paymentDetails?.merchantId, Alignment.NONE)
-                addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE)
-                addField(paymentDetails?.txnType,"" , "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_card_no), "**** **** **** 1234", "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE)
-                addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE)
-                addField(context.getString(R.string.receipt_ref_no), "", "56789", Alignment.NONE)
-                addField(context.getString(R.string.receipt_subtotal), "", paymentDetails?.txnAmount, Alignment.NONE)
-                addField(context.getString(R.string.receipt_tip), "", paymentDetails?.tip, Alignment.NONE)
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_total), "", paymentDetails?.ttlAmount, Alignment.NONE)
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT)
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER)
-                addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE)
-                addField("CARDHOLDER NAME", "", "", Alignment.CENTER)
-                addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER)
-                addField("******MERCHANT COPY******", "", "", Alignment.CENTER)
+                addField(sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT,FontSize.Small)
+                addField("", "", "", Alignment.CENTER,FontSize.Small)
+                addField("", "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT,FontSize.Small)
+                addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId, context.getString(R.string.receipt_terminal_id) + paymentDetails?.merchantId, Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE,FontSize.Small)
+                if(sharedViewModel.objPosConfig?.isDemoMode == true)
+                {
+                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                    addField("*** Training Mode ***","" , "", Alignment.CENTER,FontSize.Big)
+                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                }
+                addField(paymentDetails?.txnType,"" , "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_card_no), "**** **** **** 1234", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_ref_no), "", "56789", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_subtotal), "", paymentDetails?.txnAmount, Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_tip), "", paymentDetails?.tip, Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_total), "", paymentDetails?.ttlAmount, Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT,FontSize.Small)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE,FontSize.Small)
+                addField("CARDHOLDER NAME", "", "", Alignment.CENTER,FontSize.Small)
+                addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER,FontSize.Small)
+                addField("******MERCHANT COPY******", "", "", Alignment.CENTER,FontSize.Small)
 
             }
             .build()
     }
 
-    // Function to build a summary report
-    fun createSummaryReport(context: Context,sharedViewModel: SharedViewModel,paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
-        return SummaryReport.Builder()
-            .addSummaryField("", sharedViewModel.objPosConfig?.header1.toString(), "")
-            .addSummaryField("", context.getString(R.string.summary_header), "")
-            .addSummaryField("", sharedViewModel.objPosConfig?.header2.toString(), sharedViewModel.objPosConfig?.header3.toString())
-            .addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
-            .addSummaryField(context.getString(R.string.summary_purchase),paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A" , paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
-            .addSummaryField(context.getString(R.string.summary_refund),paymentDetails?.ttlRefundCount?.toString() ?: "N/A" , paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
-            .addSummaryField(context.getString(R.string.summary_void), "2", "10.00")
-            .addSummaryField(context.getString(R.string.summary_tip), "10", "10.00")
-            .addSummaryField(context.getString(R.string.summary_cashback),"5" , "50.00")
-            .addSummaryField(context.getString(R.string.summary_total), paymentDetails?.ttlTxnCount?.toString() ?: "N/A", paymentDetails?.ttlTxnAmount?.toString() ?: "N/A")
-            .addSummaryField(context.getString(R.string.summary_txn_breakdown), "", "")
-            .addSummaryField(context.getString(R.string.summary_credit_txn), "", "")
-            .addSummaryField(context.getString(R.string.summary_debit_txn), "", "")
-            .addSummaryField("", context.getString(R.string.summary_footer), "")
-            .build()
+    fun createSummaryReport(context: Context, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
+        val reportBuilder = SummaryReport.Builder()
+
+        reportBuilder
+            .addSummaryField("", sharedViewModel.objPosConfig?.header1.toString(), "",FontSize.Small)
+            .addSummaryField("", context.getString(R.string.summary_header), "",FontSize.Small)
+            .addSummaryField("", sharedViewModel.objPosConfig?.header2.toString(), sharedViewModel.objPosConfig?.header3.toString(),FontSize.Small)
+
+        // Conditionally add the "Training Mode" field if in demo mode
+        if (sharedViewModel.objPosConfig?.isDemoMode == true) {
+            reportBuilder.addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+            reportBuilder.addSummaryField("", "*** Training Mode ***", "",FontSize.Big)
+            reportBuilder.addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+        }
+
+        reportBuilder
+            .addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_purchase), paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A", paymentDetails?.ttlTxnAmount?.toString() ?: "N/A",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_refund), paymentDetails?.ttlRefundCount?.toString() ?: "N/A", paymentDetails?.ttlRefundAmount?.toString() ?: "N/A",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_void), "2", "10.00",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_tip), "10", "10.00",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_cashback), "5", "50.00",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_total), paymentDetails?.ttlTxnCount?.toString() ?: "N/A", paymentDetails?.ttlTxnAmount?.toString() ?: "N/A",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_txn_breakdown), "", "",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_credit_txn), "", "",FontSize.Small)
+            .addSummaryField(context.getString(R.string.summary_debit_txn), "", "",FontSize.Small)
+            .addSummaryField("", context.getString(R.string.summary_footer), "",FontSize.Small)
+
+        // Finally, build the report
+        return reportBuilder.build()
     }
+
 
     data class Receipt(
         val fields: List<Field>,  // Replace Triple with Field class for four parameters
@@ -81,7 +105,8 @@ class ReceiptBuilder {
             val label: String?,
             val value: String?,
             val description: String?,
-            val alignment: Alignment
+            val alignment: Alignment,
+            val fontsize: FontSize
         )
 
         class Builder {
@@ -91,8 +116,8 @@ class ReceiptBuilder {
             private var qrcode: String? = null
 
             // Add method to accept nullable label, value, description, and alignment
-            fun addField(label: String? = null, value: String? = null, description: String? = null, alignment: Alignment) = apply {
-                fields.add(Field(label, value, description, alignment))
+            fun addField(label: String? = null, value: String? = null, description: String? = null, alignment: Alignment,fontsize:FontSize) = apply {
+                fields.add(Field(label, value, description, alignment,fontsize))
             }
 
             // Method to add barcode
@@ -113,16 +138,24 @@ class ReceiptBuilder {
     }
 
 
+    // Data class for SummaryField, which holds label, value, description, and fontsize
+    data class SummaryField(
+        val label: String,
+        val value: String,
+        val description: String,
+        val fontsize: FontSize
+    )
+
     // Data class for SummaryReport
     data class SummaryReport(
-        val summaryFields: List<Triple<String, String, String>> // Now has label, value, and description
+        val summaryFields: List<SummaryField> // Now has label, value, description, and fontsize
     ) {
         class Builder {
-            private val summaryFields: MutableList<Triple<String, String, String>> = mutableListOf()
+            private val summaryFields: MutableList<SummaryField> = mutableListOf()
 
-            // Removed alignment and added description as third parameter
-            fun addSummaryField(label: String, value: String, description: String) = apply {
-                summaryFields.add(Triple(label, value, description))
+            // Added Int parameter for fontsize after description
+            fun addSummaryField(label: String, value: String, description: String, fontsize: FontSize) = apply {
+                summaryFields.add(SummaryField(label, value, description, fontsize))
             }
 
             fun build(): SummaryReport {
@@ -132,22 +165,30 @@ class ReceiptBuilder {
     }
 
 
+
     fun createDetailReport(context: Context,sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
         val reportBuilder = DetailedReport.Builder()
 
         reportBuilder
-            .addDetailField("", sharedViewModel.objPosConfig?.header1.toString(), "")
-            .addDetailField("", context.getString(R.string.summary_debit_txn), "")
-            .addDetailField(context.getString(R.string.detail_txn), context.getString(R.string.detail_count), context.getString(R.string.summary_total))
-            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
-            .addDetailField(context.getString(R.string.summary_purchase), paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A", paymentDetails?.ttlPurchaseAmount?.toString() ?: "N/A")
-            .addDetailField(context.getString(R.string.summary_refund), paymentDetails?.ttlRefundCount?.toString() ?: "N/A", paymentDetails?.ttlRefundAmount?.toString() ?: "N/A")
-            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line))
-            .addDetailField("", context.getString(R.string.detail_txn_details), "")
-            .addDetailField(context.getString(R.string.detail_txn_Type), "", context.getString(R.string.detail_txn_Status))
-            .addDetailField(context.getString(R.string.detail_invoice_no), "", context.getString(R.string.detail_auth_code))
-            .addDetailField(context.getString(R.string.detail_txn_amt), "", context.getString(R.string.detail_total_amt))
-            .addDetailField("", paymentDetails?.txnStatus.toString(), "")
+            .addDetailField("", sharedViewModel.objPosConfig?.header1.toString(), "",FontSize.Small)
+            .addDetailField("", context.getString(R.string.summary_debit_txn), "",FontSize.Small)
+            .addDetailField(context.getString(R.string.detail_txn), context.getString(R.string.detail_count), context.getString(R.string.summary_total),FontSize.Small)
+            if(sharedViewModel.objPosConfig?.isDemoMode == true)
+            {
+                reportBuilder.addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+                reportBuilder.addDetailField("", "*** Training Mode ***", "",FontSize.Big)
+                reportBuilder.addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+            }
+        reportBuilder
+            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+            .addDetailField(context.getString(R.string.summary_purchase), paymentDetails?.ttlPurchaseCount?.toString() ?: "N/A", paymentDetails?.ttlPurchaseAmount?.toString() ?: "N/A",FontSize.Small)
+            .addDetailField(context.getString(R.string.summary_refund), paymentDetails?.ttlRefundCount?.toString() ?: "N/A", paymentDetails?.ttlRefundAmount?.toString() ?: "N/A",FontSize.Small)
+            .addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
+            .addDetailField("", context.getString(R.string.detail_txn_details), "",FontSize.Small)
+            .addDetailField(context.getString(R.string.detail_txn_Type), "", context.getString(R.string.detail_txn_Status),FontSize.Small)
+            .addDetailField(context.getString(R.string.detail_invoice_no), "", context.getString(R.string.detail_auth_code),FontSize.Small)
+            .addDetailField(context.getString(R.string.detail_txn_amt), "", context.getString(R.string.detail_total_amt),FontSize.Small)
+            .addDetailField("", paymentDetails?.txnStatus.toString(), "",FontSize.Small)
 
 
         // Add transaction details from the transaction list
@@ -155,27 +196,32 @@ class ReceiptBuilder {
             reportBuilder.addDetailField(
                 "",
                 transaction.timedate,
-                ""
+                "",
+                FontSize.Small
             )
             reportBuilder.addDetailField(
                 transaction.TxnType,
                 "",
-                transaction.Status
+                transaction.Status,
+                FontSize.Small
             )
             reportBuilder.addDetailField(
                 transaction.InvoiceNo,
                 "",
-                transaction.AuthCode
+                transaction.AuthCode,
+                FontSize.Small
             )
             reportBuilder.addDetailField(
                 transaction.txnAmount,
                 "",
-                transaction.ttlAmount
+                transaction.ttlAmount,
+                FontSize.Small
             )
             reportBuilder.addDetailField(
                 context.getString(R.string.summary_dot_line),
                 context.getString(R.string.summary_dot_line),
-                context.getString(R.string.summary_dot_line)
+                context.getString(R.string.summary_dot_line),
+                FontSize.Small
             )
         }
 
@@ -183,15 +229,23 @@ class ReceiptBuilder {
         return reportBuilder.build()
     }
 
-    // Data class for DetailedReport
+    // Data class for DetailField with four fields
+    data class DetailField(
+        val label: String,
+        val quantity: String,
+        val price: String,
+        val discount: FontSize // Example additional parameter
+    )
+
+    // Updated DetailedReport class
     data class DetailedReport(
-        val detailFields: List<Triple<String, String, String>> // Three fields: label, quantity, price
+        val detailFields: List<DetailField>
     ) {
         class Builder {
-            private val detailFields: MutableList<Triple<String, String, String>> = mutableListOf()
+            private val detailFields: MutableList<DetailField> = mutableListOf()
 
-            fun addDetailField(label: String, quantity: String, price: String) = apply {
-                detailFields.add(Triple(label, quantity, price))
+            fun addDetailField(label: String, quantity: String, price: String, discount: FontSize) = apply {
+                detailFields.add(DetailField(label, quantity, price, discount))
             }
 
             fun build(): DetailedReport {
@@ -199,6 +253,7 @@ class ReceiptBuilder {
             }
         }
     }
+
 
     data class TransactionDetails(
         val TxnType: String,

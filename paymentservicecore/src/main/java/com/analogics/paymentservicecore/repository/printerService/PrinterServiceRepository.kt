@@ -27,6 +27,7 @@ class PrinterServiceRepository @Inject constructor(
         receiptDetails: List<String>,
         descriptionList: List<String>,
         alignment: List<Int>, // Assuming alignment is of type Int; adjust as necessary
+        fontsize: List<Int>,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
@@ -35,7 +36,7 @@ class PrinterServiceRepository @Inject constructor(
         Thread {
             try {
                 // Pass the retrieved arguments to the PrinterHandler
-                PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails,descriptionList, alignment, this) // Pass this as the listener
+                PrinterHandler.addReceiptDetails(format, barcodeString, receiptDetails,descriptionList, alignment,fontsize, this) // Pass this as the listener
                 Log.d(TAG, "Receipt printed successfully.")
 
                 iPrinterResultProviderListener.onSuccess(true)
@@ -53,6 +54,7 @@ class PrinterServiceRepository @Inject constructor(
         Transaction: List<String>,
         Count: List<String>,
         Total: List<String>, // Assuming alignment is of type Int; adjust as necessary
+        fontsize: List<Int>,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
@@ -61,7 +63,7 @@ class PrinterServiceRepository @Inject constructor(
         Thread {
             try {
                 // Pass the retrieved arguments to the PrinterHandler
-                PrinterHandler.addLeftCenterRightDetails(Transaction, Count, Total, this) // Pass this as the listener
+                PrinterHandler.addLeftCenterRightDetails(Transaction, Count, Total,fontsize, this) // Pass this as the listener
                 Log.d(TAG, "Receipt printed successfully.")
                 iPrinterResultProviderListener.onSuccess(true)
 
@@ -75,6 +77,7 @@ class PrinterServiceRepository @Inject constructor(
     override suspend fun printLeftRightDetails(
         label: List<String>,
         description: List<String>, // Assuming alignment is of type Int; adjust as necessary
+        fontsize: List<Int>,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         this.iPrinterResultProviderListener = iPrinterResultProviderListener
@@ -83,7 +86,7 @@ class PrinterServiceRepository @Inject constructor(
         Thread {
             try {
                 // Pass the retrieved arguments to the PrinterHandler
-                PrinterHandler.addLeftRightDetails(label, description, this) // Pass this as the listener
+                PrinterHandler.addLeftRightDetails(label, description,fontsize, this) // Pass this as the listener
                 Log.d(TAG, "Receipt printed successfully.")
                 iPrinterResultProviderListener.onSuccess(true)
 

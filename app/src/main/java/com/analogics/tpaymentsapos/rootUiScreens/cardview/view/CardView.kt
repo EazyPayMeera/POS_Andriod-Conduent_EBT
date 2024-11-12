@@ -76,7 +76,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
     val openBatchId = viewModel.openBatch.collectAsState().value
     val lastBatchId = viewModel.lastBatch.collectAsState().value
     val isAnyBatchPresent = viewModel.isBatchPresent.collectAsState().value
-    Log.d("Batch Id","Present Batch Id $isAnyBatchPresent")
+    Log.d("Batch Id","Present Batch Id $openBatchId")
     // Disable the hardware back button
     BackHandler(enabled = true) {
         // Do nothing or handle custom behavior here
@@ -175,8 +175,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                 if(openBatchId.isNullOrBlank())
                                 {
                                    val newBatchId = lastBatchId?.toIntOrNull()?.let { String.format("%06d", it + 1) }
-                                    Log.d("BatchViewModel", "Last batch ID Present: $lastBatchId")
-                                    Log.d("BatchViewModel", "Generated new batch ID: $newBatchId")
+                                    Log.d("Batch Id", "Last batch ID Present: $lastBatchId")
+                                    Log.d("Batch Id", "Generated new batch ID: $newBatchId")
                                     sharedViewModel.batchEntity.batchId = newBatchId
                                     sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
                                     sharedViewModel.batchEntity.batchStatus = "open"
@@ -236,6 +236,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         ) {
                             if (viewModel.emvInProgress.value == false) {
                                 if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE) {
+                                    Log.d("Batch Id", "EMV Progress Value is False")
                                     TextView(
                                         text = stringResource(id = R.string.or),
                                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -263,7 +264,11 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                         )
                                     }
                                 }
-                            } else {
+
+                            }
+                            else
+                            {
+                                Log.d("Batch Id", "EMV Progress Value is True")
                                     TextView(
                                         text = getEmvMsgIdString(displayMsgId = viewModel.displayInfoMsgId.value),
                                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
@@ -274,7 +279,9 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                             .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                                             .align(Alignment.CenterHorizontally)
                                     )
+
                                 viewModel.showProgressVar.value.takeIf { it == true }?.let {
+                                    Log.d("Batch Id", "Fetched batches: Card Inserted")
                                     CircularProgressIndicator(
                                         modifier = Modifier
                                             .padding(MaterialTheme.dimens.DP_10_CompactMedium)
@@ -283,8 +290,11 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                         strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
                                     )
                                 }
+
+
                             }
                         }
+
                     }
                 }
             }
@@ -298,11 +308,9 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
         viewModel.openBatchPresent()
         viewModel.isBatchPresent()
         viewModel.getLastBatchId()
-        viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, navHostController)
+        viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail,sharedViewModel, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.batchId
-      //  viewModel.insertTxnData(sharedViewModel.objRootAppPaymentDetail)
-        //viewModel.onPurchaseApi(sharedViewModel.objRootAppPaymentDetail)
     }
 
     // QR Code Dialog

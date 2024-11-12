@@ -33,6 +33,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.closeOpenBatches() // Returns the count of rows updated
     }
 
+    suspend fun isBatchOpen(): List<String> {
+        return iBatchDao.isBatchOpen() // Returns the count of rows updated
+    }
+
 
     suspend fun  insertTxn(txnEntity: TxnEntity){
         try {
@@ -86,6 +90,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
 
     suspend fun getStartDate(batchId: String): List<String?> {
         return iTxnDao.getStartDateByBatchIds(batchId)
+    }
+
+    suspend fun fetchPassword(user: String): String? {
+        return iTxnDao.fetchPassword(user)
     }
 
     suspend fun getUserList(): List<String?> {

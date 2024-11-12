@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.builder_core.model.PaymentServiceTxnDetails
@@ -43,6 +44,11 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _startDateList = MutableStateFlow<List<String>>(emptyList())
     private val _batchStatusList = MutableStateFlow<List<String>>(emptyList())
     private val _endDateList = MutableStateFlow<List<String>>(emptyList())
+
+    val isClosedBatchEnabled = mutableStateOf(false)
+
+    private val _openBatch = MutableStateFlow<String?>(null)
+    val openBatch: StateFlow<String?> = _openBatch
 
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
     val batchList: StateFlow<List<String>> = _batchList
@@ -183,6 +189,24 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun isBatchOpen() {
+        viewModelScope.launch {
+            try {
+                // Fetch the open batch ID (or null if no open batch exists)
+                val batchId: String? = dbRepository.openBatchId()
+                Log.d("Batch Id", "Open batch ID: $batchId")
+                batchId?.let { setCloseBatchBtnState(true) }?:setCloseBatchBtnState(false)
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error fetching open batch ID", e)
+            }
+        }
+    }
+
+    private fun setCloseBatchBtnState(enabled: Boolean) {
+        isClosedBatchEnabled.value = enabled
+    }
+
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
         val gson = Gson()
         val json = gson.toJson(txnEntityList)
@@ -286,6 +310,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Approved View Model to Printer Service Repository 1")
                 CustomDialogBuilder.composeProgressDialog(
                     title = context.resources.getString(R.string.printing),
                     subtitle = context.resources.getString(R.string.plz_wait)
@@ -347,13 +372,22 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             )
             val summaryReport = receiptBuilder.createSummaryReport(context,sharedViewModel, paymentServiceTxnDetails)
 
-            val labelList: List<String> = summaryReport.summaryFields.map { it.first }
-            val valueList: List<String> = summaryReport.summaryFields.map { it.second }
-            val descriptionList: List<String> = summaryReport.summaryFields.map { it.third }
+            val labelList: List<String> = summaryReport.summaryFields.map { it.label }
+            val valueList: List<String> = summaryReport.summaryFields.map { it.value }
+            val descriptionList: List<String> = summaryReport.summaryFields.map { it.description }
+            val fontsize: List<Int> = summaryReport.summaryFields.map { field ->
+                when (field.fontsize) { // Accessing the fourth element (the font size)
+                    ReceiptBuilder.FontSize.Small -> 24
+                    ReceiptBuilder.FontSize.Medium -> 28
+                    ReceiptBuilder.FontSize.Big -> 32
+                    else -> 24 // Default font size if no match
+                }
+            }
             PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
                 labelList,
                 valueList,
                 descriptionList,
+                fontsize,
                 iPrinterResultProviderListener
             )
         }
@@ -383,13 +417,22 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                 )
             }
             val detailedReport = receiptBuilder.createDetailReport(context,sharedViewModel,paymentServiceTxnDetails, transactionDetailsList)
-            val labelList: List<String> = detailedReport.detailFields.map { it.first }
-            val valueList: List<String> = detailedReport.detailFields.map { it.second }
-            val descriptionList: List<String> = detailedReport.detailFields.map { it.third }
+            val labelList: List<String> = detailedReport.detailFields.map { it.label }
+            val valueList: List<String> = detailedReport.detailFields.map { it.quantity }
+            val descriptionList: List<String> = detailedReport.detailFields.map { it.price }
+            val fontsize: List<Int> = detailedReport.detailFields.map { field ->
+                when (field.discount) { // Accessing the fourth element (the font size)
+                    ReceiptBuilder.FontSize.Small -> 24
+                    ReceiptBuilder.FontSize.Medium -> 28
+                    ReceiptBuilder.FontSize.Big -> 32
+                    else -> 24 // Default font size if no match
+                }
+            }
             PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
                 labelList,
                 valueList,
                 descriptionList,
+                fontsize,
                 iPrinterResultProviderListener
             )
         }
@@ -417,10 +460,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun closeOpenBatches() {
         viewModelScope.launch {
             try {
-                val closedCount = dbRepository.closeBatch()
+                val closedCount = dbRepository.closeBatch().let {
+                    isBatchOpen()
+                }
                 Log.d("BatchViewModel", "Closed $closedCount open batches")
             } catch (e: Exception) {
                 Log.e("BatchViewModel", "Error closing open batches", e)

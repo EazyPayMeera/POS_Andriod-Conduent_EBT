@@ -68,7 +68,6 @@ fun CircularMenu(
     val menuOptions = listOf(
         stringResource(id = R.string.cust_recp),
         stringResource(id = R.string.merchant_recp),
-        stringResource(id = R.string.e_recp)
     )
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
@@ -92,9 +91,8 @@ fun CircularMenu(
     ) {
         menuOptions.forEachIndexed { index, option ->
             val angle = when (index) {
-                0 -> 0f // Right
-                1 -> 180f // Left
-                2 -> -90f // Up
+                0 -> -30f // Right
+                1 -> 210f // Left
                 else -> 0f
             }
 
@@ -119,7 +117,7 @@ fun CircularMenu(
                 Text(
                     text = option,
                     color = MaterialTheme.colorScheme.tertiary,
-                    fontSize = MaterialTheme.dimens.SP_8_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_13_CompactMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -234,6 +232,9 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     CircularMenu(
                         onMenuOptionClick = { option ->
+                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                            sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
+                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
                                     viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
@@ -246,9 +247,7 @@ fun ApprovedView(navHostController: NavHostController) {
                                         objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
                                     )
                                 }
-                                context.resources.getString((R.string.e_recp)) -> {
-                                    navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                                }
+
                             }
                         }
                     )

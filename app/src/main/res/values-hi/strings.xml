@@ -197,6 +197,8 @@
     <string name="sel_app_id">एक एप्लिकेशन आईडी चुनें</string>
     <string name="default_alert_title_error">ओह!</string>
     <string name="default_alert_title_success">सफलता</string>
+    <string name="default_alert_subtitle_wrong_password">गलत पासवर्ड</string>
+
 
     <!-- Transaction Details Screen -->
     <string name="transactions">लेनदेन</string>
