@@ -1,12 +1,10 @@
 package com.analogics.paymentservicecore.utils
 
-import android.R
 import com.analogics.securityframework.handler.SecureKeyHandler
 import com.analogics.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.security.KeyPair
-import java.security.PrivateKey
 
 object PaymentServiceUtils {
 
@@ -42,10 +40,10 @@ object PaymentServiceUtils {
         return HardwareUtils.getDeviceSN()
     }
 
-    fun injectTMK(ipek: String?, ksn: String?, kcv: String?) : Boolean {
-        if (ipek?.isNotEmpty() == true && ksn?.isNotEmpty() == true) {
-            HardwareUtils.injectTMK(ipek, ksn)
-            return true
+    fun injectKeys(ipek: String?, ksn: String?, kcv: String?) : Boolean {
+        if (ipek?.isNotEmpty() == true && ksn?.isNotEmpty() == true && kcv?.isNotEmpty() == true) {
+            /* Here DUKPT Pin Key serves as main key as well. Used for encryption of track data */
+            return HardwareUtils.injectTMK(ipek, kcv) && HardwareUtils.injectDukptPinKey(ipek,ksn)
         }
         return false
     }
