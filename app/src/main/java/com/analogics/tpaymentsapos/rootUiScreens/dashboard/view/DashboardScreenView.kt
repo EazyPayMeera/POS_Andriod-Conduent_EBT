@@ -335,9 +335,6 @@ fun DashboardContentSurface(
                                 viewModel.fetchLastTransactions(sharedViewModel,context)
                                 isDialogVisible = true
                             }
-                            context.resources.getString((R.string.e_recp)) -> {
-                                navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
-                            }
                         }
                     }
                 )

@@ -76,7 +76,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
     val openBatchId = viewModel.openBatch.collectAsState().value
     val lastBatchId = viewModel.lastBatch.collectAsState().value
     val isAnyBatchPresent = viewModel.isBatchPresent.collectAsState().value
-    Log.d("Batch Id","Present Batch Id $isAnyBatchPresent")
+    Log.d("Batch Id","Present Batch Id $openBatchId")
     // Disable the hardware back button
     BackHandler(enabled = true) {
         // Do nothing or handle custom behavior here

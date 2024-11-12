@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -25,11 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.Roboto
@@ -201,9 +201,8 @@ class BatchDialogueBuilder private constructor() {
                                     .align(Alignment.CenterHorizontally)
                             )
                         } else {
-                            // List of items displayed in a column
-                            Column {
-                                batchIds.forEachIndexed { index, batchId ->
+                            LazyColumn {
+                                itemsIndexed(batchIds) { index, batchId ->
                                     // Get the corresponding start date (null if not available)
                                     val startDates =
                                         if (index < startDates.size) startDates[index] else null
@@ -215,12 +214,12 @@ class BatchDialogueBuilder private constructor() {
                                         startDates?.replace("[", "")?.replace("]", "")?.trim()
                                     val enddate =
                                         endDates?.replace("[", "")?.replace("]", "")?.trim()
-                                    val status =  batchStatus?.replace("[", "")?.replace("]", "")?.trim()
+                                    val status = batchStatus?.replace("[", "")?.replace("]", "")?.trim()
 
                                     DrawersSurface(
                                         modifier = Modifier.fillMaxWidth(),
                                         status = status.toString(),
-                                        batchId = batchId, // Pass the combined String to DrawersSurface,
+                                        batchId = batchId, // Pass the combined String to DrawersSurface
                                         startDate = startdate.toString(),
                                         endDate = enddate.toString(),
                                         onItemSelected = {
@@ -228,7 +227,6 @@ class BatchDialogueBuilder private constructor() {
                                             onClose()
                                         }
                                     )
-
 
                                     // Divider between items, but not after the last item
                                     if (index < batchIds.size - 1) {
@@ -435,8 +433,9 @@ class BatchDialogueBuilder private constructor() {
                     )
 
                     // End Date
+                    // End Date, show "-" if status is "open"
                     Text(
-                        text = if(endDate == "null") "-" else endDate, // Check for null or empty string
+                        text = if (status.equals("open", ignoreCase = true)) "-" else endDate,
                         color = Color.Gray,
                         fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
                         modifier = Modifier.padding(top = 4.dp, end = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Padding between dates

@@ -190,13 +190,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun openBatchPresent() {
+    fun isBatchOpen() {
         viewModelScope.launch {
             try {
                 // Fetch the open batch ID (or null if no open batch exists)
                 val batchId: String? = dbRepository.openBatchId()
                 Log.d("Batch Id", "Open batch ID: $batchId")
-
+                batchId?.let { setCloseBatchBtnState(true) }?:setCloseBatchBtnState(false)
             } catch (e: Exception) {
                 Log.e("BatchViewModel", "Error fetching open batch ID", e)
             }
@@ -310,6 +310,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Approved View Model to Printer Service Repository 1")
                 CustomDialogBuilder.composeProgressDialog(
                     title = context.resources.getString(R.string.printing),
                     subtitle = context.resources.getString(R.string.plz_wait)
@@ -459,10 +460,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun closeOpenBatches() {
         viewModelScope.launch {
             try {
-                val closedCount = dbRepository.closeBatch()
+                val closedCount = dbRepository.closeBatch().let {
+                    isBatchOpen()
+                }
                 Log.d("BatchViewModel", "Closed $closedCount open batches")
             } catch (e: Exception) {
                 Log.e("BatchViewModel", "Error closing open batches", e)
