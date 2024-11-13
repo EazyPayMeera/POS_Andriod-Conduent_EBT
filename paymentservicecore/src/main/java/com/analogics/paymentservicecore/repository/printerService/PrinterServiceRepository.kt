@@ -163,6 +163,20 @@ class PrinterServiceRepository @Inject constructor(
         }
     }
 
+    override suspend fun stopPrinting(iPrinterResultProviderListener: IPrinterResultProviderListener) {
+        Log.d(TAG, "Get Status in Payment Service Repository...")
+        this.iPrinterResultProviderListener = iPrinterResultProviderListener
+        try {
+            // Assuming PrinterHandler has a method to get status
+            val status = PrinterHandler.stopPrinting(this) // Replace with the actual method to get status
+            Log.d(TAG, "Printer status retrieved: $status")
+            iPrinterResultProviderListener.onSuccess(status)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get printer status: ${e.message}")
+            iPrinterResultProviderListener.onSuccess(false)
+        }
+    }
+
 
     override fun onPrinterRespHandler(uiData: String) {
         Log.d(TAG, "Received printer response: $uiData")

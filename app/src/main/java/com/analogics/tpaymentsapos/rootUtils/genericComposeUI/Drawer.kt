@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,10 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,8 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurableViewType
-import com.analogics.tpaymentsapos.rootUiScreens.settings.config.TippingView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
@@ -99,22 +92,22 @@ fun CustomDrawerContent(
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.LanguageScreen.route) }
             ),
             DrawerItem(
+                imageRes = Icons.Default.AccountCircle,
+                text = stringResource(id = R.string.user_man),
+                isChecked = false,
+                onCheckedChange = { navHostController.navigate(AppNavigationItems.UserManagementScreen.route) }
+            ),
+/*            DrawerItem(
                 imageRes = Icons.Default.VpnKey,
                 text = stringResource(id = R.string.change_password),
                 isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route) }
-            ),
+            ),*/
             DrawerItem(
                 imageRes = Icons.Default.Settings,
                 text = stringResource(id = R.string.Configuration),
                 isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) }
-            ),
-            DrawerItem(
-                imageRes = Icons.Default.AccountCircle,
-                text = stringResource(id = R.string.user_man),
-                isChecked = false,
-                onCheckedChange = { navHostController.navigate(AppNavigationItems.UserManagementScreen.route) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,

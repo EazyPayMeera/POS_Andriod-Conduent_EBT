@@ -185,6 +185,11 @@ class Printer constructor() {
         mPrinter?.startPrint()
     }
 
+    fun stopPrinting()
+    {
+        mPrinter?.close()
+    }
+
     fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>,descriptions: List<String>, alignments: List<Int>,fontsize: List<Int>) {
         try {
 

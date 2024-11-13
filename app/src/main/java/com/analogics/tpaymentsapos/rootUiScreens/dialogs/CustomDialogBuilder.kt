@@ -253,8 +253,10 @@ class CustomDialogBuilder private constructor() {
         private var _subtitle: String? = null
         private var _message: String? = null
         private var _buttonText: String? = null
+        var onCloseCallback: (() -> Unit)? = null
         var showProgress = mutableStateOf(false)
         var showAlert = mutableStateOf(false)
+        var showPrinting = mutableStateOf(false)
 
         fun create(): CustomDialogBuilder = CustomDialogBuilder()
 
@@ -315,10 +317,47 @@ class CustomDialogBuilder private constructor() {
         }
 
         @Composable
+        fun ShowPrintingDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
+            show?.let { showPrinting.value = it }
+            title?.let { _title = it }
+            subtitle?.let { _subtitle = it }
+            message?.let { _message = it }
+
+            if (showPrinting.value==true) {
+                instance = create()
+                    .setTitle(title ?: _title ?: "")
+                    .setSubtitle(subtitle ?: _subtitle ?: "")
+                    .setSmallText(message ?: _message ?: "")
+                    .setShowProgressIndicator(true)
+                    .setShowCloseButton(false)
+                    .setShowButtons(true)
+                    .setConfirmButtonText(buttonText?:_buttonText?:stringResource(id = R.string.abort))
+
+                instance?.buildDialog(onClose = {
+                    onCloseCallback?.invoke() // Call the onClose callback if it’s set
+                    showPrinting.value = false
+                    instance?.dismiss()
+                })
+
+            }
+        }
+
+        fun composePrintingDialog(show: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null,onClose: (() -> Unit)? = null) {
+            showProgress.value = false
+            showPrinting.value = show != false
+            _title = title
+            _subtitle = subtitle
+            _message = message
+            _buttonText = buttonText
+            onCloseCallback = onClose
+        }
+
+        @Composable
         fun ShowComposed()
         {
             ShowProgressDialog()
             ShowAlertDialog()
+            ShowPrintingDialog()
         }
 
         fun clearText() {
@@ -329,6 +368,7 @@ class CustomDialogBuilder private constructor() {
 
         fun hideProgress() {
             showProgress.value = false
+            showPrinting.value = false
             instance?.dismiss()
             clearText()
         }

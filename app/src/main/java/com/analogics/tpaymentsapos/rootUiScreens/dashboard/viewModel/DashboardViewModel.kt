@@ -137,9 +137,13 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         viewModelScope.launch {
             try {
                 Log.d(TAG, "Approved View Model to Printer Service Repository 1")
-                CustomDialogBuilder.composeProgressDialog(
+                CustomDialogBuilder.composePrintingDialog(
                     title = context.resources.getString(R.string.printing),
-                    subtitle = context.resources.getString(R.string.plz_wait)
+                    subtitle = context.resources.getString(R.string.plz_wait),
+                    onClose = {
+                        Log.d("Abort", "Abort Button Pressed")
+                        // Additional actions if needed
+                    }
                 )
                 // Retrieve the last transaction from _lastTransactionList
                 val lastTransactionList = _lastTransactionList.value // This is a List<ObjRootAppPaymentDetails>
@@ -149,16 +153,13 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 latestTransaction?.let {
                     // Convert the latest transaction to JSON string
                     val requestDetails = PaymentServiceUtils.objectToJsonString(it)
-                    Log.d("YourTag", "Batch ID: $requestDetails")
-                    // Pass the transaction details to the PrinterServiceRepository
                     PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails))
                         .initPrinter(context, iPrinterResultProviderListener)
-
-                    //addLogo(context,objRootAppPaymentDetail,iPrinterResultProviderListener,logoResId)
                     addReceiptDetails(context,sharedViewModel,object : IPrinterResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if(result == true)
                             {
+                                Log.d("Abort", "Printing Successful")
                                 CustomDialogBuilder.hideProgress()
                             }
                         }
@@ -167,7 +168,6 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         }
                     })
 
-                    Log.d(TAG, "Approved View Model to Printer Service Repository 2 ${PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)}")
                 } ?: Log.d(TAG, "No transactions available for printing.")
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")

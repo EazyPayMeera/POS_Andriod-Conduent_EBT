@@ -143,6 +143,7 @@
     <string name="sent_email">Email Sent</string>
     <string name="ereceipt_sent">E-Receipt was successfully sent</string>
     <string name="ok">OK</string>
+    <string name="abort">ABORT</string>
     <string name="ten">10%</string>
     <string name="tax_label_sgst">SGST</string>
     <string name="tax_label_cgst">CGST</string>

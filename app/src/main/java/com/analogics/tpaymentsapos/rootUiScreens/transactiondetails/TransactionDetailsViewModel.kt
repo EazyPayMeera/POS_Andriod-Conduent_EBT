@@ -105,9 +105,14 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         viewModelScope.launch {
             try {
                 Log.d(TAG, "Approved View Model to Printer Service Repository 1")
-                CustomDialogBuilder.composeProgressDialog(
+                CustomDialogBuilder.composePrintingDialog(
                     title = context.resources.getString(R.string.printing),
-                    subtitle = context.resources.getString(R.string.plz_wait)
+                    subtitle = context.resources.getString(R.string.plz_wait),
+                    onClose = {
+                        viewModelScope.launch {
+                            /*stopPrinting(objRootAppPaymentDetail, iPrinterResultProviderListener)*/
+                        }
+                    }
                 )
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
