@@ -40,7 +40,7 @@ class DeclineViewModel @Inject constructor(private var dbRepository: TxnDBReposi
         } ?: Log.d("Record Update", "Invoice No is null")
     }
 
-    override fun onApiSuccess(response: Any) {
+    override fun onApiServiceSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
@@ -49,11 +49,11 @@ class DeclineViewModel @Inject constructor(private var dbRepository: TxnDBReposi
         }
     }
 
-    override fun onApiError(apiServiceError: ApiServiceError) {
+    override fun onApiServiceError(apiServiceError: ApiServiceError) {
         userApiErrorHolder.value = apiServiceError
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,

@@ -99,7 +99,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }
     }
 
-    override fun onApiSuccess(response: Any) {
+    override fun onApiServiceSuccess(response: Any) {
         when (response) {
             is PaymentServiceTxnDetails ->{
                 var objRootAppPaymentDetails = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
@@ -133,12 +133,12 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
     }
 
-    override fun onApiError(apiServiceError: ApiServiceError) {
+    override fun onApiServiceError(apiServiceError: ApiServiceError) {
         setActivationButtonState(true)
         CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceError.errorMessage)
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,

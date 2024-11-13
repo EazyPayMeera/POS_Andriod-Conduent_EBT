@@ -261,7 +261,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         }
     }
 
-    override fun onApiSuccess(response: Any) {
+    override fun onApiServiceSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
@@ -271,12 +271,12 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
 
     }
 
-    override fun onApiError(paymentError: ApiServiceError) {
+    override fun onApiServiceError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
         userApiServiceErrorHolder.value = paymentError
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,

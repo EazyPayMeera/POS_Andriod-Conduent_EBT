@@ -101,7 +101,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         }
     }
 
-    override fun onApiSuccess(response: Any) {
+    override fun onApiServiceSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 useRootAppPaymentDetails.value = response
@@ -119,13 +119,13 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
 
     }
 
-    override fun onApiError(paymentError: ApiServiceError) {
+    override fun onApiServiceError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
         userApiServiceErrorHolder.value = paymentError
         setLoginButtonState(true)
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,

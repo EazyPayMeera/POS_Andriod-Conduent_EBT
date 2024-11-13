@@ -9,14 +9,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.constants.EmvConstants
+import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TransConfig
+import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.toEmvTransType
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
@@ -34,7 +39,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
+class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository, var apiServiceRepository: ApiServiceRepository) : ViewModel() {
 
     var emvInProgress = mutableStateOf(false)
     var showProgressVar = mutableStateOf(true)
@@ -202,8 +207,26 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                         onResponse: (HashMap<String, String>) -> Unit
                     ) {
                         var responseEmvTags =
-                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE)  // Unable to go online, Decline
-                        onResponse(responseEmvTags)
+                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
+
+                        viewModelScope.launch {
+                            apiServiceRepository.apiServiceRequestOnlineAuth(
+                                PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
+                                    sharedViewModel.objRootAppPaymentDetail
+                                ), object : IApiServiceResponseListener {
+                                    override fun onApiServiceSuccess(response: Any) {
+                                        when (response) {
+                                            is PaymentServiceTxnDetails -> {}
+                                        }
+                                    }
+
+                                    override fun onApiServiceError(apiServiceError: ApiServiceError) {
+                                        onResponse(responseEmvTags)
+                                    }
+                                })
+
+
+                        }
                     }
                 })
         }

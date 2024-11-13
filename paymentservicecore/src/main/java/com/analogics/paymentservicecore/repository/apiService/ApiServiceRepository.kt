@@ -47,7 +47,7 @@ class ApiServiceRepository @Inject constructor(
         when(paymentServiceTxnDetails?.txnType.toString())
         {
             TxnType.PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
-            else -> iApiServiceResponseListener.onApiError(ApiServiceError(errorMessage = "Transaction Not Supported"))
+            else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }
 
@@ -122,7 +122,7 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        this.iApiServiceResponseListener.onDisplayProgress(true)
+        this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
         accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
@@ -134,7 +134,7 @@ class ApiServiceRepository @Inject constructor(
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
          this.iApiServiceResponseListener = iApiServiceResponseListener
-         this.iApiServiceResponseListener.onDisplayProgress(true)
+         this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
 
          rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){
              onApiServiceResponse(it)
@@ -152,14 +152,14 @@ class ApiServiceRepository @Inject constructor(
     }
 
     override fun onApiServiceResponse(response: Any) {
-        iApiServiceResponseListener.onDisplayProgress(false)
+        iApiServiceResponseListener.onApiServiceDisplayProgress(false)
         when (response) {
             is ApiServiceError -> {
-                iApiServiceResponseListener.onApiError(ApiServiceError(response.toString()))
+                iApiServiceResponseListener.onApiServiceError(ApiServiceError(response.toString()))
             }
             else ->
             {
-                iApiServiceResponseListener.onApiSuccess(response)
+                iApiServiceResponseListener.onApiServiceSuccess(response)
             }
         }
     }

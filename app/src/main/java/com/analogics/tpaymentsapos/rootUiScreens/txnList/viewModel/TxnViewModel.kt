@@ -241,7 +241,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    override fun onApiSuccess(response: Any) {
+    override fun onApiServiceSuccess(response: Any) {
         when (response) {
             is ObjRootAppPaymentDetails -> {
                 objRoot.value = response
@@ -250,7 +250,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     }
 
-    override fun onApiError(paymentError: ApiServiceError) {
+    override fun onApiServiceError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
         userApiServiceErrorHolder.value = paymentError
     }
@@ -454,7 +454,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,
