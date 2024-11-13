@@ -241,13 +241,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    override fun onApiServiceSuccess(response: Any) {
-        when (response) {
-            is ObjRootAppPaymentDetails -> {
-                objRoot.value = response
-            }
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
+            objRoot.value = it
         }
-
     }
 
     override fun onApiServiceError(paymentError: ApiServiceError) {

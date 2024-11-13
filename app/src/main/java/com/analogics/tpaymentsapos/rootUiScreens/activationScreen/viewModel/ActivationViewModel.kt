@@ -99,38 +99,26 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }
     }
 
-    override fun onApiServiceSuccess(response: Any) {
-        when (response) {
-            is PaymentServiceTxnDetails ->{
-                var objRootAppPaymentDetails = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(response)
-                if(objRootAppPaymentDetails?.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
-                    activateDevice(objRootAppPaymentDetails)
-                }
-                else {
-                    CustomDialogBuilder.composeAlertDialog(
-                        title = navHostController.context.resources?.getString(
-                            R.string.default_alert_title_error
-                        ),
-                        message = getIsoResponseCodeString(navHostController.context,objRootAppPaymentDetails?.hostRespCode)
-                    )
-                    setActivationButtonState(true)
-                }
-            }
-            else -> {
-                CustomDialogBuilder.composeAlertDialog(
-                    title = navHostController.context.resources?.getString(
-                        R.string.default_alert_title_error
-                    ),
-                    message = navHostController.context.resources.getString(R.string.act_failed)
-                )
-                setActivationButtonState(true)
-            }
-        }
-    }
-
-    fun activateDevice(objRootAppPaymentDetails: ObjRootAppPaymentDetails) {
+    fun activateDevice() {
         sharedViewModel?.objPosConfig?.apply { isActivationDone = true }?.saveToPrefs()
         navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+    }
+
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        if (paymentServiceTxnDetails.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+            activateDevice()
+        } else {
+            CustomDialogBuilder.composeAlertDialog(
+                title = navHostController.context.resources?.getString(
+                    R.string.default_alert_title_error
+                ),
+                message = getIsoResponseCodeString(
+                    navHostController.context,
+                    paymentServiceTxnDetails.hostRespCode
+                )
+            )
+            setActivationButtonState(true)
+        }
     }
 
     override fun onApiServiceError(apiServiceError: ApiServiceError) {

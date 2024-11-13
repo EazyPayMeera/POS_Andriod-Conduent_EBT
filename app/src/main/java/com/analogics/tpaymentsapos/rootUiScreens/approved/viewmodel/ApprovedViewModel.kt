@@ -359,12 +359,10 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         }
     }
-    override fun onApiServiceSuccess(response: Any) {
-        when (response) {
-            is ObjRootAppPaymentDetails -> {
-                objRoot.value = response
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
+                objRoot.value = it
                 updateTxnData(objRoot.value)
-            }
         }
     }
 

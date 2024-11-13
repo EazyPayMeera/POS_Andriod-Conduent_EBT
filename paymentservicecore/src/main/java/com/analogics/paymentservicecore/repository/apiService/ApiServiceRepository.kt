@@ -15,6 +15,7 @@ import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseR
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.rkl.RklRequestRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -157,12 +158,13 @@ class ApiServiceRepository @Inject constructor(
             is ApiServiceError -> {
                 iApiServiceResponseListener.onApiServiceError(ApiServiceError(response.toString()))
             }
-            else ->
-            {
-                iApiServiceResponseListener.onApiServiceSuccess(response)
+            else -> {
+                iApiServiceResponseListener.onApiServiceSuccess(
+                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
+                        response
+                    ) ?: PaymentServiceTxnDetails()
+                )
             }
         }
     }
-
-
 }

@@ -214,10 +214,9 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                 PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                                     sharedViewModel.objRootAppPaymentDetail
                                 ), object : IApiServiceResponseListener {
-                                    override fun onApiServiceSuccess(response: Any) {
-                                        when (response) {
-                                            is PaymentServiceTxnDetails -> {}
-                                        }
+
+                                    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+                                        paymentServiceTxnDetails.txnStatus
                                     }
 
                                     override fun onApiServiceError(apiServiceError: ApiServiceError) {

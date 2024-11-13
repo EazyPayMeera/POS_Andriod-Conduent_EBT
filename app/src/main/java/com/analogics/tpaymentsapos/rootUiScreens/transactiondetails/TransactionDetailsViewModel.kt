@@ -261,14 +261,10 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         }
     }
 
-    override fun onApiServiceSuccess(response: Any) {
-        when (response) {
-            is ObjRootAppPaymentDetails -> {
-                objRoot.value = response
-            }
-            //delete entery from db
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
+            objRoot.value = it
         }
-
     }
 
     override fun onApiServiceError(paymentError: ApiServiceError) {

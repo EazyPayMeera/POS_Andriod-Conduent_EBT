@@ -101,27 +101,14 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         }
     }
 
-    override fun onApiServiceSuccess(response: Any) {
-        when (response) {
-            is ObjRootAppPaymentDetails -> {
-                useRootAppPaymentDetails.value = response
-            }
-
-            else -> {
-                //userApiSuccessHolder.value = response as ObjEmployeeResponse
-                if (isFormValid) {
-                    sharedViewModel?.objPosConfig?.apply { isLoggedIn = true}?.saveToPrefs()
-                    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                }
-                Log.e("API Response", response.toString())
-            }
-        }
-
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        sharedViewModel?.objPosConfig?.apply { isLoggedIn = true }?.saveToPrefs()
+        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
-    override fun onApiServiceError(paymentError: ApiServiceError) {
-        Log.e("API Response", paymentError.errorMessage)
-        userApiServiceErrorHolder.value = paymentError
+    override fun onApiServiceError(apiServiceError: ApiServiceError) {
+        Log.e("API Response", apiServiceError.errorMessage)
+        userApiServiceErrorHolder.value = apiServiceError
         setLoginButtonState(true)
     }
 
