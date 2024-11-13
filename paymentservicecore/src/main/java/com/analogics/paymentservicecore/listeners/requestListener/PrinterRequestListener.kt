@@ -24,4 +24,5 @@ interface PrinterRequestListener {
     suspend fun printImage(format: Bundle,imageData: ByteArray, iPrinterResultProviderListener: IPrinterResultProviderListener)
     suspend fun printLeftRightDetails(label: List<String>, description: List<String>,fontsize: List<Int>, iPrinterResultProviderListener: IPrinterResultProviderListener)
     suspend fun getStatus(iPrinterResultProviderListener: IPrinterResultProviderListener)
+    suspend fun stopPrinting(iPrinterResultProviderListener: IPrinterResultProviderListener)
 }

@@ -143,6 +143,7 @@
     <string name="sent_email">ईमेल भेजा गया</string>
     <string name="ereceipt_sent">ई-रसीद सफलतापूर्वक भेजी गई</string>
     <string name="ok">ठीक है</string>
+    <string name="abort">रद्द करें</string>
     <string name="ten">10%</string>
     <string name="tax_label_sgst">एसजीएसटी</string>
     <string name="tax_label_cgst">सीजीएसटी</string>

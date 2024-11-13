@@ -55,10 +55,13 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
                 val Password = dbRepository.fetchPassword(loggedUser)
                 if(Password != enteredPassword)
                 {
-                    CustomDialogBuilder.composeProgressDialog(
-                        title = context.resources.getString((R.string.default_alert_title_error)),
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.resources.getString(
+                            R.string.default_alert_title_error
+                        ),
                         subtitle = context.resources.getString(R.string.default_alert_subtitle_wrong_password)
                     )
+                    _password.value = ""
                 }
                 else
                 {

@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.usermanagement.view
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +53,7 @@ fun UserManagementView(navHostController: NavHostController, viewModel: UserMana
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_36_CompactMedium)
             ) {
                 TextView(
-                    text = "Add and Remove User",
+                    text = "User Info Management",
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Roboto,
@@ -87,6 +86,20 @@ fun UserManagementView(navHostController: NavHostController, viewModel: UserMana
                             isRemoveUser = true
                         },
                         title = "REMOVE USER",
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.dimens.DP_31_CompactMedium)
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
+                ) {
+                    OkButton(
+                        onClick = {
+                            navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route)
+                        },
+                        title = stringResource(id = R.string.change_password)
                     )
                 }
             }

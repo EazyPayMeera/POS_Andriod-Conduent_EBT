@@ -135,10 +135,15 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     {
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Approved View Model to Printer Service Repository 1")
-                CustomDialogBuilder.composeProgressDialog(
+                Log.d("Abort", "Approved View Model to Printer Service Repository 1")
+                CustomDialogBuilder.composePrintingDialog(
                     title = context.resources.getString(R.string.printing),
-                    subtitle = context.resources.getString(R.string.plz_wait)
+                    subtitle = context.resources.getString(R.string.plz_wait),
+                    onClose = {
+                        viewModelScope.launch {
+                            stopPrinting(objRootAppPaymentDetail, iPrinterResultProviderListener)
+                        }
+                    }
                 )
                 val requestDetails =
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
@@ -148,7 +153,10 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     override fun onSuccess(result: Any?) {
                         if(result == true)
                         {
-                            CustomDialogBuilder.hideProgress()
+                            viewModelScope.launch {
+                                CustomDialogBuilder.hideProgress()
+                            }
+
                         }
                     }
                     override fun onFailure(exception: Exception) {
@@ -281,6 +289,19 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                 PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
             )
             PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to get printer status: ${e.message}")
+        }
+    }
+
+    suspend fun stopPrinting(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
+        try {
+
+            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+            )
+            PrinterServiceRepository(paymentServiceTxnDetails).stopPrinting(iPrinterResultProviderListener)
 
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get printer status: ${e.message}")
