@@ -25,7 +25,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.apply
-import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.text.isNotBlank
 
@@ -56,7 +55,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
         viewModelScope.launch {
             try {
-                setActivationButtonState(false)
                 startActivateProcess()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -91,6 +89,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     fun startActivateProcess() {
         viewModelScope.launch {
             try {
+                setActivationButtonState(false)
                 collectActivationData()
                 apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel?.objRootAppPaymentDetail), this@ActivationViewModel)
@@ -117,17 +116,14 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                     setActivationButtonState(true)
                 }
             }
-            is ObjRootAppPaymentDetails -> {
-                sharedViewModel?.objRootAppPaymentDetail = response
-            }
-
             else -> {
-                if (isFormValid) {
-                    sharedViewModel?.objPosConfig?.apply {
-                        isActivationDone = true }?.saveToPrefs()
-                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-                }
-                Log.e("API Response", response.toString())
+                CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.resources?.getString(
+                        R.string.default_alert_title_error
+                    ),
+                    message = navHostController.context.resources.getString(R.string.act_failed)
+                )
+                setActivationButtonState(true)
             }
         }
     }

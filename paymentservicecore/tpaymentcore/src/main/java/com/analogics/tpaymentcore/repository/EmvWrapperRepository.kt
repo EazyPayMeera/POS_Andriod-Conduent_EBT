@@ -9,6 +9,7 @@ import android.os.IInputActionListener
 import android.text.TextUtils
 import android.util.Log
 import com.analogics.paymentservicecore.constants.EmvConstants
+import com.analogics.tpaymentcore.constants.EncryptionConstants
 import com.analogics.tpaymentcore.listener.requestListener.IEmvWrapperRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.AidConfig
@@ -440,7 +441,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
             val param: Bundle = Bundle()
 
-            if (isDUKPT) param.putInt("PINKeyNo", 3)
+            if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.MS_KEY_TYPE_PIN)
             else param.putInt("PINKeyNo", 10)
             val cardno: String = "1122334455667788"
 

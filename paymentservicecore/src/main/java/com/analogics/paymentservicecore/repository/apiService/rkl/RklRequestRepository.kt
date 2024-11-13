@@ -5,7 +5,6 @@ import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.builder_core.repository.BuilderServiceRepositoryLyra
 import com.analogics.builder_core.requestBuilder.ApiRequestBuilderLyra
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.handler.SecureKeyHandler
 import javax.inject.Inject
@@ -32,7 +31,7 @@ class RklRequestRepository@Inject constructor(
                         var resPaymentServiceTxnDetails = apiRequestBuilder.parseRklResponse(response)
                         resPaymentServiceTxnDetails.let {
                             var ipek = SecureKeyHandler.decryptRSA(it.encryptedIpek,paymentServiceTxnDetails?.devicePrivateKey)
-                            PaymentServiceUtils.injectTMK(ipek, it.ksn,it.kcv)
+                            PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv)
                         }
 
                         paymentServiceTxnDetails?.let {

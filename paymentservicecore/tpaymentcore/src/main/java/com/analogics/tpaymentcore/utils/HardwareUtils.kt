@@ -4,6 +4,7 @@ import android.device.DeviceManager
 import android.device.SEManager
 import android.util.Log
 import com.analogics.tpaymentcore.constants.EncryptionConstants
+import com.urovo.sdk.pinpad.PinPadProviderImpl
 
 object HardwareUtils {
     fun getDeviceSN() : String
@@ -12,14 +13,24 @@ object HardwareUtils {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun injectTMK(ipek: String, ksn: String) : Boolean
+    fun injectTMK(tmk: String, kcv: String) : Boolean
+    {
+        try {
+            return PinPadProviderImpl.getInstance().loadMainKey(EncryptionConstants.KEY_INDEX_MAIN_KEY, tmk.hexToByteArray(), kcv.hexToByteArray())
+        }catch (exception : Exception)
+        {
+            Log.e("HARDWARE_UTILS", exception.message.toString())
+            return false
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun injectDukptPinKey(ipek: String, ksn: String) : Boolean
     {
         try {
             var ipekBytes = ipek.hexToByteArray()
             var ksnBytes = ksn.hexToByteArray()
-            var sm = SEManager()
-            sm.downloadKeyDukpt(EncryptionConstants.KEY_TYPE_TMK, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size)
-            return true
+            return PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_PIN, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0
         }catch (exception : Exception)
         {
             Log.e("HARDWARE_UTILS", exception.message.toString())
