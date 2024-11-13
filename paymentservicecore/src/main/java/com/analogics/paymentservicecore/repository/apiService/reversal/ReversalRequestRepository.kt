@@ -1,11 +1,13 @@
 package com.analogics.paymentservicecore.repository.apiService.reversal
 
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.builder_core.model.BuilderServiceTxnDetails
 import com.analogics.builder_core.repository.BuilderServiceRepository
 import com.analogics.builder_core.requestBuilder.ApiRequestBuilder
 import com.analogics.builder_core.utils.BuilderUtils
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import javax.inject.Inject
 
 class ReversalRequestRepository @Inject constructor(
@@ -27,7 +29,7 @@ class ReversalRequestRepository @Inject constructor(
                 }
             },
             BuilderUtils.prepareApiRequestBody(
-                apiRequestBuilder.createReversalRequest(paymentServiceTxnDetails)
+                apiRequestBuilder.createReversalRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
             )
         )
     }

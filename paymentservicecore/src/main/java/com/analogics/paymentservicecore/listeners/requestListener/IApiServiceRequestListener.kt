@@ -1,7 +1,7 @@
 package com.analogics.paymentservicecore.listeners.requestListener
 
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.models.PosConfig
 
 interface IApiServiceRequestListener {

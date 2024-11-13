@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model
+package com.analogics.paymentservicecore.models
 
 enum class HostAuthResult {
     ERROR,

@@ -1,9 +1,9 @@
 package com.analogics.paymentservicecore.repository.apiService
 
 
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType

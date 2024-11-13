@@ -2,7 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.utility
 
 import android.content.Context
 import android.util.Log
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 

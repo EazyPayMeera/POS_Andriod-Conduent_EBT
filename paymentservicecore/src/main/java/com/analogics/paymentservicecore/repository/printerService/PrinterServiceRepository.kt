@@ -4,9 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.requestListener.PrinterRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
 import com.analogics.tpaymentcore.repository.PrinterHandler
 import javax.inject.Inject

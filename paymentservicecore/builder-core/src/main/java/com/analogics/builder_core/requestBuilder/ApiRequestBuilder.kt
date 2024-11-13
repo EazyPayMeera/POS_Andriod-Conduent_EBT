@@ -2,7 +2,7 @@ package com.analogics.builder_core.requestBuilder
 
 import android.content.Context
 import com.analogics.builder_core.constants.BuilderConstants
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.builder_core.model.BuilderServiceTxnDetails
 import com.analogics.builder_core.model.auth_capture.PostAuthRequest
 import com.analogics.builder_core.model.auth_capture.PreAuthRequest
 import com.analogics.builder_core.model.auth_token.AuthTokenRequest
@@ -24,7 +24,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
     var messageFactory = MessageFactory<IsoMessage>()
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
-    fun createRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ByteArray? {
+    fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray? {
         var message = messageFactory.newMessage(0x0800)
 
         /* Set binary encoding instead of ASCII encoding */
@@ -49,21 +49,21 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
         message.setValue(BuilderConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_NII_LENGTH)
 
         /* Field 41, TID, ANS8, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_TID, paymentServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
         /* Field 42, MID, ANS15, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_MID, paymentServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
 
         /* Field 60, Serial No, ANS...999, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_TERM_SR_NO, paymentServiceTxnDetails?.deviceSN, IsoType.LLLVAR,paymentServiceTxnDetails?.deviceSN?.length?:0)
+        message.setValue(BuilderConstants.ISO_FIELD_TERM_SR_NO, builderServiceTxnDetails?.deviceSN, IsoType.LLLVAR,builderServiceTxnDetails?.deviceSN?.length?:0)
 
         /* Field 62, Working Key, ANS...999, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_WORKING_KEY, paymentServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,paymentServiceTxnDetails?.devicePublicKey?.length?:0)
+        message.setValue(BuilderConstants.ISO_FIELD_WORKING_KEY, builderServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,builderServiceTxnDetails?.devicePublicKey?.length?:0)
 
         return message.writeData()
     }
 
-    fun createAccessTokenRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): AuthTokenRequest {
+    fun createAccessTokenRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): AuthTokenRequest {
         var appId = "pcAz2HwAompQWPEF4MXUJt91ldqEnzQR"
         var appKey = "qqOKVz4gUATaoG6W"
         var nonce = BuilderUtils.generateNonce()
@@ -76,213 +76,213 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
         )
     }
 
-    fun createLoginRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): UserLoginRequest {
+    fun createLoginRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): UserLoginRequest {
         return UserLoginRequest(
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            loginId = paymentServiceTxnDetails?.loginId,
-            loginPassword = paymentServiceTxnDetails?.loginPassword,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            loginId = builderServiceTxnDetails?.loginId,
+            loginPassword = builderServiceTxnDetails?.loginPassword,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel
         )
     }
 
-    fun createPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PurchaseRequest {
+    fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): PurchaseRequest {
         return PurchaseRequest(
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            cashierId = paymentServiceTxnDetails?.loginId,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel,
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            cashierId = builderServiceTxnDetails?.loginId,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel,
 
 
-            batchId = paymentServiceTxnDetails?.batchId,
-            invoiceNo = paymentServiceTxnDetails?.invoiceNo,
-            purchaseOrderNo = paymentServiceTxnDetails?.purchaseOrderNo,
-            dateTime = paymentServiceTxnDetails?.dateTime,
-            timeZone = paymentServiceTxnDetails?.timeZone,
-            txnType = paymentServiceTxnDetails?.txnType,
-            accountType = paymentServiceTxnDetails?.accountType,
-            txnCurrencyCode = paymentServiceTxnDetails?.txnCurrencyCode,
-            txnAmount = paymentServiceTxnDetails?.authAmount,
-            tip = paymentServiceTxnDetails?.tip,
-            cashback = paymentServiceTxnDetails?.cashback,
-            CGST = paymentServiceTxnDetails?.CGST,
-            SGST = paymentServiceTxnDetails?.SGST,
-            ttlAmount = paymentServiceTxnDetails?.ttlAmount,
+            batchId = builderServiceTxnDetails?.batchId,
+            invoiceNo = builderServiceTxnDetails?.invoiceNo,
+            purchaseOrderNo = builderServiceTxnDetails?.purchaseOrderNo,
+            dateTime = builderServiceTxnDetails?.dateTime,
+            timeZone = builderServiceTxnDetails?.timeZone,
+            txnType = builderServiceTxnDetails?.txnType,
+            accountType = builderServiceTxnDetails?.accountType,
+            txnCurrencyCode = builderServiceTxnDetails?.txnCurrencyCode,
+            txnAmount = builderServiceTxnDetails?.authAmount,
+            tip = builderServiceTxnDetails?.tip,
+            cashback = builderServiceTxnDetails?.cashback,
+            CGST = builderServiceTxnDetails?.CGST,
+            SGST = builderServiceTxnDetails?.SGST,
+            ttlAmount = builderServiceTxnDetails?.ttlAmount,
 
             )
     }
 
-    fun createVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): VoidReqeust {
+    fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): VoidReqeust {
         return VoidReqeust(
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            cashierId = paymentServiceTxnDetails?.loginId,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel,
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            cashierId = builderServiceTxnDetails?.loginId,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel,
 
-            batchId = paymentServiceTxnDetails?.batchId,
-            dateTime = paymentServiceTxnDetails?.dateTime,
-            timeZone = paymentServiceTxnDetails?.timeZone,
-            txnType = paymentServiceTxnDetails?.txnType,
-            txnCurrencyCode = paymentServiceTxnDetails?.cardCountryCode,
+            batchId = builderServiceTxnDetails?.batchId,
+            dateTime = builderServiceTxnDetails?.dateTime,
+            timeZone = builderServiceTxnDetails?.timeZone,
+            txnType = builderServiceTxnDetails?.txnType,
+            txnCurrencyCode = builderServiceTxnDetails?.cardCountryCode,
 
-            originalTxnType = paymentServiceTxnDetails?.originalTxnType,
-            originalTxnAmount = paymentServiceTxnDetails?.originalTxnAmount,
-            originalTip = paymentServiceTxnDetails?.originalTip,
-            originalCashback = paymentServiceTxnDetails?.originalCashback,
-            originalCGST = paymentServiceTxnDetails?.originalCGST,
-            originalSGST = paymentServiceTxnDetails?.originalSGST,
-            originalTtlAmount = paymentServiceTxnDetails?.originalTtlAmount,
-            originalTxnRef = paymentServiceTxnDetails?.originalTxnRef,
-            originalHostTxnRef = paymentServiceTxnDetails?.originalHostTxnRef
+            originalTxnType = builderServiceTxnDetails?.originalTxnType,
+            originalTxnAmount = builderServiceTxnDetails?.originalTxnAmount,
+            originalTip = builderServiceTxnDetails?.originalTip,
+            originalCashback = builderServiceTxnDetails?.originalCashback,
+            originalCGST = builderServiceTxnDetails?.originalCGST,
+            originalSGST = builderServiceTxnDetails?.originalSGST,
+            originalTtlAmount = builderServiceTxnDetails?.originalTtlAmount,
+            originalTxnRef = builderServiceTxnDetails?.originalTxnRef,
+            originalHostTxnRef = builderServiceTxnDetails?.originalHostTxnRef
         )
     }
 
-    fun createRefundRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): RefundRequest {
+    fun createRefundRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): RefundRequest {
         return RefundRequest(
 
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            cashierId = paymentServiceTxnDetails?.loginId,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel,
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            cashierId = builderServiceTxnDetails?.loginId,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel,
 
-            batchId = paymentServiceTxnDetails?.batchId,
-            invoiceNo = paymentServiceTxnDetails?.invoiceNo,
-            purchaseOrderNo = paymentServiceTxnDetails?.purchaseOrderNo,
-            dateTime = paymentServiceTxnDetails?.dateTime,
-            timeZone = paymentServiceTxnDetails?.timeZone,
-            txnType = paymentServiceTxnDetails?.txnType,
-            accountType = paymentServiceTxnDetails?.accountType,
-            txnCurrencyCode = paymentServiceTxnDetails?.txnCurrencyCode,
-            txnAmount = paymentServiceTxnDetails?.txnAmount,
+            batchId = builderServiceTxnDetails?.batchId,
+            invoiceNo = builderServiceTxnDetails?.invoiceNo,
+            purchaseOrderNo = builderServiceTxnDetails?.purchaseOrderNo,
+            dateTime = builderServiceTxnDetails?.dateTime,
+            timeZone = builderServiceTxnDetails?.timeZone,
+            txnType = builderServiceTxnDetails?.txnType,
+            accountType = builderServiceTxnDetails?.accountType,
+            txnCurrencyCode = builderServiceTxnDetails?.txnCurrencyCode,
+            txnAmount = builderServiceTxnDetails?.txnAmount,
 
 
-            cardEntryMode = paymentServiceTxnDetails?.cardEntryMode,
-            cardMaskedPan = paymentServiceTxnDetails?.cardMaskedPan,
-            cardBrand = paymentServiceTxnDetails?.cardBrand,
-            cardAuthMethod = paymentServiceTxnDetails?.cardAuthMethod,
-            cardAuthResult = paymentServiceTxnDetails?.cardAuthResult,
-            cardCountryCode = paymentServiceTxnDetails?.cardCountryCode,
-            cardLanguagePref = paymentServiceTxnDetails?.cardLanguagePref,
-            emvData = paymentServiceTxnDetails?.emvData,
+            cardEntryMode = builderServiceTxnDetails?.cardEntryMode,
+            cardMaskedPan = builderServiceTxnDetails?.cardMaskedPan,
+            cardBrand = builderServiceTxnDetails?.cardBrand,
+            cardAuthMethod = builderServiceTxnDetails?.cardAuthMethod,
+            cardAuthResult = builderServiceTxnDetails?.cardAuthResult,
+            cardCountryCode = builderServiceTxnDetails?.cardCountryCode,
+            cardLanguagePref = builderServiceTxnDetails?.cardLanguagePref,
+            emvData = builderServiceTxnDetails?.emvData,
 
             /* Original Txn data for Void Refund Capture */
-            originalTxnRef = paymentServiceTxnDetails?.originalTxnRef
+            originalTxnRef = builderServiceTxnDetails?.originalTxnRef
         )
     }
 
-    fun createAuthCaptureRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PostAuthRequest {
+    fun createAuthCaptureRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): PostAuthRequest {
         return PostAuthRequest(
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            cashierId = paymentServiceTxnDetails?.loginId,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel,
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            cashierId = builderServiceTxnDetails?.loginId,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel,
 
-            batchId = paymentServiceTxnDetails?.batchId,
-            dateTime = paymentServiceTxnDetails?.dateTime,
-            timeZone = paymentServiceTxnDetails?.timeZone,
-            txnType = paymentServiceTxnDetails?.txnType,
-            txnCurrencyCode = paymentServiceTxnDetails?.txnCurrencyCode,
+            batchId = builderServiceTxnDetails?.batchId,
+            dateTime = builderServiceTxnDetails?.dateTime,
+            timeZone = builderServiceTxnDetails?.timeZone,
+            txnType = builderServiceTxnDetails?.txnType,
+            txnCurrencyCode = builderServiceTxnDetails?.txnCurrencyCode,
 
-            originalTxnType = paymentServiceTxnDetails?.originalTxnType,
-            originalTxnAmount = paymentServiceTxnDetails?.originalTxnAmount,
-            originalTip = paymentServiceTxnDetails?.tip,
-            originalCashback = paymentServiceTxnDetails?.cashback,
-            originalCGST = paymentServiceTxnDetails?.originalCGST,
-            originalSGST = paymentServiceTxnDetails?.originalSGST,
-            originalTtlAmount = paymentServiceTxnDetails?.originalTtlAmount,
-            originalTxnRef = paymentServiceTxnDetails?.originalTxnRef,
-            originalHostTxnRef = paymentServiceTxnDetails?.originalHostTxnRef
+            originalTxnType = builderServiceTxnDetails?.originalTxnType,
+            originalTxnAmount = builderServiceTxnDetails?.originalTxnAmount,
+            originalTip = builderServiceTxnDetails?.tip,
+            originalCashback = builderServiceTxnDetails?.cashback,
+            originalCGST = builderServiceTxnDetails?.originalCGST,
+            originalSGST = builderServiceTxnDetails?.originalSGST,
+            originalTtlAmount = builderServiceTxnDetails?.originalTtlAmount,
+            originalTxnRef = builderServiceTxnDetails?.originalTxnRef,
+            originalHostTxnRef = builderServiceTxnDetails?.originalHostTxnRef
 
         )
     }
 
-    fun createPre_AuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): PreAuthRequest {
+    fun createPre_AuthRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): PreAuthRequest {
         return PreAuthRequest(
 
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            cashierId = paymentServiceTxnDetails?.loginId,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel,
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            cashierId = builderServiceTxnDetails?.loginId,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel,
 
 
-            batchId = paymentServiceTxnDetails?.batchId,
-            invoiceNo = paymentServiceTxnDetails?.invoiceNo,
-            purchaseOrderNo = paymentServiceTxnDetails?.purchaseOrderNo,
-            dateTime = paymentServiceTxnDetails?.dateTime,
-            timeZone = paymentServiceTxnDetails?.timeZone,
-            txnType = paymentServiceTxnDetails?.txnType,
-            accountType = paymentServiceTxnDetails?.accountType,
-            txnCurrencyCode = paymentServiceTxnDetails?.txnCurrencyCode,
-            txnAmount = paymentServiceTxnDetails?.txnAmount,
+            batchId = builderServiceTxnDetails?.batchId,
+            invoiceNo = builderServiceTxnDetails?.invoiceNo,
+            purchaseOrderNo = builderServiceTxnDetails?.purchaseOrderNo,
+            dateTime = builderServiceTxnDetails?.dateTime,
+            timeZone = builderServiceTxnDetails?.timeZone,
+            txnType = builderServiceTxnDetails?.txnType,
+            accountType = builderServiceTxnDetails?.accountType,
+            txnCurrencyCode = builderServiceTxnDetails?.txnCurrencyCode,
+            txnAmount = builderServiceTxnDetails?.txnAmount,
 
 
-            cardEntryMode = paymentServiceTxnDetails?.cardEntryMode,
-            cardMaskedPan = paymentServiceTxnDetails?.cardMaskedPan,
-            cardBrand = paymentServiceTxnDetails?.cardBrand,
-            cardAuthMethod = paymentServiceTxnDetails?.cardAuthMethod,
-            cardAuthResult = paymentServiceTxnDetails?.cardAuthResult,
-            cardCountryCode = paymentServiceTxnDetails?.cardCountryCode,
-            cardLanguagePref = paymentServiceTxnDetails?.cardLanguagePref,
-            emvData = paymentServiceTxnDetails?.emvData
+            cardEntryMode = builderServiceTxnDetails?.cardEntryMode,
+            cardMaskedPan = builderServiceTxnDetails?.cardMaskedPan,
+            cardBrand = builderServiceTxnDetails?.cardBrand,
+            cardAuthMethod = builderServiceTxnDetails?.cardAuthMethod,
+            cardAuthResult = builderServiceTxnDetails?.cardAuthResult,
+            cardCountryCode = builderServiceTxnDetails?.cardCountryCode,
+            cardLanguagePref = builderServiceTxnDetails?.cardLanguagePref,
+            emvData = builderServiceTxnDetails?.emvData
         )
     }
 
-    fun createReversalRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?): ReversalReqeust {
+    fun createReversalRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ReversalReqeust {
         return ReversalReqeust(
-            merchantId = paymentServiceTxnDetails?.merchantId,
-            terminalId = paymentServiceTxnDetails?.terminalId,
-            cashierId = paymentServiceTxnDetails?.loginId,
-            deviceSN = paymentServiceTxnDetails?.deviceSN,
-            deviceMake = paymentServiceTxnDetails?.deviceMake,
-            deviceModel = paymentServiceTxnDetails?.deviceModel,
+            merchantId = builderServiceTxnDetails?.merchantId,
+            terminalId = builderServiceTxnDetails?.terminalId,
+            cashierId = builderServiceTxnDetails?.loginId,
+            deviceSN = builderServiceTxnDetails?.deviceSN,
+            deviceMake = builderServiceTxnDetails?.deviceMake,
+            deviceModel = builderServiceTxnDetails?.deviceModel,
 
 
-            batchId = paymentServiceTxnDetails?.batchId,
-            invoiceNo = paymentServiceTxnDetails?.invoiceNo,
-            purchaseOrderNo = paymentServiceTxnDetails?.purchaseOrderNo,
-            dateTime = paymentServiceTxnDetails?.dateTime,
-            timeZone = paymentServiceTxnDetails?.timeZone,
-            txnType = paymentServiceTxnDetails?.txnType,
-            accountType = paymentServiceTxnDetails?.accountType,
-            txnCurrencyCode = paymentServiceTxnDetails?.txnCurrencyCode,
-            txnAmount = paymentServiceTxnDetails?.txnAmount,
-            tip = paymentServiceTxnDetails?.tip,
-            cashback = paymentServiceTxnDetails?.cashback,
-            CGST = paymentServiceTxnDetails?.CGST,
-            SGST = paymentServiceTxnDetails?.SGST,
-            ttlAmount = paymentServiceTxnDetails?.ttlAmount,
+            batchId = builderServiceTxnDetails?.batchId,
+            invoiceNo = builderServiceTxnDetails?.invoiceNo,
+            purchaseOrderNo = builderServiceTxnDetails?.purchaseOrderNo,
+            dateTime = builderServiceTxnDetails?.dateTime,
+            timeZone = builderServiceTxnDetails?.timeZone,
+            txnType = builderServiceTxnDetails?.txnType,
+            accountType = builderServiceTxnDetails?.accountType,
+            txnCurrencyCode = builderServiceTxnDetails?.txnCurrencyCode,
+            txnAmount = builderServiceTxnDetails?.txnAmount,
+            tip = builderServiceTxnDetails?.tip,
+            cashback = builderServiceTxnDetails?.cashback,
+            CGST = builderServiceTxnDetails?.CGST,
+            SGST = builderServiceTxnDetails?.SGST,
+            ttlAmount = builderServiceTxnDetails?.ttlAmount,
 
 
-            cardEntryMode = paymentServiceTxnDetails?.cardEntryMode,
-            cardMaskedPan = paymentServiceTxnDetails?.cardMaskedPan,
-            cardBrand = paymentServiceTxnDetails?.cardBrand,
-            cardAuthMethod = paymentServiceTxnDetails?.cardAuthMethod,
-            cardAuthResult = paymentServiceTxnDetails?.cardAuthResult,
-            cardCountryCode = paymentServiceTxnDetails?.cardCountryCode,
-            cardLanguagePref = paymentServiceTxnDetails?.cardLanguagePref,
-            emvData = paymentServiceTxnDetails?.emvData,
+            cardEntryMode = builderServiceTxnDetails?.cardEntryMode,
+            cardMaskedPan = builderServiceTxnDetails?.cardMaskedPan,
+            cardBrand = builderServiceTxnDetails?.cardBrand,
+            cardAuthMethod = builderServiceTxnDetails?.cardAuthMethod,
+            cardAuthResult = builderServiceTxnDetails?.cardAuthResult,
+            cardCountryCode = builderServiceTxnDetails?.cardCountryCode,
+            cardLanguagePref = builderServiceTxnDetails?.cardLanguagePref,
+            emvData = builderServiceTxnDetails?.emvData,
 
 
-            originalTxnType = paymentServiceTxnDetails?.originalTxnType,
-            originalTxnAmount = paymentServiceTxnDetails?.originalTxnAmount,
-            originalTip = paymentServiceTxnDetails?.originalTip,
-            originalCashback = paymentServiceTxnDetails?.originalCashback,
-            originalCGST = paymentServiceTxnDetails?.originalCGST,
-            originalSGST = paymentServiceTxnDetails?.originalSGST,
-            originalTtlAmount = paymentServiceTxnDetails?.originalTtlAmount,
-            originalTxnRef = paymentServiceTxnDetails?.originalTxnRef
+            originalTxnType = builderServiceTxnDetails?.originalTxnType,
+            originalTxnAmount = builderServiceTxnDetails?.originalTxnAmount,
+            originalTip = builderServiceTxnDetails?.originalTip,
+            originalCashback = builderServiceTxnDetails?.originalCashback,
+            originalCGST = builderServiceTxnDetails?.originalCGST,
+            originalSGST = builderServiceTxnDetails?.originalSGST,
+            originalTtlAmount = builderServiceTxnDetails?.originalTtlAmount,
+            originalTxnRef = builderServiceTxnDetails?.originalTxnRef
         )
     }
 }

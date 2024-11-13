@@ -9,11 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository

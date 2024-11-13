@@ -1,10 +1,13 @@
 package com.analogics.paymentservicecore.repository.apiService.rkl
 
+import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.builder_core.model.BuilderServiceTxnDetails
 import com.analogics.builder_core.repository.BuilderServiceRepositoryLyra
 import com.analogics.builder_core.requestBuilder.ApiRequestBuilderLyra
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.handler.SecureKeyHandler
 import javax.inject.Inject
@@ -28,14 +31,26 @@ class RklRequestRepository@Inject constructor(
                 object : IBuilderServiceResponseListenerLyra{
                     override fun onBuilderSuccess(response: ByteArray) {
                         /* Parse Response Packet to Object */
+                        var keyInjectResult = false
                         var resPaymentServiceTxnDetails = apiRequestBuilder.parseRklResponse(response)
                         resPaymentServiceTxnDetails.let {
-                            var ipek = SecureKeyHandler.decryptRSA(it.encryptedIpek,paymentServiceTxnDetails?.devicePrivateKey)
-                            PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv)
+                            if(it.encryptedIpek?.isNotEmpty()==true && it.ksn?.isNotEmpty()==true && it.kcv?.isNotEmpty()==true) {
+                                var ipek = SecureKeyHandler.decryptRSA(
+                                    it.encryptedIpek,
+                                    paymentServiceTxnDetails?.devicePrivateKey
+                                )
+                                keyInjectResult =
+                                    PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv)
+                            }
                         }
 
                         paymentServiceTxnDetails?.let {
                             it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+
+                            if(it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED && keyInjectResult == true)
+                                it.txnStatus = TxnStatus.APPROVED.toString()
+                            else
+                                it.txnStatus = TxnStatus.DECLINED.toString()
 
                             onAPIServiceResponse(it)
                         }
@@ -45,7 +60,7 @@ class RklRequestRepository@Inject constructor(
                         onAPIServiceResponse(ApiServiceError(error.toString()))
                     }
                 },
-                apiRequestBuilder.createRklRequest(paymentServiceTxnDetails)
+                apiRequestBuilder.createRklRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
             )
         }
 }

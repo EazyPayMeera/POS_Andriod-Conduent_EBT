@@ -1,6 +1,6 @@
 package com.analogics.paymentservicecore.listeners.responseListener
 
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 
 interface IApiServiceResponseListener {

@@ -7,11 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.constants.BuilderConstants
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -105,7 +106,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-        if (paymentServiceTxnDetails.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+        if (paymentServiceTxnDetails.txnStatus == TxnStatus.APPROVED.toString()) {
             activateDevice()
         } else {
             CustomDialogBuilder.composeAlertDialog(

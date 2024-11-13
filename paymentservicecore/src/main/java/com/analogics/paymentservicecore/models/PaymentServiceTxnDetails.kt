@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model
+package com.analogics.paymentservicecore.model
 
 import com.google.gson.annotations.SerializedName
 
@@ -15,7 +15,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("authAmount") var authAmount: String? = null,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
-    @SerializedName("hostAuthResult") var hostAuthResult: HostAuthResult? = null,
+    @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
@@ -61,12 +61,10 @@ data class PaymentServiceTxnDetails(
     @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
     @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
     @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
+
+    /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
-
-    /* Original Txn data for Void Refund Capture */
     @SerializedName("originalTxnRef") var originalTxnRef: String? = null,
-
-    /* Original Txn data for Void Refund Capture */
     @SerializedName("originalTxnType") var originalTxnType: String? = null,
     @SerializedName("originalTxnAmount") var originalTxnAmount: String? = null,
     @SerializedName("originalTip") var originalTip: String? = null,
@@ -76,10 +74,17 @@ data class PaymentServiceTxnDetails(
     @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
     @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null,
 
+    /* Other flags */
+    @SerializedName("isFallback")       var isFallback: Boolean? = false,
+    @SerializedName("isCaptured")       var isCaptured: Boolean? = false,
+    @SerializedName("isVoided")         var isVoided: Boolean? = false,
+    @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
+    @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false,
+
     /* Remote Key Injection. Only to be used in Payment Service */
-    var devicePublicKey: String? = null,
-    var devicePrivateKey: String? = null,
-    var encryptedIpek: String? = null,
-    var ksn: String? = null,
-    var kcv: String? = null
+    @SerializedName("devicePublicKey")  var devicePublicKey: String? = null,
+    @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,
+    @SerializedName("encryptedIpek")    var encryptedIpek: String? = null,
+    @SerializedName("ksn")              var ksn: String? = null,
+    @SerializedName("kcv")              var kcv: String? = null
 )

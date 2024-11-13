@@ -19,6 +19,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
 
+    /* Host Response */
     @SerializedName("authAmount") var authAmount: Double? = 0.00,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
@@ -35,6 +36,15 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
 
     /* Card Details */
+    @SerializedName("CardEntryMode")    var cardEntryMode: String? = null,
+    @SerializedName("CardMaskedPan")    var cardMaskedPan: String? = null,
+    @SerializedName("CardBrand")        var cardBrand: String? = null,
+    @SerializedName("CardAuthMethod")   var cardAuthMethod: String? = null,
+    @SerializedName("CardAuthResult")   var cardAuthResult: String? = null,
+    @SerializedName("CardCountryCode")  var cardCountryCode: String? = null,
+    @SerializedName("CardLanguagePref") var cardLanguagePref: String? = null,
+    @SerializedName("ReceiptEmvData")   var receiptEmvData: String? = null,
+    @SerializedName("SignatureData")    var signatureData: String? = null,
     @SerializedName("emvData") var emvData: String? = null,
 
     @SerializedName("txnType") var txnType:TxnType?=null,
@@ -52,7 +62,22 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE
+    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE,
 
+    /* Original Txn data for Void Refund Capture */
+    @SerializedName("originalTxnType")  var originalTxnType: String? = null,
+    @SerializedName("originalTxnAmount")    var originalTxnAmount: String? = null,
+    @SerializedName("originalTip")      var originalTip: String? = null,
+    @SerializedName("originalCashback") var originalCashback: String? = null,
+    @SerializedName("originalCGST")     var originalCGST: String? = null,
+    @SerializedName("originalSGST")     var originalSGST: String? = null,
+    @SerializedName("originalTtlAmount")    var originalTtlAmount: String? = null,
+    @SerializedName("originalTxnRef")   var originalTxnRef: String? = null,
 
+    /* Other flags */
+    @SerializedName("isFallback")       var isFallback: Boolean? = false,
+    @SerializedName("isCaptured")       var isCaptured: Boolean? = false,
+    @SerializedName("isVoided")         var isVoided: Boolean? = false,
+    @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
+    @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false
 ):Serializable

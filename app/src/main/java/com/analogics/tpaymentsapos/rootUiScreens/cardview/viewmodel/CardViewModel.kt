@@ -9,11 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.constants.EmvConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TransConfig
@@ -207,7 +207,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                         onResponse: (HashMap<String, String>) -> Unit
                     ) {
                         var responseEmvTags =
-                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
+                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE)  // Unable to go online, Decline
 
                         viewModelScope.launch {
                             apiServiceRepository.apiServiceRequestOnlineAuth(
