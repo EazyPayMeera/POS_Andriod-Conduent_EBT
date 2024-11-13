@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
+import com.analogics.paymentservicecore.constants.EmvConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
@@ -100,98 +101,111 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                 transConfig = getTransConfig(objRootAppPaymentDetails),
                 iEmvServiceResponseListener = object :
                 IEmvServiceResponseListener {
-                @SuppressLint("DefaultLocale")
-                override fun onEmvServiceResponse(response: Any) {
-                    when (response) {
-                        is EmvServiceResult.TransResult -> {
-                            if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
-                                        response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
-                            ) {
-                                if(isBatchPresent.value.isEmpty())
-                                {
-                                    Log.d("Batch Id","Initial Batch Id Inserted")
-                                    sharedViewModel.batchEntity.batchId = "000001"
-                                    sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
-                                    sharedViewModel.batchEntity.batchStatus = "open"
-                                    insertBatchData(sharedViewModel.batchEntity)
-                                }
-                                else
-                                {
-                                    Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
-                                    if(_openBatch.value.isNullOrEmpty())
-                                    {
-                                        val newBatchId = _lastBatch.value?.toIntOrNull()?.let { String.format("%06d", it + 1) }
-                                        Log.d("Batch Id", "Last batch ID Present: $_lastBatch")
-                                        Log.d("Batch Id", "Generated new batch ID: $newBatchId")
-                                        sharedViewModel.batchEntity.batchId = newBatchId
-                                        sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
+                    @SuppressLint("DefaultLocale")
+                    override fun onEmvServiceResponse(response: Any) {
+                        when (response) {
+                            is EmvServiceResult.TransResult -> {
+                                if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
+                                            response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
+                                ) {
+                                    if (isBatchPresent.value.isEmpty()) {
+                                        Log.d("Batch Id", "Initial Batch Id Inserted")
+                                        sharedViewModel.batchEntity.batchId = "000001"
+                                        sharedViewModel.objRootAppPaymentDetail.batchId =
+                                            sharedViewModel.batchEntity.batchId
                                         sharedViewModel.batchEntity.batchStatus = "open"
                                         insertBatchData(sharedViewModel.batchEntity)
+                                    } else {
+                                        Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
+                                        if (_openBatch.value.isNullOrEmpty()) {
+                                            val newBatchId = _lastBatch.value?.toIntOrNull()
+                                                ?.let { String.format("%06d", it + 1) }
+                                            Log.d("Batch Id", "Last batch ID Present: $_lastBatch")
+                                            Log.d("Batch Id", "Generated new batch ID: $newBatchId")
+                                            sharedViewModel.batchEntity.batchId = newBatchId
+                                            sharedViewModel.objRootAppPaymentDetail.batchId =
+                                                sharedViewModel.batchEntity.batchId
+                                            sharedViewModel.batchEntity.batchStatus = "open"
+                                            insertBatchData(sharedViewModel.batchEntity)
+                                        } else {
+                                            Log.d(
+                                                "Batch Id",
+                                                "Open Batch Id Found and set same Batch Id"
+                                            )
+                                            sharedViewModel.objRootAppPaymentDetail.batchId =
+                                                _openBatch.value
+                                        }
                                     }
-                                    else {
-                                        Log.d("Batch Id", "Open Batch Id Found and set same Batch Id")
-                                        sharedViewModel.objRootAppPaymentDetail.batchId = _openBatch.value
-                                    }
-                                }
-                                navigateToApprovalScreen(navHostController)
-                            }
-                            else {
-                                if(isBatchPresent.value.isEmpty())
-                                {
-                                    Log.d("Batch Id","Initial Batch Id Inserted")
-                                    sharedViewModel.batchEntity.batchId = "000001"
-                                    sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
-                                    sharedViewModel.batchEntity.batchStatus = "open"
-                                    insertBatchData(sharedViewModel.batchEntity)
-                                }
-                                else
-                                {
-                                    Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
-                                    if(_openBatch.value.isNullOrEmpty())
-                                    {
-                                        val newBatchId = _lastBatch.value?.toIntOrNull()?.let { String.format("%06d", it + 1) }
-                                        Log.d("Batch Id", "Last batch ID Present: $_lastBatch")
-                                        Log.d("Batch Id", "Generated new batch ID: $newBatchId")
-                                        sharedViewModel.batchEntity.batchId = newBatchId
-                                        sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
+                                    navigateToApprovalScreen(navHostController)
+                                } else {
+                                    if (isBatchPresent.value.isEmpty()) {
+                                        Log.d("Batch Id", "Initial Batch Id Inserted")
+                                        sharedViewModel.batchEntity.batchId = "000001"
+                                        sharedViewModel.objRootAppPaymentDetail.batchId =
+                                            sharedViewModel.batchEntity.batchId
                                         sharedViewModel.batchEntity.batchStatus = "open"
                                         insertBatchData(sharedViewModel.batchEntity)
+                                    } else {
+                                        Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
+                                        if (_openBatch.value.isNullOrEmpty()) {
+                                            val newBatchId = _lastBatch.value?.toIntOrNull()
+                                                ?.let { String.format("%06d", it + 1) }
+                                            Log.d("Batch Id", "Last batch ID Present: $_lastBatch")
+                                            Log.d("Batch Id", "Generated new batch ID: $newBatchId")
+                                            sharedViewModel.batchEntity.batchId = newBatchId
+                                            sharedViewModel.objRootAppPaymentDetail.batchId =
+                                                sharedViewModel.batchEntity.batchId
+                                            sharedViewModel.batchEntity.batchStatus = "open"
+                                            insertBatchData(sharedViewModel.batchEntity)
+                                        } else {
+                                            Log.d(
+                                                "Batch Id",
+                                                "Open Batch Id Found and set same Batch Id"
+                                            )
+                                            sharedViewModel.objRootAppPaymentDetail.batchId =
+                                                _openBatch.value
+                                        }
                                     }
-                                    else
-                                    {
-                                        Log.d("Batch Id", "Open Batch Id Found and set same Batch Id")
-                                        sharedViewModel.objRootAppPaymentDetail.batchId = _openBatch.value
-                                    }
+                                    navigateToDeclinedScreen(navHostController)
                                 }
-                                navigateToDeclinedScreen(navHostController)
                             }
-                        }
 
-                        is EmvServiceResult.CardCheckResult -> {
-                            when (response.status) {
-                                EmvServiceResult.CardCheckStatus.CARD_INSERTED,
-                                EmvServiceResult.CardCheckStatus.CARD_SWIPED,
-                                EmvServiceResult.CardCheckStatus.CARD_TAPPED -> {
-                                    emvInProgress.value = true
-                                    showProgressVar.value = true
-                                    displayInfoMsgId.value = emvCardCheckStatusToMsgId(response.status as EmvServiceResult.CardCheckStatus)
-                                }
-                                else -> {
-                                    emvInProgress.value = false
-                                    showProgressVar.value = false
-                                    displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.NONE
+                            is EmvServiceResult.CardCheckResult -> {
+                                when (response.status) {
+                                    EmvServiceResult.CardCheckStatus.CARD_INSERTED,
+                                    EmvServiceResult.CardCheckStatus.CARD_SWIPED,
+                                    EmvServiceResult.CardCheckStatus.CARD_TAPPED -> {
+                                        emvInProgress.value = true
+                                        showProgressVar.value = true
+                                        displayInfoMsgId.value =
+                                            emvCardCheckStatusToMsgId(response.status as EmvServiceResult.CardCheckStatus)
+                                    }
+
+                                    else -> {
+                                        emvInProgress.value = false
+                                        showProgressVar.value = false
+                                        displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.NONE
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                override fun onEmvServiceDisplayMessage(
-                    displayMsgId: EmvServiceResult.DisplayMsgId
-                ) {
+                    override fun onEmvServiceDisplayMessage(
+                        displayMsgId: EmvServiceResult.DisplayMsgId
+                    ) {
 
-                }
-            })
+                    }
+
+                    override fun onEmvServiceRequestOnline(
+                        emvTags: HashMap<String, String>,
+                        onResponse: (HashMap<String, String>) -> Unit
+                    ) {
+                        var responseEmvTags =
+                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE)  // Unable to go online, Decline
+                        onResponse(responseEmvTags)
+                    }
+                })
         }
     }
 

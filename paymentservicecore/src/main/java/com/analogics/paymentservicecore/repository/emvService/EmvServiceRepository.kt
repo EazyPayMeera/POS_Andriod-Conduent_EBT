@@ -154,6 +154,11 @@ class EmvServiceRepository @Inject constructor() :
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(sdkToEmvDisplayMsgId(displayMsgId))
     }
 
+    override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit)
+    {
+        iEmvServiceResponseListener.onEmvServiceRequestOnline(emvTags, onResponse)
+    }
+
     override fun initPaymentSDK(
         termConfig: TermConfig?,
         aidConfig: String?,

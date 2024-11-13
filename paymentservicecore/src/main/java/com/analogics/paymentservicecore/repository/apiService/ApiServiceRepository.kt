@@ -15,10 +15,8 @@ import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseR
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.rkl.RklRequestRepository
-import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import javax.inject.Inject
-import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ApiServiceRepository @Inject constructor(
@@ -40,6 +38,18 @@ class ApiServiceRepository @Inject constructor(
     override fun getPosConfig(): PosConfig {
         return posConfig.loadFromPrefs()
     }
+
+     override suspend fun apiServiceRequestOnlineAuth(
+         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+         iApiServiceResponseListener: IApiServiceResponseListener
+     )
+     {
+        when(paymentServiceTxnDetails?.txnType.toString())
+        {
+            TxnType.PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            else -> iApiServiceResponseListener.onApiError(ApiServiceError(errorMessage = "Transaction Not Supported"))
+        }
+     }
 
     override suspend fun apiServiceRefund(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,

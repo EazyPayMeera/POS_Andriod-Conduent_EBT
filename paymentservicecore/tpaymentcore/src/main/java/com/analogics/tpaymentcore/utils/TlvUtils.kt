@@ -5,7 +5,21 @@ import kotlin.experimental.and
 
 class TlvUtils {
     val TAG_TLV_UTILS = "TLV_UTILS"
-    val tlvMap = HashMap<String, String>()
+    var tlvMap = HashMap<String, String>()
+
+    constructor()
+    {
+    }
+
+    constructor(tlvMap : HashMap<String, String>)
+    {
+        this.tlvMap = tlvMap
+    }
+
+    constructor(tlvString : String)
+    {
+        parseTlv(tlvString)
+    }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun addTagValAscii(tag: String, value: String?, minLen: Int=0, maxLen: Int=255) : TlvUtils {
