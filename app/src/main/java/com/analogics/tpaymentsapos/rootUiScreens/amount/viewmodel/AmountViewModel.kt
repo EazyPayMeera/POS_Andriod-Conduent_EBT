@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -31,7 +30,7 @@ class AmountViewModel : ViewModel() {
 
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         calculateTotal(sharedViewModel)
-        when(TxnInfo.txnType) {
+        when(sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.route)
             }

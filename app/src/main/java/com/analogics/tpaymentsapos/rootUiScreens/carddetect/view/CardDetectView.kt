@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -90,7 +89,7 @@ fun CardDetectView(navHostController: NavHostController) {
                             modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
                         ) {
                             Text(
-                                text = if (TxnInfo.txnType == TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
+                                text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
                                     id = R.string.total_amt
                                 ),
                                 fontSize = MaterialTheme.dimens.SP_23_CompactMedium,

@@ -24,8 +24,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
-import com.analogics.paymentservicecore.models.TxnInfo.txnType
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -65,7 +63,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = when(txnType){
+                    text = when(sharedViewModel.objRootAppPaymentDetail.txnType){
                         TxnType.REFUND -> stringResource(R.string.refund_amt)
                         TxnType.PREAUTH -> stringResource(R.string.auth_amt)
                         TxnType.AUTHCAP -> stringResource(id = R.string.authcap_amt)
@@ -82,7 +80,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
                 // Image View
                 ImageView(
-                    imageId = if(TxnInfo.txnType==TxnType.VOID || TxnInfo.txnType==TxnType.REFUND) R.drawable.void_amt else R.drawable.card,
+                    imageId = if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID || sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.REFUND) R.drawable.void_amt else R.drawable.card,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
@@ -101,7 +99,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     amount = false,
                 )
 
-                if (TxnInfo.txnType==TxnType.VOID) {
+                if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                     TextView(
                         text = "",
@@ -134,11 +132,11 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     }
                 }
 
-                if (TxnInfo.txnType == TxnType.AUTHCAP || TxnInfo.txnType == TxnType.REFUND) {
+                if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP ||sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.original_amount) + "20.00",
+                        stringResource(id = R.string.original_amount) + "", //TODO: Remove hardcoding
                         stringResource(id = R.string.date)
                     ).forEach {
                         TextView(
