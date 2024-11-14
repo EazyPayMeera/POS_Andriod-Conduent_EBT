@@ -3,6 +3,7 @@ package com.analogics.builder_core.model
 import com.google.gson.annotations.SerializedName
 
 data class BuilderServiceTxnDetails(
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,

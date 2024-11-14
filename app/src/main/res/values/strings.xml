@@ -340,6 +340,9 @@
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA Failed</string>
     <string name="emv_msg_id_err_pure_cash_card_no_online">PURE Cash Card Not Allowed for Online Transactions</string>
 
+    <!-- EMV Display Messages (Errors)-->
+    <string name="emv_msg_id_processing_online">Processing Online</string>
+
     <!--Receipt Details -->
     <string name="header1_placeholder">Enter Header 1</string>
     <string name="header2_placeholder">Enter Header 2</string>

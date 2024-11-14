@@ -79,7 +79,10 @@ sealed class EmvServiceResult(
         ERR_GET_KERNEL_DATA_FAILED,
         ERR_QPBOC_APPLICATION,
         ERR_QPBOC_FDDA_FAILED,
-        ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS
+        ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS,
+
+        /* Progress Indicator */
+        PROCESSING_ONLINE
     }
 
     class InitResult(status: InitStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId)

@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.addClerk.viewModel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -35,6 +36,7 @@ class AddClerkViewModel @Inject constructor(
         get() = userCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank() && pwdCredentials.value.length>=AppConstants.MIN_LENGTH_PASSWORD && cnfPwdCredentials.value.isNotBlank() && (pwdCredentials.value == cnfPwdCredentials.value)
     var userType = mutableStateOf(UserType.CLERK)
     val allowClerks = mutableStateOf(false)
+    lateinit var focusRequester : FocusRequester
 
     fun onEmailChange(newEmail: String) {
         userCredentials.value = newEmail
@@ -81,7 +83,7 @@ class AddClerkViewModel @Inject constructor(
                         CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_already_exists))
                     }?:dbRepository.insertUser(userEntity).let {
                         CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.clerk_register_title), subtitle = navHost.context.resources.getString(R.string.clerk_registration_success))
-                        onLoad()
+                        onLoad(focusRequester)
                     }
                 }
                 else{
@@ -99,8 +101,9 @@ class AddClerkViewModel @Inject constructor(
         }
     }
 
-    fun onLoad()
+    fun onLoad(focusRequester: FocusRequester)
     {
+        this.focusRequester = focusRequester
         viewModelScope.launch{
             dbRepository.getUserCount().takeIf { it>0 }?.let {
                 userType.value = UserType.CLERK
@@ -111,9 +114,10 @@ class AddClerkViewModel @Inject constructor(
                 allowClerks.value = false
                 setDoneBtnState(false)
             }
-            userCredentials.value = ""
             pwdCredentials.value = ""
             cnfPwdCredentials.value = ""
+            userCredentials.value = ""
+            focusRequester.requestFocus()
         }
     }
 }

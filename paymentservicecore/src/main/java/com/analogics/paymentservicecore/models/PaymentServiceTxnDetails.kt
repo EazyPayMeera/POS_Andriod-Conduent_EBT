@@ -3,6 +3,7 @@ package com.analogics.paymentservicecore.model
 import com.google.gson.annotations.SerializedName
 
 data class PaymentServiceTxnDetails(
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,
