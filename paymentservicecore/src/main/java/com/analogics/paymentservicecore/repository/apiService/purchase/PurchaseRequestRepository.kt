@@ -41,11 +41,11 @@ class PurchaseRequestRepository @Inject constructor(
         {
             builderServiceRepositoryLyra.networkServiceRequest(object : IBuilderServiceResponseListenerLyra{
                 override fun onBuilderSuccess(response: ByteArray) {
-                    TODO("Not yet implemented")
+
                 }
 
                 override fun onBuilderFailure(error: Any) {
-                    TODO("Not yet implemented")
+                    
                 }
 
             },

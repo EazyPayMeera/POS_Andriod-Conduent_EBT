@@ -58,6 +58,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
     @SerializedName("cardBrand") var cardBrand: String? = null,
+    @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
     @SerializedName("cardAuthMethod") var cardAuthMethod: String? = null,
     @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
     @SerializedName("cardCountryCode") var cardCountryCode: String? = null,

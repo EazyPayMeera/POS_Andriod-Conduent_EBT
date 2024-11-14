@@ -35,17 +35,6 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
 
-var currentNumber = 1
-
-fun calculateTax(amount: Double): Double {
-    return amount * 0.15
-}
-
-fun calculateTip(amount: Double, tipPercentage: Int): Double {
-    return amount * (tipPercentage / 100.0)
-}
-
-
 fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmount: Double, igstAmount: Double): Double {
     return transactionAmount + tipAmount + sgstAmount + igstAmount
 }

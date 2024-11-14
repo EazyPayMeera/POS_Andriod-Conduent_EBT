@@ -12,7 +12,9 @@ object BuilderConstants {
     const val ISO_CONFIG_PATH = "assets/iso_config.xml"
 
     /* MTI Values */
-    const val MTI_NETWORK = 0x0800
+    const val MTI_AUTH_REQ = 0x0100
+    const val MTI_SALE_REQ = 0x0200
+    const val MTI_NETWORK_REQ = 0x0800
 
     /* TPDU */
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x03.toByte(),0x00.toByte(),0x00.toByte())
@@ -20,8 +22,13 @@ object BuilderConstants {
     /* Processing Code */
     const val ISO_FIELD_PROC_CODE = 3
     const val ISO_FIELD_PROC_CODE_LENGTH = 6
+    const val PROC_CODE_SALE = 0
     const val PROC_CODE_RKL_PART_SN = 990380
     const val PROC_CODE_RKL_FULL_SN = 991380
+
+    /* AMOUNT */
+    const val ISO_FIELD_AMOUNT = 4
+    const val ISO_FIELD_AMOUNT_LENGTH = 12
 
     /* STAN */
     const val ISO_FIELD_STAN = 11
@@ -35,11 +42,35 @@ object BuilderConstants {
     const val ISO_FIELD_DATE = 13
     const val ISO_FIELD_DATE_LENGTH = 4
 
+    /* POS Entry Mode */
+    const val ISO_FIELD_POS_ENTRY_MODE = 22
+    const val ISO_FIELD_POS_ENTRY_MODE_LENGTH = 3
+
+    /* POS Entry Mode */
+    const val ISO_FIELD_PAN_SEQ_NO = 23
+    const val ISO_FIELD_PAN_SEQ_NO_LENGTH = 3
+
     /* NII */
     const val ISO_FIELD_NII = 24
     const val ISO_FIELD_NII_LENGTH = 3
 
-    /* NII */
+    /* POS Condition Code */
+    const val ISO_FIELD_POS_CONDITION_CODE = 25
+    const val ISO_FIELD_POS_CONDITION_CODE_LENGTH = 2
+
+    /* Track 2 Data */
+    const val ISO_FIELD_TRACK2_DATA = 35
+    const val ISO_FIELD_TRACK2_DATA_MAX_LEN = 40
+
+    /* RRN */
+    const val ISO_FIELD_RRN = 37
+    const val ISO_FIELD_RRN_LENGTH = 12
+
+    /* Auth Code */
+    const val ISO_FIELD_AUTH_CODE = 38
+    const val ISO_FIELD_AUTH_CODE_LENGTH = 6
+
+    /* Response Code */
     const val ISO_FIELD_RESP_CODE = 39
     const val ISO_FIELD_RESP_CODE_LENGTH = 2
 
@@ -55,8 +86,30 @@ object BuilderConstants {
     const val ISO_FIELD_ADDL_DATA_KSN = 48
     const val ISO_FIELD_KSN_TAG = "4801"
 
+    /* Currency Code */
+    const val ISO_FIELD_CURRENCY_CODE_TXN = 49
+    const val ISO_FIELD_CURRENCY_CODE_LEN = 3
+
+    /* Pin Block */
+    const val ISO_FIELD_PIN_BLOCK = 52
+    const val ISO_FIELD_PIN_BLOCK_LENGTH = 8
+
+    /* ICC Related Data */
+    const val ISO_FIELD_ICC_DATA = 55
+    const val ISO_FIELD_ICC_DATA_MAX_LENGTH = 255
+
     /* TERM SR NO */
     const val ISO_FIELD_TERM_SR_NO = 60
+
+    /* Batch Number */
+    const val ISO_FIELD_PVT_USE_BATCH = 60
+    const val ISO_FIELD_PVT_USE_BATCH_MAX_LENGTH = 999
+    const val ISO_FIELD_PVT_USE_BATCH_LENGTH = 6
+    const val ISO_FIELD_PVT_USE_BATCH_LENGTH_LENGTH = 2
+
+    /* Invoice Number */
+    const val ISO_FIELD_INVOICE_NUMBER = 62
+    const val ISO_FIELD_INVOICE_NUMBER_LENGTH = 6
 
     /* WORKING KEY */
     const val ISO_FIELD_WORKING_KEY = 62
