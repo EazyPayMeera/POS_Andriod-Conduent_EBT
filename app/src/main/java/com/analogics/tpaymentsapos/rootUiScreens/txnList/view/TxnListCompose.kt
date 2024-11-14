@@ -417,6 +417,13 @@ fun TransactionItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                TextView(
+                    transaction.txnType.toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Roboto,
+                    modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
+                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
+                )
                 transaction.dateTime.toString().let {
                     TextView(
                         it,
@@ -425,13 +432,6 @@ fun TransactionItem(
                         fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
                     )
                 }
-                TextView(
-                    transaction.txnType.toString(),
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = Roboto,
-                    modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
-                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
-                )
             }
 
             // Create a Row for amount and icon
@@ -446,14 +446,23 @@ fun TransactionItem(
                 }
 
                 // Amount Text
-                transaction.ttlAmount?.let { formatAmount(it) }?.let {
+                Column(horizontalAlignment = Alignment.End) {  // Use Column to stack amount and additional text vertically
+                    transaction.ttlAmount?.let { formatAmount(it) }?.let {
+                        TextView(
+                            text = it,
+                            color = amountColor,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = Roboto,
+                            fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_17_CompactMedium,
+                            modifier = Modifier.padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium) // Optional spacing before the icon
+                        )
+                    }
+
                     TextView(
-                        text = it,
-                        color = amountColor,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Roboto,
-                        fontSize =androidx.compose.material3.MaterialTheme.dimens.SP_17_CompactMedium,
-                        modifier = Modifier.padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium) // Optional spacing before the icon
+                        transaction.txnStatus.toString(),
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
+                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
                     )
                 }
 
