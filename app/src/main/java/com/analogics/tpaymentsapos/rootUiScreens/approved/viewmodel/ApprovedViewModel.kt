@@ -359,20 +359,18 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         }
     }
-    override fun onApiSuccess(response: Any) {
-        when (response) {
-            is ObjRootAppPaymentDetails -> {
-                objRoot.value = response
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
+                objRoot.value = it
                 updateTxnData(objRoot.value)
-            }
         }
     }
 
-    override fun onApiError(apiServiceError: ApiServiceError) {
+    override fun onApiServiceError(apiServiceError: ApiServiceError) {
         userApiErrorHolder.value = apiServiceError
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,

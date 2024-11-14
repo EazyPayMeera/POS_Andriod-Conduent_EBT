@@ -11,10 +11,11 @@ data class PaymentServiceTxnDetails(
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
 
+    /* Host Authorization */
     @SerializedName("authAmount") var authAmount: String? = null,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
-    @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
+    @SerializedName("hostAuthResult") var hostAuthResult: HostAuthResult? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
@@ -23,7 +24,9 @@ data class PaymentServiceTxnDetails(
     @SerializedName("ttlPreAuthAmount") var ttlPreAuthAmount:String? = null,
     @SerializedName("ttlAuthCapAmount") var ttlAuthCapAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
+    @SerializedName("refundableAmount") var refundableAmount: String? = null,
 
+    /* Batch Details */
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
     @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
     @SerializedName("ttlVoidCount") var ttlVoidCount:Int? = null,
@@ -31,7 +34,6 @@ data class PaymentServiceTxnDetails(
     @SerializedName("ttlAuthCapCount") var ttlAuthCapCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
 
-    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
 

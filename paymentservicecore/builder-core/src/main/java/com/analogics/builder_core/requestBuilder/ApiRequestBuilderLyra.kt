@@ -324,7 +324,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             cardMaskedPan = paymentServiceTxnDetails?.cardMaskedPan,
             cardBrand = paymentServiceTxnDetails?.cardBrand,
             cardAuthMethod = paymentServiceTxnDetails?.cardAuthMethod,
-            cardAuthResult = paymentServiceTxnDetails?.hostAuthResult,
+            cardAuthResult = paymentServiceTxnDetails?.cardAuthResult,
             cardCountryCode = paymentServiceTxnDetails?.cardCountryCode,
             cardLanguagePref = paymentServiceTxnDetails?.cardLanguagePref,
             emvData = paymentServiceTxnDetails?.emvData,

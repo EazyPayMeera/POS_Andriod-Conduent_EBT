@@ -46,7 +46,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         {
             var result = false
             try {
-
                 var termTlvParams = TlvUtils()
                     .addTagValAscii(EmvConstants.EMV_TAG_MERCH_ID, aidConfig?.merchantIdentifier,15,15)
                     .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier,8,8)
@@ -180,7 +179,13 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
             Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
-            EmvNfcKernelApi.getInstance().sendOnlineProcessResult(true, "8A023030")
+            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(TlvUtils(p0.toString()).tlvMap) {
+                var tlvTags = TlvUtils(it)
+                var wentOnline = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
+                EmvNfcKernelApi.getInstance()
+                    .sendOnlineProcessResult(wentOnline, tlvTags.toTlvString())
+            }
+
         }
 
         override fun onReturnBatchData(p0: String?) {
@@ -441,7 +446,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
             val param: Bundle = Bundle()
 
-            if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.MS_KEY_TYPE_PIN)
+            if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.DUKPT_KEY_SET_PIN)
             else param.putInt("PINKeyNo", 10)
             val cardno: String = "1122334455667788"
 
@@ -506,7 +511,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 PinPadProviderImpl.getInstance().GetDukptPinBlock(param, this)
             else
                 PinPadProviderImpl.getInstance().getPinBlockEx(param, this)
-
         }
 
         fun proc_offlinePin(pinEntryType: Int, isLastPinTry: Boolean, bundle: Bundle): Int {

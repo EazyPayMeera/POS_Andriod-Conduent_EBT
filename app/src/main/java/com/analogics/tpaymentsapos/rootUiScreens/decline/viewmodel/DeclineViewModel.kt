@@ -3,9 +3,11 @@ package com.analogics.tpaymentsapos.rootUiScreens.decline.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.analogics.builder_core.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
@@ -40,20 +42,18 @@ class DeclineViewModel @Inject constructor(private var dbRepository: TxnDBReposi
         } ?: Log.d("Record Update", "Invoice No is null")
     }
 
-    override fun onApiSuccess(response: Any) {
-        when (response) {
-            is ObjRootAppPaymentDetails -> {
-                objRoot.value = response
-                updateTxnData(objRoot.value)
-            }
+    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
+            objRoot.value = it
+            updateTxnData(objRoot.value)
         }
     }
 
-    override fun onApiError(apiServiceError: ApiServiceError) {
+    override fun onApiServiceError(apiServiceError: ApiServiceError) {
         userApiErrorHolder.value = apiServiceError
     }
 
-    override fun onDisplayProgress(
+    override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
         subTitle: String?,

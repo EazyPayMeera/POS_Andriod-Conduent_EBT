@@ -20,4 +20,10 @@ object EmvConstants {
     const val EMV_TAG_SUPPORT_SM =                   "DF04"
     const val EMV_TAG_SUPPORT_VELOCITY_CHECK =       "DF05"
 
+    /* Host Response */
+    const val EMV_TAG_RESP_CODE =                     "8A"
+    const val EMV_TAG_VAL_APPROVED_ONLINE =                 "3030"
+    const val EMV_TAG_VAL_DECLINED_ONLINE =                 "3035"
+    const val EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_APPROVE =     "5933"
+    const val EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE =     "5A33"
 }
