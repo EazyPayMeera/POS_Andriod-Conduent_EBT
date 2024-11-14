@@ -73,7 +73,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("originalCGST") var originalCGST: String? = null,
     @SerializedName("originalSGST") var originalSGST: String? = null,
     @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null,
+    @SerializedName("acquirerName") var acquirerName:String?=null,
 
     /* Other flags */
     @SerializedName("isFallback")       var isFallback: Boolean? = false,

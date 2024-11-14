@@ -1,6 +1,9 @@
 package com.analogics.paymentservicecore.constants
 
 object AppConstants {
+    /* Acquirers Supported */
+    const val ACQUIRER_LYRA = "LYRA"
+
     /* Key constants */
     const val NAV_KEY_CUSTOM_TIP_AMOUNT = "customTipAmount"
     const val NAV_KEY_TAX_TYPE = "taxType"

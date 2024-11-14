@@ -62,7 +62,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE,
+    @SerializedName("acquirerName") var acquirerName:String?=BuildConfig.ACQUIRER_NAME,
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalTxnType")  var originalTxnType: String? = null,
