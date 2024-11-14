@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
@@ -50,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -411,58 +413,70 @@ fun TransactionItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium,
+                    horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
                     vertical = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium
-                ), // Match header padding
-            verticalAlignment = Alignment.CenterVertically
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                TextView(
+            // Transaction type and date column on the left
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
                     transaction.txnType.toString(),
+                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = Roboto,
                     modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
-                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
+                    fontFamily = Roboto,
+                    overflow = TextOverflow.Ellipsis
                 )
                 transaction.dateTime.toString().let {
-                    TextView(
+                    Text(
                         it,
+                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
                         color = Color.Gray,
                         modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
-            // Create a Row for amount and icon
+            // Amount, status, and icon in a row on the right
             Row(
-                verticalAlignment = Alignment.CenterVertically, // Aligns amount and icon vertically
-                modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Optional padding between details and amount
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED) {
                     Color.Red
                 } else {
-                    Color(0xFF4CAF50) // Green for other transaction types
+                    Color(0xFF4CAF50)
                 }
 
-                // Amount Text
-                Column(horizontalAlignment = Alignment.End) {  // Use Column to stack amount and additional text vertically
+                // Column for amount and status
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier.padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
+                ) {
                     transaction.ttlAmount?.let { formatAmount(it) }?.let {
-                        TextView(
+                        Text(
                             text = it,
                             color = amountColor,
                             fontWeight = FontWeight.Bold,
                             fontFamily = Roboto,
                             fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_17_CompactMedium,
-                            modifier = Modifier.padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium) // Optional spacing before the icon
+                            modifier = Modifier
+                                .widthIn(max = 100.dp) // Set a max width for the amount text
+                                .padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
-
-                    TextView(
+                    Text(
                         transaction.txnStatus.toString(),
+                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
                         color = Color.Gray,
-                        modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -471,7 +485,7 @@ fun TransactionItem(
                     sharedViewModel.objRootAppPaymentDetail = transaction
                     navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
                 }) {
-                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = "")
+                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
                 }
             }
         }
@@ -483,6 +497,10 @@ fun TransactionItem(
         )
     }
 }
+
+
+
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -580,9 +598,10 @@ fun HeaderSection(
                         contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
                     ) {
                         TextView(
-                            fontWeight = FontWeight.Bold,
                             text = stringResource(id = R.string.close_batch),
-                            fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_14_CompactMedium
+                            fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_14_CompactMedium,
+                            fontWeight = FontWeight.Bold,
+                            /*overflow = TextOverflow.Ellipsis*/
                         )
                     }
                 }
