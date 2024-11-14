@@ -152,7 +152,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.pos_entry)+ " Contactless",
+                        text = stringResource(id = R.string.pos_entry)+ " Contact",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
