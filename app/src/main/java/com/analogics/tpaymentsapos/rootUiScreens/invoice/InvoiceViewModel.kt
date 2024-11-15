@@ -43,7 +43,6 @@ class InvoiceViewModel : ViewModel() {
 
     fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
-        Log.d("Invoice No", "Invoice No in Amount: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
         viewModelScope.launch {
             if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP) {
                 navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)

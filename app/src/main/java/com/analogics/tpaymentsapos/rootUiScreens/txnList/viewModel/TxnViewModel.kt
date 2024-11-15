@@ -228,6 +228,28 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             .count { it.txnType == txn}
     }
 
+    fun totalTipAmount(): Double {
+        val purchaseTipTotal = _transactionList.value
+            .filter { it.txnType == TxnType.PURCHASE }
+            .sumOf { it.tip ?: 0.0 } // Convert BigDecimal to Double
+
+        val refundTipTotal = _transactionList.value
+            .filter { it.txnType == TxnType.REFUND }
+            .sumOf { it.tip ?: 0.0 } // Convert BigDecimal to Double
+
+        return purchaseTipTotal - refundTipTotal
+    }
+
+    fun totalTipCount(): Int {
+        val purchaseTipCount = _transactionList.value
+            .filter { it.txnType == TxnType.PURCHASE && it.tip != null && it.tip != 0.0 } // Count PURCHASE transactions with a valid tip
+
+        val refundTipCount = _transactionList.value
+            .filter { it.txnType == TxnType.REFUND && it.tip != null && it.tip != 0.0 } // Count REFUND transactions with a valid tip
+
+        return purchaseTipCount.size - refundTipCount.size // Subtract the refund count from the purchase count
+    }
+
 
     fun onApiBatchClose() {
         viewModelScope.launch {

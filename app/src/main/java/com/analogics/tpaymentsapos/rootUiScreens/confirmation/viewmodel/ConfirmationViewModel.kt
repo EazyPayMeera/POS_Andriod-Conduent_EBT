@@ -1,10 +1,15 @@
 package com.analogics.tpaymentsapos.rootUiScreens.confirmation.viewmodel
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -13,12 +18,27 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTip
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.calculateTotalAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ConfirmationViewModel : ViewModel() {
+@HiltViewModel
+class ConfirmationViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel() {
     var totalAmount = mutableDoubleStateOf(0.00)
     var tipAmount = mutableDoubleStateOf(0.00)
     var selectedButton = mutableStateOf(TipButton.NONE)
     var isTipButtonEnabled = mutableStateOf(false)
+
+    private val _totalAmount = MutableStateFlow<String?>(null)
+    val totalAmountFetch: StateFlow<String?> = _totalAmount
+
+    private val _txnAmount = MutableStateFlow<String?>(null)
+    val txnAmountFetch: StateFlow<String?> = _txnAmount
+
+    private val _tipAmount = MutableStateFlow<String?>(null)
+    val tipAmountFetch: StateFlow<String?> = _tipAmount
 
     private fun getTipPercent(button: TipButton, sharedViewModel: SharedViewModel) : Double
     {
@@ -107,5 +127,30 @@ class ConfirmationViewModel : ViewModel() {
         sharedViewModel.isTipButtonEnabled = isTipButtonEnabled.value
         sharedViewModel.selectedTipButton = selectedButton.value
         navHostController.popBackStack()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTotalAmountByInvoiceNo(invoiceNo:String) {
+        viewModelScope.launch {
+            val totalAmount = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo).toDoubleOrNull()
+            _totalAmount.value = "%.2f".format(totalAmount)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTxnAmountByInvoiceNo(invoiceNo:String) {
+        viewModelScope.launch {
+            val txnAmount = dbRepository.fetchTxnAmountByInvoiceNo(invoiceNo).toDoubleOrNull()
+            Log.d("txnAmount :", txnAmount.toString())
+            _txnAmount.value = "%.2f".format(txnAmount)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTipAmountByInvoiceNo(invoiceNo:String) {
+        viewModelScope.launch {
+            val tipAmount = dbRepository.fetchTipAmountByInvoiceNo(invoiceNo).toDoubleOrNull()
+            _tipAmount.value = "%.2f".format(tipAmount)
+        }
     }
 }

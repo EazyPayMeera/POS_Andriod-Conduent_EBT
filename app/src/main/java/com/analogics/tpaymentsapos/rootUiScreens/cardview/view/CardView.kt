@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -249,18 +250,21 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                                     Button(
-                                        onClick = { viewModel.onUpiClick(navHostController) }, // Show QR code dialog on button click
+                                        onClick = { viewModel.onUpiClick(navHostController) },
                                         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
                                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                                         modifier = Modifier
-                                            .width(MaterialTheme.dimens.DP_200_CompactMedium)
-                                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
+                                            .width(MaterialTheme.dimens.DP_160_CompactMedium)
+                                            .height(MaterialTheme.dimens.DP_70_CompactMedium)
+                                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
                                             .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
                                     ) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.upi_icon),
+                                            painter = painterResource(id = R.drawable.upi),
                                             contentDescription = null,
-                                            modifier = Modifier.size(MaterialTheme.dimens.DP_34_CompactMedium)
+                                            modifier = Modifier
+                                                .fillMaxSize(),
+                                            tint = Color.Unspecified // Keeps the original colors of the icon
                                         )
                                     }
                                 }

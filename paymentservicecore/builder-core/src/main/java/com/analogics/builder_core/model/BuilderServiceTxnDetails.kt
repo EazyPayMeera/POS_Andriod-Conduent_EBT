@@ -26,6 +26,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("ttlAuthCapAmount") var ttlAuthCapAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
+    @SerializedName("ttlTipAmount") var ttlTipAmount: String? = null,
 
     /* Batch Details */
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
@@ -34,6 +35,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("ttlPreAuthCount") var ttlPreAuthCount:Int? = null,
     @SerializedName("ttlAuthCapCount") var ttlAuthCapCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
+    @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
 
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,

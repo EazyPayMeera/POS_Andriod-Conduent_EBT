@@ -36,6 +36,15 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable WHERE batchId = :batchId")
     suspend fun getTrasactionsByBatchId(batchId: String): List<TxnEntity>
 
+    @Query("SELECT TtlAmount FROM TxnTable WHERE InvoiceNo = :invoiceNo")
+    suspend fun getTotalAmountByInvoiceNo(invoiceNo: String): String
+
+    @Query("SELECT TxnAmount FROM TxnTable WHERE InvoiceNo = :invoiceNo")
+    suspend fun getTxnAmountByInvoiceNo(invoiceNo: String): String
+
+    @Query("SELECT Tip FROM TxnTable WHERE InvoiceNo = :invoiceNo")
+    suspend fun getTipAmountByInvoiceNo(invoiceNo: String): String
+
     @Query("DELETE FROM UserTable WHERE userId = :userId")
     suspend fun deleteTransactionsByUserId(userId: String)
 
@@ -59,5 +68,6 @@ interface ITxnDao {
 
     @Query("SELECT * FROM TxnTable WHERE DateTime BETWEEN :startDate AND :endDate")
     suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity>
+
 
 }

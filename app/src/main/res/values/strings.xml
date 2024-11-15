@@ -269,7 +269,7 @@
     <string name="summary_purchase">Purchase</string>
     <string name="summary_refund">Refund</string>
     <string name="summary_void">Void</string>
-    <string name="summary_tip">Tip Surcharges</string>
+    <string name="summary_tip">Tip</string>
     <string name="summary_cashback">CashBack</string>
     <string name="summary_total">Total</string>
     <string name="summary_txn_breakdown">Transaction Breakdown:</string>
