@@ -2,6 +2,16 @@ package com.analogics.paymentservicecore.constants
 
 object EmvConstants {
 
+    const val EMV_TAG_TRACK2 =                      "57"
+    const val EMV_TAG_TRACK2_HEX =                  0x57
+    const val EMV_TAG_PAN =                         "5A"
+    const val EMV_TAG_PAN_HEX =                     0x5A
+
+    /* End to End Encryption */
+    const val EMV_KEY_ENC_TRACK =                   "ENC_TRACK"
+    const val EMV_KEY_ENC_PAN =                     "ENC_PAN"
+    const val EMV_KEY_ENC_KSN =                     "ENC_KSN"
+
     const val EMV_TAG_TRANS_CURRENCY_EXPONENT =     "5F36"
 
     const val EMV_TAG_MERCH_CATEGORY_CODE =         "9F15"

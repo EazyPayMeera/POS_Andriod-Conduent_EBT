@@ -137,6 +137,43 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             EmvNfcKernelApi.getInstance().abortKernel()
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
+        fun getEncryptedTrackData() : HashMap<String,String>
+        {
+            var hashMap = HashMap<String,String>()
+            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX)
+            trackData?.takeIf { (it.length % 8) !=0 }?.let { trackData = it.padStart(8-(it.length % 8),'0') }
+
+            var trackDateBytes = trackData.toByteArray()
+            var encryptedBytes = ByteArray(trackDateBytes.size)
+            var encryptedLen = IntArray(1)
+            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
+            var ksnLen = IntArray(1)
+            var ivBytes = ByteArray(8)
+
+            /*            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                            EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
+                            encryptedBytes, encryptedLen,
+                            ksnBytes, ksnLen
+                        ) == 0)
+                        {
+                            hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
+                            hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+                        }*/
+
+            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                EncryptionConstants.DUKPT_KEY_SET_PIN, 0x00, ivBytes,8,trackDateBytes ,trackDateBytes.size,
+                encryptedBytes, encryptedLen,
+                ksnBytes, ksnLen
+            ) == 0)
+            {
+                hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
+                hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+            }
+
+            return hashMap
+        }
+
         override fun onRequestSetAmount() {
             Log.d("EMV_APP", "Request Amount:")
             EmvNfcKernelApi.getInstance().setAmountEx(_amount, _cashbackAmount)
@@ -179,13 +216,16 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
             Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
-            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(TlvUtils(p0.toString()).tlvMap) {
+            var tlvMap = TlvUtils(p0.toString()).tlvMap.apply {
+                for (tlv in getEncryptedTrackData())
+                    put(tlv.key, tlv.value)
+            }
+            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
                 var tlvTags = TlvUtils(it)
                 var wentOnline = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
                 EmvNfcKernelApi.getInstance()
                     .sendOnlineProcessResult(wentOnline, tlvTags.toTlvString())
             }
-
         }
 
         override fun onReturnBatchData(p0: String?) {
@@ -785,13 +825,14 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             }
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
         override fun onConfirm_dukpt(p0: ByteArray?, p1: ByteArray?) {
             //iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Processing")
             if (p0 == null) {
                 EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
             } else {
                 Log.d("EMV_APP", "PinBlock:" + p0.decodeToString())
-                Log.d("EMV_APP", "KSN     :" + p1?.decodeToString())
+                Log.d("EMV_APP", "KSN     :" + p1?.toHexString())
                 EmvNfcKernelApi.getInstance().sendPinEntry()
             }
         }

@@ -154,7 +154,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
         val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
         val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)

@@ -224,14 +224,13 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                 ), object : IApiServiceResponseListener {
 
                                     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-                                        paymentServiceTxnDetails.txnStatus
+                                        onResponse(responseEmvTags)
                                     }
 
                                     override fun onApiServiceError(apiServiceError: ApiServiceError) {
                                         onResponse(responseEmvTags)
                                     }
                                 })
-                                onResponse(responseEmvTags)
                             }
                         }
                     }
