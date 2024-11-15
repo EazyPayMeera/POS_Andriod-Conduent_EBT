@@ -80,6 +80,18 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getTrasactionsByBatchId(batchId)
     }
 
+    suspend fun fetchTotalAmountByInvoiceNo(invoiceNo:String): String {
+        return iTxnDao.getTotalAmountByInvoiceNo(invoiceNo)
+    }
+
+    suspend fun fetchTxnAmountByInvoiceNo(invoiceNo:String): String {
+        return iTxnDao.getTxnAmountByInvoiceNo(invoiceNo)
+    }
+
+    suspend fun fetchTipAmountByInvoiceNo(invoiceNo:String): String {
+        return iTxnDao.getTipAmountByInvoiceNo(invoiceNo)
+    }
+
     suspend fun removeUser(user: String) {
         iTxnDao.deleteTransactionsByUserId(user)
     }

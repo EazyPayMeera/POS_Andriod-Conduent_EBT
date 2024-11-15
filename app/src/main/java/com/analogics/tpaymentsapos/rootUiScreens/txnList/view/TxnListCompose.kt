@@ -305,6 +305,8 @@ fun TransactionListScreen(
                                 viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND)
                                 )
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
+                        sharedViewModel.objRootAppPaymentDetail.ttlTipAmount = viewModel.totalTipAmount().toString()
+                        sharedViewModel.objRootAppPaymentDetail.ttlTipCount = viewModel.totalTipCount()
                     }
                 )
             }

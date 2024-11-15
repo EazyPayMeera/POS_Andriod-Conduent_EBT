@@ -30,10 +30,12 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
+    @SerializedName("ttlTipAmount") var ttlTipAmount: String? = null,
 
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
     @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
+    @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
 
     /* Card Details */
     @SerializedName("CardEntryMode")    var cardEntryMode: String? = null,

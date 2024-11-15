@@ -65,7 +65,7 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
                 }
                 else
                 {
-                    if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { navigateToInvoiceScreen(navHostController)} else {navigateToAmountScreen(navHostController)}
+                    navigateToInvoiceScreen(navHostController)
                 }
             } catch (e: Exception) {
                 Log.e("FetchStartDates", "Error fetching start dates: ${e.message}")

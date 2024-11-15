@@ -1,6 +1,8 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,11 +45,13 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransf
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
 
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
+    val totalAmount = viewModel.totalAmount.collectAsState().value
     Column {
 
         // Top App Bar
@@ -90,16 +95,21 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
 
                 OutlinedTextField(
-                    value = viewModel.transAmount,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    value = (if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) totalAmount else viewModel.transAmount) ?: "",
+                    onValueChange = { viewModel.onAmountChange(it) },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
+                    textStyle = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
+                        textAlign = TextAlign.End
+                    ),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
+                    onDoneAction = { viewModel.onConfirm(navHostController, sharedViewModel) },
                     visualTransformation = createAmountTransformation(),
                     amount = false,
                 )
+
 
                 if (TxnInfo.txnType==TxnType.VOID) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
@@ -193,6 +203,10 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
+        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) {
+            viewModel.getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
+        }
+
     }
 
 }

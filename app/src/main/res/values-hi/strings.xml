@@ -268,7 +268,7 @@
     <string name="summary_purchase">खरीद</string>
     <string name="summary_refund">रिफंड</string>
     <string name="summary_void">रद्द</string>
-    <string name="summary_tip">टिप अधिभार</string>
+    <string name="summary_tip">टिप</string>
     <string name="summary_cashback">कैशबैक</string>
     <string name="summary_total">कुल</string>
     <string name="summary_txn_breakdown">लेनदेन का विवरण:</string>

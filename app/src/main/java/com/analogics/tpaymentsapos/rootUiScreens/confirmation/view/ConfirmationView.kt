@@ -2,6 +2,8 @@
 
 package com.analogics.tpaymentsapos.rootUiScreens.confirmation.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +51,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 import com.analogics.tpaymentsapos.ui.theme.tipBColor
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ConfirmationView(navHostController: NavHostController, customTipAmount : Double? =null, viewModel: ConfirmationViewModel = hiltViewModel()) {
     val sharedViewModel= localSharedViewModel.current
@@ -58,6 +62,10 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
     var isTipEnabled by remember { viewModel.isTipButtonEnabled }
     val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, cgstAmount)
     var isDialogVisible by remember { mutableStateOf(false) }
+
+    val totalAmountFetch = viewModel.totalAmountFetch.collectAsState().value
+    val txnAmountFetch = viewModel.txnAmountFetch.collectAsState().value
+    val tipAmountFetch = viewModel.tipAmountFetch.collectAsState().value
 
     Column {
         CommonTopAppBar(
@@ -90,7 +98,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = formatAmount(totalAmount),
+                    text = (if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) totalAmountFetch else formatAmount(totalAmount)) ?: "",
                     fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -98,6 +106,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                 )
             }
         }
+
 
         TransactionSummaryCard(transAmount, tipAmount, sgstAmount, cgstAmount, sharedViewModel)
 
@@ -282,6 +291,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(customTipAmount,sharedViewModel)
+        //viewModel.getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
     }
 }
 
