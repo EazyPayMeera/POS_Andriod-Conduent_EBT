@@ -107,6 +107,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             )
             allTransactionList?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
+                    .sortedByDescending { txnData -> txnData.dateTime }
                 _transactionList.value = txnDataList
             }
         }
