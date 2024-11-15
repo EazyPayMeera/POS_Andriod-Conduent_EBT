@@ -31,4 +31,7 @@ object AppConstants {
     const val DEFAULT_EMV_CONFIG_FILE_PATH = "EmvConfig.json"
     const val DEFAULT_EMV_CAP_KEY_FILE_PATH = "EmvCAPKeys.json"
     const val EMV_CAP_KEY_ARRAY_FIELD_NAME = "CAPKeys"
+
+    /* Acquirer Specific Constants */
+    const val LYRA_MAX_INVOICE_LENGTH = 6
 }

@@ -6,11 +6,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
+import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getAcquirer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +26,11 @@ class InvoiceViewModel : ViewModel() {
 
     private val scannerServiceRepository = ScannerServiceRepository() // Instantiate here
 
-    fun updateInvoiceNo(newValue: String): String {
-        _invoiceno.value = newValue
+    fun updateInvoiceNo(newValue: String, sharedViewModel: SharedViewModel?=null): String {
+        sharedViewModel?.takeIf {getAcquirer(it.objRootAppPaymentDetail) == Acquirer.LYRA}?.let {
+            _invoiceno.value = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH)
+        }?:
+        {_invoiceno.value = newValue}
         return _invoiceno.value // Return the updated invoice number
     }
 

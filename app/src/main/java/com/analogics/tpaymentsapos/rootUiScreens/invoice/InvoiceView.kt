@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
+import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -50,6 +51,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getAcquirer
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,14 +134,14 @@ fun InvoiceView(navHostController: NavHostController) {
 
                 OutlinedTextField(
                     value = invoiceno,
-                    onValueChange = { newValue -> viewModel.updateInvoiceNo(newValue) },
+                    onValueChange = { newValue -> viewModel.updateInvoiceNo(newValue, sharedViewModel) },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.invoice_no),
                     textStyle = TextStyle(
                         fontWeight = FontWeight.Bold,
                         fontSize = MaterialTheme.dimens.SP_25_CompactMedium
                     ),
-                    keyboardType = KeyboardType.Uri,
+                    keyboardType = if(getAcquirer(sharedViewModel.objRootAppPaymentDetail) == Acquirer.LYRA) KeyboardType.Number else KeyboardType.Uri,
                     onDoneAction = {
                         viewModel.onConfirm(navHostController, sharedViewModel)
                     },
