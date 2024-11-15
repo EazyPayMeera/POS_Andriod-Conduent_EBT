@@ -139,7 +139,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.dimens.DP_10_CompactMedium),
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
             elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_11_CompactMedium)
         ) {
             LazyColumn {
