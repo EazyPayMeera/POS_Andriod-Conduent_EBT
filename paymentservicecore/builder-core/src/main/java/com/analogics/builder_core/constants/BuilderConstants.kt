@@ -85,6 +85,8 @@ object BuilderConstants {
     /* ADDITIONAL DATA */
     const val ISO_FIELD_ADDL_DATA_KSN = 48
     const val ISO_FIELD_KSN_TAG = "4801"
+    const val ISO_FIELD_KSN_LENGTH = 20
+    const val ISO_FIELD_KSN_PAD_CHAR = 'F'
 
     /* Currency Code */
     const val ISO_FIELD_CURRENCY_CODE_TXN = 49

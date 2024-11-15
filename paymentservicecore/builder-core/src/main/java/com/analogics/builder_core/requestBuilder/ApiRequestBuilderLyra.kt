@@ -5,7 +5,6 @@ import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.BuilderServiceTxnDetails
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.builder_core.utils.toCurrencyLong
-import com.analogics.builder_core.utils.toDecimalFormat
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
@@ -47,42 +46,49 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         messageFactory.isBinaryHeader = true
     }
 
-    fun getIsoPosEntryMode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String
+    fun getIsoPosEntryMode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         return "000"
     }
 
-    fun getIsoPosConditionCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String
+    fun getIsoPosConditionCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         return "00"
     }
 
-    fun getEncryptedTrack2Data(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String
+    fun getEncryptedTrack2Data(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return "00"
+        return null
     }
 
-    fun getKsnTag(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String
+    fun getKsnTag(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        var ksn = ""
-        builderServiceTxnDetails?.ksn?.let {
+        var ksn :String? = null
+        builderServiceTxnDetails?.ksn?.padStart(BuilderConstants.ISO_FIELD_KSN_LENGTH,BuilderConstants.ISO_FIELD_KSN_PAD_CHAR)?.let {
             ksn = BuilderConstants.ISO_FIELD_KSN_TAG + it.length.toString().padStart(3,'0') + it
         }
         return ksn
     }
 
-    fun getBatchNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String
-    {
-        var batchNumber = ""
-        builderServiceTxnDetails?.batchId?.padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH,'0')?.let {
-            batchNumber = it.length.toString().padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH_LENGTH,'0') + it
+    fun getBatchNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String? {
+        var batchNumber: String? =
+            builderServiceTxnDetails?.batchId?.toInt()?.toString()
+        batchNumber?.padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH, '0')?.let {
+            batchNumber = it.length.toString()
+                .padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH_LENGTH, '0') + it
         }
         return batchNumber
     }
 
-    fun getInvoiceNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String
+    fun getInvoiceNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return builderServiceTxnDetails?.invoiceNo?.padStart(BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH,'0')?:""
+        var invoiceNumber: String? =
+            builderServiceTxnDetails?.invoiceNo?.toInt()?.toString()
+        invoiceNumber?.padStart(BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH, '0')?.let {
+            invoiceNumber = it
+
+        }
+        return invoiceNumber
     }
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
@@ -161,7 +167,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
             /* Field 4, Amount, N12, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.AMOUNT,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
+            .setValue(BuilderConstants.ISO_FIELD_AMOUNT, builderServiceTxnDetails?.ttlAmount, IsoType.AMOUNT,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
 
             /* Field 11, STAN, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_STAN,
@@ -190,7 +196,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
 
             /* Field 35, Track2 Data, ANS..37, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.BINARY,encryptedTrack2Data.length)
+            .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.BINARY,encryptedTrack2Data?.length?:0)
 
             /* Field 41, TID, ANS8, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
@@ -199,7 +205,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
 
             /* Field 48, Additional Data KSN, ANS...999, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN, ksn, IsoType.ALPHA,ksn.length)
+            .setValue(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN, ksn, IsoType.ALPHA,ksn?.length?:0)
 
             /* Field 49, Currency Code Transaction, N3, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE_TXN, builderServiceTxnDetails?.txnCurrencyCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_CURRENCY_CODE_LEN)
@@ -208,7 +214,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_ICC_DATA, builderServiceTxnDetails?.emvData, IsoType.BINARY,builderServiceTxnDetails?.emvData?.length?:0)
 
             /* Field 60, Batch Number, ANS...999, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_PVT_USE_BATCH, batchNumber, IsoType.LLLVAR, batchNumber.length)
+            .setValue(BuilderConstants.ISO_FIELD_PVT_USE_BATCH, batchNumber, IsoType.LLLVAR, batchNumber?.length?:0)
 
             /* Field 62, Invoice Number, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_INVOICE_NUMBER, invoiceNumber, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH)
