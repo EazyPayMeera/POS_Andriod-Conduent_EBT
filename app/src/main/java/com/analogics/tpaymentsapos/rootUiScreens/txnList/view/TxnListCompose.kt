@@ -277,7 +277,7 @@ fun TransactionListScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp), // Add padding as necessary
+                    .padding(7.dp), // Add padding as necessary
                 contentAlignment = Alignment.BottomCenter
             ) {
                 CircularMenu(
