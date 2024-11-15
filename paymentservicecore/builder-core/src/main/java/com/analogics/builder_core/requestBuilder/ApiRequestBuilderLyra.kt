@@ -14,6 +14,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context) {
     val messageFactory = MessageFactory<IsoMessage>()
+    var builderServiceTxnDetails = BuilderServiceTxnDetails()
 
     init {
         setIsoConfig()
@@ -93,6 +94,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
 
         var message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
@@ -133,7 +135,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun parseRklResponse(response: ByteArray): BuilderServiceTxnDetails {
         var message = messageFactory.parseMessage(extractIsoPayload(response), BuilderConstants.ISO_HEADER.size,true)
 
-        return BuilderServiceTxnDetails().apply {
+        return builderServiceTxnDetails.apply {
             message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)?.let { hostRespCode = it }
             message.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN)?.let {
                 if(it.slice(0 until BuilderConstants.ISO_FIELD_KSN_TAG.length) == BuilderConstants.ISO_FIELD_KSN_TAG) {
@@ -167,7 +169,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
             /* Field 4, Amount, N12, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_AMOUNT, builderServiceTxnDetails?.ttlAmount, IsoType.AMOUNT,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
+            .setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
 
             /* Field 11, STAN, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_STAN,
@@ -226,7 +228,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun parsePurchaseResponse(response: ByteArray): BuilderServiceTxnDetails {
         var message = messageFactory.parseMessage(extractIsoPayload(response), BuilderConstants.ISO_HEADER.size,true)
 
-        return BuilderServiceTxnDetails().apply {
+        return builderServiceTxnDetails.apply {
             message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)?.let { hostRespCode = it }
         }
     }

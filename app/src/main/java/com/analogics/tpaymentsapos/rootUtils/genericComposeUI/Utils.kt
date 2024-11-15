@@ -19,6 +19,7 @@ import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
+import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
@@ -26,6 +27,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -326,4 +328,9 @@ fun getIsoResponseCodeString(context: Context, responseCode: String?) : String
         }
 
     return if(id!=null) context.resources.getString(id) else ""
+}
+
+fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails) : Acquirer
+{
+    return Acquirer.valueOf(objRootAppPaymentDetail.acquirerName?:"")
 }
