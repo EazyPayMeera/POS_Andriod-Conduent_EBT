@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -39,7 +38,7 @@ class InvoiceViewModel : ViewModel() {
     fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
         viewModelScope.launch {
-            if (TxnInfo.txnType == TxnType.AUTHCAP) {
+            if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP) {
                 navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
             } else {
                 navHostController.navigate(AppNavigationItems.AmountScreen.route)

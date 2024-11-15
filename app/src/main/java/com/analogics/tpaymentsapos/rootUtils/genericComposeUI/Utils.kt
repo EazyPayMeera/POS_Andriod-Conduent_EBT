@@ -35,17 +35,6 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
 
-var currentNumber = 1
-
-fun calculateTax(amount: Double): Double {
-    return amount * 0.15
-}
-
-fun calculateTip(amount: Double, tipPercentage: Int): Double {
-    return amount * (tipPercentage / 100.0)
-}
-
-
 fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmount: Double, igstAmount: Double): Double {
     return transactionAmount + tipAmount + sgstAmount + igstAmount
 }
@@ -238,7 +227,7 @@ fun getEmvMsgIdString(displayMsgId: EmvServiceResult.DisplayMsgId) : String
             EmvServiceResult.DisplayMsgId.ERR_QPBOC_APPLICATION -> R.string.emv_msg_id_err_qpboc_app
             EmvServiceResult.DisplayMsgId.ERR_QPBOC_FDDA_FAILED -> R.string.emv_msg_id_err_qpboc_fdda_failed
             EmvServiceResult.DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS -> R.string.emv_msg_id_err_pure_cash_card_no_online
-
+            EmvServiceResult.DisplayMsgId.PROCESSING_ONLINE -> R.string.emv_msg_id_processing_online
         }
 
     return if(id!=null) stringResource(id) else ""

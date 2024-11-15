@@ -38,15 +38,16 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
 
     /* Card Details */
-    @SerializedName("CardEntryMode")    var cardEntryMode: String? = null,
-    @SerializedName("CardMaskedPan")    var cardMaskedPan: String? = null,
-    @SerializedName("CardBrand")        var cardBrand: String? = null,
-    @SerializedName("CardAuthMethod")   var cardAuthMethod: String? = null,
-    @SerializedName("CardAuthResult")   var cardAuthResult: String? = null,
-    @SerializedName("CardCountryCode")  var cardCountryCode: String? = null,
-    @SerializedName("CardLanguagePref") var cardLanguagePref: String? = null,
-    @SerializedName("ReceiptEmvData")   var receiptEmvData: String? = null,
-    @SerializedName("SignatureData")    var signatureData: String? = null,
+    @SerializedName("cardEntryMode")    var cardEntryMode: String? = null,
+    @SerializedName("cardMaskedPan")    var cardMaskedPan: String? = null,
+    @SerializedName("cardBrand")        var cardBrand: String? = null,
+    @SerializedName("cardSeqNum")       var cardSeqNum: String? = null,
+    @SerializedName("cardAuthMethod")   var cardAuthMethod: String? = null,
+    @SerializedName("cardAuthResult")   var cardAuthResult: String? = null,
+    @SerializedName("cardCountryCode")  var cardCountryCode: String? = null,
+    @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
+    @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
+    @SerializedName("signatureData")    var signatureData: String? = null,
     @SerializedName("emvData") var emvData: String? = null,
 
     @SerializedName("txnType") var txnType:TxnType?=null,
@@ -64,7 +65,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=BuildConfig.ACQUIRER_TYPE,
+    @SerializedName("acquirerName") var acquirerName:String?=BuildConfig.ACQUIRER_NAME,
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalTxnType")  var originalTxnType: String? = null,

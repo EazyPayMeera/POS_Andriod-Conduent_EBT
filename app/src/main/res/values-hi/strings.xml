@@ -338,6 +338,9 @@
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA विफल</string>
     <string name="emv_msg_id_err_pure_cash_card_no_online">PURE कैश कार्ड ऑनलाइन लेनदेन के लिए अनुमति नहीं है</string>
 
+    <!-- EMV Display Messages (Errors)-->
+    <string name="emv_msg_id_processing_online">ऑनलाइन प्रोसेस हो रहा है</string>
+
     <!--Receipt Details -->
     <string name="header1_placeholder">हेडर 1 दर्ज करें</string>
     <string name="header2_placeholder">हेडर 2 दर्ज करें</string>

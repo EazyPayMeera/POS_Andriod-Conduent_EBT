@@ -3,6 +3,7 @@ package com.analogics.paymentservicecore.model
 import com.google.gson.annotations.SerializedName
 
 data class PaymentServiceTxnDetails(
+    @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,
@@ -59,6 +60,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
     @SerializedName("cardBrand") var cardBrand: String? = null,
+    @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
     @SerializedName("cardAuthMethod") var cardAuthMethod: String? = null,
     @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
     @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
@@ -74,7 +76,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("originalCGST") var originalCGST: String? = null,
     @SerializedName("originalSGST") var originalSGST: String? = null,
     @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
-    @SerializedName("ACQUIRER_TYPE") var ACQUIRER_TYPE:String?=null,
+    @SerializedName("acquirerName") var acquirerName:String?=null,
 
     /* Other flags */
     @SerializedName("isFallback")       var isFallback: Boolean? = false,

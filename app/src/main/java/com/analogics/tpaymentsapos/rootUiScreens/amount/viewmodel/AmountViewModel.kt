@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnInfo
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -44,7 +43,7 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
 
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         calculateTotal(sharedViewModel)
-        when(TxnInfo.txnType) {
+        when(sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.route)
             }

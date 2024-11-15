@@ -28,11 +28,13 @@ import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BaseConstant
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -207,10 +209,16 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                         onResponse: (HashMap<String, String>) -> Unit
                     ) {
                         var responseEmvTags =
-                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE)  // Unable to go online, Decline
+                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
 
                         viewModelScope.launch {
-                            apiServiceRepository.apiServiceRequestOnlineAuth(
+                            displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.PROCESSING_ONLINE
+                            if(sharedViewModel.objPosConfig?.isDemoMode==true) {
+                                delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
+                                onResponse(hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE))
+                            }
+                            else {
+                                apiServiceRepository.apiServiceRequestOnlineAuth(
                                 PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                                     sharedViewModel.objRootAppPaymentDetail
                                 ), object : IApiServiceResponseListener {
@@ -223,8 +231,8 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                         onResponse(responseEmvTags)
                                     }
                                 })
-
-
+                                onResponse(responseEmvTags)
+                            }
                         }
                     }
                 })

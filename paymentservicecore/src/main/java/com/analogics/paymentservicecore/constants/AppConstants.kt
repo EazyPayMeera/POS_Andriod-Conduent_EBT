@@ -1,6 +1,9 @@
 package com.analogics.paymentservicecore.constants
 
 object AppConstants {
+    /* Acquirers Supported */
+    const val ACQUIRER_LYRA = "LYRA"
+
     /* Key constants */
     const val NAV_KEY_CUSTOM_TIP_AMOUNT = "customTipAmount"
     const val NAV_KEY_TAX_TYPE = "taxType"
@@ -16,6 +19,7 @@ object AppConstants {
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L
     const val MIN_DIALOG_SHOW_TIME_MS = 500L
     const val CARD_CHECK_TIMEOUT_S = 30L
+    const val DEMO_MODE_PROMPTS_DELAY_MS = 3000L
 
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8
