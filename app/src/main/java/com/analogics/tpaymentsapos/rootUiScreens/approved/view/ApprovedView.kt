@@ -145,7 +145,7 @@ fun CircularMenu(
                 }
         ) {
             Image(
-                painter = painterResource(id = R.drawable.printer_logo), // Replace with your image resource
+                painter = painterResource(id = R.drawable.print_logo), // Replace with your image resource
                 contentDescription = stringResource(id = R.string.print), // Provide a content description for accessibility
                 modifier = Modifier.size(MaterialTheme.dimens.DP_60_CompactMedium) // Adjust size as needed
             )

@@ -164,7 +164,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = MaterialTheme.dimens.DP_24_CompactMedium,),
+                            .padding(top = MaterialTheme.dimens.DP_31_CompactMedium),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularMenu(

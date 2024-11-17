@@ -139,7 +139,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.dimens.DP_10_CompactMedium),
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
             elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_11_CompactMedium)
         ) {
             LazyColumn {
@@ -233,7 +233,7 @@ fun TippingView(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = MaterialTheme.dimens.DP_22_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
             )
             if (type == ConfigurableViewType.Inactivity_Timeout) {
                 Box(
@@ -271,12 +271,12 @@ fun TippingView(
                 val cardHeight = if (type == ConfigurableViewType.Taxes) {
                     MaterialTheme.dimens.DP_50_CompactMedium
                 } else {
-                    MaterialTheme.dimens.DP_34_CompactMedium
+                    MaterialTheme.dimens.DP_40_CompactMedium
                 }
 
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                        .padding(MaterialTheme.dimens.DP_20_CompactMedium),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     options.forEach { option ->
