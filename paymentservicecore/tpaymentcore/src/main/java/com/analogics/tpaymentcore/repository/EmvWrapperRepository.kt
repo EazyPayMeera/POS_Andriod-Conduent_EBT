@@ -141,15 +141,25 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         fun getEncryptedTrackData() : HashMap<String,String>
         {
             var hashMap = HashMap<String,String>()
-            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX)
-            trackData?.takeIf { (it.length % 8) !=0 }?.let { trackData = it.padStart(8-(it.length % 8),'0') }
+            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX).replace('D','=').removeSuffix("F")
+            trackData.takeIf {
+                (it.length % 8) !=0 }?.let {
+                    trackData = it.padStart(it.length + (8-it.length%8),'0')
+                }
 
             var trackDateBytes = trackData.toByteArray()
             var encryptedBytes = ByteArray(trackDateBytes.size)
             var encryptedLen = IntArray(1)
+            var encryptedLenByteArray = ByteArray(1)
             var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
             var ksnLen = IntArray(1)
+            var ksnLenByteArray = ByteArray(1)
             var ivBytes = ByteArray(8)
+            var jioData = EmvNfcKernelApi.getInstance().getField55ForJIO(1)
+
+/*            var jioData = EmvNfcKernelApi.getInstance().getField55ForJIO(1)
+            Log.d("EMV_APP", "=====> JIO_TRACKDATA:"+jioData["TRACKDATA"])
+            Log.d("EMV_APP", "=====> JIO_KSN:"+jioData["KSN"])*/
 
             /*            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
                             EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
@@ -160,8 +170,14 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                             hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
                             hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
                         }*/
+/*
+            if(PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)==0)
+            {
+                Log.d("EMV_APP", "DukptGetKsn() =====> KSN:"+ksnBytes.toHexString().uppercase())
+            }
+*/
 
-            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+/*            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
                 EncryptionConstants.DUKPT_KEY_SET_PIN, 0x00, ivBytes,8,trackDateBytes ,trackDateBytes.size,
                 encryptedBytes, encryptedLen,
                 ksnBytes, ksnLen
@@ -169,6 +185,30 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             {
                 hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
                 hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+                Log.d("EMV_APP", "DukptEncryptDataIV() =====> LYRA_TRACKDATA:"+encryptedBytes.toHexString().uppercase())
+                Log.d("EMV_APP", "DukptEncryptDataIV() =====> LYRA_KSN:"+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
+                //hashMap[EmvConstants.EMV_KEY_ENC_TRACK+"_JIO"] = jioData["TRACKDATA"]?.uppercase()?:""
+                //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
+            }*/
+
+/*
+            if(PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)==0)
+            {
+                Log.d("EMV_APP", "DukptGetKsn() =====> KSN:"+ksnBytes.toHexString().uppercase())
+            }
+*/
+            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                    EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
+                    encryptedBytes, encryptedLen,
+                    ksnBytes, ksnLen
+                ) == 0)
+            {
+                hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
+                hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+                Log.d("EMV_APP", "encryptWithPEK() =====> LYRA_TRACKDATA:"+encryptedBytes.toHexString().uppercase())
+                Log.d("EMV_APP", "encryptWithPEK() =====> LYRA_KSN:"+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
+                //hashMap[EmvConstants.EMV_KEY_ENC_TRACK+"_JIO"] = jioData["TRACKDATA"]?.uppercase()?:""
+                //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
             }
 
             return hashMap
@@ -488,11 +528,11 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
             if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.DUKPT_KEY_SET_PIN)
             else param.putInt("PINKeyNo", 10)
-            val cardno: String = "1122334455667788"
+            val cardno: String = "4761730000000011"
 
             Log.i("applog", "emv_proc_onlinePin cardno $cardno")
             param.putString("cardNo", cardno)
-            param.putBoolean("sound", true)
+            param.putBoolean("sound", false)
             param.putInt("soundVolume", 1)
             param.putBoolean("onlinePin", true)
             param.putBoolean("FullScreen", true)
@@ -569,7 +609,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             paramVar.putInt("inputType", 3) //Offline PlainPin
             paramVar.putInt("CardSlot", 0)
 
-            paramVar.putBoolean("sound", true)
+            paramVar.putBoolean("sound", false)
             paramVar.putInt("soundVolume", 1)
             paramVar.putBoolean("onlinePin", false)
             paramVar.putBoolean("FullScreen", true)
@@ -789,7 +829,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     pinpadBundle.putInt("CardSlot", 0)
                 }
                 pinpadBundle.putString("cardNo", "1122334455667788")
-                pinpadBundle.putBoolean("sound", true)
+                pinpadBundle.putBoolean("sound", false)
                 pinpadBundle.putBoolean("bypass", false)
                 pinpadBundle.putInt("soundVolume", 1)
                 pinpadBundle.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12")

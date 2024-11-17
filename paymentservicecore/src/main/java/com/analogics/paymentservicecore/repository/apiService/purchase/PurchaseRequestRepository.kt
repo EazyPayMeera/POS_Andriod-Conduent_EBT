@@ -17,6 +17,7 @@ import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,21 +40,33 @@ class PurchaseRequestRepository @Inject constructor(
 
         if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA)
         {
-            builderServiceRepositoryLyra.networkServiceRequest(object : IBuilderServiceResponseListenerLyra{
-                override fun onBuilderSuccess(response: ByteArray) {
+            if(paymentServiceTxnDetails.isDemoMode==true)
+            {
+                //apiRequestBuilderLyra.createPurchaseRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+                delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
+                onAPIServiceResponse(paymentServiceTxnDetails)
+            }
+            else {
+                builderServiceRepositoryLyra.networkServiceRequest(object :
+                    IBuilderServiceResponseListenerLyra {
+                    override fun onBuilderSuccess(response: ByteArray) {
 
-                }
+                    }
 
-                override fun onBuilderFailure(error: Any) {
-                    
-                }
+                    override fun onBuilderFailure(error: Any) {
 
-            },
-                apiRequestBuilderLyra.createPurchaseRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
-            )
+                    }
+
+                },
+                    apiRequestBuilderLyra.createPurchaseRequest(
+                        PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
+                            paymentServiceTxnDetails
+                        )
+                    )
+                )
+            }
         }
         else {
-
             builderServiceRepository.apiPurchase(
                 object : IBuilderServiceResponseListener {
                     override fun onBuilderSuccess(response: String) {

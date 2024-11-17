@@ -39,6 +39,16 @@ data class BuilderServiceTxnDetails(
 
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
+    @SerializedName("trackData")        var trackData: String? = null,
+    @SerializedName("pinBlock")        var pinBlock: String? = null,
+    @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
+    @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
+    @SerializedName("cardBrand") var cardBrand: String? = null,
+    @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
+    @SerializedName("cardAuthMethod") var cardAuthMethod: String? = null,
+    @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
+    @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
+    @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
 
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
@@ -55,16 +65,6 @@ data class BuilderServiceTxnDetails(
     @SerializedName("SGST") var SGST: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: String? = null,
-
-    /* Card Details */
-    @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
-    @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
-    @SerializedName("cardBrand") var cardBrand: String? = null,
-    @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
-    @SerializedName("cardAuthMethod") var cardAuthMethod: String? = null,
-    @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
-    @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
-    @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,

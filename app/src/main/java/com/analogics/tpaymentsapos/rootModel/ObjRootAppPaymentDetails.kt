@@ -38,6 +38,10 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
 
     /* Card Details */
+    @SerializedName("emvData")          var emvData: String? = null,
+    @SerializedName("trackData")        var trackData: String? = null,
+    @SerializedName("pinBlock")         var pinBlock: String? = null,
+    @SerializedName("ksn")              var ksn: String? = null,
     @SerializedName("cardEntryMode")    var cardEntryMode: String? = null,
     @SerializedName("cardMaskedPan")    var cardMaskedPan: String? = null,
     @SerializedName("cardBrand")        var cardBrand: String? = null,
@@ -48,7 +52,6 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
     @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
     @SerializedName("signatureData")    var signatureData: String? = null,
-    @SerializedName("emvData") var emvData: String? = null,
 
     @SerializedName("txnType") var txnType:TxnType?=null,
     @SerializedName("batchId") var batchId: String? = null,

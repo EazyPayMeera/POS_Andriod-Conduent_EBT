@@ -34,7 +34,7 @@ data class PurchaseRequest (
 @SerializedName("CardAuthResult")   var cardAuthResult: String? = "12455666" ,
 @SerializedName("CardCountryCode")  var cardCountryCode: String? = "12455666" ,
 @SerializedName("CardLanguagePref") var cardLanguagePref: String? = "12455666" ,
-@SerializedName("EmvData")          var emvData: String? = null ,
+@SerializedName("EmvData")          var emvData: String? = null,
 
 /* Original Txn data for Void Refund Capture */
 @SerializedName("OriginalTxnType")  var originalTxnType: String? = "12455666" ,

@@ -8,9 +8,9 @@ object EmvConstants {
     const val EMV_TAG_PAN_HEX =                     0x5A
 
     /* End to End Encryption */
-    const val EMV_KEY_ENC_TRACK =                   "ENC_TRACK"
-    const val EMV_KEY_ENC_PAN =                     "ENC_PAN"
-    const val EMV_KEY_ENC_KSN =                     "ENC_KSN"
+    const val EMV_TAG_ENC_TRACK =                   "FF01"
+    const val EMV_TAG_ENC_KSN =                     "FF02"
+    const val EMV_TAG_ENC_PAN =                     "FF03"
 
     const val EMV_TAG_TRANS_CURRENCY_EXPONENT =     "5F36"
 

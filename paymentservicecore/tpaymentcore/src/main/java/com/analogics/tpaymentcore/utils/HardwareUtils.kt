@@ -30,7 +30,9 @@ object HardwareUtils {
         try {
             var ipekBytes = ipek.hexToByteArray()
             var ksnBytes = ksn.hexToByteArray()
-            return PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_PIN, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0
+            return PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_PIN, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0 &&
+                    PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_TDK, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0 &&
+                    PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_EMV, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0
         }catch (exception : Exception)
         {
             Log.e("HARDWARE_UTILS", exception.message.toString())
