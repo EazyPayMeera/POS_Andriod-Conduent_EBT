@@ -4,6 +4,7 @@ import android.content.Context
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.BuilderServiceTxnDetails
 import com.analogics.builder_core.utils.BuilderUtils
+import com.analogics.builder_core.utils.toBcd
 import com.analogics.builder_core.utils.toCurrencyLong
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
@@ -128,7 +129,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getPinBlock(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         var pinBlock: String? =
-            builderServiceTxnDetails?.pinBlock?.toInt()?.toString()?:"56BA46A5F3401014"
+            builderServiceTxnDetails?.pinBlock?.toInt()?.toString()
         pinBlock?.padEnd(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, 'F')?.let {
             pinBlock = it
         }
@@ -222,8 +223,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         /* TPDU Header */
         message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
-            this[3] = ((stan/256)%256).toByte()
-            this[4] = (stan%256).toByte()
+            this[3] = ((stan/100)%100).toInt().toBcd()
+            this[4] = (stan%100).toInt().toBcd()
         }
 
             /* Field 3, Processing Code, N6, Mandatory */

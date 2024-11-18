@@ -5,6 +5,7 @@ package com.analogics.builder_core.utils
 import android.util.Log
 import com.analogics.builder_core.model.Symbol
 import java.util.Locale
+import kotlin.experimental.or
 import kotlin.math.pow
 
 fun transformToAmountDouble(amount: String, decimalPlaces: Int = 2): Double {
@@ -51,4 +52,11 @@ fun String?.toCurrencyLong(decimalPlaces: Int = 2): Long
 fun removeNonDigits(input: String): String {
     val re = Regex("[^0-9]")
     return re.replace(input, "")
+}
+
+
+fun Int?.toBcd() : Byte
+{
+    var bcd = this?:0
+    return ((bcd + (bcd/10)*6)%255).toByte()
 }
