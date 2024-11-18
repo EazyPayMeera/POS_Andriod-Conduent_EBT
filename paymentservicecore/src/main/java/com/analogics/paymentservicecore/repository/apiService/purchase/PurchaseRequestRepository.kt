@@ -50,11 +50,11 @@ class PurchaseRequestRepository @Inject constructor(
                 builderServiceRepositoryLyra.networkServiceRequest(object :
                     IBuilderServiceResponseListenerLyra {
                     override fun onBuilderSuccess(response: ByteArray) {
-
+                        onAPIServiceResponse(paymentServiceTxnDetails)
                     }
 
                     override fun onBuilderFailure(error: Any) {
-
+                        onAPIServiceResponse(ApiServiceError(error.toString()))
                     }
 
                 },
