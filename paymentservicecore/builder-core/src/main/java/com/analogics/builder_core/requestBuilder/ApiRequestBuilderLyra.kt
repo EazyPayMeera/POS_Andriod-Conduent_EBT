@@ -128,7 +128,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getPinBlock(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         var pinBlock: String? =
-            builderServiceTxnDetails?.pinBlock?.toInt()?.toString()?:"25D9E4FF80A08B70"
+            builderServiceTxnDetails?.pinBlock?.toInt()?.toString()?:"56BA46A5F3401014"
         pinBlock?.padEnd(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, 'F')?.let {
             pinBlock = it
         }
@@ -138,15 +138,23 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+        val stan = BuilderUtils.getSTAN(context)
 
         var message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
+        /* TPDU Header */
+        /* TPDU Header */
+        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+            this[1] = ((stan/256)%256).toByte()
+            this[2] = (stan%256).toByte()
+        }
+
         /* Field 3, Processing Code, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
         /* Field 11, STAN, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_STAN,
-            BuilderUtils.getSTAN(context), IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
+                stan, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
 
         /* Field 12, Time, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TIME,
@@ -208,18 +216,25 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val currencyCode = getCurrencyCode(builderServiceTxnDetails)
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
+        val stan = BuilderUtils.getSTAN(context)
 
         var message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
+        /* TPDU Header */
+        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+            this[3] = ((stan/256)%256).toByte()
+            this[4] = (stan%256).toByte()
+        }
+
             /* Field 3, Processing Code, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
             /* Field 4, Amount, N12, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
 
             /* Field 11, STAN, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_STAN,
-                BuilderUtils.getSTAN(context), IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
+                stan, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
 
             /* Field 12, Time, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TIME,
