@@ -1,12 +1,10 @@
 package com.analogics.tpaymentsapos.rootUiScreens.activationScreen.viewModel
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.logger.AppLogger
@@ -15,19 +13,16 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.apply
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.text.isNotBlank
 
 @HiltViewModel
 class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository) :
@@ -87,7 +82,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         )
     }
 
-    fun startActivateProcess() {
+    /*fun startActivateProcess() {
         viewModelScope.launch {
             try {
                 setActivationButtonState(false)
@@ -98,7 +93,41 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }
         }
+    }*/
+
+    fun startActivateProcess() {
+        viewModelScope.launch {
+            try {
+                // Disable the activation button to prevent multiple clicks
+                setActivationButtonState(false)
+
+                // Collect required activation data
+                collectActivationData()
+
+                /* Uncomment the following line if needed to make the API request with the transformed object
+                apiServiceRepository.apiServiceRklRequest(
+                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
+                        sharedViewModel?.objRootAppPaymentDetail
+                    ), this@ActivationViewModel
+                ) */
+
+                // Inject keys and activate the device if key injection is successful
+                val keyInjectionSuccess = PaymentServiceUtils.injectKeys(
+                    "5356BD8C6F465469AAE825A9069693EE",
+                    "FFFF6986499CB9000000",
+                    "C7D049"
+                )
+
+                if (keyInjectionSuccess) {
+                    activateDevice()
+                }
+
+            } catch (e: Exception) {
+                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "Unknown error occurred during activation.")
+            }
+        }
     }
+
 
     fun activateDevice() {
         sharedViewModel?.objPosConfig?.apply { isActivationDone = true }?.saveToPrefs()
