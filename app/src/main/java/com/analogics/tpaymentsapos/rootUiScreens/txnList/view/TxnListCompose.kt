@@ -41,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,9 +94,11 @@ fun TransactionListScreen(
     val endDate = viewModel.endDateList.collectAsState().value
     val sharedViewModel = localSharedViewModel.current
     val openBatchId = viewModel.openBatch.collectAsState().value
-    Log.d("Inside Header Section", "Open $openBatchId")
+    //val lastBatchId = batchId.lastOrNull()
+    val latestBatchId by rememberUpdatedState(batchId.lastOrNull())
+    //Log.d("Batch List", " $lastBatchId")
 
-
+    var selectedBatchId by remember { mutableStateOf<String?>(null) }
     val showDateTimePicker = remember { mutableStateOf(false) }
     val BatchId = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
@@ -152,7 +155,7 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value)
+                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value,selectedBatchId,latestBatchId)
                 SummarySection(viewModel)
             }
         }
@@ -186,7 +189,9 @@ fun TransactionListScreen(
                             style = MaterialTheme.typography.body2,
                             color = Color.Gray,
                             modifier = Modifier.clickable {
+                                selectedBatchId = null
                                 viewModel.fetchTransactions()
+
                             }
                         )
 
@@ -330,14 +335,19 @@ fun TransactionListScreen(
                 endDates = endDate,
                 onItemSelected = { selectedId ->
                     viewModel.filterTransactionsByBatchId(selectedId)
+                    selectedBatchId = selectedId
                 }
 
             )
     }
     LaunchedEffect(Unit) {
-        Log.d("Date Time Picker", "Fetch All the Transactions")
-        viewModel.fetchTransactions()
         viewModel.filterTransactionsForBatch()
+        //Log.d("Batch List", "Latest Batch ID inside LaunchedEffect: $latestBatchId")
+
+    }
+    LaunchedEffect(latestBatchId) {
+        Log.d("Batch List", "Latest Batch ID inside LaunchedEffect: $latestBatchId")
+        viewModel.filterTransactionsByBatchId(latestBatchId.toString())
     }
 
     LaunchedEffect(viewModel.isClosedBatchEnabled) {
@@ -513,10 +523,13 @@ fun HeaderSection(
     navHostController: NavHostController,
     selectedStartDate: LocalDateTime?,
     selectedEndDate: LocalDateTime?,
-    isBatchCloseEnabled : Boolean
+    isBatchCloseEnabled : Boolean,
+    selectedBatchId: String?,
+    lastbatchid: String?
 ) {
     val context = LocalContext.current
     var isDialogVisible by remember { mutableStateOf(false) }
+    var selectedId by remember { mutableStateOf<String?>(null) }
     var isAlertVisible by remember { mutableStateOf(false) }
     var isSummaryReport by remember { mutableStateOf(false) }
 
@@ -542,8 +555,18 @@ fun HeaderSection(
 
                 Column {
 
+                    if(!selectedBatchId.isNullOrEmpty() || !lastbatchid.isNullOrEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.sel_batchid) + (selectedBatchId
+                                ?: lastbatchid).toString(),
+                            style = MaterialTheme.typography.caption,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
+                        )
+                    }
+
                     if(selectedEndDate != null && selectedStartDate != null) {
-                        selectedStartDate?.let {
+                        selectedStartDate.let {
                             Text(
                                 text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
                                 style = MaterialTheme.typography.caption,
@@ -603,7 +626,6 @@ fun HeaderSection(
                             text = stringResource(id = R.string.close_batch),
                             fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_14_CompactMedium,
                             fontWeight = FontWeight.Bold,
-                            /*overflow = TextOverflow.Ellipsis*/
                         )
                     }
                 }

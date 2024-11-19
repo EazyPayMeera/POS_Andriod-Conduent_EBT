@@ -218,6 +218,7 @@
     <string name="which_report">Which Report You want</string>
     <string name="summary">Summary</string>
     <string name="detail">Detail</string>
+    <string name="sel_batchid">Selected Batch Id:</string>
 
 
     <!-- Sucess Screen -->
