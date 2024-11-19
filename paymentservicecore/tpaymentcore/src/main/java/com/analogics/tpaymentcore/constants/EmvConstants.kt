@@ -11,6 +11,7 @@ object EmvConstants {
     const val EMV_TAG_ENC_TRACK =                   "FF01"
     const val EMV_TAG_ENC_KSN =                     "FF02"
     const val EMV_TAG_ENC_PAN =                     "FF03"
+    const val EMV_TAG_ENC_PIN_BLOCK =               "FF04"
 
     const val EMV_TAG_TRANS_CURRENCY_EXPONENT =     "5F36"
 

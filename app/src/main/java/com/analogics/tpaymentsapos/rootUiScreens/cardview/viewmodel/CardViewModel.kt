@@ -213,10 +213,25 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                             hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
 
                         val tlvData = TlvUtils(emvTags)
-                        sharedViewModel.objRootAppPaymentDetail.trackData = tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_TRACK]
-                        sharedViewModel.objRootAppPaymentDetail.ksn = tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_KSN]
-                        tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_TRACK)
-                        tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_KSN)
+                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
+                            sharedViewModel.objRootAppPaymentDetail.trackData =
+                                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_TRACK]
+                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_TRACK)
+                        }
+                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_KSN)) {
+                            sharedViewModel.objRootAppPaymentDetail.ksn =
+                                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_KSN]
+                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_KSN)
+                        }
+                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)) {
+                            sharedViewModel.objRootAppPaymentDetail.pinBlock =
+                                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK]
+                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
+                        }
+                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_PAN)) {
+                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_PAN)
+                        }
+
                         sharedViewModel.objRootAppPaymentDetail.emvData = tlvData.toTlvString()
 
                         viewModelScope.launch {

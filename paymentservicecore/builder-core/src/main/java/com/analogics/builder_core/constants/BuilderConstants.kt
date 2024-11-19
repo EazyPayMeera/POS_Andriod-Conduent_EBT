@@ -4,7 +4,7 @@ object BuilderConstants {
     const val SHARED_PREF_NAME = "BuilderSharedPref"
     const val SHARED_PREF_KEY_STAN = "stan"
 
-    const val DEFAULT_ISO8583_NII = "011"
+    const val DEFAULT_ISO8583_NII = "0110"
     const val DEFAULT_ISO8583_DATE_TIME_FORMAT = "yyMMddHHmmss"
     const val DEFAULT_ISO8583_DATE_FORMAT = "MMdd"
     const val DEFAULT_ISO8583_TIME_FORMAT = "HHmmss"
@@ -52,7 +52,7 @@ object BuilderConstants {
 
     /* NII */
     const val ISO_FIELD_NII = 24
-    const val ISO_FIELD_NII_LENGTH = 3
+    const val ISO_FIELD_NII_LENGTH = 4
 
     /* POS Condition Code */
     const val ISO_FIELD_POS_CONDITION_CODE = 25

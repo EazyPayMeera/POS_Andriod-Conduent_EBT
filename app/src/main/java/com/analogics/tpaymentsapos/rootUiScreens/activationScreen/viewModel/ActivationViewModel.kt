@@ -92,10 +92,10 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             try {
                 setActivationButtonState(false)
                 collectActivationData()
-                apiServiceRepository.apiServiceRklRequest(
-                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel?.objRootAppPaymentDetail), this@ActivationViewModel)
-/*                if(PaymentServiceUtils.injectKeys("F04BEFBA8DC3ABF0F04BEFBA8DC3ABF0","FFFF6986499CB5600000","DDC739")==true)
-                    activateDevice()*/
+/*                apiServiceRepository.apiServiceRklRequest(
+                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel?.objRootAppPaymentDetail), this@ActivationViewModel)*/
+                if(PaymentServiceUtils.injectKeys("5356BD8C6F465469AAE825A9069693EE","FFFF6986499CB9000000","C7D049")==true)
+                    activateDevice()
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }

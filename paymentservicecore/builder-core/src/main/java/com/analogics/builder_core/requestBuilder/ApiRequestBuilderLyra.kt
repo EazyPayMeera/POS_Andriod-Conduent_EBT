@@ -50,7 +50,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     fun getIsoPosEntryMode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return "051"
+        return "0510"
     }
 
     fun getIsoPosConditionCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
@@ -119,7 +119,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getCardSeqNum(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         var cardSeqNumber: String? =
-            builderServiceTxnDetails?.cardSeqNum?.toInt()?.toString()?:"1"
+            builderServiceTxnDetails?.cardSeqNum?.toInt()?.toString()?:"0010"
         cardSeqNumber?.padStart(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, '0')?.let {
             cardSeqNumber = it
         }
@@ -129,7 +129,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getPinBlock(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         var pinBlock: String? =
-            builderServiceTxnDetails?.pinBlock?.toInt()?.toString()
+            builderServiceTxnDetails?.pinBlock
         pinBlock?.padEnd(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, 'F')?.let {
             pinBlock = it
         }
@@ -144,12 +144,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         var message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
         /* TPDU Header */
-        /* TPDU Header */
         message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
-            this[1] = ((stan/256)%256).toByte()
-            this[2] = (stan%256).toByte()
+            this[3] = ((stan/100)%100).toInt().toBcd()
+            this[4] = (stan%100).toInt().toBcd()
         }
-
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
@@ -247,11 +245,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
             /* Field 22, POS Entry Mode, N3, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_POS_ENTRY_MODE,
-                posEntryMode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_POS_ENTRY_MODE_LENGTH)
+                posEntryMode, IsoType.NUMERIC,posEntryMode?.length?:0)
 
             /* Field 23, PAN Seq Number, N3, Conditional */
             .setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO,
-                cardSeqNumber, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+                cardSeqNumber, IsoType.NUMERIC,cardSeqNumber?.length?:0)
 
             /* Field 24, NII, N3, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_NII_LENGTH)
@@ -272,7 +270,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN, ksn, IsoType.LLLVAR,ksn?.length?:0)
 
             /* Field 49, Currency Code Transaction, N3, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE_TXN, currencyCode, IsoType.NUMERIC,currencyCode?.length?:0)
+            .setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE_TXN, currencyCode, IsoType.ALPHA,currencyCode?.length?:0)
 
             /* Field 52, Pin Block, Binary 64, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.BINARY,BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
@@ -284,7 +282,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_PVT_USE_BATCH, batchNumber, IsoType.LLLVAR, batchNumber?.length?:0)
 
             /* Field 62, Invoice Number, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_INVOICE_NUMBER, invoiceNumber, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH)
+            .setValue(BuilderConstants.ISO_FIELD_INVOICE_NUMBER, invoiceNumber, IsoType.LLLVAR,invoiceNumber?.length?:0)
 
         return appendIsoLength(message.writeData())
     }

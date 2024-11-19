@@ -100,6 +100,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         var thread : Thread? = null
         var _amount : Long = 0L
         var _cashbackAmount : Long = 0L
+        var pinBlock : String? = null
+        var ksn : String? = null
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
             thread = Thread {
@@ -119,7 +121,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                         data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
                         data["isEnterAmtAfterReadRecord"] = false
                     }
-
+                    initEncryption()
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
                     EmvNfcKernelApi.getInstance().startKernel(data)
@@ -137,8 +139,18 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             EmvNfcKernelApi.getInstance().abortKernel()
         }
 
+        fun initEncryption()
+        {
+            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_TDK,ksnBytes)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_EMV,ksnBytes)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_MAC,ksnBytes)
+            pinBlock = null
+        }
+
         @OptIn(ExperimentalStdlibApi::class)
-        fun getEncryptedTrackData() : HashMap<String,String>
+        fun getEncryptedData() : HashMap<String,String>
         {
             var hashMap = HashMap<String,String>()
             var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX).replace('D','=').removeSuffix("F")
@@ -211,6 +223,10 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
             }
 
+            pinBlock?.let {
+                hashMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK] = it
+            }
+
             return hashMap
         }
 
@@ -257,7 +273,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
             Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
             var tlvMap = TlvUtils(p0.toString()).tlvMap.apply {
-                for (tlv in getEncryptedTrackData())
+                for (tlv in getEncryptedData())
                     put(tlv.key, tlv.value)
             }
             iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
@@ -525,6 +541,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             Log.i("applog", "emv_proc_onlinePin")
 
             val param: Bundle = Bundle()
+            pinBlock = null /* Clear the pinblock variable */
 
             if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.DUKPT_KEY_SET_PIN)
             else param.putInt("PINKeyNo", 10)
@@ -536,7 +553,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             param.putInt("soundVolume", 1)
             param.putBoolean("onlinePin", true)
             param.putBoolean("FullScreen", true)
-            param.putLong("timeOutMS", 30000)
+            param.putLong("timeOutMS", 300000)
             param.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12") // "4,4");   //
             param.putString("title", "Security PINPAD")
             param.putString(
@@ -587,8 +604,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
             Log.i("applog", "getPinBlockEx ")
 
-            if (isDUKPT)
+            if (isDUKPT) {
                 PinPadProviderImpl.getInstance().GetDukptPinBlock(param, this)
+            }
             else
                 PinPadProviderImpl.getInstance().getPinBlockEx(param, this)
         }
@@ -873,6 +891,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             } else {
                 Log.d("EMV_APP", "PinBlock:" + p0.decodeToString())
                 Log.d("EMV_APP", "KSN     :" + p1?.toHexString())
+                pinBlock = p0.decodeToString()
+                ksn = p1?.decodeToString()
                 EmvNfcKernelApi.getInstance().sendPinEntry()
             }
         }
