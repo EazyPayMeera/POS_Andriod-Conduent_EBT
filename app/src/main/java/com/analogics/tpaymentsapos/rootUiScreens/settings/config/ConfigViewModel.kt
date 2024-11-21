@@ -43,7 +43,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isAutoPrintMerchant.value = sharedViewModel.objPosConfig?.isAutoPrintMerchant == true
         isTippingEnabled.value = sharedViewModel.objPosConfig?.isTipEnabled == true
         isTaxEnabled.value = sharedViewModel.objPosConfig?.isTaxEnabled == true
-        isInactivity.value = sharedViewModel.objPosConfig?.isInactivity == true
+        isInactivity.value = sharedViewModel.objPosConfig?.isInactivityTimeout == true
     }
 
     private fun getTipPercent(button: TipButton, sharedViewModel: SharedViewModel) : Double
@@ -96,7 +96,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     }
 
     fun onInactivityTimeoutChange(timeout: Int,sharedViewModel: SharedViewModel) {
-        sharedViewModel.objPosConfig?.apply { this.isInactivityTimeout = timeout }?.saveToPrefs()
+        sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()
     }
 
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {

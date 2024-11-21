@@ -17,15 +17,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.splitByIntervals
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun ForgetPasswordView(navHostController: NavHostController) {
+
+    var sharedViewModel = localSharedViewModel.current
     Column {
         CommonTopAppBar(
             title = stringResource(id = R.string.forget_pswd),
@@ -90,12 +97,12 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         Image(
                             painter = painterResource(id = R.drawable.user), // Replace with your icon resource
                             contentDescription = "",
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium)
+                            modifier = Modifier.size(MaterialTheme.dimens.DP_24_CompactMedium),
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
                         Text(
-                            text = stringResource(id = R.string.mid),
-                            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                            text = stringResource(id = R.string.mid) + " " +(sharedViewModel.objPosConfig?.merchantId?:""),
+                            fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
@@ -113,8 +120,8 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
                         Text(
-                            text = stringResource(id = R.string.tid),
-                            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                            text = stringResource(id = R.string.tid) + " " + (sharedViewModel.objPosConfig?.terminalId?:""),
+                            fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
@@ -132,8 +139,8 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
                         Text(
-                            text = stringResource(id = R.string.sr_no),
-                            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                            text = stringResource(id = R.string.sr_no) + " " +(sharedViewModel.objPosConfig?.deviceSN?:PaymentServiceUtils.getDeviceSN()).splitByIntervals(listOf(4,4,3,3),"-"),
+                            fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )
@@ -151,8 +158,8 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
                         Text(
-                            text = stringResource(id = R.string.call_center),
-                            fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                            text = stringResource(id = R.string.call_center)  + " " + (sharedViewModel.objPosConfig?.customerCareNumber?:""),
+                            fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
                         )

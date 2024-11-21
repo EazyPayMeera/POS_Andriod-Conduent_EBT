@@ -330,7 +330,31 @@ fun getIsoResponseCodeString(context: Context, responseCode: String?) : String
     return if(id!=null) context.resources.getString(id) else ""
 }
 
-fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails) : Acquirer
+fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails?) : Acquirer
 {
-    return Acquirer.valueOf(objRootAppPaymentDetail.acquirerName?:"")
+    return Acquirer.valueOf(objRootAppPaymentDetail?.acquirerName?:"")
+}
+
+fun String.splitByIntervals(intervals: List<Int>, charSequence : CharSequence = "-"): String {
+    val result = mutableListOf<String>()
+    var currentIndex = 0
+
+    // Iterate through the defined intervals
+    for (interval in intervals) {
+        if (currentIndex >= this.length) break
+
+        // Extract substring based on the current interval
+        val part = this.substring(currentIndex, (currentIndex + interval).coerceAtMost(this.length))
+        result.add(part)
+
+        // Move the index forward by the current interval
+        currentIndex += interval
+    }
+
+    // Add any remaining part of the string
+    if (currentIndex < this.length) {
+        result.add(this.substring(currentIndex))
+    }
+
+    return result.joinToString(charSequence)
 }

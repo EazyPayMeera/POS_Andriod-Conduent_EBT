@@ -21,6 +21,10 @@ object AppConstants {
     const val CARD_CHECK_TIMEOUT_S = 30L
     const val DEMO_MODE_PROMPTS_DELAY_MS = 3000L
 
+    const val DEFAULT_TIP_PERCENT_1 = 5
+    const val DEFAULT_TIP_PERCENT_2 = 10
+    const val DEFAULT_TIP_PERCENT_3 = 15
+
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8
     const val MAX_LENGTH_MID = 15
@@ -34,4 +38,5 @@ object AppConstants {
 
     /* Acquirer Specific Constants */
     const val LYRA_MAX_INVOICE_LENGTH = 6
+    const val LYRA_CUSTOMER_CARE = "(020) 123 456 7890"
 }

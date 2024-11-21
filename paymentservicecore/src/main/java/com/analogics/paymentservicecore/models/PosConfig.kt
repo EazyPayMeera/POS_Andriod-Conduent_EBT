@@ -20,6 +20,8 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context,) {
     @SerializedName("loginId") var loginId: String? = null
     @SerializedName("loginPassword") var loginPassword: String? = null
     @SerializedName("language") var language: String? = null
+    @SerializedName("customerCareNumber") var customerCareNumber: String? = null
+    @SerializedName("inactivityTimeout") var inactivityTimeout: Int? = null
 
     /* Device Info */
     @SerializedName("deviceSN") var deviceSN: String? = null
@@ -55,15 +57,14 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context,) {
     @SerializedName("isPromptInvoiceNo") var isPromptInvoiceNo: Boolean? = false
     @SerializedName("isTipEnabled") var isTipEnabled: Boolean? = false
     @SerializedName("isTaxEnabled") var isTaxEnabled: Boolean? = false
-    @SerializedName("isInactivityTimeout") var isInactivityTimeout: Int? = null
-    @SerializedName("isInactivity") var isInactivity: Boolean? = false
+    @SerializedName("isInactivityTimeout") var isInactivityTimeout: Boolean? = false
 
     /* State Management */
     @SerializedName("isLoggedIn") var isLoggedIn: Boolean? = false
     @SerializedName("isPaymentSDKInit") var isPaymentSDKInit: Boolean? = false
     @SerializedName("isOnboardingComplete") var isOnboardingComplete: Boolean? = false
     @SerializedName("isActivationDone") var isActivationDone: Boolean? = false
-            
+
     fun loadFromPrefs() : PosConfig
     {
         try {

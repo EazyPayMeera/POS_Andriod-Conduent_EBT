@@ -214,7 +214,7 @@ fun TippingView(
     viewModel: ConfigViewModel,
     sharedViewModel: SharedViewModel
 ) {
-    var timeoutDuration by remember { mutableStateOf(sharedViewModel.objPosConfig?.isInactivityTimeout?.toString() ?: "") }
+    var timeoutDuration by remember { mutableStateOf(sharedViewModel.objPosConfig?.inactivityTimeout?.toString() ?: "") }
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(
             viewModel.getTipPercentLabel(TipButton.PERCENT1, sharedViewModel),

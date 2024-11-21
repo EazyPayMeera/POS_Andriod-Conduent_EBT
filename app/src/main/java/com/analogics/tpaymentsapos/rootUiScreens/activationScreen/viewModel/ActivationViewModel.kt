@@ -10,6 +10,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceRe
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
@@ -17,6 +18,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getAcquirer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -82,21 +84,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         )
     }
 
-    /*fun startActivateProcess() {
-        viewModelScope.launch {
-            try {
-                setActivationButtonState(false)
-                collectActivationData()
-/*                apiServiceRepository.apiServiceRklRequest(
-                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel?.objRootAppPaymentDetail), this@ActivationViewModel)*/
-                if(PaymentServiceUtils.injectKeys("5356BD8C6F465469AAE825A9069693EE","FFFF6986499CB9000000","C7D049")==true)
-                    activateDevice()
-            } catch (e: Exception) {
-                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
-            }
-        }
-    }*/
-
     fun startActivateProcess() {
         viewModelScope.launch {
             try {
@@ -130,10 +117,25 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }
     }
 
-
     fun activateDevice() {
-        sharedViewModel?.objPosConfig?.apply { isActivationDone = true }?.saveToPrefs()
+        loadDefaultValues(sharedViewModel)
+        sharedViewModel?.objPosConfig?.apply {
+            isActivationDone = true
+        }?.saveToPrefs()
         navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+    }
+
+    fun loadDefaultValues(sharedViewModel: SharedViewModel?)
+    {
+        /* Default TIP Percent values */
+        sharedViewModel?.objPosConfig?.tipPercent1 = AppConstants.DEFAULT_TIP_PERCENT_1.toDouble()
+        sharedViewModel?.objPosConfig?.tipPercent2 = AppConstants.DEFAULT_TIP_PERCENT_2.toDouble()
+        sharedViewModel?.objPosConfig?.tipPercent3 = AppConstants.DEFAULT_TIP_PERCENT_3.toDouble()
+
+        /* Customer Care Info */
+        sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
+        if(getAcquirer(sharedViewModel?.objRootAppPaymentDetail)== Acquirer.LYRA)
+            sharedViewModel?.objPosConfig?.customerCareNumber = AppConstants.LYRA_CUSTOMER_CARE
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
