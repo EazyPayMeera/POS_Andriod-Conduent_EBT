@@ -67,18 +67,9 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             text = stringResource(id = R.string.training_mode),
             isChecked = viewModel.isTrainingMode.value,
             onCheckedChange = {
-                if(isBatchOpen.size == 0 && !isAdmin) {
+                if(isBatchOpen.size == 0 && isAdmin) {
                     viewModel.onDemoModeChange(it, sharedViewModel)
                 }},
-            isArrow = false,
-            onArrowChange = {},
-            isAdmin = isAdmin
-        ),
-        SettingsItem(
-            imageRes = R.drawable.config_auto_print_report,
-            text = stringResource(id = R.string.auto_report_print),
-            isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { if(!isAdmin) viewModel.onAutoPrintReportChange(it, sharedViewModel) },
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -87,16 +78,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
             isChecked = viewModel.isPromptInvoiceNumber.value,
-            onCheckedChange = { if(!isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) },
-            isArrow = false,
-            onArrowChange = {},
-            isAdmin = isAdmin
-        ),
-        SettingsItem(
-            imageRes = R.drawable.config_auto_m_print,
-            text = stringResource(id = R.string.auto_print_merchant),
-            isChecked = viewModel.isAutoPrintMerchant.value,
-            onCheckedChange = { if(!isAdmin) viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
+            onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) },
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -105,7 +87,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_tipping,
             text = stringResource(id = R.string.enable_tipping),
             isChecked = viewModel.isTippingEnabled.value,
-            onCheckedChange = { if(!isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) },
+            onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) },
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -114,31 +96,47 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.taxes),
             isChecked = viewModel.isTaxEnabled.value,
-            onCheckedChange = { if(!isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) },
+            onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) },
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
         ),
         SettingsItem(
-            imageRes = R.drawable.time,
-            text = stringResource(id = R.string.inactivity_timeout),
-            isChecked = viewModel.isInactivity.value,
-            onCheckedChange = { if(!isAdmin) viewModel.onInactivityChange(it) },
-            isArrow = false,
-            onArrowChange = {},
-            isAdmin = !isAdmin
-        ),
-        SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
             isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) },
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)},
             isArrow = true,
-            onArrowChange = {navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)},
-            isAdmin = !isAdmin
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)},
+            isAdmin = isAdmin
         ),
-
-
+        SettingsItem(
+            imageRes = R.drawable.config_auto_print_report,
+            text = stringResource(id = R.string.auto_report_print),
+            isChecked = viewModel.isAutoPrintReport.value,
+            onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {},
+            isAdmin = true
+        ),
+        SettingsItem(
+            imageRes = R.drawable.config_auto_m_print,
+            text = stringResource(id = R.string.auto_print_merchant),
+            isChecked = viewModel.isAutoPrintMerchant.value,
+            onCheckedChange = { viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
+            isArrow = false,
+            onArrowChange = {},
+            isAdmin = true
+        ),
+        SettingsItem(
+            imageRes = R.drawable.time,
+            text = stringResource(id = R.string.inactivity_timeout),
+            isChecked = viewModel.isInactivity.value,
+            onCheckedChange = { viewModel.onInactivityChange(it) },
+            isArrow = false,
+            onArrowChange = {},
+            isAdmin = true
+        ),
     )
 
     Column {
@@ -159,18 +157,18 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                     SettingsSurface(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
-                        isAdmin = isAdmin
+                        isAdmin = item.isAdmin
                     )
 
-                    if (index == 4 && item.isChecked) {
+                    if (index == 2 && item.isChecked) {
                         TippingView(ConfigurableViewType.Percentage, navHostController, viewModel, sharedViewModel)
                     }
 
-                    if (index == 5 && item.isChecked) {
+                    if (index == 3 && item.isChecked) {
                         TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel)
                     }
 
-                    if (index == 6 && item.isChecked) {
+                    if (index == 7 && item.isChecked) {
                         TippingView(ConfigurableViewType.Inactivity_Timeout, navHostController, viewModel, sharedViewModel)
                     }
 
@@ -358,12 +356,12 @@ enum class TipButton(val value: Int) {
 fun SettingsSurface(
     modifier: Modifier = Modifier,
     item: SettingsItem,
-    isAdmin: Boolean // Add isAdmin parameter
+    isAdmin: Boolean
 ) {
     Surface(
         modifier = modifier
             .height(MaterialTheme.dimens.DP_60_CompactMedium)
-            .then(if (isAdmin) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+            .then(if (!isAdmin) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
             .clickable(enabled = isAdmin) {}, // Make it non-clickable if isAdmin is false
         color = MaterialTheme.colorScheme.onPrimary
     ) {
