@@ -37,6 +37,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.isBatchOpen() // Returns the count of rows updated
     }
 
+    suspend fun isAdmin(userId: String): Boolean {
+        return iBatchDao.isAdmin(userId) // Returns the count of rows updated
+    }
+
 
     suspend fun  insertTxn(txnEntity: TxnEntity){
         try {

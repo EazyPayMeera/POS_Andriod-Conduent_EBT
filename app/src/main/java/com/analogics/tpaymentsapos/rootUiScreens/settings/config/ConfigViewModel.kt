@@ -16,12 +16,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel(){
 
     private val _isOpenBatch = MutableStateFlow<List<String>>(emptyList())
 
     val isOpenBatch: StateFlow<List<String>> = _isOpenBatch
+
+    private val _isAdmin = MutableStateFlow(false) // Change to StateFlow
+    val isAdmin: StateFlow<Boolean> get() = _isAdmin
 
     var isTrainingMode = mutableStateOf(false)
     var isAutoPrintReport = mutableStateOf(false)
@@ -120,6 +124,18 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
                 val isBatchOpen = dbRepository.isBatchOpen()
                 _isOpenBatch.value = isBatchOpen
                 Log.d("BatchViewModel", "Closed ${isBatchOpen.size}")
+            } catch (e: Exception) {
+                Log.e("BatchViewModel", "Error closing open batches", e)
+            }
+        }
+    }
+
+    fun isAdmin(userId:String) {
+        viewModelScope.launch {
+            try {
+                val isAdmin = dbRepository.isAdmin(userId)
+                _isAdmin.value = isAdmin
+                Log.d("isAdmin", isAdmin.toString())
             } catch (e: Exception) {
                 Log.e("BatchViewModel", "Error closing open batches", e)
             }
