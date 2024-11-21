@@ -193,6 +193,10 @@
     <string name="set_timeout">समय सीमा सेट करें</string>
 
     <string name="is_correct">क्या यह जानकारी सही है?</string>
+    <string name="for_admin">केवल प्रशासन के लिए अनुमति प्राप्त है</string>
+    <string name="restricted">प्रतिबंधित !</string>
+    <string name="batch_open">बैच खुला है</string>
+
 
     <!-- Custom Dialogue Builder -->
     <string name="sel_app_id">एक एप्लिकेशन आईडी चुनें</string>

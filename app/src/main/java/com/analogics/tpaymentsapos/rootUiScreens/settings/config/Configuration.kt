@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -50,6 +51,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomSwitch
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toPercentFormat
@@ -61,15 +63,25 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
     var sharedViewModel = localSharedViewModel.current
     val isBatchOpen = viewModel.isOpenBatch.collectAsState().value
     val isAdmin =viewModel.isAdmin.collectAsState().value
+    val context = LocalContext.current
+
+
     val settingsItems = listOf(
         SettingsItem(
             imageRes = R.drawable.config_training_mode,
             text = stringResource(id = R.string.training_mode),
             isChecked = viewModel.isTrainingMode.value,
             onCheckedChange = {
-                if(isBatchOpen.size == 0 && isAdmin) {
-                    viewModel.onDemoModeChange(it, sharedViewModel)
-                }},
+                if (isBatchOpen.size == 0) {
+                    if (isAdmin) {
+                        viewModel.onDemoModeChange(it, sharedViewModel)
+                    } else {
+                        viewModel.onPromptDialogue(context)
+                    }
+                } else {
+                        viewModel.onBatchOpen(context)
+                }
+            },
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -78,7 +90,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
             isChecked = viewModel.isPromptInvoiceNumber.value,
-            onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) },
+            onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) else viewModel.onPromptDialogue(context)},
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -87,7 +99,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_tipping,
             text = stringResource(id = R.string.enable_tipping),
             isChecked = viewModel.isTippingEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) },
+            onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) else viewModel.onPromptDialogue(context)},
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -96,7 +108,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.taxes),
             isChecked = viewModel.isTaxEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) },
+            onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) else viewModel.onPromptDialogue(context)},
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -105,9 +117,9 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
             isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)},
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onPromptDialogue(context)},
             isArrow = true,
-            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)},
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onPromptDialogue(context)},
             isAdmin = isAdmin
         ),
         SettingsItem(
@@ -189,6 +201,8 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
         Log.d("user",sharedViewModel.objPosConfig?.loginId.toString())
         viewModel.isAdmin(sharedViewModel.objPosConfig?.loginId.toString())
     }
+
+    CustomDialogBuilder.ShowComposed()
 }
 
 
