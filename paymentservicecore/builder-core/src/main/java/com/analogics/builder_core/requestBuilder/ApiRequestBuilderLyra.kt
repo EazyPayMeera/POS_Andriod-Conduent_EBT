@@ -4,6 +4,7 @@ import android.content.Context
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.BuilderServiceTxnDetails
 import com.analogics.builder_core.utils.BuilderUtils
+import com.analogics.builder_core.utils.toBcd
 import com.analogics.builder_core.utils.toCurrencyLong
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
@@ -49,7 +50,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     fun getIsoPosEntryMode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return "000"
+        return "0510"
     }
 
     fun getIsoPosConditionCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
@@ -59,7 +60,20 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     fun getEncryptedTrack2Data(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return null
+        var trackData : String? =null
+        builderServiceTxnDetails?.trackData?.let {
+            trackData = it
+        }
+        return trackData
+    }
+
+    fun getIccData(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    {
+        var iccData : String? =null
+        builderServiceTxnDetails?.emvData?.let {
+            iccData = it
+        }
+        return iccData
     }
 
     fun getKsnTag(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
@@ -73,7 +87,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     fun getBatchNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String? {
         var batchNumber: String? =
-            builderServiceTxnDetails?.batchId?.toInt()?.toString()
+            builderServiceTxnDetails?.batchId?.toInt()?.toString()?:"1"
         batchNumber?.padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH, '0')?.let {
             batchNumber = it.length.toString()
                 .padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH_LENGTH, '0') + it
@@ -92,18 +106,54 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return invoiceNumber
     }
 
+    fun getCurrencyCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    {
+        var currencyCode: String? =
+            builderServiceTxnDetails?.txnCurrencyCode?.toInt()?.toString()?:"356"
+        currencyCode?.padStart(BuilderConstants.ISO_FIELD_CURRENCY_CODE_LEN, '0')?.let {
+            currencyCode = it
+        }
+        return currencyCode
+    }
+
+    fun getCardSeqNum(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    {
+        var cardSeqNumber: String? =
+            builderServiceTxnDetails?.cardSeqNum?.toInt()?.toString()?:"0010"
+        cardSeqNumber?.padStart(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, '0')?.let {
+            cardSeqNumber = it
+        }
+        return cardSeqNumber
+    }
+
+    fun getPinBlock(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    {
+        var pinBlock: String? =
+            builderServiceTxnDetails?.pinBlock
+        pinBlock?.padEnd(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, 'F')?.let {
+            pinBlock = it
+        }
+        return pinBlock
+    }
+
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+        val stan = BuilderUtils.getSTAN(context)
 
         var message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
+        /* TPDU Header */
+        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+            this[3] = ((stan/100)%100).toInt().toBcd()
+            this[4] = (stan%100).toInt().toBcd()
+        }
         /* Field 3, Processing Code, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
         /* Field 11, STAN, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_STAN,
-            BuilderUtils.getSTAN(context), IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
+                stan, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
 
         /* Field 12, Time, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TIME,
@@ -154,26 +204,36 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
         val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
         val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
         val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
+        val iccData = getIccData(builderServiceTxnDetails)
         val ksn = getKsnTag(builderServiceTxnDetails)
         val batchNumber = getBatchNumber(builderServiceTxnDetails)
         val invoiceNumber = getInvoiceNumber(builderServiceTxnDetails)
+        val currencyCode = getCurrencyCode(builderServiceTxnDetails)
+        val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
+        val pinBlock = getPinBlock(builderServiceTxnDetails)
+        val stan = BuilderUtils.getSTAN(context)
 
         var message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
+        /* TPDU Header */
+        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+            this[3] = ((stan/100)%100).toInt().toBcd()
+            this[4] = (stan%100).toInt().toBcd()
+        }
+
             /* Field 3, Processing Code, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
             /* Field 4, Amount, N12, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
 
             /* Field 11, STAN, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_STAN,
-                BuilderUtils.getSTAN(context), IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
+                stan, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
 
             /* Field 12, Time, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TIME,
@@ -185,11 +245,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
             /* Field 22, POS Entry Mode, N3, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_POS_ENTRY_MODE,
-                posEntryMode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_POS_ENTRY_MODE_LENGTH)
+                posEntryMode, IsoType.NUMERIC,posEntryMode?.length?:0)
 
             /* Field 23, PAN Seq Number, N3, Conditional */
             .setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO,
-                builderServiceTxnDetails?.cardSeqNum, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+                cardSeqNumber, IsoType.NUMERIC,cardSeqNumber?.length?:0)
 
             /* Field 24, NII, N3, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_NII_LENGTH)
@@ -198,7 +258,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
 
             /* Field 35, Track2 Data, ANS..37, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.BINARY,encryptedTrack2Data?.length?:0)
+            .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLLBIN,encryptedTrack2Data?.length?:0)
 
             /* Field 41, TID, ANS8, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
@@ -207,19 +267,22 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
 
             /* Field 48, Additional Data KSN, ANS...999, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN, ksn, IsoType.ALPHA,ksn?.length?:0)
+            .setValue(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN, ksn, IsoType.LLLVAR,ksn?.length?:0)
 
             /* Field 49, Currency Code Transaction, N3, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE_TXN, builderServiceTxnDetails?.txnCurrencyCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_CURRENCY_CODE_LEN)
+            .setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE_TXN, currencyCode, IsoType.ALPHA,currencyCode?.length?:0)
+
+            /* Field 52, Pin Block, Binary 64, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.BINARY,BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
 
             /* Field 55, ICC Related Data, B..255, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_ICC_DATA, builderServiceTxnDetails?.emvData, IsoType.BINARY,builderServiceTxnDetails?.emvData?.length?:0)
+            .setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccData, IsoType.LLLBIN,iccData?.length?:0)
 
             /* Field 60, Batch Number, ANS...999, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_PVT_USE_BATCH, batchNumber, IsoType.LLLVAR, batchNumber?.length?:0)
 
             /* Field 62, Invoice Number, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_INVOICE_NUMBER, invoiceNumber, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH)
+            .setValue(BuilderConstants.ISO_FIELD_INVOICE_NUMBER, invoiceNumber, IsoType.LLLVAR,invoiceNumber?.length?:0)
 
         return appendIsoLength(message.writeData())
     }

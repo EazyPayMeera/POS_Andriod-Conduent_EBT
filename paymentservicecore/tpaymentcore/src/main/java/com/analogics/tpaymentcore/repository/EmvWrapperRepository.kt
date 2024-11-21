@@ -100,6 +100,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         var thread : Thread? = null
         var _amount : Long = 0L
         var _cashbackAmount : Long = 0L
+        var pinBlock : String? = null
+        var ksn : String? = null
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
             thread = Thread {
@@ -119,7 +121,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                         data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
                         data["isEnterAmtAfterReadRecord"] = false
                     }
-
+                    initEncryption()
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
                     EmvNfcKernelApi.getInstance().startKernel(data)
@@ -135,6 +137,97 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         {
             thread?.interrupt()
             EmvNfcKernelApi.getInstance().abortKernel()
+        }
+
+        fun initEncryption()
+        {
+            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_TDK,ksnBytes)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_EMV,ksnBytes)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)
+            PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_MAC,ksnBytes)
+            pinBlock = null
+        }
+
+        @OptIn(ExperimentalStdlibApi::class)
+        fun getEncryptedData() : HashMap<String,String>
+        {
+            var hashMap = HashMap<String,String>()
+            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX).replace('D','=').removeSuffix("F")
+            trackData.takeIf {
+                (it.length % 8) !=0 }?.let {
+                    trackData = it.padStart(it.length + (8-it.length%8),'0')
+                }
+
+            var trackDateBytes = trackData.toByteArray()
+            var encryptedBytes = ByteArray(trackDateBytes.size)
+            var encryptedLen = IntArray(1)
+            var encryptedLenByteArray = ByteArray(1)
+            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
+            var ksnLen = IntArray(1)
+            var ksnLenByteArray = ByteArray(1)
+            var ivBytes = ByteArray(8)
+            var jioData = EmvNfcKernelApi.getInstance().getField55ForJIO(1)
+
+/*            var jioData = EmvNfcKernelApi.getInstance().getField55ForJIO(1)
+            Log.d("EMV_APP", "=====> JIO_TRACKDATA:"+jioData["TRACKDATA"])
+            Log.d("EMV_APP", "=====> JIO_KSN:"+jioData["KSN"])*/
+
+            /*            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                            EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
+                            encryptedBytes, encryptedLen,
+                            ksnBytes, ksnLen
+                        ) == 0)
+                        {
+                            hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
+                            hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+                        }*/
+/*
+            if(PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)==0)
+            {
+                Log.d("EMV_APP", "DukptGetKsn() =====> KSN:"+ksnBytes.toHexString().uppercase())
+            }
+*/
+
+/*            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                EncryptionConstants.DUKPT_KEY_SET_PIN, 0x00, ivBytes,8,trackDateBytes ,trackDateBytes.size,
+                encryptedBytes, encryptedLen,
+                ksnBytes, ksnLen
+            ) == 0)
+            {
+                hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
+                hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+                Log.d("EMV_APP", "DukptEncryptDataIV() =====> LYRA_TRACKDATA:"+encryptedBytes.toHexString().uppercase())
+                Log.d("EMV_APP", "DukptEncryptDataIV() =====> LYRA_KSN:"+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
+                //hashMap[EmvConstants.EMV_KEY_ENC_TRACK+"_JIO"] = jioData["TRACKDATA"]?.uppercase()?:""
+                //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
+            }*/
+
+/*
+            if(PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)==0)
+            {
+                Log.d("EMV_APP", "DukptGetKsn() =====> KSN:"+ksnBytes.toHexString().uppercase())
+            }
+*/
+            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                    EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
+                    encryptedBytes, encryptedLen,
+                    ksnBytes, ksnLen
+                ) == 0)
+            {
+                hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
+                hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
+                Log.d("EMV_APP", "encryptWithPEK() =====> LYRA_TRACKDATA:"+encryptedBytes.toHexString().uppercase())
+                Log.d("EMV_APP", "encryptWithPEK() =====> LYRA_KSN:"+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
+                //hashMap[EmvConstants.EMV_KEY_ENC_TRACK+"_JIO"] = jioData["TRACKDATA"]?.uppercase()?:""
+                //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
+            }
+
+            pinBlock?.let {
+                hashMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK] = it
+            }
+
+            return hashMap
         }
 
         override fun onRequestSetAmount() {
@@ -179,13 +272,16 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
             Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
-            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(TlvUtils(p0.toString()).tlvMap) {
+            var tlvMap = TlvUtils(p0.toString()).tlvMap.apply {
+                for (tlv in getEncryptedData())
+                    put(tlv.key, tlv.value)
+            }
+            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
                 var tlvTags = TlvUtils(it)
                 var wentOnline = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
                 EmvNfcKernelApi.getInstance()
                     .sendOnlineProcessResult(wentOnline, tlvTags.toTlvString())
             }
-
         }
 
         override fun onReturnBatchData(p0: String?) {
@@ -445,18 +541,19 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             Log.i("applog", "emv_proc_onlinePin")
 
             val param: Bundle = Bundle()
+            pinBlock = null /* Clear the pinblock variable */
 
             if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.DUKPT_KEY_SET_PIN)
             else param.putInt("PINKeyNo", 10)
-            val cardno: String = "1122334455667788"
+            val cardno: String = "4761730000000011"
 
             Log.i("applog", "emv_proc_onlinePin cardno $cardno")
             param.putString("cardNo", cardno)
-            param.putBoolean("sound", true)
+            param.putBoolean("sound", false)
             param.putInt("soundVolume", 1)
             param.putBoolean("onlinePin", true)
             param.putBoolean("FullScreen", true)
-            param.putLong("timeOutMS", 30000)
+            param.putLong("timeOutMS", 300000)
             param.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12") // "4,4");   //
             param.putString("title", "Security PINPAD")
             param.putString(
@@ -507,8 +604,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
             Log.i("applog", "getPinBlockEx ")
 
-            if (isDUKPT)
+            if (isDUKPT) {
                 PinPadProviderImpl.getInstance().GetDukptPinBlock(param, this)
+            }
             else
                 PinPadProviderImpl.getInstance().getPinBlockEx(param, this)
         }
@@ -529,7 +627,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             paramVar.putInt("inputType", 3) //Offline PlainPin
             paramVar.putInt("CardSlot", 0)
 
-            paramVar.putBoolean("sound", true)
+            paramVar.putBoolean("sound", false)
             paramVar.putInt("soundVolume", 1)
             paramVar.putBoolean("onlinePin", false)
             paramVar.putBoolean("FullScreen", true)
@@ -749,7 +847,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     pinpadBundle.putInt("CardSlot", 0)
                 }
                 pinpadBundle.putString("cardNo", "1122334455667788")
-                pinpadBundle.putBoolean("sound", true)
+                pinpadBundle.putBoolean("sound", false)
                 pinpadBundle.putBoolean("bypass", false)
                 pinpadBundle.putInt("soundVolume", 1)
                 pinpadBundle.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12")
@@ -785,13 +883,16 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             }
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
         override fun onConfirm_dukpt(p0: ByteArray?, p1: ByteArray?) {
             //iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Processing")
             if (p0 == null) {
                 EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
             } else {
                 Log.d("EMV_APP", "PinBlock:" + p0.decodeToString())
-                Log.d("EMV_APP", "KSN     :" + p1?.decodeToString())
+                Log.d("EMV_APP", "KSN     :" + p1?.toHexString())
+                pinBlock = p0.decodeToString()
+                ksn = p1?.decodeToString()
                 EmvNfcKernelApi.getInstance().sendPinEntry()
             }
         }

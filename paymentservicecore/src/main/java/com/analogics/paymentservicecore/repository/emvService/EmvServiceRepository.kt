@@ -170,14 +170,14 @@ class EmvServiceRepository @Inject constructor() :
             val jsonCapKeys = JSONObject(capKeys?:"").getJSONArray(AppConstants.EMV_CAP_KEY_ARRAY_FIELD_NAME).toString()
 
             var sdkAidConfig : com.analogics.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(aidConfig?:"",
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(aidConfig?:"",
                     com.analogics.tpaymentcore.model.emv.AidConfig::class.java
                 )
                 else -> {null}
             }
 
             var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(jsonCapKeys,
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(jsonCapKeys,
                     Array<com.analogics.tpaymentcore.model.emv.CAPKey>::class.java
                 ).toList()
                 else -> {null}
@@ -210,13 +210,13 @@ class EmvServiceRepository @Inject constructor() :
         try {
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
             var sdkAidConfig : com.analogics.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(Gson().toJson(aidConfig),
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(Gson().toJson(aidConfig),
                     com.analogics.tpaymentcore.model.emv.AidConfig::class.java
                 )
                 else -> {null}
             }
             var sdkCapKeys : List<com.analogics.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(
+                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(
                     Gson().toJson(capKeys),
                     Array<com.analogics.tpaymentcore.model.emv.CAPKey>::class.java
                 ).toList()
@@ -250,7 +250,7 @@ class EmvServiceRepository @Inject constructor() :
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
 
         var sdkTransConfig : com.analogics.tpaymentcore.model.emv.TransConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
-            ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO -> Gson().fromJson(
+            ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(
                 Gson().toJson(transConfig),
                 com.analogics.tpaymentcore.model.emv.TransConfig::class.java
             )

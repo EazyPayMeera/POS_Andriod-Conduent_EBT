@@ -4,7 +4,7 @@ object BuilderConstants {
     const val SHARED_PREF_NAME = "BuilderSharedPref"
     const val SHARED_PREF_KEY_STAN = "stan"
 
-    const val DEFAULT_ISO8583_NII = "010"
+    const val DEFAULT_ISO8583_NII = "0110"
     const val DEFAULT_ISO8583_DATE_TIME_FORMAT = "yyMMddHHmmss"
     const val DEFAULT_ISO8583_DATE_FORMAT = "MMdd"
     const val DEFAULT_ISO8583_TIME_FORMAT = "HHmmss"
@@ -17,7 +17,7 @@ object BuilderConstants {
     const val MTI_NETWORK_REQ = 0x0800
 
     /* TPDU */
-    val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x03.toByte(),0x00.toByte(),0x00.toByte())
+    val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
 
     /* Processing Code */
     const val ISO_FIELD_PROC_CODE = 3
@@ -52,7 +52,7 @@ object BuilderConstants {
 
     /* NII */
     const val ISO_FIELD_NII = 24
-    const val ISO_FIELD_NII_LENGTH = 3
+    const val ISO_FIELD_NII_LENGTH = 4
 
     /* POS Condition Code */
     const val ISO_FIELD_POS_CONDITION_CODE = 25
