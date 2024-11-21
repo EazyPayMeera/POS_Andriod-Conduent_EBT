@@ -72,14 +72,14 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             text = stringResource(id = R.string.training_mode),
             isChecked = viewModel.isTrainingMode.value,
             onCheckedChange = {
-                if (isBatchOpen.size == 0) {
-                    if (isAdmin) {
+                if (isAdmin) {
+                    if (isBatchOpen.size == 0) {
                         viewModel.onDemoModeChange(it, sharedViewModel)
                     } else {
-                        viewModel.onPromptDialogue(context)
+                        viewModel.onBatchOpen(context)
                     }
                 } else {
-                        viewModel.onBatchOpen(context)
+                    viewModel.onPromptDialogue(context)
                 }
             },
             isArrow = false,
