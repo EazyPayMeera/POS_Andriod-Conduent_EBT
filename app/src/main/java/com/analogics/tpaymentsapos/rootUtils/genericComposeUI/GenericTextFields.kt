@@ -76,8 +76,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.analogics.paymentservicecore.models.TxnType
@@ -167,40 +165,19 @@ fun AppButton(
     image: Painter? = null, // Optional parameter for the image
     enabled: Boolean? = true
 ) {
-    val isKeyboardVisible = remember { mutableStateOf(false) }
-
-    // Detect keyboard visibility using DisposableEffect
-    val rootView = LocalView.current
-    DisposableEffect(rootView) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val isKeyboardOpen =
-                ViewCompat.getRootWindowInsets(rootView)?.isVisible(WindowInsetsCompat.Type.ime()) == true
-            isKeyboardVisible.value = isKeyboardOpen
-        }
-        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
-
-        onDispose {
-            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    // Adjust padding based on keyboard visibility
-    val paddingBottom = if (isKeyboardVisible.value) 15.dp else 40.dp
-
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = paddingBottom) // Adjust padding based on keyboard visibility
-    ) {
-        Button(
-            onClick = onClick,
+            .width(MaterialTheme.dimens.DP_248_CompactMedium)
+            .height(MaterialTheme.dimens.DP_50_CompactMedium)
+    )
+    {
+        Button(onClick = onClick,
             modifier = Modifier
-                .align(if (isKeyboardVisible.value) Alignment.TopCenter else Alignment.BottomCenter) // Align based on keyboard visibility
-                .fillMaxWidth()
-                .height(50.dp),
+                .align(Alignment.Center) // Align button at the bottom
+                .fillMaxSize(),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-            colors = ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colorScheme.onPrimary,
+            colors = buttonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
                 containerColor = MaterialTheme.colorScheme.primary
             ),
             enabled = enabled != false
@@ -209,20 +186,15 @@ fun AppButton(
                 Image(
                     painter = image,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier.fillMaxHeight(),
                 )
                 Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
             }
 
-            Text(
-                text = title,
-                style = TextStyle(fontSize = 21.sp, fontWeight = FontWeight.Normal)
-            )
+            Text(text = title, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal)
         }
     }
 }
-
-
 
 
 @Composable

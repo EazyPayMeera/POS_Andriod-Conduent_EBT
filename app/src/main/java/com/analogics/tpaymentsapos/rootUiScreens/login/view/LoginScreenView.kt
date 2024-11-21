@@ -119,7 +119,7 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                     )
 
                     Box(
-                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_0_CompactMedium)
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                     ) {
                         val message = stringResource(id = R.string.cred_not_to_be_empty)
                         AppButton(
@@ -133,16 +133,20 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                             title = stringResource(id = R.string.login),
                             enabled = viewModel.isLoginEnabled.value
                         )
+                    }
 
-
-                            Text(
-                                text = stringResource(id = R.string.login_version) + BuildConfig.VERSION_NAME,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(MaterialTheme.dimens.DP_11_CompactMedium)
-                            )
-
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.login_version) + BuildConfig.VERSION_NAME,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                        )
                     }
                 }
             }
