@@ -54,16 +54,19 @@ object NetworkCallProvider {
                 val input = socket.openReadChannel()
                 val output = socket.openWriteChannel(autoFlush = true)
                 var response = ByteArray(0)
-                var packetLength : Int
+                var packetLength : Int = 0
                 output.writeFully(request)
                 do {
                     delay(100)
                     if (input.isClosedForRead) break
-                    var chunk = ByteArray(input.availableForRead)
-                    input.readAvailable(chunk,0,chunk.size)
-                    response += chunk
-                    packetLength = (response[0]*256) + (response[1]%256)
-                }while (input.isClosedForRead.not() && response.size<packetLength)
+                    if(input.availableForRead>0) {
+                        var chunk = ByteArray(input.availableForRead)
+                        input.readAvailable(chunk, 0, chunk.size)
+                        response += chunk
+                        if(response.size>=2)
+                            packetLength = (response[0] * 256) + (response[1] % 256)
+                    }
+                }while (input.isClosedForRead.not() && (packetLength==0 || response.size<packetLength))
                 socket.close()
 
                 if(response.isNotEmpty())
