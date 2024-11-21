@@ -194,6 +194,9 @@
     <string name="set_timeout">Set Timeout</string>
 	
     <string name="is_correct">Is this information correct?</string>
+    <string name="for_admin">Allowed for Admin Only</string>
+    <string name="restricted">Restricted !</string>
+    <string name="batch_open">Batch is Open</string>
 
     <!-- Custom Dialogue Builder -->
     <string name="sel_app_id">Select an application id</string>

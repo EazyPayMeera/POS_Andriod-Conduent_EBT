@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -7,9 +8,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -112,6 +115,26 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     fun onLoad(sharedViewModel: SharedViewModel)
     {
         loadPreferences(sharedViewModel)
+    }
+
+    fun onPromptDialogue(context: Context)
+    {
+        CustomDialogBuilder.composeAlertDialog(
+            title = context.resources.getString(
+                R.string.restricted
+            ),
+            subtitle = context.resources.getString(R.string.for_admin)
+        )
+    }
+
+    fun onBatchOpen(context: Context)
+    {
+        CustomDialogBuilder.composeAlertDialog(
+            title = context.resources.getString(
+                R.string.restricted
+            ),
+            subtitle = context.resources.getString(R.string.batch_open)
+        )
     }
 
     fun onBack(navHostController: NavHostController) {
