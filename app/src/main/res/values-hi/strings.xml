@@ -55,6 +55,8 @@
     <string name="prompt_new_password">कृपया नया पासवर्ड दर्ज करें</string>
     <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होना चाहिए</string>
     <string name="login_invalid_cred">अमान्य प्रमाण-पत्र</string>
+    <string name="login_version">संस्करण</string>
+
 
     <!-- Change Password -->
     <string name="label_current_pwd">वर्तमान</string>

@@ -57,13 +57,10 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
@@ -79,6 +76,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.analogics.paymentservicecore.models.TxnType
@@ -168,36 +167,62 @@ fun AppButton(
     image: Painter? = null, // Optional parameter for the image
     enabled: Boolean? = true
 ) {
+    val isKeyboardVisible = remember { mutableStateOf(false) }
+
+    // Detect keyboard visibility using DisposableEffect
+    val rootView = LocalView.current
+    DisposableEffect(rootView) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            val isKeyboardOpen =
+                ViewCompat.getRootWindowInsets(rootView)?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            isKeyboardVisible.value = isKeyboardOpen
+        }
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+
+    // Adjust padding based on keyboard visibility
+    val paddingBottom = if (isKeyboardVisible.value) 15.dp else 40.dp
+
     Box(
         modifier = Modifier
-            .width(MaterialTheme.dimens.DP_248_CompactMedium)
-            .height(MaterialTheme.dimens.DP_50_CompactMedium)
-    )
-    {
-        Button(onClick = onClick,
+            .fillMaxSize()
+            .padding(bottom = paddingBottom) // Adjust padding based on keyboard visibility
+    ) {
+        Button(
+            onClick = onClick,
             modifier = Modifier
-                .align(Alignment.Center) // Align button at the bottom
-                .fillMaxSize(),
+                .align(if (isKeyboardVisible.value) Alignment.TopCenter else Alignment.BottomCenter) // Align based on keyboard visibility
+                .fillMaxWidth()
+                .height(50.dp),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-            colors = buttonColors(
-                contentColor = MaterialTheme.colorScheme.tertiary,
+            colors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 containerColor = MaterialTheme.colorScheme.primary
             ),
             enabled = enabled != false
-            ) {
-                if (image != null) {
-                    Image(
-                        painter = image,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxHeight(),
-                        )
-                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
-                }
+        ) {
+            if (image != null) {
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxHeight()
+                )
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
+            }
 
-                Text(text = title, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal)
+            Text(
+                text = title,
+                style = TextStyle(fontSize = 21.sp, fontWeight = FontWeight.Normal)
+            )
         }
     }
 }
+
+
 
 
 @Composable
