@@ -31,5 +31,9 @@ interface IBatchDao {
     @Query("SELECT BatchStatus FROM BatchTable WHERE BatchStatus = 'open'")
     suspend fun isBatchOpen(): List<String> // This returns all BatchId values
 
+    @Query("SELECT EXISTS(SELECT 1 FROM UserTable WHERE userId = :userId AND userType = 'ADMIN')")
+    suspend fun isAdmin(userId: String): Boolean
+
+
 
 }

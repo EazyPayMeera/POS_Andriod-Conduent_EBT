@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,65 +60,73 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigViewModel = hiltViewModel()) {
     var sharedViewModel = localSharedViewModel.current
     val isBatchOpen = viewModel.isOpenBatch.collectAsState().value
+    val isAdmin =viewModel.isAdmin.collectAsState().value
     val settingsItems = listOf(
         SettingsItem(
             imageRes = R.drawable.config_training_mode,
             text = stringResource(id = R.string.training_mode),
             isChecked = viewModel.isTrainingMode.value,
             onCheckedChange = {
-                if(isBatchOpen.size == 0) {
+                if(isBatchOpen.size == 0 && !isAdmin) {
                     viewModel.onDemoModeChange(it, sharedViewModel)
                 }},
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.auto_report_print),
             isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
+            onCheckedChange = { if(!isAdmin) viewModel.onAutoPrintReportChange(it, sharedViewModel) },
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
             isChecked = viewModel.isPromptInvoiceNumber.value,
-            onCheckedChange = { viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) },
+            onCheckedChange = { if(!isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) },
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_m_print,
             text = stringResource(id = R.string.auto_print_merchant),
             isChecked = viewModel.isAutoPrintMerchant.value,
-            onCheckedChange = { viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
+            onCheckedChange = { if(!isAdmin) viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_tipping,
             text = stringResource(id = R.string.enable_tipping),
             isChecked = viewModel.isTippingEnabled.value,
-            onCheckedChange = { viewModel.onTippingEnabledChange(it, sharedViewModel) },
+            onCheckedChange = { if(!isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) },
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.taxes),
             isChecked = viewModel.isTaxEnabled.value,
-            onCheckedChange = { viewModel.onTaxEnabledChange(it, sharedViewModel) },
+            onCheckedChange = { if(!isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) },
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.time,
             text = stringResource(id = R.string.inactivity_timeout),
             isChecked = viewModel.isInactivity.value,
-            onCheckedChange = { viewModel.onInactivityChange(it) },
+            onCheckedChange = { if(!isAdmin) viewModel.onInactivityChange(it) },
             isArrow = false,
-            onArrowChange = {}
+            onArrowChange = {},
+            isAdmin = !isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
@@ -124,7 +134,8 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isChecked = viewModel.isAutoPrintReport.value,
             onCheckedChange = { navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) },
             isArrow = true,
-            onArrowChange = {navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)}
+            onArrowChange = {navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route)},
+            isAdmin = !isAdmin
         ),
 
 
@@ -147,7 +158,8 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                     val item = settingsItems[index]
                     SettingsSurface(
                         modifier = Modifier.fillMaxWidth(),
-                        item = item
+                        item = item,
+                        isAdmin = isAdmin
                     )
 
                     if (index == 4 && item.isChecked) {
@@ -176,6 +188,8 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
         viewModel.isBatchOpen()
+        Log.d("user",sharedViewModel.objPosConfig?.loginId.toString())
+        viewModel.isAdmin(sharedViewModel.objPosConfig?.loginId.toString())
     }
 }
 
@@ -186,7 +200,8 @@ data class SettingsItem(
     val isChecked: Boolean,
     val onCheckedChange: (Boolean) -> Unit,
     val isArrow: Boolean,
-    val onArrowChange: () -> Unit // Change to a function without parameters
+    val onArrowChange: () -> Unit, // Change to a function without parameters
+    var isAdmin: Boolean
 
 )
 
@@ -343,9 +358,13 @@ enum class TipButton(val value: Int) {
 fun SettingsSurface(
     modifier: Modifier = Modifier,
     item: SettingsItem,
+    isAdmin: Boolean // Add isAdmin parameter
 ) {
     Surface(
-        modifier = Modifier.height(MaterialTheme.dimens.DP_60_CompactMedium),
+        modifier = modifier
+            .height(MaterialTheme.dimens.DP_60_CompactMedium)
+            .then(if (isAdmin) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+            .clickable(enabled = isAdmin) {}, // Make it non-clickable if isAdmin is false
         color = MaterialTheme.colorScheme.onPrimary
     ) {
         SettingsContent(

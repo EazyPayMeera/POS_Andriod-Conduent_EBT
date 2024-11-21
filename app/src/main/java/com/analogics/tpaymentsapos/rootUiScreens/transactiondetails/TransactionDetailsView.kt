@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
@@ -93,7 +94,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     ImageView(
-                        imageId = R.drawable.txn_aprove,
+                        imageId = if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED) R.drawable.txn_aprove else R.drawable.decline,
                         shape = RectangleShape,
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_50_CompactMedium)

@@ -41,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,10 +93,13 @@ fun TransactionListScreen(
     val batchStatus = viewModel.batchStatusList.collectAsState().value
     val endDate = viewModel.endDateList.collectAsState().value
     val sharedViewModel = localSharedViewModel.current
-    val openBatchId = viewModel.openBatch.collectAsState().value
-    Log.d("Inside Header Section", "Open $openBatchId")
+    /*val openBatchId = viewModel.openBatch.collectAsState().value*/
+    val latestBatchId by rememberUpdatedState(batchId.lastOrNull())
+    val firstTransactionDateTime = transactions.lastOrNull()?.dateTime
+    val lastTransactionDateTime = transactions.firstOrNull()?.dateTime
+    var isSeeAllClicked by remember { mutableStateOf(false) }
 
-
+    var selectedBatchId by remember { mutableStateOf<String?>(null) }
     val showDateTimePicker = remember { mutableStateOf(false) }
     val BatchId = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
@@ -152,8 +156,9 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value)
+                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value,selectedBatchId,latestBatchId,firstTransactionDateTime,lastTransactionDateTime,isSeeAllClicked)
                 SummarySection(viewModel)
+
             }
         }
 
@@ -186,7 +191,7 @@ fun TransactionListScreen(
                             style = MaterialTheme.typography.body2,
                             color = Color.Gray,
                             modifier = Modifier.clickable {
-                                viewModel.fetchTransactions()
+                                isSeeAllClicked = true
                             }
                         )
 
@@ -212,11 +217,10 @@ fun TransactionListScreen(
                             DropdownMenuItem(onClick = {
                                 showMenu.value = false
                                 showDateTimePicker.value = true // Show date picker
-                                Log.d("Date Time Picker", "Select Date is Clicked")
-                                //viewModel.fetchTransactions()
+                                isSeeAllClicked = false
                                 selectedStartDate.value = null
                                 selectedEndDate.value = null
-                                Log.d("Date Time Picker", "Selected dates cleared")
+
                             }) {
                                 Text(stringResource(id = R.string.select_date))
                             }
@@ -227,6 +231,7 @@ fun TransactionListScreen(
                                 viewModel.fetchBatchStatus(batchId)
                                 showMenu.value = false
                                 BatchId.value = true
+                                isSeeAllClicked = false
                                 isBatchId = true
                                 selectedStartDate.value = null
                                 selectedEndDate.value = null
@@ -238,7 +243,6 @@ fun TransactionListScreen(
                 }
 
                 Divider(color = Color.Gray, thickness = 1.dp)
-
                 // If transaction list is empty
                 if (transactions.isEmpty()) {
                     Text(
@@ -314,12 +318,7 @@ fun TransactionListScreen(
     }
     }
 
-
-
     if (isBatchId) {
-        if(startDate.isEmpty() && endDate.isEmpty()) {
-            Log.d("Start Ad End Date", "Start and End Date Is Empty")
-        }
         BatchDialogueBuilder.create()
             .setTitle(stringResource(id = R.string.sel_batch_id))
             .CustomListDialog(
@@ -330,14 +329,19 @@ fun TransactionListScreen(
                 endDates = endDate,
                 onItemSelected = { selectedId ->
                     viewModel.filterTransactionsByBatchId(selectedId)
+                    selectedBatchId = selectedId
                 }
 
             )
     }
     LaunchedEffect(Unit) {
-        Log.d("Date Time Picker", "Fetch All the Transactions")
-        viewModel.fetchTransactions()
         viewModel.filterTransactionsForBatch()
+    }
+    LaunchedEffect (isSeeAllClicked){
+        viewModel.fetchTransactions()
+    }
+    LaunchedEffect(latestBatchId) {
+        viewModel.filterTransactionsByBatchId(latestBatchId.toString())
     }
 
     LaunchedEffect(viewModel.isClosedBatchEnabled) {
@@ -501,10 +505,6 @@ fun TransactionItem(
 }
 
 
-
-
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeaderSection(
@@ -513,12 +513,14 @@ fun HeaderSection(
     navHostController: NavHostController,
     selectedStartDate: LocalDateTime?,
     selectedEndDate: LocalDateTime?,
-    isBatchCloseEnabled : Boolean
+    isBatchCloseEnabled: Boolean,
+    selectedBatchId: String?,
+    lastbatchid: String?,
+    firstTransactiondate: String?,
+    lastTransactionDateTime: String?,
+    isSeeAllClicked: Boolean
 ) {
-    val context = LocalContext.current
     var isDialogVisible by remember { mutableStateOf(false) }
-    var isAlertVisible by remember { mutableStateOf(false) }
-    var isSummaryReport by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -542,8 +544,9 @@ fun HeaderSection(
 
                 Column {
 
-                    if(selectedEndDate != null && selectedStartDate != null) {
-                        selectedStartDate?.let {
+
+                    if(selectedEndDate != null && selectedStartDate != null && !isSeeAllClicked) {
+                        selectedStartDate.let {
                             Text(
                                 text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
                                 style = MaterialTheme.typography.caption,
@@ -574,14 +577,47 @@ fun HeaderSection(
                     }
                     else
                     {
-                        sharedViewModel.objPosConfig?.batchId?.let {
+                        if(isSeeAllClicked)
+                        {
+                            firstTransactiondate?.let {
+                                Text(
+                                    text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
+                                    style = MaterialTheme.typography.caption,
+                                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.align(Alignment.CenterHorizontally  )
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.to),
+                                    style = MaterialTheme.typography.caption,
+                                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.align(Alignment.Center) // Center the Text within the Box
+                                )
+                            }
+
+
+                            lastTransactionDateTime?.let {
+                                Text(
+                                    text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
+                                    style = MaterialTheme.typography.caption,
+                                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        }
+                        else if(!selectedBatchId.isNullOrEmpty() || !lastbatchid.isNullOrEmpty()) {
                             Text(
-                                text = it,
+                                text = stringResource(id = R.string.sel_batchid) + (selectedBatchId
+                                    ?: lastbatchid).toString(),
                                 style = MaterialTheme.typography.caption,
                                 color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(top = 10.dp) // Keep vertical padding for the date text
+                                modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
                             )
                         }
+
                     }
 
                 }
@@ -603,7 +639,6 @@ fun HeaderSection(
                             text = stringResource(id = R.string.close_batch),
                             fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_14_CompactMedium,
                             fontWeight = FontWeight.Bold,
-                            /*overflow = TextOverflow.Ellipsis*/
                         )
                     }
                 }

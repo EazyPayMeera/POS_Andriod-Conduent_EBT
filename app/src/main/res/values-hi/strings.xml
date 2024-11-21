@@ -218,6 +218,7 @@
     <string name="which_report">आप कौन सा रिपोर्ट चाहते हैं</string>
     <string name="summary">सारांश</string>
     <string name="detail">विवरण</string>
+    <string name="sel_batchid">चयनित बैच आईडी:</string>
 
     <!-- Success Screen -->
     <string name="payment">भुगतान</string>
