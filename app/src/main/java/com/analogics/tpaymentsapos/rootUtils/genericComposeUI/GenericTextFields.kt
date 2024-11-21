@@ -923,6 +923,38 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     }
 }
 
+@Composable
+fun DialogueSurface(componentView :@Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .shadow(
+                elevation = MaterialTheme.dimens.DP_50_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+    ) {
+        Card(
+            elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
+            backgroundColor= MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = MaterialTheme.dimens.DP_25_CompactMedium,
+                    start = MaterialTheme.dimens.DP_25_CompactMedium,
+                    end = MaterialTheme.dimens.DP_25_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_25_CompactMedium,
+                )
+                .align(Alignment.Center)
+        ) {
+            componentView()
+        }
+    }
+}
+
 
 @Composable
 fun ImageView(

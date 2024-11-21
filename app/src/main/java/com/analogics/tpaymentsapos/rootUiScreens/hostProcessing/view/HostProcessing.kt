@@ -10,20 +10,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DialogueSurface
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -53,6 +54,7 @@ fun HostProcessingDialog(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 57.dp)
             .background(MaterialTheme.colorScheme.background) // Optional background
             .clickable { onDismissRequest() }, // Dismiss on outside click if desired
         contentAlignment = Alignment.Center
@@ -67,22 +69,18 @@ fun HostProcessingDialog(
 
 @Composable
 fun HostProcessingContent(navHostController: NavHostController?) {
-    val context = LocalContext.current
-    val sharedViewModel = localSharedViewModel.current
 
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
-            .padding(top = MaterialTheme.dimens.DP_20_CompactMedium)
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
     ) {
 
-        BackgroundScreen() {
+        DialogueSurface() {
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
@@ -110,24 +108,13 @@ fun HostProcessingContent(navHostController: NavHostController?) {
                         .align(Alignment.CenterHorizontally)
                 )
 
-                if (isMerchantReceipt) {
-                    TextView(
-                        text = stringResource(id = R.string.merchant_recp),
-                        fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                }
-
-                GifImage(
-                    gifResId = R.drawable.wait,
+                CircularProgressIndicator(
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_120_CompactMedium)
-                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
+                        .padding(MaterialTheme.dimens.DP_21_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
                 )
             }
         }
