@@ -13,6 +13,7 @@ import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResul
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
@@ -218,7 +219,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun totalPurchaseTransactions(txn: TxnType): Double {
         return _transactionList.value
-            .filter { it.txnType == txn }
+            .filter { it.txnType == txn && it.txnStatus == TxnStatus.APPROVED }
             .sumOf {
                 it.ttlAmount ?: 0.0
             }
