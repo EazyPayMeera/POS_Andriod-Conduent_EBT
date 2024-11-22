@@ -272,7 +272,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
             Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
-            var tlvMap = TlvUtils(p0.toString()).tlvMap.apply {
+            var tlvMap = TlvUtils(p0).tlvMap.apply {
                 for (tlv in getEncryptedData())
                     put(tlv.key, tlv.value)
             }

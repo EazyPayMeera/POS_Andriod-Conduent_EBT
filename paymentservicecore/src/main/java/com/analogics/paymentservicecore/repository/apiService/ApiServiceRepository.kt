@@ -1,6 +1,8 @@
 package com.analogics.paymentservicecore.repository.apiService
 
 
+import com.analogics.builder_core.constants.BuilderConstants
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
@@ -17,6 +19,7 @@ import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalR
 import com.analogics.paymentservicecore.repository.apiService.rkl.RklRequestRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -45,6 +48,10 @@ class ApiServiceRepository @Inject constructor(
          iApiServiceResponseListener: IApiServiceResponseListener
      )
      {
+         /* Delay to show processing screen in demo mode */
+         if(paymentServiceTxnDetails?.isDemoMode == true)
+             delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
+
         when(paymentServiceTxnDetails?.txnType.toString())
         {
             TxnType.PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)

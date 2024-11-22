@@ -236,17 +236,18 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
 
                         viewModelScope.launch {
                             displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.PROCESSING_ONLINE
-                            if(sharedViewModel.objPosConfig?.isDemoMode==true) {
+/*                            if(sharedViewModel.objPosConfig?.isDemoMode==true) {
                                 delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
                                 onResponse(hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE))
                             }
-                            else {
+                            else {*/
                                 apiServiceRepository.apiServiceRequestOnlineAuth(
                                 PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                                     sharedViewModel.objRootAppPaymentDetail
                                 ), object : IApiServiceResponseListener {
 
                                     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+                                        responseEmvTags = TlvUtils(paymentServiceTxnDetails.emvData).tlvMap
                                         onResponse(responseEmvTags)
                                     }
 
@@ -254,7 +255,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                         onResponse(responseEmvTags)
                                     }
                                 })
-                            }
+                            /*}*/
                         }
                     }
                 })

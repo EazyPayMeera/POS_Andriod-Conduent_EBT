@@ -130,7 +130,7 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
 
     suspend fun getLastInvoiceNumber() : Int
     {
-        return iTxnDao.getLastInvoiceNumber()?.toIntOrNull()?:0
+        return iTxnDao.getLastInvoiceNumber(openBatchId())?.toIntOrNull()?:0
     }
 
     /* Clerk/User Management */

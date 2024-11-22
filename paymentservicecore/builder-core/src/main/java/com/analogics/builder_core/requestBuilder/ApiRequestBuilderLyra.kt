@@ -12,10 +12,12 @@ import com.solab.iso8583.MessageFactory
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.random.Random
 
 class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context) {
     val messageFactory = MessageFactory<IsoMessage>()
     var builderServiceTxnDetails = BuilderServiceTxnDetails()
+    lateinit var message : IsoMessage
 
     init {
         setIsoConfig()
@@ -136,18 +138,77 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return pinBlock
     }
 
+    /* Dummy Response Functions */
+    fun generateDummyRRN() : String
+    {
+        val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        val currentDate = BuilderUtils.getCurrentDateTime(BuilderConstants.DUMMY_DATE_TIME_FORMAT_RRN)
+        val encodedDate = currentDate.map { it - '0' + 'A'.code }.joinToString("") { it.toChar().toString() }
+        val randomPart = (1..BuilderConstants.ISO_FIELD_RRN_LENGTH)
+            .map { charset[Random.nextInt(charset.length)] }
+            .joinToString("")
+
+        // Shuffle the date encoding and the random part
+        val combined = (encodedDate + randomPart).toList().shuffled().joinToString("")
+        return combined.take(BuilderConstants.ISO_FIELD_RRN_LENGTH)
+    }
+
+    fun generateDummyAuthCode() : String?
+    {
+        return if(isDummyResponseApproval()) {
+            val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+            val currentDate =
+                BuilderUtils.getCurrentDateTime(BuilderConstants.DUMMY_DATE_TIME_FORMAT_AUTH_CODE)
+            val encodedDate =
+                currentDate.map { it - '0' + 'A'.code }.joinToString("") { it.toChar().toString() }
+            val randomPart = (1..BuilderConstants.ISO_FIELD_AUTH_CODE_LENGTH)
+                .map { charset[Random.nextInt(charset.length)] }
+                .joinToString("")
+
+            // Shuffle the date encoding and the random part
+            val combined = (encodedDate + randomPart).toList().shuffled().joinToString("")
+            combined.take(BuilderConstants.ISO_FIELD_AUTH_CODE_LENGTH)
+        }
+        else
+            null
+    }
+
+    fun isDummyResponseApproval() : Boolean
+    {
+        /* Approve EVEN amount & decline ODD amount */
+        return (builderServiceTxnDetails.ttlAmount.toCurrencyLong()%2)==0L
+    }
+
+    fun generateDummyRespCode() : String
+    {
+        return if(isDummyResponseApproval())
+            "00"
+        else
+            (1..99).random().toString()
+    }
+
+    fun generateDummyIccData() : String
+    {
+        return if(isDummyResponseApproval())
+            "8A023030"
+        else
+            "8A023035"
+    }
+
+    /* Request Builders */
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val stan = BuilderUtils.getSTAN(context)
 
-        var message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
+        message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
         /* TPDU Header */
         message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
             this[3] = ((stan/100)%100).toInt().toBcd()
             this[4] = (stan%100).toInt().toBcd()
         }
+
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
@@ -183,27 +244,44 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun parseRklResponse(response: ByteArray): BuilderServiceTxnDetails {
-        var message = messageFactory.parseMessage(extractIsoPayload(response), BuilderConstants.ISO_HEADER.size,true)
+        return try {
+            message = messageFactory.parseMessage(
+                extractIsoPayload(response),
+                BuilderConstants.ISO_HEADER.size,
+                true
+            )
 
-        return builderServiceTxnDetails.apply {
-            message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)?.let { hostRespCode = it }
-            message.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN)?.let {
-                if(it.slice(0 until BuilderConstants.ISO_FIELD_KSN_TAG.length) == BuilderConstants.ISO_FIELD_KSN_TAG) {
-                    var length = it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length until BuilderConstants.ISO_FIELD_KSN_TAG.length+3).toInt()
-                    if(it.length == length+BuilderConstants.ISO_FIELD_KSN_TAG.length+3)
-                        ksn = it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length+3 until it.length)
+            builderServiceTxnDetails.apply {
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)
+                    ?.let { hostRespCode = it }
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN)?.let {
+                    if (it.slice(0 until BuilderConstants.ISO_FIELD_KSN_TAG.length) == BuilderConstants.ISO_FIELD_KSN_TAG) {
+                        var length =
+                            it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length until BuilderConstants.ISO_FIELD_KSN_TAG.length + 3)
+                                .toInt()
+                        if (it.length == length + BuilderConstants.ISO_FIELD_KSN_TAG.length + 3)
+                            ksn =
+                                it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length + 3 until it.length)
+                    }
+                }
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_WORKING_KEY)?.let {
+                    if (it.length > BuilderConstants.ISO_FIELD_KCV_LENGTH) {
+                        kcv = it.slice(0 until BuilderConstants.ISO_FIELD_KCV_LENGTH)
+                        encryptedIpek =
+                            it.slice(BuilderConstants.ISO_FIELD_KCV_LENGTH until it.length)
+                    }
                 }
             }
-            message.getObjectValue<String>(BuilderConstants.ISO_FIELD_WORKING_KEY)?.let {
-                if(it.length > BuilderConstants.ISO_FIELD_KCV_LENGTH) {
-                    kcv = it.slice(0 until BuilderConstants.ISO_FIELD_KCV_LENGTH)
-                    encryptedIpek = it.slice(BuilderConstants.ISO_FIELD_KCV_LENGTH until it.length)
-                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            builderServiceTxnDetails.apply {
+                hostRespCode = null
             }
         }
     }
 
     fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
         val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
         val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
@@ -217,7 +295,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val pinBlock = getPinBlock(builderServiceTxnDetails)
         val stan = BuilderUtils.getSTAN(context)
 
-        var message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
+        message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
         /* TPDU Header */
         message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
@@ -287,12 +365,63 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return appendIsoLength(message.writeData())
     }
 
+    fun buildDummyPurchaseResponse(): ByteArray {
+        val iccData = generateDummyIccData()
+        val rrn = generateDummyRRN()
+        val authCode = generateDummyAuthCode()
+        val respCode = generateDummyRespCode()
+
+        /* Don't change the request message. Instead only fill up the response parameters */
+        message.type = BuilderConstants.MTI_SALE_RES
+
+        /* TPDU Header */
+        message.binaryIsoHeader.apply {
+            var destBytes = byteArrayOf(this[1],this[2])
+            this[1] = this[3]
+            this[2] = this[4]
+            this[3] = destBytes[0]
+            this[4] = destBytes[1]
+        }
+
+            /* Field 37, RRN, AN12, Conditional */
+        message.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)
+
+            /* Field 38, Auth Code, AN6, Conditional */
+            .setValue(BuilderConstants.ISO_FIELD_AUTH_CODE, authCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_AUTH_CODE_LENGTH)
+
+            /* Field 39, Response Code, AN2, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_RESP_CODE, respCode , IsoType.ALPHA,BuilderConstants.ISO_FIELD_RESP_CODE_LENGTH)
+
+            /* Field 55, ICC Related Data, B..255, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccData, IsoType.LLLBIN, iccData.length)
+
+        return appendIsoLength(message.writeData())
+    }
+
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun parsePurchaseResponse(response: ByteArray): BuilderServiceTxnDetails {
-        var message = messageFactory.parseMessage(extractIsoPayload(response), BuilderConstants.ISO_HEADER.size,true)
+        return try {
+            var message = messageFactory.parseMessage(
+                extractIsoPayload(response),
+                BuilderConstants.ISO_HEADER.size,
+                true
+            )
 
-        return builderServiceTxnDetails.apply {
-            message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)?.let { hostRespCode = it }
+            builderServiceTxnDetails.apply {
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)
+                    ?.let { hostRespCode = it }
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_AUTH_CODE)
+                    ?.let { hostAuthCode = it }
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RRN)
+                    ?.let { hostTxnRef = it }
+                message.getObjectValue<ByteArray>(BuilderConstants.ISO_FIELD_ICC_DATA)
+                    ?.let { emvData = it.toHexString().uppercase() }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            builderServiceTxnDetails.apply {
+                hostRespCode = null
+            }
         }
     }
 }

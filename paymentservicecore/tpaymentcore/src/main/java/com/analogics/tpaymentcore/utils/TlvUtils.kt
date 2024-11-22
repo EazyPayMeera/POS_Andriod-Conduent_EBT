@@ -16,7 +16,7 @@ class TlvUtils {
         this.tlvMap = tlvMap
     }
 
-    constructor(tlvString : String)
+    constructor(tlvString : String?)
     {
         parseTlv(tlvString)
     }

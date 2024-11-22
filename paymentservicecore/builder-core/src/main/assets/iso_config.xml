@@ -16,4 +16,31 @@
         <field num="60" type="LLLVAR" />
         <field num="62" type="LLLVAR" />
     </parse>
+
+    <header type="0200" binary="true">6000000003</header>
+    <parse type="0210">
+        <field num="3"  type="NUMERIC" length="6" />
+        <field num="4"  type="NUMERIC" length="12" />
+        <field num="11" type="NUMERIC" length="6" />
+        <field num="12" type="TIME" />
+        <field num="13" type="DATE4" />
+        <field num="22" type="NUMERIC" length="3" />
+        <field num="23" type="NUMERIC" length="3" />
+        <field num="24" type="NUMERIC" length="3" />
+        <field num="25" type="NUMERIC" length="2" />
+        <field num="35" type="LLLBIN"/>
+        <field num="37" type="ALPHA" length="12" />
+        <field num="38" type="ALPHA" length="6" />
+        <field num="39" type="ALPHA" length="2" />
+        <field num="41" type="ALPHA" length="8" />
+        <field num="42" type="ALPHA" length="15" />
+        <field num="48" type="LLLVAR" />
+        <field num="49" type="ALPHA" length="3" />
+        <field num="52" type="BINARY" length="8" />
+        <field num="55" type="LLLBIN" />
+        <field num="60" type="LLLVAR" />
+        <field num="61" type="LLLVAR" />
+        <field num="62" type="LLLVAR" />
+        <field num="63" type="LLLVAR" />
+    </parse>
 </j8583-config>

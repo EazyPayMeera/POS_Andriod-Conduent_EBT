@@ -352,7 +352,6 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
-
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             viewModelScope.launch {

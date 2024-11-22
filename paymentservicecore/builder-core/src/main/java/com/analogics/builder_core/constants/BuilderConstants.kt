@@ -9,15 +9,21 @@ object BuilderConstants {
     const val DEFAULT_ISO8583_DATE_FORMAT = "MMdd"
     const val DEFAULT_ISO8583_TIME_FORMAT = "HHmmss"
 
+    /* For Dummy Host Response */
+    const val DUMMY_DATE_TIME_FORMAT_RRN = "MMddHHmmss"
+    const val DUMMY_DATE_TIME_FORMAT_AUTH_CODE = "ddHHmm"
+
     const val ISO_CONFIG_PATH = "assets/iso_config.xml"
 
     /* MTI Values */
     const val MTI_AUTH_REQ = 0x0100
     const val MTI_SALE_REQ = 0x0200
+    const val MTI_SALE_RES = 0x0210
     const val MTI_NETWORK_REQ = 0x0800
 
     /* TPDU */
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
+    const val ISO_HEADER_LENGTH = 5
 
     /* Processing Code */
     const val ISO_FIELD_PROC_CODE = 3
