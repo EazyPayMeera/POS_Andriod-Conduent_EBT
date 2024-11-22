@@ -37,6 +37,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     var isTippingEnabled = mutableStateOf(false)
     var isTaxEnabled = mutableStateOf(false)
     var isInactivity = mutableStateOf(false)
+    var isBatchId = mutableStateOf(false)
 
     private fun loadPreferences(sharedViewModel: SharedViewModel)
     {
@@ -47,6 +48,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isTippingEnabled.value = sharedViewModel.objPosConfig?.isTipEnabled == true
         isTaxEnabled.value = sharedViewModel.objPosConfig?.isTaxEnabled == true
         isInactivity.value = sharedViewModel.objPosConfig?.isInactivityTimeout == true
+        isBatchId.value = sharedViewModel.objPosConfig?.isBatchId == true
     }
 
     private fun getTipPercent(button: TipButton, sharedViewModel: SharedViewModel) : Double
@@ -98,9 +100,18 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isInactivity.value = value
     }
 
+    fun onBatchIdChange(value: Boolean) {
+        isBatchId.value = value
+    }
+
     fun onInactivityTimeoutChange(timeout: Int,sharedViewModel: SharedViewModel) {
         sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()
     }
+
+    fun onBatchIdChange(batchId: Int,sharedViewModel: SharedViewModel) {
+        sharedViewModel.objPosConfig?.apply { this.batchId = batchId.toString() }?.saveToPrefs()
+    }
+
 
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {
         navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(AppConstants.NAV_KEY_TAX_TYPE, if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST)
