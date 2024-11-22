@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,9 @@ fun HostProcessingDialog(
     viewModel: LoginViewModel = hiltViewModel(),
     onDismissRequest: () -> Unit
 ) {
+    // Intercept the hardware back press
+    BackHandler(onBack = {})
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +71,7 @@ fun HostProcessingContent(navHostController: NavHostController?) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_100_CompactMedium))
 
                 TextView(
                     text = stringResource(id = R.string.processing),
@@ -75,10 +79,10 @@ fun HostProcessingContent(navHostController: NavHostController?) {
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_24_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_21_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
+                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
 
                 TextView(
                     text = stringResource(id = R.string.plz_wait),
@@ -86,14 +90,14 @@ fun HostProcessingContent(navHostController: NavHostController?) {
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_24_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium/*, top = MaterialTheme.dimens.DP_24_CompactMedium*/)
                         .align(Alignment.CenterHorizontally)
                 )
 
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_33_CompactMedium)
-                        .size(MaterialTheme.dimens.DP_125_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_55_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_120_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     color = MaterialTheme.colorScheme.primary,
                     strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,

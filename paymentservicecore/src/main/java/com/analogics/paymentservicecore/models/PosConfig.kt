@@ -58,6 +58,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context,) {
     @SerializedName("isTipEnabled") var isTipEnabled: Boolean? = false
     @SerializedName("isTaxEnabled") var isTaxEnabled: Boolean? = false
     @SerializedName("isInactivityTimeout") var isInactivityTimeout: Boolean? = false
+    @SerializedName("isBatchId") var isBatchId: Boolean? = false
 
     /* State Management */
     @SerializedName("isLoggedIn") var isLoggedIn: Boolean? = false

@@ -193,6 +193,8 @@
     <string name="save_btn">SAVE</string>
     <string name="adjust_per">--------Adjust %--------</string>
     <string name="set_timeout">Set Timeout</string>
+    <string name="batch_id">Batch Id</string>
+    <string name="set_batch_id">Set Batch Id</string>
 	
     <string name="is_correct">Is this information correct?</string>
     <string name="for_admin">Allowed for Admin Only</string>

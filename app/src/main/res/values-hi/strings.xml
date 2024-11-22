@@ -193,6 +193,9 @@
     <string name="save_btn">सहेजें</string>
     <string name="adjust_per">-------- % समायोजित करें --------</string>
     <string name="set_timeout">समय सीमा सेट करें</string>
+    <string name="batch_id">बैच आईडी</string>
+    <string name="set_batch_id">बैच आईडी सेट करें</string>
+
 
     <string name="is_correct">क्या यह जानकारी सही है?</string>
     <string name="for_admin">केवल प्रशासन के लिए अनुमति प्राप्त है</string>
