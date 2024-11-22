@@ -149,6 +149,15 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onArrowChange = {},
             isAdmin = true
         ),
+        SettingsItem(
+            imageRes = R.drawable.time,
+            text = stringResource(id = R.string.batch_id),
+            isChecked = viewModel.isBatchId.value,
+            onCheckedChange = { viewModel.onBatchIdChange(it) },
+            isArrow = false,
+            onArrowChange = {},
+            isAdmin = true
+        ),
     )
 
     Column {
@@ -182,6 +191,9 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
 
                     if (index == 7 && item.isChecked) {
                         TippingView(ConfigurableViewType.Inactivity_Timeout, navHostController, viewModel, sharedViewModel)
+                    }
+                    if (index == 8 && item.isChecked) {
+                        TippingView(ConfigurableViewType.Batch_Id, navHostController, viewModel, sharedViewModel)
                     }
 
                     if (index < settingsItems.size - 1) {
@@ -227,6 +239,7 @@ fun TippingView(
     sharedViewModel: SharedViewModel
 ) {
     var timeoutDuration by remember { mutableStateOf(sharedViewModel.objPosConfig?.inactivityTimeout?.toString() ?: "") }
+    var batchId by remember { mutableStateOf(sharedViewModel.objPosConfig?.batchId?.toString() ?: "") }
     val options = when (type) {
         ConfigurableViewType.Percentage -> listOf(
             viewModel.getTipPercentLabel(TipButton.PERCENT1, sharedViewModel),
@@ -238,12 +251,14 @@ fun TippingView(
             stringResource(id = R.string.tax_label_cgst) + "\n" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat()
         )
         ConfigurableViewType.Inactivity_Timeout -> listOf(stringResource(R.string.set_timeout)) // Keep for consistency
+        ConfigurableViewType.Batch_Id -> listOf(stringResource(R.string.set_batch_id))
     }
 
     val title = when (type) {
         ConfigurableViewType.Percentage -> stringResource(R.string.adjust_per)
         ConfigurableViewType.Taxes -> stringResource(R.string.adjust_per)
         ConfigurableViewType.Inactivity_Timeout -> stringResource(R.string.set_timeout)
+        ConfigurableViewType.Batch_Id -> stringResource(R.string.set_batch_id)
     }
 
     Box(
@@ -293,7 +308,40 @@ fun TippingView(
                         )
                     )
                 }
-            } else {
+            }
+            else if (type == ConfigurableViewType.Batch_Id) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()  // Ensures the Box takes only the required height
+                ) {
+                    OutlinedTextField(
+                        value = batchId,
+                        onValueChange = { newValue -> batchId = newValue },
+                        label = { Text(stringResource(id = R.string.batch_id)) },
+                        placeholder = { Text(stringResource(id = R.string.set_batch_id)) },
+                        textStyle = TextStyle(textAlign = TextAlign.Center),
+                        modifier = Modifier
+                            .align(Alignment.Center)  // Center the TextField within the Box
+                            .width(MaterialTheme.dimens.DP_160_CompactMedium)
+                            .height(MaterialTheme.dimens.DP_60_CompactMedium), // Adjust height as needed
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
+                            focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
+                            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
+                            cursorColor = Color.Transparent
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                viewModel.onBatchIdChange(batchId.toInt(),sharedViewModel)
+                            }
+                        )
+                    )
+                }
+            }
+            else {
                 // For other types (Percentage, Taxes), show the Card components
                 val cardHeight = if (type == ConfigurableViewType.Taxes) {
                     MaterialTheme.dimens.DP_50_CompactMedium
@@ -323,6 +371,9 @@ fun TippingView(
                                     )
                                     ConfigurableViewType.Taxes -> viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
                                     ConfigurableViewType.Inactivity_Timeout -> {
+                                        // No action needed here for Inactivity Timeout
+                                    }
+                                    ConfigurableViewType.Batch_Id -> {
                                         // No action needed here for Inactivity Timeout
                                     }
                                 }
@@ -355,7 +406,8 @@ fun TippingView(
 enum class ConfigurableViewType {
     Percentage,
     Taxes,
-    Inactivity_Timeout
+    Inactivity_Timeout,
+    Batch_Id
 }
 
 enum class TipButton(val value: Int) {
