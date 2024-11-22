@@ -89,29 +89,29 @@ fun HostProcessingContent(navHostController: NavHostController?) {
 
                 TextView(
                     text = stringResource(id = R.string.processing),
-                    fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_24_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
 
                 TextView(
                     text = stringResource(id = R.string.plz_wait),
-                    fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
+                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium, top = MaterialTheme.dimens.DP_24_CompactMedium)
                         .align(Alignment.CenterHorizontally)
                 )
 
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .padding(MaterialTheme.dimens.DP_21_CompactMedium)
-                        .size(MaterialTheme.dimens.DP_70_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_33_CompactMedium)
+                        .size(MaterialTheme.dimens.DP_125_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     color = MaterialTheme.colorScheme.primary,
                     strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
