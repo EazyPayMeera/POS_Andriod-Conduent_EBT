@@ -80,6 +80,8 @@ fun dashboardItemListData(
     fun setTransactionType(txnType: TxnType) {
         sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
+        if(sharedViewModel.objPosConfig?.isPromptInvoiceNo!=true)
+            dashboardViewModel.setInvoiceNumber(sharedViewModel)
     }
 
     // Helper function to create DashboardItemList

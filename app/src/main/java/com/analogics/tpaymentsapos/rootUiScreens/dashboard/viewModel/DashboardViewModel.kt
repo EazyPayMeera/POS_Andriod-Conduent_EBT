@@ -343,6 +343,15 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
+    fun setInvoiceNumber(sharedViewModel: SharedViewModel)
+    {
+        viewModelScope.launch{
+            txnDBRepository.getLastInvoiceNumber().let {
+                sharedViewModel.objRootAppPaymentDetail.invoiceNo = (it+1).toString()
+            }
+        }
+    }
+
 
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {

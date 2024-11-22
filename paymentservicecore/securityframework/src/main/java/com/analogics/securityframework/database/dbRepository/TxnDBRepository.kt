@@ -128,6 +128,11 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getTransactionsByDateRange(startDate, endDate)
     }
 
+    suspend fun getLastInvoiceNumber() : Int
+    {
+        return iTxnDao.getLastInvoiceNumber()?.toIntOrNull()?:0
+    }
+
     /* Clerk/User Management */
     suspend fun  insertUser(userManagementEntity: UserManagementEntity){
         iUserManagementDao.insert(userManagementEntity)
