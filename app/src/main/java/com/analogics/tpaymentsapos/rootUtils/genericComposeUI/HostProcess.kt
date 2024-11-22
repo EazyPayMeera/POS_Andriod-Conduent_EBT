@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.hostProcessing.view
+package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,8 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.DialogueSurface
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 /*@Composable

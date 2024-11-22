@@ -42,11 +42,11 @@ import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.hostProcessing.view.HostProcessingDialog
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HostProcessingDialog
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
