@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,15 +25,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.BuildConfig
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.login.viewModel.LoginViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.LoginButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -117,10 +119,10 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                     )
 
                     Box(
-                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
+                        modifier = Modifier.padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                     ) {
                         val message = stringResource(id = R.string.cred_not_to_be_empty)
-                        AppButton(
+                        LoginButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
                                         viewModel.onLoginClick(navHostController,sharedViewModel)
@@ -131,6 +133,22 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                             title = stringResource(id = R.string.login),
                             enabled = viewModel.isLoginEnabled.value
                         )
+
+                        Text(
+                            text = stringResource(id = R.string.login_version) + BuildConfig.VERSION_NAME,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(MaterialTheme.dimens.DP_11_CompactMedium)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                    ) {
+
                     }
                 }
             }

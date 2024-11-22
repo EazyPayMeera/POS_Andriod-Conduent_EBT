@@ -57,13 +57,10 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
@@ -79,6 +76,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.analogics.paymentservicecore.models.TxnType
@@ -184,17 +182,79 @@ fun AppButton(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
             enabled = enabled != false
-            ) {
-                if (image != null) {
-                    Image(
-                        painter = image,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxHeight(),
-                        )
-                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
-                }
+        ) {
+            if (image != null) {
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxHeight(),
+                )
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
+            }
 
-                Text(text = title, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal)
+            Text(text = title, fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal)
+        }
+    }
+}
+
+@Composable
+fun LoginButton(
+    onClick: () -> Unit,
+    title: String,
+    image: Painter? = null, // Optional parameter for the image
+    enabled: Boolean? = true
+) {
+    val isKeyboardVisible = remember { mutableStateOf(false) }
+
+    // Detect keyboard visibility using DisposableEffect
+    val rootView = LocalView.current
+    DisposableEffect(rootView) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            val isKeyboardOpen =
+                ViewCompat.getRootWindowInsets(rootView)?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            isKeyboardVisible.value = isKeyboardOpen
+        }
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
+
+        onDispose {
+            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+
+    // Adjust padding based on keyboard visibility
+    val paddingBottom = if (isKeyboardVisible.value) MaterialTheme.dimens.DP_25_CompactMedium else MaterialTheme.dimens.DP_40_CompactMedium
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = paddingBottom) // Adjust padding based on keyboard visibility
+    ) {
+        Button(
+            onClick = onClick,
+            modifier = Modifier
+                .align(if (isKeyboardVisible.value) Alignment.TopCenter else Alignment.BottomCenter) // Align based on keyboard visibility
+                .width(248.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
+            colors = buttonColors(
+                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.primary
+            ),
+            enabled = enabled != false
+        ) {
+            if (image != null) {
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxHeight()
+                )
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_11_CompactMedium))
+            }
+
+            Text(
+                text = title,
+                style = TextStyle(fontSize = MaterialTheme.dimens.SP_21_CompactMedium, fontWeight = FontWeight.Normal)
+            )
         }
     }
 }
@@ -836,6 +896,38 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            .shadow(
+                elevation = MaterialTheme.dimens.DP_50_CompactMedium,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+    ) {
+        Card(
+            elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
+            backgroundColor= MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = MaterialTheme.dimens.DP_25_CompactMedium,
+                    start = MaterialTheme.dimens.DP_25_CompactMedium,
+                    end = MaterialTheme.dimens.DP_25_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_25_CompactMedium,
+                )
+                .align(Alignment.Center)
+        ) {
+            componentView()
+        }
+    }
+}
+
+@Composable
+fun DialogueSurface(componentView :@Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
             .shadow(
                 elevation = MaterialTheme.dimens.DP_50_CompactMedium,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)

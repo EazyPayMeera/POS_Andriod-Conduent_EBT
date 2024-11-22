@@ -22,13 +22,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activationScreen.viewModel.ActivationViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUiScreens.activationScreen.viewModel.ActivationViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.InputTextField
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.LoginButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -101,7 +101,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {
-                        AppButton(
+                        LoginButton(
                             onClick = {
                                 if (viewModel.isFormValid) {
                                     viewModel.onActivationClick(navHostController,sharedViewModel)

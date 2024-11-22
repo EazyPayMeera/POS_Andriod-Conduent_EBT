@@ -55,6 +55,7 @@
     <string name="prompt_new_password">Please Enter New Password</string>
     <string name="cred_not_to_be_empty">Username and password should not be empty</string>
     <string name="login_invalid_cred">Invalid credentials</string>
+    <string name="login_version">Version </string>
 
     <!-- Change Password -->
     <string name="label_current_pwd">Current</string>

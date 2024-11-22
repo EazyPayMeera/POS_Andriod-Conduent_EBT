@@ -199,6 +199,13 @@ fun InvoiceView(navHostController: NavHostController) {
             .buildDialog(onClose = { isDialogVisible = false })
 
     }
+/*    if(isDialogVisible)
+    {
+        HostProcessingDialog(
+            navHostController = navHostController,
+            onDismissRequest = { isDialogVisible = false }
+        )
+    }*/
 
 
 }

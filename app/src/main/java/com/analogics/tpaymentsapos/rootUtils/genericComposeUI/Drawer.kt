@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.analogics.tpaymentsapos.BuildConfig
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -142,7 +144,22 @@ fun CustomDrawerContent(
                 }
             }
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+        ) {
+            Text(
+                text = stringResource(id = R.string.login_version) + BuildConfig.VERSION_NAME,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+            )
+        }
     }
+
 }
 
 data class DrawerItem(
@@ -164,6 +181,7 @@ fun DrawersSurface(
         DrawersContent(
             item = item
         )
+
     }
 }
 

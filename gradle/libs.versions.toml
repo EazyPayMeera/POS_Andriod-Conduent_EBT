@@ -21,6 +21,7 @@ coreAnimation = "1.0.0"
 roomCommon = "2.6.1"
 firebaseCrashlyticsBuildtools = "3.0.2"
 runtimeLivedata = "1.7.4"
+foundationAndroid = "1.7.5"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -51,6 +52,7 @@ androidx-core-animation = { group = "androidx.core", name = "core-animation", ve
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
