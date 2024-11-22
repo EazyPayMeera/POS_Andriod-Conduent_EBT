@@ -41,13 +41,12 @@ import com.analogics.paymentservicecore.listeners.responseListener.IScannerResul
 import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.login.InvoiceViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HostProcessingDialog
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OutlinedTextField
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
@@ -173,7 +172,7 @@ fun InvoiceView(navHostController: NavHostController) {
     }
 
 
-    if (isDialogVisible) {
+/*    if (isDialogVisible) {
         CustomDialogBuilder.create()
             .setTitle(stringResource(id = R.string.cancel_dialogue))
             .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
@@ -198,14 +197,15 @@ fun InvoiceView(navHostController: NavHostController) {
             }
             .buildDialog(onClose = { isDialogVisible = false })
 
-    }
-/*    if(isDialogVisible)
-    {
+    }*/
+    if (isDialogVisible) {
+
+        // Display the dialog while isDialogVisible is true
         HostProcessingDialog(
             navHostController = navHostController,
             onDismissRequest = { isDialogVisible = false }
         )
-    }*/
+    }
 
 
 }
