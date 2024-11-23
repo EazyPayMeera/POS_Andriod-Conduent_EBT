@@ -37,7 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.BatchDialogueBuilder
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.ListDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.usermanagement.viewmodel.UserManagementViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
@@ -128,7 +128,7 @@ fun CustomDrawerContent(
 
     if (isRemoveUser) {
         viewModel.fetchUserDetails()
-        BatchDialogueBuilder.create()
+        ListDialogueBuilder.create()
             .setTitle(stringResource(id = R.string.sel_user))
             .UserListDialog(
                 onClose = { isRemoveUser = false },

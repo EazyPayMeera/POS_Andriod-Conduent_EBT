@@ -213,7 +213,7 @@
     <!-- Transaction List Screen -->
     <string name="select_date">Select Date</string>Filter by Batch Number
     <string name="filter_by_batch">Filter by Batch Number</string>
-    <string name="empty_list">Transaction List is Empty</string>
+    <string name="empty_list">List is Empty</string>
     <string name="sel_batch_id">Select the Batch Id</string>
     <string name="to">To</string>
     <string name="close_batch">Close Batch</string>

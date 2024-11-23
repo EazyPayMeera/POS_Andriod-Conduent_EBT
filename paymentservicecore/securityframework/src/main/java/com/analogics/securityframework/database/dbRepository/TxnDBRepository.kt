@@ -80,8 +80,8 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getLastTxnEntry()
     }
 
-    suspend fun fetchTransactionByBatch(batchId:String): List<TxnEntity> {
-        return iTxnDao.getTrasactionsByBatchId(batchId)
+    suspend fun fetchTxnListByBatchId(batchId:String): List<TxnEntity>? {
+        return iTxnDao.fetchTxnListByBatchId(batchId)
     }
 
     suspend fun fetchTotalAmountByInvoiceNo(invoiceNo:String): String {
@@ -100,8 +100,8 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         iTxnDao.deleteTransactionsByUserId(user)
     }
 
-    suspend fun fetchTransactionDetailsByBatchId(): List<String> {
-        return iTxnDao.getDistinctBatchIds()
+    suspend fun fetchBatchList(): List<BatchEntity>? {
+        return iTxnDao.fetchBatchList()
     }
 
     suspend fun getStartDate(batchId: String): List<String?> {

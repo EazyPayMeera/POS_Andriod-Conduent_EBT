@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.TabRowDefaults.Divider
@@ -27,16 +25,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.delay
+import com.analogics.tpaymentsapos.R
 
-class BatchDialogueBuilder private constructor() {
+class ListDialogueBuilder private constructor() {
 
     private var title: String = ""
     private var subtitle: String = ""
@@ -60,95 +61,14 @@ class BatchDialogueBuilder private constructor() {
 
     fun setListItem(listItem: List<String>) = apply { this.listItem = listItem }
 
-    @Composable
-    fun buildDialog(onClose: () -> Unit, onItemSelected: ((String) -> Unit)? = null) {
-        if (showDialog.value) {
-            Dialog(onDismissRequest = { onClose() }) {
-
-                listItem?.let {
-                    CustomListDialog(
-                        onClose,
-                        status = it,
-                        batchIds = it,
-                        startDates = it,
-                        endDates = it,
-                        onItemSelected = onItemSelected!!
-                    )
-                }
-
-                LaunchedEffect(Unit) {
-                    delay(2000)
-                    navAction?.invoke()
-                }
-            }
-        }
-    }
-
     companion object {
-        private var instance: BatchDialogueBuilder? = null
-        private var _title: String? = null
-        private var _subtitle: String? = null
-        private var _message: String? = null
-        private var _buttonText: String? = null
-        var showAlert = mutableStateOf(false)
-
-        fun create(): BatchDialogueBuilder = BatchDialogueBuilder()
-
-        @Composable
-        fun ShowAlertDialog(
-            show: Boolean? = null,
-            title: String? = null,
-            subtitle: String? = null,
-            message: String? = null,
-            buttonText: String? = null
-        ) {
-            show?.let { showAlert.value = it }
-            title?.let { _title = it }
-            subtitle?.let { _subtitle = it }
-            message?.let { _message = it }
-            buttonText?.let { _buttonText = it }
-
-            if (showAlert.value) {
-                Dialog(onDismissRequest = { showAlert.value = false }) {
-                    Surface(
-                        shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
-                        elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
-                        color = Color.White
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
-                                .fillMaxWidth()
-                        ) {
-                            Text(
-                                text = _title ?: "",
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(bottom = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
-                            )
-                            Text(text = _subtitle ?: "")
-                            Text(text = _message ?: "")
-                            Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium))
-                            Button(
-                                onClick = { showAlert.value = false },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(text = _buttonText ?: "OK")
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        fun create(): ListDialogueBuilder = ListDialogueBuilder()
     }
 
     @Composable
-    fun CustomListDialog(
+    fun BatchListDialog(
         onClose: () -> Unit,
-        status: List<String>,
-        batchIds: List<String>, // List of batch IDs
-        startDates: List<String?>, // List of start dates (nullable)
-        endDates: List<String>,
+        batchList: List<BatchEntity>?, // List of batch IDs
         onItemSelected: (String) -> Unit // Callback for item selection
     ) {
         Dialog(onDismissRequest = { onClose() }) {
@@ -191,10 +111,10 @@ class BatchDialogueBuilder private constructor() {
                             }
                         }
                         // Check if batchIds is empty
-                        if (batchIds.isEmpty()) {
+                        if (batchList?.isEmpty()==true) {
                             // Display "Batch list Empty" message
                             Text(
-                                text = "Batch list Empty",
+                                text = stringResource(id = R.string.empty_list),
                                 style = MaterialTheme.typography.body1,
                                 modifier = Modifier
                                     .padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
@@ -202,34 +122,22 @@ class BatchDialogueBuilder private constructor() {
                             )
                         } else {
                             LazyColumn {
-                                itemsIndexed(batchIds) { index, batchId ->
-                                    // Get the corresponding start date (null if not available)
-                                    val startDates =
-                                        if (index < startDates.size) startDates[index] else null
-                                    val endDates =
-                                        if (index < endDates.size) endDates[index] else null
-                                    val batchStatus =
-                                        if (index < status.size) status[index] else null
-                                    val startdate =
-                                        startDates?.replace("[", "")?.replace("]", "")?.trim()
-                                    val enddate =
-                                        endDates?.replace("[", "")?.replace("]", "")?.trim()
-                                    val status = batchStatus?.replace("[", "")?.replace("]", "")?.trim()
+                                itemsIndexed(batchList?: emptyList()) { index, item ->
 
                                     DrawersSurface(
                                         modifier = Modifier.fillMaxWidth(),
-                                        status = status.toString(),
-                                        batchId = batchId, // Pass the combined String to DrawersSurface
-                                        startDate = startdate.toString(),
-                                        endDate = enddate.toString(),
+                                        status = item.batchStatus?.toString()?:"",
+                                        batchId = "#"+(item.batchId?.toIntOrNull()?.toString()?:""), // Pass the combined String to DrawersSurface
+                                        startDate = item.openedDateTime?.toString()?:"",
+                                        endDate = item.closedDateTime?.toString()?:"",
                                         onItemSelected = {
-                                            onItemSelected(batchId) // Pass only batchId for selection
+                                            onItemSelected(item.batchId.toString()) // Pass only batchId for selection
                                             onClose()
                                         }
                                     )
 
                                     // Divider between items, but not after the last item
-                                    if (index < batchIds.size - 1) {
+                                    if (index < (batchList?.size?:0) - 1) {
                                         Divider(
                                             modifier = Modifier.fillMaxWidth(),
                                             thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
@@ -478,17 +386,6 @@ class BatchDialogueBuilder private constructor() {
             }
         }
     }
-
-
-    // DrawerItem data class definition (same as in your example)
-    data class DrawerItem(
-        val imageRes: ImageVector,
-        val text: String,
-        val isChecked: Boolean,
-        val onCheckedChange: (Boolean) -> Unit
-    )
-
-
 }
 
 

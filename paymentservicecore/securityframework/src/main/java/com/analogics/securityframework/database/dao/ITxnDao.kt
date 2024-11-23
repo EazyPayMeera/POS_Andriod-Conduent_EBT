@@ -33,8 +33,8 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable ORDER BY id DESC LIMIT 1")
     suspend fun getLastTxnEntry(): TxnEntity?
 
-    @Query("SELECT * FROM TxnTable WHERE batchId = :batchId")
-    suspend fun getTrasactionsByBatchId(batchId: String): List<TxnEntity>
+    @Query("SELECT * FROM TxnTable WHERE batchId = :batchId ORDER BY id DESC")
+    suspend fun fetchTxnListByBatchId(batchId: String): List<TxnEntity>?
 
     @Query("SELECT TtlAmount FROM TxnTable WHERE InvoiceNo = :invoiceNo")
     suspend fun getTotalAmountByInvoiceNo(invoiceNo: String): String
@@ -51,8 +51,8 @@ interface ITxnDao {
     @Query("SELECT password FROM UserTable WHERE userId = :userId")
     suspend fun fetchPassword(userId: String): String?
 
-    @Query("SELECT DISTINCT batchId FROM TxnTable")
-    suspend fun getDistinctBatchIds(): List<String>
+    @Query("SELECT DISTINCT * FROM BatchTable ORDER BY BatchId DESC")
+    suspend fun fetchBatchList(): List<BatchEntity>
 
     @Query("SELECT MIN(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getStartDateByBatchIds(batchId: String): List<String?>

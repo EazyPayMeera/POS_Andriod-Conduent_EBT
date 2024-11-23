@@ -41,7 +41,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +62,7 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.BatchDialogueBuilder
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.ListDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.DateTimePickerDialog
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
@@ -86,28 +85,18 @@ fun TransactionListScreen(
 ) {
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
-    val transactionList = viewModel.transactionList.collectAsState().value
+    val txnList = viewModel.txnList.collectAsState().value
     val batchList = viewModel.batchList.collectAsState().value
-    val startDate = viewModel.startDateList.collectAsState().value
-    val batchStatus = viewModel.batchStatusList.collectAsState().value
-    val endDate = viewModel.endDateList.collectAsState().value
     val listTypeLabel = viewModel.listTypeLabel.collectAsState().value
     val showFilterMenu = viewModel.showFilterMenu.collectAsState().value
     val showBatchPicker = viewModel.showBatchPicker.collectAsState().value
     val showDateTimePicker = viewModel.showDateTimePicker.collectAsState().value
 
-    /*val openBatchId = viewModel.openBatch.collectAsState().value*/
-    val latestBatchId by rememberUpdatedState(batchList.lastOrNull())
-    val firstTransactionDateTime = transactionList.lastOrNull()?.dateTime
-    val lastTransactionDateTime = transactionList.firstOrNull()?.dateTime
     var isSeeAllClicked by remember { mutableStateOf(false) }
 
-    var selectedBatchId by remember { mutableStateOf<String?>(null) }
-    //val showDateTimePicker = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val selectedEndDate = remember { mutableStateOf<LocalDateTime?>(null) }
-
 
     if (showDateTimePicker) {
         Log.d("Date Time Picker", "Prompt DATE PICKER")
@@ -155,9 +144,8 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value,selectedBatchId,latestBatchId,firstTransactionDateTime,lastTransactionDateTime,isSeeAllClicked,listTypeLabel)
+                HeaderSection(viewModel, navHostController, viewModel.isClosedBatchEnabled.value,listTypeLabel)
                 SummarySection(viewModel)
-
             }
         }
 
@@ -214,32 +202,13 @@ fun TransactionListScreen(
                         ) {
                             // Date filter
                             DropdownMenuItem(onClick = {
-/*                                showMenu.value = false
-                                showDateTimePicker.value = true // Show date picker
-                                isSeeAllClicked = false
-                                selectedStartDate.value = null
-                                selectedEndDate.value = null*/
-
                                 viewModel.onDateTimeFilterClick()
-
                             }) {
                                 Text(stringResource(id = R.string.select_date))
                             }
 
                             DropdownMenuItem(onClick = {
                                 viewModel.onBatchFilterClick()
-/*
-                                viewModel.fetchStartDates(batchList)
-                                viewModel.fetchEndDates(batchList)
-                                viewModel.fetchBatchStatus(batchList)
-*/
-/*                                showMenu.value = false
-                                isSeeAllClicked = false
-                                isBatchId = true*/
-/*
-                                selectedStartDate.value = null
-                                selectedEndDate.value = null
-*/
                             }) {
                                 Text(stringResource(id = R.string.filter_by_batch))
                             }
@@ -249,7 +218,7 @@ fun TransactionListScreen(
 
                 Divider(color = Color.Gray, thickness = 1.dp)
                 // If transaction list is empty
-                if (transactionList.isEmpty()) {
+                if (txnList.isEmpty()) {
                     Text(
                         text = stringResource(id = R.string.empty_list),
                         style = MaterialTheme.typography.body1,
@@ -261,18 +230,18 @@ fun TransactionListScreen(
                 } else {
                     // Transaction list
                     LazyColumn {
-                        items(transactionList.size) { index ->
+                        items(txnList.size) { index ->
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         sharedViewModel.objRootAppPaymentDetail =
-                                            transactionList[index]
+                                            txnList[index]
                                         navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
                                     }
                             ) {
                                 TransactionItem(
-                                    transaction = transactionList[index],
+                                    transaction = txnList[index],
                                     navHostController = navHostController,
                                     sharedViewModel = sharedViewModel
                                 )
@@ -324,40 +293,22 @@ fun TransactionListScreen(
     }
 
     if (showBatchPicker) {
-        BatchDialogueBuilder.create()
+        ListDialogueBuilder.create()
             .setTitle(stringResource(id = R.string.sel_batch_id))
-            .CustomListDialog(
+            .BatchListDialog(
                 onClose = { viewModel.onDismissMenu() },
-                status = batchStatus,
-                batchIds = batchList, // Ensure this is List<String>
-                startDates = startDate,
-                endDates = endDate,
+                batchList = batchList,
                 onItemSelected = { selectedId ->
                     viewModel.filterTransactionsByBatchId(selectedId)
-                    selectedBatchId = selectedId
                 }
 
             )
     }
-    LaunchedEffect(Unit) {
-        viewModel.filterTransactionsForBatch()
-    }
-    LaunchedEffect (isSeeAllClicked){
-        viewModel.fetchTransactions()
-    }
-    LaunchedEffect(latestBatchId) {
-        viewModel.filterTransactionsByBatchId(latestBatchId.toString())
-    }
 
-    LaunchedEffect(viewModel.isClosedBatchEnabled) {
-        viewModel.isBatchOpen()
+    LaunchedEffect(Unit) {
+        viewModel.onLoad()
     }
 }
-
-
-
-
-
 
 @Composable
 fun SummarySection(viewModel: TxnViewModel) {
@@ -514,16 +465,8 @@ fun TransactionItem(
 @Composable
 fun HeaderSection(
     viewModel: TxnViewModel,
-    sharedViewModel: SharedViewModel,
     navHostController: NavHostController,
-    selectedStartDate: LocalDateTime?,
-    selectedEndDate: LocalDateTime?,
     isBatchCloseEnabled: Boolean,
-    selectedBatchId: String?,
-    lastbatchid: String?,
-    firstTransactiondate: String?,
-    lastTransactionDateTime: String?,
-    isSeeAllClicked: Boolean,
     listTypeLabel : String?
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
@@ -551,86 +494,11 @@ fun HeaderSection(
                 Column {
                     Text(
                         text = listTypeLabel?:"",
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Medium,
                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
                     )
-                    /*
-                    if(selectedEndDate != null && selectedStartDate != null && !isSeeAllClicked) {
-                        selectedStartDate.let {
-                            Text(
-                                text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
-                                style = MaterialTheme.typography.caption,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier.align(Alignment.CenterHorizontally  )
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.to),
-                                style = MaterialTheme.typography.caption,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.align(Alignment.Center) // Center the Text within the Box
-                            )
-                        }
-
-
-                        selectedEndDate?.let {
-                            Text(
-                                text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
-                                style = MaterialTheme.typography.caption,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
-                    else
-                    {
-                        if(isSeeAllClicked)
-                        {
-                            firstTransactiondate?.let {
-                                Text(
-                                    text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
-                                    style = MaterialTheme.typography.caption,
-                                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
-                                )
-                            }
-
-                            Box(
-                                modifier = Modifier.align(Alignment.CenterHorizontally  )
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.to),
-                                    style = MaterialTheme.typography.caption,
-                                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.align(Alignment.Center) // Center the Text within the Box
-                                )
-                            }
-
-
-                            lastTransactionDateTime?.let {
-                                Text(
-                                    text = it.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")),
-                                    style = MaterialTheme.typography.caption,
-                                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                )
-                            }
-                        }
-                        else if(!selectedBatchId.isNullOrEmpty() || !lastbatchid.isNullOrEmpty()) {
-                            Text(
-                                text = stringResource(id = R.string.sel_batchid) + (selectedBatchId
-                                    ?: lastbatchid).toString(),
-                                style = MaterialTheme.typography.caption,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
-                            )
-                        }
-
-                    }
-                    */
                 }
 
                 Row ()
@@ -663,23 +531,28 @@ fun HeaderSection(
                     .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium), // Consistent padding for the bottom row
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                val dNetTotal = viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
+                    TxnType.REFUND
+                )
+                val netTotal = formatAmount(dNetTotal)
+
                 Text(
                     text = stringResource(id = R.string.net_total),
-                    style = MaterialTheme.typography.h5,
-                    color = Color.Gray
+                    style = when(netTotal.length) {
+                        in 0..13 -> MaterialTheme.typography.h5
+                        else -> MaterialTheme.typography.h6
+                    },
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Medium
                 )
-                val amount = formatAmount(
-                    viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
-                        TxnType.REFUND
-                    ))
                 Text(
-                    text = amount,
-                    style = when(amount.length) {
-                        in 0..7 -> MaterialTheme.typography.h4
-                        in 8..13 -> MaterialTheme.typography.h5
+                    text = netTotal,
+                    style = when(netTotal.length) {
+                        in 0..13 -> MaterialTheme.typography.h5
                         else -> MaterialTheme.typography.h6
                         },
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
