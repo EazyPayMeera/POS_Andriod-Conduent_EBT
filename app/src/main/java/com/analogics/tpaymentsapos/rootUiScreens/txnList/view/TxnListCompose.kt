@@ -75,7 +75,6 @@ import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -85,35 +84,35 @@ fun TransactionListScreen(
     navHostController: NavHostController,
     viewModel: TxnViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
-    val transactions = viewModel.transactionList.collectAsState().value
-    val batchId = viewModel.batchList.collectAsState().value
+    val sharedViewModel = localSharedViewModel.current
+    val transactionList = viewModel.transactionList.collectAsState().value
+    val batchList = viewModel.batchList.collectAsState().value
     val startDate = viewModel.startDateList.collectAsState().value
     val batchStatus = viewModel.batchStatusList.collectAsState().value
     val endDate = viewModel.endDateList.collectAsState().value
-    val sharedViewModel = localSharedViewModel.current
+    val listTypeLabel = viewModel.listTypeLabel.collectAsState().value
+    val showFilterMenu = viewModel.showFilterMenu.collectAsState().value
+    val showBatchPicker = viewModel.showBatchPicker.collectAsState().value
+    val showDateTimePicker = viewModel.showDateTimePicker.collectAsState().value
+
     /*val openBatchId = viewModel.openBatch.collectAsState().value*/
-    val latestBatchId by rememberUpdatedState(batchId.lastOrNull())
-    val firstTransactionDateTime = transactions.lastOrNull()?.dateTime
-    val lastTransactionDateTime = transactions.firstOrNull()?.dateTime
+    val latestBatchId by rememberUpdatedState(batchList.lastOrNull())
+    val firstTransactionDateTime = transactionList.lastOrNull()?.dateTime
+    val lastTransactionDateTime = transactionList.firstOrNull()?.dateTime
     var isSeeAllClicked by remember { mutableStateOf(false) }
 
     var selectedBatchId by remember { mutableStateOf<String?>(null) }
-    val showDateTimePicker = remember { mutableStateOf(false) }
-    val BatchId = remember { mutableStateOf(false) }
+    //val showDateTimePicker = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(true) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val selectedEndDate = remember { mutableStateOf<LocalDateTime?>(null) }
-    val showMenu = remember { mutableStateOf(false) }
-
-    var isBatchId by remember { mutableStateOf(false) }
 
 
-    if (showDateTimePicker.value) {
+    if (showDateTimePicker) {
         Log.d("Date Time Picker", "Prompt DATE PICKER")
         DateTimePickerDialog(
-            onDismissRequest = { showDateTimePicker.value = false },
+            onDismissRequest = { viewModel.onDismissMenu() },
             onDateTimeSelected = { selectedDate ->
                 selectedEndDate.value = selectedDate // Save selected start date
                 isSelectingEndDate.value = true
@@ -124,7 +123,7 @@ fun TransactionListScreen(
         {
             Log.d("Date Time Picker", "Go For start Date")
             DateTimePickerDialog(
-                onDismissRequest = { showDateTimePicker.value = false },
+                onDismissRequest = { viewModel.onDismissMenu()},
                 onDateTimeSelected = { selectedDate ->
                     selectedStartDate.value = selectedDate // Save selected start date
                     isSelectingEndDate.value = false
@@ -137,7 +136,7 @@ fun TransactionListScreen(
             Log.d("Date Time Picker", "Go for Filter Transaction By Date ")
             viewModel.filterTransactionsByStartEndDate(selectedStartDate.value!!, selectedEndDate.value!!
             )
-            showDateTimePicker.value = false
+            //showDateTimePicker.value = false
             Log.d("Date Time Picker", "showDateTimePicker.value = false")
 
         }
@@ -156,7 +155,7 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value,selectedBatchId,latestBatchId,firstTransactionDateTime,lastTransactionDateTime,isSeeAllClicked)
+                HeaderSection(viewModel, sharedViewModel, navHostController, selectedStartDate.value, selectedEndDate.value, viewModel.isClosedBatchEnabled.value,selectedBatchId,latestBatchId,firstTransactionDateTime,lastTransactionDateTime,isSeeAllClicked,listTypeLabel)
                 SummarySection(viewModel)
 
             }
@@ -204,37 +203,43 @@ fun TransactionListScreen(
                             modifier = Modifier
                                 .size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium)
                                 .clickable {
-                                    showMenu.value = true
+                                    viewModel.onFilterClick()
                                 }
                         )
 
                         // Filter dropdown menu
                         DropdownMenu(
-                            expanded = showMenu.value,
-                            onDismissRequest = { showMenu.value = false }
+                            expanded = showFilterMenu,
+                            onDismissRequest = { viewModel.onDismissMenu() }
                         ) {
                             // Date filter
                             DropdownMenuItem(onClick = {
-                                showMenu.value = false
+/*                                showMenu.value = false
                                 showDateTimePicker.value = true // Show date picker
                                 isSeeAllClicked = false
                                 selectedStartDate.value = null
-                                selectedEndDate.value = null
+                                selectedEndDate.value = null*/
+
+                                viewModel.onDateTimeFilterClick()
 
                             }) {
                                 Text(stringResource(id = R.string.select_date))
                             }
 
                             DropdownMenuItem(onClick = {
-                                viewModel.fetchStartDates(batchId)
-                                viewModel.fetchEndDates(batchId)
-                                viewModel.fetchBatchStatus(batchId)
-                                showMenu.value = false
-                                BatchId.value = true
+                                viewModel.onBatchFilterClick()
+/*
+                                viewModel.fetchStartDates(batchList)
+                                viewModel.fetchEndDates(batchList)
+                                viewModel.fetchBatchStatus(batchList)
+*/
+/*                                showMenu.value = false
                                 isSeeAllClicked = false
-                                isBatchId = true
+                                isBatchId = true*/
+/*
                                 selectedStartDate.value = null
                                 selectedEndDate.value = null
+*/
                             }) {
                                 Text(stringResource(id = R.string.filter_by_batch))
                             }
@@ -244,7 +249,7 @@ fun TransactionListScreen(
 
                 Divider(color = Color.Gray, thickness = 1.dp)
                 // If transaction list is empty
-                if (transactions.isEmpty()) {
+                if (transactionList.isEmpty()) {
                     Text(
                         text = stringResource(id = R.string.empty_list),
                         style = MaterialTheme.typography.body1,
@@ -256,18 +261,18 @@ fun TransactionListScreen(
                 } else {
                     // Transaction list
                     LazyColumn {
-                        items(transactions.size) { index ->
+                        items(transactionList.size) { index ->
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         sharedViewModel.objRootAppPaymentDetail =
-                                            transactions[index]
+                                            transactionList[index]
                                         navHostController.navigate(AppNavigationItems.TransactionDetailsScreen.route)
                                     }
                             ) {
                                 TransactionItem(
-                                    transaction = transactions[index],
+                                    transaction = transactionList[index],
                                     navHostController = navHostController,
                                     sharedViewModel = sharedViewModel
                                 )
@@ -318,13 +323,13 @@ fun TransactionListScreen(
     }
     }
 
-    if (isBatchId) {
+    if (showBatchPicker) {
         BatchDialogueBuilder.create()
             .setTitle(stringResource(id = R.string.sel_batch_id))
             .CustomListDialog(
-                onClose = { isBatchId = false },
+                onClose = { viewModel.onDismissMenu() },
                 status = batchStatus,
-                batchIds = batchId, // Ensure this is List<String>
+                batchIds = batchList, // Ensure this is List<String>
                 startDates = startDate,
                 endDates = endDate,
                 onItemSelected = { selectedId ->
@@ -518,7 +523,8 @@ fun HeaderSection(
     lastbatchid: String?,
     firstTransactiondate: String?,
     lastTransactionDateTime: String?,
-    isSeeAllClicked: Boolean
+    isSeeAllClicked: Boolean,
+    listTypeLabel : String?
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
 
@@ -543,8 +549,13 @@ fun HeaderSection(
             ) {
 
                 Column {
-
-
+                    Text(
+                        text = listTypeLabel?:"",
+                        style = MaterialTheme.typography.caption,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
+                    )
+                    /*
                     if(selectedEndDate != null && selectedStartDate != null && !isSeeAllClicked) {
                         selectedStartDate.let {
                             Text(
@@ -619,7 +630,7 @@ fun HeaderSection(
                         }
 
                     }
-
+                    */
                 }
 
                 Row ()
@@ -701,12 +712,6 @@ fun HeaderSection(
         }
     }
 }
-
-@Composable
-fun AlertDialog() {
-
-}
-
 
 @Composable
 fun CircularMenu(

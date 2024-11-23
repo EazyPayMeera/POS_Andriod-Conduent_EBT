@@ -42,9 +42,14 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     IApiServiceResponseListener {
     private val _transactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     private val _batchList = MutableStateFlow<List<String>>(emptyList())
+    private val _listTypeLabel = MutableStateFlow<String>("")
     private val _startDateList = MutableStateFlow<List<String>>(emptyList())
     private val _batchStatusList = MutableStateFlow<List<String>>(emptyList())
     private val _endDateList = MutableStateFlow<List<String>>(emptyList())
+    private val _showFilterMenu = MutableStateFlow<Boolean>(false)
+    private val _showBatchPicker = MutableStateFlow<Boolean>(false)
+    private val _showDateTimePicker = MutableStateFlow<Boolean>(false)
+
 
     val isClosedBatchEnabled = mutableStateOf(false)
 
@@ -53,6 +58,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     val transactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _transactionList
     val batchList: StateFlow<List<String>> = _batchList
+    val listTypeLabel : StateFlow<String> = _listTypeLabel
+    val showFilterMenu : StateFlow<Boolean> = _showFilterMenu
+    val showBatchPicker : StateFlow<Boolean> = _showBatchPicker
+    val showDateTimePicker : StateFlow<Boolean> = _showDateTimePicker
     val startDateList: StateFlow<List<String>> = _startDateList
     val batchStatusList: StateFlow<List<String>> = _batchStatusList
     val endDateList: StateFlow<List<String>> = _endDateList
@@ -173,6 +182,37 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
+    fun onFilterClick()
+    {
+        _showFilterMenu.value = true
+
+        _showDateTimePicker.value = false
+        _showBatchPicker.value = false
+    }
+
+    fun onDateTimeFilterClick()
+    {
+        _showDateTimePicker.value = true
+
+        _showFilterMenu.value = false
+        _showBatchPicker.value = false
+
+    }
+
+    fun onBatchFilterClick()
+    {
+        _showBatchPicker.value = true
+
+        _showFilterMenu.value = false
+        _showDateTimePicker.value = false
+    }
+
+    fun onDismissMenu()
+    {
+        _showBatchPicker.value = false
+        _showFilterMenu.value = false
+        _showDateTimePicker.value = false
+    }
 
     fun fetchEndDates(batchIds: List<String>) {
         viewModelScope.launch {
