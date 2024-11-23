@@ -112,10 +112,14 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
                 paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
                 paymentServiceTxnDetails.emvData = it.emvData
-                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED)
+                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+                    paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                     paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
-                else
+                }
+                else {
+                    paymentServiceTxnDetails.hostAuthResult = TxnStatus.DECLINED.toString()
                     paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
+                }
             }
         return paymentServiceTxnDetails
     }
