@@ -1,16 +1,28 @@
 package com.analogics.securityframework.database.dbRepository
 
+import android.os.Build
+import android.text.format.DateUtils
 import android.util.Log
+import android.util.TimeUtils
+import androidx.annotation.RequiresApi
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
 import com.analogics.securityframework.database.dao.IUserManagementDao
+import com.analogics.securityframework.database.dbConstant.DBConstant
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao,private val iUserManagementDao: IUserManagementDao) {
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun  insertBatch(batchEntity: BatchEntity){
+        batchEntity.batchStatus = "open"
+        batchEntity.openedDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(
+            DBConstant.DATE_TIME_FORMAT_BATCH
+        ))
         iBatchDao.insert(batchEntity)
     }
     suspend fun  updateBatch(batchEntity: BatchEntity){
@@ -29,12 +41,20 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.getOpenBatchId()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun closeBatch(): Int {
-        return iBatchDao.closeOpenBatches() // Returns the count of rows updated
+        return iBatchDao.closeOpenBatches(LocalDateTime.now().format(DateTimeFormatter.ofPattern(
+            DBConstant.DATE_TIME_FORMAT_BATCH
+        )))
     }
 
     suspend fun isBatchOpen(): List<String> {
         return iBatchDao.isBatchOpen() // Returns the count of rows updated
+    }
+
+    suspend fun isBatchOpen(batchId: String?) : Boolean
+    {
+        return iBatchDao.getBatchStatus(batchId)?.equals("open")==true
     }
 
     suspend fun isAdmin(userId: String): Boolean {
@@ -68,7 +88,7 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getBatchDetailsTxn(id)
     }
 
-    suspend fun getAllTxnListData(): List<TxnEntity>{
+    suspend fun getAllTxnListData(): List<TxnEntity>?{
         return iTxnDao.getAllTxnListData()
     }
 

@@ -25,11 +25,14 @@ interface IBatchDao {
     @Query("SELECT BatchId FROM BatchTable")
     suspend fun isBatchPresent(): List<String> // This returns all BatchId values
 
-    @Query("UPDATE BatchTable SET BatchStatus = 'close' WHERE BatchStatus = 'open'")
-    suspend fun closeOpenBatches(): Int // This returns the number of rows affected
+    @Query("UPDATE BatchTable SET BatchStatus = 'close', ClosedDateTime = :dateTime WHERE BatchStatus = 'open'")
+    suspend fun closeOpenBatches(dateTime : String?): Int // This returns the number of rows affected
 
     @Query("SELECT BatchStatus FROM BatchTable WHERE BatchStatus = 'open'")
     suspend fun isBatchOpen(): List<String> // This returns all BatchId values
+
+    @Query("SELECT BatchStatus FROM BatchTable WHERE BatchId = :batchId")
+    suspend fun getBatchStatus(batchId : String?): String?
 
     @Query("SELECT EXISTS(SELECT 1 FROM UserTable WHERE userId = :userId AND userType = 'ADMIN')")
     suspend fun isAdmin(userId: String): Boolean

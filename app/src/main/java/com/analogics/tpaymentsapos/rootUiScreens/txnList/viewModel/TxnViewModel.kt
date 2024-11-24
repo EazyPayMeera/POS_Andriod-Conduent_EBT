@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
@@ -29,6 +30,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,6 +49,8 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _showFilterMenu = MutableStateFlow<Boolean>(false)
     private val _showBatchPicker = MutableStateFlow<Boolean>(false)
     private val _showDateTimePicker = MutableStateFlow<Boolean>(false)
+    private val _isBatchOpen = MutableStateFlow<Boolean>(false)
+    lateinit var navHostController: NavHostController
 
 
     val isClosedBatchEnabled = mutableStateOf(false)
@@ -60,28 +64,26 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     val showFilterMenu : StateFlow<Boolean> = _showFilterMenu
     val showBatchPicker : StateFlow<Boolean> = _showBatchPicker
     val showDateTimePicker : StateFlow<Boolean> = _showDateTimePicker
+    val isBatchOpen : StateFlow<Boolean> = _isBatchOpen
     var allTransactionList: List<TxnEntity>? = null
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     private var isFiltered = false
 
-    /*init {
+    fun fetchAllTrans() {
         viewModelScope.launch {
-            fetchTransactions()
-        }
-    }*/
-
-    fun fetchTransactions() {
-        viewModelScope.launch {
-            allTransactionList = dbRepository.getAllTxnListData()
-            allTransactionList?.let {
-                // Convert the list to TxnDataList and sort in descending order (assuming there's a timestamp or ID to sort by)
+            dbRepository.getAllTxnListData()?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
-                    .sortedByDescending { txnData -> txnData.dateTime }  // Replace transactionDate with your sorting field
+                    .sortedByDescending { txnData -> txnData.dateTime }
                 _txnList.value = txnDataList
+                _listTypeLabel.value =
+                    txnDataList[txnDataList.size-1].dateTime.toString() + " " + navHostController.context.resources.getString(R.string.to) +
+                            "\n" + txnDataList[0].dateTime.toString()
+                _isBatchOpen.value = false
             }
         }
     }
+
     fun fetchTransactionDetailsTxnByDate(date: String){
         viewModelScope.launch {
             allTransactionList =dbRepository.fetchTransactionDetailsTxnByDate(date)
@@ -118,13 +120,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    fun setListTypeLabel(label: String) {
-        _listTypeLabel.value = label
-    }
-
     fun filterTransactionsByBatchId(batchId:String) {
-        _listTypeLabel.value = "Batch #${batchId.toInt()}"
+        _listTypeLabel.value = navHostController.context.resources.getString(R.string.lbl_batch_id)+(batchId.toIntOrNull()?:"")
         viewModelScope.launch {
+            dbRepository.isBatchOpen(batchId).let { _isBatchOpen.value = it }
             dbRepository.fetchTxnListByBatchId(batchId)?.let {
                 val txnList = convertTxnEntityListToTxnDataList(it)
                     .sortedByDescending { txnData -> txnData.dateTime }
@@ -143,33 +142,33 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    fun onLoad() {
+    fun onLoad(navHostController : NavHostController) {
+        this.navHostController = navHostController
         fetchCurrentBatchTrans()
     }
 
     fun onFilterClick()
     {
+        onDismissMenu()
         _showFilterMenu.value = true
-
-        _showDateTimePicker.value = false
-        _showBatchPicker.value = false
     }
 
     fun onDateTimeFilterClick()
     {
+        onDismissMenu()
         _showDateTimePicker.value = true
-
-        _showFilterMenu.value = false
-        _showBatchPicker.value = false
-
     }
 
     fun onBatchFilterClick()
     {
+        onDismissMenu()
         _showBatchPicker.value = true
+    }
 
-        _showFilterMenu.value = false
-        _showDateTimePicker.value = false
+    fun onSeeAllClicked()
+    {
+        onDismissMenu()
+        fetchAllTrans()
     }
 
     fun onDismissMenu()
@@ -477,7 +476,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             try {
                 val closedCount = dbRepository.closeBatch().let {
-                    isBatchOpen()
+                    //isBatchOpen()
                 }
                 Log.d("BatchViewModel", "Closed $closedCount open batches")
             } catch (e: Exception) {

@@ -25,7 +25,7 @@ interface ITxnDao {
     suspend fun getBatchDetailsTxn(id: Long): BatchEntity?
 
     @Query("SELECT * FROM TxnTable")
-    suspend fun getAllTxnListData(): List<TxnEntity>
+    suspend fun getAllTxnListData(): List<TxnEntity>?
 
     @Query("SELECT * FROM TxnTable WHERE substr(dateTime, 1, 16) <= :date")
      suspend fun getTransactionDetailsTxnBeforeTime(date: String): List<TxnEntity>

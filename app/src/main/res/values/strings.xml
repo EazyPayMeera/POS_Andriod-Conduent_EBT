@@ -214,8 +214,10 @@
     <string name="select_date">Select Date</string>Filter by Batch Number
     <string name="filter_by_batch">Filter by Batch Number</string>
     <string name="empty_list">List is Empty</string>
-    <string name="sel_batch_id">Select the Batch Id</string>
-    <string name="to">To</string>
+    <string name="sel_batch_id">Select Batch</string>
+    <string name="from_date">From</string>
+    <string name="to_date">To</string>
+    <string name="to">to</string>
     <string name="close_batch">Close Batch</string>
     <string name="confirmation">Confirmation</string>
     <string name="are_you_sure">Are You Sure ? </string>
@@ -224,7 +226,7 @@
     <string name="which_report">Which Report You want</string>
     <string name="summary">Summary</string>
     <string name="detail">Detail</string>
-    <string name="sel_batchid">Selected Batch Id:</string>
+    <string name="lbl_batch_id">Batch #</string>
 
 
     <!-- Sucess Screen -->

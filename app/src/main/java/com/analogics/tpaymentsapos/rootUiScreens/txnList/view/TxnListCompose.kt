@@ -87,12 +87,9 @@ fun TransactionListScreen(
     val sharedViewModel = localSharedViewModel.current
     val txnList = viewModel.txnList.collectAsState().value
     val batchList = viewModel.batchList.collectAsState().value
-    val listTypeLabel = viewModel.listTypeLabel.collectAsState().value
     val showFilterMenu = viewModel.showFilterMenu.collectAsState().value
     val showBatchPicker = viewModel.showBatchPicker.collectAsState().value
     val showDateTimePicker = viewModel.showDateTimePicker.collectAsState().value
-
-    var isSeeAllClicked by remember { mutableStateOf(false) }
 
     val isSelectingEndDate = remember { mutableStateOf(true) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
@@ -144,7 +141,7 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, navHostController, viewModel.isClosedBatchEnabled.value,listTypeLabel)
+                HeaderSection(viewModel, navHostController)
                 SummarySection(viewModel)
             }
         }
@@ -178,7 +175,7 @@ fun TransactionListScreen(
                             style = MaterialTheme.typography.body2,
                             color = Color.Gray,
                             modifier = Modifier.clickable {
-                                isSeeAllClicked = true
+                                viewModel.onSeeAllClicked()
                             }
                         )
 
@@ -306,7 +303,7 @@ fun TransactionListScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onLoad()
+        viewModel.onLoad(navHostController)
     }
 }
 
@@ -465,11 +462,11 @@ fun TransactionItem(
 @Composable
 fun HeaderSection(
     viewModel: TxnViewModel,
-    navHostController: NavHostController,
-    isBatchCloseEnabled: Boolean,
-    listTypeLabel : String?
+    navHostController: NavHostController
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
+    val isBatchOpen = viewModel.isBatchOpen.collectAsState().value
+    val listTypeLabel = viewModel.listTypeLabel.collectAsState().value
 
     Row(
         modifier = Modifier
@@ -494,10 +491,10 @@ fun HeaderSection(
                 Column {
                     Text(
                         text = listTypeLabel?:"",
-                        style = MaterialTheme.typography.h6,
+                        style = if(listTypeLabel.length>15) MaterialTheme.typography.caption else MaterialTheme.typography.h6,
                         fontWeight = FontWeight.Medium,
                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
+                        modifier = Modifier.padding(top = if(listTypeLabel.length>15) androidx.compose.material3.MaterialTheme.dimens.DP_2_CompactMedium else androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium) // Keep vertical padding for the date text
                     )
                 }
 
@@ -511,7 +508,7 @@ fun HeaderSection(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .height(androidx.compose.material3.MaterialTheme.dimens.DP_36_CompactMedium),
-                        enabled = isBatchCloseEnabled,
+                        enabled = isBatchOpen,
                         contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
                     ) {
                         TextView(

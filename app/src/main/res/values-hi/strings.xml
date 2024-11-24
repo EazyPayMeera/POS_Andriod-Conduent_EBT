@@ -217,7 +217,9 @@
     <string name="select_date">तारीख चुनें</string>
     <string name="filter_by_batch">बैच नंबर द्वारा फ़िल्टर करें</string>
     <string name="empty_list">लेनदेन सूची खाली है</string>
-    <string name="sel_batch_id">बैच आईडी चुनें</string>
+    <string name="sel_batch_id">बैच चुनें</string>
+    <string name="from_date">से</string>
+    <string name="to_date">तक</string>
     <string name="to">से</string>
     <string name="close_batch">बैच बंद करें</string>
     <string name="confirmation">पुष्टिकरण</string>
@@ -227,7 +229,7 @@
     <string name="which_report">आप कौन सा रिपोर्ट चाहते हैं</string>
     <string name="summary">सारांश</string>
     <string name="detail">विवरण</string>
-    <string name="sel_batchid">चयनित बैच आईडी:</string>
+    <string name="lbl_batch_id">बैच #</string>
 
     <!-- Success Screen -->
     <string name="payment">भुगतान</string>

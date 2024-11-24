@@ -169,6 +169,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                 sharedViewModel.batchEntity.batchId = "000001"
                                 sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
                                 sharedViewModel.batchEntity.batchStatus = "open"
+                                sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
                                 viewModel.insertBatchData(sharedViewModel.batchEntity)
                             }
                             else
@@ -181,6 +182,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                     sharedViewModel.batchEntity.batchId = newBatchId
                                     sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
                                     sharedViewModel.batchEntity.batchStatus = "open"
+                                    sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
                                     viewModel.insertBatchData(sharedViewModel.batchEntity)
                                 }
                                 else {

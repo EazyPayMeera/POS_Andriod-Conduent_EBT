@@ -122,6 +122,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                         sharedViewModel.objRootAppPaymentDetail.batchId =
                                             sharedViewModel.batchEntity.batchId
                                         sharedViewModel.batchEntity.batchStatus = "open"
+                                        sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
                                         insertBatchData(sharedViewModel.batchEntity)
                                     } else {
                                         Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
@@ -134,6 +135,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                             sharedViewModel.objRootAppPaymentDetail.batchId =
                                                 sharedViewModel.batchEntity.batchId
                                             sharedViewModel.batchEntity.batchStatus = "open"
+                                            sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
                                             insertBatchData(sharedViewModel.batchEntity)
                                         } else {
                                             Log.d(
@@ -152,6 +154,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                         sharedViewModel.objRootAppPaymentDetail.batchId =
                                             sharedViewModel.batchEntity.batchId
                                         sharedViewModel.batchEntity.batchStatus = "open"
+                                        sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
                                         insertBatchData(sharedViewModel.batchEntity)
                                     } else {
                                         Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
@@ -164,6 +167,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                             sharedViewModel.objRootAppPaymentDetail.batchId =
                                                 sharedViewModel.batchEntity.batchId
                                             sharedViewModel.batchEntity.batchStatus = "open"
+                                            sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
                                             insertBatchData(sharedViewModel.batchEntity)
                                         } else {
                                             Log.d(
