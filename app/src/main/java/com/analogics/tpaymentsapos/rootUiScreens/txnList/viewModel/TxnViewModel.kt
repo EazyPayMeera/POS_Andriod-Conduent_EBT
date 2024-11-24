@@ -63,13 +63,16 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun fetchAllTrans() {
         viewModelScope.launch {
-            dbRepository.getAllTxnListData()?.let {
+            dbRepository.getAllTxnListData()?.takeIf { it.isNotEmpty() }?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                     .sortedByDescending { txnData -> txnData.dateTime }
                 _txnList.value = txnDataList
                 _listTypeLabel.value =
                     txnDataList[txnDataList.size-1].dateTime.toString() + " " + navHostController.context.resources.getString(R.string.to) +
                             "\n" + txnDataList[0].dateTime.toString()
+                _isBatchOpen.value = false
+            }?:let {
+                _listTypeLabel.value = ""
                 _isBatchOpen.value = false
             }
         }
@@ -110,7 +113,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun fetchCurrentBatchTrans() {
         viewModelScope.launch {
-            dbRepository.fetchBatchList()?.let {
+            dbRepository.fetchBatchList()?.takeIf { it.isNotEmpty() }?.let {
                 _batchList.value = it
             }?.also {
                 filterTransactionsByBatchId(_batchList.value[0].batchId?:"")

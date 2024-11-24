@@ -52,7 +52,7 @@ interface ITxnDao {
     suspend fun fetchPassword(userId: String): String?
 
     @Query("SELECT DISTINCT * FROM BatchTable ORDER BY BatchId DESC")
-    suspend fun fetchBatchList(): List<BatchEntity>
+    suspend fun fetchBatchList(): List<BatchEntity>?
 
     @Query("SELECT MIN(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getStartDateByBatchIds(batchId: String): List<String?>
