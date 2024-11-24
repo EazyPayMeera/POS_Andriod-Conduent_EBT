@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
@@ -30,7 +31,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -52,12 +52,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _isBatchOpen = MutableStateFlow<Boolean>(false)
     lateinit var navHostController: NavHostController
 
-
-    val isClosedBatchEnabled = mutableStateOf(false)
-
-    private val _openBatch = MutableStateFlow<String?>(null)
-    val openBatch: StateFlow<String?> = _openBatch
-
     val txnList: StateFlow<List<ObjRootAppPaymentDetails>> = _txnList
     val batchList: StateFlow<List<BatchEntity>> = _batchList
     val listTypeLabel : StateFlow<String> = _listTypeLabel
@@ -65,10 +59,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     val showBatchPicker : StateFlow<Boolean> = _showBatchPicker
     val showDateTimePicker : StateFlow<Boolean> = _showDateTimePicker
     val isBatchOpen : StateFlow<Boolean> = _isBatchOpen
-    var allTransactionList: List<TxnEntity>? = null
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
-    private var isFiltered = false
 
     fun fetchAllTrans() {
         viewModelScope.launch {
@@ -84,39 +75,24 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    fun fetchTransactionDetailsTxnByDate(date: String){
-        viewModelScope.launch {
-            allTransactionList =dbRepository.fetchTransactionDetailsTxnByDate(date)
-            allTransactionList?.let {
-                val txnDataList = convertTxnEntityListToTxnDataList(it)
-                _txnList.value = txnDataList
-            }
-        }
-    }
     @RequiresApi(Build.VERSION_CODES.O)
-    fun filterTransactionsByDateRange(startDate: LocalDateTime,endDate: LocalDateTime) {
+    fun filterTransactionsByStartEndDate(startDate: LocalDateTime?, endDate: LocalDateTime?) {
         viewModelScope.launch {
-            val filteredList = _txnList.value.filter { transaction ->
-                val transactionDateTime = LocalDateTime.parse(transaction.dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                transactionDateTime.isAfter(startDate) && transactionDateTime.isBefore(endDate)
-
-            }
-            _txnList.value = filteredList
-            Log.d("Date Time Picker", "Updated Filter Transaction By Date ")
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun filterTransactionsByStartEndDate(startDate: LocalDateTime,endDate: LocalDateTime) {
-        viewModelScope.launch {
-            allTransactionList = dbRepository.getTransactionsByDateRange(startDate.toString(),
-                endDate.toString()
-            )
-            allTransactionList?.let {
+                dbRepository.getTransactionsByDateRange(startDate?.toString()?:"",
+                    endDate?.toString()?:""
+                )?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                     .sortedByDescending { txnData -> txnData.dateTime }
                 _txnList.value = txnDataList
-            }
+            }?:let{
+                    _txnList.value = emptyList()
+                }
+
+            _listTypeLabel.value =
+                startDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT)).toString() + " " + navHostController.context.resources.getString(R.string.to) +
+                        "\n" +
+                        endDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT)).toString()
+            _isBatchOpen.value = false
         }
     }
 
@@ -159,6 +135,12 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         _showDateTimePicker.value = true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onDateTimeFilterApplied(startDate: LocalDateTime?, endDate: LocalDateTime?)
+    {
+        filterTransactionsByStartEndDate(startDate,endDate)
+    }
+
     fun onBatchFilterClick()
     {
         onDismissMenu()
@@ -176,24 +158,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         _showBatchPicker.value = false
         _showFilterMenu.value = false
         _showDateTimePicker.value = false
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun isBatchOpen() {
-        viewModelScope.launch {
-            try {
-                // Fetch the open batch ID (or null if no open batch exists)
-                val batchId: String? = dbRepository.openBatchId()
-                Log.d("Batch Id", "Open batch ID: $batchId")
-                batchId?.let { setCloseBatchBtnState(true) }?:setCloseBatchBtnState(false)
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error fetching open batch ID", e)
-            }
-        }
-    }
-
-    private fun setCloseBatchBtnState(enabled: Boolean) {
-        isClosedBatchEnabled.value = enabled
     }
 
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
@@ -260,7 +224,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     override fun onApiServiceError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
-        userApiServiceErrorHolder.value = paymentError
     }
 
 
@@ -476,7 +439,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             try {
                 val closedCount = dbRepository.closeBatch().let {
-                    //isBatchOpen()
+                    fetchCurrentBatchTrans()    /* To refresh the batch list & statues */
                 }
                 Log.d("BatchViewModel", "Closed $closedCount open batches")
             } catch (e: Exception) {

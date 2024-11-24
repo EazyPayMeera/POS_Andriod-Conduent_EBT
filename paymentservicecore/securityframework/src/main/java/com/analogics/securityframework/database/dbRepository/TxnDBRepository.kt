@@ -144,7 +144,7 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getEndDateByBatchIds(batchId)
     }
 
-    suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity> {
+    suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity>? {
         return iTxnDao.getTransactionsByDateRange(startDate, endDate)
     }
 

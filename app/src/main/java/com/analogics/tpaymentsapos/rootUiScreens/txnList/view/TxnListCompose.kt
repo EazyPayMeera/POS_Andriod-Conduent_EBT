@@ -91,44 +91,9 @@ fun TransactionListScreen(
     val showBatchPicker = viewModel.showBatchPicker.collectAsState().value
     val showDateTimePicker = viewModel.showDateTimePicker.collectAsState().value
 
-    val isSelectingEndDate = remember { mutableStateOf(true) }
+    val isSelectingEndDate = remember { mutableStateOf(false) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val selectedEndDate = remember { mutableStateOf<LocalDateTime?>(null) }
-
-    if (showDateTimePicker) {
-        Log.d("Date Time Picker", "Prompt DATE PICKER")
-        DateTimePickerDialog(
-            onDismissRequest = { viewModel.onDismissMenu() },
-            onDateTimeSelected = { selectedDate ->
-                selectedEndDate.value = selectedDate // Save selected start date
-                isSelectingEndDate.value = true
-            }
-        )
-
-        if (isSelectingEndDate.value)
-        {
-            Log.d("Date Time Picker", "Go For start Date")
-            DateTimePickerDialog(
-                onDismissRequest = { viewModel.onDismissMenu()},
-                onDateTimeSelected = { selectedDate ->
-                    selectedStartDate.value = selectedDate // Save selected start date
-                    isSelectingEndDate.value = false
-                }
-
-            )
-        }
-
-        if (selectedStartDate.value != null && selectedEndDate.value != null) {
-            Log.d("Date Time Picker", "Go for Filter Transaction By Date ")
-            viewModel.filterTransactionsByStartEndDate(selectedStartDate.value!!, selectedEndDate.value!!
-            )
-            //showDateTimePicker.value = false
-            Log.d("Date Time Picker", "showDateTimePicker.value = false")
-
-        }
-
-    }
-
 
     Column {
         CommonTopAppBar(
@@ -300,6 +265,27 @@ fun TransactionListScreen(
                 }
 
             )
+    }
+
+    if (showDateTimePicker) {
+        DateTimePickerDialog(
+            onDismissRequest = {  },
+            onDateTimeSelected = { selectedDate ->
+                selectedStartDate.value = selectedDate // Save selected start date
+                isSelectingEndDate.value = true
+            }
+        )
+
+        if (isSelectingEndDate.value)
+        {
+            DateTimePickerDialog(
+                onDismissRequest = { isSelectingEndDate.value = false},
+                onDateTimeSelected = { selectedDate ->
+                    selectedEndDate.value = selectedDate // Save selected start date
+                    viewModel.onDateTimeFilterApplied(selectedStartDate.value, selectedEndDate.value)
+                }
+            )
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -490,7 +476,7 @@ fun HeaderSection(
 
                 Column {
                     Text(
-                        text = listTypeLabel?:"",
+                        text = listTypeLabel,
                         style = if(listTypeLabel.length>15) MaterialTheme.typography.caption else MaterialTheme.typography.h6,
                         fontWeight = FontWeight.Medium,
                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary,

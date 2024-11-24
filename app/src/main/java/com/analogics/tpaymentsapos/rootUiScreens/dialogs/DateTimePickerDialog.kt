@@ -51,6 +51,7 @@ fun DateTimePickerDialog(
     DisposableEffect(Unit) {
         onDispose {
             datePickerDialog.dismiss()
+            onDismissRequest.invoke()
         }
     }
 }
