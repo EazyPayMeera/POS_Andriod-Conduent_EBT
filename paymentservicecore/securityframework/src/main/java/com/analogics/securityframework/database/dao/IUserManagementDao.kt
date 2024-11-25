@@ -20,4 +20,16 @@ interface IUserManagementDao {
 
     @Query("SELECT COUNT(userId) FROM UserTable")
     suspend fun getUserCount(): Int
+
+    @Query("SELECT EXISTS(SELECT 1 FROM UserTable WHERE userId = :userId AND userType = 'ADMIN')")
+    suspend fun isAdmin(userId: String): Boolean
+
+    @Query("SELECT userId FROM UserTable")
+    suspend fun getUserList(): List<String?>
+
+    @Query("DELETE FROM UserTable WHERE userId = :userId")
+    suspend fun deleteUser(userId: String)
+
+    @Query("SELECT password FROM UserTable WHERE userId = :userId")
+    suspend fun fetchPassword(userId: String): String?
 }

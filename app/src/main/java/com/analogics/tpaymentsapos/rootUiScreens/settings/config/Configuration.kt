@@ -61,7 +61,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigViewModel = hiltViewModel()) {
     var sharedViewModel = localSharedViewModel.current
-    val isBatchOpen = viewModel.isOpenBatch.collectAsState().value
+    val isBatchOpen = viewModel.checkBatchStatus.collectAsState().value
     val isAdmin =viewModel.isAdmin.collectAsState().value
     val context = LocalContext.current
 
@@ -209,9 +209,6 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
-        viewModel.isBatchOpen()
-        Log.d("user",sharedViewModel.objPosConfig?.loginId.toString())
-        viewModel.isAdmin(sharedViewModel.objPosConfig?.loginId.toString())
     }
 
     CustomDialogBuilder.ShowComposed()

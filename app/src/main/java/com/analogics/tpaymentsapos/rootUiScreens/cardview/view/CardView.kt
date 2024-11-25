@@ -311,9 +311,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
 
     LaunchedEffect(Unit) {
-        viewModel.openBatchPresent()
-        viewModel.isBatchPresent()
-        viewModel.getLastBatchId()
         viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, sharedViewModel, navHostController)
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.batchId

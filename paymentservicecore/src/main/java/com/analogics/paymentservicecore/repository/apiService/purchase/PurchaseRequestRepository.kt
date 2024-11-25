@@ -1,7 +1,8 @@
 package com.analogics.paymentservicecore.repository.apiService.purchase
 
-import android.os.Message
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
@@ -20,7 +21,6 @@ import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,11 +32,12 @@ class PurchaseRequestRepository @Inject constructor(
     var dbRepository: TxnDBRepository
 ) {
     //lateinit var paymentServiceTxnDetails:PaymentServiceTxnDetails
-    suspend fun sendPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun sendPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
 
         /* Insert entry into DB & update later */
         PaymentServiceUtils.transformObject<TxnEntity>(paymentServiceTxnDetails)?.let {
-            dbRepository.insertTxn(
+            dbRepository.insertOrUpdateTxn(
                 it
             )
         }

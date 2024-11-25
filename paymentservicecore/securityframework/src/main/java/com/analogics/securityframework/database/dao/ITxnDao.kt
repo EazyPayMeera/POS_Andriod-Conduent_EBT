@@ -16,11 +16,9 @@ interface ITxnDao {
     @Update
     suspend fun update(vararg txnEntity: TxnEntity)
 
-    // Query to fetch a transaction by MerchantId
     @Query("SELECT * FROM TxnTable WHERE Id = :id")
-    suspend fun getTransactionDetailsTxn(id: Long): TxnEntity?
+    suspend fun fetchTxnDetails(id: Long?): TxnEntity?
 
-    // Query to fetch a transaction by MerchantId
     @Query("SELECT * FROM TxnTable WHERE Id = :id")
     suspend fun getBatchDetailsTxn(id: Long): BatchEntity?
 
@@ -45,23 +43,8 @@ interface ITxnDao {
     @Query("SELECT Tip FROM TxnTable WHERE InvoiceNo = :invoiceNo")
     suspend fun getTipAmountByInvoiceNo(invoiceNo: String): String
 
-    @Query("DELETE FROM UserTable WHERE userId = :userId")
-    suspend fun deleteTransactionsByUserId(userId: String)
-
-    @Query("SELECT password FROM UserTable WHERE userId = :userId")
-    suspend fun fetchPassword(userId: String): String?
-
-    @Query("SELECT DISTINCT * FROM BatchTable ORDER BY BatchId DESC")
-    suspend fun fetchBatchList(): List<BatchEntity>?
-
     @Query("SELECT MIN(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getStartDateByBatchIds(batchId: String): List<String?>
-
-    @Query("SELECT userId FROM UserTable")
-    suspend fun getUserList(): List<String?>
-
-    @Query("SELECT BatchStatus FROM BatchTable WHERE batchId = :batchId")
-    suspend fun getBatchStatus(batchId: String): List<String?>
 
     @Query("SELECT MAX(DateTime) FROM TxnTable WHERE batchId = :batchId")
     suspend fun getEndDateByBatchIds(batchId: String): List<String?>

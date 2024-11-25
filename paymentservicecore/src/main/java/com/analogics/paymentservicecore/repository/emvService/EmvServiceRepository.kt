@@ -35,8 +35,8 @@ class EmvServiceRepository @Inject constructor() :
 
     fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) : InitStatus {
         return when (value) {
-            EmvSdkResult.InitStatus.SUCCESS -> EmvServiceResult.InitStatus.SUCCESS
-            else -> EmvServiceResult.InitStatus.FAILURE
+            EmvSdkResult.InitStatus.SUCCESS -> InitStatus.SUCCESS
+            else -> InitStatus.FAILURE
         }
     }
 
@@ -77,6 +77,7 @@ class EmvServiceRepository @Inject constructor() :
             EmvSdkResult.TransStatus.CARD_REMOVED -> TransStatus.CARD_REMOVED
             EmvSdkResult.TransStatus.ISSUER_SCRIPT_UPDATE_SUCCESSFUL -> TransStatus.ISSUER_SCRIPT_UPDATE_SUCCESSFUL
             EmvSdkResult.TransStatus.ISSUER_SCRIPT_UPDATE_FAILED -> TransStatus.ISSUER_SCRIPT_UPDATE_FAILED
+            EmvSdkResult.TransStatus.INITIATED -> TransStatus.INITIATED
 
             else -> TransStatus.ERROR
         }

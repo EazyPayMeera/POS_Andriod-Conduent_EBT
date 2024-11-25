@@ -8,7 +8,7 @@ import java.io.Serializable
 
 @Entity(tableName = "TxnTable")
 data class TxnEntity(
-    @PrimaryKey(autoGenerate = true) var id: Long? = null,
+    @PrimaryKey(autoGenerate = false) var id: Long? = null,
 
     /* Merchant & Cashier Info */
     @ColumnInfo(name = "MerchantId") var merchantId: String? = null,

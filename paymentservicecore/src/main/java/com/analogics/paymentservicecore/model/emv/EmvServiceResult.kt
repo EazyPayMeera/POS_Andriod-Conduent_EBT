@@ -24,6 +24,7 @@ sealed class EmvServiceResult(
         CARD_REMOVED,
         ISSUER_SCRIPT_UPDATE_SUCCESSFUL,
         ISSUER_SCRIPT_UPDATE_FAILED,
+        INITIATED,
         ERROR
     }
     enum class InitStatus {

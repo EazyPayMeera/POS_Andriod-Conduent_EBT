@@ -37,18 +37,8 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var apiServiceRepository: ApiServiceRepository): ViewModel(),
-    IApiServiceResponseListener {
-
-
-    val isPrinting = mutableStateOf(false)
-    val isCustomer = mutableStateOf(false)
-    val isPrintingError = mutableStateOf(false)
-    var printerStatus: Any? = null // Declare the variable to hold the result
-
-    private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiErrorHolder = MutableStateFlow(ApiServiceError())
-
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel()
+{
 
     fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
         var imageData: ByteArray? = null
@@ -307,80 +297,5 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             Log.e(TAG, "Failed to get printer status: ${e.message}")
         }
     }
-
-    fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails) = viewModelScope.launch {
-        // Convert ObjRootAppPaymentDetails to JSON or entity object
-        val txnEntity = convertObjRootToTxnEntity(objRootAppPaymentDetails)
-
-        txnEntity.id?.let { id ->
-            // Check if the entity exists in the database using the primary key (invoice no)
-            val existingEntity = dbRepository.fetchTransactionDetailsTxn(id)
-
-            if (existingEntity != null) {
-                // Entry found, proceed with update
-                dbRepository.updateTxn(txnEntity)
-                Log.d("Record Update", "Record update successful for invoice no: $id")
-            } else {
-                // Entry not found, log the message
-                dbRepository.insertTxn(txnEntity)
-            }
-        } ?: Log.d("Record Update", "Invoice No is null")
-    }
-
-    fun updateBatchData(batchEntity: BatchEntity) = viewModelScope.launch {
-        // Convert ObjRootAppPaymentDetails to JSON or entity object
-        val batchEntity = convertBatchToBatchEntity(batchEntity)
-        Log.d("Batch Id","Inside Update Batch Table")
-        batchEntity.id?.let { id ->
-            // Check if the entity exists in the database using the primary key (invoice no)
-            val existingEntity = dbRepository.fetchBatchDetailsTxn(id)
-
-            if (existingEntity != null) {
-                // Entry found, proceed with update
-                dbRepository.insertBatch(batchEntity)
-                Log.d("Record Update", "Record update successful for invoice no: $id")
-            } else {
-                Log.d("Batch Id","Inside Insert Batch Table")
-                // Entry not found, log the message
-                dbRepository.insertBatch(batchEntity)
-            }
-        } ?: Log.d("Record Update", "Invoice No is null")
-    }
-
-    fun onPurchaseApi(objRootAppPaymentDetail: ObjRootAppPaymentDetails) {
-        viewModelScope.launch {
-            try {
-                val requestDetails =
-                    PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-                apiServiceRepository.apiServicePurchase(
-                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@ApprovedViewModel)
-            } catch (e: Exception) {
-                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
-            }
-        }
-    }
-    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
-                objRoot.value = it
-                updateTxnData(objRoot.value)
-        }
-    }
-
-    override fun onApiServiceError(apiServiceError: ApiServiceError) {
-        userApiErrorHolder.value = apiServiceError
-    }
-
-    override fun onApiServiceDisplayProgress(
-        show: Boolean,
-        title: String?,
-        subTitle: String?,
-        message: String?
-    ) {
-
-    }
-
-
-
-
 
 }

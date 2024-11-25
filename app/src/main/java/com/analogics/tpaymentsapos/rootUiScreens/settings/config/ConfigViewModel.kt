@@ -23,9 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel(){
 
-    private val _isOpenBatch = MutableStateFlow<List<String>>(emptyList())
-
-    val isOpenBatch: StateFlow<List<String>> = _isOpenBatch
+    private val _isBatchOpen = MutableStateFlow<Boolean>(false)
+    val isBatchOpen: StateFlow<Boolean> = _isBatchOpen
 
     private val _isAdmin = MutableStateFlow(false) // Change to StateFlow
     val isAdmin: StateFlow<Boolean> get() = _isAdmin
@@ -126,6 +125,8 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     fun onLoad(sharedViewModel: SharedViewModel)
     {
         loadPreferences(sharedViewModel)
+        checkIfAdmin(sharedViewModel)
+        checkBatchStatus()
     }
 
     fun onPromptDialogue(context: Context)
@@ -152,26 +153,20 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         navHostController.popBackStack()
     }
 
-    fun isBatchOpen() {
+    fun checkBatchStatus() {
         viewModelScope.launch {
-            try {
-                val isBatchOpen = dbRepository.isBatchOpen()
-                _isOpenBatch.value = isBatchOpen
-                Log.d("BatchViewModel", "Closed ${isBatchOpen.size}")
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error closing open batches", e)
+            dbRepository.isBatchOpen().let {
+                _isBatchOpen.value = it
             }
         }
     }
 
-    fun isAdmin(userId:String) {
+    fun checkIfAdmin(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            try {
-                val isAdmin = dbRepository.isAdmin(userId)
-                _isAdmin.value = isAdmin
-                Log.d("isAdmin", isAdmin.toString())
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error closing open batches", e)
+            sharedViewModel.objPosConfig?.loginId?.let {
+                dbRepository.isAdmin(it).let {
+                    _isAdmin.value = it
+                }
             }
         }
     }
