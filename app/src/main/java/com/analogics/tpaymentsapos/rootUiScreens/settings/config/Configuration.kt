@@ -44,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -150,7 +149,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isAdmin = true
         ),
         SettingsItem(
-            imageRes = R.drawable.time,
+            imageRes = R.drawable.batch_id,
             text = stringResource(id = R.string.batch_id),
             isChecked = viewModel.isBatchId.value,
             onCheckedChange = { viewModel.onBatchIdChange(it) },
@@ -452,7 +451,7 @@ fun SettingsContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp), // Added padding for better touch area
+                .padding(vertical = MaterialTheme.dimens.DP_20_CompactMedium), // Added padding for better touch area
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -478,7 +477,7 @@ fun SettingsContent(
                     contentDescription = "Close",
                     tint = Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(MaterialTheme.dimens.DP_40_CompactMedium)
                         .clickable {
                             item.onArrowChange()
                         }
