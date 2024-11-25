@@ -2,7 +2,6 @@ package com.analogics.tpaymentcore.repository
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import com.analogics.tpaymentcore.Printer.Printer
 import com.analogics.tpaymentcore.listener.requestListener.PrinterListener
 import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
@@ -22,14 +21,8 @@ object PrinterHandler : PrinterListener {
         try {
             // Initialize the printer
             Printer.getInstance().initPrint(context)
-            Log.d(TAG, "Printer initialized successfully.")
-
-            // Notify success
-            //printerHandlerListener.onPrinterRespHandler("SUCCESS")
+            printerHandlerListener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to initialize printer: ${exception.message}")
-
-            // Notify failure
             printerHandlerListener.onPrinterRespHandler("FAILURE")
         }
     }
@@ -58,19 +51,10 @@ object PrinterHandler : PrinterListener {
         listener: IPrinterHandlerListener
     ) {
         try {
-
             Printer.getInstance().printMultipleTextsAndStartPrinting(barcodeFormat,barcode,receipt,descriptionList,alignment,fontsize)
             Printer.getInstance().feedLine(3)
-            //Printer.getInstance().qrCodePrinting(barcodeFormat,"123456")
-
-            Log.d(TAG, "Receipt details added successfully.")
-
-            // Notify success
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
-
-            // Notify failure
             listener.onPrinterRespHandler("FAILURE")
         }
     }
@@ -79,12 +63,9 @@ object PrinterHandler : PrinterListener {
         listener: IPrinterHandlerListener
     ) {
         try {
-
             Printer.getInstance().stopPrinting()
-            Log.d(TAG, "Receipt details added successfully.")
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
             listener.onPrinterRespHandler("FAILURE")
         }
     }
@@ -95,12 +76,9 @@ object PrinterHandler : PrinterListener {
         listener: IPrinterHandlerListener
     ) {
         try {
-
             Printer.getInstance().addImage(format,imageData)
-            Log.d(TAG, "Receipt details added successfully.")
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
             listener.onPrinterRespHandler("FAILURE")
         }
     }
@@ -116,14 +94,8 @@ object PrinterHandler : PrinterListener {
 
             Printer.getInstance().printLeftCenterRightPrinting(Transaction,Count,Total,fontsize)
             Printer.getInstance().feedLine(3)
-            Log.d(TAG, "Receipt details added successfully.")
-
-            // Notify success
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
-
-            // Notify failure
             listener.onPrinterRespHandler("FAILURE")
         }
     }
@@ -135,14 +107,9 @@ object PrinterHandler : PrinterListener {
         listener: IPrinterHandlerListener
     ) {
         try {
-
             Printer.getInstance().addRightLeftDetails(label,description,fontsize)
-            Log.d(TAG, "Receipt details added successfully.")
             listener.onPrinterRespHandler("SUCCESS")
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to add receipt details: ${exception.message}")
-
-            // Notify failure
             listener.onPrinterRespHandler("FAILURE")
         }
     }

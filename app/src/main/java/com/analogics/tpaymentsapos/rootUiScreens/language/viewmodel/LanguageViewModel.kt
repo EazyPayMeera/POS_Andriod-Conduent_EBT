@@ -28,7 +28,6 @@ class LanguageViewModel @Inject constructor() : ViewModel() {
         java.util.Locale.setDefault(locale)
         config.setLocale(locale)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
-
     }
 
 }

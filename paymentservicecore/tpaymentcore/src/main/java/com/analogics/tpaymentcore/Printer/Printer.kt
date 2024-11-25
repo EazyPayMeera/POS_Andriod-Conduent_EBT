@@ -5,7 +5,6 @@ import android.content.Context
 import android.device.PrinterManager
 import android.os.Bundle
 import android.util.Log
-import com.urovo.file.logfile
 import com.urovo.sdk.print.PrinterProviderImpl
 import com.urovo.sdk.print.PrinterProviderImpl.TAG
 import com.urovo.sdk.print.PrinterProviderImpl.fontName_default
@@ -29,10 +28,6 @@ class Printer constructor() {
 
     // To Initialize the Printer
     fun initPrint(context: Context) {
-
-        logfile.printLog("===initPrint in Printer kt")
-
-        // Use the provided context instance instead of `Context` type
         if (this.mPrinter == null) {
             // Ensure PrinterProviderImpl.getInstance returns a PrinterManager or compatible type
             this.mPrinter = PrinterProviderImpl.getInstance(context)
@@ -43,7 +38,6 @@ class Printer constructor() {
 
     // Get Printer Status
     fun getPrinterStatus(): Int {
-        logfile.printLog(TAG + "===getStatus")
         var ret = -1
 
         if (this.mPrinterMan == null) {
@@ -52,8 +46,6 @@ class Printer constructor() {
         }
 
         ret = mPrinterMan?.getStatus() ?: -1 // Safely call getStatus and provide a default value of -1
-
-        // Return the status
         return ret
 
     }
@@ -68,15 +60,13 @@ class Printer constructor() {
     // To add text
     fun addText(text: String,alignment: Int,fontSize:Int)
     {
-        // Define default formatting options
         val defaultFont = 1
         val defaultFontName = ""
         val defaultFontBold = true
         val defaultNewline = true
         val defaultLineHeight = 0
         val defaultFontSize = fontSize
-        Log.d(TAG, "Text printed successfully: $text with alignment: $alignment")
-        // Create a Bundle with default values
+
         val format = Bundle().apply {
             putInt("font", defaultFont)
             putInt("align", alignment)
@@ -89,7 +79,6 @@ class Printer constructor() {
 
         try {
             mPrinter?.addText(format, text)
-            //Thread.sleep(10)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to add text: '$text'. Error: ${e.message}", e)
         }
@@ -98,8 +87,6 @@ class Printer constructor() {
     // Add Text on Left
     // Overloaded method with String only
     fun addTextOnlyLeft(text: String) {
-
-        // Create a Bundle with default values
         val format = Bundle().apply {
             putInt("font", 1)
             putString("fontName", "Arial")
@@ -113,16 +100,12 @@ class Printer constructor() {
 
     // Add Text on Left and Right
     fun addTextLeft_Right(textLeft: String?, textRight: String?, fontSize: Int) {
-        // Create a default Bundle with predefined formatting
         val defaultFormat = Bundle()
         defaultFormat.putInt("font", 1) // Default font type
         defaultFormat.putString("fontName", fontName_default) // Default font name
         defaultFormat.putBoolean("fontBold", false) // Default to non-bold font
         defaultFormat.putInt("lineHeight", 5) // Default line height
         defaultFormat.putInt("fontSize", fontSize)
-
-
-        // Call the existing method with the default formatting Bundle
         mPrinter?.addTextLeft_Right(defaultFormat, textLeft, textRight)
     }
 
@@ -132,7 +115,6 @@ class Printer constructor() {
             val leftText = label[i]
             val rightText = description[i]
             val fontSize = fontsize[i]
-            //Thread.sleep(200)
             addTextLeft_Right(leftText, rightText,fontSize)
         }
     }
@@ -142,16 +124,12 @@ class Printer constructor() {
         textLeft: String?, textCenter: String?, textRight: String?,
         fontSize: Int
     ) {
-        // Call the original method with default formatting
         val defaultFormat = Bundle()
         defaultFormat.putInt("font", 1) // Default font type
         defaultFormat.putString("fontName", fontName_default) // Default font name
         defaultFormat.putBoolean("fontBold", false) // Default font bold setting
         defaultFormat.putInt("lineHeight", 5) // Default line height
         defaultFormat.putInt("fontSize", fontSize)
-
-
-        // Invoke the original method with default settings
         mPrinter?.addTextLeft_Center_Right(defaultFormat, textLeft, textCenter, textRight)
 
     }
@@ -192,15 +170,11 @@ class Printer constructor() {
 
     fun printMultipleTextsAndStartPrinting(format: Bundle, barcode: String, texts: List<String>,descriptions: List<String>, alignments: List<Int>,fontsize: List<Int>) {
         try {
-
-            // Add each text to the printer with its corresponding alignment
             for (i in texts.indices) {
                 val text = texts[i]
                 val alignment = alignments[i]
                 val description = descriptions[i]
                 val fontsize = fontsize[i]
-
-                Log.d("PRINTING TAGS", "Printing Text: '$text', Alignment: $alignment, Description: '$description'")
                 if(alignment == -1) {
                     addTextLeft_Right(text,description,fontsize)
                 }
@@ -209,14 +183,8 @@ class Printer constructor() {
                     addText(text, alignment,fontsize)
                 }
             }
-
-            // Print the QR code
             qrCodePrinting(format, barcode)
-
-            // Feed 3 lines after printing
             feedLine(1)
-
-            // Start the printing process
             startPrinting()
 
         } catch (e: Exception) {
@@ -246,15 +214,10 @@ class Printer constructor() {
                     addTextLeft_Center_Right(trasaction, count, total, FontSize)
                 }
             }
-
-            // Feed 3 lines after printing
             feedLine(3)
-
-            // Start the printing process
             startPrinting()
 
         } catch (e: Exception) {
-            // Handle the exception
             Log.e(TAG, "Error in printMultipleTextsAndStartPrinting: ${e.message}")
         }
     }

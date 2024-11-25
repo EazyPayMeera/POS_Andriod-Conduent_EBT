@@ -78,7 +78,6 @@ fun SettingsView(navHostController: NavHostController) {
             }
         }
 
-        // Middle Surface with top and bottom padding, and clickable
         SettingsMiddleSurface(
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,7 +87,6 @@ fun SettingsView(navHostController: NavHostController) {
             elevation = MaterialTheme.dimens.DP_21_CompactMedium, // Elevation for shadow effect
             color = MaterialTheme.colorScheme.background
         ) {
-            // Use Row to place text and images horizontally
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -146,8 +144,6 @@ fun SettingsView(navHostController: NavHostController) {
                     contentDescription = "",
                     modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed Need to change here 24.dp
                 )
-
-                // Change Password text
                 Text(
                     text = stringResource(id = R.string.Configuration),
                     style = MaterialTheme.typography.bodyLarge,
