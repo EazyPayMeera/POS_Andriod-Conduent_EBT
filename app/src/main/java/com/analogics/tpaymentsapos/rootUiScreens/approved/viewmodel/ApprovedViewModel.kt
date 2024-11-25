@@ -3,11 +3,10 @@ package com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel
 
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -27,13 +26,15 @@ import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertBatchToBatchEntity
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import getPrinterStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,35 +42,9 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     IApiServiceResponseListener {
 
 
-    val isPrinting = mutableStateOf(false)
-    val isCustomer = mutableStateOf(false)
-    val isPrintingError = mutableStateOf(false)
-    var printerStatus: Any? = null // Declare the variable to hold the result
-
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiErrorHolder = MutableStateFlow(ApiServiceError())
-
-
-    fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
-        var imageData: ByteArray? = null
-        try {
-            val baos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            imageData = baos.toByteArray()
-        } catch (e: Exception) {
-            // TODO: handle exception
-            e.printStackTrace()
-            return null
-        }
-        return imageData
-    }
-
-    fun getLogoBitmap(context: Context, id: Int): Bitmap {
-        val draw = context.resources.getDrawable(id) as BitmapDrawable
-        val bitmap = draw.bitmap
-        return bitmap
-    }
-
+    
     fun printReceipt(
         logoResId: Int,
         sharedViewModel: SharedViewModel,
@@ -282,18 +257,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         }
     }
 
-    suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
-        try {
-
-            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-            )
-            PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get printer status: ${e.message}")
-        }
-    }
 
     suspend fun stopPrinting(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
         try {
@@ -327,6 +290,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         } ?: Log.d("Record Update", "Invoice No is null")
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun updateBatchData(batchEntity: BatchEntity) = viewModelScope.launch {
         // Convert ObjRootAppPaymentDetails to JSON or entity object
         val batchEntity = convertBatchToBatchEntity(batchEntity)

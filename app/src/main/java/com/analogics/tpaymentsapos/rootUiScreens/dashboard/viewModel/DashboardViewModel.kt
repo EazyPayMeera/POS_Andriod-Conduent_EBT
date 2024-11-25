@@ -26,13 +26,12 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.analogics.tpaymentsapos.rootUtils.miscellaneous.readAsset
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import getPrinterStatus
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,7 +100,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(logoResId,sharedViewModel,objRootAppPaymentDetail,context, object : IPrinterResultProviderListener {
+                                initPrinter(logoResId,sharedViewModel,context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -130,8 +129,8 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     suspend fun initPrinter(
         logoResId: Int,
         sharedViewModel: SharedViewModel,
-        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         context: Context,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
         viewModelScope.launch {
@@ -175,18 +174,6 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
-    suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
-        try {
-
-            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-            )
-            PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get printer status: ${e.message}")
-        }
-    }
 
     suspend fun addReceiptDetails(context: Context,sharedViewModel: SharedViewModel,iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
@@ -283,32 +270,6 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         }
     }
 
-    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
-    {
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-        val logoBitmap = getLogoBitmap(context, logoResId)
-
-        // Convert the bitmap to ByteArray
-        val imageData = getBitmapBytes(logoBitmap)
-
-        // Ensure the imageData is not null
-        if (imageData != null) {
-            // Prepare the format Bundle for the printer
-            val format = Bundle().apply {
-                putInt("align", 1)  // Example alignment: Center
-                putInt("width", 100)  // Width of the image
-                putInt("height", 100)  // Height of the image
-            }
-
-            // Call the addImage function with format and image data
-            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
-        } else {
-            // Handle the case where the image data is null
-            Log.e("ImageError", "Failed to get image bytes")
-        }
-    }
 
 
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
