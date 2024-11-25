@@ -1,12 +1,11 @@
 package com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel
 
 
+import addLogo
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -17,17 +16,13 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertBatchToBatchEntity
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import getPrinterStatus
@@ -44,7 +39,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiErrorHolder = MutableStateFlow(ApiServiceError())
-    
+
     fun printReceipt(
         logoResId: Int,
         sharedViewModel: SharedViewModel,
@@ -145,33 +140,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             }
         }
 
-    }
-
-    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
-    {
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-        val logoBitmap = getLogoBitmap(context, logoResId)
-
-        // Convert the bitmap to ByteArray
-        val imageData = getBitmapBytes(logoBitmap)
-
-        // Ensure the imageData is not null
-        if (imageData != null) {
-            // Prepare the format Bundle for the printer
-            val format = Bundle().apply {
-                putInt("align", 1)  // Example alignment: Center
-                putInt("width", 100)  // Width of the image
-                putInt("height", 100)  // Height of the image
-            }
-
-            // Call the addImage function with format and image data
-            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
-        } else {
-            // Handle the case where the image data is null
-            Log.e("ImageError", "Failed to get image bytes")
-        }
     }
 
 
@@ -290,7 +258,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         } ?: Log.d("Record Update", "Invoice No is null")
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    /*@RequiresApi(Build.VERSION_CODES.O)
     fun updateBatchData(batchEntity: BatchEntity) = viewModelScope.launch {
         // Convert ObjRootAppPaymentDetails to JSON or entity object
         val batchEntity = convertBatchToBatchEntity(batchEntity)
@@ -309,7 +277,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                 dbRepository.insertBatch(batchEntity)
             }
         } ?: Log.d("Record Update", "Invoice No is null")
-    }
+    }*/
 
     fun onPurchaseApi(objRootAppPaymentDetail: ObjRootAppPaymentDetails) {
         viewModelScope.launch {

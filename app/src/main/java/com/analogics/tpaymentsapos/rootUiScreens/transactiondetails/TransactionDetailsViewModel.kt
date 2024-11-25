@@ -1,10 +1,10 @@
 package com.analogics.tpaymentsapos.rootUiScreens.transactiondetails
 
+import addLogo
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -21,10 +21,9 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import getPrinterStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -34,9 +33,6 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionDetailsViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val apiServiceRepository: ApiServiceRepository) : ViewModel(),
     IApiServiceResponseListener {
-
-    val isPrinting = mutableStateOf(false)
-    val isCustomer = mutableStateOf(false)
 
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
@@ -138,7 +134,6 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
 
     }
 
-
     suspend fun addReceiptDetails(sharedViewModel: SharedViewModel, context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
@@ -221,45 +216,6 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         }
     }
 
-    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
-    {
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-        val logoBitmap = getLogoBitmap(context, logoResId)
-
-        // Convert the bitmap to ByteArray
-        val imageData = getBitmapBytes(logoBitmap)
-
-        // Ensure the imageData is not null
-        if (imageData != null) {
-            // Prepare the format Bundle for the printer
-            val format = Bundle().apply {
-                putInt("align", 1)  // Example alignment: Center
-                putInt("width", 100)  // Width of the image
-                putInt("height", 100)  // Height of the image
-            }
-
-            // Call the addImage function with format and image data
-            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
-        } else {
-            // Handle the case where the image data is null
-            Log.e("ImageError", "Failed to get image bytes")
-        }
-    }
-
-    suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
-        try {
-
-            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-            )
-            PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get printer status: ${e.message}")
-        }
-    }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
         PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
