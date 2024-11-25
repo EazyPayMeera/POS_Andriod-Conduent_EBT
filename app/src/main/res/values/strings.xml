@@ -57,6 +57,11 @@
     <string name="login_invalid_cred">Invalid credentials</string>
     <string name="login_version">Version </string>
 
+    <!-- User Management -->
+    <string name="label_user_management">User Management</string>
+    <string name="label_add_user">Add User</string>
+    <string name="label_remove_user">Remove User</string>
+
     <!-- Change Password -->
     <string name="label_current_pwd">Current</string>
     <string name="label_new_pwd">New</string>

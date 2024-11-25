@@ -27,6 +27,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
+import com.analogics.tpaymentsapos.rootModel.UiLanguage
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.gson.Gson
@@ -329,6 +330,15 @@ fun getIsoResponseCodeString(context: Context, responseCode: String?) : String
         }
 
     return if(id!=null) context.resources.getString(id) else ""
+}
+
+fun setUiLanguage(context: Context, language: UiLanguage) {
+    val config = context.resources.configuration
+    val locale = Locale(language.languageCode)
+    Locale.setDefault(locale)
+    config.setLocale(locale)
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
 }
 
 fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails?) : Acquirer
