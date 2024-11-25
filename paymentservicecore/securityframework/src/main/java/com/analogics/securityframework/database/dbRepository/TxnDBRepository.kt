@@ -39,22 +39,42 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.getOpenBatchId()
     }
 
+    suspend fun fetchBatchDetails(batchId: String?): BatchEntity? {
+        return iBatchDao.fetchBatchDetails(batchId)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun openBatch(txnEntity: TxnEntity) {
         txnEntity.batchId?.let {
-            isBatchOpen(it).takeIf { it == false }?.let {
-                insertBatch(
-                    BatchEntity(
-                        merchantId = txnEntity.merchantId,
-                        terminalId = txnEntity.terminalId,
-                        cashierId = txnEntity.cashierId,
-                        batchId = txnEntity.batchId,
-                        batchStatus = BatchStatus.OPEN.toString(),
-                        openedDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(
-                            DBConstant.DATE_TIME_FORMAT_BATCH
-                        ))
+            isBatchExist(it).let {
+                if(it == false) {
+                    insertBatch(
+                        BatchEntity(
+                            merchantId = txnEntity.merchantId,
+                            terminalId = txnEntity.terminalId,
+                            cashierId = txnEntity.cashierId,
+                            batchId = txnEntity.batchId,
+                            batchStatus = BatchStatus.OPEN.toString(),
+                            openedDateTime = LocalDateTime.now().format(
+                                DateTimeFormatter.ofPattern(
+                                    DBConstant.DATE_TIME_FORMAT_BATCH
+                                )
+                            )
+                        )
                     )
-                )
+                }
+                else if(isBatchOpen(txnEntity.batchId) == false)
+                {
+                    fetchBatchDetails(txnEntity.batchId)?.let {
+                        it.batchStatus = BatchStatus.OPEN.toString()
+                        it.openedDateTime = LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern(
+                                DBConstant.DATE_TIME_FORMAT_BATCH
+                            )
+                        )
+                        updateBatch(it)
+                    }
+                }
             }
         }
     }
@@ -85,20 +105,27 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.getBatchStatus(batchId?:fetchLastBatchId())?.equals("OPEN")==true
     }
 
+    suspend fun isBatchExist(batchId: String?): Boolean
+    {
+        return iBatchDao.isBatchExist(batchId)
+    }
+
     suspend fun fetchBatchList(): List<BatchEntity>? {
         return iBatchDao.fetchBatchList()
     }
 
     /* Transaction Management */
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun insertOrUpdateTxn(txnEntity: TxnEntity) {
+    suspend fun insertOrUpdateTxn(txnEntity: TxnEntity?) {
         try {
-            openBatch(txnEntity).let {
-                txnEntity.id?.let {
-                    iTxnDao.fetchTxnDetails(it)?.let {
-                        iTxnDao.update(txnEntity)
-                    } ?: let {
-                        iTxnDao.insert(txnEntity)
+            txnEntity?.let {
+                openBatch(it).let {
+                    txnEntity.id?.let {
+                        iTxnDao.fetchTxnDetails(it)?.let {
+                            iTxnDao.update(txnEntity)
+                        } ?: let {
+                            iTxnDao.insert(txnEntity)
+                        }
                     }
                 }
             }

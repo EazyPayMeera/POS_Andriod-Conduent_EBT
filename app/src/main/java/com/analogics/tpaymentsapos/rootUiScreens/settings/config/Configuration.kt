@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,7 +60,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigViewModel = hiltViewModel()) {
     var sharedViewModel = localSharedViewModel.current
-    val isBatchOpen = viewModel.checkBatchStatus.collectAsState().value
+    val isBatchOpen = viewModel.isBatchOpen.collectAsState().value
     val isAdmin =viewModel.isAdmin.collectAsState().value
     val context = LocalContext.current
 
@@ -73,13 +72,13 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isChecked = viewModel.isTrainingMode.value,
             onCheckedChange = {
                 if (isAdmin) {
-                    if (isBatchOpen.size == 0) {
+                    if (isBatchOpen != true) {
                         viewModel.onDemoModeChange(it, sharedViewModel)
                     } else {
-                        viewModel.onBatchOpen(context)
+                        viewModel.onShowBatchOpen(context)
                     }
                 } else {
-                    viewModel.onPromptDialogue(context)
+                    viewModel.onShowAdminOnly(context)
                 }
             },
             isArrow = false,
@@ -90,7 +89,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
             isChecked = viewModel.isPromptInvoiceNumber.value,
-            onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) else viewModel.onPromptDialogue(context)},
+            onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -99,7 +98,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_tipping,
             text = stringResource(id = R.string.enable_tipping),
             isChecked = viewModel.isTippingEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) else viewModel.onPromptDialogue(context)},
+            onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -108,7 +107,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.taxes),
             isChecked = viewModel.isTaxEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) else viewModel.onPromptDialogue(context)},
+            onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
             onArrowChange = {},
             isAdmin = isAdmin
@@ -117,9 +116,9 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
             isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onPromptDialogue(context)},
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
-            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onPromptDialogue(context)},
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onShowAdminOnly(context)},
             isAdmin = isAdmin
         ),
         SettingsItem(

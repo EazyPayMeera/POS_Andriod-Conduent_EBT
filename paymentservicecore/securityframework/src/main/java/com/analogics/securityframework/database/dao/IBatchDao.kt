@@ -36,6 +36,12 @@ interface IBatchDao {
     @Query("SELECT BatchStatus FROM BatchTable WHERE BatchId = :batchId")
     suspend fun getBatchStatus(batchId : String?): String?
 
+    @Query("SELECT EXISTS(SELECT 1 FROM BatchTable WHERE batchId = :batchId)")
+    suspend fun isBatchExist(batchId: String?): Boolean
+
     @Query("SELECT DISTINCT * FROM BatchTable ORDER BY id DESC")
     suspend fun fetchBatchList(): List<BatchEntity>?
+
+    @Query("SELECT * FROM BatchTable WHERE batchId = :batchId ORDER BY id DESC LIMIT 1")
+    suspend fun fetchBatchDetails(batchId: String?): BatchEntity?
 }

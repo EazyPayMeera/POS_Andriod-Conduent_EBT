@@ -106,7 +106,7 @@ fun TransactionListScreen(
             modifier = Modifier.padding(androidx.compose.material3.MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
             Column(modifier = Modifier) {
-                HeaderSection(viewModel, navHostController)
+                HeaderSection(viewModel, navHostController, sharedViewModel)
                 SummarySection(viewModel)
             }
         }
@@ -392,7 +392,7 @@ fun TransactionItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED) {
+                val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED || transaction.txnStatus == TxnStatus.ERROR || transaction.txnStatus == TxnStatus.INITIATED) {
                     Color.Red
                 } else {
                     Color(0xFF4CAF50)
@@ -448,7 +448,8 @@ fun TransactionItem(
 @Composable
 fun HeaderSection(
     viewModel: TxnViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    sharedViewModel : SharedViewModel
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     val isBatchOpen = viewModel.isBatchOpen.collectAsState().value
@@ -553,7 +554,7 @@ fun HeaderSection(
                 .setProgressColor(color = androidx.compose.material3.MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    viewModel.closeOpenBatches()
+                    viewModel.closeOpenBatches(sharedViewModel)
                 }
                 .setOnConfirmAction {
 

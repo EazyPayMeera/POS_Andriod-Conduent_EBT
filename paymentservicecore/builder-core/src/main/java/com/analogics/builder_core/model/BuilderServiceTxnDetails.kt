@@ -6,6 +6,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
+    @SerializedName("cashierId") var cashierId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,
     @SerializedName("loginPassword") var loginPassword: String? = null,
     @SerializedName("deviceSN") var deviceSN: String? = null,

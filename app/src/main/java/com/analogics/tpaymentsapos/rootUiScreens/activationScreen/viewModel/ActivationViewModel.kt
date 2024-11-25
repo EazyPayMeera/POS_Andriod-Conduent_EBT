@@ -131,11 +131,13 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.tipPercent1 = AppConstants.DEFAULT_TIP_PERCENT_1.toDouble()
         sharedViewModel?.objPosConfig?.tipPercent2 = AppConstants.DEFAULT_TIP_PERCENT_2.toDouble()
         sharedViewModel?.objPosConfig?.tipPercent3 = AppConstants.DEFAULT_TIP_PERCENT_3.toDouble()
+        sharedViewModel?.objPosConfig?.batchId = AppConstants.BATCH_ID_START_VAL.toString()
 
         /* Customer Care Info */
         sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
-        if(getAcquirer(sharedViewModel?.objRootAppPaymentDetail)== Acquirer.LYRA)
+        if(getAcquirer(sharedViewModel?.objRootAppPaymentDetail)== Acquirer.LYRA) {
             sharedViewModel?.objPosConfig?.customerCareNumber = AppConstants.LYRA_CUSTOMER_CARE
+        }
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {

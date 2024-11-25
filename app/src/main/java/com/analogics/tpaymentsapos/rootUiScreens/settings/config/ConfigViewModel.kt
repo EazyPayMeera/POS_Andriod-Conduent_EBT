@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.settings.config
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -111,7 +110,6 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         sharedViewModel.objPosConfig?.apply { this.batchId = batchId.toString() }?.saveToPrefs()
     }
 
-
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {
         navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(AppConstants.NAV_KEY_TAX_TYPE, if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST)
         navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
@@ -129,7 +127,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         checkBatchStatus()
     }
 
-    fun onPromptDialogue(context: Context)
+    fun onShowAdminOnly(context: Context)
     {
         CustomDialogBuilder.composeAlertDialog(
             title = context.resources.getString(
@@ -139,7 +137,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         )
     }
 
-    fun onBatchOpen(context: Context)
+    fun onShowBatchOpen(context: Context)
     {
         CustomDialogBuilder.composeAlertDialog(
             title = context.resources.getString(

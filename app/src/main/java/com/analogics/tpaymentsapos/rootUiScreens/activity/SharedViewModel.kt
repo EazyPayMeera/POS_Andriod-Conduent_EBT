@@ -29,6 +29,9 @@ class SharedViewModel:ViewModel() {
       /* Copy Config Data */
       objRootAppPaymentDetail.terminalId = objPosConfig?.terminalId
       objRootAppPaymentDetail.merchantId = objPosConfig?.merchantId
+      objRootAppPaymentDetail.batchId = objPosConfig?.batchId
+      objRootAppPaymentDetail.cashierId = objPosConfig?.cashierId
+      objRootAppPaymentDetail.loginId = objPosConfig?.loginId
       objRootAppPaymentDetail.isDemoMode = objPosConfig?.isDemoMode
    }
 }

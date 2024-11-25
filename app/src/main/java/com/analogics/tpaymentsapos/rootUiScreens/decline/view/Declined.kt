@@ -116,9 +116,6 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                 ) {
                     OkButton(
                         onClick = {
-                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-                            sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.DECLINED
-                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         },
                         title = stringResource(id = R.string.done),

@@ -59,6 +59,9 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
                 if(dbRepository.getUserDetails(emailCredentials.value).takeIf { it?.password==pwdCredentials.value }?.let { true } == true) {
                     navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                     sharedViewModel.objPosConfig?.apply {
+                        /* As of now, login id is same as Cashier ID> May be changed with name */
+                        cashierId = emailCredentials.value
+
                         loginId = emailCredentials.value
                         /* Do not store password separately in config. Verify runtime from DB */
                         isLoggedIn = true

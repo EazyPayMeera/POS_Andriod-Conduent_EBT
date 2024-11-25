@@ -20,6 +20,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.models.Acquirer
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
@@ -193,6 +194,16 @@ fun emvCardCheckStatusToMsgId(cardCheckStatus: EmvServiceResult.CardCheckStatus)
         EmvServiceResult.CardCheckStatus.CARD_SWIPED -> EmvServiceResult.DisplayMsgId.CARD_SWIPED
         EmvServiceResult.CardCheckStatus.CARD_TAPPED -> EmvServiceResult.DisplayMsgId.CARD_TAPPED
         else -> EmvServiceResult.DisplayMsgId.NONE
+    }
+}
+
+fun emvStatusToTransStatus(emvTransStatus: Any?) : TxnStatus
+{
+    return when(emvTransStatus) {
+        EmvServiceResult.TransStatus.APPROVED_ONLINE, EmvServiceResult.TransStatus.APPROVED_OFFLINE -> TxnStatus.APPROVED
+        EmvServiceResult.TransStatus.DECLINED_ONLINE,EmvServiceResult.TransStatus.DECLINED_OFFLINE -> TxnStatus.DECLINED
+        EmvServiceResult.TransStatus.INITIATED -> TxnStatus.INITIATED
+        else -> TxnStatus.ERROR
     }
 }
 
