@@ -153,7 +153,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             text = stringResource(id = R.string.batch_id),
             isChecked = viewModel.isBatchId.value,
             onCheckedChange = { viewModel.onBatchIdChange(it) },
-            isArrow = false,
+            isArrow = true,
             onArrowChange = {},
             isAdmin = true
         ),

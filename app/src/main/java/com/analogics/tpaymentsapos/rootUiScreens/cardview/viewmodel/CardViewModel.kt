@@ -29,13 +29,11 @@ import com.analogics.tpaymentcore.utils.TlvUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BaseConstant
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -109,6 +107,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                 transConfig = getTransConfig(objRootAppPaymentDetails),
                 iEmvServiceResponseListener = object :
                 IEmvServiceResponseListener {
+                    @RequiresApi(Build.VERSION_CODES.O)
                     @SuppressLint("DefaultLocale")
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
@@ -275,25 +274,6 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
 
     }
 
-    /*@RequiresApi(Build.VERSION_CODES.O)
-    fun fetchOpenBatches() {
-        viewModelScope.launch {
-            try {
-                // Fetch the list of BatchEntity
-                val batches: List<BatchEntity> = dbRepository.getOpenBatchId()
-
-                // Map BatchEntity to String (using batchId for this example)
-                val batchIds: List<String> = batches.mapNotNull { it.batchId } // Ensure no nulls if batchId can be null
-
-                // Assign the transformed list to _openBatchId
-                _openBatchId.value = batchIds
-                Log.d("BatchViewModel", "Fetched Open Batches: $batchIds")
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error fetching open batches", e)
-            }
-        }
-    }*/
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun isBatchPresent() {
         viewModelScope.launch {
@@ -325,6 +305,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun insertBatchData(batchEntity: BatchEntity)=viewModelScope.launch{
         val json = Gson().toJson(batchEntity) // Convert ObjRootAppPaymentDetails to JSON
 

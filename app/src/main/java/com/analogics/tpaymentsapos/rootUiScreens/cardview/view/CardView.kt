@@ -165,8 +165,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         onClick = {
                             if(isAnyBatchPresent.isEmpty())
                             {
-                                Log.d("Batch Id","Initial Batch Id Inserted")
-                                sharedViewModel.batchEntity.batchId = "000001"
+                                Log.d("batch Id Initial", sharedViewModel.objPosConfig?.batchId.toString())
+                                sharedViewModel.batchEntity.batchId = sharedViewModel.objPosConfig?.batchId
                                 sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
                                 sharedViewModel.batchEntity.batchStatus = "open"
                                 sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
@@ -176,9 +176,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                             {
                                 if(openBatchId.isNullOrBlank())
                                 {
-                                   val newBatchId = lastBatchId?.toIntOrNull()?.let { String.format("%06d", it + 1) }
-                                    Log.d("Batch Id", "Last batch ID Present: $lastBatchId")
-                                    Log.d("Batch Id", "Generated new batch ID: $newBatchId")
+                                    Log.d("batch Id old", sharedViewModel.objPosConfig?.batchId.toString())
+                                   val newBatchId = sharedViewModel.objPosConfig?.batchId?.toIntOrNull()?.let { String.format("%06d", it + 1) }
                                     sharedViewModel.batchEntity.batchId = newBatchId
                                     sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
                                     sharedViewModel.batchEntity.batchStatus = "open"
@@ -186,7 +185,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                     viewModel.insertBatchData(sharedViewModel.batchEntity)
                                 }
                                 else {
-                                    Log.d("Batch Id", "Open Batch Id Found and set same Batch Id")
                                     sharedViewModel.objRootAppPaymentDetail.batchId = openBatchId
                                 }
                             }

@@ -108,7 +108,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()
     }
 
-    fun onBatchIdChange(batchId: Int,sharedViewModel: SharedViewModel) {
+    fun onBatchIdChange(batchId: Int, sharedViewModel: SharedViewModel) {
         sharedViewModel.objPosConfig?.apply { this.batchId = batchId.toString() }?.saveToPrefs()
     }
 
