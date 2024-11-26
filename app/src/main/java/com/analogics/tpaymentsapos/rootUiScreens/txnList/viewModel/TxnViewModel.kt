@@ -32,6 +32,7 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import getPrinterStatus
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -114,6 +115,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     fun fetchCurrentBatchTrans() {
         viewModelScope.launch {
             dbRepository.fetchBatchList()?.takeIf { it.isNotEmpty() }?.let {
+                delay(300)
                 _batchList.value = it
             }?.also {
                 filterTransactionsByBatchId(_batchList.value[0].batchId?:"")

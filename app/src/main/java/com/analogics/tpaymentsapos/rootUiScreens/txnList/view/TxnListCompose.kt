@@ -29,6 +29,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -62,9 +63,9 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.dialogs.ListDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.DateTimePickerDialog
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.ListDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -72,6 +73,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import kotlin.math.cos
@@ -90,6 +92,9 @@ fun TransactionListScreen(
     val showFilterMenu = viewModel.showFilterMenu.collectAsState().value
     val showBatchPicker = viewModel.showBatchPicker.collectAsState().value
     val showDateTimePicker = viewModel.showDateTimePicker.collectAsState().value
+
+    // Loading state for showing progress indicator
+    val showProgressIndicator = remember { mutableStateOf(true) }
 
     val isSelectingEndDate = remember { mutableStateOf(false) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
@@ -189,6 +194,19 @@ fun TransactionListScreen(
                             .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                             .align(Alignment.CenterHorizontally)
                     )
+                    if (showProgressIndicator.value) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LinearProgressIndicator(
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                                //trackColor = Color.LightGray
+                            )
+                        }
+                    }
                 } else {
                     // Transaction list
                     LazyColumn {
@@ -290,6 +308,8 @@ fun TransactionListScreen(
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(navHostController)
+        delay(3000)
+        showProgressIndicator.value = false
     }
 }
 

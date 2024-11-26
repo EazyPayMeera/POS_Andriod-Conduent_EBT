@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -31,8 +32,6 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootModel.UiLanguage
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -390,4 +389,9 @@ fun HideSoftKeyboard(navController: NavHostController) {
     LaunchedEffect(Unit) {
         keyboardController?.hide()
     }
+}
+
+@Composable
+fun LoadingBar() {
+    LinearProgressIndicator()
 }
