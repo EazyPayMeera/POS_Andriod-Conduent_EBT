@@ -4,8 +4,11 @@ package com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel
 import addLogo
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -16,12 +19,14 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertBatchToBatchEntity
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel

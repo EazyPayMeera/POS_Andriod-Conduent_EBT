@@ -49,7 +49,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun UserManagementView(navHostController: NavHostController, viewModel: UserManagementViewModel = hiltViewModel()) {
     Column {
         CommonTopAppBar(
-            title = "User Management",
+            title = stringResource(id = R.string.label_user_management),
             onBackButtonClick = { navHostController.popBackStack() }
         )
         Column(
@@ -82,13 +82,13 @@ fun CustomDrawerContent(
     val drawersItems = listOf(
         DrawerItem(
             imageRes = Icons.Default.PermIdentity,
-            text = "ADD USER",
+            text = stringResource(id = R.string.label_add_user),
             isChecked = false,
             onCheckedChange = { navHostController.navigate(AppNavigationItems.AddClerkScreen.route) }
         ),
         DrawerItem(
             imageRes = Icons.Default.Person,
-            text = "REMOVE USER",
+            text = stringResource(id = R.string.label_remove_user),
             isChecked = false,
             onCheckedChange = { isRemoveUser = true }
         ),

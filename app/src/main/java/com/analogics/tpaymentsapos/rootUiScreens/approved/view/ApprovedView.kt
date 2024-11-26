@@ -232,9 +232,6 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     CircularMenu(
                         onMenuOptionClick = { option ->
-                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-                            sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
-                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
                                     viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
@@ -260,11 +257,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
-                            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-                            sharedViewModel.objRootAppPaymentDetail.txnStatus = TxnStatus.APPROVED
-                            viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-
                         },
                         title = stringResource(id = R.string.done),
                     )

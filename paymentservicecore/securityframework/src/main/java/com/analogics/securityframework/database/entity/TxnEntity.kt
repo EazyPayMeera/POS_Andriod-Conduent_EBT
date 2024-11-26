@@ -8,12 +8,13 @@ import java.io.Serializable
 
 @Entity(tableName = "TxnTable")
 data class TxnEntity(
-    @PrimaryKey(autoGenerate = true) var id: Long? = null,
+    @PrimaryKey(autoGenerate = false) var id: Long? = null,
 
     /* Merchant & Cashier Info */
     @ColumnInfo(name = "MerchantId") var merchantId: String? = null,
     @ColumnInfo(name = "TerminalId") var terminalId: String? = null,
     @ColumnInfo(name = "CashierId") var cashierId: String? = null,
+    @ColumnInfo(name = "LoginId") var loginId: String? = null,
     @ColumnInfo(name = "DeviceSN") var deviceSN: String? = null,
 
     /* Transaction Info */

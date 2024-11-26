@@ -291,13 +291,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         override fun onReturnTransactionResult(p0: ContantPara.TransactionResult?) {
             Log.d("EMV_APP", "Transaction Result:" + p0.toString())
             Log.d("EMV_APP", "TLV Data:" + EmvNfcKernelApi.getInstance().GetField55ForSAMA())
-            iEmvSdkResponseListener?.onEmvSdkResponse(
-                EmvSdkResult.TransResult(
-            when (p0) {
-                ContantPara.TransactionResult.ONLINE_APPROVAL ->  TransStatus.APPROVED_ONLINE
-                ContantPara.TransactionResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
-                else -> TransStatus.ERROR
-            }))
+            iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(urovoToEmvTransResult(p0)))
         }
 
         override fun onRequestDisplayText(p0: ContantPara.DisplayText?) {
@@ -354,6 +348,27 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
             Log.d("EMV_APP", "NFC Trans Error:" + p0.toString())
+        }
+
+        fun urovoToEmvTransResult(transactionResult : ContantPara.TransactionResult?) : TransStatus?
+        {
+           return when (transactionResult) {
+                ContantPara.TransactionResult.ONLINE_APPROVAL ->  TransStatus.APPROVED_ONLINE
+                ContantPara.TransactionResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
+                ContantPara.TransactionResult.ONLINE_DECLINED -> TransStatus.DECLINED_ONLINE
+                ContantPara.TransactionResult.OFFLINE_DECLINED -> TransStatus.DECLINED_OFFLINE
+                ContantPara.TransactionResult.CANCELED -> TransStatus.CANCELED
+                ContantPara.TransactionResult.CANCELED_OR_TIMEOUT -> TransStatus.CANCELED
+                ContantPara.TransactionResult.TERMINATED -> TransStatus.TERMINATED
+                ContantPara.TransactionResult.CARD_BLOCKED_APP_FAIL -> TransStatus.CARD_BLOCKED
+                ContantPara.TransactionResult.APPLICATION_BLOCKED_APP_FAIL -> TransStatus.APP_BLOCKED
+                ContantPara.TransactionResult.NO_EMV_APPS -> TransStatus.NO_EMV_APPS
+                ContantPara.TransactionResult.SELECT_APP_FAIL -> TransStatus.APP_SELECTION_FAILED
+                ContantPara.TransactionResult.INVALID_ICC_DATA -> TransStatus.INVALID_ICC_CARD
+                ContantPara.TransactionResult.ICC_CARD_REMOVED -> TransStatus.CARD_REMOVED
+
+                else -> TransStatus.ERROR
+            }
         }
 
         fun addContactAid(config: AidConfig) : Boolean {

@@ -161,31 +161,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         onClick = {
-                            if(isAnyBatchPresent.isEmpty())
-                            {
-                                Log.d("batch Id Initial", sharedViewModel.objPosConfig?.batchId.toString())
-                                sharedViewModel.batchEntity.batchId = sharedViewModel.objPosConfig?.batchId
-                                sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
-                                sharedViewModel.batchEntity.batchStatus = "open"
-                                sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
-                                viewModel.insertBatchData(sharedViewModel.batchEntity)
-                            }
-                            else
-                            {
-                                if(openBatchId.isNullOrBlank())
-                                {
-                                    Log.d("batch Id old", sharedViewModel.objPosConfig?.batchId.toString())
-                                   val newBatchId = sharedViewModel.objPosConfig?.batchId?.toIntOrNull()?.let { String.format("%06d", it + 1) }
-                                    sharedViewModel.batchEntity.batchId = newBatchId
-                                    sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.batchEntity.batchId
-                                    sharedViewModel.batchEntity.batchStatus = "open"
-                                    sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
-                                    viewModel.insertBatchData(sharedViewModel.batchEntity)
-                                }
-                                else {
-                                    sharedViewModel.objRootAppPaymentDetail.batchId = openBatchId
-                                }
-                            }
                             navHostController.navigate(AppNavigationItems. CardDetectScreen.route)
                         }
                     )
@@ -307,12 +282,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
 
     LaunchedEffect(Unit) {
-        viewModel.openBatchPresent()
-        viewModel.isBatchPresent()
-        viewModel.getLastBatchId()
-        viewModel.startPayment(context, sharedViewModel.objRootAppPaymentDetail, sharedViewModel, navHostController)
-        sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-        sharedViewModel.objRootAppPaymentDetail.batchId = sharedViewModel.objPosConfig?.batchId
+        viewModel.startPayment(context, sharedViewModel, navHostController)
     }
 
     // QR Code Dialog

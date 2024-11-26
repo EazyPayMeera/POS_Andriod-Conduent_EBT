@@ -3,7 +3,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -18,21 +17,23 @@ import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TransConfig
 import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult
 import com.analogics.tpaymentcore.utils.TlvUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -82,6 +83,14 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
+    {
+        viewModelScope.launch {
+            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
+        }
+    }
+
     fun getTransConfig(objRootAppPaymentDetails: ObjRootAppPaymentDetails) : TransConfig
     {
         return TransConfig(
@@ -97,86 +106,31 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
 
     fun startPayment(
         context: Context,
-        objRootAppPaymentDetails: ObjRootAppPaymentDetails,
         sharedViewModel: SharedViewModel,
         navHostController: NavHostController
     ) {
         viewModelScope.launch {
+            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
             emvServiceRepository.startPayment(
                 context = context,
-                transConfig = getTransConfig(objRootAppPaymentDetails),
+                transConfig = getTransConfig(sharedViewModel.objRootAppPaymentDetail),
                 iEmvServiceResponseListener = object :
-                IEmvServiceResponseListener {
+                    IEmvServiceResponseListener {
                     @RequiresApi(Build.VERSION_CODES.O)
                     @SuppressLint("DefaultLocale")
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
+
+                                /* Update Transaction Result & Store in DB */
+                                sharedViewModel.objRootAppPaymentDetail.txnStatus = emvStatusToTransStatus(response.status)
+                                updateTransResult(sharedViewModel.objRootAppPaymentDetail)
+
                                 if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
                                             response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
                                 ) {
-                                    if (isBatchPresent.value.isEmpty()) {
-                                        Log.d("Batch Id", "Initial Batch Id Inserted")
-                                        sharedViewModel.batchEntity.batchId = "000001"
-                                        sharedViewModel.objRootAppPaymentDetail.batchId =
-                                            sharedViewModel.batchEntity.batchId
-                                        sharedViewModel.batchEntity.batchStatus = "open"
-                                        sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
-                                        insertBatchData(sharedViewModel.batchEntity)
-                                    } else {
-                                        Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
-                                        if (_openBatch.value.isNullOrEmpty()) {
-                                            val newBatchId = _lastBatch.value?.toIntOrNull()
-                                                ?.let { String.format("%06d", it + 1) }
-                                            Log.d("Batch Id", "Last batch ID Present: $_lastBatch")
-                                            Log.d("Batch Id", "Generated new batch ID: $newBatchId")
-                                            sharedViewModel.batchEntity.batchId = newBatchId
-                                            sharedViewModel.objRootAppPaymentDetail.batchId =
-                                                sharedViewModel.batchEntity.batchId
-                                            sharedViewModel.batchEntity.batchStatus = "open"
-                                            sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
-                                            insertBatchData(sharedViewModel.batchEntity)
-                                        } else {
-                                            Log.d(
-                                                "Batch Id",
-                                                "Open Batch Id Found and set same Batch Id"
-                                            )
-                                            sharedViewModel.objRootAppPaymentDetail.batchId =
-                                                _openBatch.value
-                                        }
-                                    }
                                     navigateToApprovalScreen(navHostController)
                                 } else {
-                                    if (isBatchPresent.value.isEmpty()) {
-                                        Log.d("Batch Id", "Initial Batch Id Inserted")
-                                        sharedViewModel.batchEntity.batchId = "000001"
-                                        sharedViewModel.objRootAppPaymentDetail.batchId =
-                                            sharedViewModel.batchEntity.batchId
-                                        sharedViewModel.batchEntity.batchStatus = "open"
-                                        sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
-                                        insertBatchData(sharedViewModel.batchEntity)
-                                    } else {
-                                        Log.d("Batch Id", "No Open Batch Found: $_lastBatch")
-                                        if (_openBatch.value.isNullOrEmpty()) {
-                                            val newBatchId = _lastBatch.value?.toIntOrNull()
-                                                ?.let { String.format("%06d", it + 1) }
-                                            Log.d("Batch Id", "Last batch ID Present: $_lastBatch")
-                                            Log.d("Batch Id", "Generated new batch ID: $newBatchId")
-                                            sharedViewModel.batchEntity.batchId = newBatchId
-                                            sharedViewModel.objRootAppPaymentDetail.batchId =
-                                                sharedViewModel.batchEntity.batchId
-                                            sharedViewModel.batchEntity.batchStatus = "open"
-                                            sharedViewModel.batchEntity.cashierId = sharedViewModel.objPosConfig?.loginId
-                                            insertBatchData(sharedViewModel.batchEntity)
-                                        } else {
-                                            Log.d(
-                                                "Batch Id",
-                                                "Open Batch Id Found and set same Batch Id"
-                                            )
-                                            sharedViewModel.objRootAppPaymentDetail.batchId =
-                                                _openBatch.value
-                                        }
-                                    }
                                     navigateToDeclinedScreen(navHostController)
                                 }
                             }
@@ -208,6 +162,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
 
                     }
 
+                    @RequiresApi(Build.VERSION_CODES.O)
                     override fun onEmvServiceRequestOnline(
                         emvTags: HashMap<String, String>,
                         onResponse: (HashMap<String, String>) -> Unit
@@ -239,18 +194,14 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
 
                         viewModelScope.launch {
                             displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.PROCESSING_ONLINE
-/*                            if(sharedViewModel.objPosConfig?.isDemoMode==true) {
-                                delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
-                                onResponse(hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE))
-                            }
-                            else {*/
-                                apiServiceRepository.apiServiceRequestOnlineAuth(
+                            apiServiceRepository.apiServiceRequestOnlineAuth(
                                 PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                                     sharedViewModel.objRootAppPaymentDetail
                                 ), object : IApiServiceResponseListener {
 
                                     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-                                        responseEmvTags = TlvUtils(paymentServiceTxnDetails.emvData).tlvMap
+                                        responseEmvTags =
+                                            TlvUtils(paymentServiceTxnDetails.emvData).tlvMap
                                         onResponse(responseEmvTags)
                                     }
 
@@ -258,76 +209,9 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                         onResponse(responseEmvTags)
                                     }
                                 })
-                            /*}*/
                         }
                     }
                 })
         }
     }
-
-    fun insertTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
-        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
-
-        dbRepository.insertTxn(Gson().fromJson(json, TxnEntity::class.java))
-        Log.d("password " +
-                "record insert suc", Gson().fromJson(json, TxnEntity::class.java).toString())
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun isBatchPresent() {
-        viewModelScope.launch {
-            try {
-                // Fetch the list of BatchEntity
-                val batches: List<String> = dbRepository.isBatchPresent()
-                Log.d("Batch Id", "Fetched batches: $batches")
-                // Assign the transformed list to _openBatchId
-                _isBatchPresent.value = batches
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error fetching open batches", e)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun openBatchPresent() {
-        viewModelScope.launch {
-            try {
-                // Fetch the open batch ID (or null if no open batch exists)
-                val batchId: String? = dbRepository.openBatchId()
-                Log.d("Batch Id", "Open batch ID: $batchId")
-
-                // Update the value of _openBatch
-                _openBatch.value = batchId
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error fetching open batch ID", e)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun insertBatchData(batchEntity: BatchEntity)=viewModelScope.launch{
-        val json = Gson().toJson(batchEntity) // Convert ObjRootAppPaymentDetails to JSON
-
-        dbRepository.insertBatch(Gson().fromJson(json, batchEntity::class.java))
-        Log.d("password " +
-                "record insert suc", Gson().fromJson(json, batchEntity::class.java).toString())
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getLastBatchId() {
-        viewModelScope.launch {
-            try {
-                // Fetch the list of BatchEntity
-                val lastBatch: String? = dbRepository.getLastBatch()
-                Log.d("Batch Id", "Fetched batches: $lastBatch")
-                // Assign the transformed list to _openBatchId
-                _lastBatch.value = lastBatch
-            } catch (e: Exception) {
-                Log.e("BatchViewModel", "Error fetching open batches", e)
-            }
-        }
-    }
-
 }

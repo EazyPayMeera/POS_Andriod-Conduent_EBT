@@ -1,11 +1,15 @@
 package com.analogics.paymentservicecore.repository.apiService
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult
+import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
 import com.analogics.paymentservicecore.models.TxnType
@@ -43,6 +47,7 @@ class ApiServiceRepository @Inject constructor(
         return posConfig.loadFromPrefs()
     }
 
+     @RequiresApi(Build.VERSION_CODES.O)
      override suspend fun apiServiceRequestOnlineAuth(
          paymentServiceTxnDetails: PaymentServiceTxnDetails?,
          iApiServiceResponseListener: IApiServiceResponseListener
@@ -51,6 +56,9 @@ class ApiServiceRepository @Inject constructor(
          /* Delay to show processing screen in demo mode */
          if(paymentServiceTxnDetails?.isDemoMode == true)
              delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
+
+         /* Set Transaction Status as Initiated */
+         paymentServiceTxnDetails?.txnStatus = TransStatus.INITIATED.toString()
 
         when(paymentServiceTxnDetails?.txnType.toString())
         {
@@ -79,6 +87,7 @@ class ApiServiceRepository @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun apiServicePurchase(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener

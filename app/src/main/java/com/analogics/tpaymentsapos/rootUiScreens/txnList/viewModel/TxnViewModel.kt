@@ -426,11 +426,12 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun closeOpenBatches() {
+    fun closeOpenBatches(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             try {
                 val closedCount = dbRepository.closeBatch().let {
                     fetchCurrentBatchTrans()    /* To refresh the batch list & statues */
+                    if(it>=1) setNextBatchId(sharedViewModel)
                 }
                 Log.d("BatchViewModel", "Closed $closedCount open batches")
             } catch (e: Exception) {
@@ -439,4 +440,14 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
+    fun setNextBatchId(sharedViewModel: SharedViewModel)
+    {
+        viewModelScope.launch{
+            dbRepository.fetchLastBatchId()?.let {
+                sharedViewModel.objPosConfig?.apply {
+                    batchId = ((it.toIntOrNull()?:0) + 1).toString()
+                }?.saveToPrefs()
+            }
+        }
+    }
 }

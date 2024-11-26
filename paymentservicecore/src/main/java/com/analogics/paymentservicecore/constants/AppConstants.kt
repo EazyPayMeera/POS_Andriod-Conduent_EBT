@@ -21,6 +21,8 @@ object AppConstants {
     const val CARD_CHECK_TIMEOUT_S = 30L
     const val DEMO_MODE_PROMPTS_DELAY_MS = 3000L
 
+    const val BATCH_ID_START_VAL = 1
+
     const val DEFAULT_TIP_PERCENT_1 = 5
     const val DEFAULT_TIP_PERCENT_2 = 10
     const val DEFAULT_TIP_PERCENT_3 = 15

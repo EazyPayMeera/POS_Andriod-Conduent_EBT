@@ -1,9 +1,7 @@
 package com.analogics.securityframework.database.dbRepository
 
 import android.os.Build
-import android.text.format.DateUtils
 import android.util.Log
-import android.util.TimeUtils
 import androidx.annotation.RequiresApi
 import com.analogics.securityframework.database.dao.IBatchDao
 import com.analogics.securityframework.database.dao.ITxnDao
@@ -12,19 +10,19 @@ import com.analogics.securityframework.database.dbConstant.DBConstant
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
+import com.analogics.securityframework.model.BatchStatus
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao,private val iUserManagementDao: IUserManagementDao) {
+class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, private val iTxnDao: ITxnDao, private val iUserManagementDao: IUserManagementDao) {
+
+    /* Batch Management */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun  insertBatch(batchEntity: BatchEntity){
-        batchEntity.batchStatus = "open"
-        batchEntity.openedDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(
-            DBConstant.DATE_TIME_FORMAT_BATCH
-        ))
         iBatchDao.insert(batchEntity)
     }
+
     suspend fun  updateBatch(batchEntity: BatchEntity){
         iBatchDao.update(batchEntity)
     }
@@ -33,67 +31,126 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iBatchDao.isBatchPresent() // Ensure this returns List<BatchEntity>
     }
 
-    suspend fun getLastBatch(): String? {
+    suspend fun fetchLastBatchId(): String? {
         return iBatchDao.getLastBatchId()
     }
 
-    suspend fun openBatchId(): String? {
+    suspend fun fetchOpenBatchId(): String? {
         return iBatchDao.getOpenBatchId()
     }
 
+    suspend fun fetchBatchDetails(batchId: String?): BatchEntity? {
+        return iBatchDao.fetchBatchDetails(batchId)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun closeBatch(): Int {
-        return iBatchDao.closeOpenBatches(LocalDateTime.now().format(DateTimeFormatter.ofPattern(
-            DBConstant.DATE_TIME_FORMAT_BATCH
-        )))
+    suspend fun openBatch(txnEntity: TxnEntity) {
+        txnEntity.batchId?.let {
+            isBatchExist(it).let {
+                if(it == false) {
+                    insertBatch(
+                        BatchEntity(
+                            merchantId = txnEntity.merchantId,
+                            terminalId = txnEntity.terminalId,
+                            cashierId = txnEntity.cashierId,
+                            batchId = txnEntity.batchId,
+                            batchStatus = BatchStatus.OPEN.toString(),
+                            openedDateTime = LocalDateTime.now().format(
+                                DateTimeFormatter.ofPattern(
+                                    DBConstant.DATE_TIME_FORMAT_BATCH
+                                )
+                            )
+                        )
+                    )
+                }
+                else if(isBatchOpen(txnEntity.batchId) == false)
+                {
+                    fetchBatchDetails(txnEntity.batchId)?.let {
+                        it.batchStatus = BatchStatus.OPEN.toString()
+                        it.openedDateTime = LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern(
+                                DBConstant.DATE_TIME_FORMAT_BATCH
+                            )
+                        )
+                        updateBatch(it)
+                    }
+                }
+            }
+        }
     }
 
-    suspend fun isBatchOpen(): List<String> {
-        return iBatchDao.isBatchOpen() // Returns the count of rows updated
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun closeBatch(batchId: String?=null): Int {
+        return if (batchId != null)
+            iBatchDao.closeBatch(
+                batchId,
+                LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern(
+                        DBConstant.DATE_TIME_FORMAT_BATCH
+                    )
+                )
+            )
+        else
+            iBatchDao.closeOpenBatches(
+                LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern(
+                        DBConstant.DATE_TIME_FORMAT_BATCH
+                    )
+                )
+            )
     }
 
-    suspend fun isBatchOpen(batchId: String?) : Boolean
+    suspend fun isBatchOpen(batchId: String?=null) : Boolean
     {
-        return iBatchDao.getBatchStatus(batchId)?.equals("open")==true
+        return iBatchDao.getBatchStatus(batchId?:fetchLastBatchId())?.equals("OPEN")==true
     }
 
-    suspend fun isAdmin(userId: String): Boolean {
-        return iBatchDao.isAdmin(userId) // Returns the count of rows updated
+    suspend fun isBatchExist(batchId: String?): Boolean
+    {
+        return iBatchDao.isBatchExist(batchId)
     }
 
+    suspend fun fetchBatchList(): List<BatchEntity>? {
+        return iBatchDao.fetchBatchList()
+    }
 
-    suspend fun  insertTxn(txnEntity: TxnEntity){
+    /* Transaction Management */
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun insertOrUpdateTxn(txnEntity: TxnEntity?) {
         try {
-            iTxnDao.insert(txnEntity)
+            txnEntity?.let {
+                openBatch(it).let {
+                    txnEntity.id?.let {
+                        iTxnDao.fetchTxnDetails(it)?.let {
+                            iTxnDao.update(txnEntity)
+                        } ?: let {
+                            iTxnDao.insert(txnEntity)
+                        }
+                    }
+                }
+            }
         }catch ( e : Exception)
         {
             Log.e("DATABASE",e.message.toString())
         }
-
     }
 
-
-    suspend fun  updateTxn(txnEntity: TxnEntity){
-        iTxnDao.update(txnEntity)
+    suspend fun updateTxn(txnEntity: TxnEntity){
+        try {
+            iTxnDao.update(txnEntity)
+        }catch ( e : Exception)
+        {
+            Log.e("DATABASE",e.message.toString())
+        }
     }
-
 
     // Get Transaction Details From Transaction Using Merchant-Id
     suspend fun fetchTransactionDetailsTxn(id: Long): TxnEntity? {
-        return iTxnDao.getTransactionDetailsTxn(id)
-    }
-
-    // Get Transaction Details From Transaction Using Merchant-Id
-    suspend fun fetchBatchDetailsTxn(id: Long): BatchEntity? {
-        return iTxnDao.getBatchDetailsTxn(id)
+        return iTxnDao.fetchTxnDetails(id)
     }
 
     suspend fun getAllTxnListData(): List<TxnEntity>?{
         return iTxnDao.getAllTxnListData()
-    }
-
-    suspend fun fetchTransactionDetailsTxnByDate(date: String): List<TxnEntity> {
-        return iTxnDao.getTransactionDetailsTxnBeforeTime(date)
     }
 
     suspend fun fetchLastTransaction(): TxnEntity? {
@@ -116,47 +173,19 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getTipAmountByInvoiceNo(invoiceNo)
     }
 
-    suspend fun removeUser(user: String) {
-        iTxnDao.deleteTransactionsByUserId(user)
-    }
-
-    suspend fun fetchBatchList(): List<BatchEntity>? {
-        return iTxnDao.fetchBatchList()
-    }
-
-    suspend fun getStartDate(batchId: String): List<String?> {
-        return iTxnDao.getStartDateByBatchIds(batchId)
-    }
-
-    suspend fun fetchPassword(user: String): String? {
-        return iTxnDao.fetchPassword(user)
-    }
-
-    suspend fun getUserList(): List<String?> {
-        return iTxnDao.getUserList()
-    }
-
-    suspend fun getBatchStatus(batchId: String): List<String?> {
-        return iTxnDao.getBatchStatus(batchId)
-    }
-
-    suspend fun getEndDate(batchId: String): List<String?> {
-        return iTxnDao.getEndDateByBatchIds(batchId)
-    }
-
     suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity>? {
         return iTxnDao.getTransactionsByDateRange(startDate, endDate)
     }
 
-    suspend fun getLastInvoiceNumber() : Int
-    {
-        return iTxnDao.getLastInvoiceNumber(openBatchId())?.toIntOrNull()?:0
+    suspend fun getLastInvoiceNumber() : Int {
+        return iTxnDao.getLastInvoiceNumber(fetchOpenBatchId())?.toIntOrNull()?:0
     }
 
     /* Clerk/User Management */
     suspend fun  insertUser(userManagementEntity: UserManagementEntity){
         iUserManagementDao.insert(userManagementEntity)
     }
+
     suspend fun  updateUser(userManagementEntity: UserManagementEntity){
         iUserManagementDao.update(userManagementEntity)
     }
@@ -165,7 +194,23 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iUserManagementDao.getUserDetails(userId)
     }
 
+    suspend fun getUserList(): List<String?> {
+        return iUserManagementDao.getUserList()
+    }
+
     suspend fun getUserCount(): Int {
         return iUserManagementDao.getUserCount()
+    }
+
+    suspend fun fetchPassword(user: String): String? {
+        return iUserManagementDao.fetchPassword(user)
+    }
+
+    suspend fun removeUser(user: String) {
+        iUserManagementDao.deleteUser(user)
+    }
+
+    suspend fun isAdmin(userId: String): Boolean {
+        return iUserManagementDao.isAdmin(userId) // Returns the count of rows updated
     }
 }

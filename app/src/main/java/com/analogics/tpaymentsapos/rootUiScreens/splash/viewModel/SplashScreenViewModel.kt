@@ -7,8 +7,11 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.UiLanguage
+import com.analogics.tpaymentsapos.rootModel.toUiLanguage
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.setUiLanguage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,6 +22,9 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig()
+
+            /* Apply UI Language */
+            setUiLanguage(navController.context,sharedViewModel.objPosConfig?.language?.toUiLanguage()?: UiLanguage.ENGLISH)
 
             /* Check if onboarding carousel is shown */
             if(sharedViewModel.objPosConfig?.isOnboardingComplete!=true)

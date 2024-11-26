@@ -20,6 +20,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.models.Acquirer
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
@@ -27,6 +28,7 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
+import com.analogics.tpaymentsapos.rootModel.UiLanguage
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.gson.Gson
@@ -195,6 +197,16 @@ fun emvCardCheckStatusToMsgId(cardCheckStatus: EmvServiceResult.CardCheckStatus)
     }
 }
 
+fun emvStatusToTransStatus(emvTransStatus: Any?) : TxnStatus
+{
+    return when(emvTransStatus) {
+        EmvServiceResult.TransStatus.APPROVED_ONLINE, EmvServiceResult.TransStatus.APPROVED_OFFLINE -> TxnStatus.APPROVED
+        EmvServiceResult.TransStatus.DECLINED_ONLINE,EmvServiceResult.TransStatus.DECLINED_OFFLINE -> TxnStatus.DECLINED
+        EmvServiceResult.TransStatus.INITIATED -> TxnStatus.INITIATED
+        else -> TxnStatus.ERROR
+    }
+}
+
 @Composable
 fun getEmvMsgIdString(displayMsgId: EmvServiceResult.DisplayMsgId) : String
 {
@@ -329,6 +341,15 @@ fun getIsoResponseCodeString(context: Context, responseCode: String?) : String
         }
 
     return if(id!=null) context.resources.getString(id) else ""
+}
+
+fun setUiLanguage(context: Context, language: UiLanguage) {
+    val config = context.resources.configuration
+    val locale = Locale(language.languageCode)
+    Locale.setDefault(locale)
+    config.setLocale(locale)
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
 }
 
 fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails?) : Acquirer
