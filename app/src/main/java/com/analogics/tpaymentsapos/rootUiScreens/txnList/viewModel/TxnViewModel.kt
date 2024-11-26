@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -31,6 +30,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import getPrinterStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -415,18 +415,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
-    suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrinterResultProviderListener: IPrinterResultProviderListener) {
-        try {
-
-            val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-                PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-            )
-            PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get printer status: ${e.message}")
-        }
-    }
 
     override fun onApiServiceDisplayProgress(
         show: Boolean,

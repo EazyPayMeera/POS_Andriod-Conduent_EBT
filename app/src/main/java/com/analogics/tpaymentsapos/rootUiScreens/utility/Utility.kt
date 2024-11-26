@@ -1,8 +1,6 @@
 
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
@@ -12,7 +10,6 @@ import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
-import java.io.ByteArrayOutputStream
 
 
 suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
@@ -56,23 +53,4 @@ suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPayment
     }
 }
 
-fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
-    var imageData: ByteArray? = null
-    try {
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        imageData = baos.toByteArray()
-    } catch (e: Exception) {
-        // TODO: handle exception
-        e.printStackTrace()
-        return null
-    }
-    return imageData
-}
 
-
-fun getLogoBitmap(context: Context, id: Int): Bitmap {
-    val draw = context.resources.getDrawable(id) as BitmapDrawable
-    val bitmap = draw.bitmap
-    return bitmap
-}
