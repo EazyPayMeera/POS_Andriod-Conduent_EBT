@@ -198,33 +198,32 @@ class Printer constructor() {
     }
 
     fun printLeftCenterRightPrinting(
-        Trasaction: List<String>,
-        Count: List<String>, Total: List<String>,
-        fontsize: List<Int>
+        transaction: List<String>,
+        count: List<String>,
+        total: List<String>,
+        fontSize: List<Int>
     ) {
         try {
+            for (i in transaction.indices) {
+                val trasaction = transaction[i]
+                val countItem = count[i]
+                val totalItem = total[i]
+                val fontSizeItem = fontSize[i]
 
-            for (i in Trasaction.indices) {
-                val trasaction = Trasaction[i]
-                val count = Count[i]
-                val total = Total[i]
-                val FontSize = fontsize[i]
-                if(FontSize == 32)
-                {
-                    addText(count,1,FontSize)
-                }
-                else
-                {
-                    addTextLeft_Center_Right(trasaction, count, total, FontSize)
+                if (fontSizeItem == 32) {
+                    addText(countItem, 1, fontSizeItem)
+                } else {
+                    addTextLeft_Center_Right(trasaction, countItem, totalItem, fontSizeItem)
                 }
             }
             feedLine(3)
             startPrinting()
 
         } catch (e: Exception) {
-            Log.e(TAG, "Error in printMultipleTextsAndStartPrinting: ${e.message}")
+            Log.e(TAG, "Error in printLeftCenterRightPrinting: ${e.message}")
         }
     }
+
 
 
 }
