@@ -30,7 +30,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel()
 {
-
     fun printReceipt(
         logoResId: Int,
         sharedViewModel: SharedViewModel,

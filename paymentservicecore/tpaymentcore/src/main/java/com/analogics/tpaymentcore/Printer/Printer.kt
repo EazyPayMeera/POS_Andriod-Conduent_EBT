@@ -100,6 +100,9 @@ class Printer constructor() {
 
     // Add Text on Left and Right
     fun addTextLeft_Right(textLeft: String?, textRight: String?, fontSize: Int) {
+        if (textRight != null) {
+            Log.d("Input String",textRight)
+        }
         val defaultFormat = Bundle()
         defaultFormat.putInt("font", 1) // Default font type
         defaultFormat.putString("fontName", fontName_default) // Default font name
@@ -175,6 +178,7 @@ class Printer constructor() {
                 val alignment = alignments[i]
                 val description = descriptions[i]
                 val fontsize = fontsize[i]
+                Log.d("TextDebug", "Text: $text, Alignment: $alignment, Description: $description, Font Size: $fontsize")
                 if(alignment == -1) {
                     addTextLeft_Right(text,description,fontsize)
                 }
