@@ -8,6 +8,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
@@ -379,4 +381,13 @@ fun String.splitByIntervals(intervals: List<Int>, charSequence : CharSequence = 
     }
 
     return result.joinToString(charSequence)
+}
+
+
+@Composable
+fun HideSoftKeyboard(navController: NavHostController) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        keyboardController?.hide()
+    }
 }

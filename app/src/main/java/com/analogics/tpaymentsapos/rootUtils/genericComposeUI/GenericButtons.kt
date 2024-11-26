@@ -18,34 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
-/*@Composable
-fun CustomSwitch(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    checkedImage: Int,
-    uncheckedImage: Int,
-    modifier: Modifier = Modifier,
-    imageSize: Dp = MaterialTheme.dimens.DP_40_CompactMedium // Default size passed
-) {
-    Box(
-        modifier = modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null // Disable ripple effect
-            ) { onCheckedChange(!checked) }
-            .padding(MaterialTheme.dimens.DP_2_CompactMedium) // Padding for better touch area
-    ) {
-        androidx.compose.foundation.Image(
-            painter = painterResource(id = if (checked) checkedImage else uncheckedImage),
-            contentDescription = null,
-            modifier = Modifier
-                .size(imageSize) // Apply the dynamic size
-                .background(MaterialTheme.colorScheme.onPrimary)
-                .clip(RoundedCornerShape(MaterialTheme.dimens.DP_21_CompactMedium))
-        )
-    }
-}*/
-
 @Composable
 fun CustomSwitch(
     checked: Boolean,
