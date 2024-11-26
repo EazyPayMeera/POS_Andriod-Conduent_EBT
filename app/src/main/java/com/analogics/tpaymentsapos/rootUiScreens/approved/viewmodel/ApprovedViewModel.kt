@@ -1,6 +1,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel
 
 
+import addLogo
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
@@ -18,8 +19,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import getPrinterStatus
@@ -43,9 +42,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             // Call getPrinterStatus with a callback
             getPrinterStatus(objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                 override fun onSuccess(result: Any?) {
-                    Log.d(TAG, "Printer status retrieved: $result")
-                    Log.d("PaymentDetail", "Transaction Amount: ${objRootAppPaymentDetail.txnAmount}")
-                    Log.d("PaymentDetail", "Transaction Amount: ${objRootAppPaymentDetail.ttlAmount}")
 
                     val subtitleText = when (result) {
                         -1 -> context.resources.getString(R.string.printer_out_of_paper) // Example error for result -1
@@ -53,7 +49,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     }
 
                     if (result != 0) {
-                        Log.d(TAG, "Printer status retrieved inside result not equal to zero: $result")
                         CustomDialogBuilder.composeAlertDialog(
                             title = context.resources.getString(R.string.printer_error_title),
                             subtitle = subtitleText // Dynamic subtitle based on result
@@ -97,7 +92,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     {
         viewModelScope.launch {
             try {
-                Log.d("Abort", "Approved View Model to Printer Service Repository 1")
                 CustomDialogBuilder.composePrintingDialog(
                     title = context.resources.getString(R.string.printing),
                     subtitle = context.resources.getString(R.string.plz_wait),
@@ -134,32 +128,6 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     }
 
-    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
-    {
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-        val logoBitmap = getLogoBitmap(context, logoResId)
-
-        // Convert the bitmap to ByteArray
-        val imageData = getBitmapBytes(logoBitmap)
-
-        // Ensure the imageData is not null
-        if (imageData != null) {
-            // Prepare the format Bundle for the printer
-            val format = Bundle().apply {
-                putInt("align", 1)  // Example alignment: Center
-                putInt("width", 100)  // Width of the image
-                putInt("height", 100)  // Height of the image
-            }
-
-            // Call the addImage function with format and image data
-            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
-        } else {
-            // Handle the case where the image data is null
-            Log.e("ImageError", "Failed to get image bytes")
-        }
-    }
 
 
     suspend fun addReceiptDetails(sharedViewModel: SharedViewModel, context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
