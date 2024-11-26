@@ -94,22 +94,24 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 collectActivationData()
 
                 // Uncomment the following line if needed to make the API request with the transformed object
+                /*
                 apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                         sharedViewModel?.objRootAppPaymentDetail
                     ), this@ActivationViewModel
                 )
+                 */
 
-                /*// Inject keys and activate the device if key injection is successful
+                // Inject keys and activate the device if key injection is successful
                 val keyInjectionSuccess = PaymentServiceUtils.injectKeys(
-                    "5356BD8C6F465469AAE825A9069693EE",
-                    "FFFF6986499CB9000000",
-                    "C7D049"
+                    "FB7BB5FC24E765B61E1FB80F6AD4FB83",
+                    "FFFF6986499C2C600000",
+                    "44934E"
                 )
 
                 if (keyInjectionSuccess) {
                     activateDevice()
-                }*/
+                }
 
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "Unknown error occurred during activation.")
