@@ -1,50 +1,36 @@
 package com.analogics.tpaymentsapos.rootUiScreens.approved.viewmodel
 
 
-import addLogo
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
 import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertBatchToBatchEntity
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.convertObjRootToTxnEntity
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getBitmapBytes
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getLogoBitmap
 import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import getPrinterStatus
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository,var apiServiceRepository: ApiServiceRepository): ViewModel(),
-    IApiServiceResponseListener {
-
-
-    private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiErrorHolder = MutableStateFlow(ApiServiceError())
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel()
+{
 
     fun printReceipt(
         logoResId: Int,
@@ -148,6 +134,33 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     }
 
+    suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener,logoResId: Int)
+    {
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+        val logoBitmap = getLogoBitmap(context, logoResId)
+
+        // Convert the bitmap to ByteArray
+        val imageData = getBitmapBytes(logoBitmap)
+
+        // Ensure the imageData is not null
+        if (imageData != null) {
+            // Prepare the format Bundle for the printer
+            val format = Bundle().apply {
+                putInt("align", 1)  // Example alignment: Center
+                putInt("width", 100)  // Width of the image
+                putInt("height", 100)  // Height of the image
+            }
+
+            // Call the addImage function with format and image data
+            PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
+        } else {
+            // Handle the case where the image data is null
+            Log.e("ImageError", "Failed to get image bytes")
+        }
+    }
+
 
     suspend fun addReceiptDetails(sharedViewModel: SharedViewModel, context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
@@ -244,81 +257,5 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             Log.e(TAG, "Failed to get printer status: ${e.message}")
         }
     }
-
-    fun updateTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails) = viewModelScope.launch {
-        // Convert ObjRootAppPaymentDetails to JSON or entity object
-        val txnEntity = convertObjRootToTxnEntity(objRootAppPaymentDetails)
-
-        txnEntity.id?.let { id ->
-            // Check if the entity exists in the database using the primary key (invoice no)
-            val existingEntity = dbRepository.fetchTransactionDetailsTxn(id)
-
-            if (existingEntity != null) {
-                // Entry found, proceed with update
-                dbRepository.updateTxn(txnEntity)
-                Log.d("Record Update", "Record update successful for invoice no: $id")
-            } else {
-                // Entry not found, log the message
-                dbRepository.insertTxn(txnEntity)
-            }
-        } ?: Log.d("Record Update", "Invoice No is null")
-    }
-
-    /*@RequiresApi(Build.VERSION_CODES.O)
-    fun updateBatchData(batchEntity: BatchEntity) = viewModelScope.launch {
-        // Convert ObjRootAppPaymentDetails to JSON or entity object
-        val batchEntity = convertBatchToBatchEntity(batchEntity)
-        Log.d("Batch Id","Inside Update Batch Table")
-        batchEntity.id?.let { id ->
-            // Check if the entity exists in the database using the primary key (invoice no)
-            val existingEntity = dbRepository.fetchBatchDetailsTxn(id)
-
-            if (existingEntity != null) {
-                // Entry found, proceed with update
-                dbRepository.insertBatch(batchEntity)
-                Log.d("Record Update", "Record update successful for invoice no: $id")
-            } else {
-                Log.d("Batch Id","Inside Insert Batch Table")
-                // Entry not found, log the message
-                dbRepository.insertBatch(batchEntity)
-            }
-        } ?: Log.d("Record Update", "Invoice No is null")
-    }*/
-
-    fun onPurchaseApi(objRootAppPaymentDetail: ObjRootAppPaymentDetails) {
-        viewModelScope.launch {
-            try {
-                val requestDetails =
-                    PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-                apiServiceRepository.apiServicePurchase(
-                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@ApprovedViewModel)
-            } catch (e: Exception) {
-                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
-            }
-        }
-    }
-    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
-                objRoot.value = it
-                updateTxnData(objRoot.value)
-        }
-    }
-
-    override fun onApiServiceError(apiServiceError: ApiServiceError) {
-        userApiErrorHolder.value = apiServiceError
-    }
-
-    override fun onApiServiceDisplayProgress(
-        show: Boolean,
-        title: String?,
-        subTitle: String?,
-        message: String?
-    ) {
-
-    }
-
-
-
-
 
 }
