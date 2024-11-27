@@ -115,7 +115,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     fun fetchCurrentBatchTrans() {
         viewModelScope.launch {
             dbRepository.fetchBatchList()?.takeIf { it.isNotEmpty() }?.let {
-                delay(300)
+                delay(400)
                 _batchList.value = it
             }?.also {
                 filterTransactionsByBatchId(_batchList.value[0].batchId?:"")
