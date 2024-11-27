@@ -46,6 +46,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CustomDrawerContent
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.HideSoftKeyboard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.removeNonDigits
@@ -64,9 +65,6 @@ fun DashboardView(navHostController: NavHostController) {
         dashboardViewModel,
         dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel, sharedViewModel)
     ) {}
-    LaunchedEffect(Unit) {
-
-    }
 }
 
 @Composable
@@ -210,7 +208,8 @@ fun TrainingView(
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
-
+    
+    HideSoftKeyboard(navHostController)
     CustomDialogBuilder.ShowComposed()
 }
 

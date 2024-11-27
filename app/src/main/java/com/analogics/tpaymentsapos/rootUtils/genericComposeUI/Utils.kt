@@ -7,7 +7,10 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
@@ -29,8 +32,6 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootModel.Symbol
 import com.analogics.tpaymentsapos.rootModel.UiLanguage
-import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -379,4 +380,18 @@ fun String.splitByIntervals(intervals: List<Int>, charSequence : CharSequence = 
     }
 
     return result.joinToString(charSequence)
+}
+
+
+@Composable
+fun HideSoftKeyboard(navController: NavHostController) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        keyboardController?.hide()
+    }
+}
+
+@Composable
+fun LoadingBar() {
+    LinearProgressIndicator()
 }
