@@ -94,8 +94,8 @@
     <string name="auth_code">Auth Code:</string>
     <string name="no">No.:</string>
     <string name="cancel_no">No</string>
-    <string name="inc_no">Invoice Number:</string> POS Entry:
-    <string name="pos_entry">POS Entry:</string>
+    <string name="inc_no">Invoice Number : </string> POS Entry:
+    <string name="pos_entry">POS Entry : </string>
     <string name="print">PRINT</string> CANCEL
     <string name="cancel">CANCEL</string>
     <string name="tap_swipe_insert">Tap/Swipe/Insert</string>
@@ -174,6 +174,8 @@
     <string name="sgst_amt">SGST Amount:</string>
     <string name="cgst_amt">CGST Amount:</string>
     <string name="igst_amt">IGST Amount:</string>
+
+    <string name="not_found">Record Not Found</string>
 
     <!-- Transaction Receipt Details Screen -->
     <string name="header">Headers</string>

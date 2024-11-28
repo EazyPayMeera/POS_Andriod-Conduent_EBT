@@ -213,4 +213,8 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     suspend fun isAdmin(userId: String): Boolean {
         return iUserManagementDao.isAdmin(userId) // Returns the count of rows updated
     }
+
+    suspend fun isRRLFound(invoiceNo: String): Boolean {
+        return iTxnDao.isRRLFound(invoiceNo) // Returns the count of rows updated
+    }
 }

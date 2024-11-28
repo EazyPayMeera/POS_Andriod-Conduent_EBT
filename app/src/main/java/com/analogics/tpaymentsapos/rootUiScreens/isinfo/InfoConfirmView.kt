@@ -1,6 +1,8 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.isinfo
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -38,9 +42,11 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransformation
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirmViewModel = hiltViewModel()){
     var isEditable by remember { mutableStateOf(false) }
+    var sharedViewModel= localSharedViewModel.current
     Column {
 
         CommonTopAppBar(
@@ -71,15 +77,15 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                     alignment = Alignment.Center,
                     contentDescription = "",
                 )
-
+                val Amount = if(isEditable) viewModel.rawInput else viewModel.totalAmount.value ?:"0.00"
                 OutlinedTextField(
-                    value = viewModel.rawInput,
+                    value = Amount,
                     onValueChange = {if (isEditable) viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController)},
+                    onDoneAction = {viewModel.onConfirm(Amount,sharedViewModel,navHostController)},
                     visualTransformation = createAmountTransformation(),
                     readOnly = !isEditable,
                     trailingIcon = {Icon(
@@ -158,13 +164,20 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                     firstButtonTitle = stringResource(id = R.string.cancel_btn),
                     firstButtonOnClick = { viewModel.onCancel(navHostController) },
                     secondButtonTitle = stringResource(id = R.string.confirm_btn),
-                    secondButtonOnClick = { viewModel.onConfirm(navHostController) }
+                    secondButtonOnClick = { viewModel.onConfirm(
+                        Amount,
+                        sharedViewModel,
+                        navHostController
+                    ) }
                 )
 
             }
         }
 
+    }
 
+    LaunchedEffect(Unit) {
+        viewModel.getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
     }
 }
 

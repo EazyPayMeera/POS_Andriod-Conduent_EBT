@@ -31,9 +31,11 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     private val _totalAmount = MutableStateFlow<String?>(null)
     val totalAmount: StateFlow<String?> = _totalAmount
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(sharedViewModel: SharedViewModel)
     {
         transAmount.ifEmpty { transAmount = formatAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00) }
+        getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
     }
 
     fun onAmountChange(newValue: String) :String{
@@ -65,23 +67,41 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun calculateTotal(sharedViewModel: SharedViewModel)  {
-        sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
-        if(sharedViewModel.objPosConfig?.isTaxEnabled == true)
-        {
-            sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,sharedViewModel.objPosConfig?.CGSTPercent?:0.00)
-            sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,sharedViewModel.objPosConfig?.SGSTPercent?:0.00)
+    private fun calculateTotal(sharedViewModel: SharedViewModel) {
+        when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+            TxnType.REFUND, TxnType.PREAUTH -> {
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
+            }
+            else -> {
+                // Handle non-REFUND and non-PREAUTH cases
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
+
+                if (sharedViewModel.objPosConfig?.isTaxEnabled == true) {
+                    sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(
+                        sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
+                        sharedViewModel.objPosConfig?.CGSTPercent ?: 0.00
+                    )
+                    sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(
+                        sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
+                        sharedViewModel.objPosConfig?.SGSTPercent ?: 0.00
+                    )
+                }
+
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount =
+                    (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) +
+                            (sharedViewModel.objRootAppPaymentDetail.CGST ?: 0.00) +
+                            (sharedViewModel.objRootAppPaymentDetail.SGST ?: 0.00)
+            }
         }
-        sharedViewModel.objRootAppPaymentDetail.ttlAmount = (sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00) +
-                (sharedViewModel.objRootAppPaymentDetail.CGST?:0.00) +
-                (sharedViewModel.objRootAppPaymentDetail.SGST?:0.00)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getTotalAmountByInvoiceNo(invoiceNo:String) {
+    fun getTotalAmountByInvoiceNo(invoiceNo: String) {
         viewModelScope.launch {
-            val totalAmount = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo).toDoubleOrNull()
-            _totalAmount.value = "%.2f".format(totalAmount)
+            val totalAmountString = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo)
+            val totalAmount = totalAmountString?.toDoubleOrNull() ?: 0.0
+            val formattedAmount = "%.2f".format(totalAmount)
+            _totalAmount.value = formattedAmount
         }
     }
 

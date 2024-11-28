@@ -55,4 +55,7 @@ interface ITxnDao {
     @Query("SELECT InvoiceNo FROM TxnTable WHERE batchId = :batchId ORDER BY InvoiceNo DESC LIMIT 1")
     suspend fun getLastInvoiceNumber(batchId : String?): String?
 
+    @Query("SELECT EXISTS(SELECT 1 FROM TxnTable WHERE InvoiceNo = :invoiceNo)")
+    suspend fun isRRLFound(invoiceNo: String): Boolean
+
 }
