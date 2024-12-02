@@ -173,12 +173,6 @@ fun ApprovedView(navHostController: NavHostController) {
 
         // Outer Surface with background color, padding, and rounded corners
         BackgroundScreen(
-//            color = Color(0xFFF7931E), // Orange color for the outer Surface
-//            modifier = Modifier
-//                .padding(MaterialTheme.dimens.DP_25_CompactMedium) // Padding for the outer Surface
-//                .height(MaterialTheme.dimens.DP_540_CompactMedium) // Adjust the height as per your requirement
-//                .width(MaterialTheme.dimens.DP_410_CompactMedium), // Adjust the width as per your requirement
-//            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium) // Rounded corners for the outer Surface
         ) {
             Column(
                 modifier = Modifier
@@ -211,7 +205,7 @@ fun ApprovedView(navHostController: NavHostController) {
                             .height(MaterialTheme.dimens.DP_33_CompactMedium) // Fixed height
                     )
                 } ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Spacer when Text is not shown
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
                 ImageView(
                     imageId = if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED) R.drawable.approve else R.drawable.decline,
                     size = MaterialTheme.dimens.DP_126_CompactMedium,
@@ -250,7 +244,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 }
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_60_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_50_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
                 ) {

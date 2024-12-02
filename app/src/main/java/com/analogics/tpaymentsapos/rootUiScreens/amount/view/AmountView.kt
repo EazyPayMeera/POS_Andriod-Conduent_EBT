@@ -147,8 +147,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.original_amount) + "", //TODO: Remove hardcoding
-                        stringResource(id = R.string.date)
+                        stringResource(id = R.string.original_amount) + viewModel.totalAmount.value, //TODO: Remove hardcoding
+                        stringResource(id = R.string.date) + sharedViewModel.objRootAppPaymentDetail.dateTime
                     ).forEach {
                         TextView(
                             text = it,
