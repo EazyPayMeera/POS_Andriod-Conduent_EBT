@@ -164,8 +164,8 @@
     <string name="close">Close</string>
     <string name="chip_detected">Chip Detected</string>
     <string name="approved">APPROVED</string>
-    <string name="original_amount">Original Amount :</string>
-    <string name="date">Txn Date:</string>
+    <string name="original_amount">Original Amount : </string>
+    <string name="date">Txn Date : </string>
     <string name="sel_pre_auth">Select the Pre-Auth Type</string>
     <string name="new_auth">New-Authorisation</string>
     <string name="auth_cap">Auth-Capture</string>

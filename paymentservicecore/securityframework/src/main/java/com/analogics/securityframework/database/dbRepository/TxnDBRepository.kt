@@ -165,6 +165,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getTotalAmountByInvoiceNo(invoiceNo)
     }
 
+    suspend fun fetchTimeDateByInvoiceNo(invoiceNo:String): String {
+        return iTxnDao.getTimeDateByInvoiceNo(invoiceNo)
+    }
+
     suspend fun fetchTxnAmountByInvoiceNo(invoiceNo:String): String {
         return iTxnDao.getTxnAmountByInvoiceNo(invoiceNo)
     }
