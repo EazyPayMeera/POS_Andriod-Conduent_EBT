@@ -16,20 +16,16 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
-import com.analogics.tpaymentsapos.rootUiScreens.carddetect.viewmodel.CardDetectViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -39,9 +35,6 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 
 @Composable
 fun CardDetectView(navHostController: NavHostController) {
-    val viewModel: CardDetectViewModel = hiltViewModel()
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     val sharedViewModel = localSharedViewModel.current
 

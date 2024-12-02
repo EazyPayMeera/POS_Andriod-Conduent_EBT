@@ -25,13 +25,5 @@ class CardDetectViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-//    fun insertTxnData(objRootAppPaymentDetails: ObjRootAppPaymentDetails)=viewModelScope.launch{
-//        val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
-//
-//        dbRepository.insertTxn(Gson().fromJson(json, TxnEntity::class.java))
-//        Log.d("password " +
-//                "record insert suc",Gson().fromJson(json, TxnEntity::class.java).toString())
-//
-//    }
 }
 

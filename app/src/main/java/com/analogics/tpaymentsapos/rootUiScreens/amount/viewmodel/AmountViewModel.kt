@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.amount.viewmodel
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +32,15 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     private val _totalAmount = MutableStateFlow<String?>(null)
     val totalAmount: StateFlow<String?> = _totalAmount
 
+    private val _timeDate = MutableStateFlow<String?>(null)
+    val timeDate: StateFlow<String?> = _timeDate
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(sharedViewModel: SharedViewModel)
     {
         transAmount.ifEmpty { transAmount = formatAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00) }
+        getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
+        getTimeDateByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
     }
 
     fun onAmountChange(newValue: String) :String{
@@ -65,23 +72,50 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun calculateTotal(sharedViewModel: SharedViewModel)  {
-        sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
-        if(sharedViewModel.objPosConfig?.isTaxEnabled == true)
-        {
-            sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,sharedViewModel.objPosConfig?.CGSTPercent?:0.00)
-            sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00,sharedViewModel.objPosConfig?.SGSTPercent?:0.00)
+    private fun calculateTotal(sharedViewModel: SharedViewModel) {
+        when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+            TxnType.REFUND, TxnType.PREAUTH -> {
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
+            }
+            else -> {
+                // Handle non-REFUND and non-PREAUTH cases
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
+
+                if (sharedViewModel.objPosConfig?.isTaxEnabled == true) {
+                    sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(
+                        sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
+                        sharedViewModel.objPosConfig?.CGSTPercent ?: 0.00
+                    )
+                    sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(
+                        sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
+                        sharedViewModel.objPosConfig?.SGSTPercent ?: 0.00
+                    )
+                }
+
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount =
+                    (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) +
+                            (sharedViewModel.objRootAppPaymentDetail.CGST ?: 0.00) +
+                            (sharedViewModel.objRootAppPaymentDetail.SGST ?: 0.00)
+            }
         }
-        sharedViewModel.objRootAppPaymentDetail.ttlAmount = (sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00) +
-                (sharedViewModel.objRootAppPaymentDetail.CGST?:0.00) +
-                (sharedViewModel.objRootAppPaymentDetail.SGST?:0.00)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getTotalAmountByInvoiceNo(invoiceNo:String) {
+    fun getTotalAmountByInvoiceNo(invoiceNo: String) {
         viewModelScope.launch {
-            val totalAmount = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo).toDoubleOrNull()
-            _totalAmount.value = "%.2f".format(totalAmount)
+            val totalAmountString = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo)
+            val totalAmount = totalAmountString?.toDoubleOrNull() ?: 0.0
+            val formattedAmount = "%.2f".format(totalAmount)
+            _totalAmount.value = formattedAmount
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTimeDateByInvoiceNo(invoiceNo: String) {
+        viewModelScope.launch {
+            val totalDateTimeString = dbRepository.fetchTimeDateByInvoiceNo(invoiceNo)
+            _timeDate.value = totalDateTimeString
+            Log.d("TimeDateDebug", "Fetched TimeDate: ${_timeDate.value}")
         }
     }
 

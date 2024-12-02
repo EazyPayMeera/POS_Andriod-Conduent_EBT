@@ -165,6 +165,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getTotalAmountByInvoiceNo(invoiceNo)
     }
 
+    suspend fun fetchTimeDateByInvoiceNo(invoiceNo:String): String {
+        return iTxnDao.getTimeDateByInvoiceNo(invoiceNo)
+    }
+
     suspend fun fetchTxnAmountByInvoiceNo(invoiceNo:String): String {
         return iTxnDao.getTxnAmountByInvoiceNo(invoiceNo)
     }
@@ -212,5 +216,9 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
 
     suspend fun isAdmin(userId: String): Boolean {
         return iUserManagementDao.isAdmin(userId) // Returns the count of rows updated
+    }
+
+    suspend fun isRRLFound(invoiceNo: String): Boolean {
+        return iTxnDao.isRRLFound(invoiceNo) // Returns the count of rows updated
     }
 }

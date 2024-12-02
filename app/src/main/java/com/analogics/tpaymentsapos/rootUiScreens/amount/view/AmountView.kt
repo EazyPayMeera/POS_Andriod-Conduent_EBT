@@ -1,6 +1,9 @@
 // AmountView.kt
 package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,11 +44,15 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.createAmountTransf
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
 
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     Column {
 
         // Top App Bar
@@ -88,7 +96,10 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
 
                 OutlinedTextField(
-                    value = viewModel.transAmount,
+                    value = when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+                        TxnType.REFUND, TxnType.VOID -> viewModel.totalAmount.value // Use totalAmount when TxnType is REFUND or VOID
+                        else -> viewModel.transAmount // Use transAmount for other TxnTypes
+                    }.toString(),
                     onValueChange = {viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
@@ -117,7 +128,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                         stringResource(id = R.string.card) + " ************6983",
                         stringResource(id = R.string.auth_code) + " 896356",
                         stringResource(id = R.string.no) + " 100034345364633",
-                        stringResource(id = R.string.inc_no) + " INVC1234",
+                        stringResource(id = R.string.inc_no) + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
                         stringResource(id = R.string.pos_entry) + " Contact"
                     ).forEach {
                         TextView(
@@ -136,8 +147,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.original_amount) + "", //TODO: Remove hardcoding
-                        stringResource(id = R.string.date)
+                        stringResource(id = R.string.original_amount) + " " + viewModel.totalAmount.value, //TODO: Remove hardcoding
+                        stringResource(id = R.string.date) + " " + viewModel.timeDate.value
                     ).forEach {
                         TextView(
                             text = it,

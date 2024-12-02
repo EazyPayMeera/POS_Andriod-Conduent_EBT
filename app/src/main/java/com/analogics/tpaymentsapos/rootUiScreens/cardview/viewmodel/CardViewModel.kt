@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.cardview.viewmodel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -17,14 +18,12 @@ import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TransConfig
 import com.analogics.paymentservicecore.model.error.ApiServiceError
-import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
-import com.analogics.tpaymentcore.model.emv.EmvSdkResult
 import com.analogics.tpaymentcore.utils.TlvUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -109,6 +108,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         sharedViewModel: SharedViewModel,
         navHostController: NavHostController
     ) {
+        Log.d("Start Payment","Inside DashBoard ViewModel")
         viewModelScope.launch {
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
             emvServiceRepository.startPayment(
@@ -121,18 +121,18 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-
+                                Log.d("EMVServiceResponse", "Transaction Status: ${response.status}")
                                 /* Update Transaction Result & Store in DB */
                                 sharedViewModel.objRootAppPaymentDetail.txnStatus = emvStatusToTransStatus(response.status)
                                 updateTransResult(sharedViewModel.objRootAppPaymentDetail)
-
-                                if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
+                                navigateToApprovalScreen(navHostController)
+                                /*if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
                                             response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
                                 ) {
                                     navigateToApprovalScreen(navHostController)
                                 } else {
                                     navigateToDeclinedScreen(navHostController)
-                                }
+                                }*/
                             }
 
                             is EmvServiceResult.CardCheckResult -> {

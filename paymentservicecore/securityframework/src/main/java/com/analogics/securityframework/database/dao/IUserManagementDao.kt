@@ -24,6 +24,7 @@ interface IUserManagementDao {
     @Query("SELECT EXISTS(SELECT 1 FROM UserTable WHERE userId = :userId AND userType = 'ADMIN')")
     suspend fun isAdmin(userId: String): Boolean
 
+
     @Query("SELECT userId FROM UserTable")
     suspend fun getUserList(): List<String?>
 

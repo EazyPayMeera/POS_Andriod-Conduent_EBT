@@ -1,8 +1,10 @@
 package com.analogics.tpaymentsapos.rootUiScreens.login
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -10,19 +12,25 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getAcquirer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class InvoiceViewModel : ViewModel() {
+@HiltViewModel
+class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel() {
     private val TAG = "InvoiceViewModel"
     private val _invoiceno = MutableStateFlow("")
     val invoiceno: StateFlow<String> = _invoiceno
+    private val _isInvoiceFound = MutableStateFlow(false)
+    val isInvoiceFound: StateFlow<Boolean> get() = _isInvoiceFound
 
     private val scannerServiceRepository = ScannerServiceRepository() // Instantiate here
 
@@ -80,6 +88,15 @@ class InvoiceViewModel : ViewModel() {
             Log.d(TAG, "Scanner started successfully in viewModel")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start scanner in viewModel: ${e.message}")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)   // To check for Refund Transaction is Found or not
+    fun isRRLFound(invoiceNo: String) {
+        viewModelScope.launch {
+            // Check if the invoice exists
+            val isFound = dbRepository.isRRLFound(invoiceNo)
+            _isInvoiceFound.value = isFound
         }
     }
 }
