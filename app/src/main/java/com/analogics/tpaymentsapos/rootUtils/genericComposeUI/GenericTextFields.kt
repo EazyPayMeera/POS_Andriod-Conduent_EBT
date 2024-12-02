@@ -930,7 +930,7 @@ fun CircularMenu(
     Box(
         modifier = Modifier
             .size(MaterialTheme.dimens.DP_100_CompactMedium)
-            .padding(0.dp),
+            .padding(MaterialTheme.dimens.DP_0_CompactMedium),
         contentAlignment = Alignment.Center
     ) {
         // Loop through menuOptions and position them around the center

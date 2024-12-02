@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -108,7 +107,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                     )
 
                     TextView(
@@ -118,7 +117,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = 30.dp, start = 34.dp)
+                            .padding(top = MaterialTheme.dimens.DP_33_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
                     )
 
                     TextView(
@@ -128,7 +127,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = 10.dp, start = 34.dp)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
                     )
 
                     TextView(
@@ -138,7 +137,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = 10.dp, start = 34.dp)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
                     )
 
                     TextView(
@@ -148,7 +147,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = 10.dp, start = 34.dp)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
                     )
 
                     TextView(
@@ -158,7 +157,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = 10.dp, start = 34.dp)
+                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
                     )
 
                     Box(

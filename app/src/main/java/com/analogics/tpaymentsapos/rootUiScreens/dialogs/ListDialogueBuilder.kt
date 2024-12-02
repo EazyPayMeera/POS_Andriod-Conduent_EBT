@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,14 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.analogics.securityframework.database.entity.BatchEntity
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import com.analogics.tpaymentsapos.R
 
 class ListDialogueBuilder private constructor() {
 
@@ -89,7 +87,7 @@ class ListDialogueBuilder private constructor() {
                     ) {
                         GenericCard(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(0.dp),
+                            shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_0_CompactMedium),
                             elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
                             backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
                         ) {
@@ -177,7 +175,7 @@ class ListDialogueBuilder private constructor() {
                     ) {
                         GenericCard(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(0.dp),
+                            shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_0_CompactMedium),
                             elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
                             backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
                         ) {

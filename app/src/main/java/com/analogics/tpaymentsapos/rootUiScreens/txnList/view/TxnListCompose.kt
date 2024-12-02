@@ -174,7 +174,7 @@ fun TransactionListScreen(
                     }
                 }
 
-                Divider(color = Color.Gray, thickness = 1.dp)
+                Divider(color = Color.Gray, thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium)
                 // If transaction list is empty
                 if (txnList.isEmpty()) {
                     Text(
@@ -424,7 +424,7 @@ fun TransactionItem(
                             fontFamily = Roboto,
                             fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_17_CompactMedium,
                             modifier = Modifier
-                                .widthIn(max = 100.dp) // Set a max width for the amount text
+                                .widthIn(max = androidx.compose.material3.MaterialTheme.dimens.DP_125_CompactMedium) // Set a max width for the amount text
                                 .padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
