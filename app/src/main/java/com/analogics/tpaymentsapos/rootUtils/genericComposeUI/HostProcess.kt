@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
@@ -40,7 +39,7 @@ fun HostProcessingDialog(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 57.dp)
+            .padding(top = MaterialTheme.dimens.DP_57_CompactMedium)
             .background(MaterialTheme.colorScheme.background) // Optional background
             .clickable { onDismissRequest() }, // Dismiss on outside click if desired
         contentAlignment = Alignment.Center

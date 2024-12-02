@@ -46,7 +46,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -227,7 +226,7 @@ fun TransactionListScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(7.dp), // Add padding as necessary
+                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_7_CompactMedium), // Add padding as necessary
                 contentAlignment = Alignment.BottomCenter
             ) {
                 CircularMenu(
