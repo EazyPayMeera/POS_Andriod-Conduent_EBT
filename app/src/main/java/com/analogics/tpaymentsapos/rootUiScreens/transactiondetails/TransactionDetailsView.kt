@@ -21,10 +21,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.tpaymentsapos.R
-import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUiScreens.login.CircularMenu
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -176,9 +175,6 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                                     }
                                     context.resources.getString((R.string.merchant_recp)) -> {
                                         viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
-                                    }
-                                    context.resources.getString((R.string.e_recp)) -> {
-                                        navHostController.navigate(AppNavigationItems.EnterEmailScreen.route)
                                     }
                                 }
                             }

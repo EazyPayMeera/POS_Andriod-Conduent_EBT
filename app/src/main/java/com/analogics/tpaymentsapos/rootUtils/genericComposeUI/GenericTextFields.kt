@@ -4,6 +4,8 @@ package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,9 +20,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -48,6 +52,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,9 +88,12 @@ import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @Composable
@@ -1070,7 +1078,97 @@ fun OutlinedTextField(
 
 
 
+@Composable
+fun CircularMenu(
+    onMenuOptionClick: (String) -> Unit
+) {
+    val menuOptions = listOf(
+        stringResource(id = R.string.cust_recp),
+        stringResource(id = R.string.merchant_recp),
+    )
+    var expanded by remember { mutableStateOf(false) }
+    val distance = remember { Animatable(0f) }
+    val scope = rememberCoroutineScope()
 
+    val printButtonInitialColor = MaterialTheme.colorScheme.primary
+    var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
+
+    LaunchedEffect(expanded) {
+        distance.animateTo(
+            targetValue = if (expanded) 80f else 0f,
+            animationSpec = tween(durationMillis = 500)
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .size(MaterialTheme.dimens.DP_100_CompactMedium)
+            .padding(0.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        menuOptions.forEachIndexed { index, option ->
+            val angle = when (index) {
+                0 -> -30f // Right
+                1 -> 210f // Left
+                else -> 0f
+            }
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .offset(
+                        x = (distance.value * cos(Math.toRadians(angle.toDouble()))).dp,
+                        y = (distance.value * sin(Math.toRadians(angle.toDouble()))).dp
+                    )
+                    .size(MaterialTheme.dimens.DP_60_CompactMedium)
+                    .shadow(MaterialTheme.dimens.DP_4_CompactMedium, shape = CircleShape)
+                    .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
+                    .clickable {
+                        onMenuOptionClick(option)
+                        expanded = false
+                        scope.launch {
+                            printButtonColor = printButtonInitialColor
+                        }
+                    }
+            ) {
+                androidx.compose.material.Text(
+                    text = option,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    fontSize = MaterialTheme.dimens.SP_13_CompactMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(MaterialTheme.dimens.DP_60_CompactMedium)
+                .shadow(
+                    MaterialTheme.dimens.DP_4_CompactMedium,
+                    shape = CircleShape
+                )
+                .background(printButtonColor, shape = CircleShape)
+                .clickable {
+                    scope.launch {
+                        printButtonColor = if (expanded) {
+                            Color.Gray
+                        } else {
+                            printButtonInitialColor
+                        }
+                    }
+                    expanded = !expanded
+                }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.print_logo), // Replace with your image resource
+                contentDescription = stringResource(id = R.string.print), // Provide a content description for accessibility
+                modifier = Modifier.size(MaterialTheme.dimens.DP_60_CompactMedium) // Adjust size as needed
+            )
+        }
+    }
+}
 
 
 
