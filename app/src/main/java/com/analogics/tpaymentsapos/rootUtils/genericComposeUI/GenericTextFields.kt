@@ -241,8 +241,8 @@ fun LoginButton(
             onClick = onClick,
             modifier = Modifier
                 .align(if (isKeyboardVisible.value) Alignment.TopCenter else Alignment.BottomCenter) // Align based on keyboard visibility
-                .width(248.dp)
-                .height(50.dp),
+                .width(MaterialTheme.dimens.DP_248_CompactMedium)
+                .height(MaterialTheme.dimens.DP_50_CompactMedium),
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
             colors = buttonColors(
                 contentColor = MaterialTheme.colorScheme.tertiary,
@@ -568,177 +568,6 @@ fun FooterButtons(
     }
 }
 
-/*
-@Composable
-fun FooterButtons(
-    firstButtonTitle: String?=null,
-    firstButtonOnClick: (() -> Unit)?={},
-    secondButtonTitle: String?=null,
-    secondButtonOnClick: (() -> Unit)?={},
-    alignment: Alignment = Alignment.BottomCenter // Default alignment
-) {
-    // State to track keyboard visibility
-    val context = LocalContext.current
-    val isKeyboardVisible = remember { mutableStateOf(false) }
-
-    fun updateKeyboardState(view: View) {
-        val isKeyboardOpen =
-            ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) != false
-        isKeyboardVisible.value = isKeyboardOpen
-    }
-    // Get the current view
-    val rootView = LocalView.current
-    val view = LocalView.current
-    // Use DisposableEffect to set up a listener for layout changes
-    DisposableEffect(view) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            updateKeyboardState(view)
-        }
-        rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
-
-        onDispose {
-            rootView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    LaunchedEffect(view) {
-        updateKeyboardState(view)
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed
-    ) {
-        Row(
-            modifier = Modifier
-                .align(if (isKeyboardVisible.value) Alignment.TopCenter else alignment)
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            var isFirstButtonPressed by remember { mutableStateOf(false) }
-            var isSecondButtonPressed by remember { mutableStateOf(false) }
-
-            // First Button
-            firstButtonTitle?.let {
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .clickable {
-                            isFirstButtonPressed = true
-                            firstButtonOnClick?.invoke()
-                        }
-                        .padding(MaterialTheme.dimens.DP_20_CompactMedium) // Increase padding to enlarge touchable area
-                        .shadow(
-                            MaterialTheme.dimens.DP_4_CompactMedium,
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        )
-                        .background(
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        )
-                ) {
-                    Button(
-                        onClick = {
-                            isFirstButtonPressed = true
-                            firstButtonOnClick?.invoke()
-                        },
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                        modifier = Modifier
-                            .width(MaterialTheme.dimens.DP_145_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_48_CompactMedium)
-                            .border(
-                                width = if (isFirstButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else MaterialTheme.dimens.DP_0_CompactMedium,
-                                color = if (isFirstButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                            ),
-                        colors = buttonColors(
-                            contentColor = MaterialTheme.colorScheme.tertiary,
-                            containerColor = colorResource(R.color.grey)
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                            pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
-                            hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                            focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                        )
-                    ) {
-                        TextView(
-                            text = firstButtonTitle.uppercase(),
-                            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            1,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-
-            // Second Button
-            secondButtonTitle?.let {
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier
-                        .width(MaterialTheme.dimens.DP_126_CompactMedium)
-                        .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                        .clickable {
-                            isSecondButtonPressed = true
-                            secondButtonOnClick?.invoke()
-                        }
-                        .padding(MaterialTheme.dimens.DP_20_CompactMedium) // Increase padding to enlarge touchable area
-                        .shadow(
-                            MaterialTheme.dimens.DP_4_CompactMedium,
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        )
-                        .background(
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                        )
-                ) {
-                    Button(
-                        onClick = {
-                            isSecondButtonPressed = true
-                            secondButtonOnClick?.invoke()
-                        },
-                        modifier = Modifier
-                            .width(MaterialTheme.dimens.DP_145_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_48_CompactMedium)
-                            .border(
-                                width = if (isSecondButtonPressed) MaterialTheme.dimens.DP_2_CompactMedium else MaterialTheme.dimens.DP_0_CompactMedium,
-                                color = if (isSecondButtonPressed) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium)
-                            ),
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
-                        colors = buttonColors(
-                            contentColor = MaterialTheme.colorScheme.tertiary,
-                            containerColor = colorResource(R.color.grey)
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
-                            pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
-                            hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
-                            focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                        )
-                    ) {
-                        TextView(
-                            text = secondButtonTitle.uppercase(),
-                            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            1,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-*/
 
 @Composable
 fun ScannerButton(
@@ -1077,15 +906,12 @@ fun OutlinedTextField(
 }
 
 
-
 @Composable
 fun CircularMenu(
-    onMenuOptionClick: (String) -> Unit
+    menuOptions: List<String>, // Accept the list of menu options
+    onMenuOptionClick: (String) -> Unit,
+    onPrintClick: () -> Unit // Add a new parameter for the print click action
 ) {
-    val menuOptions = listOf(
-        stringResource(id = R.string.cust_recp),
-        stringResource(id = R.string.merchant_recp),
-    )
     var expanded by remember { mutableStateOf(false) }
     val distance = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -1093,6 +919,7 @@ fun CircularMenu(
     val printButtonInitialColor = MaterialTheme.colorScheme.primary
     var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
 
+    // Animation effect when expanded
     LaunchedEffect(expanded) {
         distance.animateTo(
             targetValue = if (expanded) 80f else 0f,
@@ -1106,6 +933,7 @@ fun CircularMenu(
             .padding(0.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Loop through menuOptions and position them around the center
         menuOptions.forEachIndexed { index, option ->
             val angle = when (index) {
                 0 -> -30f // Right
@@ -1141,6 +969,7 @@ fun CircularMenu(
             }
         }
 
+        // Main print button
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -1151,6 +980,7 @@ fun CircularMenu(
                 )
                 .background(printButtonColor, shape = CircleShape)
                 .clickable {
+                    onPrintClick()
                     scope.launch {
                         printButtonColor = if (expanded) {
                             Color.Gray
@@ -1169,6 +999,7 @@ fun CircularMenu(
         }
     }
 }
+
 
 
 

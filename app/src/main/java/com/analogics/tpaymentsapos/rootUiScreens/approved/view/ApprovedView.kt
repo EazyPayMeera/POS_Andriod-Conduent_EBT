@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.approved.view
 
 
 import android.os.Build
@@ -110,6 +110,7 @@ fun ApprovedView(navHostController: NavHostController) {
                     contentAlignment = Alignment.Center
                 ) {
                     CircularMenu(
+                        menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
@@ -125,7 +126,8 @@ fun ApprovedView(navHostController: NavHostController) {
                                 }
 
                             }
-                        }
+                        },
+                        onPrintClick = {}
                     )
                 }
                 Box(

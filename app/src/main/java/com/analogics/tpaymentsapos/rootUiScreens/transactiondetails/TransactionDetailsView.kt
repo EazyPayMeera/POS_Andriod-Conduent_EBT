@@ -168,6 +168,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         contentAlignment = Alignment.Center
                     ) {
                         CircularMenu(
+                            menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
                             onMenuOptionClick = { option ->
                                 when (option) {
                                     context.resources.getString((R.string.cust_recp)) -> {
@@ -177,7 +178,8 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                                         viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                     }
                                 }
-                            }
+                            },
+                            onPrintClick = {}
                         )
                     }
 

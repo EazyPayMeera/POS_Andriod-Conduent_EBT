@@ -3,10 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.txnList.view
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,13 +14,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
@@ -41,18 +36,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,6 +60,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.DateTimePickerDialog
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.ListDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel.TxnViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
@@ -75,10 +68,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import kotlin.math.cos
-import kotlin.math.sin
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -241,6 +231,7 @@ fun TransactionListScreen(
                 contentAlignment = Alignment.BottomCenter
             ) {
                 CircularMenu(
+                    menuOptions = listOf(context.resources.getString((R.string.summary)), context.resources.getString((R.string.detail))),
                     onMenuOptionClick = { selectedOption ->
                         when(selectedOption)
                         {
@@ -592,102 +583,3 @@ fun HeaderSection(
     }
 }
 
-@Composable
-fun CircularMenu(
-    onMenuOptionClick: (String) -> Unit,
-    onPrintClick: () -> Unit // Add a new parameter for the print click action
-) {
-    val menuOptions = listOf(
-        stringResource(id = R.string.summary),
-        stringResource(id = R.string.detail)
-    )
-    var expanded by remember { mutableStateOf(false) }
-    val distance = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
-
-    val printButtonInitialColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
-    var printButtonColor by remember { mutableStateOf(printButtonInitialColor) }
-
-    LaunchedEffect(expanded) {
-        distance.animateTo(
-            targetValue = if (expanded) 80f else 0f,
-            animationSpec = tween(durationMillis = 500)
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .size(androidx.compose.material3.MaterialTheme.dimens.DP_100_CompactMedium)
-            .padding(0.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        menuOptions.forEachIndexed { index, option ->
-            val angle = when (index) {
-                0 -> -30f // Right
-                1 -> 210f // Left
-                else -> 0f
-            }
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .offset(
-                        x = (distance.value * cos(Math.toRadians(angle.toDouble()))).dp,
-                        y = (distance.value * sin(Math.toRadians(angle.toDouble()))).dp
-                    )
-                    .size(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
-                    .shadow(
-                        androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium,
-                        shape = CircleShape
-                    )
-                    .background(
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                        shape = CircleShape
-                    )
-                    .clickable {
-                        onMenuOptionClick(option)
-                        expanded = false
-                        scope.launch {
-                            printButtonColor = printButtonInitialColor
-                        }
-                    }
-            ) {
-                Text(
-                    text = option,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.tertiary,
-                    fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_13_CompactMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
-                .shadow(
-                    androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium,
-                    shape = CircleShape
-                )
-                .background(printButtonColor, shape = CircleShape)
-                .clickable {
-                    onPrintClick()
-                    scope.launch {
-                        printButtonColor = if (expanded) {
-                            Color.Gray
-                        } else {
-                            printButtonInitialColor
-                        }
-                    }
-                    expanded = !expanded
-                }
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.print_logo), // Replace with your image resource
-                contentDescription = stringResource(id = R.string.print), // Provide a content description for accessibility
-                modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
-            )
-        }
-    }
-}

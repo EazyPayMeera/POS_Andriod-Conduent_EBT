@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.confirmshift.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
