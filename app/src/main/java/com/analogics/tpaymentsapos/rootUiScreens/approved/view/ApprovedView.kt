@@ -52,7 +52,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -191,7 +190,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
 
                 TextView(
-                    text = stringResource(id = R.string.approved),
+                    text = sharedViewModel.objRootAppPaymentDetail.txnStatus.toString(),
                     fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -212,9 +211,9 @@ fun ApprovedView(navHostController: NavHostController) {
                             .height(MaterialTheme.dimens.DP_33_CompactMedium) // Fixed height
                     )
                 } ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Spacer when Text is not shown
-
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                 ImageView(
-                    imageId = R.drawable.approve,
+                    imageId = if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED) R.drawable.approve else R.drawable.decline,
                     size = MaterialTheme.dimens.DP_126_CompactMedium,
                     alignment = Alignment.Center,
                     modifier = Modifier
@@ -251,7 +250,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 }
                 Box(
                     modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_70_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_60_CompactMedium)
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
                 ) {

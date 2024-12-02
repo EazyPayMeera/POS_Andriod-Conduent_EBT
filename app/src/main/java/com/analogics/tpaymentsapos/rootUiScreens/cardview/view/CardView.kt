@@ -30,7 +30,6 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,7 +56,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.FooterButtons
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getEmvMsgIdString
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -74,9 +72,8 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
-    val openBatchId = viewModel.openBatch.collectAsState().value
-    val lastBatchId = viewModel.lastBatch.collectAsState().value
-    val isAnyBatchPresent = viewModel.isBatchPresent.collectAsState().value
+
+
     BackHandler(enabled = true) {
         // Do nothing or handle custom behavior here
     }
@@ -267,8 +264,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                         strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
                                     )
                                 }
-
-
                             }
                         }
 
