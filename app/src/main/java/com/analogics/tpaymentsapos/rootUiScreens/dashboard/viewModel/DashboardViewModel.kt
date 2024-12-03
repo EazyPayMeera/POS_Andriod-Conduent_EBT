@@ -351,4 +351,9 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
             }
         }
     }
+
+    fun dummyEncryptData()
+    {
+        emvServiceRepository.dummyEncryptedData()
+    }
 }

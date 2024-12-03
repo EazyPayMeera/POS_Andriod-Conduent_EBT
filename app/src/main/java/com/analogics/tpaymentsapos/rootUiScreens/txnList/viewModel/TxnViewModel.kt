@@ -31,6 +31,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import getPrinterStatus
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,6 +115,8 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun fetchCurrentBatchTrans() {
         viewModelScope.launch {
+            CustomDialogBuilder.composeProgressDialog(show = true)
+            delay(1000)
             dbRepository.fetchBatchList()?.takeIf { it.isNotEmpty() }?.let {
                 delay(400)
                 _batchList.value = it

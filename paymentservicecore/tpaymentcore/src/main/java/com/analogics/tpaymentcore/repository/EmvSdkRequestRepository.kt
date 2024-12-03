@@ -1,6 +1,7 @@
 package com.analogics.tpaymentcore.repository
 
 import android.content.Context
+import android.util.Log
 import com.analogics.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.AidConfig
@@ -39,6 +40,15 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
             EmvWrapperRepository.abortPayment()
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
+        }
+    }
+
+    fun dummyEncryptedData()
+    {
+        try {
+            EmvWrapperRepository.dummyEncryptedData()
+        } catch (exception: Exception) {
+            Log.e("ENCRYPTION",exception.message.toString())
         }
     }
 

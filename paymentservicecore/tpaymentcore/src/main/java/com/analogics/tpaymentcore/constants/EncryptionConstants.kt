@@ -23,9 +23,22 @@ object EncryptionConstants {
     const val DUKPT_KEY_SET_PIN = 3
     const val DUKPT_KEY_SET_MAC = 4
 
+    /* DUKPT Encryption Type */
+    const val DUKPT_ENCRYPT_TYPE_AES = 0x00
+    const val DUKPT_ENCRYPT_TYPE_3DES = 0x40
+
+    /* DUKPT Encryption Algorithm */
+    const val DUKPT_MODE_ENCRYPT_ECB = 0x00
+    const val DUKPT_MODE_ENCRYPT_CBC = 0x01
+    const val DUKPT_MODE_DECRYPT_ECB = 0x02
+    const val DUKPT_MODE_DECRYPT_CBC = 0x03
+
     /* KSN */
     const val DUKPT_KSN_MIN_LENGTH = 16
     const val DUKPT_KSN_MAX_LENGTH = 20
+
+    /* Init Vector */
+    const val TDES_IV_LENGTH = 8
 
     /* DES Mode */
     const val DES_MODE_ENCRYPT = 0
