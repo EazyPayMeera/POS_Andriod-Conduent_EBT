@@ -22,47 +22,6 @@ class ReceiptBuilder {
         Big
     }
 
-    // Function to build a receipt
-    fun createReceipt(context: Context, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): Receipt {
-        return Receipt.Builder()
-            .apply {
-
-                Log.d("PaymentDetail hello", "Batch Id: ${sharedViewModel.objRootAppPaymentDetail.batchId}")
-                addField(sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT,FontSize.Small)
-                addField("", "", "", Alignment.CENTER,FontSize.Small)
-                addField("", "", "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT,FontSize.Small)
-                addField(context.getString(R.string.receipt_merchant_id), paymentDetails?.merchantId, "", Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_terminal_id), paymentDetails?.terminalId,"", Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE,FontSize.Small)
-                if(sharedViewModel.objPosConfig?.isDemoMode == true)
-                {
-                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                    addField("*** Training Mode ***","" , "", Alignment.CENTER,FontSize.Big)
-                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                }
-                addField(paymentDetails?.txnType,"" , "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_card_no), paymentDetails?.cardMaskedPan, "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_ref_no), "", "56789", Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_subtotal), "", (paymentDetails?.txnAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_tip), "", (paymentDetails?.tip?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_total), "", (paymentDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT,FontSize.Small)
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE,FontSize.Small)
-                addField("CARDHOLDER NAME", "", "", Alignment.CENTER,FontSize.Small)
-                addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER,FontSize.Small)
-                addField("******MERCHANT COPY******", "", "", Alignment.CENTER,FontSize.Small)
-
-            }
-            .build()
-    }
-
     fun createSummaryReport(context: Context, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): SummaryReport {
         val reportBuilder = SummaryReport.Builder()
 
@@ -92,6 +51,54 @@ class ReceiptBuilder {
 
         // Finally, build the report
         return reportBuilder.build()
+    }
+
+    // Function to build a receipt
+    fun createReceipt(context: Context,customer: Boolean = false, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): Receipt {
+        return Receipt.Builder()
+            .apply {
+                Log.d("CustomerStatus", "Customer value: $customer")
+                Log.d("PaymentDetails", "Terminal ID: ${paymentDetails?.terminalId}")
+                if(customer) {
+                    addField(
+                        sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT, FontSize.Small)
+                }
+                addField("", "", "", Alignment.CENTER,FontSize.Small)
+                addField("", "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT,FontSize.Small)
+                addField(context.getString(R.string.receipt_merchant_id),paymentDetails?.merchantId,"", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_terminal_id),paymentDetails?.merchantId,"", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE,FontSize.Small)
+                if(sharedViewModel.objPosConfig?.isDemoMode == true)
+                {
+                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                    addField("*** Training Mode ***","" , "", Alignment.CENTER,FontSize.Big)
+                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                }
+                addField(paymentDetails?.txnType,"" , "", Alignment.CENTER,FontSize.Big)
+                addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE,FontSize.Big)
+                addField(context.getString(R.string.receipt_card_no), paymentDetails?.cardMaskedPan, "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_ref_no), "", "56789", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_subtotal), "", (paymentDetails?.txnAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
+                addField(context.getString(R.string.receipt_tip), "", (paymentDetails?.tip?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                addField(context.getString(R.string.receipt_total), "", (paymentDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                if(!customer) {
+                    addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT, FontSize.Small)
+                }
+                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
+                if(customer) {
+                    addField("CARDHOLDER NAME", "", "", Alignment.CENTER, FontSize.Small)
+                    addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER, FontSize.Small)
+                    addField("******MERCHANT COPY******", "", "", Alignment.CENTER, FontSize.Small)
+                }
+
+            }
+            .build()
     }
 
 

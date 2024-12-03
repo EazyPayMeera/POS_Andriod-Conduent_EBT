@@ -330,7 +330,7 @@ fun DashboardContentSurface(
                     onMenuOptionClick = { option ->
                         when (option) {
                             context.resources.getString((R.string.cust_recp)) -> {
-                                viewModel.fetchLastTransactions(sharedViewModel,context)
+                                viewModel.fetchLastTransactions(sharedViewModel,context,true)
                                 isDialogVisible = true
                             }
                             context.resources.getString((R.string.merchant_recp)) -> {

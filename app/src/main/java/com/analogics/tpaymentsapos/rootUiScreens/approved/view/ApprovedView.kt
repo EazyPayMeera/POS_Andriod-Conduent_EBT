@@ -117,12 +117,7 @@ fun ApprovedView(navHostController: NavHostController) {
                                     viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
-                                    viewModel.printReceipt(
-                                        R.drawable.master_mono,
-                                        sharedViewModel,
-                                        context,
-                                        objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
-                                    )
+                                    viewModel.printReceipt(R.drawable.master_mono, sharedViewModel, context, objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail)
                                 }
 
                             }

@@ -65,7 +65,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(logoResId,sharedViewModel,context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+                                initPrinter(logoResId,sharedViewModel,context,customer,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -94,6 +94,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         logoResId: Int,
         sharedViewModel: SharedViewModel,
         context: Context,
+        customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     )
@@ -114,7 +115,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
                     PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
                 PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)).initPrinter(context, iPrinterResultProviderListener)
                 addLogo(context,objRootAppPaymentDetail,iPrinterResultProviderListener,logoResId)
-                addReceiptDetails(sharedViewModel,context,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
+                addReceiptDetails(sharedViewModel,context,customer,objRootAppPaymentDetail,object : IPrinterResultProviderListener {
                     override fun onSuccess(result: Any?) {
                         if(result == true)
                         {
@@ -134,7 +135,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
 
     }
 
-    suspend fun addReceiptDetails(sharedViewModel: SharedViewModel, context: Context, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
+    suspend fun addReceiptDetails(sharedViewModel: SharedViewModel, context: Context,customer: Boolean = false, objRootAppPaymentDetail: ObjRootAppPaymentDetails, iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
 
@@ -146,7 +147,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
             )
 
             // Generate the receipt
-            val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
+            val receipt = receiptBuilder.createReceipt(context,customer,sharedViewModel,paymentServiceTxnDetails)
             val labelList: List<String> = receipt.fields.map { it.label.toString() }
             val descriptionList: List<String> = receipt.fields.map { it.description.toString() }
             val aligment: List<String> = receipt.fields.map { it.alignment.toString() }
