@@ -251,8 +251,8 @@
     <!-- Receipt Builder -->
     <string name="receipt_header">ग्लोबल पेमेंट्स</string>
     <string name="receipt_address">स्टोर का पता:</string>
-    <string name="receipt_merchant_id">MID</string>
-    <string name="receipt_terminal_id">TID</string>
+    <string name="receipt_merchant_id">MID:</string>
+    <string name="receipt_terminal_id">TID:</string>
     <string name="receipt_gray_line">---------------------------------</string>
     <string name="receipt_card_type">कार्ड प्रकार:</string>
     <string name="receipt_card_no">कार्ड संख्या:</string>

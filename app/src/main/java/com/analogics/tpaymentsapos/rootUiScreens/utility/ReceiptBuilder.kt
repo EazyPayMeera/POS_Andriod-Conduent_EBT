@@ -67,8 +67,8 @@ class ReceiptBuilder {
                 addField("", "", "", Alignment.CENTER,FontSize.Small)
                 addField("", "", "", Alignment.CENTER,FontSize.Small)
                 addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT,FontSize.Small)
-                addField(context.getString(R.string.receipt_merchant_id),paymentDetails?.merchantId,"", Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_terminal_id),paymentDetails?.merchantId,"", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_merchant_id) + paymentDetails?.merchantId,"","", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_terminal_id) + paymentDetails?.terminalId,"","", Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE,FontSize.Small)
                 if(sharedViewModel.objPosConfig?.isDemoMode == true)
                 {
