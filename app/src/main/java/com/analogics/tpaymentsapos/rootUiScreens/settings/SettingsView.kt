@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.settings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

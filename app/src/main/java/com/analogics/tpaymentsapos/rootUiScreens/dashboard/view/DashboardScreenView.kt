@@ -326,10 +326,11 @@ fun DashboardContentSurface(
                 contentAlignment = Alignment.Center
             ) {
                 CircularMenu(
+                    menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
                     onMenuOptionClick = { option ->
                         when (option) {
                             context.resources.getString((R.string.cust_recp)) -> {
-                                viewModel.fetchLastTransactions(sharedViewModel,context)
+                                viewModel.fetchLastTransactions(sharedViewModel,context,true)
                                 isDialogVisible = true
                             }
                             context.resources.getString((R.string.merchant_recp)) -> {
@@ -337,7 +338,8 @@ fun DashboardContentSurface(
                                 isDialogVisible = true
                             }
                         }
-                    }
+                    },
+                    onPrintClick = {}
                 )
             }
             CustomDialogBuilder.ShowComposed()

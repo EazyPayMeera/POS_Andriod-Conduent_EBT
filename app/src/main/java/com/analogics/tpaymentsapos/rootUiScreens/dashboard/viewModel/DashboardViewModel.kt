@@ -100,7 +100,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         // If the printer status is OK, call initPrinter
                         launch { // Start a new coroutine to call initPrinter
                             try {
-                                initPrinter(logoResId,sharedViewModel,context,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+                                initPrinter(logoResId,sharedViewModel,context,customer,objRootAppPaymentDetail, object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -130,6 +130,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         logoResId: Int,
         sharedViewModel: SharedViewModel,
         context: Context,
+        customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
         iPrinterResultProviderListener: IPrinterResultProviderListener
     ) {
@@ -154,7 +155,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     val requestDetails = PaymentServiceUtils.objectToJsonString(it)
                     PrinterServiceRepository(PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails))
                         .initPrinter(context, iPrinterResultProviderListener)
-                    addReceiptDetails(context,sharedViewModel,object : IPrinterResultProviderListener {
+                    addReceiptDetails(context,customer,sharedViewModel,object : IPrinterResultProviderListener {
                         override fun onSuccess(result: Any?) {
                             if(result == true)
                             {
@@ -175,7 +176,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     }
 
 
-    suspend fun addReceiptDetails(context: Context,sharedViewModel: SharedViewModel,iPrinterResultProviderListener: IPrinterResultProviderListener) {
+    suspend fun addReceiptDetails(context: Context,customer: Boolean = false,sharedViewModel: SharedViewModel,iPrinterResultProviderListener: IPrinterResultProviderListener) {
         // Create an instance of ReceiptBuilder
         val receiptBuilder = ReceiptBuilder()
 
@@ -193,7 +194,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 )
                 Log.d("YourTag", "Latest: $paymentServiceTxnDetails")
                 // Generate the receipt
-                val receipt = receiptBuilder.createReceipt(context,sharedViewModel,paymentServiceTxnDetails)
+                val receipt = receiptBuilder.createReceipt(context,customer,sharedViewModel,paymentServiceTxnDetails)
                 val labelList: List<String> = receipt.fields.map { it.label.toString() }
                 val descriptionList: List<String> = receipt.fields.map { it.description.toString() }
                 val aligment: List<String> = receipt.fields.map { it.alignment.toString() }
@@ -279,7 +280,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         return gson.fromJson(json, txnDataListType)
     }
 
-    fun fetchLastTransactions(sharedViewModel: SharedViewModel, context: Context) {
+    fun fetchLastTransactions(sharedViewModel: SharedViewModel, context: Context,customer: Boolean = false) {
         Log.d("Print Last Receipt", "Last Receipt Clicked")
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -290,7 +291,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 val txnDataList = convertTxnEntityListToTxnDataList(listOf(latestTransaction))
                 withContext(Dispatchers.Main) {
                     _lastTransactionList.value = txnDataList
-                    printReceipt(0, sharedViewModel, context, true, sharedViewModel.objRootAppPaymentDetail)
+                    printReceipt(0, sharedViewModel, context, customer, sharedViewModel.objRootAppPaymentDetail)
                 }
             } else {
                 withContext(Dispatchers.Main) {

@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.rootScreen.component
+package com.analogics.tpaymentsapos.rootUiScreens.forgetpassword.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

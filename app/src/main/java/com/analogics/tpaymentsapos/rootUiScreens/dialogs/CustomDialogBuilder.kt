@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -200,7 +199,7 @@ class CustomDialogBuilder private constructor() {
                                                         R.color.grey
                                                     )
                                                 ),
-                                                shape = RoundedCornerShape(12.dp),
+                                                shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_13_CompactMedium),
                                                 modifier = Modifier
                                                     .weight(1f) // Use weight to make button take equal space
                                                     .height(androidx.compose.material3.MaterialTheme.dimens.DP_46_CompactMedium) // Set the desired height here

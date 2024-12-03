@@ -272,7 +272,7 @@
     <string name="receipt_aid">AID:</string>
     <string name="receipt_tc">TC:</string>
     <string name="receipt_total">कुल:</string>
-    <string name="receipt_txn_status">लेन-देन की स्थिति:</string>
+    <string name="receipt_txn_status">स्थिति:</string>
     <string name="receipt_payment">भुगतान:</string>
     <string name="receipt_authorization">अधिकारिता:</string>
     <string name="receipt_invoice_no">इनवॉइस:</string>

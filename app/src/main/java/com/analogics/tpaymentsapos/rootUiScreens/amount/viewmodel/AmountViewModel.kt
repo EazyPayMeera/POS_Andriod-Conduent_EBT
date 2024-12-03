@@ -76,6 +76,7 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         when (sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.REFUND, TxnType.PREAUTH -> {
                 sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
             }
             else -> {
                 // Handle non-REFUND and non-PREAUTH cases
