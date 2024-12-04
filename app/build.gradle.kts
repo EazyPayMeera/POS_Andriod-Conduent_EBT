@@ -92,7 +92,6 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
-
     // Accompanist libraries (latest versions)
     implementation(libs.accompanist.pager)
     implementation("com.google.accompanist:accompanist-pager:0.28.0")

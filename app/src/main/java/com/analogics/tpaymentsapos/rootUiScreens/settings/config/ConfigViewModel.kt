@@ -98,9 +98,9 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isInactivity.value = value
     }
 
-    fun onBatchIdChange(value: Boolean) {
+    /*fun onBatchIdChange(value: Boolean) {
         isBatchId.value = value
-    }
+    }*/
 
     fun onInactivityTimeoutChange(timeout: Int,sharedViewModel: SharedViewModel) {
         sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()

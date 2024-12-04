@@ -237,6 +237,15 @@
     <string name="detail">विवरण</string>
     <string name="lbl_batch_id">बैच #</string>
 
+    <!-- BatchId Screen -->
+    <string name="batchScreen_BatchIdNo">बैच आईडी दर्ज करें</string>
+    <string name="batchScreen_BatchId">बैच संख्या</string>
+
+    <!-- InactivityTimeout Screen -->
+    <string name="inactivity_enter_timeout">समय सीमा दर्ज करें</string>
+    <string name="inactivity_timeout_screen">निष्क्रियता समय सीमा (सेकंड)</string>
+
+
     <!-- Success Screen -->
     <string name="payment">भुगतान</string>
     <string name="successful">सफल</string>
