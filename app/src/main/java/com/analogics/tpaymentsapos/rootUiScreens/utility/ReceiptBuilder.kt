@@ -1,7 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.utility
 
 import android.content.Context
-import android.util.Log
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -33,7 +32,7 @@ class ReceiptBuilder {
         // Conditionally add the "Training Mode" field if in demo mode
         if (sharedViewModel.objPosConfig?.isDemoMode == true) {
             reportBuilder.addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
-            reportBuilder.addSummaryField("", "*** Training Mode ***", "",FontSize.Big)
+            reportBuilder.addSummaryField("", context.getString(R.string.receipt_train_mode), "",FontSize.Big)
             reportBuilder.addSummaryField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
         }
 
@@ -57,8 +56,6 @@ class ReceiptBuilder {
     fun createReceipt(context: Context,customer: Boolean = false, sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?): Receipt {
         return Receipt.Builder()
             .apply {
-                Log.d("CustomerStatus", "Customer value: $customer")
-                Log.d("PaymentDetails", "Terminal ID: ${paymentDetails?.terminalId}")
                 if(customer) {
                     addField(
                         sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER, FontSize.Small)
@@ -73,7 +70,7 @@ class ReceiptBuilder {
                 if(sharedViewModel.objPosConfig?.isDemoMode == true)
                 {
                     addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                    addField("*** Training Mode ***","" , "", Alignment.CENTER,FontSize.Big)
+                    addField(context.getString(R.string.receipt_train_mode),"" , "", Alignment.CENTER,FontSize.Big)
                     addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                 }
                 addField(paymentDetails?.txnType,"" , "", Alignment.CENTER,FontSize.Big)
@@ -92,9 +89,13 @@ class ReceiptBuilder {
                 }
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                 if(customer) {
-                    addField("CARDHOLDER NAME", "", "", Alignment.CENTER, FontSize.Small)
-                    addField(" TRANSACTION ACCEPTED & LIABILITY" + " OF CARDHOLDER TO PAY IS" + " CONFIRMED", "", "", Alignment.CENTER, FontSize.Small)
-                    addField("******MERCHANT COPY******", "", "", Alignment.CENTER, FontSize.Small)
+                    addField(context.getString(R.string.receipt_card_holder_name), "", "", Alignment.CENTER, FontSize.Small)
+                    addField(context.getString(R.string.receipt_note), "", "", Alignment.CENTER, FontSize.Small)
+                    addField(context.getString(R.string.receipt_custom_copy), "", "", Alignment.CENTER, FontSize.Small)
+                }
+                else
+                {
+                    addField(context.getString(R.string.receipt_merch_copy), "", "", Alignment.CENTER, FontSize.Small)
                 }
 
             }
@@ -184,7 +185,7 @@ class ReceiptBuilder {
             if(sharedViewModel.objPosConfig?.isDemoMode == true)
             {
                 reportBuilder.addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
-                reportBuilder.addDetailField("", "*** Training Mode ***", "",FontSize.Big)
+                reportBuilder.addDetailField("", context.getString(R.string.receipt_train_mode), "",FontSize.Big)
                 reportBuilder.addDetailField(context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line), context.getString(R.string.summary_dot_line),FontSize.Small)
             }
         reportBuilder

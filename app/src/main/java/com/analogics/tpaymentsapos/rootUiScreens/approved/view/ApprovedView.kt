@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.approved.view
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,10 @@ fun ApprovedView(navHostController: NavHostController) {
     val sharedViewModel = localSharedViewModel.current
 
     //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+
+
+    Log.d("PaymentDetailsDebug", "Transaction Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
+    Log.d("PaymentDetailsDebug", "Total Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
 
     Column {
         CommonTopAppBar(
