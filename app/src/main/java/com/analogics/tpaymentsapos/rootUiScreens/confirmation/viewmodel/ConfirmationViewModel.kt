@@ -94,6 +94,7 @@ class ConfirmationViewModel @Inject constructor(private val dbRepository: TxnDBR
 
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = totalAmount.doubleValue
+        sharedViewModel.objRootAppPaymentDetail.tip = tipAmount.doubleValue
         when(sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.PURCHASE,TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.route)

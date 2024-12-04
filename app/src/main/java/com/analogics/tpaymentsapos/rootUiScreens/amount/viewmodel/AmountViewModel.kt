@@ -11,10 +11,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,13 +52,16 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         return transformToAmountDouble(newValue).toString()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         calculateTotal(sharedViewModel)
         when(sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.REFUND,TxnType.PREAUTH -> {
                 navHostController.navigate(AppNavigationItems.CardScreen.route)
             }
-            TxnType.VOID,TxnType.AUTHCAP -> {
+            TxnType.VOID -> {
+                Log.d("Database","Go to update when void")
+                updateTransResult(sharedViewModel.objRootAppPaymentDetail)
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
             }
             else -> {
@@ -74,9 +81,14 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel) {
         when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-            TxnType.REFUND, TxnType.PREAUTH -> {
+            TxnType.REFUND -> {
                 sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(_totalAmount.value.toString())
+            }
+            TxnType.VOID -> {
+                sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(_totalAmount.value.toString())
             }
             else -> {
                 // Handle non-REFUND and non-PREAUTH cases
@@ -107,6 +119,7 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
             val totalAmountString = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo)
             val totalAmount = totalAmountString?.toDoubleOrNull() ?: 0.0
             val formattedAmount = "%.2f".format(totalAmount)
+            Log.d("TotalAmountDebug", "Total Amount: $formattedAmount")
             _totalAmount.value = formattedAmount
         }
     }
@@ -124,4 +137,15 @@ class AmountViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         val randomNumber = (10000000..99999999).random()
         return "INVC$randomNumber"
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
+    {
+        Log.d("Database","Go to update ")
+        viewModelScope.launch {
+            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
+        }
+    }
+
+
 }
