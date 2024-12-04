@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -82,10 +84,9 @@ fun TransactionListScreen(
     val showFilterMenu = viewModel.showFilterMenu.collectAsState().value
     val showBatchPicker = viewModel.showBatchPicker.collectAsState().value
     val showDateTimePicker = viewModel.showDateTimePicker.collectAsState().value
+    val showProgressViewModel = viewModel.showProgress.collectAsState().value
 
-    // Loading state for showing progress indicator
-    val showProgressIndicator = remember { mutableStateOf(true) }
-
+    val showProgressIndicator = remember { mutableStateOf(false) }
     val isSelectingEndDate = remember { mutableStateOf(false) }
     val selectedStartDate = remember { mutableStateOf<LocalDateTime?>(null) }
     val selectedEndDate = remember { mutableStateOf<LocalDateTime?>(null) }
@@ -184,20 +185,6 @@ fun TransactionListScreen(
                             .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
                             .align(Alignment.CenterHorizontally)
                     )
-                    if (showProgressIndicator.value) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(androidx.compose.material3.MaterialTheme.dimens.DP_4_CompactMedium),
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            CircularProgressIndicator(
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_100_CompactMedium)
-                                    .graphicsLayer(alpha = 0.4f)
-                            )
-                        }
-                    }
                 } else {
                     // Transaction list
                     LazyColumn {
@@ -219,6 +206,24 @@ fun TransactionListScreen(
                             }
                         }
                     }
+                }
+            }
+
+            // Progress Indicator
+            if (showProgressIndicator.value) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                    CircularProgressIndicator(
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center)
+                            .size(androidx.compose.material3.MaterialTheme.dimens.DP_100_CompactMedium)
+                            .graphicsLayer(alpha = 1.0f)
+                    )
                 }
             }
 
@@ -300,8 +305,14 @@ fun TransactionListScreen(
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(navHostController)
-        delay(3000)
-        showProgressIndicator.value = false
+    }
+    LaunchedEffect(showProgressViewModel) {
+        if(showProgressViewModel == true)
+            showProgressIndicator.value = true
+        else {
+            delay(viewModel.minAnimDelayMS)
+            showProgressIndicator.value = false
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.analogics.paymentservicecore.repository.apiService.rkl
 
+import android.util.Log
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.analogics.builder_core.model.BuilderServiceTxnDetails
@@ -41,6 +42,14 @@ class RklRequestRepository@Inject constructor(
                                 )
                                 keyInjectResult =
                                     PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv)
+
+                                Log.d("RKL","Private Key    :${paymentServiceTxnDetails?.devicePrivateKey}")
+                                Log.d("RKL","Public Key     :${paymentServiceTxnDetails?.devicePublicKey}")
+                                Log.d("RKL","Encrypted IPEK :${it.encryptedIpek}")
+                                Log.d("RKL","Decrypted IPEK :$ipek")
+                                Log.d("RKL","KSN            :${it.ksn}")
+                                Log.d("RKL","KCV            :${it.kcv}")
+                                Log.d("RKL","RKL Success    :${keyInjectResult}")
                             }
                         }
 

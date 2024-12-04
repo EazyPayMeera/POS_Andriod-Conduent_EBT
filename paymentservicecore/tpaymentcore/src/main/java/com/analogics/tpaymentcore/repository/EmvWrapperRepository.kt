@@ -162,53 +162,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             var trackDateBytes = trackData.toByteArray()
             var encryptedBytes = ByteArray(trackDateBytes.size)
             var encryptedLen = IntArray(1)
-            var encryptedLenByteArray = ByteArray(1)
             var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
             var ksnLen = IntArray(1)
-            var ksnLenByteArray = ByteArray(1)
-            var ivBytes = ByteArray(8)
-            var jioData = EmvNfcKernelApi.getInstance().getField55ForJIO(1)
 
-/*            var jioData = EmvNfcKernelApi.getInstance().getField55ForJIO(1)
-            Log.d("EMV_APP", "=====> JIO_TRACKDATA:"+jioData["TRACKDATA"])
-            Log.d("EMV_APP", "=====> JIO_KSN:"+jioData["KSN"])*/
-
-            /*            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                            EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
-                            encryptedBytes, encryptedLen,
-                            ksnBytes, ksnLen
-                        ) == 0)
-                        {
-                            hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
-                            hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                        }*/
-/*
-            if(PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)==0)
-            {
-                Log.d("EMV_APP", "DukptGetKsn() =====> KSN:"+ksnBytes.toHexString().uppercase())
-            }
-*/
-
-/*            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                EncryptionConstants.DUKPT_KEY_SET_PIN, 0x00, ivBytes,8,trackDateBytes ,trackDateBytes.size,
-                encryptedBytes, encryptedLen,
-                ksnBytes, ksnLen
-            ) == 0)
-            {
-                hashMap[EmvConstants.EMV_KEY_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
-                hashMap[EmvConstants.EMV_KEY_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                Log.d("EMV_APP", "DukptEncryptDataIV() =====> LYRA_TRACKDATA:"+encryptedBytes.toHexString().uppercase())
-                Log.d("EMV_APP", "DukptEncryptDataIV() =====> LYRA_KSN:"+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
-                //hashMap[EmvConstants.EMV_KEY_ENC_TRACK+"_JIO"] = jioData["TRACKDATA"]?.uppercase()?:""
-                //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
-            }*/
-
-/*
-            if(PinPadProviderImpl.getInstance().DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN,ksnBytes)==0)
-            {
-                Log.d("EMV_APP", "DukptGetKsn() =====> KSN:"+ksnBytes.toHexString().uppercase())
-            }
-*/
             if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
                     EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
                     encryptedBytes, encryptedLen,
@@ -217,10 +173,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             {
                 hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
                 hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                Log.d("EMV_APP", "encryptWithPEK() =====> LYRA_TRACKDATA:"+encryptedBytes.toHexString().uppercase())
-                Log.d("EMV_APP", "encryptWithPEK() =====> LYRA_KSN:"+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
-                //hashMap[EmvConstants.EMV_KEY_ENC_TRACK+"_JIO"] = jioData["TRACKDATA"]?.uppercase()?:""
-                //hashMap[EmvConstants.EMV_KEY_ENC_KSN+"_JIO"] = jioData["KSN"]?.uppercase()?:""
+                Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDateBytes.decodeToString())
+                Log.d("ENCRYPTION", "ENCRYPTED TRACK DATA (LYRA) : "+encryptedBytes.toHexString().uppercase())
+                Log.d("ENCRYPTION", "KSN (LYRA)                  : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
             }
 
             pinBlock?.let {
