@@ -71,7 +71,7 @@ fun BatchIdView(navHostController: NavHostController) {
                 )
 
                 ImageView(
-                    imageId = R.drawable.batch_id,
+                    imageId = R.drawable.batch,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,

@@ -68,7 +68,7 @@ fun InactivityTimeoutView(navHostController: NavHostController) {
                 )
 
                 ImageView(
-                    imageId = R.drawable.time,
+                    imageId = R.drawable.timeout,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
@@ -78,13 +78,12 @@ fun InactivityTimeoutView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = Timeout?.toString() ?: "",
                     onValueChange = { newValue ->
-                        // Safely convert the newValue to an integer, or set batchId to null if invalid
                         val updatedBatchId = newValue.toIntOrNull()?.coerceIn(0,300)
                         if (updatedBatchId != null) {
                             Timeout = updatedBatchId
                             viewModel.updateInactivityTimeout(updatedBatchId, sharedViewModel)
                         } else {
-                            Timeout = null // Handle case where input is cleared or invalid
+                            Timeout = null
                         }
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
