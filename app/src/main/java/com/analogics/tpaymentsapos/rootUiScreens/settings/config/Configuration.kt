@@ -142,8 +142,8 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.time,
             text = stringResource(id = R.string.inactivity_timeout),
             isChecked = viewModel.isInactivity.value,
-            onCheckedChange = { viewModel.onInactivityChange(it) },
-            isArrow = false,
+            onCheckedChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
+            isArrow = true,
             onArrowChange = {},
             isAdmin = true
         ),
@@ -151,7 +151,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.batch_id,
             text = stringResource(id = R.string.batch_id),
             isChecked = viewModel.isBatchId.value,
-            onCheckedChange = { viewModel.onBatchIdChange(it) },
+            onCheckedChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
             isArrow = true,
             onArrowChange = {},
             isAdmin = true

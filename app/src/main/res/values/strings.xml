@@ -235,6 +235,14 @@
     <string name="detail">Detail</string>
     <string name="lbl_batch_id">Batch #</string>
 
+    <!-- BatchId Screen -->
+    <string name="batchScreen_BatchIdNo">Enter the Batch Id </string>
+    <string name="batchScreen_BatchId">Batch Number</string>
+
+    <!-- InactivityTimeout Screen -->
+    <string name="inactivity_enter_timeout">Enter the Timeout</string>
+    <string name="inactivity_timeout_screen">Inactivity Timeout (sec)</string>
+
 
     <!-- Sucess Screen -->
     <string name="payment">Payment</string>
