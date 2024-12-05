@@ -263,8 +263,4 @@ class EmvServiceRepository @Inject constructor() :
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
     }
-
-    fun dummyEncryptedData(){
-        emvSdkRequestRepository.dummyEncryptedData()
-    }
 }

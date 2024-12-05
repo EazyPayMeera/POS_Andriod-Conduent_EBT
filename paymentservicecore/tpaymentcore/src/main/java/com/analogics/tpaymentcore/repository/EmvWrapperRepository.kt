@@ -166,74 +166,10 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             var ksnLen = IntArray(1)
             var ivBytes = ByteArray(EncryptionConstants.TDES_IV_LENGTH)
 
-            /*            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                                EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
-                                encryptedBytes, encryptedLen,
-                                ksnBytes, ksnLen
-                            ) == 0)
-                        {
-                            hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
-                            hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                            Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDateBytes.decodeToString())
-                            Log.d("ENCRYPTION", "ENCRYPTED TRACK DATA (LYRA) : "+encryptedBytes.toHexString().uppercase())
-                            Log.d("ENCRYPTION", "KSN (LYRA)                  : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
-                        }*/
-
             if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                    EncryptionConstants.DUKPT_KEY_SET_PIN, EncryptionConstants.DUKPT_ENCRYPT_TYPE_3DES.or(EncryptionConstants.DUKPT_MODE_ENCRYPT_CBC),
+                    EncryptionConstants.DUKPT_KEY_SET_PIN, EncryptionConstants.DUKPT_MODE_ENCRYPT_ECB,
                     ivBytes,ivBytes.size,
                     trackDataBytes ,trackDataBytes.size,
-                    encryptedBytes, encryptedLen,
-                    ksnBytes, ksnLen
-                ) == 0)
-            {
-                hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
-                hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDataBytes.decodeToString())
-                Log.d("ENCRYPTION", "ENCRYPTED TRACK DATA (LYRA) : "+encryptedBytes.toHexString().uppercase())
-                Log.d("ENCRYPTION", "KSN (LYRA)                  : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
-            }
-
-            pinBlock?.let {
-                hashMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK] = it
-            }
-
-            return hashMap
-        }
-
-        @OptIn(ExperimentalStdlibApi::class)
-        fun dummyEncryptedData() : HashMap<String,String>
-        {
-            var hashMap = HashMap<String,String>()
-            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX).replace('D','=').removeSuffix("F")
-            trackData.takeIf {
-                (it.length % 8) !=0 }?.let {
-                trackData = it.padStart(it.length + (8-it.length%8),'0')
-            }
-
-            var trackDataBytes = "0004761730000000011=31122011303130600000".toByteArray()
-            var encryptedBytes = ByteArray(trackDataBytes.size)
-            var encryptedLen = IntArray(1)
-            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
-            var ksnLen = IntArray(1)
-            var ivBytes = ByteArray(8)
-
-            /*            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                                EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
-                                encryptedBytes, encryptedLen,
-                                ksnBytes, ksnLen
-                            ) == 0)
-                        {
-                            hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
-                            hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                            Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDateBytes.decodeToString())
-                            Log.d("ENCRYPTION", "ENCRYPTED TRACK DATA (LYRA) : "+encryptedBytes.toHexString().uppercase())
-                            Log.d("ENCRYPTION", "KSN (LYRA)                  : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
-                        }*/
-            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                    EncryptionConstants.DUKPT_KEY_SET_TDK, 0x00,
-                    ivBytes,ivBytes.size,
-                    trackDataBytes, trackDataBytes.size,
                     encryptedBytes, encryptedLen,
                     ksnBytes, ksnLen
                 ) == 0)

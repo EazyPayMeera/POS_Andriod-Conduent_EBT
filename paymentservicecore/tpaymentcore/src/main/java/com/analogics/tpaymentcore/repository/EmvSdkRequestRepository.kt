@@ -42,14 +42,4 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
     }
-
-    fun dummyEncryptedData()
-    {
-        try {
-            EmvWrapperRepository.dummyEncryptedData()
-        } catch (exception: Exception) {
-            Log.e("ENCRYPTION",exception.message.toString())
-        }
-    }
-
 }
