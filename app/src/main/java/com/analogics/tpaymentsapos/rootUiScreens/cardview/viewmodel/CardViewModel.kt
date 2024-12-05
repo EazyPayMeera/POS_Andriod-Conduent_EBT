@@ -47,25 +47,9 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
     var showProgressVar = mutableStateOf(true)
     var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
 
-    private val _isBatchPresent = MutableStateFlow<List<String>>(emptyList())
-    val isBatchPresent: StateFlow<List<String>> = _isBatchPresent
-
-    private val _openBatch = MutableStateFlow<String?>(null)
-    val openBatch: StateFlow<String?> = _openBatch
-
-    private val _lastBatch = MutableStateFlow<String?>(null)
-    val lastBatch: StateFlow<String?> = _lastBatch
-
-
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
-        }
-    }
-
-    fun navigateToDeclinedScreen(navHostController: NavHostController) {
-        viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.DeclineScreen.route) // Navigate to the desired screen
         }
     }
 
@@ -130,13 +114,6 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                 /* Update Transaction Result & Store in DB */
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status))
                                 navigateToApprovalScreen(navHostController)
-                                /*if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
-                                            response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
-                                ) {
-                                    navigateToApprovalScreen(navHostController)
-                                } else {
-                                    navigateToDeclinedScreen(navHostController)
-                                }*/
                             }
 
                             is EmvServiceResult.CardCheckResult -> {
