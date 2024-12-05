@@ -1,8 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -11,33 +9,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.paymentservicecore.logger.AppLogger
-import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
-import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUiScreens.utility.ReceiptBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.miscellaneous.readAsset
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.google.zxing.BarcodeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import getPrinterStatus
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
+import fetchLastTransactions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -70,8 +58,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     }
 
 
-
-    @OptIn(DelicateCoroutinesApi::class)
+/*    @OptIn(DelicateCoroutinesApi::class)
     fun printReceipt(
         logoResId: Int,
         sharedViewModel: SharedViewModel,
@@ -269,9 +256,42 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 Log.d("TAG", "No transactions available for receipt printing.")
             }
         }
+    }*/
+
+    /*fun printReceipt(
+        logoResId: Int,
+        sharedViewModel: SharedViewModel,
+        context: Context,
+        customer: Boolean = false,
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+    ) {
+        viewModelScope.printReceipt(
+            logoResId,
+            sharedViewModel,
+            context,
+            customer,
+            objRootAppPaymentDetail,
+            txnDBRepository
+        )
+    }*/
+
+    fun fetchLastTransactions(
+        sharedViewModel: SharedViewModel,
+        context: Context,
+        customer: Boolean = false,
+        //txnDBRepository: TxnDBRepository // Assuming you need this parameter
+    ) {
+        Log.d("Fetch Last Transaction","In DashBoard View Model")
+        viewModelScope.launch {
+            // Inside this coroutine, you can now call suspend functions
+            fetchLastTransactions(
+                sharedViewModel,
+                context,
+                customer,
+                txnDBRepository
+            )
+        }
     }
-
-
 
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {
         val gson = Gson()
@@ -280,7 +300,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
         return gson.fromJson(json, txnDataListType)
     }
 
-    fun fetchLastTransactions(sharedViewModel: SharedViewModel, context: Context,customer: Boolean = false) {
+    /*fun fetchLastTransactions(sharedViewModel: SharedViewModel, context: Context,customer: Boolean = false) {
         Log.d("Print Last Receipt", "Last Receipt Clicked")
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -303,7 +323,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                 }
             }
         }
-    }
+    }*/
 
     fun setInvoiceNumber(sharedViewModel: SharedViewModel)
     {
