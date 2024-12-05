@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.repository.apiService
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.paymentservicecore.constants.AppConstants
@@ -23,7 +24,11 @@ import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalR
 import com.analogics.paymentservicecore.repository.apiService.rkl.RklRequestRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -57,8 +62,13 @@ class ApiServiceRepository @Inject constructor(
          if(paymentServiceTxnDetails?.isDemoMode == true)
              delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
 
-         /* Set Transaction Status as Initiated */
+         /* Set Transaction Status as Initiated & Insert entry into DB. Update later on response */
          paymentServiceTxnDetails?.txnStatus = TransStatus.INITIATED.toString()
+         PaymentServiceUtils.transformObject<TxnEntity>(paymentServiceTxnDetails)?.let {
+             dbRepository.insertOrUpdateTxn(
+                 it
+             )
+         }
 
         when(paymentServiceTxnDetails?.txnType.toString())
         {
@@ -175,11 +185,24 @@ class ApiServiceRepository @Inject constructor(
                 iApiServiceResponseListener.onApiServiceError(ApiServiceError(response.toString()))
             }
             else -> {
-                iApiServiceResponseListener.onApiServiceSuccess(
-                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
-                        response
-                    ) ?: PaymentServiceTxnDetails()
-                )
+                try {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        PaymentServiceUtils.transformObject<TxnEntity>(response)?.let {
+                            dbRepository.updateTxn(
+                                it
+                            )
+                        }
+                    }
+                    iApiServiceResponseListener.onApiServiceSuccess(
+                        PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
+                            response
+                        ) ?: PaymentServiceTxnDetails()
+                    )
+                }catch (e : Exception)
+                {
+                    e.printStackTrace()
+                    iApiServiceResponseListener.onApiServiceError(ApiServiceError(e.message.toString()))
+                }
             }
         }
     }

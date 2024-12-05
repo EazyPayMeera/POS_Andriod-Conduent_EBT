@@ -1,6 +1,7 @@
 package com.analogics.tpaymentcore.repository
 
 import android.content.Context
+import android.util.Log
 import com.analogics.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.AidConfig
@@ -41,5 +42,4 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
     }
-
 }

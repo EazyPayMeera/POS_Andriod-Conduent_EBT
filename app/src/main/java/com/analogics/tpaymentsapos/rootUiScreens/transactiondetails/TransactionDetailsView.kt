@@ -111,7 +111,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.card)+"Visa **** **** **** 1234",
+                        text = stringResource(id = R.string.card)+ " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:"") + (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -121,7 +121,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.auth_code) + " Auth 1234",
+                        text = stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -131,7 +131,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.no) + " 100034345364633",
+                        text = stringResource(id = R.string.no) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -141,7 +141,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.inc_no) + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
+                        text = stringResource(id = R.string.inc_no) + " " + (sharedViewModel.objRootAppPaymentDetail.invoiceNo?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -151,7 +151,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.pos_entry)+ " Contact",
+                        text = stringResource(id = R.string.pos_entry)+ " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,

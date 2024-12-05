@@ -159,21 +159,24 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     trackData = it.padStart(it.length + (8-it.length%8),'0')
                 }
 
-            var trackDateBytes = trackData.toByteArray()
-            var encryptedBytes = ByteArray(trackDateBytes.size)
+            var trackDataBytes = trackData.toByteArray()
+            var encryptedBytes = ByteArray(trackDataBytes.size)
             var encryptedLen = IntArray(1)
             var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH/2)
             var ksnLen = IntArray(1)
+            var ivBytes = ByteArray(EncryptionConstants.TDES_IV_LENGTH)
 
-            if(PinPadProviderImpl.getInstance().encryptWithPEK(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                    EncryptionConstants.DUKPT_KEY_SET_PIN, trackDateBytes ,trackDateBytes.size,
+            if(PinPadProviderImpl.getInstance().DukptEncryptDataIV(EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
+                    EncryptionConstants.DUKPT_KEY_SET_PIN, EncryptionConstants.DUKPT_MODE_ENCRYPT_ECB,
+                    ivBytes,ivBytes.size,
+                    trackDataBytes ,trackDataBytes.size,
                     encryptedBytes, encryptedLen,
                     ksnBytes, ksnLen
                 ) == 0)
             {
                 hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
                 hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDateBytes.decodeToString())
+                Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDataBytes.decodeToString())
                 Log.d("ENCRYPTION", "ENCRYPTED TRACK DATA (LYRA) : "+encryptedBytes.toHexString().uppercase())
                 Log.d("ENCRYPTION", "KSN (LYRA)                  : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
             }
