@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.listeners.requestListener
 
 import android.content.Context
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
 import com.analogics.paymentservicecore.model.emv.TermConfig
@@ -14,7 +15,7 @@ interface IEmvServiceRequestListener {
     fun initPaymentSDK(termConfig: TermConfig?=null, aidConfig: AidConfig?=null, capKeys: List<CAPKey>, iEmvServiceResponseListener: IEmvServiceResponseListener)
     fun startPayment(
         context: Context,
-        transConfig: TransConfig?=null,
+        paymentServiceTxnDetails : PaymentServiceTxnDetails?=null,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     )
     fun abortPayment()
