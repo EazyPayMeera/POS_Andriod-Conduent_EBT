@@ -32,4 +32,4 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         )
     }
 }
-    
+
