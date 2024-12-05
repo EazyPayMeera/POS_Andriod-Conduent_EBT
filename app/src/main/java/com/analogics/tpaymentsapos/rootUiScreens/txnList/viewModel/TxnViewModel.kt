@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.txnList.viewModel
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Build
@@ -33,7 +34,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import getPrinterStatus
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -88,6 +88,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @RequiresApi(Build.VERSION_CODES.O)
     fun filterTransactionsByStartEndDate(startDate: LocalDateTime?, endDate: LocalDateTime?) {
         viewModelScope.launch {

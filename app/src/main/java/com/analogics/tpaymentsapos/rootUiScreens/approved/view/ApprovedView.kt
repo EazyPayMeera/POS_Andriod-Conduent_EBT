@@ -2,6 +2,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.approved.view
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,16 +45,24 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @Composable
 fun ApprovedView(navHostController: NavHostController) {
     val context = LocalContext.current
+    //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
     val viewModel: ApprovedViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
 
     val sharedViewModel = localSharedViewModel.current
+
+    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
+
+
+    Log.d("PaymentDetailsDebug", "Transaction Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
+    Log.d("PaymentDetailsDebug", "Total Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
 
     Column {
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
+        // Outer Surface with background color, padding, and rounded corners
         BackgroundScreen(
         ) {
             Column(
