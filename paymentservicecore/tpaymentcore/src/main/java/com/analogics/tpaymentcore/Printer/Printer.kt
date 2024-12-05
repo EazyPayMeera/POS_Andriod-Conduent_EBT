@@ -102,6 +102,9 @@ class Printer constructor() {
     fun addTextLeft_Right(textLeft: String?, textRight: String?, fontSize: Int) {
         if (textRight != null) {
             Log.d("Input String",textRight)
+            if (textLeft != null) {
+                Log.d("Input String",textLeft)
+            }
         }
         val defaultFormat = Bundle()
         defaultFormat.putInt("font", 1) // Default font type

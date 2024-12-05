@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.pleasewait.view
 
 import android.os.Build
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.pin.view
 
 
 import androidx.compose.foundation.layout.Arrangement

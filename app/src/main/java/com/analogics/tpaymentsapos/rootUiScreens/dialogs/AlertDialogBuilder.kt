@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
@@ -94,7 +93,7 @@ fun CustomAlertDialog(
                             .fillMaxWidth()
                             .wrapContentHeight(), // Wraps content height
                         backgroundColor = colorResource(id = R.color.purple_200), // Replace with any color you want
-                        shape = RoundedCornerShape(0.dp),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_0_CompactMedium),
                     ) {
                         Column(
                             verticalArrangement = Arrangement.Center,

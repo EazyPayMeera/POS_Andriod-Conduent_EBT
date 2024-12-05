@@ -1,4 +1,4 @@
-package com.analogics.tpaymentsapos.rootUiScreens.login
+package com.analogics.tpaymentsapos.rootUiScreens.decline.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +21,6 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.decline.viewmodel.DeclineViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.BackgroundScreen
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CircularMenu
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
@@ -88,7 +87,8 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                         .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Optional padding for horizontal spacing
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularMenu(
+                   /* CircularMenu(
+                        menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
                         onMenuOptionClick = { option ->
 
                             when (option) {
@@ -103,7 +103,7 @@ fun DeclineView(navHostController: NavHostController, totalAmount: String) {
                                 }
                             }
                         }
-                    )
+                    )*/
                 }
 
                 // Done button at the bottom

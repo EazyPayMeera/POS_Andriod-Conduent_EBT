@@ -2,6 +2,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.isinfo
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

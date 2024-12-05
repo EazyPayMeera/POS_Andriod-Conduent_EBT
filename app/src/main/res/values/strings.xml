@@ -271,13 +271,18 @@
     <string name="receipt_aid">AID:</string>
     <string name="receipt_tc">TC:</string>
     <string name="receipt_total">TOTAL:</string>
-    <string name="receipt_txn_status">TRANSACTION STATUS:</string>
+    <string name="receipt_txn_status">STATUS:</string>
     <string name="receipt_payment">PAYMENT::</string>
     <string name="receipt_authorization">AUTHORIZATION:</string>
     <string name="receipt_invoice_no">INV:</string>
     <string name="receipt_auth_code">AUTH Code</string>
     <string name="receipt_tip">TIP</string>
     <string name="receipt_sign">SIGN</string>
+    <string name="receipt_card_holder_name">CARDHOLDER NAME</string>
+    <string name="receipt_note">TRANSACTION ACCEPTED &amp; LIABILITY OF CARDHOLDER TO PAY IS CONFIRMED</string>
+    <string name="receipt_custom_copy">******CUSTOMER COPY******</string>
+    <string name="receipt_merch_copy">******MERCHANT COPY******</string>
+    <string name="receipt_train_mode">*** Training Mode ***</string>
 
     <!-- Summary Report -->
     <string name="summary_header">SUMMARY REPORT</string>

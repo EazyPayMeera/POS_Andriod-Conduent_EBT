@@ -2,6 +2,7 @@
 package com.analogics.tpaymentsapos.rootUiScreens.isinfo
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,10 +10,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
@@ -44,13 +49,18 @@ class InfoConfirmViewModel @Inject constructor(private val dbRepository: TxnDBRe
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(
         Amount: String,
         sharedViewModel: SharedViewModel,
         navHostController: NavHostController
     ) {
+        Log.d("AmountDebug", "Amount: $Amount")
+        Log.d("PaymentDetailsDebug", "Transaction Type: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+        sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(Amount)
         navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+        updateTransResult(sharedViewModel.objRootAppPaymentDetail)
     }
 
     fun onCancel(navHostController: NavHostController) {
@@ -64,6 +74,14 @@ class InfoConfirmViewModel @Inject constructor(private val dbRepository: TxnDBRe
             val totalAmount = totalAmountString?.toDoubleOrNull() ?: 0.0
             val formattedAmount = "%.2f".format(totalAmount)
             _totalAmount.value = formattedAmount
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
+    {
+        viewModelScope.launch {
+            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
         }
     }
 }
