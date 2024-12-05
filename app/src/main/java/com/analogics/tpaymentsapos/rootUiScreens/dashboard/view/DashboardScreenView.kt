@@ -343,7 +343,6 @@ fun DashboardContentSurface(
                 )
             }
             CustomDialogBuilder.ShowComposed()
-
         }
     }
 }

@@ -75,10 +75,12 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
                     .sortedByDescending { txnData -> txnData.dateTime }
                 _txnList.value = txnDataList
                 _listTypeLabel.value =
-                    txnDataList[txnDataList.size-1].dateTime.toString() + " " + navHostController.context.resources.getString(R.string.to) +
+                    txnDataList[txnDataList.size - 1].dateTime.toString() + " " + navHostController.context.resources.getString(
+                        R.string.to
+                    ) +
                             "\n" + txnDataList[0].dateTime.toString()
                 _isBatchOpen.value = false
-            }?:let {
+            } ?: let {
                 _listTypeLabel.value = ""
                 _isBatchOpen.value = false
             }
@@ -90,27 +92,32 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     fun filterTransactionsByStartEndDate(startDate: LocalDateTime?, endDate: LocalDateTime?) {
         viewModelScope.launch {
             _showProgress.value = true
-                dbRepository.getTransactionsByDateRange(startDate?.toString()?:"",
-                    endDate?.toString()?:""
-                )?.let {
+            dbRepository.getTransactionsByDateRange(
+                startDate?.toString() ?: "",
+                endDate?.toString() ?: ""
+            )?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                     .sortedByDescending { txnData -> txnData.dateTime }
                 _txnList.value = txnDataList
-            }?:let{
-                    _txnList.value = emptyList()
-                }
+            } ?: let {
+                _txnList.value = emptyList()
+            }
 
             _listTypeLabel.value =
-                startDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT)).toString() + " " + navHostController.context.resources.getString(R.string.to) +
+                startDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT))
+                    .toString() + " " + navHostController.context.resources.getString(R.string.to) +
                         "\n" +
-                        endDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT)).toString()
+                        endDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT))
+                            .toString()
             _isBatchOpen.value = false
             _showProgress.value = false
         }
     }
 
     fun filterTransactionsByBatchId(batchId:String) {
-        _listTypeLabel.value = navHostController.context.resources.getString(R.string.lbl_batch_id)+(batchId.toIntOrNull()?:"")
+        _listTypeLabel.value =
+            navHostController.context.resources.getString(R.string.lbl_batch_id) + (batchId.toIntOrNull()
+                ?: "")
         viewModelScope.launch {
             _showProgress.value = true
             dbRepository.isBatchOpen(batchId).let { _isBatchOpen.value = it }
@@ -125,12 +132,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun fetchCurrentBatchTrans() {
         viewModelScope.launch {
-            CustomDialogBuilder.composeProgressDialog(show = true)
-            delay(1000)
             dbRepository.fetchBatchList()?.takeIf { it.isNotEmpty() }?.let {
                 _batchList.value = it
             }?.also {
-                filterTransactionsByBatchId(_batchList.value[0].batchId?:"")
+                filterTransactionsByBatchId(_batchList.value[0].batchId ?: "")
             }
         }
     }
