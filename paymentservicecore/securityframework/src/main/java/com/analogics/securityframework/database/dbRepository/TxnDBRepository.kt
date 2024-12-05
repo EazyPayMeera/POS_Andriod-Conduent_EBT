@@ -144,8 +144,7 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         }
     }
 
-    // Get Transaction Details From Transaction Using Merchant-Id
-    suspend fun fetchTransactionDetailsTxn(id: Long): TxnEntity? {
+    suspend fun fetchTxnById(id: Long?): TxnEntity? {
         return iTxnDao.fetchTxnDetails(id)
     }
 

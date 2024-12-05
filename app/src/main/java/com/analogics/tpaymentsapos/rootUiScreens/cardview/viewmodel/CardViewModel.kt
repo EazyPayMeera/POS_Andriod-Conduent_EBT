@@ -84,10 +84,14 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
+    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?)
     {
+        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
         viewModelScope.launch {
-            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
+                it.txnStatus = txnStatus?.toString()?:""
+                dbRepository.updateTxn(it)
+            }
         }
     }
 
@@ -124,8 +128,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                             is EmvServiceResult.TransResult -> {
                                 Log.d("EMVServiceResponse", "Transaction Status: ${response.status}")
                                 /* Update Transaction Result & Store in DB */
-                                sharedViewModel.objRootAppPaymentDetail.txnStatus = emvStatusToTransStatus(response.status)
-                                updateTransResult(sharedViewModel.objRootAppPaymentDetail)
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status))
                                 navigateToApprovalScreen(navHostController)
                                 /*if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
                                             response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
