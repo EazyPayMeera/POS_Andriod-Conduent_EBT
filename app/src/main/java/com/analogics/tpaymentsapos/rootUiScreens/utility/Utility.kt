@@ -80,17 +80,20 @@ fun CoroutineScope.printReceipt(
     context: Context,
     customer: Boolean = false,
     objRootAppPaymentDetail: ObjRootAppPaymentDetails,
-    dbRepository: TxnDBRepository // If needed
+    lastTxn: Boolean
 ) {
     launch {
         getPrinterStatus(objRootAppPaymentDetail, object : IPrinterResultProviderListener {
             override fun onSuccess(result: Any?) {
+                Log.d(TAG, "Printer status retrieved: $result")
+
                 val subtitleText = when (result) {
                     -1 -> context.resources.getString(R.string.printer_out_of_paper)
                     else -> context.resources.getString(R.string.printer_busy)
                 }
 
                 if (result != 0) {
+                    Log.d(TAG, "Printer status retrieved inside result not equal to zero: $result")
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.resources.getString(R.string.printer_error_title),
                         subtitle = subtitleText
@@ -99,8 +102,13 @@ fun CoroutineScope.printReceipt(
                     launch {
                         try {
                             initPrinter(
-                                logoResId, sharedViewModel, context, customer,
-                                objRootAppPaymentDetail, object : IPrinterResultProviderListener {
+                                logoResId,
+                                sharedViewModel,
+                                context,
+                                customer,
+                                lastTxn,
+                                objRootAppPaymentDetail,
+                                object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
                                         Log.d(TAG, "Printer initialized successfully.")
                                     }
@@ -108,8 +116,7 @@ fun CoroutineScope.printReceipt(
                                     override fun onFailure(exception: Exception) {
                                         Log.e(TAG, "Failed to initialize printer: ${exception.message}")
                                     }
-                                }
-                            )
+                                })
                         } catch (e: Exception) {
                             Log.e(TAG, "Error during printer initialization: ${e.message}")
                         }
@@ -124,71 +131,73 @@ fun CoroutineScope.printReceipt(
     }
 }
 
-fun CoroutineScope.initPrinter(
+suspend fun initPrinter(
     logoResId: Int,
     sharedViewModel: SharedViewModel,
     context: Context,
     customer: Boolean = false,
+    lastTxn: Boolean = false,
     objRootAppPaymentDetail: ObjRootAppPaymentDetails,
     iPrinterResultProviderListener: IPrinterResultProviderListener
 ) {
-    launch {
-        try {
-            CustomDialogBuilder.composePrintingDialog(
-                title = context.resources.getString(R.string.printing),
-                subtitle = context.resources.getString(R.string.plz_wait),
-                onClose = {
-                    launch { stopPrinting(objRootAppPaymentDetail, iPrinterResultProviderListener) }
-                }
-            )
+    try {
+        Log.d(TAG, "Approved View Model to Printer Service Repository 1")
+        CustomDialogBuilder.composePrintingDialog(
+            title = context.resources.getString(R.string.printing),
+            subtitle = context.resources.getString(R.string.plz_wait),
+            onClose = {
+                Log.d("Abort", "Abort Button Pressed")
+                // Additional actions if needed
+            }
+        )
 
-            val requestDetails = PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        // Retrieve the last transaction from _lastTransactionList
+        val lastTransactionList = _lastTransactionList.value // This is a List<ObjRootAppPaymentDetails>
+        val latestTransaction = if(lastTxn) lastTransactionList.lastOrNull() else objRootAppPaymentDetail // Get the last transaction or null if the list is empty
 
+        // Check if the latest transaction is not null before proceeding
+        latestTransaction.let { transaction ->
+            // Convert the latest transaction to JSON string
+            val requestDetails = PaymentServiceUtils.objectToJsonString(transaction)
+
+            // Convert JSON string to PaymentServiceTxnDetails and handle nullable
             val paymentServiceTxnDetails =
                 PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)
 
             if (paymentServiceTxnDetails == null) {
                 Log.e(TAG, "Error: Failed to convert ObjRootAppPaymentDetails to PaymentServiceTxnDetails")
-                return@launch
+                return
             }
 
+            // Proceed with non-nullable paymentServiceTxnDetails
             PrinterServiceRepository(paymentServiceTxnDetails).initPrinter(
                 context,
                 iPrinterResultProviderListener
             )
 
-            addLogo(context, objRootAppPaymentDetail, iPrinterResultProviderListener, logoResId)
-
             addReceiptDetails(
                 context,
                 sharedViewModel,
                 customer,
-                paymentServiceTxnDetails, // Non-null value passed here
+                paymentServiceTxnDetails,
                 object : IPrinterResultProviderListener {
                     override fun onSuccess(result: Any?) {
-                        Log.d(TAG, "Receipt printed successfully! Result: $result")
                         if (result == true) {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                CustomDialogBuilder.hideProgress()
-                            }
+                            Log.d("Abort", "Printing Successful")
+                            CustomDialogBuilder.hideProgress()
                         }
                     }
 
                     override fun onFailure(exception: Exception) {
-                        Log.e(TAG, "Failed to add receipt details: ${exception.message}")
+                        Log.e(TAG, "Failed to print receipt: ${exception.message}")
                     }
                 }
             )
-        } catch (e: Exception) {
-            Log.e(TAG, "Error during initPrinter: ${e.message}")
-        }
+        } ?: Log.d(TAG, "No transactions available for printing.")
+    } catch (e: Exception) {
+        AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
     }
 }
-
-
-
-// Other helper functions like stopPrinting or addReceiptDetails can remain here if shared.
-
 
 
 private suspend fun addReceiptDetails(
@@ -305,7 +314,7 @@ suspend fun fetchLastTransactions(
         val txnDataList = convertTxnEntityListToTxnDataList(listOf(latestTransaction))
         withContext(Dispatchers.Main) {
             _lastTransactionList.value = txnDataList
-            printData(0, sharedViewModel, context, customer, sharedViewModel.objRootAppPaymentDetail)
+            printReceipt(0, sharedViewModel, context, customer, sharedViewModel.objRootAppPaymentDetail,lastTxn = true)
         }
     } else {
         withContext(Dispatchers.Main) {
@@ -319,39 +328,7 @@ suspend fun fetchLastTransactions(
 }
 
 
-suspend fun addSummaryDetails(
-    context: Context,
-    sharedViewModel: SharedViewModel,
-    objRootAppPaymentDetail: ObjRootAppPaymentDetails,
-    iPrinterResultProviderListener: IPrinterResultProviderListener
-) {
-    val receiptBuilder = ReceiptBuilder()
-    withContext(Dispatchers.IO) {
-        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
-            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
-        )
-        val summaryReport = receiptBuilder.createSummaryReport(context,sharedViewModel, paymentServiceTxnDetails)
 
-        val labelList: List<String> = summaryReport.summaryFields.map { it.label }
-        val valueList: List<String> = summaryReport.summaryFields.map { it.value }
-        val descriptionList: List<String> = summaryReport.summaryFields.map { it.description }
-        val fontsize: List<Int> = summaryReport.summaryFields.map { field ->
-            when (field.fontsize) { // Accessing the fourth element (the font size)
-                ReceiptBuilder.FontSize.Small -> 24
-                ReceiptBuilder.FontSize.Medium -> 28
-                ReceiptBuilder.FontSize.Big -> 32
-                else -> 24 // Default font size if no match
-            }
-        }
-        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
-            labelList,
-            valueList,
-            descriptionList,
-            fontsize,
-            iPrinterResultProviderListener
-        )
-    }
-}
 
 
 
@@ -381,11 +358,12 @@ fun CoroutineScope.printData(
                 } else {
                         launch {
                             try {
-                                initData(
+                                initPrinter(
                                     logoResId,
                                     sharedViewModel,
                                     context,
                                     customer,
+                                    lastTxn = true,
                                     objRootAppPaymentDetail,
                                     object : IPrinterResultProviderListener {
                                         override fun onSuccess(result: Any?) {
@@ -416,72 +394,10 @@ fun CoroutineScope.printData(
     }
 }
 
-suspend fun initData(
-    logoResId: Int,
-    sharedViewModel: SharedViewModel,
-    context: Context,
-    customer: Boolean = false,
-    objRootAppPaymentDetail: ObjRootAppPaymentDetails,
-    iPrinterResultProviderListener: IPrinterResultProviderListener
-) {
-    try {
-        Log.d(TAG, "Approved View Model to Printer Service Repository 1")
-        CustomDialogBuilder.composePrintingDialog(
-            title = context.resources.getString(R.string.printing),
-            subtitle = context.resources.getString(R.string.plz_wait),
-            onClose = {
-                Log.d("Abort", "Abort Button Pressed")
-                // Additional actions if needed
-            }
-        )
 
-        // Retrieve the last transaction from _lastTransactionList
-        val lastTransactionList = _lastTransactionList.value // This is a List<ObjRootAppPaymentDetails>
-        val latestTransaction = lastTransactionList.lastOrNull() // Get the last transaction or null if the list is empty
 
-        // Check if the latest transaction is not null before proceeding
-        latestTransaction?.let { transaction ->
-            // Convert the latest transaction to JSON string
-            val requestDetails = PaymentServiceUtils.objectToJsonString(transaction)
 
-            // Convert JSON string to PaymentServiceTxnDetails and handle nullable
-            val paymentServiceTxnDetails =
-                PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails)
 
-            if (paymentServiceTxnDetails == null) {
-                Log.e(TAG, "Error: Failed to convert ObjRootAppPaymentDetails to PaymentServiceTxnDetails")
-                return
-            }
-
-            // Proceed with non-nullable paymentServiceTxnDetails
-            PrinterServiceRepository(paymentServiceTxnDetails).initPrinter(
-                context,
-                iPrinterResultProviderListener
-            )
-
-            addReceiptDetails(
-                context,
-                sharedViewModel,
-                customer,
-                paymentServiceTxnDetails,
-                object : IPrinterResultProviderListener {
-                    override fun onSuccess(result: Any?) {
-                        if (result == true) {
-                            Log.d("Abort", "Printing Successful")
-                            CustomDialogBuilder.hideProgress()
-                        }
-                    }
-
-                    override fun onFailure(exception: Exception) {
-                        Log.e(TAG, "Failed to print receipt: ${exception.message}")
-                    }
-                }
-            )
-        } ?: Log.d(TAG, "No transactions available for printing.")
-    } catch (e: Exception) {
-        AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
-    }
-}
 
 
 

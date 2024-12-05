@@ -39,7 +39,7 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
             context,
             customer,
             objRootAppPaymentDetail,
-            dbRepository
+            lastTxn = false
         )
     }
 

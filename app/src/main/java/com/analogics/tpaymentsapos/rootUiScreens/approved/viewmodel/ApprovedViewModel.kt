@@ -28,7 +28,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             context,
             customer,
             objRootAppPaymentDetail,
-            dbRepository
+            lastTxn = false
         )
     }
 }
