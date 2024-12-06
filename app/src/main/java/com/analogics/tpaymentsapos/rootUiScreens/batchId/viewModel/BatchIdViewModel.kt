@@ -1,13 +1,16 @@
 package com.analogics.tpaymentsapos.rootUiScreens.batchId.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,17 +43,20 @@ class BatchIdViewModel @Inject constructor(private val dbRepository: TxnDBReposi
 
     fun isBatchOpen() {
         viewModelScope.launch {
-            _showProgress.value = true
-            Log.d("isBatchOpen", "Progress started") // Log progress start
-
             dbRepository.isBatchOpen().let {
                 _isBatchOpen.value = it
-                Log.d("isBatchOpen", "Batch open status: $it") // Log the result
             }
-
-            _showProgress.value = false
-            Log.d("isBatchOpen", "Progress ended") // Log progress end
         }
+    }
+
+    fun onShowBatchOpen(context: Context)
+    {
+        CustomDialogBuilder.composeAlertDialog(
+            title = context.resources.getString(
+                R.string.restricted
+            ),
+            subtitle = context.resources.getString(R.string.batch_open)
+        )
     }
 
     private fun convertTxnEntityListToTxnDataList(txnEntityList: List<TxnEntity>): List<ObjRootAppPaymentDetails> {

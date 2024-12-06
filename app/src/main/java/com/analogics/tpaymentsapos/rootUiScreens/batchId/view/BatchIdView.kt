@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +30,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.batchId.viewModel.BatchIdViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -42,6 +44,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun BatchIdView(navHostController: NavHostController) {
     val viewModel: BatchIdViewModel = hiltViewModel()
     var sharedViewModel= localSharedViewModel.current
+    val context = LocalContext.current
 
     var batchId by remember { mutableStateOf(sharedViewModel.objPosConfig?.batchId.toString()) }
 
@@ -82,7 +85,10 @@ fun BatchIdView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = batchId, // Use the mutable state here
                     onValueChange = { newValue ->
-                        if (!viewModel.isBatchOpen.value) { // Check if the random number is empty
+                        if (viewModel.isBatchOpen.value) {
+                            viewModel.onShowBatchOpen(context = context)
+                        } else {
+                            // Allow editing when isBatchOpen is false
                             batchId = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH) // Update the mutable state when the text changes
                             viewModel.updateBatchId(batchId, sharedViewModel)
                         }
@@ -127,7 +133,7 @@ fun BatchIdView(navHostController: NavHostController) {
     LaunchedEffect(Unit) {
         viewModel.isBatchOpen()
     }
-
+    CustomDialogBuilder.ShowComposed()
 
 }
 
