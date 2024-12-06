@@ -38,6 +38,9 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
             sharedViewModel,
             context,
             customer,
+            false,
+            false,
+            null,
             objRootAppPaymentDetail,
             lastTxn = false
         )

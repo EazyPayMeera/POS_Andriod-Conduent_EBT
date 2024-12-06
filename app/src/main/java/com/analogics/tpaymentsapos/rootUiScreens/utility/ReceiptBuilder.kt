@@ -175,7 +175,10 @@ class ReceiptBuilder {
 
 
 
-    fun createDetailReport(context: Context,sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails> ): DetailedReport {
+    fun createDetailReport(
+        context: Context,
+        sharedViewModel: SharedViewModel, paymentDetails: PaymentServiceTxnDetails?, transactionList: List<TransactionDetails>?
+    ): DetailedReport {
         val reportBuilder = DetailedReport.Builder()
 
         reportBuilder
@@ -201,7 +204,7 @@ class ReceiptBuilder {
 
 
         // Add transaction details from the transaction list
-        transactionList.forEach { transaction ->
+        transactionList?.forEach { transaction ->
             reportBuilder.addDetailField(
                 "",
                 transaction.timedate,
