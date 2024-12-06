@@ -299,26 +299,7 @@ fun DashboardContentSurface(
             }
 
             Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
-
-            /*Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    *//*.padding(top = MaterialTheme.dimens.DP_25_CompactMedium)*//*,
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                    *//*AppButton(
-                        onClick = {
-                            Log.d("Print Last Receipt ","Last Receipt Clicked ")
-                            viewModel.fetchLastTransactions(sharedViewModel,context)
-                            isDialogVisible = true
-                        },
-                        title = stringResource(id = R.string.print_last_receipt),
-                        image = painterResource(id = R.drawable.ic_print)
-                    )*//*
-
-
-            }*/
+            
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
