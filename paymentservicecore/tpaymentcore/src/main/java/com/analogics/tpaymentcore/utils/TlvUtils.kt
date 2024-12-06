@@ -1,6 +1,7 @@
 package com.analogics.tpaymentcore.utils
 
 import android.util.Log
+import java.util.Hashtable
 import kotlin.experimental.and
 
 class TlvUtils {
@@ -14,6 +15,11 @@ class TlvUtils {
     constructor(tlvMap : HashMap<String, String>)
     {
         this.tlvMap = tlvMap
+    }
+
+    constructor(tlvMap : Hashtable<String, String>?)
+    {
+        this.tlvMap = tlvMap?.toMap() as HashMap<String, String>
     }
 
     constructor(tlvString : String?)
@@ -69,7 +75,7 @@ class TlvUtils {
                 var tagLen : Int
                 var lenLen : Int
                 var valLen : Int
-                Log.d(TAG_TLV_UTILS, "------------- Parsed Tag List ------------- ")
+                Log.d(TAG_TLV_UTILS, "------------- Parsed Tag List -------------")
                 while(hexBytes.isNotEmpty())
                 {
                     tagLen = getTagLen(hexBytes);

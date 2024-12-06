@@ -42,4 +42,14 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
     }
+
+    override fun getEmvTag(tag: String?): String? {
+        return try {
+            EmvWrapperRepository.getEmvTag(tag)
+        }catch (exception: Exception)
+        {
+            exception.printStackTrace()
+            null
+        }
+    }
 }

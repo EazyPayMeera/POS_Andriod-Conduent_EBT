@@ -56,3 +56,14 @@ fun Double?.toDecimalFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(type 
 {
     return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }
+
+fun maskPAN(pan: String): String {
+    if (pan.length <= 4) {
+        return pan
+    }
+    val maskedPart = "*".repeat(pan.length - 4) // Mask all but the last 4 characters
+    val lastPart = pan.takeLast(4)             // Last 4 characters
+
+    return "$maskedPart$lastPart".chunked(4)
+        .joinToString(" ")
+}
