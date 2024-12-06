@@ -9,12 +9,12 @@ enum class TxnType {
     TXNLIST
 }
 
-fun TxnType.toEmvTransType() : String
+fun String.toEmvTransType() : String
 {
     return when(this)
     {
-        TxnType.REFUND -> "09"
-        TxnType.VOID -> "20"
+        TxnType.REFUND.toString() -> "09"
+        TxnType.VOID.toString() -> "20"
         else -> "00"
     }
 }

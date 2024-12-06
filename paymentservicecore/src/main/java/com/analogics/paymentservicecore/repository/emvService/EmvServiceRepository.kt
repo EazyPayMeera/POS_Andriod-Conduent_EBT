@@ -1,12 +1,18 @@
 package com.analogics.paymentservicecore.repository.emvService
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.constants.ConfigConstants
+import com.analogics.paymentservicecore.constants.EmvConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IEmvServiceRequestListener
+import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
+import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckStatus
@@ -17,21 +23,33 @@ import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.analogics.paymentservicecore.model.emv.TermConfig
 import com.analogics.paymentservicecore.model.emv.TransConfig
+import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.model.error.EmvServiceException
+import com.analogics.paymentservicecore.models.toEmvTransType
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.paymentservicecore.utils.toDecimalFormat
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
 import com.analogics.tpaymentcore.model.emv.EmvSdkResult
 import com.analogics.tpaymentcore.repository.EmvSdkRequestRepository
+import com.analogics.tpaymentcore.utils.TlvUtils
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
-class EmvServiceRepository @Inject constructor() :
+class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServiceRepository) :
     IEmvServiceRequestListener,
     IEmvSdkResponseListener {
     private val emvSdkRequestRepository = EmvSdkRequestRepository(this)
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var context: Context
+    lateinit var paymentServiceTxnDetails : PaymentServiceTxnDetails
 
     fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) : InitStatus {
         return when (value) {
@@ -155,9 +173,11 @@ class EmvServiceRepository @Inject constructor() :
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(sdkToEmvDisplayMsgId(displayMsgId))
     }
 
-    override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit)
-    {
-        iEmvServiceResponseListener.onEmvServiceRequestOnline(emvTags, onResponse)
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            onEmvServiceRequestOnline(emvTags, onResponse)
+        }
     }
 
     override fun initPaymentSDK(
@@ -244,11 +264,13 @@ class EmvServiceRepository @Inject constructor() :
 
     override fun startPayment(
         context: Context,
-        transConfig: TransConfig?,
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     ) {
+        this.paymentServiceTxnDetails = paymentServiceTxnDetails?: PaymentServiceTxnDetails()
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
+        var transConfig = getTransConfig(paymentServiceTxnDetails)
 
         var sdkTransConfig : com.analogics.tpaymentcore.model.emv.TransConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
             ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(
@@ -262,5 +284,66 @@ class EmvServiceRepository @Inject constructor() :
 
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
+    }
+
+    private fun getTransConfig(paymentServiceTxnDetails: PaymentServiceTxnDetails?) : TransConfig
+    {
+        return TransConfig(
+            amount = (paymentServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(),
+            cashbackAmount = (paymentServiceTxnDetails?.cashback?.toDoubleOrNull()?:0.00).toDecimalFormat(),
+            currencyCode = paymentServiceTxnDetails?.txnCurrencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
+            transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
+            cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
+            cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
+            supportDRL = false
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun onEmvServiceRequestOnline(
+        emvTags: HashMap<String, String>,
+        onResponse: (HashMap<String, String>) -> Unit
+    ) {
+
+        var responseEmvTags =
+            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
+
+        val tlvData = TlvUtils(emvTags)
+        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
+            paymentServiceTxnDetails.trackData =
+                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_TRACK]
+            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_TRACK)
+        }
+        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_KSN)) {
+            paymentServiceTxnDetails.ksn =
+                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_KSN]
+            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_KSN)
+        }
+        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)) {
+            paymentServiceTxnDetails.pinBlock =
+                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK]
+            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
+        }
+        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_PAN)) {
+            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_PAN)
+        }
+
+        paymentServiceTxnDetails.emvData = tlvData.toTlvString()
+
+        iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.PROCESSING_ONLINE)
+        apiServiceRepository.apiServiceRequestOnlineAuth(
+            paymentServiceTxnDetails, object : IApiServiceResponseListener {
+
+                override fun onApiServiceSuccess(apiPaymentServiceTxnDetails: PaymentServiceTxnDetails) {
+                    paymentServiceTxnDetails = apiPaymentServiceTxnDetails
+                    responseEmvTags =
+                        TlvUtils(paymentServiceTxnDetails.emvData).tlvMap
+                    onResponse(responseEmvTags)
+                }
+
+                override fun onApiServiceError(apiServiceError: ApiServiceError) {
+                    onResponse(responseEmvTags)
+                }
+            })
     }
 }

@@ -41,31 +41,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository, var apiServiceRepository: ApiServiceRepository) : ViewModel() {
+class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
 
     var emvInProgress = mutableStateOf(false)
     var showProgressVar = mutableStateOf(true)
     var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
 
-    private val _isBatchPresent = MutableStateFlow<List<String>>(emptyList())
-    val isBatchPresent: StateFlow<List<String>> = _isBatchPresent
-
-    private val _openBatch = MutableStateFlow<String?>(null)
-    val openBatch: StateFlow<String?> = _openBatch
-
-    private val _lastBatch = MutableStateFlow<String?>(null)
-    val lastBatch: StateFlow<String?> = _lastBatch
-
-
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
-        }
-    }
-
-    fun navigateToDeclinedScreen(navHostController: NavHostController) {
-        viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.DeclineScreen.route) // Navigate to the desired screen
         }
     }
 
@@ -95,19 +79,6 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
-    fun getTransConfig(objRootAppPaymentDetails: ObjRootAppPaymentDetails) : TransConfig
-    {
-        return TransConfig(
-            amount = objRootAppPaymentDetails.ttlAmount.toDecimalFormat(),
-            cashbackAmount = objRootAppPaymentDetails.cashback.toDecimalFormat(),
-            currencyCode = objRootAppPaymentDetails.txnCurrencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
-            transactionType = objRootAppPaymentDetails.txnType?.toEmvTransType().toString(),
-            cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
-            cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
-            supportDRL = false
-        )
-    }
-
     fun startPayment(
         context: Context,
         sharedViewModel: SharedViewModel,
@@ -118,7 +89,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
             emvServiceRepository.startPayment(
                 context = context,
-                transConfig = getTransConfig(sharedViewModel.objRootAppPaymentDetail),
+                paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail),
                 iEmvServiceResponseListener = object :
                     IEmvServiceResponseListener {
                     @RequiresApi(Build.VERSION_CODES.O)
@@ -130,13 +101,6 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                 /* Update Transaction Result & Store in DB */
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status))
                                 navigateToApprovalScreen(navHostController)
-                                /*if ((response.status == EmvServiceResult.TransStatus.APPROVED_ONLINE ||
-                                            response.status == EmvServiceResult.TransStatus.APPROVED_OFFLINE)
-                                ) {
-                                    navigateToApprovalScreen(navHostController)
-                                } else {
-                                    navigateToDeclinedScreen(navHostController)
-                                }*/
                             }
 
                             is EmvServiceResult.CardCheckResult -> {
@@ -163,57 +127,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                     override fun onEmvServiceDisplayMessage(
                         displayMsgId: EmvServiceResult.DisplayMsgId
                     ) {
-
-                    }
-
-                    @RequiresApi(Build.VERSION_CODES.O)
-                    override fun onEmvServiceRequestOnline(
-                        emvTags: HashMap<String, String>,
-                        onResponse: (HashMap<String, String>) -> Unit
-                    ) {
-                        var responseEmvTags =
-                            hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
-
-                        val tlvData = TlvUtils(emvTags)
-                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
-                            sharedViewModel.objRootAppPaymentDetail.trackData =
-                                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_TRACK]
-                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_TRACK)
-                        }
-                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_KSN)) {
-                            sharedViewModel.objRootAppPaymentDetail.ksn =
-                                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_KSN]
-                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_KSN)
-                        }
-                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)) {
-                            sharedViewModel.objRootAppPaymentDetail.pinBlock =
-                                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK]
-                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
-                        }
-                        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_PAN)) {
-                            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_PAN)
-                        }
-
-                        sharedViewModel.objRootAppPaymentDetail.emvData = tlvData.toTlvString()
-
-                        viewModelScope.launch {
-                            displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.PROCESSING_ONLINE
-                            apiServiceRepository.apiServiceRequestOnlineAuth(
-                                PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
-                                    sharedViewModel.objRootAppPaymentDetail
-                                ), object : IApiServiceResponseListener {
-
-                                    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-                                        responseEmvTags =
-                                            TlvUtils(paymentServiceTxnDetails.emvData).tlvMap
-                                        onResponse(responseEmvTags)
-                                    }
-
-                                    override fun onApiServiceError(apiServiceError: ApiServiceError) {
-                                        onResponse(responseEmvTags)
-                                    }
-                                })
-                        }
+                        displayInfoMsgId.value = displayMsgId
                     }
                 })
         }

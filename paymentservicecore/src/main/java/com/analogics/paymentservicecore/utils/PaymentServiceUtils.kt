@@ -1,5 +1,7 @@
 package com.analogics.paymentservicecore.utils
 
+import com.analogics.builder_core.model.Symbol
+import com.analogics.builder_core.utils.formatAmount
 import com.analogics.securityframework.handler.SecureKeyHandler
 import com.analogics.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
@@ -48,4 +50,9 @@ object PaymentServiceUtils {
         return false
     }
 
+}
+
+fun Double?.toDecimalFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(type = Symbol.Type.NONE), withSeparator: Boolean = false): String
+{
+    return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }

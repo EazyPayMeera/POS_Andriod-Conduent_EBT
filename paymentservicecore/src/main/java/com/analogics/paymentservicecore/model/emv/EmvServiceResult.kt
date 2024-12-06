@@ -1,9 +1,12 @@
 package com.analogics.paymentservicecore.model.emv
 
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
+
 sealed class EmvServiceResult(
     var status: Any? = null,
     var displayMsgId : DisplayMsgId? = null,
-    var emvTags : HashMap<String,String>? = null
+    var emvTags : HashMap<String,String>? = null,
+    var paymentServiceTxnDetails: PaymentServiceTxnDetails? = null
 )
 {
     enum class TransStatus {
