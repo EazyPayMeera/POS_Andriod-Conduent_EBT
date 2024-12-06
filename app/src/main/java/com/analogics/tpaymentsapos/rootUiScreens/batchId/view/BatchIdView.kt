@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,8 +82,10 @@ fun BatchIdView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = batchId, // Use the mutable state here
                     onValueChange = { newValue ->
-                        batchId = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH) // Update the mutable state when the text changes
-                        viewModel.updateBatchId(batchId,sharedViewModel)
+                        if (!viewModel.isBatchOpen.value) { // Check if the random number is empty
+                            batchId = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH) // Update the mutable state when the text changes
+                            viewModel.updateBatchId(batchId, sharedViewModel)
+                        }
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.batchScreen_BatchId),
@@ -103,10 +106,12 @@ fun BatchIdView(navHostController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = MaterialTheme.dimens.DP_120_CompactMedium,
+                .padding(
+                    start = MaterialTheme.dimens.DP_120_CompactMedium,
                     end = MaterialTheme.dimens.DP_120_CompactMedium,
                     top = MaterialTheme.dimens.DP_24_CompactMedium,
-                    bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    bottom = MaterialTheme.dimens.DP_24_CompactMedium
+                ),
             horizontalArrangement = Arrangement.Center
         ) {
             OkButton(
@@ -117,6 +122,10 @@ fun BatchIdView(navHostController: NavHostController) {
                 title = stringResource(id = R.string.save_btn),
             )
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.isBatchOpen()
     }
 
 
