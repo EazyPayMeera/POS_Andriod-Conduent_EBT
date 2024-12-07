@@ -38,9 +38,12 @@ import com.analogics.tpaymentcore.utils.TlvUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServiceRepository) :
     IEmvServiceRequestListener,
@@ -276,6 +279,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     ) {
         this.paymentServiceTxnDetails = paymentServiceTxnDetails?: PaymentServiceTxnDetails()
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
+        this.context = context
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
         var transConfig = getTransConfig(paymentServiceTxnDetails)
 
@@ -302,6 +306,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
             cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
             cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
+            enableBeeper = false,
             supportDRL = false
         )
     }
@@ -341,9 +346,9 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         try {
             /* Card Brand. AID has a preference over PAN */
             emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_AID_CARD)?.let {
-                paymentServiceTxnDetails.cardBrand = getCardBrand(aid = it).toString()
+                paymentServiceTxnDetails.cardBrand = getCardBrand(aid = it)
             }?:emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_PAN)?.let {
-                paymentServiceTxnDetails.cardBrand = getCardBrand(pan = it).toString()
+                paymentServiceTxnDetails.cardBrand = getCardBrand(pan = it)
             }
 
             /* Language Preference */

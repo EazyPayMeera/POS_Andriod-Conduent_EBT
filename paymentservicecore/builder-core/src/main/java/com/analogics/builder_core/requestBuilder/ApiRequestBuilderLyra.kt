@@ -3,6 +3,8 @@ package com.analogics.builder_core.requestBuilder
 import android.content.Context
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.builder_core.model.BuilderServiceTxnDetails
+import com.analogics.builder_core.model.CardEntryMode
+import com.analogics.builder_core.model.PosConditionCode
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.builder_core.utils.toBcd
 import com.analogics.builder_core.utils.toCurrencyLong
@@ -52,12 +54,32 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     fun getIsoPosEntryMode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return "0510"
+        return when(builderServiceTxnDetails?.cardEntryMode)
+        {
+            CardEntryMode.MANUAL.toString()->"0110"
+            CardEntryMode.MAGSTRIPE.toString()->"0210"
+            CardEntryMode.CONTACT.toString()->"0510"
+            CardEntryMode.CONTACLESS.toString()->"0710"
+            CardEntryMode.FALLBACK_MAGSTRIPE.toString()->"8010"
+            CardEntryMode.CONTACLESS_MAGSTRIPE.toString()->"9110"
+            else -> "0010"
+        }
     }
 
     fun getIsoPosConditionCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
-        return "00"
+        return when(builderServiceTxnDetails?.posConditionCode)
+        {
+            PosConditionCode.NORMAL_PRESENTMENT.toString()->"00"
+            PosConditionCode.CUSTOMER_NOT_PRESENT.toString()->"01"
+            PosConditionCode.MERCHANT_SUSPICIOUS.toString()->"03"
+            PosConditionCode.ECR_INTERFACE.toString()->"04"
+            PosConditionCode.CARD_NOT_PRESENT.toString()->"05"
+            PosConditionCode.PREAUTH.toString()->"06"
+            PosConditionCode.MOTO.toString()->"08"
+            PosConditionCode.CARD_PRESENT_BAD_MAG.toString()->"71"
+            else -> "00"
+        }
     }
 
     fun getEncryptedTrack2Data(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?

@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.model.emv
+package com.analogics.builder_core.model
 
 import com.google.gson.annotations.SerializedName
 

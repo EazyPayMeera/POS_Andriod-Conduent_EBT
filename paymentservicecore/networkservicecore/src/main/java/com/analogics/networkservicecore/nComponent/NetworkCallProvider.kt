@@ -12,12 +12,13 @@ import io.ktor.network.sockets.openWriteChannel
 import io.ktor.utils.io.availableForRead
 import io.ktor.utils.io.readAvailable
 import io.ktor.utils.io.writeFully
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-
-
+import kotlin.coroutines.CoroutineContext
 
 
 object NetworkCallProvider {
@@ -45,9 +46,9 @@ object NetworkCallProvider {
     }
 
     suspend fun
-            safeApiCall(request : ByteArray): ResultProvider<ByteArray> {
+            safeApiCall(request: ByteArray): ResultProvider<ByteArray> {
         return try {
-            withContext(Dispatchers.IO)
+            withContext(context = Dispatchers.Main)
             {
                 val socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
                     .connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT))

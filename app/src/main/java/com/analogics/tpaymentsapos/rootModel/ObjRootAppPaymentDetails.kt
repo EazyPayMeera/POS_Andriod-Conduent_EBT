@@ -1,6 +1,8 @@
 package com.analogics.tpaymentsapos.rootModel
 
 
+import com.analogics.paymentservicecore.model.emv.CardEntryMode
+import com.analogics.paymentservicecore.model.emv.PosConditionCode
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.BuildConfig
@@ -43,7 +45,8 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("trackData")        var trackData: String? = null,
     @SerializedName("pinBlock")         var pinBlock: String? = null,
     @SerializedName("ksn")              var ksn: String? = null,
-    @SerializedName("cardEntryMode")    var cardEntryMode: String? = null,
+    @SerializedName("posConditionCode") var posConditionCode: PosConditionCode? = null,
+    @SerializedName("cardEntryMode")    var cardEntryMode: CardEntryMode? = null,
     @SerializedName("cardMaskedPan")    var cardMaskedPan: String? = null,
     @SerializedName("cardBrand")        var cardBrand: String? = null,
     @SerializedName("cardSeqNum")       var cardSeqNum: String? = null,
