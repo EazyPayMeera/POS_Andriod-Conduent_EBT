@@ -48,7 +48,7 @@ object NetworkCallProvider {
     suspend fun
             safeApiCall(request: ByteArray): ResultProvider<ByteArray> {
         return try {
-            withContext(context = Dispatchers.Main)
+            withContext(Dispatchers.IO)
             {
                 val socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
                     .connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT))
