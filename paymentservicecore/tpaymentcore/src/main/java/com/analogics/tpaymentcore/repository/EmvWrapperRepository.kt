@@ -31,13 +31,7 @@ import com.urovo.sdk.pinpad.listener.PinInputListener
 import java.util.Hashtable
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.collections.contentToString
 import kotlin.collections.set
-import kotlin.text.decodeToString
-import kotlin.text.substring
-import kotlin.text.toInt
-import kotlin.text.uppercase
-import kotlin.toString
 
 class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
@@ -229,7 +223,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
-            Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
+            Log.d("Request_date", "Process Online:" + p0.toString() + "\n" + p1?.toString())
             var tlvMap = TlvUtils(p0).tlvMap.apply {
                 for (tlv in getEncryptedData())
                     put(tlv.key, tlv.value)
@@ -298,8 +292,10 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
-            if (p0 == ContantPara.NfcTransResult.ONLINE_APPROVAL || p0 == ContantPara.NfcTransResult.OFFLINE_APPROVAL)
+            if (p0 == ContantPara.NfcTransResult.ONLINE_APPROVAL || p0 == ContantPara.NfcTransResult.OFFLINE_APPROVAL) {
+                Log.d("EMV_APP", "P0 is matching ")
                 iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
+            }
             else
                 iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
         }
@@ -498,6 +494,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         fun getSdkCardType(aid : String) : String
         {
+            Log.d("CardTypeDebug", "AID: $aid")
             return when(aid.substring(0,10))
             {
                 "A000000003" -> ContantPara.NfcCardType.VisaCard.name

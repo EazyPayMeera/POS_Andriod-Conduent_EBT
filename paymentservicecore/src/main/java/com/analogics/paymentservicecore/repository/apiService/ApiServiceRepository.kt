@@ -4,12 +4,10 @@ package com.analogics.paymentservicecore.repository.apiService
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
 import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.PosConfig
@@ -58,6 +56,7 @@ class ApiServiceRepository @Inject constructor(
          iApiServiceResponseListener: IApiServiceResponseListener
      )
      {
+         Log.d("Request_date","apiServiceRequestOnlineAuth")
          /* Delay to show processing screen in demo mode */
          if(paymentServiceTxnDetails?.isDemoMode == true)
              delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
@@ -73,6 +72,7 @@ class ApiServiceRepository @Inject constructor(
         when(paymentServiceTxnDetails?.txnType.toString())
         {
             TxnType.PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.REFUND.toString() -> apiServiceRefund(paymentServiceTxnDetails,iApiServiceResponseListener)
             else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }
@@ -81,6 +81,7 @@ class ApiServiceRepository @Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
+        Log.d("Request_date","apiServiceRefund")
         this.iApiServiceResponseListener = iApiServiceResponseListener
         refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
             onApiServiceResponse(it)

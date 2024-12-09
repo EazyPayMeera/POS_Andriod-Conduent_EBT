@@ -31,6 +31,7 @@ object BuilderConstants {
     const val PROC_CODE_SALE = 0
     const val PROC_CODE_RKL_PART_SN = 990380
     const val PROC_CODE_RKL_FULL_SN = 991380
+    const val PROC_CODE_REFUND = 2
 
     /* AMOUNT */
     const val ISO_FIELD_AMOUNT = 4

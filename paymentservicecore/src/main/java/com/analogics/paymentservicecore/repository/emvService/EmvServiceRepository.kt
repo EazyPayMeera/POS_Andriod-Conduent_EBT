@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.repository.emvService
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.constants.ConfigConstants
@@ -13,7 +14,6 @@ import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
 import com.analogics.paymentservicecore.model.emv.CardCheckMode
-import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckStatus
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
@@ -27,7 +27,6 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
-import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.paymentservicecore.utils.toDecimalFormat
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
@@ -38,10 +37,8 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServiceRepository) :
     IEmvServiceRequestListener,
@@ -176,6 +173,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
         CoroutineScope(Dispatchers.IO).launch {
+            Log.d("Request_date","onEmvSdkOnlineRequest")
             onEmvServiceRequestOnline(emvTags, onResponse)
         }
     }
@@ -304,7 +302,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         emvTags: HashMap<String, String>,
         onResponse: (HashMap<String, String>) -> Unit
     ) {
-
+        Log.d("Request_date","onEmvServiceRequestOnline")
         var responseEmvTags =
             hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
 
