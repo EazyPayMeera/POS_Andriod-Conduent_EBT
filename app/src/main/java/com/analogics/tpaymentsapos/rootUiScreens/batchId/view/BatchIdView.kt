@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +30,7 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.batchId.viewModel.BatchIdViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
@@ -41,6 +44,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun BatchIdView(navHostController: NavHostController) {
     val viewModel: BatchIdViewModel = hiltViewModel()
     var sharedViewModel= localSharedViewModel.current
+    val context = LocalContext.current
 
     var batchId by remember { mutableStateOf(sharedViewModel.objPosConfig?.batchId.toString()) }
 
@@ -81,8 +85,13 @@ fun BatchIdView(navHostController: NavHostController) {
                 OutlinedTextField(
                     value = batchId, // Use the mutable state here
                     onValueChange = { newValue ->
-                        batchId = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH) // Update the mutable state when the text changes
-                        viewModel.updateBatchId(batchId,sharedViewModel)
+                        if (viewModel.isBatchOpen.value) {
+                            viewModel.onShowBatchOpen(context = context)
+                        } else {
+                            // Allow editing when isBatchOpen is false
+                            batchId = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH) // Update the mutable state when the text changes
+                            viewModel.updateBatchId(batchId, sharedViewModel)
+                        }
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.batchScreen_BatchId),
@@ -103,10 +112,12 @@ fun BatchIdView(navHostController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = MaterialTheme.dimens.DP_120_CompactMedium,
+                .padding(
+                    start = MaterialTheme.dimens.DP_120_CompactMedium,
                     end = MaterialTheme.dimens.DP_120_CompactMedium,
                     top = MaterialTheme.dimens.DP_24_CompactMedium,
-                    bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    bottom = MaterialTheme.dimens.DP_24_CompactMedium
+                ),
             horizontalArrangement = Arrangement.Center
         ) {
             OkButton(
@@ -119,6 +130,10 @@ fun BatchIdView(navHostController: NavHostController) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.isBatchOpen()
+    }
+    CustomDialogBuilder.ShowComposed()
 
 }
 

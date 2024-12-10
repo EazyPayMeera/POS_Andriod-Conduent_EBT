@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.repository.emvService
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.constants.ConfigConstants
@@ -313,7 +314,6 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
             cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
             cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
-            enableBeeper = false,
             supportDRL = false
         )
     }

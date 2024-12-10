@@ -47,7 +47,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -240,10 +239,10 @@ fun TransactionListScreen(
                         when(selectedOption)
                         {
                             context.resources.getString((R.string.summary)) -> {
-                                viewModel.printReceipt(context, true,false,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                                viewModel.printReceipt(0,sharedViewModel,context, false,true,isDetail = false,sharedViewModel.objRootAppPaymentDetail)
                             }
                             context.resources.getString((R.string.detail)) -> {
-                                viewModel.printReceipt(context, true,true,sharedViewModel,sharedViewModel.objRootAppPaymentDetail)
+                                viewModel.printReceipt(0,sharedViewModel,context, false,false,isDetail = true,sharedViewModel.objRootAppPaymentDetail)
                             }
                         }
 

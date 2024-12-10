@@ -44,6 +44,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApprovedView(navHostController: NavHostController) {
+    Log.d("Approved Screen","Inside Approved Screen")
     val context = LocalContext.current
     //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
     val viewModel: ApprovedViewModel = hiltViewModel()

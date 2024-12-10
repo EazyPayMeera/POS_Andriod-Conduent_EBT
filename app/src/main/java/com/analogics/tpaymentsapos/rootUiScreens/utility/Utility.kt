@@ -79,6 +79,9 @@ fun CoroutineScope.printReceipt(
     sharedViewModel: SharedViewModel,
     context: Context,
     customer: Boolean = false,
+    isSummary: Boolean = false,
+    isDetail: Boolean = false,
+    txnList: List<ObjRootAppPaymentDetails>?,
     objRootAppPaymentDetail: ObjRootAppPaymentDetails,
     lastTxn: Boolean
 ) {
@@ -107,6 +110,9 @@ fun CoroutineScope.printReceipt(
                                 context,
                                 customer,
                                 lastTxn,
+                                isSummary,
+                                isDetail,
+                                txnList,
                                 objRootAppPaymentDetail,
                                 object : IPrinterResultProviderListener {
                                     override fun onSuccess(result: Any?) {
@@ -137,6 +143,9 @@ suspend fun initPrinter(
     context: Context,
     customer: Boolean = false,
     lastTxn: Boolean = false,
+    isSummary: Boolean = false,
+    isDetail: Boolean = false,
+    txnList: List<ObjRootAppPaymentDetails>?,
     objRootAppPaymentDetail: ObjRootAppPaymentDetails,
     iPrinterResultProviderListener: IPrinterResultProviderListener
 ) {
@@ -175,24 +184,60 @@ suspend fun initPrinter(
                 iPrinterResultProviderListener
             )
 
-            addReceiptDetails(
-                context,
-                sharedViewModel,
-                customer,
-                paymentServiceTxnDetails,
-                object : IPrinterResultProviderListener {
+            if(isSummary)
+            {
+                addDetailedReceipt(
+                    sharedViewModel,
+                    context,
+                    objRootAppPaymentDetail,
+                    txnList,
+                    object : IPrinterResultProviderListener {
+                        override fun onSuccess(result: Any?) {
+                            if(result == true)
+                            {
+                                CustomDialogBuilder.hideProgress()
+                            }
+                        }
+                        override fun onFailure(exception: Exception) {
+
+                        }
+                    }
+                )
+            }
+            else if(isDetail)
+            {
+                addSummaryDetails(context,sharedViewModel,objRootAppPaymentDetail,object : IPrinterResultProviderListener{
                     override fun onSuccess(result: Any?) {
-                        if (result == true) {
-                            Log.d("Abort", "Printing Successful")
+                        if(result == true)
+                        {
                             CustomDialogBuilder.hideProgress()
                         }
                     }
-
                     override fun onFailure(exception: Exception) {
-                        Log.e(TAG, "Failed to print receipt: ${exception.message}")
+
                     }
-                }
-            )
+                })
+            }
+            else {
+                addReceiptDetails(
+                    context,
+                    sharedViewModel,
+                    customer,
+                    paymentServiceTxnDetails,
+                    object : IPrinterResultProviderListener {
+                        override fun onSuccess(result: Any?) {
+                            if (result == true) {
+                                Log.d("Abort", "Printing Successful")
+                                CustomDialogBuilder.hideProgress()
+                            }
+                        }
+
+                        override fun onFailure(exception: Exception) {
+                            Log.e(TAG, "Failed to print receipt: ${exception.message}")
+                        }
+                    }
+                )
+            }
         } ?: Log.d(TAG, "No transactions available for printing.")
     } catch (e: Exception) {
         AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
@@ -314,7 +359,7 @@ suspend fun fetchLastTransactions(
         val txnDataList = convertTxnEntityListToTxnDataList(listOf(latestTransaction))
         withContext(Dispatchers.Main) {
             _lastTransactionList.value = txnDataList
-            printReceipt(0, sharedViewModel, context, customer, sharedViewModel.objRootAppPaymentDetail,lastTxn = true)
+            printReceipt(0, sharedViewModel, context, customer,false,false,null, sharedViewModel.objRootAppPaymentDetail,lastTxn = true)
         }
     } else {
         withContext(Dispatchers.Main) {
@@ -328,71 +373,85 @@ suspend fun fetchLastTransactions(
 }
 
 
-
-
-
-
-fun CoroutineScope.printData(
-    logoResId: Int,
+suspend fun addDetailedReceipt(
     sharedViewModel: SharedViewModel,
     context: Context,
-    customer: Boolean = false,
-    objRootAppPaymentDetail: ObjRootAppPaymentDetails
+    objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+    transactionList: List<ObjRootAppPaymentDetails>?, // Assuming this is the input type
+    iPrinterResultProviderListener: IPrinterResultProviderListener
 ) {
-    launch {
-        getPrinterStatus(objRootAppPaymentDetail, object : IPrinterResultProviderListener {
-            override fun onSuccess(result: Any?) {
-                Log.d(TAG, "Printer status retrieved: $result")
-
-                val subtitleText = when (result) {
-                    -1 -> context.resources.getString(R.string.printer_out_of_paper) // Example error for result -1
-                    else -> context.resources.getString(R.string.printer_busy) // Default error for other cases
-                }
-
-                if (result != 0) {
-                    Log.d(TAG, "Printer status retrieved inside result not equal to zero: $result")
-                    CustomDialogBuilder.composeAlertDialog(
-                        title = context.resources.getString(R.string.printer_error_title),
-                        subtitle = subtitleText // Dynamic subtitle based on result
-                    )
-                } else {
-                        launch {
-                            try {
-                                initPrinter(
-                                    logoResId,
-                                    sharedViewModel,
-                                    context,
-                                    customer,
-                                    lastTxn = true,
-                                    objRootAppPaymentDetail,
-                                    object : IPrinterResultProviderListener {
-                                        override fun onSuccess(result: Any?) {
-                                            Log.d(TAG, "Printer initialized successfully.")
-                                        }
-
-                                        override fun onFailure(exception: Exception) {
-                                            Log.e(
-                                                TAG,
-                                                "Failed to initialize printer: ${exception.message}"
-                                            )
-                                            // Handle failure for printer initialization here
-                                        }
-                                    })
-                            } catch (e: Exception) {
-                                Log.e(TAG, "Error during printer initialization: ${e.message}")
-                            }
-                        }
-                }
-            }
-
-            override fun onFailure(exception: Exception) {
-                Log.e(TAG, "Failed to get printer status: ${exception.message}")
-                // Handle failure for getting printer status here
+    val receiptBuilder = ReceiptBuilder()
+    withContext(Dispatchers.IO) {
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+        val transactionDetailsList = transactionList?.map { paymentDetail ->
+            ReceiptBuilder.TransactionDetails(
+                TxnType = paymentDetail.txnType.toString(), // Replace with actual property
+                Status = paymentDetail.txnStatus.toString(), // Replace with actual property
+                InvoiceNo = paymentDetail.invoiceNo.toString(),
+                AuthCode = paymentDetail.hostAuthCode.toString(),
+                txnAmount = paymentDetail.txnAmount.toString(),
+                ttlAmount = paymentDetail.ttlAmount.toString(),
+                timedate = paymentDetail.dateTime.toString()
+            )
+        }
+        val detailedReport = receiptBuilder.createDetailReport(context,sharedViewModel,paymentServiceTxnDetails, transactionDetailsList)
+        val labelList: List<String> = detailedReport.detailFields.map { it.label }
+        val valueList: List<String> = detailedReport.detailFields.map { it.quantity }
+        val descriptionList: List<String> = detailedReport.detailFields.map { it.price }
+        val fontsize: List<Int> = detailedReport.detailFields.map { field ->
+            when (field.discount) { // Accessing the fourth element (the font size)
+                ReceiptBuilder.FontSize.Small -> 24
+                ReceiptBuilder.FontSize.Medium -> 28
+                ReceiptBuilder.FontSize.Big -> 32
+                else -> 24 // Default font size if no match
             }
         }
+        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
+            labelList,
+            valueList,
+            descriptionList,
+            fontsize,
+            iPrinterResultProviderListener
         )
     }
 }
+
+suspend fun addSummaryDetails(
+    context: Context,
+    sharedViewModel: SharedViewModel,
+    objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+    iPrinterResultProviderListener: IPrinterResultProviderListener
+) {
+    val receiptBuilder = ReceiptBuilder()
+    withContext(Dispatchers.IO) {
+        val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
+            PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
+        )
+        val summaryReport = receiptBuilder.createSummaryReport(context,sharedViewModel, paymentServiceTxnDetails)
+
+        val labelList: List<String> = summaryReport.summaryFields.map { it.label }
+        val valueList: List<String> = summaryReport.summaryFields.map { it.value }
+        val descriptionList: List<String> = summaryReport.summaryFields.map { it.description }
+        val fontsize: List<Int> = summaryReport.summaryFields.map { field ->
+            when (field.fontsize) { // Accessing the fourth element (the font size)
+                ReceiptBuilder.FontSize.Small -> 24
+                ReceiptBuilder.FontSize.Medium -> 28
+                ReceiptBuilder.FontSize.Big -> 32
+                else -> 24 // Default font size if no match
+            }
+        }
+        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
+            labelList,
+            valueList,
+            descriptionList,
+            fontsize,
+            iPrinterResultProviderListener
+        )
+    }
+}
+
 
 
 

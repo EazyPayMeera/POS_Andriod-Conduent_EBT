@@ -9,34 +9,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.constants.AppConstants
-import com.analogics.paymentservicecore.constants.EmvConstants
-import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.model.emv.CardCheckMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
-import com.analogics.paymentservicecore.model.emv.TransConfig
-import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnStatus
-import com.analogics.paymentservicecore.models.toEmvTransType
-import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
-import com.analogics.securityframework.database.entity.TxnEntity
-import com.analogics.tpaymentcore.utils.TlvUtils
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
-import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,6 +35,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
+            Log.d("Approved Screen","Going to Approved Screen")
             navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
         }
     }
