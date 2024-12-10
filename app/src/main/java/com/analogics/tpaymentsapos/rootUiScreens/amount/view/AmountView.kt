@@ -202,6 +202,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
+
     }
 
 }

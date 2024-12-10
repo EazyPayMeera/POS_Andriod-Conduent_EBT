@@ -21,7 +21,7 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.tpaymentcore.utils.TlvUtils
 import javax.inject.Inject
 
-class VoidRequestRepository @Inject constructor (
+class PreAuthRequestRepository @Inject constructor (
     var apiRequestBuilder: ApiRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository,
     var apiRequestBuilderLyra: ApiRequestBuilderLyra,
@@ -33,7 +33,7 @@ class VoidRequestRepository @Inject constructor (
     suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
 
         if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA) {
-            var request = apiRequestBuilderLyra.CreateVoidRequest(
+            var request = apiRequestBuilderLyra.createPreAuthRequest(
                 PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
                     paymentServiceTxnDetails
                 )
@@ -76,7 +76,7 @@ class VoidRequestRepository @Inject constructor (
                     }
                 },
                 BuilderUtils.prepareApiRequestBody(
-                    apiRequestBuilder.createVoidRequest(
+                    apiRequestBuilder.createPre_AuthRequest(
                         PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
                             paymentServiceTxnDetails
                         )

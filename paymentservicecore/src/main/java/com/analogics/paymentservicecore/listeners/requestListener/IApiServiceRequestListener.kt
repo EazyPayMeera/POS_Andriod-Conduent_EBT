@@ -33,6 +33,11 @@ interface IApiServiceRequestListener {
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
+    suspend fun apiServicePreAuth(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iApiServiceResponseListener: IApiServiceResponseListener
+    )
+
     suspend fun apiServiceReversal(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener

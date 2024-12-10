@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.repository.apiService.access_token.Acces
 import com.analogics.paymentservicecore.repository.apiService.auth_capture.AuthCaptureRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.batch.BatchRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.login.LoginRequestRepository
+import com.analogics.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
@@ -34,6 +35,7 @@ class ApiServiceRepository @Inject constructor(
     private val accessTokenRequestRepository: AccessTokenRequestRepository,
     private var refundRequestRepository: RefundRequestRepository,
     private val authCaptureRequestRepository: AuthCaptureRequestRepository,
+    private var preAuthRequestRepository: PreAuthRequestRepository,
     private val loginRequestRepository: LoginRequestRepository,
     private val reversalRequestRepository: ReversalRequestRepository,
     private val voidRequestRepository: VoidRequestRepository,
@@ -73,6 +75,8 @@ class ApiServiceRepository @Inject constructor(
         {
             TxnType.PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
             TxnType.REFUND.toString() -> apiServiceRefund(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.PREAUTH.toString() -> apiServicePreAuth(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.VOID.toString() -> apiServiceVoid(paymentServiceTxnDetails,iApiServiceResponseListener)
             else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }
@@ -87,6 +91,18 @@ class ApiServiceRepository @Inject constructor(
             onApiServiceResponse(it)
         }
     }
+
+     @RequiresApi(Build.VERSION_CODES.O)
+     override suspend fun apiServicePreAuth(
+         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+         iApiServiceResponseListener: IApiServiceResponseListener
+     ) {
+         Log.d("Request_date","apiServiceRefund")
+         this.iApiServiceResponseListener = iApiServiceResponseListener
+         preAuthRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
+             onApiServiceResponse(it)
+         }
+     }
 
     override suspend fun apiServiceVoid(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,

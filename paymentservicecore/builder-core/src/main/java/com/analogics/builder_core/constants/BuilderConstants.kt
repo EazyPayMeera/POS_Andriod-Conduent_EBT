@@ -20,6 +20,7 @@ object BuilderConstants {
     const val MTI_SALE_REQ = 0x0200
     const val MTI_SALE_RES = 0x0210
     const val MTI_NETWORK_REQ = 0x0800
+    const val MIT_VOID_REQ = 0x0220
 
     /* TPDU */
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
@@ -32,6 +33,7 @@ object BuilderConstants {
     const val PROC_CODE_RKL_PART_SN = 990380
     const val PROC_CODE_RKL_FULL_SN = 991380
     const val PROC_CODE_REFUND = 2
+    const val PROC_CODE_VOID_SALE = 2
 
     /* AMOUNT */
     const val ISO_FIELD_AMOUNT = 4
