@@ -73,6 +73,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     ContantPara.CardSlot.UNKNOWN,
                     termTlvParams
                 )
+                EmvNfcKernelApi.getInstance().LogOutEnable(0)
                 Log.d("EMV_APP", "Term Config Override: $termTlvParams")
             }catch (exception : Exception)
             {
