@@ -177,6 +177,8 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
                 else -> null
             }
         }
+        else if(response is EmvSdkResult.TransResult)
+            abortPayment()
     }
 
     override fun onEmvSdkDisplayMessage(displayMsgId: EmvSdkResult.DisplayMsgId) {
@@ -185,8 +187,13 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            onEmvServiceRequestOnline(emvTags, onResponse)
+        try {
+            CoroutineScope(Dispatchers.Default).launch {
+                onEmvServiceRequestOnline(emvTags, onResponse)
+            }
+        }catch (e: Exception)
+        {
+            e.printStackTrace()
         }
     }
 

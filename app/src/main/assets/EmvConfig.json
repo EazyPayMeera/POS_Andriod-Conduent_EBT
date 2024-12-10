@@ -59,6 +59,7 @@
     "magCVMCapabilityCVMRequired" : "10",
     "magCVMCapabilityNoCVMRequired" : "00",
     "securityCapability": "08",
+    "addlTerminalCapabilities" : "6B00C0A001",
     "aidList": [
       {
         "aid": "A0000000031010",
@@ -78,7 +79,7 @@
         "tacDefault" :"F45084800C",
         "tacDenial" :"0000000000",
         "tacOnline" :"F45084800C",
-        "riskManagementData": "007A800000000000",
+        "riskManagementData": "EC7A804000000000",
         "kernelConfiguration": "30"
       },
       {
@@ -87,7 +88,7 @@
         "tacDefault" :"F45004800C",
         "tacDenial" :"0000800000",
         "tacOnline" :"F45004800C",
-        "riskManagementData": "4C7A800000000000",
+        "riskManagementData": "EC7A804000000000",
         "kernelConfiguration": "B0"
       }
     ]

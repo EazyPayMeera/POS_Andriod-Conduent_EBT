@@ -28,6 +28,12 @@ import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Hashtable
 import java.util.Locale
 import javax.inject.Inject
@@ -97,7 +103,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
-        var thread : Thread? = null
+        var job : Job? = null
         var _amount : Long = 0L
         var _cashbackAmount : Long = 0L
         var pinBlock : String? = null
@@ -107,8 +113,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         fun resetTransData()
         {
             /* Interrupt existing thread if any */
-            thread?.interrupt()
-            thread = null
+            job?.cancel()
+            job = null
 
             /* Reset transaction parameters */
             _amount = 0L
@@ -119,7 +125,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
-            thread = Thread {
+            resetTransData()
+            /*thread = Thread {*/
                 try {
                     this.iEmvSdkResponseListener = iEmvSdkResponseListener
                     val data = Hashtable<String, Any>()
@@ -139,13 +146,18 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     initEncryption()
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
-                    EmvNfcKernelApi.getInstance().startKernel(data)
+
+                    job = CoroutineScope(Dispatchers.Default).launch {
+                        EmvNfcKernelApi.getInstance().startKernel(data)
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     this.iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkException(errorMessage = e.message.toString()))
                 }
+/*
             }
             thread?.start()
+*/
         }
 
         @OptIn(ExperimentalStdlibApi::class)
@@ -167,21 +179,27 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         fun abortPayment()
         {
-            thread?.interrupt()
+            job?.cancel()
+            job = null
             EmvNfcKernelApi.getInstance().abortKernel()
         }
 
         fun encryptThenRequestOnline(p0: String?, p1: String?=null)
         {
-            var tlvMap = TlvUtils(p0).tlvMap.apply {
-                for (tlv in getEncryptedData())
-                    put(tlv.key, tlv.value)
-            }
-            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
-                var tlvTags = TlvUtils(it)
-                var hasOnlineResp = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
-                EmvNfcKernelApi.getInstance()
-                    .sendOnlineProcessResult(hasOnlineResp, tlvTags.toTlvString())
+            try {
+                var tlvMap = TlvUtils(p0).tlvMap.apply {
+                    for (tlv in getEncryptedData())
+                        put(tlv.key, tlv.value)
+                }
+                iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
+                    var tlvTags = TlvUtils(it)
+                    var hasOnlineResp = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
+                    EmvNfcKernelApi.getInstance()
+                        .sendOnlineProcessResult(hasOnlineResp, tlvTags.toTlvString())
+                }
+            }catch (e: Exception)
+            {
+                e.printStackTrace()
             }
         }
 
@@ -235,7 +253,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onRequestSetAmount() {
-            Log.d("EMV_APP", "Request Amount:")
+            Log.d("EMV_APP", "Request Amount:$_amount")
             EmvNfcKernelApi.getInstance().setAmountEx(_amount, _cashbackAmount)
         }
 
@@ -243,8 +261,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             p0: ContantPara.CheckCardResult?,
             p1: Hashtable<String, String>?
         ) {
-            Log.d("EMV_APP", "Check Card Result:" + p0.toString())
-            Log.d("EMV_APP", "Check Card List:" + p1.toString())
+            Log.d("EMV_APP", "Check Card Result:" + p0?.toString())
+            Log.d("EMV_APP", "Check Card List:" + p1?.toString())
 
             iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.CardCheckResult(status = urovoToCheckCardStatus(p0)))
         }
@@ -274,7 +292,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
-            Log.d("EMV_APP", "Process Online:" + p0.toString() + "\n" + p1?.toString())
+            Log.d("EMV_APP", "Process Online:" + p0?.toString() + "\n" + p1?.toString())
             encryptThenRequestOnline(p0,p1)
         }
 
@@ -319,15 +337,24 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onReturnNfcCardData(p0: Hashtable<String, String>?) {
-            p0?.containsKey(EmvConstants.UROVO_SDK_KEY_EMV_DATA)?.takeIf { it == true }?.let {
-                nfcTlv = TlvUtils(p0[EmvConstants.UROVO_SDK_KEY_EMV_DATA]).toTlvString()
+            try {
+                p0?.containsKey(EmvConstants.UROVO_SDK_KEY_EMV_DATA)?.takeIf { it == true }?.let {
+                    nfcTlv = TlvUtils(p0[EmvConstants.UROVO_SDK_KEY_EMV_DATA]).toTlvString()
+                }
+                Log.d("EMV_APP", "NFC Card Data:" + p0?.toString())
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            Log.d("EMV_APP", "NFC Card Data:" + p0.toString())
         }
 
         override fun onNFCrequestOnline() {
-            Log.d("EMV_APP", "NFC Process Online:")
-            encryptThenRequestOnline(nfcTlv)
+            try {
+                Log.d("EMV_APP", "NFC Process Online:" + nfcTlv)
+                encryptThenRequestOnline(nfcTlv)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun onNFCrequestImportPin(p0: Int, p1: Int, p2: String?) {
@@ -336,11 +363,12 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
+            Log.d("EMV_APP", "NFC Result :" + p0?.toString())
             iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(urovoToEmvTransResult(p0)))
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
-            Log.d("EMV_APP", "NFC Trans Error:" + p0.toString())
+            Log.d("EMV_APP", "NFC Trans Error:" + p0?.toString())
         }
 
         fun urovoToEmvTransResult(transactionResult : ContantPara.TransactionResult?) : TransStatus?
