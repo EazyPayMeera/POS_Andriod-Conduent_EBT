@@ -19,6 +19,7 @@
   "enableBeeper" : "1",
   "enableRefundCVM" : "1",
   "forceInputPIN" : "0",
+  "enableEmvLogs" : "0",
   "additionalTags" : "",
 
   "contact": {

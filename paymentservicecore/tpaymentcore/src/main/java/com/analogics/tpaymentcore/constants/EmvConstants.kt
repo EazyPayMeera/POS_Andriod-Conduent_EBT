@@ -35,7 +35,10 @@ object EmvConstants {
     const val EMV_TAG_SUPPORT_SM =                   "DF04"
     const val EMV_TAG_SUPPORT_VELOCITY_CHECK =       "DF05"
 
+    /* UROVO Specific values */
     const val UROVO_SDK_KEY_EMV_DATA =               "EMVDATA"
+    const val UROVO_SDK_EMV_LOG_DISABLE   =                 0
+    const val UROVO_SDK_EMV_LOG_ENABLE   =                  1
 
     /* Host Response */
     const val EMV_TAG_RESP_CODE =                     "8A"

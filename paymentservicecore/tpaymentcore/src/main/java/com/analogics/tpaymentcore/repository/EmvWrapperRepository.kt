@@ -73,7 +73,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     ContantPara.CardSlot.UNKNOWN,
                     termTlvParams
                 )
-                EmvNfcKernelApi.getInstance().LogOutEnable(0)
+
+                EmvNfcKernelApi.getInstance().LogOutEnable(if(aidConfig?.enableEmvLogs == true) EmvConstants.UROVO_SDK_EMV_LOG_ENABLE else EmvConstants.UROVO_SDK_EMV_LOG_DISABLE)
+
                 Log.d("EMV_APP", "Term Config Override: $termTlvParams")
             }catch (exception : Exception)
             {

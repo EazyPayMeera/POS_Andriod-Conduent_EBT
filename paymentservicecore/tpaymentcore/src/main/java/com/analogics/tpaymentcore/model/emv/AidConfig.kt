@@ -41,6 +41,7 @@ data class AidConfig(
     @SerializedName("supportVelocityCheck") val supportVelocityCheck : Boolean? = null,
     @SerializedName("enableRefundCVM")      val enableRefundCVM : Boolean? = null,
     @SerializedName("forceInputPIN")        val forceInputPIN : Boolean? = null,
+    @SerializedName("enableEmvLogs")        val enableEmvLogs : Boolean? = null,
 
     /* AID Specific */
     @SerializedName("aid")                  val aid : String? = null,
