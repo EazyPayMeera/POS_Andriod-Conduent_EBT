@@ -6,9 +6,10 @@ enum class CardBrand {
     AMEX,
     JCB,
     DISCOVER,
+    DINERS,
     PURE,
     RUPAY,
     MIR,
     UPI,
-    ERROR
+    UNKNOWN
 }

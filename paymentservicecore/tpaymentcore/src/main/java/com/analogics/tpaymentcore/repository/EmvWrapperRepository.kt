@@ -28,10 +28,22 @@ import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Hashtable
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.collections.contentToString
 import kotlin.collections.set
+import kotlin.text.decodeToString
+import kotlin.text.substring
+import kotlin.text.toInt
+import kotlin.text.uppercase
+import kotlin.toString
 
 class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
@@ -61,6 +73,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     ContantPara.CardSlot.UNKNOWN,
                     termTlvParams
                 )
+
+                EmvNfcKernelApi.getInstance().LogOutEnable(if(aidConfig?.enableEmvLogs == true) EmvConstants.UROVO_SDK_EMV_LOG_ENABLE else EmvConstants.UROVO_SDK_EMV_LOG_DISABLE)
+
                 Log.d("EMV_APP", "Term Config Override: $termTlvParams")
             }catch (exception : Exception)
             {
@@ -91,14 +106,30 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
-        var thread : Thread? = null
+        var job : Job? = null
         var _amount : Long = 0L
         var _cashbackAmount : Long = 0L
         var pinBlock : String? = null
         var ksn : String? = null
+        var nfcTlv : String? = null
+
+        fun resetTransData()
+        {
+            /* Interrupt existing thread if any */
+            job?.cancel()
+            job = null
+
+            /* Reset transaction parameters */
+            _amount = 0L
+            _cashbackAmount = 0L
+            pinBlock = null
+            ksn = null
+            nfcTlv = null
+        }
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
-            thread = Thread {
+            resetTransData()
+            /*thread = Thread {*/
                 try {
                     this.iEmvSdkResponseListener = iEmvSdkResponseListener
                     val data = Hashtable<String, Any>()
@@ -118,19 +149,61 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                     initEncryption()
                     EmvNfcKernelApi.getInstance().setContext(context)
                     EmvNfcKernelApi.getInstance().setListener(this)
-                    EmvNfcKernelApi.getInstance().startKernel(data)
+
+                    job = CoroutineScope(Dispatchers.Default).launch {
+                        EmvNfcKernelApi.getInstance().startKernel(data)
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     this.iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkException(errorMessage = e.message.toString()))
                 }
+/*
             }
             thread?.start()
+*/
+        }
+
+        @OptIn(ExperimentalStdlibApi::class)
+        fun getEmvTag(tag : String?) : String?
+        {
+            var tagVal: String? = null
+            try {
+                tag?.let {
+                    EmvNfcKernelApi.getInstance().getValByTag(tag.hexToInt())?.let {
+                        tagVal = it
+                    }
+                }
+            }catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+            return tagVal
         }
 
         fun abortPayment()
         {
-            thread?.interrupt()
+            job?.cancel()
+            job = null
             EmvNfcKernelApi.getInstance().abortKernel()
+        }
+
+        fun encryptThenRequestOnline(p0: String?, p1: String?=null)
+        {
+            try {
+                var tlvMap = TlvUtils(p0).tlvMap.apply {
+                    for (tlv in getEncryptedData())
+                        put(tlv.key, tlv.value)
+                }
+                iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
+                    var tlvTags = TlvUtils(it)
+                    var hasOnlineResp = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
+                    EmvNfcKernelApi.getInstance()
+                        .sendOnlineProcessResult(hasOnlineResp, tlvTags.toTlvString())
+                }
+            }catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
         }
 
         fun initEncryption()
@@ -183,7 +256,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onRequestSetAmount() {
-            Log.d("EMV_APP", "Request Amount:")
+            Log.d("EMV_APP", "Request Amount:$_amount")
             EmvNfcKernelApi.getInstance().setAmountEx(_amount, _cashbackAmount)
         }
 
@@ -191,11 +264,10 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             p0: ContantPara.CheckCardResult?,
             p1: Hashtable<String, String>?
         ) {
-            Log.d("EMV_APP", "Check Card Result:" + p0.toString())
-            Log.d("EMV_APP", "Check Card List:" + p1.toString())
+            Log.d("EMV_APP", "Check Card Result:" + p0?.toString())
+            Log.d("EMV_APP", "Check Card List:" + p1?.toString())
 
-            if (p0 == ContantPara.CheckCardResult.INSERTED_CARD)
-                iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.CardCheckResult(status = EmvSdkResult.CardCheckStatus.CARD_INSERTED))
+            iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.CardCheckResult(status = urovoToCheckCardStatus(p0)))
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
@@ -223,17 +295,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onRequestOnlineProcess(p0: String?, p1: String?) {
-            Log.d("Request_date", "Process Online:" + p0.toString() + "\n" + p1?.toString())
-            var tlvMap = TlvUtils(p0).tlvMap.apply {
-                for (tlv in getEncryptedData())
-                    put(tlv.key, tlv.value)
-            }
-            iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
-                var tlvTags = TlvUtils(it)
-                var wentOnline = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
-                EmvNfcKernelApi.getInstance()
-                    .sendOnlineProcessResult(wentOnline, tlvTags.toTlvString())
-            }
+            Log.d("EMV_APP", "Process Online:" + p0?.toString() + "\n" + p1?.toString())
+            encryptThenRequestOnline(p0,p1)
         }
 
         override fun onReturnBatchData(p0: String?) {
@@ -277,12 +340,24 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onReturnNfcCardData(p0: Hashtable<String, String>?) {
-            Log.d("EMV_APP", "NFC Card Data:" + p0.toString())
+            try {
+                p0?.containsKey(EmvConstants.UROVO_SDK_KEY_EMV_DATA)?.takeIf { it == true }?.let {
+                    nfcTlv = TlvUtils(p0[EmvConstants.UROVO_SDK_KEY_EMV_DATA]).toTlvString()
+                }
+                Log.d("EMV_APP", "NFC Card Data:" + p0?.toString())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun onNFCrequestOnline() {
-            Log.d("EMV_APP", "NFC Process Online:")
-            EmvNfcKernelApi.getInstance().sendOnlineProcessResult(true, "8A023030")
+            try {
+                Log.d("EMV_APP", "NFC Process Online:" + nfcTlv)
+                encryptThenRequestOnline(nfcTlv)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun onNFCrequestImportPin(p0: Int, p1: Int, p2: String?) {
@@ -291,17 +366,12 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
-            Log.d("EMV_APP", "NFC Trans Result:" + p0.toString())
-            if (p0 == ContantPara.NfcTransResult.ONLINE_APPROVAL || p0 == ContantPara.NfcTransResult.OFFLINE_APPROVAL) {
-                Log.d("EMV_APP", "P0 is matching ")
-                iEmvSdkResponseListener?.onEmvSdkResponse("SUCCESS")
-            }
-            else
-                iEmvSdkResponseListener?.onEmvSdkResponse("FAILURE")
+            Log.d("EMV_APP", "NFC Result :" + p0?.toString())
+            iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(urovoToEmvTransResult(p0)))
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
-            Log.d("EMV_APP", "NFC Trans Error:" + p0.toString())
+            Log.d("EMV_APP", "NFC Trans Error:" + p0?.toString())
         }
 
         fun urovoToEmvTransResult(transactionResult : ContantPara.TransactionResult?) : TransStatus?
@@ -322,6 +392,42 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 ContantPara.TransactionResult.ICC_CARD_REMOVED -> TransStatus.CARD_REMOVED
 
                 else -> TransStatus.ERROR
+            }
+        }
+
+        fun urovoToEmvTransResult(transactionResult : ContantPara.NfcTransResult?) : TransStatus?
+        {
+            return when (transactionResult) {
+                ContantPara.NfcTransResult.ONLINE_APPROVAL ->  TransStatus.APPROVED_ONLINE
+                ContantPara.NfcTransResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
+                ContantPara.NfcTransResult.DECLINE_ONLINE -> TransStatus.DECLINED_ONLINE
+                ContantPara.NfcTransResult.DECLINE_OFFLINE -> TransStatus.DECLINED_OFFLINE
+                ContantPara.NfcTransResult.CARD_REMOVED -> TransStatus.CARD_REMOVED
+                ContantPara.NfcTransResult.TERMINATE -> TransStatus.TERMINATED
+                ContantPara.NfcTransResult.RETRY -> TransStatus.RETRY
+                ContantPara.NfcTransResult.OTHER_INTERFACES -> TransStatus.TRY_ANOTHER_INTERFACE
+
+                else -> TransStatus.ERROR
+            }
+        }
+
+        fun urovoToCheckCardStatus(checkCardResult : ContantPara.CheckCardResult?) : EmvSdkResult.CardCheckStatus?
+        {
+            return when (checkCardResult) {
+                ContantPara.CheckCardResult.INSERTED_CARD -> EmvSdkResult.CardCheckStatus.CARD_INSERTED
+                ContantPara.CheckCardResult.TAP_CARD_DETECTED -> EmvSdkResult.CardCheckStatus.CARD_TAPPED
+                ContantPara.CheckCardResult.MSR -> EmvSdkResult.CardCheckStatus.CARD_SWIPED
+                ContantPara.CheckCardResult.NOT_ICC -> EmvSdkResult.CardCheckStatus.NOT_ICC_CARD
+                ContantPara.CheckCardResult.USE_ICC_CARD -> EmvSdkResult.CardCheckStatus.USE_ICC_CARD
+                ContantPara.CheckCardResult.BAD_SWIPE -> EmvSdkResult.CardCheckStatus.BAD_SWIPE
+                ContantPara.CheckCardResult.NEED_FALLBACK -> EmvSdkResult.CardCheckStatus.NEED_FALLBACK
+                ContantPara.CheckCardResult.MULT_CARD -> EmvSdkResult.CardCheckStatus.MULTIPLE_CARDS
+                ContantPara.CheckCardResult.TIMEOUT -> EmvSdkResult.CardCheckStatus.TIMEOUT
+                ContantPara.CheckCardResult.CANCEL -> EmvSdkResult.CardCheckStatus.CANCEL
+                ContantPara.CheckCardResult.DEVICE_BUSY -> EmvSdkResult.CardCheckStatus.DEVICE_BUSY
+                ContantPara.CheckCardResult.NO_CARD -> EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
+                else -> EmvSdkResult.CardCheckStatus.ERROR
+
             }
         }
 
@@ -494,7 +600,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         fun getSdkCardType(aid : String) : String
         {
-            Log.d("CardTypeDebug", "AID: $aid")
             return when(aid.substring(0,10))
             {
                 "A000000003" -> ContantPara.NfcCardType.VisaCard.name

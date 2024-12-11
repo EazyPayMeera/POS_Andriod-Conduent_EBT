@@ -1,5 +1,8 @@
 package com.analogics.paymentservicecore.model
 
+import com.analogics.paymentservicecore.model.emv.CardBrand
+import com.analogics.paymentservicecore.model.emv.PosConditionCode
+import com.analogics.paymentservicecore.models.TxnType
 import com.google.gson.annotations.SerializedName
 
 data class PaymentServiceTxnDetails(
@@ -42,9 +45,10 @@ data class PaymentServiceTxnDetails(
     @SerializedName("emvData") var emvData: String? = null,
     @SerializedName("trackData")        var trackData: String? = null,
     @SerializedName("pinBlock")        var pinBlock: String? = null,
+    @SerializedName("posConditionCode") var posConditionCode: PosConditionCode? = null,
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
-    @SerializedName("cardBrand") var cardBrand: String? = null,
+    @SerializedName("cardBrand") var cardBrand: CardBrand? = null,
     @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
     @SerializedName("cardAuthMethod") var cardAuthMethod: String? = null,
     @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
@@ -56,7 +60,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
     @SerializedName("dateTime") var dateTime: String? = null,
     @SerializedName("timeZone") var timeZone: String? = null,
-    @SerializedName("txnType") var txnType: String? = null,
+    @SerializedName("txnType") var txnType: TxnType? = null,
     @SerializedName("accountType") var accountType: String? = null,
     @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,
     @SerializedName("txnAmount") var txnAmount: String? = null,

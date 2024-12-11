@@ -42,6 +42,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("emvData") var emvData: String? = null,
     @SerializedName("trackData")        var trackData: String? = null,
     @SerializedName("pinBlock")        var pinBlock: String? = null,
+    @SerializedName("posConditionCode") var posConditionCode: String? = null,
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
     @SerializedName("cardBrand") var cardBrand: String? = null,

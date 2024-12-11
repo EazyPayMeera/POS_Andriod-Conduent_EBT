@@ -13,7 +13,9 @@ import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceRe
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.AidConfig
 import com.analogics.paymentservicecore.model.emv.CAPKey
+import com.analogics.paymentservicecore.model.emv.CardBrand
 import com.analogics.paymentservicecore.model.emv.CardCheckMode
+import com.analogics.paymentservicecore.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckResult
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.CardCheckStatus
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
@@ -27,6 +29,7 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.model.error.EmvServiceException
 import com.analogics.paymentservicecore.models.toEmvTransType
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.utils.maskPAN
 import com.analogics.paymentservicecore.utils.toDecimalFormat
 import com.analogics.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
@@ -36,9 +39,12 @@ import com.analogics.tpaymentcore.utils.TlvUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServiceRepository) :
     IEmvServiceRequestListener,
@@ -164,6 +170,16 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
 
     override fun onEmvSdkResponse(response: Any) {
         iEmvServiceResponseListener.onEmvServiceResponse(sdkToEmvService(response))
+        if (response is EmvSdkResult.CardCheckResult) {
+            paymentServiceTxnDetails.cardEntryMode = when(sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)){
+                CardCheckStatus.CARD_INSERTED -> CardEntryMode.CONTACT.toString()
+                CardCheckStatus.CARD_TAPPED -> CardEntryMode.CONTACLESS.toString()
+                CardCheckStatus.CARD_SWIPED -> CardEntryMode.MAGSTRIPE.toString()
+                else -> null
+            }
+        }
+        else if(response is EmvSdkResult.TransResult)
+            abortPayment()
     }
 
     override fun onEmvSdkDisplayMessage(displayMsgId: EmvSdkResult.DisplayMsgId) {
@@ -172,9 +188,13 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            Log.d("Request_date","onEmvSdkOnlineRequest")
-            onEmvServiceRequestOnline(emvTags, onResponse)
+        try {
+            CoroutineScope(Dispatchers.Default).launch {
+                onEmvServiceRequestOnline(emvTags, onResponse)
+            }
+        }catch (e: Exception)
+        {
+            e.printStackTrace()
         }
     }
 
@@ -267,6 +287,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     ) {
         this.paymentServiceTxnDetails = paymentServiceTxnDetails?: PaymentServiceTxnDetails()
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
+        this.context = context
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
         var transConfig = getTransConfig(paymentServiceTxnDetails)
 
@@ -302,31 +323,12 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         emvTags: HashMap<String, String>,
         onResponse: (HashMap<String, String>) -> Unit
     ) {
-        Log.d("Request_date","onEmvServiceRequestOnline")
+
         var responseEmvTags =
             hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
 
-        val tlvData = TlvUtils(emvTags)
-        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
-            paymentServiceTxnDetails.trackData =
-                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_TRACK]
-            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_TRACK)
-        }
-        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_KSN)) {
-            paymentServiceTxnDetails.ksn =
-                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_KSN]
-            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_KSN)
-        }
-        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)) {
-            paymentServiceTxnDetails.pinBlock =
-                tlvData.tlvMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK]
-            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
-        }
-        if (tlvData.tlvMap.containsKey(EmvConstants.EMV_TAG_PAN)) {
-            tlvData.tlvMap.remove(EmvConstants.EMV_TAG_PAN)
-        }
-
-        paymentServiceTxnDetails.emvData = tlvData.toTlvString()
+        extractReceiptInfo()
+        prepareHostTlvData(emvTags)
 
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.PROCESSING_ONLINE)
         apiServiceRepository.apiServiceRequestOnlineAuth(
@@ -343,5 +345,117 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
                     onResponse(responseEmvTags)
                 }
             })
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun extractReceiptInfo()
+    {
+        try {
+            /* Card Brand. AID has a preference over PAN */
+            emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_AID_CARD)?.let {
+                paymentServiceTxnDetails.cardBrand = getCardBrand(aid = it)
+            }?:emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_PAN)?.let {
+                paymentServiceTxnDetails.cardBrand = getCardBrand(pan = it)
+            }
+
+            /* Language Preference */
+            emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_LANG_PREF)?.let {
+                paymentServiceTxnDetails.cardLanguagePref = it.hexToByteArray().decodeToString()
+            }
+
+            /* Issuer/Card Country Code */
+            emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_CARD_COUNTRY_CODE)?.let {
+                paymentServiceTxnDetails.cardCountryCode = it.toInt().toString()    // To trim 0
+            }
+        }catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun prepareHostTlvData(emvTags: HashMap<String, String>)
+    {
+        try {
+            /* PAN */
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_PAN)) {
+                paymentServiceTxnDetails.cardMaskedPan = maskPAN(emvTags[EmvConstants.EMV_TAG_PAN].toString())
+                emvTags.remove(EmvConstants.EMV_TAG_PAN)
+            }
+
+            /* Track2 */
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
+                paymentServiceTxnDetails.trackData = emvTags[EmvConstants.EMV_TAG_ENC_TRACK]
+                emvTags.remove(EmvConstants.EMV_TAG_ENC_TRACK)
+            }
+
+            /* KSN */
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_KSN)) {
+                paymentServiceTxnDetails.ksn = emvTags[EmvConstants.EMV_TAG_ENC_KSN]
+                emvTags.remove(EmvConstants.EMV_TAG_ENC_KSN)
+            }
+
+            /* PinBlock */
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)) {
+                paymentServiceTxnDetails.pinBlock = emvTags[EmvConstants.EMV_TAG_ENC_PIN_BLOCK]
+                emvTags.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
+            }
+
+            /* TLV string for Host Communication */
+            paymentServiceTxnDetails.emvData = TlvUtils(emvTags).toTlvString()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getCardBrand(aid : String?=null, pan : String?=null) : CardBrand?
+    {
+        var cardBrand : CardBrand? = CardBrand.UNKNOWN
+        try {
+
+            aid?.let {
+                return when(it.substring(0,10))
+                {
+                    "A000000003" -> CardBrand.VISA
+                    "A000000004" -> CardBrand.MASTERCARD
+                    "A000000524" -> CardBrand.RUPAY
+                    "A000000025" -> CardBrand.AMEX
+                    "A000000065" -> CardBrand.JCB
+                    "A000000152" -> CardBrand.DISCOVER
+                    else -> CardBrand.UNKNOWN
+                }
+            }?: pan?.let {
+                return when(it.substring(0,6).toInt())
+                {
+                    in 400000..499999 -> CardBrand.VISA
+
+                    // Mastercard ranges: 51-55 and 2221-2720
+                    in 510000..559999, in 222100..272099 -> CardBrand.MASTERCARD
+
+                    // American Express: 34, 37
+                    in 340000..349999, in 370000..379999 -> CardBrand.AMEX
+
+                    // Discover: 6011, 644-649, 65
+                    in 601100..601199, in 644000..649999, in 650000..659999 -> CardBrand.DISCOVER
+
+                    // Diners Club: 36, 38, 39
+                    in 360000..369999, in 380000..399999 -> CardBrand.DINERS
+
+                    // JCB: 3528-3589
+                    in 352800..358999 -> CardBrand.JCB
+
+                    // UnionPay: 62
+                    in 620000..629999 -> CardBrand.UPI
+
+                    // Maestro: 50, 56-69
+                    in 500000..509999, in 560000..699999 -> CardBrand.MASTERCARD
+
+                    else -> CardBrand.UNKNOWN
+                }
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        return cardBrand
     }
 }

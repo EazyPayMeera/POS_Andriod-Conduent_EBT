@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 configurations.maybeCreate("default")
-artifacts.add("default", file("urovo_sdk_v1.0.9.aar"))
+artifacts.add("default", file("urovo_sdk_v1.0.12.aar"))
 android {
     namespace = "com.analogics.tpaymentcore"
     compileSdk = 34
@@ -38,7 +38,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(files("libs/urovo_sdk_v1.0.9.aar"))
+    implementation(files("libs/urovo_sdk_v1.0.12.aar"))
     implementation("com.google.dagger:hilt-android:2.51")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.google.code.gson:gson:2.10.1")

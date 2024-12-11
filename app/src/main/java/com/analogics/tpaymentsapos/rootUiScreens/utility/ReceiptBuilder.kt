@@ -73,7 +73,7 @@ class ReceiptBuilder {
                     addField(context.getString(R.string.receipt_train_mode),"" , "", Alignment.CENTER,FontSize.Big)
                     addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                 }
-                addField(paymentDetails?.txnType,"" , "", Alignment.CENTER,FontSize.Big)
+                addField(paymentDetails?.txnType.toString(),"" , "", Alignment.CENTER,FontSize.Big)
                 addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE,FontSize.Big)
                 addField(context.getString(R.string.receipt_card_no), paymentDetails?.cardMaskedPan, "", Alignment.CENTER,FontSize.Small)
                 addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE,FontSize.Small)

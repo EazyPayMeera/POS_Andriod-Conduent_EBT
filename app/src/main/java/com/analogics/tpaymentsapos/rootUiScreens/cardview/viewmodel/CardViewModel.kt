@@ -86,8 +86,9 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                             is EmvServiceResult.TransResult -> {
                                 Log.d("EMVServiceResponse", "Transaction Status: ${response.status}")
                                 /* Update Transaction Result & Store in DB */
-                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status))
-                                navigateToApprovalScreen(navHostController)
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
+                                    navigateToApprovalScreen(navHostController)
+                                }
                             }
 
                             is EmvServiceResult.CardCheckResult -> {
