@@ -98,6 +98,19 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return batchNumber
     }
 
+    fun getOrigAmount(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    {
+        Log.d("OriginalAmountLog", "originalTtlAmount: ${builderServiceTxnDetails?.originalTtlAmount}")
+        var amount: String? =
+            (builderServiceTxnDetails?.originalTtlAmount?.trim('[')?.trim(']')?.toDoubleOrNull()?.toCurrencyLong()?:0).toString()
+        amount?.padStart(BuilderConstants.ISO_FIELD_AMOUNT_LENGTH, '0')?.let {
+            amount = it
+
+        }
+        return amount
+    }
+
+
     fun getInvoiceNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
     {
         var invoiceNumber: String? =
@@ -117,6 +130,26 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             currencyCode = it
         }
         return currencyCode
+    }
+
+    fun getProcessingCodeForVoid(builderServiceTxnDetails: BuilderServiceTxnDetails?): String? {
+        val originalTxnType = builderServiceTxnDetails?.originalTxnType
+            ?.replace("[", "")
+            ?.replace("]", "")
+            ?.trim()
+        Log.d("TransactionTypeDebug", "Original Transaction Type: $originalTxnType")
+
+        return when (originalTxnType) {
+            "PURCHASE" -> {
+                BuilderConstants.PROC_CODE_VOID_SALE.toString().padStart(6, '0') // Ensures the value is 6 digits with leading zeros
+            }
+            "REFUND" -> {
+                BuilderConstants.PROC_CODE_REFUND.toString()
+            }
+            else -> {
+                BuilderConstants.PROC_CODE_VOID_PRE_AUTH.toString()
+            }
+        }
     }
 
     fun getCardSeqNum(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
@@ -452,6 +485,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun CreateRefundRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        Log.d("TransactionTypeDebug", "Original Transaction Type: ${builderServiceTxnDetails?.originalTxnType}")
 
         Log.d("Request_date","CreateRefundRequest")
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
@@ -469,6 +503,12 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val stan = BuilderUtils.getSTAN(context)
 
         message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
+
+         //TPDU Header
+        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+            this[3] = ((stan/100)%100).toInt().toBcd()
+            this[4] = (stan%100).toInt().toBcd()
+        }
 
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_REFUND, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
@@ -533,10 +573,13 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun CreateVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        Log.d("TransactionTypeDebug", "Original Transaction Type: ${builderServiceTxnDetails?.originalTxnType}")
 
         Log.d("Request_date","CreateVoidRequest")
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
-        val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
+        val amount = 0
+        val originalAmt = getOrigAmount(builderServiceTxnDetails)
+        Log.d("AmountDebug", "After fetching amount")
         val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
         val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
         val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
@@ -548,11 +591,22 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
         val stan = BuilderUtils.getSTAN(context)
+        val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
+        val procCode = getProcessingCodeForVoid(builderServiceTxnDetails)
+        Log.d("Void Request", "Original Amount: $originalAmt")
+        Log.d("Void Request", "Original Host Transaction Reference: ${builderServiceTxnDetails?.ttlAmount}")
 
         message = messageFactory.newMessage(BuilderConstants.MIT_VOID_REQ)
 
+        //TPDU Header
+        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+            this[3] = ((stan/100)%100).toInt().toBcd()
+            this[4] = (stan%100).toInt().toBcd()
+        }
+
+
         /* Field 3, Processing Code, N6, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_REFUND, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, procCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
             /* Field 4, Amount, N12, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
@@ -586,6 +640,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             /* Field 35, Track2 Data, ANS..37, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLBIN,encryptedTrack2Data?.length?:0)
 
+            /* Field 37, RRN, ANS..37, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA,BuilderConstants.ISO_FIELD_RRN_LENGTH)
+
             /* Field 41, TID, ANS8, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
@@ -605,7 +662,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccData, IsoType.LLLBIN,iccData?.length?:0)
 
             /* Field 60, Batch Number, ANS...999, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_PVT_USE_BATCH, batchNumber, IsoType.LLLVAR, batchNumber?.length?:0)
+            .setValue(BuilderConstants.ISO_FIELD_PVT_USE_BATCH, batchNumber + originalAmt, IsoType.LLLVAR, batchNumber?.length?:0)
 
             /* Field 62, Invoice Number, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_INVOICE_NUMBER, invoiceNumber, IsoType.LLLVAR,invoiceNumber?.length?:0)

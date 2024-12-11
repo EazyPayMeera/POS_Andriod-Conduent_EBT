@@ -33,7 +33,9 @@ object BuilderConstants {
     const val PROC_CODE_RKL_PART_SN = 990380
     const val PROC_CODE_RKL_FULL_SN = 991380
     const val PROC_CODE_REFUND = 2
-    const val PROC_CODE_VOID_SALE = 2
+    const val PROC_CODE_VOID_SALE = 20000
+    const val PROC_CODE_VOID_REFUND = 22
+    const val PROC_CODE_VOID_PRE_AUTH = 32
 
     /* AMOUNT */
     const val ISO_FIELD_AMOUNT = 4
@@ -128,6 +130,8 @@ object BuilderConstants {
 
     const val MIN_STAN_VAL = 1
     const val MAX_STAN_VAL = 999999
+
+
 
     /* ISO Response Codes */
     const val ISO_RESP_CODE_APPROVED = "00" // APPROVED

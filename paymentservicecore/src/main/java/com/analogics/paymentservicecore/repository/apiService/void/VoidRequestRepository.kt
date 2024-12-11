@@ -30,7 +30,7 @@ class VoidRequestRepository @Inject constructor (
 
     //lateinit var paymentServiceTxnDetails:PaymentServiceTxnDetails
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun sendPreAuthRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
 
         if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA) {
             var request = apiRequestBuilderLyra.CreateVoidRequest(

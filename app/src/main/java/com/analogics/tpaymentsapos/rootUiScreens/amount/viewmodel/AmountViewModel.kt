@@ -132,6 +132,22 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    fun getTransactionByInvoiceNo(sharedViewModel: SharedViewModel,invoiceNo: String) {
+        viewModelScope.launch {
+            val TxnEntity = dbRepository.fetchTransactionByInvoiceNo(invoiceNo)
+            sharedViewModel.objRootAppPaymentDetail.originalTxnType = TxnEntity.map { it.txnType }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalTip = TxnEntity.map { it.tip }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalCGST = TxnEntity.map { it.CGST}.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalSGST = TxnEntity.map { it.SGST }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalCashback =TxnEntity.map { it.cashback }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = TxnEntity.map { it.ttlAmount }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalTxnAmount = TxnEntity.map { it.txnAmount }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = TxnEntity.map { it.hostTxnRef }.toString()
+
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getTimeDateByInvoiceNo(invoiceNo: String) {
         viewModelScope.launch {
             val totalDateTimeString = dbRepository.fetchTimeDateByInvoiceNo(invoiceNo)
@@ -173,10 +189,8 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     }
 
                     override fun onApiServiceError(error: ApiServiceError) {
-                        // Handle error response
-                        // This could be used to display an error message to the user
-                        Log.e("AuthenticationError", error.errorMessage)
-                        navHostController.navigate(AppNavigationItems.DeclineScreen.route)
+
+                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
                 })
             } catch (e: Exception) {

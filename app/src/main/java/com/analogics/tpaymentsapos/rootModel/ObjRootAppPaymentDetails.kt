@@ -72,6 +72,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("acquirerName") var acquirerName:String?=BuildConfig.ACQUIRER_NAME,
 
     /* Original Txn data for Void Refund Capture */
+    @SerializedName("originalHostTxnRef")  var originalHostTxnRef: String? = null,
     @SerializedName("originalTxnType")  var originalTxnType: String? = null,
     @SerializedName("originalTxnAmount")    var originalTxnAmount: String? = null,
     @SerializedName("originalTip")      var originalTip: String? = null,

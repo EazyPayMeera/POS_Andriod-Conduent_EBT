@@ -76,7 +76,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
             emvServiceRepository.startPayment(
                 context = context,
-                paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail),
+                    paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail),
                 iEmvServiceResponseListener = object :
                     IEmvServiceResponseListener {
                     @RequiresApi(Build.VERSION_CODES.O)

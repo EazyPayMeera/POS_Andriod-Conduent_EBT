@@ -3,6 +3,7 @@ package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -202,6 +203,13 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
+        Log.d("InvoiceDebug", "Invoice No: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()}")
+        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID) {
+            viewModel.getTransactionByInvoiceNo(
+                sharedViewModel,
+                sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()
+            )
+        }
 
     }
 

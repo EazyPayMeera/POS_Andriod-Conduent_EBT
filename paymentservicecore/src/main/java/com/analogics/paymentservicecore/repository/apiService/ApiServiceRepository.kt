@@ -17,6 +17,7 @@ import com.analogics.paymentservicecore.repository.apiService.auth_capture.AuthC
 import com.analogics.paymentservicecore.repository.apiService.batch.BatchRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.login.LoginRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
+import com.analogics.paymentservicecore.repository.apiService.preauth.VoidRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.purchase.PurchaseRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.refund.RefundRequestRepository
 import com.analogics.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
@@ -104,6 +105,7 @@ class ApiServiceRepository @Inject constructor(
          }
      }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun apiServiceVoid(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener

@@ -37,6 +37,9 @@ interface ITxnDao {
     @Query("SELECT TtlAmount FROM TxnTable WHERE InvoiceNo = :invoiceNo")
     suspend fun getTotalAmountByInvoiceNo(invoiceNo: String): String
 
+    @Query("SELECT * FROM TxnTable WHERE InvoiceNo = :invoiceNo")
+    suspend fun fetchTrasactionByInvoiceNo(invoiceNo: String): List<TxnEntity>
+
     @Query("SELECT DateTime FROM TxnTable WHERE InvoiceNo = :invoiceNo")
     suspend fun getTimeDateByInvoiceNo(invoiceNo: String): String
 
