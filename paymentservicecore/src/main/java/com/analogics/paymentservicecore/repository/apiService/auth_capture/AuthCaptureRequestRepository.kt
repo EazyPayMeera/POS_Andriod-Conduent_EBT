@@ -91,6 +91,7 @@ class AuthCaptureRequestRepository @Inject constructor(
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
         apiRequestBuilderLyra.parsePurchaseResponse(response).let {
+            paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
             paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef

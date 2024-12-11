@@ -127,7 +127,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             (builderServiceTxnDetails?.originalTtlAmount?.trim('[')?.trim(']')?.toDoubleOrNull()?.toCurrencyLong()?:0).toString()
         amount?.padStart(BuilderConstants.ISO_FIELD_AMOUNT_LENGTH, '0')?.let {
             amount = it
-
         }
         return amount
     }
@@ -139,7 +138,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             builderServiceTxnDetails?.invoiceNo?.toInt()?.toString()
         invoiceNumber?.padStart(BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH, '0')?.let {
             invoiceNumber = it
-
         }
         return invoiceNumber
     }
@@ -192,6 +190,18 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             pinBlock = it
         }
         return pinBlock
+    }
+
+    fun getSTAN(builderServiceTxnDetails: BuilderServiceTxnDetails?) : Long
+    {
+        var stan : Long = 0
+        builderServiceTxnDetails?.stan?.toLongOrNull()?.let {
+            stan = it   /* Reuse if received from application. Ex : Void or Reversal */
+        }?:let {
+            stan = BuilderUtils.getSTAN(context)
+            this.builderServiceTxnDetails.stan = stan.toString()
+        }
+        return stan%(BuilderConstants.ISO_FIELD_STAN_MAX_VAL+1)
     }
 
     /* Dummy Response Functions */
@@ -255,7 +265,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
-        val stan = BuilderUtils.getSTAN(context)
+        val stan = getSTAN(builderServiceTxnDetails)
 
         message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
@@ -349,7 +359,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val currencyCode = getCurrencyCode(builderServiceTxnDetails)
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = BuilderUtils.getSTAN(context)
+        val stan = getSTAN(builderServiceTxnDetails)
 
         message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
@@ -434,7 +444,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val currencyCode = getCurrencyCode(builderServiceTxnDetails)
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = BuilderUtils.getSTAN(context)
+        val stan = getSTAN(builderServiceTxnDetails)
 
         message = messageFactory.newMessage(BuilderConstants.MTI_AUTH_REQ)
 
@@ -522,7 +532,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val currencyCode = getCurrencyCode(builderServiceTxnDetails)
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = BuilderUtils.getSTAN(context)
+        val stan = getSTAN(builderServiceTxnDetails)
 
         message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
@@ -612,7 +622,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val currencyCode = getCurrencyCode(builderServiceTxnDetails)
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = BuilderUtils.getSTAN(context)
+        val stan = getSTAN(builderServiceTxnDetails)
         val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
         val procCode = getProcessingCodeForVoid(builderServiceTxnDetails)
         Log.d("Void Request", "Original Amount: $originalAmt")
@@ -705,7 +715,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val currencyCode = getCurrencyCode(builderServiceTxnDetails)
         val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
         val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = BuilderUtils.getSTAN(context)
+        val stan = getSTAN(builderServiceTxnDetails)
         val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
 
         message = messageFactory.newMessage(BuilderConstants.MIT_VOID_REQ)

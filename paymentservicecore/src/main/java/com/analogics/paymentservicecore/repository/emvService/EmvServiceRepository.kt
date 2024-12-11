@@ -327,7 +327,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         var responseEmvTags =
             hashMapOf(EmvConstants.EMV_TAG_RESP_CODE to EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE)  // Unable to go online, Decline
 
-        extractReceiptInfo()
+        extractReceiptInfo(emvTags)
         prepareHostTlvData(emvTags)
 
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.PROCESSING_ONLINE)
@@ -335,9 +335,9 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
             paymentServiceTxnDetails, object : IApiServiceResponseListener {
 
                 override fun onApiServiceSuccess(apiPaymentServiceTxnDetails: PaymentServiceTxnDetails) {
-                    paymentServiceTxnDetails = apiPaymentServiceTxnDetails
+                    paymentServiceTxnDetails = apiPaymentServiceTxnDetails.copy(emvData = paymentServiceTxnDetails.emvData)
                     responseEmvTags =
-                        TlvUtils(paymentServiceTxnDetails.emvData).tlvMap
+                        TlvUtils(apiPaymentServiceTxnDetails.emvData).tlvMap
                     onResponse(responseEmvTags)
                 }
 
@@ -348,7 +348,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun extractReceiptInfo()
+    private fun extractReceiptInfo(emvTags: HashMap<String, String>)
     {
         try {
             /* Card Brand. AID has a preference over PAN */
@@ -356,6 +356,8 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
                 paymentServiceTxnDetails.cardBrand = getCardBrand(aid = it)
             }?:emvSdkRequestRepository.getEmvTag(EmvConstants.EMV_TAG_PAN)?.let {
                 paymentServiceTxnDetails.cardBrand = getCardBrand(pan = it)
+            }?: emvTags.containsKey(EmvConstants.EMV_TAG_PAN).takeIf{ it == true }?.let {
+                paymentServiceTxnDetails.cardBrand = getCardBrand(pan = emvTags[EmvConstants.EMV_TAG_PAN])
             }
 
             /* Language Preference */
@@ -376,13 +378,19 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     private fun prepareHostTlvData(emvTags: HashMap<String, String>)
     {
         try {
-            /* PAN */
+            /* Masked PAN */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_PAN)) {
                 paymentServiceTxnDetails.cardMaskedPan = maskPAN(emvTags[EmvConstants.EMV_TAG_PAN].toString())
                 emvTags.remove(EmvConstants.EMV_TAG_PAN)
             }
 
-            /* Track2 */
+            /* Encrypted PAN */
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_PAN)) {
+                paymentServiceTxnDetails.cardPan = emvTags[EmvConstants.EMV_TAG_ENC_PAN]
+                emvTags.remove(EmvConstants.EMV_TAG_ENC_PAN)
+            }
+
+            /* Encrypted Track2 */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
                 paymentServiceTxnDetails.trackData = emvTags[EmvConstants.EMV_TAG_ENC_TRACK]
                 emvTags.remove(EmvConstants.EMV_TAG_ENC_TRACK)

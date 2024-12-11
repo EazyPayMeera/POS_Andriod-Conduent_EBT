@@ -45,6 +45,7 @@ object BuilderConstants {
     /* STAN */
     const val ISO_FIELD_STAN = 11
     const val ISO_FIELD_STAN_LENGTH = 6
+    const val ISO_FIELD_STAN_MAX_VAL = 999999
 
     /* Time */
     const val ISO_FIELD_TIME = 12
