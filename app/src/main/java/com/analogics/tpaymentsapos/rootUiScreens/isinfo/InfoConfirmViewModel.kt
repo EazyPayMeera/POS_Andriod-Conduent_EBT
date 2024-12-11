@@ -134,5 +134,21 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTransactionByInvoiceNo(sharedViewModel: SharedViewModel,invoiceNo: String) {
+        viewModelScope.launch {
+            val TxnEntity = dbRepository.fetchTransactionByInvoiceNo(invoiceNo)
+            sharedViewModel.objRootAppPaymentDetail.originalTxnType = TxnEntity.map { it.txnType }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalTip = TxnEntity.map { it.tip }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalCGST = TxnEntity.map { it.CGST}.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalSGST = TxnEntity.map { it.SGST }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalCashback =TxnEntity.map { it.cashback }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = TxnEntity.map { it.ttlAmount }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalTxnAmount = TxnEntity.map { it.txnAmount }.toString()
+            sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = TxnEntity.map { it.hostTxnRef }.toString()
+
+        }
+    }
+
 
 }

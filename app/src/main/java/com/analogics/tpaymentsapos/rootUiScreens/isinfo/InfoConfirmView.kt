@@ -2,7 +2,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.isinfo
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -179,6 +178,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
 
     LaunchedEffect(Unit) {
         viewModel.getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
+        viewModel.getTransactionByInvoiceNo(sharedViewModel,sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
     }
 }
 
