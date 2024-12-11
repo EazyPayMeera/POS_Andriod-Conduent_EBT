@@ -10,12 +10,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.analogics.paymentservicecore.models.TxnStatus
+import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
@@ -28,7 +34,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InfoConfirmViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel() {
+class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private val dbRepository: TxnDBRepository) : ViewModel() {
 
     private val _totalAmount = MutableStateFlow<String?>(null)
     val totalAmount: StateFlow<String?> = _totalAmount
@@ -55,12 +61,12 @@ class InfoConfirmViewModel @Inject constructor(private val dbRepository: TxnDBRe
         sharedViewModel: SharedViewModel,
         navHostController: NavHostController
     ) {
-        Log.d("AmountDebug", "Amount: $Amount")
-        Log.d("PaymentDetailsDebug", "Transaction Type: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(Amount)
         navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
         updateTransResult(sharedViewModel.objRootAppPaymentDetail)
+        authenticateTransaction(sharedViewModel,navHostController)
     }
 
     fun onCancel(navHostController: NavHostController) {
@@ -84,4 +90,49 @@ class InfoConfirmViewModel @Inject constructor(private val dbRepository: TxnDBRe
             dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
+        viewModelScope.launch {
+            try {
+                Log.d("AuthTransaction","Going For Authenticate the transaction")
+                apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
+                    IApiServiceResponseListener {
+
+                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                        // Handle successful response
+                        Log.d("ApiServiceSuccess", "Response: $response")
+                        // Transform the response if necessary and update your ViewModel state
+                        updateTransDetails(sharedViewModel = sharedViewModel,
+                            emvStatusToTransStatus(response.txnStatus)
+                        )
+                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                    }
+
+                    override fun onApiServiceError(error: ApiServiceError) {
+
+                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                    }
+                })
+            } catch (e: Exception) {
+                // Handle any exceptions that may occur
+                Log.e("ApiCallException", e.message ?: "Unknown error")
+                navHostController.navigate(AppNavigationItems.DeclineScreen.route)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransDetails(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?)
+    {
+        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
+        viewModelScope.launch {
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
+                it.txnStatus = txnStatus?.toString()?:""
+                dbRepository.updateTxn(it)
+            }
+        }
+    }
+
+
 }

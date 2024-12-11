@@ -22,6 +22,7 @@ object BuilderConstants {
     const val MTI_NETWORK_REQ = 0x0800
     const val MIT_VOID_REQ = 0x0220
 
+
     /* TPDU */
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
     const val ISO_HEADER_LENGTH = 5

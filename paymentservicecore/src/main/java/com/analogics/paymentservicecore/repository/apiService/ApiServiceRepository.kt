@@ -78,6 +78,7 @@ class ApiServiceRepository @Inject constructor(
             TxnType.REFUND.toString() -> apiServiceRefund(paymentServiceTxnDetails,iApiServiceResponseListener)
             TxnType.PREAUTH.toString() -> apiServicePreAuth(paymentServiceTxnDetails,iApiServiceResponseListener)
             TxnType.VOID.toString() -> apiServiceVoid(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.AUTHCAP.toString() -> apiServiceAuthCapture(paymentServiceTxnDetails,iApiServiceResponseListener)
             else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }
@@ -127,19 +128,14 @@ class ApiServiceRepository @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun apiServiceAuthCapture(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        if(TxnType.PREAUTH==TxnType.PREAUTH) {
-            authCaptureRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
+        authCaptureRequestRepository.sendAuthCapRequest(paymentServiceTxnDetails){
                 onApiServiceResponse(it)
-            }
-        }else {
-            authCaptureRequestRepository.sendAuthCaptureRequest(paymentServiceTxnDetails){
-                onApiServiceResponse(it)
-            }
         }
     }
 
