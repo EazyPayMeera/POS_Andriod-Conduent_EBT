@@ -4,12 +4,14 @@ object BuilderConstants {
     const val SHARED_PREF_NAME = "BuilderSharedPref"
     const val SHARED_PREF_KEY_STAN = "stan"
 
+    const val DEFAULT_ISO8583_CURRENCY_CODE = "356"
     const val DEFAULT_ISO8583_NII = "0110"
     const val DEFAULT_ISO8583_DATE_TIME_FORMAT = "yyMMddHHmmss"
     const val DEFAULT_ISO8583_DATE_FORMAT = "MMdd"
     const val DEFAULT_ISO8583_TIME_FORMAT = "HHmmss"
 
     /* For Dummy Host Response */
+    const val DUMMY_RANDOM_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     const val DUMMY_DATE_TIME_FORMAT_RRN = "MMddHHmmss"
     const val DUMMY_DATE_TIME_FORMAT_AUTH_CODE = "ddHHmm"
 

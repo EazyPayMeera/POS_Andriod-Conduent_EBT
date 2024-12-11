@@ -53,9 +53,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         messageFactory.isBinaryHeader = true
     }
 
-    fun getIsoPosEntryMode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getIsoPosEntryMode() : String?
     {
-        return when(builderServiceTxnDetails?.cardEntryMode)
+        return when(builderServiceTxnDetails.cardEntryMode)
         {
             CardEntryMode.MANUAL.toString()->"0110"
             CardEntryMode.MAGSTRIPE.toString()->"0210"
@@ -67,9 +67,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         }
     }
 
-    fun getIsoPosConditionCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getIsoPosConditionCode() : String?
     {
-        return when(builderServiceTxnDetails?.posConditionCode)
+        return when(builderServiceTxnDetails.posConditionCode)
         {
             PosConditionCode.NORMAL_PRESENTMENT.toString()->"00"
             PosConditionCode.CUSTOMER_NOT_PRESENT.toString()->"01"
@@ -83,36 +83,36 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         }
     }
 
-    fun getEncryptedTrack2Data(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getEncryptedTrack2Data() : String?
     {
         var trackData : String? =null
-        builderServiceTxnDetails?.trackData?.let {
+        builderServiceTxnDetails.trackData?.let {
             trackData = it
         }
         return trackData
     }
 
-    fun getIccData(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getIccData() : String?
     {
         var iccData : String? =null
-        builderServiceTxnDetails?.emvData?.let {
+        builderServiceTxnDetails.emvData?.let {
             iccData = it
         }
         return iccData
     }
 
-    fun getKsnTag(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getKsnTag() : String?
     {
         var ksn :String? = null
-        builderServiceTxnDetails?.ksn?.padStart(BuilderConstants.ISO_FIELD_KSN_LENGTH,BuilderConstants.ISO_FIELD_KSN_PAD_CHAR)?.let {
+        builderServiceTxnDetails.ksn?.padStart(BuilderConstants.ISO_FIELD_KSN_LENGTH,BuilderConstants.ISO_FIELD_KSN_PAD_CHAR)?.let {
             ksn = BuilderConstants.ISO_FIELD_KSN_TAG + it.length.toString().padStart(3,'0') + it
         }
         return ksn
     }
 
-    fun getBatchNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String? {
+    fun getBatchNumber() : String? {
         var batchNumber: String? =
-            builderServiceTxnDetails?.batchId?.toInt()?.toString()?:"1"
+            builderServiceTxnDetails.batchId?.toInt()?.toString()?:"1"
         batchNumber?.padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH, '0')?.let {
             batchNumber = it.length.toString()
                 .padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH_LENGTH, '0') + it
@@ -120,11 +120,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return batchNumber
     }
 
-    fun getOrigAmount(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getOrigAmount() : String?
     {
-        Log.d("OriginalAmountLog", "originalTtlAmount: ${builderServiceTxnDetails?.originalTtlAmount}")
+        Log.d("OriginalAmountLog", "originalTtlAmount: ${builderServiceTxnDetails.originalTtlAmount}")
         var amount: String? =
-            (builderServiceTxnDetails?.originalTtlAmount?.trim('[')?.trim(']')?.toDoubleOrNull()?.toCurrencyLong()?:0).toString()
+            (builderServiceTxnDetails.originalTtlAmount?.trim('[')?.trim(']')?.toDoubleOrNull()?.toCurrencyLong()?:0).toString()
         amount?.padStart(BuilderConstants.ISO_FIELD_AMOUNT_LENGTH, '0')?.let {
             amount = it
         }
@@ -132,28 +132,28 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
 
-    fun getInvoiceNumber(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getInvoiceNumber() : String?
     {
         var invoiceNumber: String? =
-            builderServiceTxnDetails?.invoiceNo?.toInt()?.toString()
+            builderServiceTxnDetails.invoiceNo?.toInt()?.toString()
         invoiceNumber?.padStart(BuilderConstants.ISO_FIELD_INVOICE_NUMBER_LENGTH, '0')?.let {
             invoiceNumber = it
         }
         return invoiceNumber
     }
 
-    fun getCurrencyCode(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getCurrencyCode() : String?
     {
         var currencyCode: String? =
-            builderServiceTxnDetails?.txnCurrencyCode?.toInt()?.toString()?:"356"
+            builderServiceTxnDetails.txnCurrencyCode?.toInt()?.toString()?: BuilderConstants.DEFAULT_ISO8583_CURRENCY_CODE
         currencyCode?.padStart(BuilderConstants.ISO_FIELD_CURRENCY_CODE_LEN, '0')?.let {
             currencyCode = it
         }
         return currencyCode
     }
 
-    fun getProcessingCodeForVoid(builderServiceTxnDetails: BuilderServiceTxnDetails?): String? {
-        val originalTxnType = builderServiceTxnDetails?.originalTxnType
+    fun getProcessingCodeForVoid(): String? {
+        val originalTxnType = builderServiceTxnDetails.originalTxnType
             ?.replace("[", "")
             ?.replace("]", "")
             ?.trim()
@@ -172,34 +172,34 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         }
     }
 
-    fun getCardSeqNum(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getCardSeqNum() : String?
     {
         var cardSeqNumber: String? =
-            builderServiceTxnDetails?.cardSeqNum?.toInt()?.toString()?:"0010"
+            builderServiceTxnDetails.cardSeqNum?.toInt()?.toString()
         cardSeqNumber?.padStart(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, '0')?.let {
             cardSeqNumber = it
         }
         return cardSeqNumber
     }
 
-    fun getPinBlock(builderServiceTxnDetails: BuilderServiceTxnDetails?) : String?
+    fun getPinBlock() : String?
     {
         var pinBlock: String? =
-            builderServiceTxnDetails?.pinBlock
+            builderServiceTxnDetails.pinBlock
         pinBlock?.padEnd(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, 'F')?.let {
             pinBlock = it
         }
         return pinBlock
     }
 
-    fun getSTAN(builderServiceTxnDetails: BuilderServiceTxnDetails?) : Long
+    fun getSTAN() : Long
     {
         var stan : Long = 0
-        builderServiceTxnDetails?.stan?.toLongOrNull()?.let {
+        builderServiceTxnDetails.stan?.toLongOrNull()?.let {
             stan = it   /* Reuse if received from application. Ex : Void or Reversal */
         }?:let {
             stan = BuilderUtils.getSTAN(context)
-            this.builderServiceTxnDetails.stan = stan.toString()
+            builderServiceTxnDetails.stan = stan.toString()
         }
         return stan%(BuilderConstants.ISO_FIELD_STAN_MAX_VAL+1)
     }
@@ -207,7 +207,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     /* Dummy Response Functions */
     fun generateDummyRRN() : String
     {
-        val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        val charset = BuilderConstants.DUMMY_RANDOM_CHARSET
         val currentDate = BuilderUtils.getCurrentDateTime(BuilderConstants.DUMMY_DATE_TIME_FORMAT_RRN)
         val encodedDate = currentDate.map { it - '0' + 'A'.code }.joinToString("") { it.toChar().toString() }
         val randomPart = (1..BuilderConstants.ISO_FIELD_RRN_LENGTH)
@@ -222,7 +222,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun generateDummyAuthCode() : String?
     {
         return if(isDummyResponseApproval()) {
-            val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+            val charset = BuilderConstants.DUMMY_RANDOM_CHARSET
             val currentDate =
                 BuilderUtils.getCurrentDateTime(BuilderConstants.DUMMY_DATE_TIME_FORMAT_AUTH_CODE)
             val encodedDate =
@@ -265,7 +265,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
-        val stan = getSTAN(builderServiceTxnDetails)
+        val stan = getSTAN()
 
         message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
 
@@ -349,17 +349,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
-        val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
-        val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
-        val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
-        val iccData = getIccData(builderServiceTxnDetails)
-        val ksn = getKsnTag(builderServiceTxnDetails)
-        val batchNumber = getBatchNumber(builderServiceTxnDetails)
-        val invoiceNumber = getInvoiceNumber(builderServiceTxnDetails)
-        val currencyCode = getCurrencyCode(builderServiceTxnDetails)
-        val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
-        val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = getSTAN(builderServiceTxnDetails)
+        val posEntryMode = getIsoPosEntryMode()
+        val posConditionCode = getIsoPosConditionCode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val iccData = getIccData()
+        val ksn = getKsnTag()
+        val batchNumber = getBatchNumber()
+        val invoiceNumber = getInvoiceNumber()
+        val currencyCode = getCurrencyCode()
+        val cardSeqNumber = getCardSeqNum()
+        val pinBlock = getPinBlock()
+        val stan = getSTAN()
 
         message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
@@ -434,17 +434,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun createPreAuthRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
-        val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
-        val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
-        val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
-        val iccData = getIccData(builderServiceTxnDetails)
-        val ksn = getKsnTag(builderServiceTxnDetails)
-        val batchNumber = getBatchNumber(builderServiceTxnDetails)
-        val invoiceNumber = getInvoiceNumber(builderServiceTxnDetails)
-        val currencyCode = getCurrencyCode(builderServiceTxnDetails)
-        val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
-        val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = getSTAN(builderServiceTxnDetails)
+        val posEntryMode = getIsoPosEntryMode()
+        val posConditionCode = getIsoPosConditionCode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val iccData = getIccData()
+        val ksn = getKsnTag()
+        val batchNumber = getBatchNumber()
+        val invoiceNumber = getInvoiceNumber()
+        val currencyCode = getCurrencyCode()
+        val cardSeqNumber = getCardSeqNum()
+        val pinBlock = getPinBlock()
+        val stan = getSTAN()
 
         message = messageFactory.newMessage(BuilderConstants.MTI_AUTH_REQ)
 
@@ -522,17 +522,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("Request_date","CreateRefundRequest")
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
-        val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
-        val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
-        val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
-        val iccData = getIccData(builderServiceTxnDetails)
-        val ksn = getKsnTag(builderServiceTxnDetails)
-        val batchNumber = getBatchNumber(builderServiceTxnDetails)
-        val invoiceNumber = getInvoiceNumber(builderServiceTxnDetails)
-        val currencyCode = getCurrencyCode(builderServiceTxnDetails)
-        val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
-        val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = getSTAN(builderServiceTxnDetails)
+        val posEntryMode = getIsoPosEntryMode()
+        val posConditionCode = getIsoPosConditionCode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val iccData = getIccData()
+        val ksn = getKsnTag()
+        val batchNumber = getBatchNumber()
+        val invoiceNumber = getInvoiceNumber()
+        val currencyCode = getCurrencyCode()
+        val cardSeqNumber = getCardSeqNum()
+        val pinBlock = getPinBlock()
+        val stan = getSTAN()
 
         message = messageFactory.newMessage(BuilderConstants.MTI_SALE_REQ)
 
@@ -610,21 +610,21 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("Request_date","CreateVoidRequest")
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = 0
-        val originalAmt = getOrigAmount(builderServiceTxnDetails)
+        val originalAmt = getOrigAmount()
         Log.d("AmountDebug", "After fetching amount")
-        val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
-        val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
-        val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
-        val iccData = getIccData(builderServiceTxnDetails)
-        val ksn = getKsnTag(builderServiceTxnDetails)
-        val batchNumber = getBatchNumber(builderServiceTxnDetails)
-        val invoiceNumber = getInvoiceNumber(builderServiceTxnDetails)
-        val currencyCode = getCurrencyCode(builderServiceTxnDetails)
-        val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
-        val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = getSTAN(builderServiceTxnDetails)
+        val posEntryMode = getIsoPosEntryMode()
+        val posConditionCode = getIsoPosConditionCode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val iccData = getIccData()
+        val ksn = getKsnTag()
+        val batchNumber = getBatchNumber()
+        val invoiceNumber = getInvoiceNumber()
+        val currencyCode = getCurrencyCode()
+        val cardSeqNumber = getCardSeqNum()
+        val pinBlock = getPinBlock()
+        val stan = getSTAN()
         val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
-        val procCode = getProcessingCodeForVoid(builderServiceTxnDetails)
+        val procCode = getProcessingCodeForVoid()
         Log.d("Void Request", "Original Amount: $originalAmt")
         Log.d("Void Request", "Original Host Transaction Reference: ${builderServiceTxnDetails?.ttlAmount}")
 
@@ -705,17 +705,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun createAuthCapRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = builderServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?.toCurrencyLong()?:0
-        val posEntryMode = getIsoPosEntryMode(builderServiceTxnDetails)
-        val posConditionCode = getIsoPosConditionCode(builderServiceTxnDetails)
-        val encryptedTrack2Data = getEncryptedTrack2Data(builderServiceTxnDetails)
-        val iccData = getIccData(builderServiceTxnDetails)
-        val ksn = getKsnTag(builderServiceTxnDetails)
-        val batchNumber = getBatchNumber(builderServiceTxnDetails)
-        val invoiceNumber = getInvoiceNumber(builderServiceTxnDetails)
-        val currencyCode = getCurrencyCode(builderServiceTxnDetails)
-        val cardSeqNumber = getCardSeqNum(builderServiceTxnDetails)
-        val pinBlock = getPinBlock(builderServiceTxnDetails)
-        val stan = getSTAN(builderServiceTxnDetails)
+        val posEntryMode = getIsoPosEntryMode()
+        val posConditionCode = getIsoPosConditionCode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val iccData = getIccData()
+        val ksn = getKsnTag()
+        val batchNumber = getBatchNumber()
+        val invoiceNumber = getInvoiceNumber()
+        val currencyCode = getCurrencyCode()
+        val cardSeqNumber = getCardSeqNum()
+        val pinBlock = getPinBlock()
+        val stan = getSTAN()
         val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
 
         message = messageFactory.newMessage(BuilderConstants.MIT_VOID_REQ)
@@ -850,6 +850,4 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             }
         }
     }
-
-
 }
