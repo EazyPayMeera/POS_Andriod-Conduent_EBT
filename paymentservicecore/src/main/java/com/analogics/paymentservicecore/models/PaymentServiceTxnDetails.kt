@@ -23,16 +23,14 @@ data class PaymentServiceTxnDetails(
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
+    /* Batch Totals */
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
     @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
     @SerializedName("ttlVoidAmount") var ttlVoidAmount:String? = null,
     @SerializedName("ttlPreAuthAmount") var ttlPreAuthAmount:String? = null,
     @SerializedName("ttlAuthCapAmount") var ttlAuthCapAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
-    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("ttlTipAmount") var ttlTipAmount: String? = null,
-
-    /* Batch Details */
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
     @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
     @SerializedName("ttlVoidCount") var ttlVoidCount:Int? = null,
@@ -47,6 +45,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("pinBlock")        var pinBlock: String? = null,
     @SerializedName("posConditionCode") var posConditionCode: PosConditionCode? = null,
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
+    @SerializedName("cardPan") var cardPan: String? = null,
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
     @SerializedName("cardBrand") var cardBrand: CardBrand? = null,
     @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
@@ -55,8 +54,10 @@ data class PaymentServiceTxnDetails(
     @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
     @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
 
+    /* Transaction Details */
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
+    @SerializedName("stan") var stan: String? = null,
     @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
     @SerializedName("dateTime") var dateTime: String? = null,
     @SerializedName("timeZone") var timeZone: String? = null,
@@ -69,6 +70,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("CGST") var CGST: String? = null,
     @SerializedName("SGST") var SGST: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
+    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: String? = null,
 
     /* Original Txn data for Void Refund Capture */

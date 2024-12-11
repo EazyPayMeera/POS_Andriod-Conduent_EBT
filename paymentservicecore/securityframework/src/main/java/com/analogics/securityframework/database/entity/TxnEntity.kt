@@ -20,6 +20,7 @@ data class TxnEntity(
     /* Transaction Info */
     @ColumnInfo(name = "BatchId") var batchId: String? = null,
     @ColumnInfo(name = "InvoiceNo") var invoiceNo: String? = null,
+    @ColumnInfo(name = "Stan") var stan: String? = null,
     @ColumnInfo(name = "PurchaseOrderNo") var purchaseOrderNo: String? = null,
     @ColumnInfo(name = "DateTime") var dateTime: String? = null,
     @ColumnInfo(name = "TimeZone") var timeZone: String? = null,
@@ -36,6 +37,7 @@ data class TxnEntity(
 
     /* Card Details */
     @ColumnInfo(name = "CardEntryMode") var cardEntryMode: String? = null,
+    @ColumnInfo(name = "CardPan") var cardPan: String? = null,
     @ColumnInfo(name = "CardMaskedPan") var cardMaskedPan: String? = null,
     @ColumnInfo(name = "CardBrand") var cardBrand: String? = null,
     @ColumnInfo(name = "CardAuthMethod") var cardAuthMethod: String? = null,
@@ -43,6 +45,8 @@ data class TxnEntity(
     @ColumnInfo(name = "CardCountryCode") var cardCountryCode: String? = null,
     @ColumnInfo(name = "CardLanguagePref") var cardLanguagePref: String? = null,
     @ColumnInfo(name = "EmvData") var emvData: String? = null,
+    @ColumnInfo(name = "PosConditionCode") var posConditionCode: String? = null,
+    @ColumnInfo(name = "KSN") var ksn: String? = null,
     @ColumnInfo(name = "ReceiptEmvData") var receiptEmvData: String? = null,
     @ColumnInfo(name = "SignatureData") var signatureData: String? = null,
 

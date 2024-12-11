@@ -22,19 +22,18 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
 
-    /* Host Response */
+    /* Host Authorization */
     @SerializedName("authAmount") var authAmount: Double? = 0.00,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
 
+    /* Batch Totals */
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,
     @SerializedName("ttlRefundAmount") var ttlRefundAmount:String? = null,
     @SerializedName("ttlTxnAmount") var ttlTxnAmount:String? = null,
-    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("ttlTipAmount") var ttlTipAmount: String? = null,
-
     @SerializedName("ttlPurchaseCount") var ttlPurchaseCount:Int? = null,
     @SerializedName("ttlRefundCount") var ttlRefundCount:Int? = null,
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
@@ -47,6 +46,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ksn")              var ksn: String? = null,
     @SerializedName("posConditionCode") var posConditionCode: PosConditionCode? = null,
     @SerializedName("cardEntryMode")    var cardEntryMode: CardEntryMode? = null,
+    @SerializedName("cardPan")          var cardPan: String? = null,
     @SerializedName("cardMaskedPan")    var cardMaskedPan: String? = null,
     @SerializedName("cardBrand")        var cardBrand: String? = null,
     @SerializedName("cardSeqNum")       var cardSeqNum: String? = null,
@@ -57,12 +57,14 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
     @SerializedName("signatureData")    var signatureData: String? = null,
 
-    @SerializedName("txnType") var txnType:TxnType?=null,
+    /* Transaction Details */
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
+    @SerializedName("stan") var stan: String? = null,
     @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
     @SerializedName("dateTime") var dateTime: String? = null,
     @SerializedName("timeZone") var timeZone: String? = null,
+    @SerializedName("txnType") var txnType:TxnType?=null,
     @SerializedName("accountType") var accountType: String? = null,
     @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,
     @SerializedName("txnAmount") var txnAmount: Double? = 0.00,
@@ -71,6 +73,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("CGST") var CGST: Double? = 0.00,
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
+    @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
     @SerializedName("acquirerName") var acquirerName:String?=BuildConfig.ACQUIRER_NAME,
 
