@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.transactiondetails
 
+import android.R.id
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,18 @@ fun TransactionDetailsView(navHostController: NavHostController) {
     val viewModel: TransactionDetailsViewModel = hiltViewModel()
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
+
+    fun getImageId() : Int
+    {
+        return if(sharedViewModel.objRootAppPaymentDetail.isVoided==true)
+            R.drawable.voided
+        else if(sharedViewModel.objRootAppPaymentDetail.isRefunded==true)
+            R.drawable.refunded
+        else if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED)
+            R.drawable.approval
+        else
+            R.drawable.error
+    }
 
     Column {
 
@@ -92,7 +105,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     ImageView(
-                        imageId = if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED) R.drawable.txn_aprove else R.drawable.decline,
+                        imageId = getImageId(),
                         shape = RectangleShape,
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_50_CompactMedium)
