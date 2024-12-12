@@ -99,4 +99,5 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
             _isInvoiceFound.value = isFound
         }
     }
+
 }
