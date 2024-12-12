@@ -22,7 +22,6 @@ import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getFormattedDateTime
@@ -101,17 +100,11 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        // Handle successful response
-                        Log.d("ApiServiceSuccess", "Response: $response")
-                        // Transform the response if necessary and update your ViewModel state
-                        updateTransDetails(sharedViewModel = sharedViewModel,
-                            emvStatusToTransStatus(response.txnStatus)
-                        )
+                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
 
                     override fun onApiServiceError(error: ApiServiceError) {
-
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
                 })
@@ -119,18 +112,6 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
                 // Handle any exceptions that may occur
                 Log.e("ApiCallException", e.message ?: "Unknown error")
                 navHostController.navigate(AppNavigationItems.DeclineScreen.route)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransDetails(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?)
-    {
-        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
-        viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
-                it.txnStatus = txnStatus?.toString()?:""
-                dbRepository.updateTxn(it)
             }
         }
     }

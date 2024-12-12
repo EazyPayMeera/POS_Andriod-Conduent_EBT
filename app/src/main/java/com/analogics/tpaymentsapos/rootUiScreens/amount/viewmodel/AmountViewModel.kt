@@ -22,7 +22,6 @@ import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
@@ -165,11 +164,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         }
     }
 
-    fun generateInvoiceNumber(): String {
-        val randomNumber = (10000000..99999999).random()
-        return "INVC$randomNumber"
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
     {
@@ -188,18 +182,11 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        // Handle successful response
-                        Log.d("ApiServiceSuccess", "Response: $response")
-                        // Transform the response if necessary and update your ViewModel state
-/*                        updateTransResult(sharedViewModel = sharedViewModel,
-                            emvStatusToTransStatus(response.txnStatus)
-                        )*/
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
 
                     override fun onApiServiceError(error: ApiServiceError) {
-
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
                 })
