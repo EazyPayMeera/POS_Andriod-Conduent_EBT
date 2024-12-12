@@ -8,5 +8,6 @@ enum class TxnStatus {
     ERROR,
     REVERSED,
     VOIDED,
-    REFUNDED
+    REFUNDED,
+    CAPTURED
 }

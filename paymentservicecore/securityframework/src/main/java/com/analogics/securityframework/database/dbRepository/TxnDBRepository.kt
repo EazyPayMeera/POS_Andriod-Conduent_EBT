@@ -11,6 +11,7 @@ import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
 import com.analogics.securityframework.model.BatchStatus
+import com.analogics.securityframework.model.TxnType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -126,6 +127,20 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
                         } ?: let {
                             iTxnDao.insert(txnEntity)
                         }
+                    }.also {
+                        /* Update original linked transaction */
+                        when(txnEntity.txnType)
+                        {
+                            TxnType.VOID.toString() -> fetchTxnByHostTxnRef(txnEntity.hostTxnRef)?.let {
+                                iTxnDao.update(it.copy(isVoided = true))
+                            }
+                            TxnType.REFUND.toString() -> fetchTxnByHostTxnRef(txnEntity.hostTxnRef)?.let {
+                                iTxnDao.update(it.copy(isRefunded = true))
+                            }
+                            TxnType.AUTHCAP.toString() -> fetchTxnByHostTxnRef(txnEntity.hostTxnRef)?.let {
+                                iTxnDao.update(it.copy(isCaptured = true))
+                            }
+                        }
                     }
                 }
             }
@@ -166,6 +181,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
 
     suspend fun fetchTransactionByInvoiceNo(invoiceNo:String): List<TxnEntity>? {
         return iTxnDao.fetchTrasactionByInvoiceNo(invoiceNo)
+    }
+
+    suspend fun fetchTxnByHostTxnRef(hostTxnRef:String?): TxnEntity? {
+        return iTxnDao.fetchTxnByHostTxnRef(hostTxnRef)
     }
 
     suspend fun fetchTimeDateByInvoiceNo(invoiceNo:String): String {
