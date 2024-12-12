@@ -643,7 +643,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("Void Request", "Original Amount: $originalAmt")
         Log.d("Void Request", "Original Host Transaction Reference: ${builderServiceTxnDetails?.ttlAmount}")
 
-        message = messageFactory.newMessage(BuilderConstants.MIT_VOID_REQ)
+        message = messageFactory.newMessage(BuilderConstants.MTI_VOID_REQ)
 
         //TPDU Header
         message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
@@ -735,7 +735,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val stan = getSTAN()
         val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
 
-        message = messageFactory.newMessage(BuilderConstants.MIT_VOID_REQ)
+        message = messageFactory.newMessage(BuilderConstants.MTI_VOID_REQ)
 
         /* TPDU Header */
         message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
@@ -841,6 +841,27 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return appendIsoLength(message.writeData())
     }
 
+    fun buildDummyVoidResponse(): ByteArray {
+        val respCode = generateDummyRespCode()
+
+        /* Don't change the request message. Instead only fill up the response parameters */
+        message.type = BuilderConstants.MTI_VOID_RES
+
+        /* TPDU Header */
+        message.binaryIsoHeader.apply {
+            var destBytes = byteArrayOf(this[1],this[2])
+            this[1] = this[3]
+            this[2] = this[4]
+            this[3] = destBytes[0]
+            this[4] = destBytes[1]
+        }
+
+        /* Field 39, Response Code, AN2, Mandatory */
+        message.setValue(BuilderConstants.ISO_FIELD_RESP_CODE, respCode , IsoType.ALPHA,BuilderConstants.ISO_FIELD_RESP_CODE_LENGTH)
+
+        return appendIsoLength(message.writeData())
+    }
+
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun parsePurchaseResponse(response: ByteArray): BuilderServiceTxnDetails {
         return try {
@@ -859,6 +880,28 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                     ?.let { hostTxnRef = it }
                 message.getObjectValue<ByteArray>(BuilderConstants.ISO_FIELD_ICC_DATA)
                     ?.let { emvData = it.toHexString().uppercase() }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            builderServiceTxnDetails.apply {
+                hostRespCode = null
+            }
+        }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
+    fun parseVoidResponse(response: ByteArray): BuilderServiceTxnDetails {
+        return try {
+            var message = messageFactory.parseMessage(
+                extractIsoPayload(response),
+                BuilderConstants.ISO_HEADER.size,
+                true
+            )
+            builderServiceTxnDetails.apply {
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)
+                    ?.let { hostRespCode = it }
+                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RRN)
+                    ?.let { hostTxnRef = it }
             }
         } catch (e: Exception) {
             e.printStackTrace()

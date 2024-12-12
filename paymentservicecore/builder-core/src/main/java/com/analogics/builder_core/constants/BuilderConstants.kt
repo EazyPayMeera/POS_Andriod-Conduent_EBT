@@ -22,7 +22,8 @@ object BuilderConstants {
     const val MTI_SALE_REQ = 0x0200
     const val MTI_SALE_RES = 0x0210
     const val MTI_NETWORK_REQ = 0x0800
-    const val MIT_VOID_REQ = 0x0220
+    const val MTI_VOID_REQ = 0x0220
+    const val MTI_VOID_RES = 0x0230
 
 
     /* TPDU */

@@ -191,9 +191,10 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         // Handle successful response
                         Log.d("ApiServiceSuccess", "Response: $response")
                         // Transform the response if necessary and update your ViewModel state
-                        updateTransResult(sharedViewModel = sharedViewModel,
+/*                        updateTransResult(sharedViewModel = sharedViewModel,
                             emvStatusToTransStatus(response.txnStatus)
-                        )
+                        )*/
+                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
 

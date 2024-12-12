@@ -42,7 +42,7 @@ class VoidRequestRepository @Inject constructor (
             if(paymentServiceTxnDetails.isDemoMode == true)
             {
                 onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,
-                    apiRequestBuilderLyra.buildDummyPurchaseResponse()))
+                    apiRequestBuilderLyra.buildDummyVoidResponse()))
             }
             else {
                 builderServiceRepositoryLyra.networkServiceRequest(
@@ -89,18 +89,8 @@ class VoidRequestRepository @Inject constructor (
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-        apiRequestBuilderLyra.parsePurchaseResponse(response).let {
+        apiRequestBuilderLyra.parseVoidResponse(response).let {
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
-            paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
-            paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
-            var tlv = TlvUtils(it.emvData)
-            /* Extract tag 8A from ISO field if required */
-            if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
-                it.hostRespCode?.encodeToByteArray()?.toHexString()?.let {
-                    tlv.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] = it
-                }
-            }
-            paymentServiceTxnDetails.emvData = tlv.toTlvString()
             if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
                 paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                 paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
