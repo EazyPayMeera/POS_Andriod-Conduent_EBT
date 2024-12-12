@@ -652,7 +652,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         }
 
             /* Field 2, PAN, N..19, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_PAN, encryptedPan, IsoType.LLBIN,encryptedPan?.length?:0)
+             message.setValue(BuilderConstants.ISO_FIELD_PAN, encryptedPan, IsoType.LLBIN,encryptedPan?.length?:0)
 
             /* Field 3, Processing Code, N6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, procCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
@@ -725,6 +725,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val posEntryMode = getIsoPosEntryMode()
         val posConditionCode = getIsoPosConditionCode()
         val encryptedTrack2Data = getEncryptedTrack2Data()
+        val encryptedPan = getEncryptedPAN()
         val iccData = getIccData()
         val ksn = getKsnTag()
         val batchNumber = getBatchNumber()
@@ -742,6 +743,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             this[3] = ((stan/100)%100).toInt().toBcd()
             this[4] = (stan%100).toInt().toBcd()
         }
+
+        /* Field 2, PAN, N..19, Mandatory */
+        message.setValue(BuilderConstants.ISO_FIELD_PAN, encryptedPan, IsoType.LLBIN,encryptedPan?.length?:0)
+
 
         /* Field 3, Processing Code, N6, Mandatory */
         message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_SALE, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
