@@ -29,6 +29,9 @@ object BuilderConstants {
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
     const val ISO_HEADER_LENGTH = 5
 
+    /* PAN */
+    const val ISO_FIELD_PAN = 2
+
     /* Processing Code */
     const val ISO_FIELD_PROC_CODE = 3
     const val ISO_FIELD_PROC_CODE_LENGTH = 6

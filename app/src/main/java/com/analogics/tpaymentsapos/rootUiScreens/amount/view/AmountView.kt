@@ -126,11 +126,11 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.card) + " ************6983",
-                        stringResource(id = R.string.auth_code) + " 896356",
-                        stringResource(id = R.string.no) + " 100034345364633",
-                        stringResource(id = R.string.inc_no) + sharedViewModel.objRootAppPaymentDetail.invoiceNo,
-                        stringResource(id = R.string.pos_entry) + " Contact"
+                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:"") + (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
+                        stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
+                        stringResource(id = R.string.no) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
+                        stringResource(id = R.string.inc_no) + (sharedViewModel.objRootAppPaymentDetail.invoiceNo?:"-"),
+                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-")
                     ).forEach {
                         TextView(
                             text = it,
@@ -206,8 +206,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         Log.d("InvoiceDebug", "Invoice No: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()}")
         if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID) {
             viewModel.getTransactionByInvoiceNo(
-                sharedViewModel,
-                sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()
+                sharedViewModel
             )
         }
 

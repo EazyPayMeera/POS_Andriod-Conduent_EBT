@@ -178,7 +178,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
 
     LaunchedEffect(Unit) {
         viewModel.getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
-        viewModel.getTransactionByInvoiceNo(sharedViewModel,sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
+        viewModel.getTransactionByInvoiceNo(sharedViewModel)
     }
 }
 

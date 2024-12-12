@@ -83,6 +83,15 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         }
     }
 
+    fun getEncryptedPAN() : String?
+    {
+        var pan : String? =null
+        builderServiceTxnDetails.cardPan?.let {
+            pan = it
+        }
+        return pan
+    }
+
     fun getEncryptedTrack2Data() : String?
     {
         var trackData : String? =null
@@ -202,6 +211,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             builderServiceTxnDetails.stan = stan.toString()
         }
         return stan%(BuilderConstants.ISO_FIELD_STAN_MAX_VAL+1)
+    }
+
+    fun getAuthCode() : String?
+    {
+        return builderServiceTxnDetails.hostAuthCode
     }
 
     /* Dummy Response Functions */
@@ -614,7 +628,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("AmountDebug", "After fetching amount")
         val posEntryMode = getIsoPosEntryMode()
         val posConditionCode = getIsoPosConditionCode()
-        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val encryptedPan = getEncryptedPAN()
         val iccData = getIccData()
         val ksn = getKsnTag()
         val batchNumber = getBatchNumber()
@@ -624,6 +638,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val pinBlock = getPinBlock()
         val stan = getSTAN()
         val rrn = builderServiceTxnDetails?.originalHostTxnRef?.trim('[')?.trim(']')
+        val authCode = getAuthCode()
         val procCode = getProcessingCodeForVoid()
         Log.d("Void Request", "Original Amount: $originalAmt")
         Log.d("Void Request", "Original Host Transaction Reference: ${builderServiceTxnDetails?.ttlAmount}")
@@ -636,9 +651,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             this[4] = (stan%100).toInt().toBcd()
         }
 
+            /* Field 2, PAN, N..19, Mandatory */
+        message.setValue(BuilderConstants.ISO_FIELD_PAN, encryptedPan, IsoType.LLBIN,encryptedPan?.length?:0)
 
-        /* Field 3, Processing Code, N6, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, procCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+            /* Field 3, Processing Code, N6, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_PROC_CODE, procCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
 
             /* Field 4, Amount, N12, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
@@ -669,11 +686,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             /* Field 25, POS Condition Code, N2, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
 
-            /* Field 35, Track2 Data, ANS..37, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLBIN,encryptedTrack2Data?.length?:0)
-
             /* Field 37, RRN, ANS..37, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA,BuilderConstants.ISO_FIELD_RRN_LENGTH)
+
+            /* Field 38, Auth Code, AN6, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_AUTH_CODE, authCode, IsoType.ALPHA,BuilderConstants.ISO_FIELD_AUTH_CODE_LENGTH)
 
             /* Field 41, TID, ANS8, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)

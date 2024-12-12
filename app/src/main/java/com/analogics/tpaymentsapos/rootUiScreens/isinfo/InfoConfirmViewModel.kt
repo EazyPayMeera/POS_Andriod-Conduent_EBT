@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.model.error.ApiServiceError
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.paymentservicecore.utils.toDecimalFormat
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -135,18 +136,26 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getTransactionByInvoiceNo(sharedViewModel: SharedViewModel,invoiceNo: String) {
+    fun getTransactionByInvoiceNo(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            val TxnEntity = dbRepository.fetchTransactionByInvoiceNo(invoiceNo)
-            sharedViewModel.objRootAppPaymentDetail.originalTxnType = TxnEntity.map { it.txnType }.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalTip = TxnEntity.map { it.tip }.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalCGST = TxnEntity.map { it.CGST}.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalSGST = TxnEntity.map { it.SGST }.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalCashback =TxnEntity.map { it.cashback }.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = TxnEntity.map { it.ttlAmount }.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalTxnAmount = TxnEntity.map { it.txnAmount }.toString()
-            sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = TxnEntity.map { it.hostTxnRef }.toString()
-
+            dbRepository.fetchTransactionByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())?.let {
+                PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it[0])?.let {
+                    sharedViewModel.objRootAppPaymentDetail = it.copy(
+                        id = sharedViewModel.objRootAppPaymentDetail.id,
+                        txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
+                        txnStatus = sharedViewModel.objRootAppPaymentDetail.txnStatus,
+                        hostAuthResult = sharedViewModel.objRootAppPaymentDetail.hostAuthResult
+                    )
+                    sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
+                    sharedViewModel.objRootAppPaymentDetail.originalTip = it.tip.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalCGST = it.CGST.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalSGST = it.SGST.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalCashback =it.cashback.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = it.ttlAmount.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalTxnAmount = it.txnAmount.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
+                }
+            }
         }
     }
 
