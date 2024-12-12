@@ -117,18 +117,6 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransDetails(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?)
-    {
-        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
-        viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
-                it.txnStatus = txnStatus?.toString()?:""
-                dbRepository.updateTxn(it)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getTransactionByInvoiceNo(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             dbRepository.fetchTransactionByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())?.let {
