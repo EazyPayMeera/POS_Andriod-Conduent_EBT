@@ -55,7 +55,7 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
             if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP) {
                 navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
             } else {
-                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                navHostController.navigate(AppNavigationItems.SignatureScreen.route)
             }
         }
     }

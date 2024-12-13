@@ -65,6 +65,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.preauth.view.PreauthView
 import com.analogics.tpaymentsapos.rootUiScreens.receiptdetails.view.ReceiptDetailsView
 import com.analogics.tpaymentsapos.rootUiScreens.settings.SettingsView
 import com.analogics.tpaymentsapos.rootUiScreens.settings.config.ConfigurationView
+import com.analogics.tpaymentsapos.rootUiScreens.signature.SignatureView
 import com.analogics.tpaymentsapos.rootUiScreens.splash.view.SplashScreenView
 import com.analogics.tpaymentsapos.rootUiScreens.sucess.SucessView
 import com.analogics.tpaymentsapos.rootUiScreens.tax.view.TaxPercentageView
@@ -318,6 +319,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.InactivityTimeoutScreen.route) {
             InactivityTimeoutView(navHostController)
+        }
+        composable(AppNavigationItems.SignatureScreen.route) {
+            SignatureView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

@@ -93,5 +93,6 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("isCaptured")       var isCaptured: Boolean? = false,
     @SerializedName("isVoided")         var isVoided: Boolean? = false,
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
-    @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false
+    @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false,
+
 ):Serializable
