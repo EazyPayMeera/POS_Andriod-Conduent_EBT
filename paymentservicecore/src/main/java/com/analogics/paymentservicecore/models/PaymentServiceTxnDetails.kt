@@ -73,6 +73,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: String? = null,
 
+
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
     @SerializedName("originalTxnRef") var originalTxnRef: String? = null,

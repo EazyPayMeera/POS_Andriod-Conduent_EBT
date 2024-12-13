@@ -1,6 +1,6 @@
 package com.analogics.tpaymentsapos.navigation
 
 enum class NavScreensEnum {
-    SplashScreen,DashBoardView,OnBoardingView,LoginScreen,ForgetPasswordView,PleaseWaitView,AmountView,InvoiceView,ConfirmationView,TipView,CardView,CardDetectView,PinView,ApprovedView,PasswordView,EmailView,RefundAmtView,SettingsView,LanguageView,ConfigurationView,ConfirmShiftView,TaxPercentageView,TipPercentageView,PreauthView,EnterEmailView,DeclineView,Drawer,TxnListView,InfoConfirmView,SucessView,ChangePasswordView,BarcodeView,TransactionDetailsView,ReceiptDetailsView,UserManagementView,BatchIdView,InactivityTimeoutView
+    SplashScreen,DashBoardView,OnBoardingView,LoginScreen,ForgetPasswordView,PleaseWaitView,AmountView,InvoiceView,ConfirmationView,TipView,CardView,CardDetectView,PinView,ApprovedView,PasswordView,EmailView,RefundAmtView,SettingsView,LanguageView,ConfigurationView,ConfirmShiftView,TaxPercentageView,TipPercentageView,PreauthView,EnterEmailView,DeclineView,Drawer,TxnListView,InfoConfirmView,SucessView,ChangePasswordView,BarcodeView,TransactionDetailsView,ReceiptDetailsView,UserManagementView,BatchIdView,InactivityTimeoutView,SignatureView
     ,AddClerkScreen,ActivationScreen
 }
