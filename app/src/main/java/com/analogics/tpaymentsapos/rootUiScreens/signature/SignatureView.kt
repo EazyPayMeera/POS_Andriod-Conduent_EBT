@@ -72,9 +72,9 @@ fun SignatureView(navHostController: NavHostController) {
     }
 
     FooterButtons(
-        firstButtonTitle = stringResource(id = R.string.cancel_btn),
+        firstButtonTitle = stringResource(id = R.string.clear),
         firstButtonOnClick = { touchPoints.clear() },
-        secondButtonTitle = stringResource(id = R.string.confirm_btn),
+        secondButtonTitle = stringResource(id = R.string.done),
         secondButtonOnClick = {
             viewModel.onDoneButtonClick(navHostController, sharedViewModel,touchPoints)
         }
