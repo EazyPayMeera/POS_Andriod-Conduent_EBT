@@ -55,7 +55,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("cardCountryCode")  var cardCountryCode: String? = null,
     @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
     @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
-    @SerializedName("signatureData")    var signatureData: String? = null,
+
 
     /* Transaction Details */
     @SerializedName("batchId") var batchId: String? = null,
@@ -76,6 +76,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
     @SerializedName("acquirerName") var acquirerName:String?=BuildConfig.ACQUIRER_NAME,
+    @SerializedName("signatureData")    var signatureData: String? = null,
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef")  var originalHostTxnRef: String? = null,
