@@ -56,6 +56,8 @@
     <string name="cred_not_to_be_empty">Username and password should not be empty</string>
     <string name="login_invalid_cred">Invalid credentials</string>
     <string name="login_version">Version </string>
+    <string name="invalid_invoice">Invoice? </string>
+    <string name="invoice_not_found">Invoice No Not Found</string>
 
     <!-- User Management -->
     <string name="label_user_management">User Management</string>

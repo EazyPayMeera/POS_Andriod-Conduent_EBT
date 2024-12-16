@@ -12,12 +12,17 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getAcquirer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,23 +47,29 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
         return _invoiceno.value // Return the updated invoice number
     }
 
-    fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel)
-    {
-        sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
-        Log.d("Invoice No", "Invoice No in onConfirm: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
-        navigateToAmountScreen(navHostController,sharedViewModel)
-    }
 
-    fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
         viewModelScope.launch {
-            if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP) {
-                navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
-            } else {
-                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+            when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+                TxnType.AUTHCAP -> {
+                    if (getTransactionByInvoiceNo(navHostController, sharedViewModel)) {
+                        navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
+                    }
+                }
+                TxnType.REFUND, TxnType.VOID -> {
+                    if (getTransactionByInvoiceNo(navHostController, sharedViewModel)) {
+                        navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                    }
+                }
+                else -> {
+                    navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                }
             }
         }
     }
+
 
     fun navigateToTrainingScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -99,5 +110,50 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
             _isInvoiceFound.value = isFound
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTransactionByInvoiceNo(navHost: NavHostController?, sharedViewModel: SharedViewModel): Boolean {
+        var isTransactionFound = true
+        viewModelScope.launch {
+            try {
+                Log.d("getTransactionByInvoiceNo", "Fetching transaction for invoiceNo: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
+
+                dbRepository.fetchTransactionByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())?.let { transactions ->
+                    if (transactions.isEmpty()) {
+                        CustomDialogBuilder.composeAlertDialog(
+                            title = navHost?.context?.resources?.getString(R.string.invalid_invoice),
+                            subtitle = navHost?.context?.resources?.getString(R.string.invoice_not_found)
+                        )
+                        isTransactionFound = false
+                        return@launch
+                    }
+
+                    PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(transactions[0])?.let { transformedObject ->
+                        sharedViewModel.objRootAppPaymentDetail = transformedObject.copy(
+                            id = sharedViewModel.objRootAppPaymentDetail.id,
+                            txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
+                            txnStatus = sharedViewModel.objRootAppPaymentDetail.txnStatus,
+                            hostAuthResult = sharedViewModel.objRootAppPaymentDetail.hostAuthResult
+                        )
+
+                        sharedViewModel.objRootAppPaymentDetail.originalTxnType = transformedObject.txnType
+                        sharedViewModel.objRootAppPaymentDetail.originalTip = transformedObject.tip?.toDecimalFormat() ?: "0.00"
+                        sharedViewModel.objRootAppPaymentDetail.originalCGST = transformedObject.CGST?.toDecimalFormat() ?: "0.00"
+                        sharedViewModel.objRootAppPaymentDetail.originalSGST = transformedObject.SGST?.toDecimalFormat() ?: "0.00"
+                        sharedViewModel.objRootAppPaymentDetail.originalCashback = transformedObject.cashback?.toDecimalFormat() ?: "0.00"
+                        sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = transformedObject.ttlAmount?.toDecimalFormat() ?: "0.00"
+                        sharedViewModel.objRootAppPaymentDetail.originalTxnAmount = transformedObject.txnAmount?.toDecimalFormat() ?: "0.00"
+                        sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = transformedObject.hostTxnRef
+                        isTransactionFound = true
+                    } ?: Log.e("getTransactionByInvoiceNo", "Transformation failed for transaction: ${transactions[0]}")
+                } ?: Log.e("getTransactionByInvoiceNo", "fetchTransactionByInvoiceNo returned null")
+            } catch (e: Exception) {
+                Log.e("getTransactionByInvoiceNo", "Error occurred: ${e.message}", e)
+                isTransactionFound = false
+            }
+        }
+        return isTransactionFound
+    }
+
 
 }

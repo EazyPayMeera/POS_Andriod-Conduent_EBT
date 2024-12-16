@@ -56,6 +56,8 @@
     <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होना चाहिए</string>
     <string name="login_invalid_cred">अमान्य प्रमाण-पत्र</string>
     <string name="login_version">संस्करण</string>
+    <string name="invalid_invoice">Invoice? </string>
+    <string name="invoice_not_found">Invoice No Not Found</string>
 
     <!-- User Management -->
     <string name="label_user_management">उपयोगकर्ता प्रबंधन</string>
