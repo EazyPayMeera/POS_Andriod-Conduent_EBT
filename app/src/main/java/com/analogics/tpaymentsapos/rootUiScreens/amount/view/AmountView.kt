@@ -204,6 +204,12 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
         Log.d("InvoiceDebug", "Invoice No: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()}")
+        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID) {
+            viewModel.getTransactionByInvoiceNo(
+                sharedViewModel
+            )
+        }
+
     }
 
 }
