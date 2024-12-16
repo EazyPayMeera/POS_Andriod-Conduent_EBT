@@ -28,6 +28,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusIconId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
@@ -38,18 +39,6 @@ fun TransactionDetailsView(navHostController: NavHostController) {
     val viewModel: TransactionDetailsViewModel = hiltViewModel()
     val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
-
-    fun getImageId() : Int
-    {
-        return if(sharedViewModel.objRootAppPaymentDetail.isVoided==true)
-            R.drawable.voided
-        else if(sharedViewModel.objRootAppPaymentDetail.isRefunded==true)
-            R.drawable.refunded
-        else if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED)
-            R.drawable.approval
-        else
-            R.drawable.error
-    }
 
     Column {
 
@@ -105,7 +94,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     ImageView(
-                        imageId = getImageId(),
+                        imageId = getTxnStatusIconId(sharedViewModel.objRootAppPaymentDetail),
                         shape = RectangleShape,
                         modifier = Modifier
                             .size(MaterialTheme.dimens.DP_50_CompactMedium)

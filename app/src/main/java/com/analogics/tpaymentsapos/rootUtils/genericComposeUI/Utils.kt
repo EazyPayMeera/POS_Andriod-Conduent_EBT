@@ -24,6 +24,7 @@ import com.analogics.paymentservicecore.logger.AppLogger
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnStatus
+import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
@@ -394,4 +395,24 @@ fun HideSoftKeyboard(navController: NavHostController) {
 @Composable
 fun LoadingBar() {
     LinearProgressIndicator()
+}
+
+@Composable
+fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : Int
+{
+    return if(objRootAppPaymentDetails.isVoided==true)
+        R.drawable.voided
+    else if(objRootAppPaymentDetails.isRefunded==true)
+            R.drawable.refunded
+    else if(objRootAppPaymentDetails.isCaptured==true)
+        R.drawable.captured
+    else if(objRootAppPaymentDetails.txnStatus == TxnStatus.APPROVED)
+        when(objRootAppPaymentDetails.txnType) {
+            TxnType.PREAUTH -> R.drawable.authorized
+            else -> R.drawable.approved
+        }
+    else if(objRootAppPaymentDetails.txnStatus == TxnStatus.DECLINED)
+        R.drawable.declined
+    else
+        R.drawable.error
 }
