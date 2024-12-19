@@ -78,7 +78,7 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_40_CompactMedium))
 
             ImageView(
-                imageId= R.drawable.ic_launcher_foreground,
+                imageId= R.drawable.eazypaylogo,
                 contentDescription = "",
                 modifier = Modifier.size(MaterialTheme.dimens.DP_70_CompactMedium)
             )
