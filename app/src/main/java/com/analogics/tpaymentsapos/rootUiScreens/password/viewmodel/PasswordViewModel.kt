@@ -48,12 +48,12 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
         }
     }
 
-    fun checkPassword(sharedViewModel: SharedViewModel, context: Context, loggedUser:String, enteredPassword:String,navHostController: NavHostController)
+    fun checkPassword(sharedViewModel: SharedViewModel, context: Context, enteredPassword:String, navHostController: NavHostController)
     {
         viewModelScope.launch {
             try {
-                val Password = dbRepository.fetchPassword(loggedUser)
-                if(Password != enteredPassword)
+                val password = dbRepository.fetchPassword(sharedViewModel.objPosConfig?.loginId.toString())
+                if(password != enteredPassword)
                 {
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.resources.getString(

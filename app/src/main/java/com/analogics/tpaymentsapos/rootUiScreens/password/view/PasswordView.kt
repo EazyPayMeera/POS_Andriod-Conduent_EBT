@@ -83,9 +83,9 @@ fun PasswordView(navHostController: NavHostController) {
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.enter_password),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
-                    keyboardType = KeyboardType.Password,
+                    keyboardType = KeyboardType.NumberPassword,
                     onDoneAction = {
-                        viewModel.checkPassword(sharedViewModel,context,sharedViewModel.objPosConfig?.loginId.toString(),password,navHostController)
+                        viewModel.checkPassword(sharedViewModel,context, password,navHostController)
                     },
                     isPassword = true,
                 )
@@ -96,14 +96,14 @@ fun PasswordView(navHostController: NavHostController) {
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { /*viewModel.navigateToTrainingScreen(navHostController)*/isDialogVisible=true },
+            firstButtonOnClick = { navHostController.popBackStack() },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = {
-                viewModel.checkPassword(sharedViewModel,context,sharedViewModel.objPosConfig?.loginId.toString(),password,navHostController)
+                viewModel.checkPassword(sharedViewModel,context, password,navHostController)
             }
         )
 
-        if (isDialogVisible) {
+/*        if (isDialogVisible) {
             CustomDialogBuilder.create()
                 .setTitle(stringResource(id = R.string.cancel_dialogue))
                 .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
@@ -128,7 +128,7 @@ fun PasswordView(navHostController: NavHostController) {
                 }
                 .buildDialog(onClose = { isDialogVisible = false })
 
-        }
+        }*/
         CustomDialogBuilder.ShowComposed()
 
     }
