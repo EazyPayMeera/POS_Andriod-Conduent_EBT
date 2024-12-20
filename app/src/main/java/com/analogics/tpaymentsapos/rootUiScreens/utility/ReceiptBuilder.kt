@@ -57,9 +57,18 @@ class ReceiptBuilder {
         return Receipt.Builder()
             .apply {
                 if(customer) {
-                    addField(
-                        sharedViewModel.objPosConfig?.header1.toString(), "", "", Alignment.CENTER, FontSize.Small)
-                    addField(context.getString(R.string.receipt_address), sharedViewModel.objPosConfig?.header2.toString(), "", Alignment.LEFT, FontSize.Small)
+                    sharedViewModel.objPosConfig?.header1?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                    sharedViewModel.objPosConfig?.header2?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                    sharedViewModel.objPosConfig?.header3?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                    sharedViewModel.objPosConfig?.header4?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
                 }
                 addField("", "", "", Alignment.CENTER,FontSize.Small)
                 addField("", "", "", Alignment.CENTER,FontSize.Small)
@@ -76,9 +85,9 @@ class ReceiptBuilder {
                 addField(paymentDetails?.txnType.toString(),"" , "", Alignment.CENTER,FontSize.Big)
                 addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE,FontSize.Big)
                 addField(context.getString(R.string.receipt_card_no), paymentDetails?.cardMaskedPan, "", Alignment.CENTER,FontSize.Small)
-                addField(context.getString(R.string.receipt_card_type), "", "CREDIT", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_card_type), "", paymentDetails?.cardBrand?.toString(), Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE,FontSize.Small)
-                addField(context.getString(R.string.receipt_ref_no), "", "56789", Alignment.NONE,FontSize.Small)
+                addField(context.getString(R.string.receipt_ref_no), "", paymentDetails?.hostTxnRef, Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_subtotal), "", (paymentDetails?.txnAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
                 addField(context.getString(R.string.receipt_tip), "", (paymentDetails?.tip?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
@@ -98,6 +107,20 @@ class ReceiptBuilder {
                     addField(context.getString(R.string.receipt_merch_copy), "", "", Alignment.CENTER, FontSize.Small)
                 }
 
+                if(customer) {
+                    sharedViewModel.objPosConfig?.footer1?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                    sharedViewModel.objPosConfig?.footer2?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                    sharedViewModel.objPosConfig?.footer3?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                    sharedViewModel.objPosConfig?.footer4?.let {
+                        addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
+                    }
+                }
             }
             .build()
     }
