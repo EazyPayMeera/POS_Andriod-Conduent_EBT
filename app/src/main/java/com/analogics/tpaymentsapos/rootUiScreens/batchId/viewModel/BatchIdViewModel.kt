@@ -30,15 +30,16 @@ class BatchIdViewModel @Inject constructor(private val dbRepository: TxnDBReposi
 
     val isBatchOpen : StateFlow<Boolean> = _isBatchOpen
 
-    fun updateBatchId(newValue: String, sharedViewModel: SharedViewModel?=null): String {
-        _batchid.value = newValue
+    fun updateBatchId(newValue: String): String {
+        if (isBatchOpen.value == false)
+            _batchid.value = newValue
         return _batchid.value // Return the updated invoice number
     }
 
     fun onConfirm(sharedViewModel: SharedViewModel)
     {
-        sharedViewModel.objPosConfig?.batchId = batchId.value
-        Log.d("Batch No", "Batch No in onConfirm: ${sharedViewModel.objPosConfig?.batchId}")
+        if (isBatchOpen.value == false)
+            sharedViewModel.objPosConfig?.apply { batchId = _batchid.value}?.saveToPrefs()
     }
 
     fun isBatchOpen() {

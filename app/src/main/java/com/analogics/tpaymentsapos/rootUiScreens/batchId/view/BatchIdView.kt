@@ -88,9 +88,8 @@ fun BatchIdView(navHostController: NavHostController) {
                         if (viewModel.isBatchOpen.value) {
                             viewModel.onShowBatchOpen(context = context)
                         } else {
-                            // Allow editing when isBatchOpen is false
                             batchId = newValue.take(AppConstants.LYRA_MAX_INVOICE_LENGTH) // Update the mutable state when the text changes
-                            viewModel.updateBatchId(batchId, sharedViewModel)
+                            viewModel.updateBatchId(newValue)
                         }
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
@@ -101,7 +100,10 @@ fun BatchIdView(navHostController: NavHostController) {
                     ),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {
-                        viewModel.onConfirm(sharedViewModel)
+                        if (viewModel.isBatchOpen.value)
+                            viewModel.onShowBatchOpen(context = context)
+                        else
+                            viewModel.onConfirm(sharedViewModel)
                     },
                     isPassword = false,
                     trailingIcon = null
@@ -122,8 +124,10 @@ fun BatchIdView(navHostController: NavHostController) {
         ) {
             OkButton(
                 onClick = {
-                    Log.d("Click on save Button","OK")
-                    viewModel.onConfirm(sharedViewModel)
+                    if (viewModel.isBatchOpen.value)
+                        viewModel.onShowBatchOpen(context = context)
+                    else
+                        viewModel.onConfirm(sharedViewModel)
                 },
                 title = stringResource(id = R.string.save_btn),
             )
