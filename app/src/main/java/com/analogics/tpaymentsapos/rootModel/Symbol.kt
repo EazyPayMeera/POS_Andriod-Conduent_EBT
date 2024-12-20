@@ -1,6 +1,12 @@
 package com.analogics.tpaymentsapos.rootModel
 
-class Symbol(val position: Position=Position.START, val type: Type=Type.CURRENCY, val currency: Currency=Currency.INR, val noSpace : Boolean = false) {
+object DefaultSymbol {
+    var currency: Symbol.Currency = Symbol.Currency.INR
+    var position: Symbol.Position = Symbol.Position.START
+    var noSpace : Boolean = false
+}
+
+class Symbol(val position: Position=DefaultSymbol.position, val type: Type=Type.CURRENCY, val currency: Currency=DefaultSymbol.currency, val noSpace : Boolean = DefaultSymbol.noSpace) {
 
     enum class Type {
         CURRENCY,
