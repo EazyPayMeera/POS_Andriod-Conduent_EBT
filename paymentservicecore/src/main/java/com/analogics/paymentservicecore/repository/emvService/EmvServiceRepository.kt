@@ -141,6 +141,50 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         }
     }
 
+    fun emvCardCheckStatusToDisplayMsgId(status: CardCheckStatus) : DisplayMsgId
+    {
+        return when (status) {
+            CardCheckStatus.NO_CARD_DETECTED -> DisplayMsgId.ERR_CARD_READ
+            CardCheckStatus.CARD_INSERTED -> DisplayMsgId.CARD_INSERTED
+            CardCheckStatus.CARD_TAPPED -> DisplayMsgId.CARD_TAPPED
+            CardCheckStatus.CARD_SWIPED -> DisplayMsgId.CARD_SWIPED
+            CardCheckStatus.NOT_ICC_CARD -> DisplayMsgId.INVALID_ICC_CARD
+            CardCheckStatus.USE_ICC_CARD -> DisplayMsgId.USE_CONTACT_IC_CARD
+            CardCheckStatus.BAD_SWIPE -> DisplayMsgId.ERR_CARD_READ
+            CardCheckStatus.NEED_FALLBACK -> DisplayMsgId.USE_MAG_STRIPE
+            CardCheckStatus.MULTIPLE_CARDS -> DisplayMsgId.ERR_MULTI_CARD
+            CardCheckStatus.TIMEOUT -> DisplayMsgId.TIMEOUT
+            CardCheckStatus.CANCEL -> DisplayMsgId.CANCELED
+            CardCheckStatus.DEVICE_BUSY -> DisplayMsgId.ERR_PROCESSING
+
+            else -> DisplayMsgId.NONE
+        }
+    }
+
+    fun emvTransStatusToDisplayMsgId(status: TransStatus) : DisplayMsgId
+    {
+        return when (status) {
+            TransStatus.APPROVED_ONLINE -> DisplayMsgId.APPROVED_ONLINE
+            TransStatus.DECLINED_ONLINE -> DisplayMsgId.DECLINED_ONLINE
+            TransStatus.APPROVED_OFFLINE -> DisplayMsgId.APPROVED_OFFLINE
+            TransStatus.DECLINED_OFFLINE -> DisplayMsgId.DECLINED_OFFLINE
+            TransStatus.CANCELED -> DisplayMsgId.CANCELED
+            TransStatus.TIMEOUT -> DisplayMsgId.TIMEOUT
+            TransStatus.TERMINATED -> DisplayMsgId.TERMINATED
+            TransStatus.CARD_BLOCKED -> DisplayMsgId.CARD_BLOCKED
+            TransStatus.APP_BLOCKED -> DisplayMsgId.APP_BLOCKED
+            TransStatus.NO_EMV_APPS -> DisplayMsgId.NO_EMV_APPS
+            TransStatus.APP_SELECTION_FAILED -> DisplayMsgId.APP_SELECTION_FAILED
+            TransStatus.TRY_ANOTHER_INTERFACE -> DisplayMsgId.TRY_ANOTHER_INTERFACE
+            TransStatus.INVALID_ICC_CARD -> DisplayMsgId.INVALID_ICC_CARD
+            TransStatus.RETRY -> DisplayMsgId.RETRY
+            TransStatus.CARD_REMOVED -> DisplayMsgId.CARD_REMOVED
+            TransStatus.ISSUER_SCRIPT_UPDATE_SUCCESSFUL -> DisplayMsgId.ISSUER_SCRIPT_UPDATE_SUCCESSFUL
+            TransStatus.ISSUER_SCRIPT_UPDATE_FAILED -> DisplayMsgId.ISSUER_SCRIPT_UPDATE_FAILED
+            else -> DisplayMsgId.NONE
+        }
+    }
+
     fun sdkToEmvService(response: Any) : Any
     {
         return when(response) {
@@ -150,13 +194,17 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
                 )
             }
             is EmvSdkResult.CardCheckResult -> {
+                var status = sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)
                 CardCheckResult(
-                    status = sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)
+                    status = status,
+                    displayMsgId = emvCardCheckStatusToDisplayMsgId(status)
                 )
             }
             is EmvSdkResult.TransResult -> {
+                var status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
                 TransResult(
-                    status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
+                    status = status,
+                    displayMsgId = emvTransStatusToDisplayMsgId(status)
                 )
             }
             is EmvSdkException ->{

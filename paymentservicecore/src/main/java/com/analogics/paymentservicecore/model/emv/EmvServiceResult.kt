@@ -86,7 +86,26 @@ sealed class EmvServiceResult(
         ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS,
 
         /* Progress Indicator */
-        PROCESSING_ONLINE
+        PROCESSING_ONLINE,
+
+        /* Transaction Status as Display ID */
+        APPROVED_ONLINE,
+        DECLINED_ONLINE,
+        APPROVED_OFFLINE,
+        DECLINED_OFFLINE,
+        CANCELED,
+        TIMEOUT,
+        CARD_BLOCKED,
+        NO_EMV_APPS,
+        APP_SELECTION_FAILED,
+        TRY_ANOTHER_INTERFACE,
+        INVALID_ICC_CARD,
+        RETRY,
+        CARD_REMOVED,
+        ISSUER_SCRIPT_UPDATE_SUCCESSFUL,
+        ISSUER_SCRIPT_UPDATE_FAILED,
+        INITIATED,
+        ERROR
     }
 
     class InitResult(status: InitStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId)

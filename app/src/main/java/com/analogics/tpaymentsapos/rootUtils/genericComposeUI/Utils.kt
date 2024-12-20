@@ -189,16 +189,6 @@ fun getLogoBitmap(context: Context, id: Int): Bitmap {
     return bitmap
 }
 
-fun emvCardCheckStatusToMsgId(cardCheckStatus: EmvServiceResult.CardCheckStatus) : EmvServiceResult.DisplayMsgId
-{
-    return when(cardCheckStatus) {
-        EmvServiceResult.CardCheckStatus.CARD_INSERTED -> EmvServiceResult.DisplayMsgId.CARD_INSERTED
-        EmvServiceResult.CardCheckStatus.CARD_SWIPED -> EmvServiceResult.DisplayMsgId.CARD_SWIPED
-        EmvServiceResult.CardCheckStatus.CARD_TAPPED -> EmvServiceResult.DisplayMsgId.CARD_TAPPED
-        else -> EmvServiceResult.DisplayMsgId.NONE
-    }
-}
-
 fun emvStatusToTransStatus(emvTransStatus: Any?) : TxnStatus
 {
     return when(emvTransStatus) {
@@ -210,13 +200,11 @@ fun emvStatusToTransStatus(emvTransStatus: Any?) : TxnStatus
     }
 }
 
-@Composable
-fun getEmvMsgIdString(displayMsgId: EmvServiceResult.DisplayMsgId) : String
+fun emvMsgIdToStringId(displayMsgId: EmvServiceResult.DisplayMsgId?) : Int?
 {
     val id : Int? =
         when(displayMsgId) {
             EmvServiceResult.DisplayMsgId.DISPLAY_BALANCE -> R.string.amount
-            EmvServiceResult.DisplayMsgId.NONE -> null
             EmvServiceResult.DisplayMsgId.CARD_INSERTED -> R.string.emv_msg_id_card_inserted
             EmvServiceResult.DisplayMsgId.CARD_TAPPED -> R.string.emv_msg_id_card_tapped
             EmvServiceResult.DisplayMsgId.CARD_SWIPED -> R.string.emv_msg_id_card_swiped
@@ -246,8 +234,32 @@ fun getEmvMsgIdString(displayMsgId: EmvServiceResult.DisplayMsgId) : String
             EmvServiceResult.DisplayMsgId.ERR_QPBOC_FDDA_FAILED -> R.string.emv_msg_id_err_qpboc_fdda_failed
             EmvServiceResult.DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS -> R.string.emv_msg_id_err_pure_cash_card_no_online
             EmvServiceResult.DisplayMsgId.PROCESSING_ONLINE -> R.string.emv_msg_id_processing_online
+            EmvServiceResult.DisplayMsgId.APPROVED_ONLINE -> R.string.emv_msg_id_approved_online
+            EmvServiceResult.DisplayMsgId.DECLINED_ONLINE -> R.string.emv_msg_id_declined_online
+            EmvServiceResult.DisplayMsgId.APPROVED_OFFLINE -> R.string.emv_msg_id_approved_offline
+            EmvServiceResult.DisplayMsgId.DECLINED_OFFLINE -> R.string.emv_msg_id_declined_offline
+            EmvServiceResult.DisplayMsgId.CANCELED -> R.string.emv_msg_id_cancelled
+            EmvServiceResult.DisplayMsgId.TIMEOUT -> R.string.emv_msg_id_timeout
+            EmvServiceResult.DisplayMsgId.CARD_BLOCKED -> R.string.emv_msg_id_card_blocked
+            EmvServiceResult.DisplayMsgId.NO_EMV_APPS -> R.string.emv_msg_id_no_emv_apps
+            EmvServiceResult.DisplayMsgId.APP_SELECTION_FAILED -> R.string.emv_msg_id_app_selection_failed
+            EmvServiceResult.DisplayMsgId.TRY_ANOTHER_INTERFACE -> R.string.emv_msg_id_try_another_interface
+            EmvServiceResult.DisplayMsgId.INVALID_ICC_CARD -> R.string.emv_msg_id_invalid_icc_card
+            EmvServiceResult.DisplayMsgId.RETRY -> R.string.emv_msg_id_retry
+            EmvServiceResult.DisplayMsgId.CARD_REMOVED -> R.string.emv_msg_id_card_removed
+            EmvServiceResult.DisplayMsgId.ISSUER_SCRIPT_UPDATE_SUCCESSFUL -> R.string.emv_msg_id_issuer_script_update_successful
+            EmvServiceResult.DisplayMsgId.ISSUER_SCRIPT_UPDATE_FAILED -> R.string.emv_msg_id_issuer_script_update_failed
+
+            else -> null
         }
 
+    return id
+}
+
+@Composable
+fun getEmvMsgIdString(displayMsgId: EmvServiceResult.DisplayMsgId) : String
+{
+    val id : Int? = emvMsgIdToStringId(displayMsgId)
     return if(id!=null) stringResource(id) else ""
 }
 

@@ -20,9 +20,10 @@ import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvMsgIdToStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
+import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -54,8 +55,8 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
     }
 
     fun onCancelClick(navHostController: NavHostController) {
-        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         viewModelScope.launch {
+            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
             emvServiceRepository.abortPayment()
         }
     }
@@ -96,29 +97,28 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                 Log.d("EMVServiceResponse", "Transaction Status: ${response.status}")
                                 /* Update Transaction Result & Store in DB */
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
-                                    if(isStatusSuggestAnotherCard(response.status)!=true)
-                                        navigateToApprovalScreen(navHostController)
+                                    if(isStatusTryAnotherCard(response.status)==true)
+                                        displayEmvError(response.displayMsgId)
                                     else
-                                        displayEmvError()
+                                        navigateToApprovalScreen(navHostController)
                                 }
                             }
 
                             is EmvServiceResult.CardCheckResult -> {
-                                when (response.status) {
-                                    EmvServiceResult.CardCheckStatus.CARD_INSERTED,
-                                    EmvServiceResult.CardCheckStatus.CARD_SWIPED,
-                                    EmvServiceResult.CardCheckStatus.CARD_TAPPED -> {
-                                        emvInProgress.value = true
-                                        showProgressVar.value = true
-                                        displayInfoMsgId.value =
-                                            emvCardCheckStatusToMsgId(response.status as EmvServiceResult.CardCheckStatus)
+                                emvInProgress.value = false
+                                showProgressVar.value = false
+                                if(isCardCheckStatusInProgress(response.status)) {
+                                    emvInProgress.value = true
+                                    showProgressVar.value = true
+                                    response.displayMsgId?.let {
+                                        displayInfoMsgId.value = it
                                     }
-
-                                    else -> {
-                                        emvInProgress.value = false
-                                        showProgressVar.value = false
-                                        displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.NONE
-                                    }
+                                }
+                                else if(isCardCheckStatusAbort(response.status)) {
+                                    displayEmvError(response.displayMsgId, true)
+                                }
+                                else if(isCardCheckStatusError(response.status)) {
+                                    displayEmvError(response.displayMsgId)
                                 }
                             }
                         }
@@ -133,18 +133,69 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
-    fun displayEmvError()
+    fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false)
     {
-        CustomDialogBuilder.composeAlertDialog(onButtonClick = {
-            viewModelScope.launch{
-                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
-                startPayment(context,sharedViewModel,navHostController)
-            }
-        })
+        /* Display error & restart payment */
         emvInProgress.value = false
+        var message : String? = null
+        emvMsgIdToStringId(displayMsgId)?.let {
+            message = context.getString(it)
+        }
+        CustomDialogBuilder.composeAlertDialog(
+            title = context.getString(R.string.default_alert_title_error),
+            message = message,
+            onButtonClick = {
+                abort?.takeIf { it == false }?.let {
+                    viewModelScope.launch {
+                        delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                        startPayment(context, sharedViewModel, navHostController)
+                    }
+                }?:let {
+                    onCancelClick(navHostController)
+                }
+        })
     }
 
-    fun isStatusSuggestAnotherCard(status: Any?) : Boolean
+    fun isCardCheckStatusInProgress(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.CardCheckStatus.CARD_INSERTED,
+            EmvServiceResult.CardCheckStatus.CARD_SWIPED,
+            EmvServiceResult.CardCheckStatus.CARD_TAPPED,
+            -> true
+            else -> false
+        }
+    }
+
+    fun isCardCheckStatusAbort(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.CardCheckStatus.TIMEOUT
+            -> true
+            else -> false
+        }
+    }
+
+    fun isCardCheckStatusError(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
+            EmvServiceResult.CardCheckStatus.NOT_ICC_CARD,
+            EmvServiceResult.CardCheckStatus.USE_ICC_CARD,
+            EmvServiceResult.CardCheckStatus.BAD_SWIPE,
+            EmvServiceResult.CardCheckStatus.NEED_FALLBACK,
+            EmvServiceResult.CardCheckStatus.MULTIPLE_CARDS,
+            EmvServiceResult.CardCheckStatus.DEVICE_BUSY,
+            EmvServiceResult.CardCheckStatus.ERROR,
+            -> true
+            else -> false
+        }
+    }
+
+    fun isStatusTryAnotherCard(status: Any?) : Boolean
     {
         return when(status)
         {

@@ -374,8 +374,22 @@
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA विफल</string>
     <string name="emv_msg_id_err_pure_cash_card_no_online">PURE कैश कार्ड ऑनलाइन लेनदेन के लिए अनुमति नहीं है</string>
 
-    <!-- EMV Display Messages (Errors)-->
+    <!-- EMV Display Messages (Errors) -->
     <string name="emv_msg_id_processing_online">ऑनलाइन प्रोसेस हो रहा है</string>
+
+    <!-- EMV Display Messages (Transaction Status) -->
+    <string name="emv_msg_id_approved_online">ऑनलाइन स्वीकृत</string>
+    <string name="emv_msg_id_declined_online">ऑनलाइन अस्वीकृत</string>
+    <string name="emv_msg_id_approved_offline">ऑफलाइन स्वीकृत</string>
+    <string name="emv_msg_id_declined_offline">ऑफलाइन अस्वीकृत</string>
+    <string name="emv_msg_id_no_emv_apps">कार्ड समर्थित नहीं</string>
+    <string name="emv_msg_id_app_selection_failed">एप्लिकेशन चयन विफल</string>
+    <string name="emv_msg_id_try_another_interface">दूसरा इंटरफेस आज़माएं</string>
+    <string name="emv_msg_id_invalid_icc_card">अमान्य ICC कार्ड</string>
+    <string name="emv_msg_id_retry">कृपया पुनः प्रयास करें</string>
+    <string name="emv_msg_id_card_removed">कार्ड हटा दिया गया</string>
+    <string name="emv_msg_id_issuer_script_update_successful">इशूअर स्क्रिप्ट अपडेट सफल</string>
+    <string name="emv_msg_id_issuer_script_update_failed">इशूअर स्क्रिप्ट अपडेट विफल</string>
 
     <!--Receipt Details -->
     <string name="header1_placeholder">हेडर 1 दर्ज करें</string>

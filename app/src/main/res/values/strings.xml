@@ -354,7 +354,7 @@
     <string name="emv_msg_id_card_blocked">Card Blocked</string>
     <string name="emv_msg_id_terminated">Terminated</string>
 
-    <!-- EMV Display Messages (Errors)-->
+    <!-- EMV Display Messages (Errors) -->
     <string name="emv_msg_id_err_card_read">Card Read Error</string>
     <string name="emv_msg_id_err_processing">Processing Error</string>
     <string name="emv_msg_id_err_load_callback">Callback Error</string>
@@ -370,8 +370,22 @@
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA Failed</string>
     <string name="emv_msg_id_err_pure_cash_card_no_online">PURE Cash Card Not Allowed for Online Transactions</string>
 
-    <!-- EMV Display Messages (Errors)-->
+    <!-- EMV Display Messages (Errors) -->
     <string name="emv_msg_id_processing_online">Processing Online</string>
+
+    <!-- EMV Display Messages (Transaction Status) -->
+    <string name="emv_msg_id_approved_online">Approved Online</string>
+    <string name="emv_msg_id_declined_online">Declined Online</string>
+    <string name="emv_msg_id_approved_offline">Approved Offline</string>
+    <string name="emv_msg_id_declined_offline">Declined Offline</string>
+    <string name="emv_msg_id_no_emv_apps">Card Not Supported</string>
+    <string name="emv_msg_id_app_selection_failed">Application Selection Failed</string>
+    <string name="emv_msg_id_try_another_interface">Try Another Interface</string>
+    <string name="emv_msg_id_invalid_icc_card">Invalid ICC Card</string>
+    <string name="emv_msg_id_retry">Please Retry</string>
+    <string name="emv_msg_id_card_removed">Card Removed</string>
+    <string name="emv_msg_id_issuer_script_update_successful">Issuer Script Update Successful</string>
+    <string name="emv_msg_id_issuer_script_update_failed">Issuer Script Update Failed</string>
 
     <!--Receipt Details -->
     <string name="header1_placeholder">Enter Header 1</string>
