@@ -19,6 +19,7 @@ object AppConstants {
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L
     const val MIN_DIALOG_SHOW_TIME_MS = 500L
     const val CARD_CHECK_TIMEOUT_S = 30L
+    const val CARD_CHECK_RESTART_DELAY_MS = 2000L
     const val DEMO_MODE_PROMPTS_DELAY_MS = 3000L
 
     const val BATCH_ID_START_VAL = 1

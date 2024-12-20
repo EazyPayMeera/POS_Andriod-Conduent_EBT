@@ -135,7 +135,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isChecked = viewModel.isAutoPrintMerchant.value,
             onCheckedChange = { viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
             isArrow = false,
-            onArrowChange = {},
+            onArrowChange = { },
             isAdmin = true
         ),
         SettingsItem(
@@ -144,7 +144,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isChecked = viewModel.isInactivity.value,
             onCheckedChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
             isArrow = true,
-            onArrowChange = {},
+            onArrowChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
             isAdmin = true
         ),
         SettingsItem(
@@ -153,7 +153,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isChecked = viewModel.isBatchId.value,
             onCheckedChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
             isArrow = true,
-            onArrowChange = {},
+            onArrowChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
             isAdmin = true
         ),
     )

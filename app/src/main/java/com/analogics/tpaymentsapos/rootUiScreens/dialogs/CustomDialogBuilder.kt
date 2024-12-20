@@ -275,18 +275,19 @@ class CustomDialogBuilder private constructor() {
                     .setShowCloseButton(false)
                     .setShowButtons(true)
                     .setConfirmButtonText(buttonText?:_buttonText?:stringResource(id = R.string.ok))
-                instance?.buildDialog(onClose = { showAlert.value = false })
+                instance?.buildDialog(onClose = { showAlert.value = false; onCloseCallback?.invoke() })
 
             }
         }
 
-        fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
+        fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null, onButtonClick: (() -> Unit)? = null) {
             showProgress.value = false
             showAlert.value = show != false
             _title = title
             _subtitle = subtitle
             _message = message
             _buttonText = buttonText
+            onCloseCallback = onButtonClick
         }
 
         @Composable

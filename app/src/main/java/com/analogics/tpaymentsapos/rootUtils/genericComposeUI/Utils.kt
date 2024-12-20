@@ -205,6 +205,7 @@ fun emvStatusToTransStatus(emvTransStatus: Any?) : TxnStatus
         EmvServiceResult.TransStatus.APPROVED_ONLINE, EmvServiceResult.TransStatus.APPROVED_OFFLINE -> TxnStatus.APPROVED
         EmvServiceResult.TransStatus.DECLINED_ONLINE,EmvServiceResult.TransStatus.DECLINED_OFFLINE -> TxnStatus.DECLINED
         EmvServiceResult.TransStatus.INITIATED -> TxnStatus.INITIATED
+        EmvServiceResult.TransStatus.TERMINATED -> TxnStatus.TERMINATED
         else -> TxnStatus.ERROR
     }
 }

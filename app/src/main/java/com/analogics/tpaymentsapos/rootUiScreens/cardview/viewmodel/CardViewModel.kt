@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
@@ -18,11 +19,13 @@ import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvCardCheckStatusToMsgId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransStatus
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +35,9 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
     var emvInProgress = mutableStateOf(false)
     var showProgressVar = mutableStateOf(true)
     var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
+    lateinit var context: Context
+    lateinit var sharedViewModel: SharedViewModel
+    lateinit var navHostController : NavHostController
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
@@ -71,7 +77,10 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         sharedViewModel: SharedViewModel,
         navHostController: NavHostController
     ) {
-        Log.d("Start Payment","Inside DashBoard ViewModel")
+        this.context = context
+        this.sharedViewModel = sharedViewModel
+        this.navHostController = navHostController
+
         viewModelScope.launch {
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
             emvServiceRepository.startPayment(
@@ -87,7 +96,10 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                 Log.d("EMVServiceResponse", "Transaction Status: ${response.status}")
                                 /* Update Transaction Result & Store in DB */
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
-                                    navigateToApprovalScreen(navHostController)
+                                    if(isStatusSuggestAnotherCard(response.status)!=true)
+                                        navigateToApprovalScreen(navHostController)
+                                    else
+                                        displayEmvError()
                                 }
                             }
 
@@ -118,6 +130,33 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                         displayInfoMsgId.value = displayMsgId
                     }
                 })
+        }
+    }
+
+    fun displayEmvError()
+    {
+        CustomDialogBuilder.composeAlertDialog(onButtonClick = {
+            viewModelScope.launch{
+                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                startPayment(context,sharedViewModel,navHostController)
+            }
+        })
+        emvInProgress.value = false
+    }
+
+    fun isStatusSuggestAnotherCard(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.TransStatus.TRY_ANOTHER_INTERFACE,
+            EmvServiceResult.TransStatus.RETRY,
+            EmvServiceResult.TransStatus.CARD_BLOCKED,
+            EmvServiceResult.TransStatus.APP_BLOCKED,
+            EmvServiceResult.TransStatus.APP_SELECTION_FAILED,
+            EmvServiceResult.TransStatus.NO_EMV_APPS,
+            EmvServiceResult.TransStatus.INVALID_ICC_CARD,
+            -> true
+            else -> false
         }
     }
 }

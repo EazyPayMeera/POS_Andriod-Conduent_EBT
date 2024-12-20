@@ -6,6 +6,7 @@ enum class TxnStatus {
     APPROVED,
     DECLINED,
     ERROR,
+    TERMINATED,
     REVERSED,
     VOIDED,
     REFUNDED,
