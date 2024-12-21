@@ -161,7 +161,7 @@
     <string name="tax_current_value">वर्तमान कर</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
-    <string name="or">---------------या---------------</string>
+    <string name="or">--- यूपीआई के लिए क्लिक करें ---</string>
     <string name="close">बंद करें</string>
     <string name="chip_detected">चिप का पता चला</string>
     <string name="approved">स्वीकृत</string>

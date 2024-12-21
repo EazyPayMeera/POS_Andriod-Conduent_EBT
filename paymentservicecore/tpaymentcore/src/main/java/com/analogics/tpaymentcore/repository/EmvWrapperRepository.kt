@@ -17,6 +17,7 @@ import com.analogics.tpaymentcore.model.emv.CAPKey
 import com.analogics.tpaymentcore.model.emv.CardCheckMode
 import com.analogics.tpaymentcore.model.emv.EmvSdkException
 import com.analogics.tpaymentcore.model.emv.EmvSdkResult
+import com.analogics.tpaymentcore.model.emv.EmvSdkResult.DisplayMsgId
 import com.analogics.tpaymentcore.model.emv.EmvSdkResult.InitResult
 import com.analogics.tpaymentcore.model.emv.EmvSdkResult.InitStatus
 import com.analogics.tpaymentcore.model.emv.EmvSdkResult.TransStatus
@@ -112,6 +113,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         var pinBlock : String? = null
         var ksn : String? = null
         var nfcTlv : String? = null
+        var nfcDisplayMsgId : DisplayMsgId? = null
 
         fun resetTransData()
         {
@@ -125,6 +127,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             pinBlock = null
             ksn = null
             nfcTlv = null
+            nfcDisplayMsgId = null
         }
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
@@ -365,6 +368,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCrequestTipsConfirm(p0: ContantPara.NfcTipMessageID?, p1: String?) {
             Log.d("EMV_APP", "NFC Request Tip:" + p0.toString())
+            nfcDisplayMsgId = urovoToDisplayMsgId(p0)
         }
 
         override fun onReturnNfcCardData(p0: Hashtable<String, String>?) {
@@ -382,7 +386,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             try {
                 Log.d("EMV_APP", "NFC Process Online:" + nfcTlv)
                 encryptThenRequestOnline(nfcTlv)
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -395,7 +398,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         override fun onNFCTransResult(p0: ContantPara.NfcTransResult?) {
             Log.d("EMV_APP", "NFC Result :" + p0?.toString())
-            iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(urovoToEmvTransResult(p0)))
+            iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(urovoToEmvTransResult(p0), nfcDisplayMsgId))
         }
 
         override fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
@@ -456,6 +459,28 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 ContantPara.CheckCardResult.NO_CARD -> EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
                 else -> EmvSdkResult.CardCheckStatus.ERROR
 
+            }
+        }
+
+        fun urovoToDisplayMsgId(displayMsgId : ContantPara.NfcTipMessageID?) : DisplayMsgId?
+        {
+            return when (displayMsgId) {
+                ContantPara.NfcTipMessageID.USE_MAG_STRIPE -> DisplayMsgId.USE_MAG_STRIPE
+                ContantPara.NfcTipMessageID.DISPLAY_BALANCE -> DisplayMsgId.DISPLAY_BALANCE
+                ContantPara.NfcTipMessageID.END_APPLICATION -> DisplayMsgId.END_APPLICATION
+                ContantPara.NfcTipMessageID.INSERT_SWIPE_OR_TRY_ANOTHER_CARD -> DisplayMsgId.INSERT_SWIPE_OR_TRY_ANOTHER_CARD
+                ContantPara.NfcTipMessageID.PLS_REMOVE_CARD -> DisplayMsgId.REMOVE_CARD
+                ContantPara.NfcTipMessageID.PLS_USE_CONTACT_IC_CARD -> DisplayMsgId.USE_CONTACT_IC_CARD
+                ContantPara.NfcTipMessageID.SEE_PHONE_REMOVE_AND_PRESENT_CARD -> DisplayMsgId.SEE_PHONE_AND_PRESENT_CARD_AGAIN
+                ContantPara.NfcTipMessageID.NEED_SIGNATURE -> DisplayMsgId.NEED_SIGNATURE
+                ContantPara.NfcTipMessageID.CARD_READ_OK -> DisplayMsgId.CARD_READ_OK
+                ContantPara.NfcTipMessageID.APPLICATION_BLOCKED -> DisplayMsgId.APP_BLOCKED
+                ContantPara.NfcTipMessageID.TERMINATE -> DisplayMsgId.TERMINATED
+                ContantPara.NfcTipMessageID.TRY_AGAIN_RESENT_CARD, ContantPara.NfcTipMessageID.PLS_SECOND_TAP_CARD -> DisplayMsgId.TAP_CARD_AGAIN
+                ContantPara.NfcTipMessageID.CARD_ERROR -> DisplayMsgId.ERR_CARD_READ
+                ContantPara.NfcTipMessageID.PROCESSING_ERROR, ContantPara.NfcTipMessageID.UNKNOW  -> DisplayMsgId.ERR_PROCESSING
+
+                else -> DisplayMsgId.NONE
             }
         }
 

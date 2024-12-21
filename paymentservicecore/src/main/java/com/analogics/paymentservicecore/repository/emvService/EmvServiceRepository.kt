@@ -161,7 +161,27 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         }
     }
 
-    fun emvTransStatusToDisplayMsgId(status: TransStatus) : DisplayMsgId
+    fun adjustTransStatusFromDisplayMsgId(status: TransStatus, displayMsgId: DisplayMsgId?) : TransStatus
+    {
+        var transStatus = when (status) {
+            TransStatus.TERMINATED -> when(displayMsgId)
+            {
+                DisplayMsgId.APP_BLOCKED -> TransStatus.APP_BLOCKED
+                DisplayMsgId.CARD_BLOCKED -> TransStatus.CARD_BLOCKED
+                DisplayMsgId.NO_EMV_APPS -> TransStatus.NO_EMV_APPS
+                DisplayMsgId.TRY_ANOTHER_INTERFACE-> TransStatus.TRY_ANOTHER_INTERFACE
+                DisplayMsgId.TAP_CARD_AGAIN,
+                DisplayMsgId.INSERT_SWIPE_OR_TRY_ANOTHER_CARD,
+                DisplayMsgId.RETRY -> TransStatus.RETRY
+                else -> status
+            }
+            else -> status
+        }
+
+        return transStatus
+    }
+
+    fun emvTransStatusToDisplayMsgId(status: TransStatus) : DisplayMsgId?
     {
         return when (status) {
             TransStatus.APPROVED_ONLINE -> DisplayMsgId.APPROVED_ONLINE
@@ -202,9 +222,17 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
             }
             is EmvSdkResult.TransResult -> {
                 var status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
+                var displayMsgId : DisplayMsgId? = null
+                    response.displayMsgId?.let {
+                        displayMsgId = sdkToEmvDisplayMsgId(it)
+                        status = adjustTransStatusFromDisplayMsgId(status,displayMsgId) /* For NFC needs adjustment */
+                    }?:let {
+                        displayMsgId = emvTransStatusToDisplayMsgId(status)
+                    }
+
                 TransResult(
                     status = status,
-                    displayMsgId = emvTransStatusToDisplayMsgId(status)
+                    displayMsgId = displayMsgId
                 )
             }
             is EmvSdkException ->{

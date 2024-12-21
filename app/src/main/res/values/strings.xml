@@ -161,7 +161,7 @@
     <string name="tax_current_value">Current Tax</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
-    <string name="or">---------------or---------------</string>
+    <string name="or">----- Click For UPI -----</string>
     <string name="close">Close</string>
     <string name="chip_detected">Chip Detected</string>
     <string name="approved">APPROVED</string>
