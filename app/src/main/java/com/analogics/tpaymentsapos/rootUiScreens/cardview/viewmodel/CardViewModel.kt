@@ -25,6 +25,7 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.emvStatusToTransSt
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.rootUtils.miscellaneous.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,6 +84,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         this.navHostController = navHostController
 
         viewModelScope.launch {
+            checkNetwork(context)
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
             emvServiceRepository.startPayment(
                 context = context,
@@ -130,6 +132,17 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                         displayInfoMsgId.value = displayMsgId
                     }
                 })
+        }
+    }
+
+    fun checkNetwork(context: Context)
+    {
+        if(NetworkUtils().checkForInternet(context)!=true)
+        {
+            CustomDialogBuilder.composeAlertDialog(
+                title = context.getString(R.string.default_alert_title_error),
+                message = context.getString(R.string.err_no_internet_connection),
+            )
         }
     }
 

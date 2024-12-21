@@ -161,7 +161,7 @@
     <string name="tax_current_value">Current Tax</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
-    <string name="or">----- Click For UPI -----</string>
+    <string name="upi_separator">----- Click For UPI -----</string>
     <string name="close">Close</string>
     <string name="chip_detected">Chip Detected</string>
     <string name="approved">APPROVED</string>
@@ -386,6 +386,9 @@
     <string name="emv_msg_id_card_removed">Card Removed</string>
     <string name="emv_msg_id_issuer_script_update_successful">Issuer Script Update Successful</string>
     <string name="emv_msg_id_issuer_script_update_failed">Issuer Script Update Failed</string>
+
+    <!--  App Errors -->
+    <string name="err_no_internet_connection">Please Check Your Internet Connection</string>
 
     <!--Receipt Details -->
     <string name="header1_placeholder">Enter Header 1</string>

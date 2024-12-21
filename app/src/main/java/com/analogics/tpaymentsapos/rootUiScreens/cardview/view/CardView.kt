@@ -209,7 +209,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                 if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE) {
                                     Log.d("Batch Id", "EMV Progress Value is False")
                                     TextView(
-                                        text = stringResource(id = R.string.or),
+                                        text = stringResource(id = R.string.upi_separator),
                                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                                         color = MaterialTheme.colorScheme.tertiary,
                                         fontWeight = FontWeight.Bold,

@@ -161,7 +161,7 @@
     <string name="tax_current_value">वर्तमान कर</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
-    <string name="or">--- यूपीआई के लिए क्लिक करें ---</string>
+    <string name="upi_separator">--- यूपीआई के लिए क्लिक करें ---</string>
     <string name="close">बंद करें</string>
     <string name="chip_detected">चिप का पता चला</string>
     <string name="approved">स्वीकृत</string>
@@ -390,6 +390,9 @@
     <string name="emv_msg_id_card_removed">कार्ड हटा दिया गया</string>
     <string name="emv_msg_id_issuer_script_update_successful">इशूअर स्क्रिप्ट अपडेट सफल</string>
     <string name="emv_msg_id_issuer_script_update_failed">इशूअर स्क्रिप्ट अपडेट विफल</string>
+
+    <!-- App Errors -->
+    <string name="err_no_internet_connection">कृपया अपना इंटरनेट कनेक्शन जांचें</string>
 
     <!--Receipt Details -->
     <string name="header1_placeholder">हेडर 1 दर्ज करें</string>
