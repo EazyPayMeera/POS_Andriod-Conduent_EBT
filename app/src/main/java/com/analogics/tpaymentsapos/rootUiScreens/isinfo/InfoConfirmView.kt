@@ -133,7 +133,7 @@ fun InfoConfirmView(navHostController: NavHostController, viewModel: InfoConfirm
                 )
 
                 TextView(
-                    text = stringResource(id = R.string.no) + " 100034345364633",
+                    text = stringResource(id = R.string.ref_id) + " 100034345364633",
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,

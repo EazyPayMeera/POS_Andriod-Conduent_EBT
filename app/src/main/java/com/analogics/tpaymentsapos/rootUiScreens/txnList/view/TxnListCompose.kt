@@ -65,6 +65,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusStringId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnTypeStringId
 import com.analogics.tpaymentsapos.ui.theme.Roboto
 import com.analogics.tpaymentsapos.ui.theme.dimens
 import kotlinx.coroutines.delay
@@ -392,7 +394,7 @@ fun TransactionItem(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    transaction.txnType.toString(),
+                    stringResource(id = getTxnTypeStringId(transaction.txnType)),
                     fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium),
@@ -440,7 +442,7 @@ fun TransactionItem(
                         )
                     }
                     Text(
-                        transaction.txnStatus.toString(),
+                        stringResource(id = getTxnStatusStringId(transaction.txnStatus)),
                         fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
                         color = Color.Gray,
                         overflow = TextOverflow.Ellipsis

@@ -3,6 +3,7 @@
     <string name="top_back">वापस</string>
     <!-- splash -->
     <string name="welcome">स्वागत है</string>
+    <string name="empty"></string>
 
     <!-- onBoardScreen -->
     <string name="safe_fast_txn">सुरक्षित और तेज़ लेन-देन</string>
@@ -92,10 +93,10 @@
     <string name="org_amt">मूल राशि</string>
     <string name="card">कार्ड:</string> प्रमाण कोड:
     <string name="auth_code">प्रमाण कोड:</string>
-    <string name="no">संख्या:</string>
+    <string name="ref_id">संदर्भ आईडी:</string>
     <string name="cancel_no">नहीं</string>
-    <string name="inc_no">इनवॉइस नंबर : </string> पीओएस प्रविष्टि:
-    <string name="pos_entry">पीओएस प्रविष्टि : </string>
+    <string name="inc_no">इनवॉइस नंबर: </string> पीओएस प्रविष्टि:
+    <string name="pos_entry">पीओएस प्रविष्टि: </string>
     <string name="print">प्रिंट</string> रद्द करें
     <string name="cancel">रद्द करें</string>
     <string name="tap_swipe_insert">टैप/स्वाइप/इंसर्ट करें</string>
@@ -393,6 +394,40 @@
 
     <!-- App Errors -->
     <string name="err_no_internet_connection">कृपया अपना इंटरनेट कनेक्शन जांचें</string>
+
+    <!-- Transaction Statuses -->
+    <string name="status_initiated">आरंभित</string>
+    <string name="status_approved">स्वीकृत</string>
+    <string name="status_declined">अस्वीकृत</string>
+    <string name="status_error">एरर</string>
+    <string name="status_terminated">टर्मिनेटेड</string>
+    <string name="status_reversed">रिवर्स्ड</string>
+    <string name="status_voided">वॉइडेड</string>
+    <string name="status_refunded">रिफंडेड</string>
+    <string name="status_captured">कैप्चर्ड</string>
+
+    <!-- Card Brands -->
+    <string name="card_brand_visa">वीज़ा</string>
+    <string name="card_brand_mastercard">मास्टरकार्ड</string>
+    <string name="card_brand_amex">अमेक्स</string>
+    <string name="card_brand_discover">डिस्कवर</string>
+    <string name="card_brand_diners">डाइनर्स</string>
+    <string name="card_brand_jcb">जेसीबी</string>
+    <string name="card_brand_upi">यूपीआई</string>
+    <string name="card_brand_pure">प्योर</string>
+    <string name="card_brand_rupay">रुपे</string>
+    <string name="card_brand_mir">मीर</string>
+    <string name="card_brand_unknown">अज्ञात</string>
+
+    <!--POS Entry Modes -->
+    <string name="card_entry_mode_contact">कॉन्टैक्ट</string>
+    <string name="card_entry_mode_contactless">कॉन्टैक्टलेस</string>
+    <string name="card_entry_mode_contactless_magstripe">कॉन्टैक्टलेस मैगस्ट्राइप</string>
+    <string name="card_entry_mode_magstripe">मैगस्ट्राइप</string>
+    <string name="card_entry_mode_fallback_magstripe">फॉलबैक मैगस्ट्राइप</string>
+    <string name="card_entry_mode_manual">मैनुअल</string>
+    <string name="card_entry_mode_qrcode">क्यूआरकोड</string>
+    <string name="card_entry_mode_unspecified">अविशिष्ट</string>
 
     <!--Receipt Details -->
     <string name="header1_placeholder">हेडर 1 दर्ज करें</string>

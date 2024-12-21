@@ -1,6 +1,5 @@
 package com.analogics.tpaymentsapos.rootUiScreens.transactiondetails
 
-import android.R.id
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -28,8 +26,13 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.GenericCard
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCardBrandStringId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCardEntryStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusIconId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusStringId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnTypeStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toCardBrand
 import com.analogics.tpaymentsapos.ui.theme.dimens
 
 
@@ -64,9 +67,9 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                 ) {
 
                     TextView(
-                        text = sharedViewModel.objRootAppPaymentDetail.txnType.toString(),
+                        text = stringResource(id = getTxnTypeStringId(sharedViewModel.objRootAppPaymentDetail.txnType)),
                         fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -74,9 +77,9 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = sharedViewModel.objRootAppPaymentDetail.txnStatus.toString(),
-                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
+                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                        fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -84,9 +87,9 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
-                        fontSize = MaterialTheme.dimens.SP_35_CompactMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        text = stringResource(id = getTxnStatusStringId(sharedViewModel.objRootAppPaymentDetail.txnStatus)),
+                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -113,33 +116,29 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.card)+ " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:"") + (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
+                        text = stringResource(id = R.string.card)+ " " + (stringResource(id = getCardBrandStringId(sharedViewModel.objRootAppPaymentDetail.cardBrand?.toCardBrand())).plus(" ")) + (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = MaterialTheme.dimens.DP_33_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_33_CompactMedium,
+                                start = MaterialTheme.dimens.DP_34_CompactMedium
+                            )
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
+                        text = stringResource(id = R.string.pos_entry)+ " " + (stringResource(id =getCardEntryStringId(sharedViewModel.objRootAppPaymentDetail.cardEntryMode))),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
-                    )
-
-                    TextView(
-                        text = stringResource(id = R.string.no) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_11_CompactMedium,
+                                start = MaterialTheme.dimens.DP_34_CompactMedium
+                            )
                     )
 
                     TextView(
@@ -149,17 +148,36 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_11_CompactMedium,
+                                start = MaterialTheme.dimens.DP_34_CompactMedium
+                            )
                     )
 
                     TextView(
-                        text = stringResource(id = R.string.pos_entry)+ " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-"),
+                        text = stringResource(id = R.string.ref_id) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.Start)
-                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium, start = MaterialTheme.dimens.DP_34_CompactMedium)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_11_CompactMedium,
+                                start = MaterialTheme.dimens.DP_34_CompactMedium
+                            )
+                    )
+
+                    TextView(
+                        text = stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_11_CompactMedium,
+                                start = MaterialTheme.dimens.DP_34_CompactMedium
+                            )
                     )
 
                     Box(

@@ -128,7 +128,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     listOf(
                         stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:"") + (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
                         stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
-                        stringResource(id = R.string.no) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
+                        stringResource(id = R.string.ref_id) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
                         stringResource(id = R.string.inc_no) + (sharedViewModel.objRootAppPaymentDetail.invoiceNo?:"-"),
                         stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-")
                     ).forEach {

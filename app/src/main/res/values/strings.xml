@@ -3,6 +3,7 @@
     <string name="top_back">Back</string>
     <!-- splash -->
     <string name="welcome">WELCOME</string>
+    <string name="empty"></string>
 
     <!-- onBoardScreen -->
     <string name="safe_fast_txn">Safe and fast transaction</string>
@@ -92,10 +93,10 @@
     <string name="org_amt">Original Amount</string>
     <string name="card">Card:</string> Auth Code:
     <string name="auth_code">Auth Code:</string>
-    <string name="no">No.:</string>
+    <string name="ref_id">Reference Id:</string>
     <string name="cancel_no">No</string>
-    <string name="inc_no">Invoice Number : </string> POS Entry:
-    <string name="pos_entry">POS Entry : </string>
+    <string name="inc_no">Invoice Number: </string> POS Entry:
+    <string name="pos_entry">POS Entry: </string>
     <string name="print">PRINT</string> CANCEL
     <string name="cancel">CANCEL</string>
     <string name="tap_swipe_insert">Tap/Swipe/Insert</string>
@@ -390,6 +391,40 @@
     <!--  App Errors -->
     <string name="err_no_internet_connection">Please Check Your Internet Connection</string>
 
+    <!-- Transaction Statuses -->
+    <string name="status_initiated">INITIATED</string>
+    <string name="status_approved">APPROVED</string>
+    <string name="status_declined">DECLINED</string>
+    <string name="status_error">ERROR</string>
+    <string name="status_terminated">TERMINATED</string>
+    <string name="status_reversed">REVERSED</string>
+    <string name="status_voided">VOIDED</string>
+    <string name="status_refunded">REFUNDED</string>
+    <string name="status_captured">CAPTURED</string>
+
+    <!-- Card Brands -->
+    <string name="card_brand_visa">VISA</string>
+    <string name="card_brand_mastercard">MASTERCARD</string>
+    <string name="card_brand_amex">AMEX</string>
+    <string name="card_brand_discover">DISCOVER</string>
+    <string name="card_brand_diners">DINERS</string>
+    <string name="card_brand_jcb">JCB</string>
+    <string name="card_brand_upi">UPI</string>
+    <string name="card_brand_pure">PURE</string>
+    <string name="card_brand_rupay">RUPAY</string>
+    <string name="card_brand_mir">MIR</string>
+    <string name="card_brand_unknown">UNKNOWN</string>
+
+    <!--Card Entry Modes -->
+    <string name="card_entry_mode_contact">CONTACT</string>
+    <string name="card_entry_mode_contactless">CONTACTLESS</string>
+    <string name="card_entry_mode_contactless_magstripe">CONTACTLESS MAGSTRIPE</string>
+    <string name="card_entry_mode_magstripe">MAGSTRIPE</string>
+    <string name="card_entry_mode_fallback_magstripe">FALLBACK MAGSTRIPE</string>
+    <string name="card_entry_mode_manual">MANUAL</string>
+    <string name="card_entry_mode_qrcode">QRCODE</string>
+    <string name="card_entry_mode_unspecified">UNSPECIFIED</string>
+
     <!--Receipt Details -->
     <string name="header1_placeholder">Enter Header 1</string>
     <string name="header2_placeholder">Enter Header 2</string>
@@ -400,7 +435,6 @@
     <string name="footer3_placeholder">Enter Footer 3</string>
     <string name="footer4_placeholder">Enter Footer 4</string>
     <string name="default_placeholder">Enter Text</string>
-
 
     <string name="sel_user">Select the User</string>
 

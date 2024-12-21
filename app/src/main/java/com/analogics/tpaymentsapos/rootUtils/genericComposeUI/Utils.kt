@@ -21,6 +21,8 @@ import androidx.navigation.NavHostController
 import com.analogics.builder_core.constants.BuilderConstants
 import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.model.emv.CardBrand
+import com.analogics.paymentservicecore.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnStatus
@@ -428,4 +430,82 @@ fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : In
         R.drawable.declined
     else
         R.drawable.error
+}
+
+fun getTxnTypeStringId(txnType: TxnType?) : Int
+{
+    return when(txnType) {
+        TxnType.PURCHASE -> R.string.purchase
+        TxnType.REFUND -> R.string.refund
+        TxnType.PREAUTH -> R.string.pre_auth
+        TxnType.AUTHCAP -> R.string.auth_capture
+        TxnType.VOID -> R.string.void_trans
+        TxnType.TXNLIST -> R.string.transactions
+        else -> R.string.empty
+    }
+}
+
+fun getTxnStatusStringId(txnStatus: TxnStatus?) : Int
+{
+    return when(txnStatus) {
+        TxnStatus.INITIATED -> R.string.status_initiated
+        TxnStatus.APPROVED -> R.string.status_approved
+        TxnStatus.DECLINED -> R.string.status_declined
+        TxnStatus.ERROR -> R.string.status_error
+        TxnStatus.TERMINATED -> R.string.status_terminated
+        TxnStatus.REVERSED -> R.string.status_reversed
+        TxnStatus.VOIDED -> R.string.status_voided
+        TxnStatus.REFUNDED -> R.string.status_refunded
+        TxnStatus.CAPTURED -> R.string.status_captured
+        else -> R.string.empty
+    }
+}
+
+fun getCardBrandStringId(cardBrand: CardBrand?) : Int
+{
+    return when(cardBrand) {
+        CardBrand.VISA -> R.string.card_brand_visa
+        CardBrand.MASTERCARD -> R.string.card_brand_mastercard
+        CardBrand.AMEX -> R.string.card_brand_amex
+        CardBrand.DISCOVER -> R.string.card_brand_discover
+        CardBrand.DINERS -> R.string.card_brand_diners
+        CardBrand.JCB -> R.string.card_brand_jcb
+        CardBrand.UPI -> R.string.card_brand_upi
+        CardBrand.PURE -> R.string.card_brand_pure
+        CardBrand.RUPAY -> R.string.card_brand_rupay
+        CardBrand.MIR -> R.string.card_brand_mir
+        else -> R.string.card_brand_unknown
+    }
+}
+
+fun getCardEntryStringId(cardEntryMode: CardEntryMode?) : Int
+{
+    return when(cardEntryMode) {
+        CardEntryMode.CONTACT -> R.string.card_entry_mode_contact
+        CardEntryMode.CONTACLESS -> R.string.card_entry_mode_contactless
+        CardEntryMode.CONTACLESS_MAGSTRIPE -> R.string.card_entry_mode_contactless_magstripe
+        CardEntryMode.MAGSTRIPE -> R.string.card_entry_mode_magstripe
+        CardEntryMode.FALLBACK_MAGSTRIPE -> R.string.card_entry_mode_fallback_magstripe
+        CardEntryMode.MANUAL -> R.string.card_entry_mode_manual
+        CardEntryMode.QRCODE -> R.string.card_entry_mode_qrcode
+        else -> R.string.card_entry_mode_unspecified
+    }
+}
+
+fun String.toCardBrand() : CardBrand
+{
+    return when(this)
+    {
+        CardBrand.VISA.name -> CardBrand.VISA
+        CardBrand.MASTERCARD.name -> CardBrand.MASTERCARD
+        CardBrand.AMEX.name -> CardBrand.AMEX
+        CardBrand.DISCOVER.name -> CardBrand.DISCOVER
+        CardBrand.DINERS.name -> CardBrand.DINERS
+        CardBrand.JCB.name -> CardBrand.JCB
+        CardBrand.UPI.name -> CardBrand.UPI
+        CardBrand.PURE.name -> CardBrand.PURE
+        CardBrand.RUPAY.name -> CardBrand.RUPAY
+        CardBrand.MIR.name -> CardBrand.MIR
+        else -> CardBrand.UNKNOWN
+    }
 }
