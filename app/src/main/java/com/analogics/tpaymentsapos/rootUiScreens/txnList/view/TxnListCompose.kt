@@ -416,10 +416,11 @@ fun TransactionItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val amountColor = if (transaction.txnType == TxnType.REFUND || transaction.txnStatus == TxnStatus.DECLINED || transaction.txnStatus == TxnStatus.ERROR || transaction.txnStatus == TxnStatus.INITIATED) {
-                    Color.Red
-                } else {
-                    Color(0xFF4CAF50)
+                val amountColor = when (transaction.txnStatus) {
+                    TxnStatus.APPROVED,
+                    TxnStatus.CAPTURED
+                    -> Color(0xFF4CAF50)
+                    else -> Color.Red
                 }
 
                 // Column for amount and status

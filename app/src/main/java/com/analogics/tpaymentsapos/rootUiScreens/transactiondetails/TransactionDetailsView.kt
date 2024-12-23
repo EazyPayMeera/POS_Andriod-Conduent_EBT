@@ -18,6 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.analogics.builder_core.constants.BuilderConstants
+import com.analogics.paymentservicecore.constants.AppConstants
+import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
@@ -28,6 +31,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCardBrandStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCardEntryStringId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusIconId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnTypeStringId
@@ -96,6 +101,21 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                             .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
                     )
 
+                    if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.DECLINED) {
+                        sharedViewModel.objRootAppPaymentDetail.hostRespCode?.takeIf { it.length >= 2 }
+                            ?.let {
+                                TextView(
+                                    text = "[ " + getIsoResponseCodeString(context,it) + " ]",
+                                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
+                                )
+                            }
+                    }
+
                     ImageView(
                         imageId = getTxnStatusIconId(sharedViewModel.objRootAppPaymentDetail),
                         shape = RectangleShape,
@@ -106,13 +126,16 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                     )
 
                     TextView(
-                        text = sharedViewModel.objRootAppPaymentDetail.dateTime.toString(),
+                        text = stringResource(id = R.string.date_time)+ " " + (sharedViewModel.objRootAppPaymentDetail.dateTime?.toString()?:"-"),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
+                            .align(Alignment.Start)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_33_CompactMedium,
+                                start = MaterialTheme.dimens.DP_34_CompactMedium
+                            )
                     )
 
                     TextView(
@@ -123,7 +146,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                         modifier = Modifier
                             .align(Alignment.Start)
                             .padding(
-                                top = MaterialTheme.dimens.DP_33_CompactMedium,
+                                top = MaterialTheme.dimens.DP_11_CompactMedium,
                                 start = MaterialTheme.dimens.DP_34_CompactMedium
                             )
                     )

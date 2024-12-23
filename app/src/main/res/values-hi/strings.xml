@@ -7,7 +7,7 @@
 
     <!-- onBoardScreen -->
     <string name="safe_fast_txn">सुरक्षित और तेज़ लेन-देन</string>
-    <string name="single_use_pass">एकल उपयोग पासवर्ड जो दोबारा काम नहीं करेगा, आपके विवरण को सुरक्षित रखेगा चाहे वे उजागर हो जाएं</string>
+    <string name="safe_fast_description">एकल उपयोग पासवर्ड जो दोबारा काम नहीं करेगा, आपके विवरण को सुरक्षित रखेगा चाहे वे उजागर हो जाएं</string>
     <string name="analysis_data">डेटा का विश्लेषण</string>
     <string name="improving_customer">डेटा एनालिटिक्स के माध्यम से ग्राहक प्रतिधारण में सुधार, कई महत्वपूर्ण बातें ध्यान में रखनी चाहिए</string>
     <string name="quick_and_easy_payments">तेज़ और आसान भुगतान</string>
@@ -91,13 +91,14 @@
     <string name="enter_Pin">कृपया पिन दर्ज करें</string>
     <string name="pin">पिन</string>
     <string name="org_amt">मूल राशि</string>
-    <string name="card">कार्ड:</string> प्रमाण कोड:
+    <string name="date_time">समय:</string>
+    <string name="card">कार्ड:</string>
     <string name="auth_code">प्रमाण कोड:</string>
     <string name="ref_id">संदर्भ आईडी:</string>
     <string name="cancel_no">नहीं</string>
-    <string name="inc_no">इनवॉइस नंबर: </string> पीओएस प्रविष्टि:
+    <string name="inc_no">इनवॉइस नंबर: </string>
     <string name="pos_entry">पीओएस प्रविष्टि: </string>
-    <string name="print">प्रिंट</string> रद्द करें
+    <string name="print">प्रिंट</string>
     <string name="cancel">रद्द करें</string>
     <string name="tap_swipe_insert">टैप/स्वाइप/इंसर्ट करें</string>
     <string name="chip_detect">चिप का पता चला</string>

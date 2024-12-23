@@ -127,19 +127,19 @@ fun OnBoardSlideView(navHostController: NavHostController, viewModel: OnBoarding
 
     val imageSlider = listOf(
         OnBoardingContentList(
+            image = R.drawable.onboarding3,
+            headNote = stringResource(id = R.string.quick_and_easy_payments),
+            subNote = stringResource(id = R.string.creating_pay),
+            isIndicatorShow = false
+        ),
+        OnBoardingContentList(
             headNote = stringResource(id = R.string.safe_fast_txn),
-            subNote = stringResource(id = R.string.single_use_pass)
+            subNote = stringResource(id = R.string.safe_fast_description)
         ),
         OnBoardingContentList(
             image = R.drawable.onboarding2,
             headNote = stringResource(id = R.string.analysis_data),
             subNote = stringResource(id = R.string.improving_customer)
-        ),
-        OnBoardingContentList(
-            image = R.drawable.onboarding3,
-            headNote = stringResource(id = R.string.quick_and_easy_payments),
-            subNote = stringResource(id = R.string.creating_pay),
-            isIndicatorShow = false
         )
     )
 

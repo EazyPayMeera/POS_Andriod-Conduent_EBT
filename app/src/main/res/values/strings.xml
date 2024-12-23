@@ -6,12 +6,12 @@
     <string name="empty"></string>
 
     <!-- onBoardScreen -->
-    <string name="safe_fast_txn">Safe and fast transaction</string>
-    <string name="single_use_pass">Single use password that won’t work twice, keeping your details safe even if they get exposed</string>
-    <string name="analysis_data">Analysis of data</string>
-    <string name="improving_customer">Improving customer retention through data analytics, there are several takeaways to keep in mind</string>
-    <string name="quick_and_easy_payments">Quick and easy payments</string>
-    <string name="creating_pay">Creating a seamless payment experience is crucial for user satisfaction and conversio</string>
+    <string name="safe_fast_txn">Secure Payments for Peace of Mind</string>
+    <string name="safe_fast_description">Payments are completed with highest level of security, offering peace of mind with every purchase</string>
+    <string name="analysis_data">Comprehensive Transaction Tracking and Management</string>
+    <string name="improving_customer">Detailed information about financial transactions helping businesses track and manage their transactions effectively</string>
+    <string name="quick_and_easy_payments">Fast and Convenient Payment Solution</string>
+    <string name="creating_pay">Experience seamless and efficient transactions that save you time and effort, making payments simple, quick, and hassle-free</string>
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
 
@@ -91,13 +91,14 @@
     <string name="enter_Pin">Please Enter The Pin</string>
     <string name="pin">Pin</string>
     <string name="org_amt">Original Amount</string>
-    <string name="card">Card:</string> Auth Code:
+    <string name="date_time">Time:</string>
+    <string name="card">Card:</string>
     <string name="auth_code">Auth Code:</string>
     <string name="ref_id">Reference Id:</string>
     <string name="cancel_no">No</string>
-    <string name="inc_no">Invoice Number: </string> POS Entry:
+    <string name="inc_no">Invoice Number: </string>
     <string name="pos_entry">POS Entry: </string>
-    <string name="print">PRINT</string> CANCEL
+    <string name="print">PRINT</string>
     <string name="cancel">CANCEL</string>
     <string name="tap_swipe_insert">Tap/Swipe/Insert</string>
     <string name="chip_detect">Chip Detected</string>
