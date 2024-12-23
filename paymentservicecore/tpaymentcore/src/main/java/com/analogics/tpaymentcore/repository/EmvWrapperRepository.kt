@@ -258,7 +258,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             {
                 hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedBytes.toHexString().uppercase()
                 hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDataBytes.decodeToString())
+                //Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDataBytes.decodeToString())
                 Log.d("ENCRYPTION", "ENCRYPTED TRACK DATA (LYRA) : "+encryptedBytes.toHexString().uppercase())
                 Log.d("ENCRYPTION", "KSN TRACK DATA (LYRA)       : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
             }
@@ -274,8 +274,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             {
                 hashMap[EmvConstants.EMV_TAG_ENC_PAN] = encryptedBytes.sliceArray(0 until encryptedLen[0]).toHexString().uppercase()
                 Log.d("ENCRYPTION", "INPUT PAN (ASCII)    : "+cardPanBytes.decodeToString())
-                Log.d("ENCRYPTION", "ENCRYPTED PAN (LYRA) : "+encryptedBytes.sliceArray(0 until encryptedLen[0]).toHexString().uppercase())
-                Log.d("ENCRYPTION", "KSN PAN (LYRA)       : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
+                //Log.d("ENCRYPTION", "ENCRYPTED PAN (LYRA) : "+encryptedBytes.sliceArray(0 until encryptedLen[0]).toHexString().uppercase())
+                //Log.d("ENCRYPTION", "KSN PAN (LYRA)       : "+ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase())
             }
 
             /* Set Pin Block */

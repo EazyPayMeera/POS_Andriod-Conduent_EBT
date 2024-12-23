@@ -111,9 +111,9 @@
     <string name="total_amt">कुल राशि:</string>
     <string name="refund_amt_data">रिफंड राशि:</string>
     <string name="custom">कस्टम</string>
-    <string name="end_shift_title">अपना शिफ्ट समाप्त करें?</string>
-    <string name="end_shift_message_1">क्या आप वाकई</string>
-    <string name="end_shift_message_2">अपना शिफ्ट समाप्त करना चाहते हैं?</string>
+    <string name="end_shift_title">लॉगआउट?</string>
+    <string name="end_shift_message_1">क्या आप वाकई लॉगआउट करना चाहते हैं?</string>
+    <string name="end_shift_message_2">लॉगआउट करना चाहते हैं?</string>
     <string name="dialogue_cancel_request">क्या आप वाकई रद्द करना चाहते हैं?</string>
     <string name="print_shift_report">शिफ्ट रिपोर्ट प्रिंट करें</string>
     <string name="print_last_receipt">अंतिम रसीद प्रिंट करें</string>
@@ -395,6 +395,14 @@
 
     <!-- App Errors -->
     <string name="err_no_internet_connection">कृपया अपना इंटरनेट कनेक्शन जांचें</string>
+    <string name="err_txn_not_found">लेनदेन नहीं मिला</string>
+    <string name="err_only_purchase_can_be_refunded">केवल खरीदारी को ही वापस किया जा सकता है</string>
+    <string name="err_txn_already_refunded">लेनदेन पहले ही रिफंडेड है</string>
+    <string name="err_txn_already_voided">लेनदेन पहले ही वॉइडेड है</string>
+    <string name="err_txn_already_captured">लेनदेन पहले ही कैप्चर्ड है</string>
+    <string name="err_batch_is_settled">बैच बंद हो गया है</string>
+    <string name="err_cant_mix_demo_trans">लाइव और डेमो लेनदेन को मिश्रित नहीं कर सकते</string>
+    <string name="err_zero_amt_not_allowed">कृपया मान्य राशि दर्ज करें</string>
 
     <!-- Transaction Statuses -->
     <string name="status_initiated">आरंभित</string>

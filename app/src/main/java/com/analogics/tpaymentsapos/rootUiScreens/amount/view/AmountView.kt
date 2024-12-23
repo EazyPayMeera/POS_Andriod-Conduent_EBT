@@ -3,7 +3,6 @@ package com.analogics.tpaymentsapos.rootUiScreens.amount.view
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -97,10 +96,10 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
 
                 OutlinedTextField(
-                    value = when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+                    value = viewModel.transAmount/*when (sharedViewModel.objRootAppPaymentDetail.txnType) {
                         TxnType.REFUND, TxnType.VOID -> viewModel.totalAmount.value // Use totalAmount when TxnType is REFUND or VOID
                         else -> viewModel.transAmount // Use transAmount for other TxnTypes
-                    }.toString(),
+                    }.toString()*/,
                     onValueChange = {viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
@@ -109,6 +108,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     visualTransformation = createAmountTransformation(),
                     amount = false,
+                    readOnly = viewModel.isReadOnly
                 )
 
                 if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID) {
@@ -148,8 +148,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.original_amount) + " " + viewModel.totalAmount.value, //TODO: Remove hardcoding
-                        stringResource(id = R.string.date) + " " + viewModel.timeDate.value
+                        stringResource(id = R.string.original_amount) + " " + viewModel.origTotalAmount.value,
+                        stringResource(id = R.string.date) + " " + viewModel.origDateTime.value
                     ).forEach {
                         TextView(
                             text = it,
@@ -203,14 +203,15 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
-        Log.d("InvoiceDebug", "Invoice No: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()}")
+        /*Log.d("InvoiceDebug", "Invoice No: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()}")
         if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID) {
             viewModel.getTransactionByInvoiceNo(
                 sharedViewModel
             )
-        }
-
+        }*/
     }
+
+    CustomDialogBuilder.ShowComposed()
 
 }
 

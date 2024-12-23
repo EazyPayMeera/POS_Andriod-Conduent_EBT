@@ -6,8 +6,10 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun InvoiceView(navHostController: NavHostController) {
@@ -168,7 +171,7 @@ fun InvoiceView(navHostController: NavHostController) {
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.navigateToTrainingScreen(navHostController)*/ isDialogVisible=true},
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.navigateToAmountScreen(navHostController,sharedViewModel) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
     }
 
@@ -199,7 +202,8 @@ fun InvoiceView(navHostController: NavHostController) {
             .buildDialog(onClose = { isDialogVisible = false })
 
     }
-    
+
+    CustomDialogBuilder.ShowComposed()
 }
 
 

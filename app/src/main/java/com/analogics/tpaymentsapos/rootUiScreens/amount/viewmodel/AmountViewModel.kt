@@ -22,11 +22,13 @@ import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
+import com.analogics.tpaymentsapos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,18 +41,44 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     var transAmount by mutableStateOf("")
         private set
 
+    var isReadOnly by mutableStateOf(true)
+        private set
+
     private val _totalAmount = MutableStateFlow<String?>(null)
     val totalAmount: StateFlow<String?> = _totalAmount
+    private val _origTotalAmount = MutableStateFlow<String?>(null)
+    val origTotalAmount: StateFlow<String?> = _origTotalAmount
 
     private val _timeDate = MutableStateFlow<String?>(null)
     val timeDate: StateFlow<String?> = _timeDate
+    private val _origDateTime = MutableStateFlow<String?>(null)
+    val origDateTime: StateFlow<String?> = _origDateTime
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(sharedViewModel: SharedViewModel)
     {
-        transAmount.ifEmpty { transAmount = formatAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00) }
-        getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
-        getTimeDateByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
+        transAmount.ifEmpty {
+            when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+                TxnType.VOID, TxnType.REFUND -> {
+                    transAmount =
+                        formatAmount(sharedViewModel.objRootAppPaymentDetail.ttlAmount ?: 0.00)
+                    _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
+                    _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
+                }
+                TxnType.AUTHCAP -> {
+                    transAmount =
+                        formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTxnAmount?.toDoubleOrNull() ?: 0.00)
+                    _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
+                    _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
+                    isReadOnly = false
+                }
+                else -> {
+                    transAmount =
+                        formatAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00)
+                    isReadOnly = false
+                }
+            }
+        }
     }
 
     fun onAmountChange(newValue: String) :String{
@@ -60,19 +88,29 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
-        calculateTotal(sharedViewModel)
-        when(sharedViewModel.objRootAppPaymentDetail.txnType) {
-            TxnType.REFUND,TxnType.PREAUTH -> {
-                navHostController.navigate(AppNavigationItems.CardScreen.route)
-            }
-            TxnType.VOID -> {
-                Log.d("Database","Go to update when void")
-                updateTransResult(sharedViewModel.objRootAppPaymentDetail)
-                //navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
-                authenticateTransaction(sharedViewModel,navHostController)
-            }
-            else -> {
-                navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
+        if(transformToAmountDouble(transAmount)<0.01) {
+            CustomDialogBuilder.composeAlertDialog(
+                title = navHostController.context.getString(R.string.default_alert_title_error),
+                message = navHostController.context.getString(R.string.err_zero_amt_not_allowed)
+            )
+        }
+        else {
+            calculateTotal(sharedViewModel)
+            when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+                TxnType.REFUND, TxnType.PREAUTH -> {
+                    navHostController.navigate(AppNavigationItems.CardScreen.route)
+                }
+
+                TxnType.VOID -> {
+                    Log.d("Database", "Go to update when void")
+                    updateTransResult(sharedViewModel.objRootAppPaymentDetail)
+                    //navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
+                    authenticateTransaction(sharedViewModel, navHostController)
+                }
+
+                else -> {
+                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
+                }
             }
         }
     }
@@ -89,13 +127,13 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     private fun calculateTotal(sharedViewModel: SharedViewModel) {
         when (sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.REFUND -> {
-                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(_totalAmount.value.toString())
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(transAmount)
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
             }
             TxnType.VOID -> {
                 sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(totalAmount.value.toString())
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(_totalAmount.value.toString())
+                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(transAmount)
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
             }
             else -> {
                 // Handle non-REFUND and non-PREAUTH cases

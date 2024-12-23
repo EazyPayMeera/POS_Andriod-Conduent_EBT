@@ -32,6 +32,7 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
 
     fun navigateToInvoiceScreen(navHostController: NavHostController) {
         viewModelScope.launch {
+            navHostController.popBackStack()
             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
         }
     }

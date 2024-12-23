@@ -12,12 +12,17 @@ import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.paymentservicecore.utils.toDecimalFormat
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ScannerServiceRepository
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getAcquirer
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +36,7 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
     val invoiceno: StateFlow<String> = _invoiceno
     private val _isInvoiceFound = MutableStateFlow(false)
     val isInvoiceFound: StateFlow<Boolean> get() = _isInvoiceFound
+    lateinit var navHostController: NavHostController
 
     private val scannerServiceRepository = ScannerServiceRepository() // Instantiate here
 
@@ -42,11 +48,13 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
         return _invoiceno.value // Return the updated invoice number
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel)
     {
-        sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
+        //sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
+        this.navHostController = navHostController
+        getTxnDetailsByInvoiceNo(navHostController.context,sharedViewModel)
         Log.d("Invoice No", "Invoice No in onConfirm: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
-        navigateToAmountScreen(navHostController,sharedViewModel)
     }
 
     fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
@@ -100,4 +108,61 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTxnDetailsByInvoiceNo(context: Context, sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            dbRepository.fetchTransactionByInvoiceNo(invoiceno.value)?.takeIf{ it.isNotEmpty() }?.let {
+                if(it[0].isVoided==true || it[0].txnType==TxnType.VOID.toString())
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.getString(R.string.default_alert_title_error),
+                        message = context.getString(R.string.err_txn_already_voided))
+                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND && it[0].isRefunded==true)
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.getString(R.string.default_alert_title_error),
+                        message = context.getString(R.string.err_txn_already_refunded))
+                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND && (it[0].txnType!= TxnType.PURCHASE.toString()))
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.getString(R.string.default_alert_title_error),
+                        message = context.getString(R.string.err_only_purchase_can_be_refunded))
+                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].isCaptured==true)
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.getString(R.string.default_alert_title_error),
+                        message = context.getString(R.string.err_txn_already_captured))
+                else if(it[0].isDemoMode != sharedViewModel.objRootAppPaymentDetail.isDemoMode)
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.getString(R.string.default_alert_title_error),
+                        message = context.getString(R.string.err_cant_mix_demo_trans))
+                else {
+                    PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it[0])?.let {
+                        sharedViewModel.objRootAppPaymentDetail = it.copy(
+                            id = sharedViewModel.objRootAppPaymentDetail.id,
+                            txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
+                            txnStatus = sharedViewModel.objRootAppPaymentDetail.txnStatus,
+                            hostAuthResult = sharedViewModel.objRootAppPaymentDetail.hostAuthResult
+                        )
+                        sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
+                        sharedViewModel.objRootAppPaymentDetail.originalTip =
+                            it.tip.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalCGST =
+                            it.CGST.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalSGST =
+                            it.SGST.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalCashback =
+                            it.cashback.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =
+                            it.ttlAmount.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalTxnAmount =
+                            it.txnAmount.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
+                    }
+
+                    navigateToAmountScreen(navHostController,sharedViewModel)
+                }
+            }?:let {
+                CustomDialogBuilder.composeAlertDialog(
+                    title = context.getString(R.string.default_alert_title_error),
+                    message = context.getString(R.string.err_txn_not_found))
+            }
+        }
+    }
 }

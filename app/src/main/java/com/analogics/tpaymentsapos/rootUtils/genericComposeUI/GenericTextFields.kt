@@ -84,10 +84,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -564,8 +566,20 @@ fun FooterButtons(
                     )
                 }
             }
+
+            LaunchedEffect(isFirstButtonPressed,isSecondButtonPressed) {
+                if(isFirstButtonPressed == true || isSecondButtonPressed == true)
+                {
+                    delay(AppConstants.BUTTON_CLICK_DISAPPEAR_DELAY_MS)
+                    isFirstButtonPressed = false
+                    isSecondButtonPressed = false
+                }
+            }
         }
+
+
     }
+
 }
 
 

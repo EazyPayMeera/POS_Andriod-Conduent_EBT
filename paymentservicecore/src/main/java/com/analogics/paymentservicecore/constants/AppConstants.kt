@@ -22,6 +22,9 @@ object AppConstants {
     const val CARD_CHECK_RESTART_DELAY_MS = 1000L
     const val DEMO_MODE_PROMPTS_DELAY_MS = 3000L
 
+    /* UI */
+    const val BUTTON_CLICK_DISAPPEAR_DELAY_MS = 100L
+
     const val BATCH_ID_START_VAL = 1
 
     const val DEFAULT_TIP_PERCENT_1 = 5
