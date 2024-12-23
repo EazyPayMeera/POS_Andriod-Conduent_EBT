@@ -129,11 +129,29 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     fun loadDefaultValues(sharedViewModel: SharedViewModel?)
     {
+        /* Default Flags */
+        sharedViewModel?.objPosConfig?.isDemoMode = AppConstants.DEFAULT_DEMO_MODE
+        sharedViewModel?.objPosConfig?.isTipEnabled = AppConstants.DEFAULT_TIP_MODE
+        sharedViewModel?.objPosConfig?.isTaxEnabled = AppConstants.DEFAULT_TAX_MODE
+        sharedViewModel?.objPosConfig?.isPromptInvoiceNo = AppConstants.DEFAULT_INVOICE_MODE
+
         /* Default TIP Percent values */
         sharedViewModel?.objPosConfig?.tipPercent1 = AppConstants.DEFAULT_TIP_PERCENT_1.toDouble()
         sharedViewModel?.objPosConfig?.tipPercent2 = AppConstants.DEFAULT_TIP_PERCENT_2.toDouble()
         sharedViewModel?.objPosConfig?.tipPercent3 = AppConstants.DEFAULT_TIP_PERCENT_3.toDouble()
+
         sharedViewModel?.objPosConfig?.batchId = AppConstants.BATCH_ID_START_VAL.toString()
+
+        /* Default Headers & Footers */
+        sharedViewModel?.objPosConfig?.header1 = AppConstants.DEFAULT_HEADER_1
+        sharedViewModel?.objPosConfig?.header2 = AppConstants.DEFAULT_HEADER_2
+        sharedViewModel?.objPosConfig?.header3 = AppConstants.DEFAULT_HEADER_3
+        sharedViewModel?.objPosConfig?.header4 = AppConstants.DEFAULT_HEADER_4
+
+        sharedViewModel?.objPosConfig?.footer1 = AppConstants.DEFAULT_FOOTER_1
+        sharedViewModel?.objPosConfig?.footer2 = AppConstants.DEFAULT_FOOTER_2
+        sharedViewModel?.objPosConfig?.footer3 = AppConstants.DEFAULT_FOOTER_3
+        sharedViewModel?.objPosConfig?.footer4 = AppConstants.DEFAULT_FOOTER_4
 
         /* Customer Care Info */
         sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()

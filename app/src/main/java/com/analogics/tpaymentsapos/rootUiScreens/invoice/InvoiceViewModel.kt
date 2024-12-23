@@ -53,7 +53,10 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
     {
         //sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
         this.navHostController = navHostController
-        getTxnDetailsByInvoiceNo(navHostController.context,sharedViewModel)
+        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PREAUTH)
+            navigateToAmountScreen(navHostController, sharedViewModel)
+        else
+            getTxnDetailsByInvoiceNo(navHostController.context,sharedViewModel)
         Log.d("Invoice No", "Invoice No in onConfirm: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo}")
     }
 
@@ -162,6 +165,16 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
                 CustomDialogBuilder.composeAlertDialog(
                     title = context.getString(R.string.default_alert_title_error),
                     message = context.getString(R.string.err_txn_not_found))
+            }
+        }
+    }
+
+    fun onLoad(sharedViewModel: SharedViewModel) {
+        if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PREAUTH) {
+        viewModelScope.launch {
+                dbRepository.getLastInvoiceNumber().let {
+                    _invoiceno.value = (it + 1).toString()
+                }
             }
         }
     }

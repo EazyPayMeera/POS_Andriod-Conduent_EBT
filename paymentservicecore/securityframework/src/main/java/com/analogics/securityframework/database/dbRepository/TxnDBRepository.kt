@@ -11,6 +11,7 @@ import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
 import com.analogics.securityframework.model.BatchStatus
+import com.analogics.securityframework.model.TxnStatus
 import com.analogics.securityframework.model.TxnType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -132,13 +133,13 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
                         when(txnEntity.txnType)
                         {
                             TxnType.VOID.toString() -> fetchTxnByHostTxnRef(txnEntity.hostTxnRef)?.let {
-                                iTxnDao.update(it.copy(isVoided = true))
+                                iTxnDao.update(it.copy(isVoided = true, txnStatus = TxnStatus.VOIDED.toString()))
                             }
                             TxnType.REFUND.toString() -> fetchTxnByHostTxnRef(txnEntity.hostTxnRef)?.let {
-                                iTxnDao.update(it.copy(isRefunded = true))
+                                iTxnDao.update(it.copy(isRefunded = true, txnStatus = TxnStatus.REFUNDED.toString()))
                             }
                             TxnType.AUTHCAP.toString() -> fetchTxnByHostTxnRef(txnEntity.hostTxnRef)?.let {
-                                iTxnDao.update(it.copy(isCaptured = true))
+                                iTxnDao.update(it.copy(isCaptured = true, txnStatus = TxnStatus.CAPTURED.toString()))
                             }
                         }
                     }
@@ -204,7 +205,7 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     }
 
     suspend fun getLastInvoiceNumber() : Int {
-        return iTxnDao.getLastInvoiceNumber(fetchOpenBatchId())?.toIntOrNull()?:0
+        return iTxnDao.getLastInvoiceNumber(fetchLastBatchId())?.toIntOrNull()?:0
     }
 
     /* Clerk/User Management */

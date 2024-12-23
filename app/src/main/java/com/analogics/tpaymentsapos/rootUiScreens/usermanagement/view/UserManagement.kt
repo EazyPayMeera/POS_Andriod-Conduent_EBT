@@ -146,18 +146,14 @@ fun CustomDrawerContent(
 
     if (isDialogVisible) {
         CustomDialogBuilder.create()
-            .setTitle("Operation Not Allowed")
-            .setSubtitle("Minimum 1 User")
-            .setSmallText("is Mandatory")
+            .setTitle(stringResource(id = R.string.operation_not_allowed))
+            .setSubtitle(stringResource(id = R.string.min_one_admin_required))
             .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-            .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
-            .setOnCancelAction {
-                navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
-            }
-            .setOnConfirmAction {
-                navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
-            }
-            .setShowButtons(false)
+            .setShowProgressIndicator(false)
+            .setShowCloseButton(false)
+            .setOnConfirmAction { }
+            .setConfirmButtonText(stringResource(id = R.string.ok))
+            .setShowButtons(true)
             .setAutoOff(false)
             .setNavAction {
                 navHostController.popBackStack()

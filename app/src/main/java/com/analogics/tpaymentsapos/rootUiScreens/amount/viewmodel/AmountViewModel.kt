@@ -103,7 +103,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
                 TxnType.VOID -> {
                     Log.d("Database", "Go to update when void")
-                    updateTransResult(sharedViewModel.objRootAppPaymentDetail)
+                    //updateTransResult(sharedViewModel.objRootAppPaymentDetail)
                     //navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
                     authenticateTransaction(sharedViewModel, navHostController)
                 }

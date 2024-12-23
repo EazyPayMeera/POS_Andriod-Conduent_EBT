@@ -57,7 +57,7 @@
     <string name="prompt_new_password">Please Enter New Password</string>
     <string name="cred_not_to_be_empty">Username and password should not be empty</string>
     <string name="login_invalid_cred">Invalid credentials</string>
-    <string name="login_version">Version </string>
+    <string name="login_version">v</string>
 
     <!-- User Management -->
     <string name="label_user_management">User Management</string>
@@ -447,6 +447,8 @@
     <string name="default_placeholder">Enter Text</string>
 
     <string name="sel_user">Select the User</string>
+    <string name="operation_not_allowed">Operation Not Allowed</string>
+    <string name="min_one_admin_required">Minimum One Admin Is Mandatory</string>
 
     <!-- ISO Response Codes -->
     <string name="iso_resp_code_approved">APPROVED</string>

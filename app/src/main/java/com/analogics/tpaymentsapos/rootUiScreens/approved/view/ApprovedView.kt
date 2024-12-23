@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CommonTopAppBar
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.ImageView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.OkButton
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusIconId
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toAmountFormat
 import com.analogics.tpaymentsapos.ui.theme.dimens
@@ -52,15 +55,20 @@ fun ApprovedView(navHostController: NavHostController) {
 
     val sharedViewModel = localSharedViewModel.current
 
+    var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
+
     //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
 
 
+/*
     Log.d("PaymentDetailsDebug", "Transaction Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
     Log.d("PaymentDetailsDebug", "Total Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
+*/
 
     Column {
         CommonTopAppBar(
-            onBackButtonClick = { navHostController.popBackStack() }
+            onBackButtonClick = { navHostController.popBackStack() },
+            showBackIcon = false
         )
 
         // Outer Surface with background color, padding, and rounded corners
@@ -76,7 +84,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
 
                 TextView(
-                    text = sharedViewModel.objRootAppPaymentDetail.txnStatus.toString(),
+                    text = stringResource(id = getTxnStatusStringId(txnRecord.txnStatus)),
                     fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -86,9 +94,9 @@ fun ApprovedView(navHostController: NavHostController) {
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it != TxnType.VOID }?.let {
+                txnRecord.txnType.takeIf { it != TxnType.VOID }?.let {
                     Text(
-                        text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                        text = txnRecord.ttlAmount.toAmountFormat(),
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -99,7 +107,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 } ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Spacer when Text is not shown
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
                 ImageView(
-                    imageId = if(sharedViewModel.objRootAppPaymentDetail.txnStatus == TxnStatus.APPROVED) R.drawable.approve else R.drawable.decline,
+                    imageId = getTxnStatusIconId(txnRecord),
                     size = MaterialTheme.dimens.DP_126_CompactMedium,
                     alignment = Alignment.Center,
                     modifier = Modifier
@@ -120,10 +128,10 @@ fun ApprovedView(navHostController: NavHostController) {
                         onMenuOptionClick = { option ->
                             when (option) {
                                 context.resources.getString((R.string.cust_recp)) -> {
-                                    viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                    viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,txnRecord)
                                 }
                                 context.resources.getString((R.string.merchant_recp)) -> {
-                                    viewModel.printReceipt(R.drawable.master_mono, sharedViewModel, context, objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail)
+                                    viewModel.printReceipt(R.drawable.master_mono, sharedViewModel, context, objRootAppPaymentDetail = txnRecord)
                                 }
 
                             }
@@ -139,7 +147,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
-                            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+                            viewModel.onDone(navHostController)
                         },
                         title = stringResource(id = R.string.done),
                     )

@@ -65,7 +65,7 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(Amount)
         navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
-        updateTransResult(sharedViewModel.objRootAppPaymentDetail)
+        //updateTransResult(sharedViewModel.objRootAppPaymentDetail)
         authenticateTransaction(sharedViewModel,navHostController)
     }
 

@@ -56,7 +56,7 @@
     <string name="prompt_new_password">कृपया नया पासवर्ड दर्ज करें</string>
     <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होना चाहिए</string>
     <string name="login_invalid_cred">अमान्य प्रमाण-पत्र</string>
-    <string name="login_version">संस्करण</string>
+    <string name="login_version">v</string>
 
     <!-- User Management -->
     <string name="label_user_management">उपयोगकर्ता प्रबंधन</string>
@@ -450,6 +450,8 @@
     <string name="default_placeholder">पाठ दर्ज करें</string>
 
     <string name="sel_user">उपयोगकर्ता का चयन करें</string>
+    <string name="operation_not_allowed">क्रिया अनुमत नहीं है</string>
+    <string name="min_one_admin_required">कम से कम एक व्यवस्थापक अनिवार्य है</string>
 
     <!-- ISO Response Codes -->
     <string name="iso_resp_code_approved">स्वीकृत</string>

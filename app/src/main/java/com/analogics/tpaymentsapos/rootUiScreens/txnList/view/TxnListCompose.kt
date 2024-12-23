@@ -252,10 +252,10 @@ fun TransactionListScreen(
                     onPrintClick = {
                         Log.d("Print","Clicked on Print Image")
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnAmount = formatAmount(
-                            viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
+                            viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
                         )
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND))
-                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE))
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP))
                         sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE)
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (
                                 viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND)

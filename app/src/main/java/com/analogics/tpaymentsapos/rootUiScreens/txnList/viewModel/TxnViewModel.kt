@@ -185,7 +185,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun totalPurchaseTransactions(txn: TxnType): Double {
         return _txnList.value
-            .filter { it.txnType == txn && it.txnStatus == TxnStatus.APPROVED }
+            .filter { it.txnType == txn && (it.txnStatus == TxnStatus.APPROVED || it.txnStatus == TxnStatus.REFUNDED) }
             .sumOf {
                 it.ttlAmount ?: 0.0
             }

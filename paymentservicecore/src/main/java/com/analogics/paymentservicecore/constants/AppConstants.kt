@@ -27,9 +27,27 @@ object AppConstants {
 
     const val BATCH_ID_START_VAL = 1
 
+    const val DEFAULT_DEMO_MODE = false
+    const val DEFAULT_TIP_MODE = true
+    const val DEFAULT_TAX_MODE = true
+    const val DEFAULT_INVOICE_MODE = true
+
+    const val DEFAULT_HEADER_1 = "BANK NAME"
+    const val DEFAULT_HEADER_2 = "ADDRESS LINE 1"
+    const val DEFAULT_HEADER_3 = "ADDRESS LINE 2"
+    const val DEFAULT_HEADER_4 = "PHONE NUMBER"
+
+    const val DEFAULT_FOOTER_1 = ""
+    const val DEFAULT_FOOTER_2 = "THANK YOU"
+    const val DEFAULT_FOOTER_3 = "VISIT AGAIN!"
+    const val DEFAULT_FOOTER_4 = ""
+
     const val DEFAULT_TIP_PERCENT_1 = 5
     const val DEFAULT_TIP_PERCENT_2 = 10
     const val DEFAULT_TIP_PERCENT_3 = 15
+
+    const val DEFAULT_TAX_PERCENT_SGST = 12.5
+    const val DEFAULT_TAX_PERCENT_CGST = 18.0
 
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8

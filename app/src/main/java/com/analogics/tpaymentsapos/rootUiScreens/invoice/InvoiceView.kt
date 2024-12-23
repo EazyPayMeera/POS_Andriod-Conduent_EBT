@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -173,6 +174,8 @@ fun InvoiceView(navHostController: NavHostController) {
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
         )
+
+
     }
 
 
@@ -201,6 +204,10 @@ fun InvoiceView(navHostController: NavHostController) {
             }
             .buildDialog(onClose = { isDialogVisible = false })
 
+    }
+
+    LaunchedEffect(Unit){
+        viewModel.onLoad(sharedViewModel)
     }
 
     CustomDialogBuilder.ShowComposed()
