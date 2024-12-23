@@ -251,8 +251,10 @@ class CustomDialogBuilder private constructor() {
         private var _title: String? = null
         private var _subtitle: String? = null
         private var _message: String? = null
-        private var _buttonText: String? = null
-        var onCloseCallback: (() -> Unit)? = null
+        private var _okBtnText: String? = null
+        private var _cancelBtnText: String? = null
+        var onOk: (() -> Unit)? = null
+        var onCancel: (() -> Unit)? = null
         var showProgress = mutableStateOf(false)
         var showAlert = mutableStateOf(false)
         var showPrinting = mutableStateOf(false)
@@ -260,7 +262,7 @@ class CustomDialogBuilder private constructor() {
         fun create(): CustomDialogBuilder = CustomDialogBuilder()
 
         @Composable
-        fun ShowAlertDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
+        fun ShowAlertDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null, okBtnText: String? = null, cancelBtnText: String? = null) {
             show?.let { showAlert.value = it }
             title?.let { _title = it }
             subtitle?.let { _subtitle = it }
@@ -274,20 +276,29 @@ class CustomDialogBuilder private constructor() {
                     .setShowProgressIndicator(false)
                     .setShowCloseButton(false)
                     .setShowButtons(true)
-                    .setConfirmButtonText(buttonText?:_buttonText?:stringResource(id = R.string.ok))
-                instance?.buildDialog(onClose = { showAlert.value = false; onCloseCallback?.invoke() })
+                    .setConfirmButtonText(okBtnText?:_okBtnText?:stringResource(id = R.string.ok))
+                    .setOnConfirmAction { onOk?.invoke() }
+
+                cancelBtnText?:_cancelBtnText?.let {
+                    instance?.setCancelButtonText(it)
+                    instance?.setOnCancelAction { onCancel?.invoke() }
+                }
+
+                instance?.buildDialog(onClose = { showAlert.value = false })
 
             }
         }
 
-        fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null, onButtonClick: (() -> Unit)? = null) {
+        fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, okBtnText: String? = null, onOkClick: (() -> Unit)? = null, cancelBtnText: String? = null, onCancelClick: (() -> Unit)? = null) {
             showProgress.value = false
             showAlert.value = show != false
             _title = title
             _subtitle = subtitle
             _message = message
-            _buttonText = buttonText
-            onCloseCallback = onButtonClick
+            _okBtnText = okBtnText
+            _cancelBtnText = cancelBtnText
+            onOk = onOkClick
+            onCancel = onCancelClick
         }
 
         @Composable
@@ -331,10 +342,10 @@ class CustomDialogBuilder private constructor() {
                     .setShowProgressIndicator(true)
                     .setShowCloseButton(false)
                     .setShowButtons(true)
-                    .setConfirmButtonText(buttonText?:_buttonText?:stringResource(id = R.string.abort))
+                    .setConfirmButtonText(buttonText?:_okBtnText?:stringResource(id = R.string.abort))
 
                 instance?.buildDialog(onClose = {
-                    onCloseCallback?.invoke() // Call the onClose callback if it’s set
+                    onOk?.invoke() // Call the onClose callback if it’s set
                     showPrinting.value = false
                     instance?.dismiss()
                 })
@@ -348,8 +359,8 @@ class CustomDialogBuilder private constructor() {
             _title = title
             _subtitle = subtitle
             _message = message
-            _buttonText = buttonText
-            onCloseCallback = onClose
+            _okBtnText = buttonText
+            onOk = onClose
         }
 
         @Composable

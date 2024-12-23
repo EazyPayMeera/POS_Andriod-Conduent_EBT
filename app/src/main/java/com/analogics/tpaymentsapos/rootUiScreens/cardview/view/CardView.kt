@@ -275,7 +275,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
     FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
 
-
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, sharedViewModel, navHostController)
     }

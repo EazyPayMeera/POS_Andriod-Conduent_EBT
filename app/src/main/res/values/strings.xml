@@ -105,7 +105,7 @@
     <string name="chip_detect">Chip Detected</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
-    <string name="cancel_dialogue">Cancel ?</string>
+    <string name="cancel_dialogue">Cancel?</string>
     <string name="yes">YES</string>
     <string name="add_tip">Add Tip:</string> Select an application id
     <string name="txn_sum">Transaction Summary:</string>
@@ -254,7 +254,7 @@
 
     <!-- Printer Strings -->
     <string name="printer_error_title">Printing Error</string>
-    <string name="printer_out_of_paper">Printer is Out Paper</string>
+    <string name="printer_out_of_paper">Printer is Out Of Paper</string>
     <string name="printer_busy">Printer is Busy</string>
     <string name="printer_Alert">Printing</string>
     <string name="printer_no_record">No Record Found</string>

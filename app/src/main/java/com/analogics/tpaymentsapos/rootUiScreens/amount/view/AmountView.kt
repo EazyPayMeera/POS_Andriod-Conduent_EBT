@@ -175,18 +175,18 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
                 .setSmallText("")
                 .setShowCloseButton(false) // Can set to false if you don't want the close button
-                .setCancelButtonText(stringResource(id = R.string.yes))
-                .setConfirmButtonText(stringResource(id = R.string.cancel_no))
+                .setCancelButtonText(stringResource(id = R.string.cancel_no))
+                .setConfirmButtonText(stringResource(id = R.string.yes))
                 .setCancelable(true)
                 .setAutoOff(false)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                    navHostController.navigate(AppNavigationItems.AmountScreen.route)
                 }
                 .setOnConfirmAction {
-                    navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
                 }
                 .setShowButtons(true)
                 .setNavAction {

@@ -55,11 +55,23 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
-    fun onCancelClick(navHostController: NavHostController) {
+    fun abortPayment(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
             emvServiceRepository.abortPayment()
         }
+    }
+
+    fun onCancelClick(navHostController: NavHostController) {
+        CustomDialogBuilder.composeAlertDialog(
+            title = context.getString(R.string.cancel_dialogue),
+            message = context.getString(R.string.dialogue_cancel_request),
+            okBtnText = context.getString(R.string.yes),
+            onOkClick = {
+                abortPayment(navHostController)
+            },
+            cancelBtnText = context.getString(R.string.cancel_no),
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -157,14 +169,14 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         CustomDialogBuilder.composeAlertDialog(
             title = context.getString(R.string.default_alert_title_error),
             message = message,
-            onButtonClick = {
+            onOkClick = {
                 abort?.takeIf { it == false }?.let {
                     viewModelScope.launch {
                         delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
                         startPayment(context, sharedViewModel, navHostController)
                     }
                 }?:let {
-                    onCancelClick(navHostController)
+                    abortPayment(navHostController)
                 }
         })
     }
