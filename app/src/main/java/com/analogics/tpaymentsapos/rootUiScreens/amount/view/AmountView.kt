@@ -51,7 +51,6 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     Column {
 
@@ -96,10 +95,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
 
                 OutlinedTextField(
-                    value = viewModel.transAmount/*when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-                        TxnType.REFUND, TxnType.VOID -> viewModel.totalAmount.value // Use totalAmount when TxnType is REFUND or VOID
-                        else -> viewModel.transAmount // Use transAmount for other TxnTypes
-                    }.toString()*/,
+                    value = viewModel.transAmount,
                     onValueChange = {viewModel.onAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
@@ -203,12 +199,6 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(sharedViewModel)
-        /*Log.d("InvoiceDebug", "Invoice No: ${sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString()}")
-        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID) {
-            viewModel.getTransactionByInvoiceNo(
-                sharedViewModel
-            )
-        }*/
     }
 
     CustomDialogBuilder.ShowComposed()

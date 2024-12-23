@@ -159,50 +159,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getTotalAmountByInvoiceNo(invoiceNo: String) {
-        viewModelScope.launch {
-            val totalAmountString = dbRepository.fetchTotalAmountByInvoiceNo(invoiceNo)
-            val totalAmount = totalAmountString?.toDoubleOrNull() ?: 0.0
-            val formattedAmount = totalAmount.toDecimalFormat()
-            Log.d("TotalAmountDebug", "Total Amount: $formattedAmount")
-            _totalAmount.value = formattedAmount
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getTransactionByInvoiceNo(sharedViewModel: SharedViewModel) {
-        viewModelScope.launch {
-            dbRepository.fetchTransactionByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())?.let {
-                PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it[0])?.let {
-                    sharedViewModel.objRootAppPaymentDetail = it.copy(
-                        id = sharedViewModel.objRootAppPaymentDetail.id,
-                        txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
-                        txnStatus = sharedViewModel.objRootAppPaymentDetail.txnStatus,
-                        hostAuthResult = sharedViewModel.objRootAppPaymentDetail.hostAuthResult
-                    )
-                    sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
-                    sharedViewModel.objRootAppPaymentDetail.originalTip = it.tip.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalCGST = it.CGST.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalSGST = it.SGST.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalCashback =it.cashback.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = it.ttlAmount.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalTxnAmount = it.txnAmount.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
-                }
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getTimeDateByInvoiceNo(invoiceNo: String) {
-        viewModelScope.launch {
-            val totalDateTimeString = dbRepository.fetchTimeDateByInvoiceNo(invoiceNo)
-            _timeDate.value = totalDateTimeString
-            Log.d("TimeDateDebug", "Fetched TimeDate: ${_timeDate.value}")
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
     {
         Log.d("Database","Go to update ")
@@ -232,18 +188,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 // Handle any exceptions that may occur
                 Log.e("ApiCallException", e.message ?: "Unknown error")
                 navHostController.navigate(AppNavigationItems.DeclineScreen.route)
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?)
-    {
-        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
-        viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
-                it.txnStatus = txnStatus?.toString()?:""
-                dbRepository.updateTxn(it)
             }
         }
     }
