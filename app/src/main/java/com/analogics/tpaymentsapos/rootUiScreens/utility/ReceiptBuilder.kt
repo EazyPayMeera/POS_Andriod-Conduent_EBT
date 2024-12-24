@@ -70,12 +70,13 @@ class ReceiptBuilder {
                         addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
                     }
                 }
-                addField("", "", "", Alignment.CENTER,FontSize.Small)
-                addField("", "", "", Alignment.CENTER,FontSize.Small)
+                addField(" ", "", "", Alignment.CENTER,FontSize.Medium)
+
                 addField(context.getString(R.string.receipt_date), paymentDetails?.dateTime, "", Alignment.LEFT,FontSize.Small)
                 addField(context.getString(R.string.receipt_merchant_id) + paymentDetails?.merchantId,"","", Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_terminal_id) + paymentDetails?.terminalId,"","", Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_batch_no), paymentDetails?.batchId, context.getString(R.string.receipt_invoice_no) + paymentDetails?.invoiceNo, Alignment.NONE,FontSize.Small)
+                addField(" ", "", "", Alignment.CENTER,FontSize.Medium)
                 if(sharedViewModel.objPosConfig?.isDemoMode == true)
                 {
                     addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
@@ -84,6 +85,7 @@ class ReceiptBuilder {
                 }
                 addField(paymentDetails?.txnType.toString(),"" , "", Alignment.CENTER,FontSize.Big)
                 addField(context.getString(R.string.receipt_txn_status), "", paymentDetails?.txnStatus, Alignment.NONE,FontSize.Big)
+                addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
                 addField(context.getString(R.string.receipt_card_no), paymentDetails?.cardMaskedPan, "", Alignment.CENTER,FontSize.Small)
                 addField(context.getString(R.string.receipt_card_type), "", paymentDetails?.cardBrand?.toString(), Alignment.NONE,FontSize.Small)
                 addField(context.getString(R.string.receipt_auth_code), "", paymentDetails?.hostAuthCode, Alignment.NONE,FontSize.Small)
@@ -94,20 +96,27 @@ class ReceiptBuilder {
                 addField(context.getString(R.string.receipt_total), "", (paymentDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                 if(!customer) {
+                    addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
                     addField(context.getString(R.string.receipt_sign), "", "", Alignment.LEFT, FontSize.Small)
-                }
-                addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
-                if(customer) {
+                    addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                     addField(context.getString(R.string.receipt_card_holder_name), "", "", Alignment.CENTER, FontSize.Small)
+                    addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
                     addField(context.getString(R.string.receipt_note), "", "", Alignment.CENTER, FontSize.Small)
+                }
+
+                if(customer) {
+                    //addField(context.getString(R.string.receipt_card_holder_name), "", "", Alignment.CENTER, FontSize.Small)
+                    addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
                     addField(context.getString(R.string.receipt_custom_copy), "", "", Alignment.CENTER, FontSize.Small)
                 }
                 else
                 {
+                    addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
                     addField(context.getString(R.string.receipt_merch_copy), "", "", Alignment.CENTER, FontSize.Small)
                 }
 
                 if(customer) {
+                    addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
                     sharedViewModel.objPosConfig?.footer1?.let {
                         addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
                     }
@@ -121,6 +130,8 @@ class ReceiptBuilder {
                         addField(it.toString(), "", "", Alignment.CENTER, FontSize.Small)
                     }
                 }
+
+                addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
             }
             .build()
     }

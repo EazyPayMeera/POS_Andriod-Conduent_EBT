@@ -289,7 +289,7 @@
     <string name="receipt_invoice_no">INV:</string>
     <string name="receipt_auth_code">AUTH Code</string>
     <string name="receipt_tip">TIP</string>
-    <string name="receipt_sign">SIGN</string>
+    <string name="receipt_sign">x</string>
     <string name="receipt_card_holder_name">CARDHOLDER NAME</string>
     <string name="receipt_note">TRANSACTION ACCEPTED &amp; LIABILITY OF CARDHOLDER TO PAY IS CONFIRMED</string>
     <string name="receipt_custom_copy">******CUSTOMER COPY******</string>
