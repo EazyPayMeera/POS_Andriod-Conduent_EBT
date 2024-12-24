@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.models.TxnStatus
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
@@ -34,17 +35,23 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
     ) {
-        viewModelScope.printReceipt(
-            logoResId,
-            sharedViewModel,
-            context,
-            customer,
-            false,
-            false,
-            null,
-            objRootAppPaymentDetail,
-            lastTxn = false
-        )
+
+        viewModelScope.launch{
+            dbRepository.fetchLastTransaction()?.let {
+                var objPaymentDetail = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails()
+                viewModelScope.printReceipt(
+                    logoResId,
+                    sharedViewModel,
+                    context,
+                    customer,
+                    false,
+                    false,
+                    null,
+                    objPaymentDetail,
+                    lastTxn = false
+                )
+            }
+        }
     }
 }
 

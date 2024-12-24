@@ -397,6 +397,7 @@
     <string name="err_no_internet_connection">कृपया अपना इंटरनेट कनेक्शन जांचें</string>
     <string name="err_txn_not_found">लेनदेन नहीं मिला</string>
     <string name="err_only_purchase_can_be_refunded">केवल खरीदारी को ही वापस किया जा सकता है</string>
+    <string name="err_only_preauth_can_be_captured">केवल प्रीऑथ को ही कैप्चर किया जा सकता है</string>
     <string name="err_txn_already_refunded">लेनदेन पहले ही रिफंडेड है</string>
     <string name="err_txn_already_voided">लेनदेन पहले ही वॉइडेड है</string>
     <string name="err_txn_already_captured">लेनदेन पहले ही कैप्चर्ड है</string>

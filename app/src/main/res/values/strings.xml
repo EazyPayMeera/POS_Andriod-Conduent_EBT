@@ -394,6 +394,7 @@
     <string name="err_no_internet_connection">Please Check Your Internet Connection</string>
     <string name="err_txn_not_found">Transaction Not Found</string>
     <string name="err_only_purchase_can_be_refunded">Only Purchase Can Refunded</string>
+    <string name="err_only_preauth_can_be_captured">Only Preauth Can Captured</string>
     <string name="err_txn_already_refunded">Transaction Already Refunded</string>
     <string name="err_txn_already_voided">Transaction Already Voided</string>
     <string name="err_txn_already_captured">Transaction Already Captured</string>
