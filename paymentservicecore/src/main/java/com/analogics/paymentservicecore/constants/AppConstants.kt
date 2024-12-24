@@ -32,10 +32,10 @@ object AppConstants {
     const val DEFAULT_TAX_MODE = true
     const val DEFAULT_INVOICE_MODE = true
 
-    const val DEFAULT_HEADER_1 = "BANK NAME"
-    const val DEFAULT_HEADER_2 = "ADDRESS LINE 1"
-    const val DEFAULT_HEADER_3 = "ADDRESS LINE 2"
-    const val DEFAULT_HEADER_4 = "PHONE NUMBER"
+    const val DEFAULT_HEADER_1 = "Bank Name"
+    const val DEFAULT_HEADER_2 = "Address Line 1"
+    const val DEFAULT_HEADER_3 = "Address Line 2"
+    const val DEFAULT_HEADER_4 = "Phone Number"
 
     const val DEFAULT_FOOTER_1 = ""
     const val DEFAULT_FOOTER_2 = "THANK YOU"
@@ -46,8 +46,8 @@ object AppConstants {
     const val DEFAULT_TIP_PERCENT_2 = 10
     const val DEFAULT_TIP_PERCENT_3 = 15
 
-    const val DEFAULT_TAX_PERCENT_SGST = 12.5
-    const val DEFAULT_TAX_PERCENT_CGST = 18.0
+    const val DEFAULT_TAX_PERCENT_SGST = 5.00
+    const val DEFAULT_TAX_PERCENT_CGST = 5.00
 
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8

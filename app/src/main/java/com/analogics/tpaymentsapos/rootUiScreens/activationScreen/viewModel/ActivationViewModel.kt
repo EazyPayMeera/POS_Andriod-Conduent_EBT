@@ -140,6 +140,10 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.tipPercent2 = AppConstants.DEFAULT_TIP_PERCENT_2.toDouble()
         sharedViewModel?.objPosConfig?.tipPercent3 = AppConstants.DEFAULT_TIP_PERCENT_3.toDouble()
 
+        /* Default TAX Percent values */
+        sharedViewModel?.objPosConfig?.SGSTPercent = AppConstants.DEFAULT_TAX_PERCENT_SGST
+        sharedViewModel?.objPosConfig?.CGSTPercent = AppConstants.DEFAULT_TAX_PERCENT_CGST
+
         sharedViewModel?.objPosConfig?.batchId = AppConstants.BATCH_ID_START_VAL.toString()
 
         /* Default Headers & Footers */
