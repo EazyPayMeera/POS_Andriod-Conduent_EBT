@@ -61,7 +61,7 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable WHERE DateTime BETWEEN :startDate AND :endDate")
     suspend fun getTransactionsByDateRange(startDate: String, endDate: String): List<TxnEntity>
 
-    @Query("SELECT InvoiceNo FROM TxnTable WHERE batchId = :batchId ORDER BY InvoiceNo DESC LIMIT 1")
+    @Query("SELECT InvoiceNo FROM TxnTable WHERE batchId = :batchId ORDER BY id DESC LIMIT 1")
     suspend fun getLastInvoiceNumber(batchId : String?): String?
 
     @Query("SELECT EXISTS(SELECT 1 FROM TxnTable WHERE InvoiceNo = :invoiceNo)")
