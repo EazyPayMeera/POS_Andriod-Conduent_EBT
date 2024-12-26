@@ -21,6 +21,7 @@ object AppConstants {
     const val CARD_CHECK_TIMEOUT_S = 30L
     const val CARD_CHECK_RESTART_DELAY_MS = 1000L
     const val DEMO_MODE_PROMPTS_DELAY_MS = 3000L
+    const val AUTO_PRINT_RECEIPT_DELAY_MS = 1000L
 
     /* UI */
     const val BUTTON_CLICK_DISAPPEAR_DELAY_MS = 100L

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -56,14 +57,6 @@ fun ApprovedView(navHostController: NavHostController) {
     val sharedViewModel = localSharedViewModel.current
 
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
-
-    //viewModel.updateTxnData(sharedViewModel.objRootAppPaymentDetail)
-
-
-/*
-    Log.d("PaymentDetailsDebug", "Transaction Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
-    Log.d("PaymentDetailsDebug", "Total Amount: ${sharedViewModel.objRootAppPaymentDetail.txnAmount}")
-*/
 
     Column {
         CommonTopAppBar(
@@ -108,7 +101,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
                 ImageView(
                     imageId = getTxnStatusIconId(txnRecord),
-                    size = MaterialTheme.dimens.DP_126_CompactMedium,
+                    size = MaterialTheme.dimens.DP_120_CompactMedium,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
@@ -156,6 +149,10 @@ fun ApprovedView(navHostController: NavHostController) {
                 CustomDialogBuilder.ShowComposed()
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(context,sharedViewModel)
     }
 }
 

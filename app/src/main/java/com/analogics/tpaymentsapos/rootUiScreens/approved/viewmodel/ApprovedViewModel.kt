@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
@@ -13,7 +14,9 @@ import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
+import com.analogics.tpaymentsapos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import printReceipt
 import javax.inject.Inject
@@ -21,6 +24,21 @@ import javax.inject.Inject
 @HiltViewModel
 class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel()
 {
+    lateinit var context: Context
+
+    fun onLoad(context: Context, sharedViewModel: SharedViewModel)
+    {
+        this.context = context
+
+        if(sharedViewModel.objPosConfig?.isAutoPrintMerchant==true)
+        {
+            viewModelScope.launch{
+                delay(AppConstants.AUTO_PRINT_RECEIPT_DELAY_MS)
+                printReceipt(R.drawable.master_mono,sharedViewModel,context,objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail)
+            }
+        }
+    }
+
     fun onDone(navHostController: NavHostController)
     {
         viewModelScope.launch {

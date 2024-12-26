@@ -132,6 +132,10 @@ class ReceiptBuilder {
                 }
 
                 addField(" ", "", "", Alignment.LEFT, FontSize.Medium)
+               /* paymentDetails?.invoiceNo?.let {
+                    addField("", it, "", Alignment.CENTER, FontSize.Small)
+                }
+                addField(" ", "", "", Alignment.LEFT, FontSize.Medium)*/
             }
             .build()
     }
