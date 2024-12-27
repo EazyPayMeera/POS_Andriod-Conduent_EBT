@@ -1,1 +1,1 @@
-# TPayments
+# EzeAndroidPOS
