@@ -18,8 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.constants.BuilderConstants
-import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
@@ -32,7 +30,6 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.TextView
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCardBrandStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCardEntryStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeString
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getIsoResponseCodeStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusIconId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnStatusStringId
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getTxnTypeStringId
@@ -106,7 +103,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                             ?.let {
                                 TextView(
                                     text = "[ " + getIsoResponseCodeString(context,it) + " ]",
-                                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                    fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
@@ -176,32 +173,37 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                                 start = MaterialTheme.dimens.DP_34_CompactMedium
                             )
                     )
+                    if (sharedViewModel.objRootAppPaymentDetail.hostTxnRef != null) {
+                        TextView(
+                            text = stringResource(id = R.string.ref_id) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef
+                                ?: "-"),
+                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(
+                                    top = MaterialTheme.dimens.DP_11_CompactMedium,
+                                    start = MaterialTheme.dimens.DP_34_CompactMedium
+                                )
+                        )
+                    }
 
-                    TextView(
-                        text = stringResource(id = R.string.ref_id) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .padding(
-                                top = MaterialTheme.dimens.DP_11_CompactMedium,
-                                start = MaterialTheme.dimens.DP_34_CompactMedium
-                            )
-                    )
+                    if (sharedViewModel.objRootAppPaymentDetail.hostAuthCode != null) {
+                        TextView(
+                            text = stringResource(id = R.string.auth_code) + " " + sharedViewModel.objRootAppPaymentDetail.hostAuthCode,
+                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(
+                                    top = MaterialTheme.dimens.DP_11_CompactMedium,
+                                    start = MaterialTheme.dimens.DP_34_CompactMedium
+                                )
+                        )
+                    }
 
-                    TextView(
-                        text = stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .padding(
-                                top = MaterialTheme.dimens.DP_11_CompactMedium,
-                                start = MaterialTheme.dimens.DP_34_CompactMedium
-                            )
-                    )
 
                     Box(
                         modifier = Modifier

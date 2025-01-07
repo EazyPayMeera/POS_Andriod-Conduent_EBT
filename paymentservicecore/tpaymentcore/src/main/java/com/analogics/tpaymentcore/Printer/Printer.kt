@@ -136,6 +136,7 @@ class Printer constructor() {
         defaultFormat.putBoolean("fontBold", false) // Default font bold setting
         defaultFormat.putInt("lineHeight", 5) // Default line height
         defaultFormat.putInt("fontSize", fontSize)
+        Log.d("PrintingDebug", "Left: $textLeft, Center: $textCenter, Right: $textRight")
         mPrinter?.addTextLeft_Center_Right(defaultFormat, textLeft, textCenter, textRight)
 
     }
@@ -181,7 +182,6 @@ class Printer constructor() {
                 val alignment = alignments[i]
                 val description = descriptions[i]
                 val fontsize = fontsize[i]
-                Log.d("TextDebug", "Text: $text, Alignment: $alignment, Description: $description, Font Size: $fontsize")
                 if(alignment == -1) {
                     addTextLeft_Right(text,description,fontsize)
                 }
@@ -206,6 +206,7 @@ class Printer constructor() {
         total: List<String>,
         fontSize: List<Int>
     ) {
+
         try {
             for (i in transaction.indices) {
                 val trasaction = transaction[i]
@@ -219,7 +220,7 @@ class Printer constructor() {
                     addTextLeft_Center_Right(trasaction, countItem, totalItem, fontSizeItem)
                 }
             }
-            feedLine(3)
+            feedLine(1)
             startPrinting()
 
         } catch (e: Exception) {

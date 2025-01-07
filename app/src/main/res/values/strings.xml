@@ -206,7 +206,7 @@
     <string name="set_timeout">Set Timeout</string>
     <string name="batch_id">Batch Id</string>
     <string name="set_batch_id">Set Batch Id</string>
-	
+
     <string name="is_correct">Is this information correct?</string>
     <string name="for_admin">Allowed for Admin Only</string>
     <string name="restricted">Restricted !</string>
@@ -266,9 +266,9 @@
     <string name="receipt_terminal_id">TID:</string>
     <string name="receipt_gray_line">---------------------------------</string>
     <string name="receipt_card_type">CARD TYPE:</string>
-    <string name="receipt_card_no">CARD No:</string>
+    <string name="receipt_card_no">CARD No</string>
     <string name="receipt_trans_type">TRANS TYPE:</string>
-    <string name="receipt_batch_no">BATCH NO:</string>
+    <string name="receipt_batch_no">BATCH NO</string>
     <string name="receipt_trace_no">TRACE NO:</string>
     <string name="receipt_date">DATE</string>
     <string name="receipt_time">TIME</string>

@@ -158,7 +158,7 @@ fun InvoiceView(navHostController: NavHostController) {
                                 contentDescription = null, // Provide a content description if needed
                                 modifier = Modifier
                                     .clickable {
-                                        openScanner(context, viewModel)
+                                        //openScanner(context, viewModel)
                                     },  // Toggle editable state on icon click
                                 tint = MaterialTheme.colorScheme.primary
                             )

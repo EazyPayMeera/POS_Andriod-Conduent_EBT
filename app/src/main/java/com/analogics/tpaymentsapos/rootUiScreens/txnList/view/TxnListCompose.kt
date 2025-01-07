@@ -212,11 +212,11 @@ fun TransactionListScreen(
 
             // Progress Indicator
             if (showProgressIndicator.value) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator(
                         color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
                         modifier = Modifier
@@ -263,11 +263,13 @@ fun TransactionListScreen(
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
                         sharedViewModel.objRootAppPaymentDetail.ttlTipAmount = viewModel.totalTipAmount().toString()
                         sharedViewModel.objRootAppPaymentDetail.ttlTipCount = viewModel.totalTipCount()
+                        Log.d("TotalPurchaseAmount", "Total Purchase Amount: ${sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount}")
+
                     }
                 )
             }
             CustomDialogBuilder.ShowComposed()
-    }
+        }
     }
 
     if (showBatchPicker) {
@@ -559,7 +561,7 @@ fun HeaderSection(
                     style = when(netTotal.length) {
                         in 0..13 -> MaterialTheme.typography.h5
                         else -> MaterialTheme.typography.h6
-                        },
+                    },
                     color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium
                 )

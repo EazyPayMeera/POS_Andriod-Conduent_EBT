@@ -385,6 +385,7 @@ suspend fun addDetailedReceipt(
         val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
             PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
         )
+        Log.d("PaymentServiceTxnDetails", "Details: $paymentServiceTxnDetails")
         val transactionDetailsList = transactionList?.map { paymentDetail ->
             ReceiptBuilder.TransactionDetails(
                 TxnType = paymentDetail.txnType.toString(), // Replace with actual property
