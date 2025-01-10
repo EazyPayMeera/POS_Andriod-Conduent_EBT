@@ -36,12 +36,15 @@ object EmvConstants {
     const val EMV_TAG_SUPPORT_VELOCITY_CHECK =       "DF05"
 
     /* UROVO Specific values */
-    const val UROVO_SDK_KEY_EMV_DATA =               "EMVDATA"
-    const val UROVO_SDK_EMV_LOG_DISABLE   =                 0
-    const val UROVO_SDK_EMV_LOG_ENABLE   =                  1
+    const val UROVO_SDK_KEY_EMV_DATA =                  "EMVDATA"
+    const val UROVO_SDK_KEY_MSR_DATA =                  "StripInfo"
+    const val UROVO_SDK_KEY_MSR_TRACK1 =                "D1"
+    const val UROVO_SDK_KEY_MSR_TRACK2 =                "D2"
+    const val UROVO_SDK_EMV_LOG_DISABLE   =             0
+    const val UROVO_SDK_EMV_LOG_ENABLE   =              1
 
     /* Host Response */
-    const val EMV_TAG_RESP_CODE =                     "8A"
+    const val EMV_TAG_RESP_CODE =                           "8A"
     const val EMV_TAG_VAL_APPROVED_ONLINE =                 "3030"
     const val EMV_TAG_VAL_DECLINED_ONLINE =                 "3035"
     const val EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_APPROVE =     "5933"

@@ -30,10 +30,8 @@ import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Hashtable
 import java.util.Locale
@@ -94,9 +92,9 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
                 when(result) {
                     true->
-                        iEmvSdkResponseListener.onEmvSdkResponse(InitResult(InitStatus.SUCCESS))//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                        iEmvSdkResponseListener.onEmvSdkResponse(InitResult(InitStatus.SUCCESS))//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Velocity Check enable
                     else ->
-                        iEmvSdkResponseListener.onEmvSdkResponse(InitResult(InitStatus.FAILURE))//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Valocity Check enable
+                        iEmvSdkResponseListener.onEmvSdkResponse(InitResult(InitStatus.FAILURE))//DF02---random trans select enable  DF03--Except file check enable DF04--Support SM DF05-- Velocity Check enable
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -190,11 +188,11 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             EmvNfcKernelApi.getInstance().abortKernel()
         }
 
-        fun encryptThenRequestOnline(p0: String?, p1: String?=null)
+        fun encryptThenRequestOnline(p0: String?=null, p1: String?=null)
         {
             try {
                 var tlvMap = TlvUtils(p0).tlvMap.apply {
-                    for (tlv in getEncryptedData())
+                    for (tlv in getEncryptedData(TlvUtils(p0).tlvMap))
                         put(tlv.key, tlv.value)
                 }
                 iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
@@ -220,10 +218,14 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         @OptIn(ExperimentalStdlibApi::class)
-        fun getEncryptedData() : HashMap<String,String>
+        fun getEncryptedData(tlvMap: HashMap<String, String>): HashMap<String,String>
         {
             var hashMap = HashMap<String,String>()
-            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX).replace('D','=').removeSuffix("F")
+            var trackData = EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX)
+            trackData.takeIf { it.isEmpty() == true && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2)}?.let {
+                trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2]?:""
+            }
+            trackData = trackData.replace('D','=').removeSuffix("F")
             var cardPan = trackData.substringBefore('=')
 
             /* Clear PAN is OK to send to service layer. Service layer will filter it */
@@ -291,6 +293,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             EmvNfcKernelApi.getInstance().setAmountEx(_amount, _cashbackAmount)
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
         override fun onReturnCheckCardResult(
             p0: ContantPara.CheckCardResult?,
             p1: Hashtable<String, String>?
@@ -299,6 +302,20 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             Log.d("EMV_APP", "Check Card List:" + p1?.toString())
 
             iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.CardCheckResult(status = urovoToCheckCardStatus(p0)))
+
+            /* Process MSR from here only */
+            p0.takeIf { it == ContantPara.CheckCardResult.MSR && p1?.containsKey(EmvConstants.UROVO_SDK_KEY_MSR_DATA)==true}?.let {
+                var msrTlv = TlvUtils(p1?.get(EmvConstants.UROVO_SDK_KEY_MSR_DATA) ?:"")
+                var nfcTlv = TlvUtils()
+
+                msrTlv.tlvMap.containsKey(EmvConstants.UROVO_SDK_KEY_MSR_TRACK2).takeIf { it == true }?.let {
+                    msrTlv.tlvMap[EmvConstants.UROVO_SDK_KEY_MSR_TRACK2]?.let {
+                        var trackData = it.hexToByteArray().decodeToString().replace('=','D')
+                        nfcTlv.addTagValHex(EmvConstants.EMV_TAG_TRACK2,trackData,0,trackData.length)
+                    }
+                }
+                encryptThenRequestOnline(nfcTlv.toTlvString())
+            }
         }
 
         override fun onRequestSelectApplication(p0: ArrayList<String>?) {
@@ -673,9 +690,13 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
             if (isDUKPT) param.putInt("PINKeyNo", EncryptionConstants.DUKPT_KEY_SET_PIN)
             else param.putInt("PINKeyNo", 10)
-            val cardno: String = "4761730000000011"
+            var cardno: String? = null
 
-            Log.i("applog", "emv_proc_onlinePin cardno $cardno")
+            getEmvTag(EmvConstants.EMV_TAG_PAN)?.let {
+                cardno = it
+                Log.i("EMV_APP", "emv_proc_onlinePin cardno $cardno")
+            }
+
             param.putString("cardNo", cardno)
             param.putBoolean("sound", false)
             param.putInt("soundVolume", 1)
