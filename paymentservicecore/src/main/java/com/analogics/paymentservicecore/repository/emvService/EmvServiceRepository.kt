@@ -138,6 +138,8 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
             EmvSdkResult.DisplayMsgId.ERR_QPBOC_APPLICATION -> DisplayMsgId.ERR_QPBOC_APPLICATION
             EmvSdkResult.DisplayMsgId.ERR_QPBOC_FDDA_FAILED -> DisplayMsgId.ERR_QPBOC_FDDA_FAILED
             EmvSdkResult.DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS -> DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS
+
+            EmvSdkResult.DisplayMsgId.PROCESSING_ONLINE -> DisplayMsgId.PROCESSING_ONLINE
         }
     }
 

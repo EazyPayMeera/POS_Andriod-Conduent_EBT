@@ -960,44 +960,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             return iret
         }
 
-        fun promptPin(
-            pinpadBundle: Bundle?,
-            isOnlinePin: Boolean,
-            keyIndex: Int,
-            plainKey: String?,
-            randomLocation: Boolean
-        ) {
-            var pinpadBundle = pinpadBundle
-            if (pinpadBundle == null || pinpadBundle.isEmpty) {
-                pinpadBundle = Bundle()
-                if (!isOnlinePin) {
-                    pinpadBundle.putInt("inputType", 3) //Offline PlainPin
-                    pinpadBundle.putInt("CardSlot", 0)
-                }
-                pinpadBundle.putString("cardNo", "1122334455667788")
-                pinpadBundle.putBoolean("sound", false)
-                pinpadBundle.putBoolean("bypass", false)
-                pinpadBundle.putInt("soundVolume", 1)
-                pinpadBundle.putString("supportPinLen", "0,4,5,6,7,8,9,10,11,12")
-                pinpadBundle.putBoolean("onlinePin", isOnlinePin)
-                pinpadBundle.putInt("PINKeyNo", keyIndex)
-                pinpadBundle.putLong("timeOutMS", (30 * 1000).toLong())
-                pinpadBundle.putBoolean("randomKeyboard", true)
-
-                pinpadBundle.putBoolean("FullScreen", true)
-                pinpadBundle.putInt("customKeyboardDialog", 5)
-
-                pinpadBundle.putString("title", "Security Keyboard")
-                pinpadBundle.putString("message", "Enter Your Pin")
-            }
-            try {
-                PinPadProviderImpl.getInstance()
-                    .getPinBlockEx(pinpadBundle, this)
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-            }
-        }
-
         override fun onInput(p0: Int, p1: Int) {
             Log.d("EMV_LOG", "On Input: $p0, $p1")
         }
@@ -1013,7 +975,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
 
         @OptIn(ExperimentalStdlibApi::class)
         override fun onConfirm_dukpt(p0: ByteArray?, p1: ByteArray?) {
-            //iEmvSdkResponseListener?.onEmvSdkDisplayMessage("Processing")
+            iEmvSdkResponseListener?.onEmvSdkDisplayMessage(DisplayMsgId.PROCESSING_ONLINE)
             if (p0 == null) {
                 EmvNfcKernelApi.getInstance().bypassPinEntry() //bypass
             } else {
