@@ -692,6 +692,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             /* Field 38, Auth Code, AN6, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_AUTH_CODE, authCode, IsoType.ALPHA,BuilderConstants.ISO_FIELD_AUTH_CODE_LENGTH)
 
+            /* Field 39, Response Code, AN2, Mandatory */
+            .setValue(BuilderConstants.ISO_FIELD_RESP_CODE, builderServiceTxnDetails?.hostRespCode, IsoType.ALPHA,BuilderConstants.ISO_FIELD_RESP_CODE_LENGTH)
+
             /* Field 41, TID, ANS8, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 

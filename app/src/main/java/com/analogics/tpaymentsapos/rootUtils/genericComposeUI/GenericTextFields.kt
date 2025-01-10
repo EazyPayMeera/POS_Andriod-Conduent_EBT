@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -84,12 +85,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -311,17 +310,19 @@ fun CommonTopAppBar(
             {
                 Box(
                     modifier = Modifier
-                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Set a larger size for the clickable area
-                        .clickable {
-                            onBackButtonClick()
-                        }
+                        .size(MaterialTheme.dimens.DP_60_CompactMedium) // Invisible touch area for better touch responsiveness
+                        .clickable(
+                            onClick = { onBackButtonClick() },
+                            indication = null, // Remove ripple effect if it's not required
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "",
+                        contentDescription = "Back",
                         modifier = Modifier
-                            .align(Alignment.Center) // Center the icon in the Box
-                            .size(MaterialTheme.dimens.DP_23_CompactMedium) // Keep the icon size unchanged
+                            .align(Alignment.Center) // Center the icon
+                            .size(MaterialTheme.dimens.DP_23_CompactMedium) // Icon remains the same size
                     )
                 }
             }
@@ -331,6 +332,7 @@ fun CommonTopAppBar(
 }
 
 
+
 @Composable
 fun OkButton(
     onClick: () -> Unit,
@@ -338,6 +340,7 @@ fun OkButton(
     maxsizebutton: Boolean = true, // New parameter to control button size,
     enabled: Boolean?=false
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Button(
         modifier = Modifier
             .then(
@@ -356,7 +359,8 @@ fun OkButton(
             contentColor = MaterialTheme.colorScheme.tertiary,
             containerColor = if(enabled==true) MaterialTheme.colorScheme.primary else colorResource(R.color.grey) // Keep or change as needed
         ),
-        onClick = onClick
+        onClick = onClick,
+        interactionSource = interactionSource
     ) {
         Text(
             text = title
@@ -491,6 +495,7 @@ fun FooterButtons(
 
             // First Button
             firstButtonTitle?.let {
+                val interactionSource = remember { MutableInteractionSource() }
                 Button(
                     enabled = enabled!=false,
                     onClick = {
@@ -515,7 +520,8 @@ fun FooterButtons(
                         pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
                         hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                    )
+                    ),
+                    interactionSource = interactionSource
                 ) {
                     TextView(
                         text = firstButtonTitle.uppercase(),
@@ -530,6 +536,7 @@ fun FooterButtons(
 
             // Second Button
             secondButtonTitle?.let {
+                val interactionSource = remember { MutableInteractionSource() }
                 Button(
                     enabled = enabled!=false,
                     onClick = {
@@ -554,7 +561,8 @@ fun FooterButtons(
                         pressedElevation = MaterialTheme.dimens.DP_12_CompactMedium,
                         hoveredElevation = MaterialTheme.dimens.DP_10_CompactMedium,
                         focusedElevation = MaterialTheme.dimens.DP_11_CompactMedium
-                    )
+                    ) ,
+                    interactionSource = interactionSource
                 ) {
                     TextView(
                         text = secondButtonTitle.uppercase(),
@@ -566,20 +574,8 @@ fun FooterButtons(
                     )
                 }
             }
-
-            LaunchedEffect(isFirstButtonPressed,isSecondButtonPressed) {
-                if(isFirstButtonPressed == true || isSecondButtonPressed == true)
-                {
-                    delay(AppConstants.BUTTON_CLICK_DISAPPEAR_DELAY_MS)
-                    isFirstButtonPressed = false
-                    isSecondButtonPressed = false
-                }
-            }
         }
-
-
     }
-
 }
 
 
@@ -636,7 +632,7 @@ fun CardWithImageText(
             )
             .clickable(
                 onClick = onClick,
-                indication = null, // Disable the default ripple effect if not needed
+                indication = LocalIndication.current, // Disable the default ripple effect if not needed
                 interactionSource = remember { MutableInteractionSource() }
             ),
         backgroundColor = MaterialTheme.colorScheme.secondary,
@@ -860,11 +856,12 @@ fun OutlinedTextField(
 ) {
     // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
 
     // Handle value change with length restriction if `amount` flag is true
     val handleValueChange: (TextFieldValue) -> Unit = { newValue ->
         if (amount) {
-            if(removeNonDigits(newValue.text).length <= 12) onValueChange(formatAmount(newValue.text)) // Restrict input to 12 characters
+            if (removeNonDigits(newValue.text).length <= 12) onValueChange(formatAmount(newValue.text)) // Restrict input to 12 characters
         } else {
             onValueChange(newValue.text)
         }
@@ -888,6 +885,12 @@ fun OutlinedTextField(
         readOnly = readOnly,
         trailingIcon = trailingIcon,
         modifier = modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null // Removes ripple effect but keeps the clickable functionality
+            ) {
+                focusRequester.requestFocus() // Request focus when clicked
+            }
             .focusRequester(focusRequester)
             .padding(MaterialTheme.dimens.DP_2_CompactMedium)
             .width(MaterialTheme.dimens.DP_280_CompactMedium)
@@ -900,7 +903,6 @@ fun OutlinedTextField(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.tertiary, // Set the color to black,
                     textAlign = TextAlign.Center
-
                 )
             }
         } else null,
@@ -911,7 +913,6 @@ fun OutlinedTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
             cursorColor = Color.Transparent
         )
-
     )
 
     LaunchedEffect(Unit) {
