@@ -24,6 +24,7 @@ import com.analogics.tpaymentcore.model.emv.EmvSdkResult.TransStatus
 import com.analogics.tpaymentcore.model.emv.TransConfig
 import com.analogics.tpaymentcore.utils.TlvUtils
 import com.urovo.i9000s.api.emv.ContantPara
+import com.urovo.i9000s.api.emv.ContantPara.CardSlot
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
@@ -112,6 +113,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         var ksn : String? = null
         var nfcTlv : String? = null
         var nfcDisplayMsgId : DisplayMsgId? = null
+        var checkCardResult : ContantPara.CheckCardResult? = null
 
         fun resetTransData()
         {
@@ -126,6 +128,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             ksn = null
             nfcTlv = null
             nfcDisplayMsgId = null
+            checkCardResult = null
         }
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
@@ -170,7 +173,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             var tagVal: String? = null
             try {
                 tag?.let {
-                    EmvNfcKernelApi.getInstance().getValByTag(tag.hexToInt())?.let {
+                    EmvNfcKernelApi.getInstance().getValByTag(tag.hexToInt())?.takeIf { it.isNotEmpty() }?.let {
                         tagVal = it
                     }
                 }
@@ -198,8 +201,28 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                 iEmvSdkResponseListener?.onEmvSdkOnlineRequest(tlvMap) {
                     var tlvTags = TlvUtils(it)
                     var hasOnlineResp = tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
-                    EmvNfcKernelApi.getInstance()
-                        .sendOnlineProcessResult(hasOnlineResp, tlvTags.toTlvString())
+                    when(checkCardResult)
+                    {
+                        ContantPara.CheckCardResult.MSR -> {
+                            /* Magstripe Conditions */
+                            if(hasOnlineResp
+                                &&  tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
+                                && tlvTags.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] == EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE)
+                            {
+                                iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(TransStatus.APPROVED_ONLINE))
+                            }
+                            else if(hasOnlineResp==true)
+                            {
+                                iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(TransStatus.DECLINED_ONLINE))
+                            }
+                            else
+                            {
+                                iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkResult.TransResult(TransStatus.ERROR))
+                            }
+                        }
+                        else -> EmvNfcKernelApi.getInstance()
+                            .sendOnlineProcessResult(hasOnlineResp, tlvTags.toTlvString())
+                    }
                 }
             }catch (e: Exception)
             {
@@ -307,6 +330,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             p0.takeIf { it == ContantPara.CheckCardResult.MSR && p1?.containsKey(EmvConstants.UROVO_SDK_KEY_MSR_DATA)==true}?.let {
                 var msrTlv = TlvUtils(p1?.get(EmvConstants.UROVO_SDK_KEY_MSR_DATA) ?:"")
                 var nfcTlv = TlvUtils()
+                checkCardResult = ContantPara.CheckCardResult.MSR
 
                 msrTlv.tlvMap.containsKey(EmvConstants.UROVO_SDK_KEY_MSR_TRACK2).takeIf { it == true }?.let {
                     msrTlv.tlvMap[EmvConstants.UROVO_SDK_KEY_MSR_TRACK2]?.let {

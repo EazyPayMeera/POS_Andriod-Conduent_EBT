@@ -474,6 +474,11 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
                 emvTags.remove(EmvConstants.EMV_TAG_ENC_TRACK)
             }
 
+            /* Remove Track2 */
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
+                emvTags.remove(EmvConstants.EMV_TAG_TRACK2)
+            }
+
             /* KSN */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_KSN)) {
                 paymentServiceTxnDetails.ksn = emvTags[EmvConstants.EMV_TAG_ENC_KSN]
@@ -499,7 +504,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
         var cardBrand : CardBrand? = CardBrand.UNKNOWN
         try {
 
-            aid?.let {
+            aid?.takeIf { it.length>=10 }?.let {
                 return when(it.substring(0,10))
                 {
                     "A000000003" -> CardBrand.VISA
@@ -510,7 +515,7 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
                     "A000000152" -> CardBrand.DISCOVER
                     else -> CardBrand.UNKNOWN
                 }
-            }?: pan?.let {
+            }?: pan?.takeIf { it.length>=6 }?.let {
                 return when(it.substring(0,6).toInt())
                 {
                     in 400000..499999 -> CardBrand.VISA
