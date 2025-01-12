@@ -127,7 +127,7 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
                         message = context.getString(R.string.err_only_purchase_can_be_refunded))
-                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].txnType.toString()!= TxnType.PREAUTH.toString())
+                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].txnType!= TxnType.PREAUTH.toString())
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
                         message = context.getString(R.string.err_only_preauth_can_be_captured))
