@@ -94,7 +94,15 @@ class ReceiptBuilder {
                     addField(context.getString(R.string.receipt_ref_no), "", paymentDetails.hostTxnRef, Alignment.NONE, FontSize.Small)
                 }
                 addField(context.getString(R.string.receipt_subtotal), "", (paymentDetails?.txnAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
-                addField(context.getString(R.string.receipt_tip), "", (paymentDetails?.tip?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
+                paymentDetails?.tip?.toDoubleOrNull()?.takeIf { it>0.0 }?.let {
+                    addField(context.getString(R.string.receipt_tip), "", (paymentDetails.tip?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
+                }
+                paymentDetails?.SGST?.toDoubleOrNull()?.takeIf { it>0.0 }?.let {
+                    addField(context.getString(R.string.receipt_sgst), "", (paymentDetails.SGST?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
+                }
+                paymentDetails?.CGST?.toDoubleOrNull()?.takeIf { it>0.0 }?.let {
+                    addField(context.getString(R.string.receipt_cgst), "", (paymentDetails.CGST?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
+                }
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                 addField(context.getString(R.string.receipt_total), "", (paymentDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)

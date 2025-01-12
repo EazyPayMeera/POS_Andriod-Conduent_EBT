@@ -290,11 +290,13 @@
     <string name="receipt_invoice_no">इनवॉइस:</string>
     <string name="receipt_auth_code">अधिकार कोड</string>
     <string name="receipt_tip">टिप</string>
+    <string name="receipt_sgst">एसजीएसटी</string>
+    <string name="receipt_cgst">सीजीएसटी</string>
     <string name="receipt_sign">x</string>
     <string name="receipt_card_holder_name">कार्डधारक का नाम</string>
     <string name="receipt_note">लेन-देन स्वीकार किया गया और भुगतान करने के लिए कार्डधारक की जिम्मेदारी की पुष्टि की गई</string>
-    <string name="receipt_custom_copy">******ग्राहक प्रति******</string>
-    <string name="receipt_merch_copy">******व्यापारी प्रति******</string>
+    <string name="receipt_custom_copy">***** ग्राहक प्रति *****</string>
+    <string name="receipt_merch_copy">***** व्यापारी प्रति *****</string>
     <string name="receipt_train_mode">*** प्रशिक्षण मोड ***</string>
 
 
