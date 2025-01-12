@@ -184,7 +184,7 @@ suspend fun initPrinter(
                 iPrinterResultProviderListener
             )
 
-            if(isSummary)
+            if(isDetail)
             {
                 addDetailedReceipt(
                     sharedViewModel,
@@ -204,7 +204,7 @@ suspend fun initPrinter(
                     }
                 )
             }
-            else if(isDetail)
+            else if(isSummary)
             {
                 addSummaryDetails(context,sharedViewModel,objRootAppPaymentDetail,object : IPrinterResultProviderListener{
                     override fun onSuccess(result: Any?) {

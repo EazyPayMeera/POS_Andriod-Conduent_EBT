@@ -256,9 +256,9 @@ fun TransactionListScreen(
                         )
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND))
                         sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP))
-                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE)
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.AUTHCAP)
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (
-                                viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.REFUND)
+                                viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.AUTHCAP) + viewModel.totalTransactionsCount(TxnType.REFUND)
                                 )
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
                         sharedViewModel.objRootAppPaymentDetail.ttlTipAmount = viewModel.totalTipAmount().toString()
@@ -341,7 +341,7 @@ fun SummarySection(viewModel: TxnViewModel) {
             }
 
             Text(
-                formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE)),
+                formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP)),
                 style = MaterialTheme.typography.body2
             )
         }
@@ -542,7 +542,7 @@ fun HeaderSection(
                     .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium), // Consistent padding for the bottom row
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val dNetTotal = viewModel.totalPurchaseTransactions(TxnType.PURCHASE) - viewModel.totalPurchaseTransactions(
+                val dNetTotal = viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP) - viewModel.totalPurchaseTransactions(
                     TxnType.REFUND
                 )
                 val netTotal = formatAmount(dNetTotal)
