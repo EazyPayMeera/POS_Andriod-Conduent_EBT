@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
+import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
+import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.ListDialogueBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUiScreens.usermanagement.viewmodel.UserManagementViewModel
@@ -47,6 +50,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun UserManagementView(navHostController: NavHostController, viewModel: UserManagementViewModel = hiltViewModel()) {
+    val sharedViewModel= localSharedViewModel.current
     Column {
         CommonTopAppBar(
             title = stringResource(id = R.string.label_user_management),
@@ -62,7 +66,8 @@ fun UserManagementView(navHostController: NavHostController, viewModel: UserMana
             CustomDrawerContent(
                 onCloseDrawer = { },
                 navHostController = navHostController,
-                viewModel = viewModel  // Pass viewModel here
+                viewModel = viewModel,  // Pass viewModel here,
+                sharedViewModel = sharedViewModel
             )
         }
     }
@@ -73,10 +78,11 @@ fun UserManagementView(navHostController: NavHostController, viewModel: UserMana
 fun CustomDrawerContent(
     onCloseDrawer: () -> Unit,
     navHostController: NavHostController,
-    viewModel: UserManagementViewModel
+    viewModel: UserManagementViewModel,
+    sharedViewModel: SharedViewModel
 ) {
+    var isViewUser by remember { mutableStateOf(false) }
     var isRemoveUser by remember { mutableStateOf(false) }
-    var isDialogVisible by remember { mutableStateOf(false) }
     val userList = viewModel.usersList.collectAsState().value
 
     val drawersItems = listOf(
@@ -85,6 +91,12 @@ fun CustomDrawerContent(
             text = stringResource(id = R.string.label_add_user),
             isChecked = false,
             onCheckedChange = { navHostController.navigate(AppNavigationItems.AddClerkScreen.route) }
+        ),
+        DrawerItem(
+            imageRes = Icons.Default.Person,
+            text = stringResource(id = R.string.label_view_user),
+            isChecked = false,
+            onCheckedChange = { isViewUser = true }
         ),
         DrawerItem(
             imageRes = Icons.Default.Person,
@@ -126,39 +138,38 @@ fun CustomDrawerContent(
         }
     }
 
+    if (isViewUser) {
+        viewModel.prepareUserList()
+        ListDialogueBuilder.create()
+            .setTitle(stringResource(id = R.string.label_view_user))
+            .UserListDialog(
+                title = stringResource(id = R.string.label_view_user),
+                msgOnEmpty = stringResource(id = R.string.msg_user_list_empty),
+                onClose = { isViewUser = false },
+                users = userList,
+                onItemSelected = { }
+            )
+    }
+
     if (isRemoveUser) {
-        viewModel.fetchUserDetails()
+        viewModel.prepareUserList()
         ListDialogueBuilder.create()
             .setTitle(stringResource(id = R.string.sel_user))
             .UserListDialog(
+                title = stringResource(id = R.string.label_remove_user),
+                msgOnEmpty = stringResource(id = R.string.msg_user_list_empty),
                 onClose = { isRemoveUser = false },
                 users = userList,
                 onItemSelected = { selectedId ->
-                    // Check if only 1 user is available for removal
-                    if (userList.size > 1) {
-                        viewModel.removeUser(selectedId)
-                    } else {
-                        isDialogVisible = true  // Show the dialog if there's only one user
-                    }
+                    viewModel.removeUser(navHostController,selectedId, sharedViewModel)
                 }
             )
     }
 
-    if (isDialogVisible) {
-        CustomDialogBuilder.create()
-            .setTitle(stringResource(id = R.string.operation_not_allowed))
-            .setSubtitle(stringResource(id = R.string.min_one_admin_required))
-            .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-            .setShowProgressIndicator(false)
-            .setShowCloseButton(false)
-            .setOnConfirmAction { }
-            .setConfirmButtonText(stringResource(id = R.string.ok))
-            .setShowButtons(true)
-            .setAutoOff(false)
-            .setNavAction {
-                navHostController.popBackStack()
-            }
-            .buildDialog(onClose = { isDialogVisible = false })
+    CustomDialogBuilder.ShowComposed()
+
+    LaunchedEffect(Unit) {
+        viewModel.onLoad()
     }
 }
 

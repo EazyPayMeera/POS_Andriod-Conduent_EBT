@@ -61,7 +61,11 @@
     <!-- User Management -->
     <string name="label_user_management">उपयोगकर्ता प्रबंधन</string>
     <string name="label_add_user">उपयोगकर्ता जोड़ें</string>
+    <string name="label_view_user">उपयोगकर्ताओं को देखें</string>
     <string name="label_remove_user">उपयोगकर्ता हटाएं</string>
+    <string name="msg_user_removed">उपयोगकर्ता हटाया गया</string>
+    <string name="msg_logout_first">उपयोगकर्ता लॉग इन है\nदूसरे उपयोगकर्ता के साथ लॉग इन करें</string>
+    <string name="msg_user_list_empty">उपयोगकर्ता सूची खाली है</string>
 
     <!-- Change Password -->
     <string name="label_current_pwd">वर्तमान</string>

@@ -152,6 +152,8 @@ class ListDialogueBuilder private constructor() {
 
     @Composable
     fun UserListDialog(
+        title: String,
+        msgOnEmpty: String,
         onClose: () -> Unit,
         users: List<String>,
         onItemSelected: (String) -> Unit // Callback for item selection
@@ -186,7 +188,7 @@ class ListDialogueBuilder private constructor() {
                             ) {
                                 // Header text
                                 Text(
-                                    text = "Select User", // Update with appropriate title if needed
+                                    text = title, // Update with appropriate title if needed
                                     style = MaterialTheme.typography.h6,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
@@ -199,7 +201,7 @@ class ListDialogueBuilder private constructor() {
                         // Check if users list is empty
                         if (users.isEmpty()) {
                             Text(
-                                text = "User list Empty",
+                                text = msgOnEmpty,
                                 style = MaterialTheme.typography.body1,
                                 modifier = Modifier
                                     .padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)

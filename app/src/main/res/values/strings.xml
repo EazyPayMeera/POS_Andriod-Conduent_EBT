@@ -62,7 +62,11 @@
     <!-- User Management -->
     <string name="label_user_management">User Management</string>
     <string name="label_add_user">Add User</string>
+    <string name="label_view_user">View Users</string>
     <string name="label_remove_user">Remove User</string>
+    <string name="msg_user_removed">User Removed</string>
+    <string name="msg_logout_first">User Logged In\nLogin With Another User</string>
+    <string name="msg_user_list_empty">User List Empty</string>
 
     <!-- Change Password -->
     <string name="label_current_pwd">Current</string>

@@ -18,12 +18,17 @@ interface IUserManagementDao {
     @Query("SELECT * FROM UserTable WHERE userId = :userId")
     suspend fun getUserDetails(userId: String): UserManagementEntity?
 
+    @Query("SELECT * FROM UserTable")
+    suspend fun getAllUserDetails(): List<UserManagementEntity>?
+
     @Query("SELECT COUNT(userId) FROM UserTable")
     suspend fun getUserCount(): Int
 
+    @Query("SELECT COUNT(userId) FROM UserTable WHERE userType = 'ADMIN'")
+    suspend fun getAdminCount(): Int
+
     @Query("SELECT EXISTS(SELECT 1 FROM UserTable WHERE userId = :userId AND userType = 'ADMIN')")
     suspend fun isAdmin(userId: String): Boolean
-
 
     @Query("SELECT userId FROM UserTable")
     suspend fun getUserList(): List<String?>

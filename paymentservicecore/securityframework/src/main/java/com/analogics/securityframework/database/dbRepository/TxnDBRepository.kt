@@ -221,12 +221,20 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iUserManagementDao.getUserDetails(userId)
     }
 
+    suspend fun getAllUserDetails(): List<UserManagementEntity>? {
+        return iUserManagementDao.getAllUserDetails()
+    }
+
     suspend fun getUserList(): List<String?> {
         return iUserManagementDao.getUserList()
     }
 
     suspend fun getUserCount(): Int {
         return iUserManagementDao.getUserCount()
+    }
+
+    suspend fun getAdminCount(): Int {
+        return iUserManagementDao.getAdminCount()
     }
 
     suspend fun fetchPassword(user: String): String? {
