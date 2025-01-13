@@ -111,13 +111,27 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     }
 
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {
-        navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(AppConstants.NAV_KEY_TAX_TYPE, if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST)
-        navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+        if (isAdmin.value != true) {
+            onShowAdminOnly(navHostController.context)
+        } else {
+            navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(
+                AppConstants.NAV_KEY_TAX_TYPE,
+                if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST
+            )
+            navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+        }
     }
 
     fun onTipPercentChange(button: TipButton, navHostController: NavHostController) {
-        navHostController.currentBackStackEntry?.savedStateHandle?.set<Int>(AppConstants.NAV_KEY_TIP_PERCENT_INDEX, button.value)
-        navHostController.navigate(AppNavigationItems.TipPercentageScreen.route)
+        if (isAdmin.value != true) {
+            onShowAdminOnly(navHostController.context)
+        } else {
+            navHostController.currentBackStackEntry?.savedStateHandle?.set<Int>(
+                AppConstants.NAV_KEY_TIP_PERCENT_INDEX,
+                button.value
+            )
+            navHostController.navigate(AppNavigationItems.TipPercentageScreen.route)
+        }
     }
 
     fun onLoad(sharedViewModel: SharedViewModel)

@@ -60,7 +60,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigViewModel = hiltViewModel()) {
     var sharedViewModel = localSharedViewModel.current
     val isBatchOpen = viewModel.isBatchOpen.collectAsState().value
-    val isAdmin =viewModel.isAdmin.collectAsState().value
+    val isAdmin = viewModel.isAdmin.collectAsState().value
     val context = LocalContext.current
 
 
@@ -82,7 +82,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             },
             isArrow = false,
             onArrowChange = {},
-            isAdmin = isAdmin
+            isEnabled = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_invoice_prompt,
@@ -91,7 +91,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
             onArrowChange = {},
-            isAdmin = isAdmin
+            isEnabled = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_tipping,
@@ -100,7 +100,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
             onArrowChange = {},
-            isAdmin = isAdmin
+            isEnabled = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_tax,
@@ -109,7 +109,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
             onArrowChange = {},
-            isAdmin = isAdmin
+            isEnabled = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
@@ -118,7 +118,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
             onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onShowAdminOnly(context)},
-            isAdmin = isAdmin
+            isEnabled = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
@@ -127,7 +127,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
             isArrow = false,
             onArrowChange = {},
-            isAdmin = true
+            isEnabled = true
         ),
         SettingsItem(
             imageRes = R.drawable.config_auto_m_print,
@@ -136,7 +136,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
             isArrow = false,
             onArrowChange = { },
-            isAdmin = true
+            isEnabled = true
         ),
         SettingsItem(
             imageRes = R.drawable.time,
@@ -145,7 +145,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
             isArrow = true,
             onArrowChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
-            isAdmin = true
+            isEnabled = true
         ),
         SettingsItem(
             imageRes = R.drawable.batch_id,
@@ -154,7 +154,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
             isArrow = true,
             onArrowChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
-            isAdmin = true
+            isEnabled = true
         ),
     )
 
@@ -176,22 +176,22 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                     SettingsSurface(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
-                        isAdmin = item.isAdmin
+                        isEnabled = item.isEnabled
                     )
 
                     if (index == 2 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Percentage, navHostController, viewModel, sharedViewModel)
+                        TippingView(ConfigurableViewType.Percentage, navHostController, viewModel, sharedViewModel, item.isEnabled)
                     }
 
                     if (index == 3 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel)
+                        TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel, item.isEnabled)
                     }
 
                     if (index == 7 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Inactivity_Timeout, navHostController, viewModel, sharedViewModel)
+                        TippingView(ConfigurableViewType.Inactivity_Timeout, navHostController, viewModel, sharedViewModel, item.isEnabled)
                     }
                     if (index == 8 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Batch_Id, navHostController, viewModel, sharedViewModel)
+                        TippingView(ConfigurableViewType.Batch_Id, navHostController, viewModel, sharedViewModel, item.isEnabled)
                     }
 
                     if (index < settingsItems.size - 1) {
@@ -220,7 +220,7 @@ data class SettingsItem(
     val onCheckedChange: (Boolean) -> Unit,
     val isArrow: Boolean,
     val onArrowChange: () -> Unit, // Change to a function without parameters
-    var isAdmin: Boolean
+    var isEnabled: Boolean
 
 )
 
@@ -231,7 +231,8 @@ fun TippingView(
     type: ConfigurableViewType,
     navHostController: NavHostController,
     viewModel: ConfigViewModel,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    isEnabled : Boolean
 ) {
     var timeoutDuration by remember { mutableStateOf(sharedViewModel.objPosConfig?.inactivityTimeout?.toString() ?: "") }
     var batchId by remember { mutableStateOf(sharedViewModel.objPosConfig?.batchId?.toString() ?: "") }
@@ -255,138 +256,154 @@ fun TippingView(
         ConfigurableViewType.Inactivity_Timeout -> stringResource(R.string.set_timeout)
         ConfigurableViewType.Batch_Id -> stringResource(R.string.set_batch_id)
     }
-
-    Box(
+    Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.onPrimary)
-            .padding(MaterialTheme.dimens.DP_4_CompactMedium)
+            .fillMaxSize()
+            .then(if (!isEnabled) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+            .clickable(enabled = isEnabled) {}, // Make it non-clickable if isAdmin is false
+        color = MaterialTheme.colorScheme.onPrimary
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.onPrimary)
+                .padding(MaterialTheme.dimens.DP_4_CompactMedium)
+                .then(if (!isEnabled) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+                .clickable(enabled = isEnabled) {}, // Make it non-clickable if isAdmin is false
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
+            Column(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-            )
-            if (type == ConfigurableViewType.Inactivity_Timeout) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()  // Ensures the Box takes only the required height
-                ) {
-                    OutlinedTextField(
-                        value = timeoutDuration,
-                        onValueChange = { newValue -> timeoutDuration = newValue },
-                        label = { Text(stringResource(id = R.string.timeout)) },
-                        placeholder = { Text(stringResource(id = R.string.enter_timeout)) },
-                        textStyle = TextStyle(textAlign = TextAlign.Center),
-                        modifier = Modifier
-                            .align(Alignment.Center)  // Center the TextField within the Box
-                            .width(MaterialTheme.dimens.DP_160_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_60_CompactMedium), // Adjust height as needed
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
-                            focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
-                            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
-                            cursorColor = Color.Transparent
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                viewModel.onInactivityTimeoutChange(timeoutDuration.toInt(),sharedViewModel)
-                            }
-                        )
-                    )
-                }
-            }
-            else if (type == ConfigurableViewType.Batch_Id) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()  // Ensures the Box takes only the required height
-                ) {
-                    OutlinedTextField(
-                        value = batchId,
-                        onValueChange = { newValue -> batchId = newValue },
-                        label = { Text(stringResource(id = R.string.batch_id)) },
-                        placeholder = { Text(stringResource(id = R.string.set_batch_id)) },
-                        textStyle = TextStyle(textAlign = TextAlign.Center),
-                        modifier = Modifier
-                            .align(Alignment.Center)  // Center the TextField within the Box
-                            .width(MaterialTheme.dimens.DP_160_CompactMedium)
-                            .height(MaterialTheme.dimens.DP_60_CompactMedium), // Adjust height as needed
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
-                            focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
-                            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
-                            cursorColor = Color.Transparent
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                viewModel.onBatchIdChange(batchId.toInt(),sharedViewModel)
-                            }
-                        )
-                    )
-                }
-            }
-            else {
-                // For other types (Percentage, Taxes), show the Card components
-                val cardHeight = if (type == ConfigurableViewType.Taxes) {
-                    MaterialTheme.dimens.DP_50_CompactMedium
-                } else {
-                    MaterialTheme.dimens.DP_40_CompactMedium
-                }
-
-                Row(
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
-                        .padding(MaterialTheme.dimens.DP_20_CompactMedium),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    options.forEach { option ->
-                        Card(
+                        .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
+                )
+                if (type == ConfigurableViewType.Inactivity_Timeout) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()  // Ensures the Box takes only the required height
+                    ) {
+                        OutlinedTextField(
+                            value = timeoutDuration,
+                            onValueChange = { newValue -> timeoutDuration = newValue },
+                            label = { Text(stringResource(id = R.string.timeout)) },
+                            placeholder = { Text(stringResource(id = R.string.enter_timeout)) },
+                            textStyle = TextStyle(textAlign = TextAlign.Center),
                             modifier = Modifier
-                                .width(MaterialTheme.dimens.DP_115_CompactMedium)
-                                .height(cardHeight),
-                            onClick = {
-                                when (type) {
-                                    ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(
-                                        when (options.indexOf(option)) {
-                                            0 -> TipButton.PERCENT1
-                                            1 -> TipButton.PERCENT2
-                                            2 -> TipButton.PERCENT3
-                                            else -> TipButton.NONE
-                                        }, navHostController
+                                .align(Alignment.Center)  // Center the TextField within the Box
+                                .width(MaterialTheme.dimens.DP_160_CompactMedium)
+                                .height(MaterialTheme.dimens.DP_60_CompactMedium), // Adjust height as needed
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
+                                focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
+                                unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
+                                cursorColor = Color.Transparent
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    viewModel.onInactivityTimeoutChange(
+                                        timeoutDuration.toInt(),
+                                        sharedViewModel
                                     )
-                                    ConfigurableViewType.Taxes -> viewModel.onTaxPercentChange(options.indexOf(option), navHostController)
-                                    ConfigurableViewType.Inactivity_Timeout -> {
-                                        // No action needed here for Inactivity Timeout
-                                    }
-                                    ConfigurableViewType.Batch_Id -> {
-                                        // No action needed here for Inactivity Timeout
-                                    }
                                 }
-                            },
-                            elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium)
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
+                            )
+                        )
+                    }
+                } else if (type == ConfigurableViewType.Batch_Id) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()  // Ensures the Box takes only the required height
+                    ) {
+                        OutlinedTextField(
+                            value = batchId,
+                            onValueChange = { newValue -> batchId = newValue },
+                            label = { Text(stringResource(id = R.string.batch_id)) },
+                            placeholder = { Text(stringResource(id = R.string.set_batch_id)) },
+                            textStyle = TextStyle(textAlign = TextAlign.Center),
+                            modifier = Modifier
+                                .align(Alignment.Center)  // Center the TextField within the Box
+                                .width(MaterialTheme.dimens.DP_160_CompactMedium)
+                                .height(MaterialTheme.dimens.DP_60_CompactMedium), // Adjust height as needed
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
+                                focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
+                                unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
+                                cursorColor = Color.Transparent
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    viewModel.onBatchIdChange(batchId.toInt(), sharedViewModel)
+                                }
+                            )
+                        )
+                    }
+                } else {
+                    // For other types (Percentage, Taxes), show the Card components
+                    val cardHeight = if (type == ConfigurableViewType.Taxes) {
+                        MaterialTheme.dimens.DP_50_CompactMedium
+                    } else {
+                        MaterialTheme.dimens.DP_40_CompactMedium
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(MaterialTheme.dimens.DP_20_CompactMedium),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        options.forEach { option ->
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(color = MaterialTheme.colorScheme.onPrimary)
+                                    .width(MaterialTheme.dimens.DP_115_CompactMedium)
+                                    .height(cardHeight),
+                                onClick = {
+                                    when (type) {
+                                        ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(
+                                            when (options.indexOf(option)) {
+                                                0 -> TipButton.PERCENT1
+                                                1 -> TipButton.PERCENT2
+                                                2 -> TipButton.PERCENT3
+                                                else -> TipButton.NONE
+                                            }, navHostController
+                                        )
+
+                                        ConfigurableViewType.Taxes -> viewModel.onTaxPercentChange(
+                                            options.indexOf(option),
+                                            navHostController
+                                        )
+
+                                        ConfigurableViewType.Inactivity_Timeout -> {
+                                            // No action needed here for Inactivity Timeout
+                                        }
+
+                                        ConfigurableViewType.Batch_Id -> {
+                                            // No action needed here for Inactivity Timeout
+                                        }
+                                    }
+                                },
+                                elevation = CardDefaults.elevatedCardElevation(MaterialTheme.dimens.DP_4_CompactMedium)
                             ) {
-                                Text(
-                                    text = option,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(MaterialTheme.dimens.DP_4_CompactMedium)
-                                )
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(color = MaterialTheme.colorScheme.onPrimary)
+                                ) {
+                                    Text(
+                                        text = option,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(MaterialTheme.dimens.DP_4_CompactMedium)
+                                    )
+                                }
                             }
                         }
                     }
@@ -417,13 +434,13 @@ enum class TipButton(val value: Int) {
 fun SettingsSurface(
     modifier: Modifier = Modifier,
     item: SettingsItem,
-    isAdmin: Boolean
+    isEnabled: Boolean
 ) {
     Surface(
         modifier = modifier
             .height(MaterialTheme.dimens.DP_60_CompactMedium)
-            .then(if (!isAdmin) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
-            .clickable(enabled = isAdmin) {}, // Make it non-clickable if isAdmin is false
+            .then(if (!isEnabled) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+            .clickable(enabled = isEnabled) {}, // Make it non-clickable if isAdmin is false
         color = MaterialTheme.colorScheme.onPrimary
     ) {
         SettingsContent(
