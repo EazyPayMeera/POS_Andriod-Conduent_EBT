@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.tpaymentsapos.BuildConfig
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
@@ -110,6 +112,12 @@ fun CustomDrawerContent(
                 text = stringResource(id = R.string.Configuration),
                 isChecked = false,
                 onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) }
+            ),
+            DrawerItem(
+                imageRes = Icons.Default.Key,
+                text = stringResource(id = R.string.reactivate_device),
+                isChecked = false,
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,

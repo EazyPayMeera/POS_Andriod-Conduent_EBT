@@ -15,9 +15,11 @@ import com.analogics.paymentservicecore.repository.emvService.EmvServiceReposito
 import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.tpaymentsapos.R
+import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootModel.ObjRootAppPaymentDetails
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.rootUtils.miscellaneous.readAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fetchLastTransactions
@@ -119,6 +121,32 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                         //CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
                     }
                 })
+            }
+        }
+    }
+
+    fun onReactivate(navHostController : NavHostController, sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            if (txnDBRepository.isBatchOpen()) {
+                CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.resources.getString(
+                        R.string.restricted
+                    ),
+                    subtitle = navHostController.context.resources.getString(R.string.batch_open)
+                )
+            }
+            else{
+                CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.getString(R.string.reactivate_device),
+                    message = navHostController.context.getString(R.string.confirm_reactivate_device),
+                    okBtnText = navHostController.context.getString(R.string.yes),
+                    onOkClick = {
+                        sharedViewModel.objPosConfig?.apply { isActivationDone = false; isLoggedIn = false; isPaymentSDKInit = false }
+                            ?.saveToPrefs()
+                        navHostController.navigateAndClean(AppNavigationItems.ActivationScreen.route)
+                    },
+                    cancelBtnText = navHostController.context.getString(R.string.cancel_no),
+                )
             }
         }
     }

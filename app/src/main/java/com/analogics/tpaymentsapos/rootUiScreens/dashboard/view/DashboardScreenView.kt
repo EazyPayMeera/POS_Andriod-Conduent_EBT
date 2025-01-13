@@ -64,7 +64,13 @@ fun DashboardView(navHostController: NavHostController) {
         navHostController = navHostController,
         dashboardViewModel,
         dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel, sharedViewModel)
-    ) {}
+    ) {
+        when(it)
+        {
+            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE-> dashboardViewModel.onReactivate(navHostController, sharedViewModel)
+            else -> null
+        }
+    }
 }
 
 @Composable

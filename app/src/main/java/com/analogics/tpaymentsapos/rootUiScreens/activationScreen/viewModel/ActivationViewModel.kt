@@ -14,6 +14,7 @@ import com.analogics.paymentservicecore.models.Acquirer
 import com.analogics.paymentservicecore.models.TxnStatus
 import com.analogics.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.securityframework.database.dbRepository.TxnDBRepository
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
@@ -27,7 +28,7 @@ import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @HiltViewModel
-class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository) :
+class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository, private var txnDBRepository: TxnDBRepository) :
     ViewModel(),
     IApiServiceResponseListener {
     var tidInput = mutableStateOf("")
@@ -124,7 +125,14 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.apply {
             isActivationDone = true
         }?.saveToPrefs()
-        navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+        viewModelScope.launch {
+            txnDBRepository.getUserCount().let {
+                if(it>0)
+                    navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+                else
+                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+            }
+        }
     }
 
     fun loadDefaultValues(sharedViewModel: SharedViewModel?)

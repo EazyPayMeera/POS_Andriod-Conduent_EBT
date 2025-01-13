@@ -26,6 +26,8 @@ object AppConstants {
     /* UI */
     const val BUTTON_CLICK_DISAPPEAR_DELAY_MS = 100L
 
+    const val BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE = "EVT_REACTIVATE_DEVICE"
+
     const val BATCH_ID_START_VAL = 1
 
     const val DEFAULT_DEMO_MODE = false
