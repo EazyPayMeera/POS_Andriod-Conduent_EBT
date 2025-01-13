@@ -129,7 +129,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                                     }
                                 }
                                 else if(isCardCheckStatusAbort(response.status)) {
-                                    displayEmvError(response.displayMsgId, true)
+                                    displayEmvError(response.displayMsgId, abort =  true)
                                 }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
@@ -141,7 +141,16 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
                     override fun onEmvServiceDisplayMessage(
                         displayMsgId: EmvServiceResult.DisplayMsgId
                     ) {
-                        displayInfoMsgId.value = displayMsgId
+                        if(isDispIdNeedPopupMsg(displayMsgId)) {
+                            displayEmvError(displayMsgId, restart = false)
+                        }
+                        else{
+                            displayInfoMsgId.value = displayMsgId
+                            if(displayMsgId!=EmvServiceResult.DisplayMsgId.NONE) {
+                                emvInProgress.value = true
+                                showProgressVar.value = true
+                            }
+                        }
                     }
                 })
         }
@@ -158,7 +167,7 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
         }
     }
 
-    fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false)
+    fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
         /* Display error & restart payment */
         emvInProgress.value = false
@@ -171,9 +180,11 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
             message = message,
             onOkClick = {
                 abort?.takeIf { it == false }?.let {
-                    viewModelScope.launch {
-                        delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
-                        startPayment(context, sharedViewModel, navHostController)
+                    if(restart==true) {
+                        viewModelScope.launch {
+                            delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                            startPayment(context, sharedViewModel, navHostController)
+                        }
                     }
                 }?:let {
                     abortPayment(navHostController)
@@ -215,6 +226,18 @@ class CardViewModel @Inject constructor(private  var emvServiceRepository: EmvSe
             EmvServiceResult.CardCheckStatus.MULTIPLE_CARDS,
             EmvServiceResult.CardCheckStatus.DEVICE_BUSY,
             EmvServiceResult.CardCheckStatus.ERROR,
+            -> true
+            else -> false
+        }
+    }
+
+    fun isDispIdNeedPopupMsg(displayMsgId: EmvServiceResult.DisplayMsgId?) : Boolean
+    {
+        return when(displayMsgId)
+        {
+            EmvServiceResult.DisplayMsgId.RETRY,
+            EmvServiceResult.DisplayMsgId.SEE_PHONE_AND_PRESENT_CARD_AGAIN,
+            EmvServiceResult.DisplayMsgId.TAP_CARD_AGAIN
             -> true
             else -> false
         }

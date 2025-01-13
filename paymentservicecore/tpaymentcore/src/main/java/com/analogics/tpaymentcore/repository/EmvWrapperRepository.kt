@@ -410,6 +410,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         override fun onNFCrequestTipsConfirm(p0: ContantPara.NfcTipMessageID?, p1: String?) {
             Log.d("EMV_APP", "NFC Request Tip:" + p0.toString())
             nfcDisplayMsgId = urovoToDisplayMsgId(p0)
+            iEmvSdkResponseListener?.onEmvSdkDisplayMessage(nfcDisplayMsgId?:DisplayMsgId.NONE)
         }
 
         override fun onReturnNfcCardData(p0: Hashtable<String, String>?) {

@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -57,10 +58,11 @@ fun ApprovedView(navHostController: NavHostController) {
     val sharedViewModel = localSharedViewModel.current
 
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
+    val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
 
     Column {
         CommonTopAppBar(
-            onBackButtonClick = { navHostController.popBackStack() },
+            onBackButtonClick = { },
             showBackIcon = false
         )
 
@@ -110,28 +112,49 @@ fun ApprovedView(navHostController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularMenu(
-                        menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
-                        onMenuOptionClick = { option ->
-                            when (option) {
-                                context.resources.getString((R.string.cust_recp)) -> {
-                                    viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,txnRecord)
-                                }
-                                context.resources.getString((R.string.merchant_recp)) -> {
-                                    viewModel.printReceipt(R.drawable.master_mono, sharedViewModel, context, objRootAppPaymentDetail = txnRecord)
-                                }
+                if(hasDbRecord==true) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularMenu(
+                            menuOptions = listOf(
+                                context.resources.getString((R.string.cust_recp)),
+                                context.resources.getString((R.string.merchant_recp))
+                            ),
+                            onMenuOptionClick = { option ->
+                                when (option) {
+                                    context.resources.getString((R.string.cust_recp)) -> {
+                                        viewModel.printReceipt(
+                                            R.drawable.master_mono,
+                                            sharedViewModel,
+                                            context,
+                                            true,
+                                            txnRecord
+                                        )
+                                    }
 
-                            }
-                        },
-                        onPrintClick = {}
-                    )
+                                    context.resources.getString((R.string.merchant_recp)) -> {
+                                        viewModel.printReceipt(
+                                            R.drawable.master_mono,
+                                            sharedViewModel,
+                                            context,
+                                            objRootAppPaymentDetail = txnRecord
+                                        )
+                                    }
+                                }
+                            },
+                            onPrintClick = {}
+                        )
+                    }
                 }
+                else
+                {
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_70_CompactMedium))
+                }
+
                 Box(
                     modifier = Modifier
                         .padding(top = MaterialTheme.dimens.DP_50_CompactMedium)

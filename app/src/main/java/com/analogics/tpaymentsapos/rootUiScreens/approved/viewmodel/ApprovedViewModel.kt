@@ -17,6 +17,8 @@ import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import com.analogics.tpaymentsapos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import printReceipt
 import javax.inject.Inject
@@ -25,16 +27,27 @@ import javax.inject.Inject
 class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel()
 {
     lateinit var context: Context
+    private val _hasDbRecord = MutableStateFlow<Boolean>(false)
+    val hasDbRecord: StateFlow<Boolean> = _hasDbRecord
 
     fun onLoad(context: Context, sharedViewModel: SharedViewModel)
     {
         this.context = context
+        viewModelScope.launch {
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
+                _hasDbRecord.value = true
+            }
 
-        if(sharedViewModel.objPosConfig?.isAutoPrintMerchant==true)
-        {
-            viewModelScope.launch{
-                delay(AppConstants.AUTO_PRINT_RECEIPT_DELAY_MS)
-                printReceipt(R.drawable.master_mono,sharedViewModel,context,objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail)
+            if (_hasDbRecord.value == true && sharedViewModel.objPosConfig?.isAutoPrintMerchant == true) {
+                viewModelScope.launch {
+                    delay(AppConstants.AUTO_PRINT_RECEIPT_DELAY_MS)
+                    printReceipt(
+                        R.drawable.master_mono,
+                        sharedViewModel,
+                        context,
+                        objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
+                    )
+                }
             }
         }
     }
