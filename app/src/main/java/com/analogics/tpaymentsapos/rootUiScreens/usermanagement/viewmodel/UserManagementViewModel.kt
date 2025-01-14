@@ -1,5 +1,6 @@
 package com.analogics.tpaymentsapos.rootUiScreens.usermanagement.viewmodel
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -26,6 +27,8 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
     private val _userList = MutableStateFlow<List<String>>(emptyList())
     val usersList: StateFlow<List<String>> = _userList
     lateinit var userList: List<UserManagementEntity>
+    private val _isAdmin = MutableStateFlow(false) // Change to StateFlow
+    val isAdmin: StateFlow<Boolean> get() = _isAdmin
 
     // Function to fetch user details from the database
     fun prepareUserList() {
@@ -94,8 +97,9 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
         }
     }
 
-    fun onLoad() {
+    fun onLoad(sharedViewModel: SharedViewModel) {
         refreshUserList()
+        checkIfAdmin(sharedViewModel)
     }
 
     fun refreshUserList() {
@@ -108,5 +112,25 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
                 Log.e("FetchUserDetails", "Error fetching user details: ${e.message}")
             }
         }
+    }
+
+    fun checkIfAdmin(sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            sharedViewModel.objPosConfig?.loginId?.let {
+                dbRepository.isAdmin(it).let {
+                    _isAdmin.value = it
+                }
+            }
+        }
+    }
+
+    fun onShowAdminOnly(context: Context)
+    {
+        CustomDialogBuilder.composeAlertDialog(
+            title = context.resources.getString(
+                R.string.restricted
+            ),
+            subtitle = context.resources.getString(R.string.for_admin)
+        )
     }
 }

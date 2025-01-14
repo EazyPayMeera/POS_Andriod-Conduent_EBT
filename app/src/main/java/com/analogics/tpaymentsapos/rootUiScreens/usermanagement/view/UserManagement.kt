@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -84,30 +85,35 @@ fun CustomDrawerContent(
     var isViewUser by remember { mutableStateOf(false) }
     var isRemoveUser by remember { mutableStateOf(false) }
     val userList = viewModel.usersList.collectAsState().value
+    val isAdmin = viewModel.isAdmin.collectAsState().value
 
     val drawersItems = listOf(
         DrawerItem(
             imageRes = Icons.Default.PermIdentity,
             text = stringResource(id = R.string.label_add_user),
             isChecked = false,
-            onCheckedChange = { navHostController.navigate(AppNavigationItems.AddClerkScreen.route) }
+            isEnabled = isAdmin,
+            onCheckedChange = { if(!isAdmin) viewModel.onShowAdminOnly(navHostController.context) else navHostController.navigate(AppNavigationItems.AddClerkScreen.route) }
         ),
         DrawerItem(
             imageRes = Icons.Default.Person,
             text = stringResource(id = R.string.label_view_user),
             isChecked = false,
+            isEnabled = true,
             onCheckedChange = { isViewUser = true }
         ),
         DrawerItem(
             imageRes = Icons.Default.Person,
             text = stringResource(id = R.string.label_remove_user),
             isChecked = false,
-            onCheckedChange = { isRemoveUser = true }
+            isEnabled = isAdmin,
+            onCheckedChange = { if(!isAdmin) viewModel.onShowAdminOnly(navHostController.context) else isRemoveUser = true }
         ),
         DrawerItem(
             imageRes = Icons.Default.Settings,
             text = stringResource(id = R.string.change_password),
             isChecked = false,
+            isEnabled = true,
             onCheckedChange = { navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route) }
         ),
     )
@@ -169,7 +175,7 @@ fun CustomDrawerContent(
     CustomDialogBuilder.ShowComposed()
 
     LaunchedEffect(Unit) {
-        viewModel.onLoad()
+        viewModel.onLoad(sharedViewModel)
     }
 }
 
@@ -177,16 +183,19 @@ data class DrawerItem(
     val imageRes: ImageVector,
     val text: String,
     val isChecked: Boolean,
-    val onCheckedChange: (Boolean) -> Unit
+    val onCheckedChange: (Boolean) -> Unit,
+    var isEnabled : Boolean
 )
 
 @Composable
 fun DrawersSurface(
     modifier: Modifier = Modifier,
-    item: DrawerItem,
+    item: DrawerItem
 ) {
     Surface(
-        modifier = Modifier.height(MaterialTheme.dimens.DP_60_CompactMedium),
+        modifier = Modifier.height(MaterialTheme.dimens.DP_60_CompactMedium)
+            .then(if (!item.isEnabled) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+            .clickable(enabled = item.isEnabled) {}, // Make it non-clickable if isAdmin is false ,
         color = MaterialTheme.colorScheme.onPrimary
     ) {
         DrawersContent(
