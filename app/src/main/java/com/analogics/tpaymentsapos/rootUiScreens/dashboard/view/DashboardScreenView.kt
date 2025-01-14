@@ -270,8 +270,8 @@ fun DashboardContentSurface(
             }
 
             // LaunchedEffect that toggles visibility
-            LaunchedEffect(Unit) {
-                while (true) {
+            LaunchedEffect(isDemoMode) {
+                while (isDemoMode==true) {
                     delay(AppConstants.TRAINING_MODE_BLINK_DELAY_MS)
                     visibility = !visibility // Toggle visibility
                 }
