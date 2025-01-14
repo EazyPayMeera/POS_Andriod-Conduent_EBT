@@ -22,9 +22,6 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
 
-    private val _savedPassword = MutableStateFlow("")
-    val savedPassword: StateFlow<String> = _savedPassword
-
     fun updatePassword(newValue: String):String {
         _password.value = newValue
         return _password.value
@@ -34,18 +31,6 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
         viewModelScope.launch {
             navHostController.popBackStack()
             navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
-        }
-    }
-
-    fun navigateToAmountScreen(navHostController: NavHostController) {
-        viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.AmountScreen.route)
-        }
-    }
-
-    fun navigateToTrainingScreen(navHostController: NavHostController) {
-        viewModelScope.launch {
-            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         }
     }
 

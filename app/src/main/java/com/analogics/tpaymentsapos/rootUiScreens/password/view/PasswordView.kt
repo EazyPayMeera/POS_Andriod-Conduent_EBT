@@ -42,7 +42,6 @@ fun PasswordView(navHostController: NavHostController) {
     val context = LocalContext.current
     val viewModel: PasswordViewModel = hiltViewModel()
     var sharedViewModel= localSharedViewModel.current
-    var isDialogVisible by remember { mutableStateOf(false) }
 
     // Collect the state from ViewModel
     val password by viewModel.password.collectAsState()
@@ -103,32 +102,6 @@ fun PasswordView(navHostController: NavHostController) {
             }
         )
 
-/*        if (isDialogVisible) {
-            CustomDialogBuilder.create()
-                .setTitle(stringResource(id = R.string.cancel_dialogue))
-                .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
-                .setSmallText("")
-                .setShowCloseButton(false) // Can set to false if you don't want the close button
-                .setCancelButtonText(stringResource(id = R.string.yes))
-                .setConfirmButtonText(stringResource(id = R.string.cancel_no))
-                .setCancelable(true)
-                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
-                .setShowProgressIndicator(false)
-                .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
-                }
-                .setOnConfirmAction {
-                    navHostController.navigate(AppNavigationItems.PasswordScreen.route)
-                }
-                .setShowButtons(true)
-                .setAutoOff(false)
-                .setNavAction {
-                    navHostController.popBackStack()
-                }
-                .buildDialog(onClose = { isDialogVisible = false })
-
-        }*/
         CustomDialogBuilder.ShowComposed()
 
     }
