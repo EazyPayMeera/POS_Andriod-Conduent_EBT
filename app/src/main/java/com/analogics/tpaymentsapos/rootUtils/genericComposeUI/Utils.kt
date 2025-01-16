@@ -406,7 +406,7 @@ fun String.splitByIntervals(intervals: List<Int>, charSequence : CharSequence = 
 
 
 @Composable
-fun HideSoftKeyboard(navController: NavHostController) {
+fun HideSoftKeyboard() {
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
         keyboardController?.hide()

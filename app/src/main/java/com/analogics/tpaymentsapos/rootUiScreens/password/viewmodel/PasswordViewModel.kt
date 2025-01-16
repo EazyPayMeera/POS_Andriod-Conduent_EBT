@@ -49,6 +49,7 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
                 }
                 else
                 {
+                    _password.value = ""
                     event.emit(PasswordValidation.Result(true))
                 }
             } catch (e: Exception) {
@@ -60,6 +61,7 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
     fun onCancel()
     {
         viewModelScope.launch {
+            _password.value = ""
             event.emit(PasswordValidation.Result(false))
         }
     }

@@ -68,6 +68,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -450,9 +451,12 @@ fun FooterButtons(
     secondButtonTitle: String?=null,
     secondButtonOnClick: (() -> Unit)?={},
     alignment: Alignment = Alignment.BottomCenter, // Default alignment
-    enabled: Boolean?=true
+    enabled: Boolean?=true,
+    closeKeypadOnFirstButton : Boolean?=false,
+    closeKeypadOnSecondButton : Boolean?=false
 ) {
     val isKeyboardVisible = remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     fun updateKeyboardState(view: View) {
         val isKeyboardOpen =
@@ -500,6 +504,7 @@ fun FooterButtons(
                     enabled = enabled!=false,
                     onClick = {
                         isFirstButtonPressed = true
+                        if(closeKeypadOnFirstButton ==  true) keyboardController?.hide()
                         firstButtonOnClick?.invoke()
                     },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_11_CompactMedium),
@@ -541,6 +546,7 @@ fun FooterButtons(
                     enabled = enabled!=false,
                     onClick = {
                         isSecondButtonPressed = true
+                        if(closeKeypadOnSecondButton ==  true) keyboardController?.hide()
                         secondButtonOnClick?.invoke()
                     },
                     modifier = Modifier

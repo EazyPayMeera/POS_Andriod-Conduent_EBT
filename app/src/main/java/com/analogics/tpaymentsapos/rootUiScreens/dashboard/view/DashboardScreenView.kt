@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,27 +60,57 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
-    val sharedViewModel= localSharedViewModel.current
-    val isPromptPassword = remember { mutableStateOf(false) }
+    val sharedViewModel = localSharedViewModel.current
+    val isPasswordPrompt = remember { mutableStateOf(false) }
+    val receivedEvent = remember { mutableStateOf("") }
 
-    TrainingView(
-        navHostController = navHostController,
-        dashboardViewModel,
-        dashboardItemLists = dashboardItemListData(navHostController, dashboardViewModel, sharedViewModel)
-    ) {
-        when(it)
-        {
-            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE-> isPromptPassword.value = true
+    fun handleDashboardTrigger(event: String) {
+        when (event) {
+            AppConstants.BUTTON_CLICK_EVENT_SET_LANGUAGE -> navHostController.navigate(
+                AppNavigationItems.LanguageScreen.route
+            )
+            AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT -> navHostController.navigate(
+                AppNavigationItems.UserManagementScreen.route
+            )
+            AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION -> navHostController.navigate(
+                AppNavigationItems.ConfigurationScreen.route
+            )
+            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE -> dashboardViewModel.onReactivate(
+                navHostController,
+                sharedViewModel
+            )
+            AppConstants.BUTTON_CLICK_EVENT_LOGOUT -> navHostController.navigate(
+                AppNavigationItems.ConfirmShiftScreen.route
+            )
             else -> null
         }
     }
 
-    if(isPromptPassword.value==true) {
-        PasswordUtil.VerifyUserPassword(navHostController = navHostController) {
-            isPromptPassword.value = false
+    TrainingView(
+        navHostController = navHostController,
+        dashboardViewModel,
+        dashboardItemLists = dashboardItemListData(
+            navHostController,
+            dashboardViewModel,
+            sharedViewModel
+        )
+    ) { event, isPassword ->
+        isPasswordPrompt.value = isPassword
+        if (isPassword) {
+            receivedEvent.value = event
+        } else {
+            handleDashboardTrigger(event)
         }
     }
+
+    PasswordUtil.PromptUserPassword(navHostController, isPasswordPrompt.value) {
+        isPasswordPrompt.value = false
+        if(it==true)    /* Only If Password Validation Is Successful */
+            handleDashboardTrigger(receivedEvent.value)
+    }
 }
+
+
 
 @Composable
 fun dashboardItemListData(
@@ -166,7 +197,7 @@ fun TrainingView(
     navHostController: NavHostController,
     dashboardViewModel: DashboardViewModel,
     dashboardItemLists: List<DashboardItemList>,
-    onMenuItemClick: (String) -> Unit
+    onMenuItemClick: (String, Boolean) -> Unit
 ) {
     val sharedViewModel= localSharedViewModel.current
     val selectedButton = dashboardViewModel.selectedButton.value
@@ -230,7 +261,7 @@ fun TrainingView(
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
     
-    HideSoftKeyboard(navHostController)
+    HideSoftKeyboard()
     CustomDialogBuilder.ShowComposed()
 }
 

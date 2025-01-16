@@ -166,7 +166,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
+            closeKeypadOnSecondButton = true
         )
 
         if (isDialogVisible) {

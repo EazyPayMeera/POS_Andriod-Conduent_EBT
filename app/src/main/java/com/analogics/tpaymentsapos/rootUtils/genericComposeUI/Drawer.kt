@@ -46,7 +46,7 @@ import com.analogics.tpaymentsapos.ui.theme.dimens
 fun CustomDrawerContent(
     onCloseDrawer: () -> Unit,
     navHostController: NavHostController,
-    onMenuItemClick: (String) -> Unit
+    onMenuItemClick: (String, Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -93,37 +93,31 @@ fun CustomDrawerContent(
                 imageRes = Icons.Default.Chat,
                 text = stringResource(id = R.string.set_lang),
                 isChecked = false,
-                onCheckedChange = { navHostController.navigate(AppNavigationItems.LanguageScreen.route) }
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_SET_LANGUAGE, false) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.AccountCircle,
                 text = stringResource(id = R.string.user_man),
                 isChecked = false,
-                onCheckedChange = { navHostController.navigate(AppNavigationItems.UserManagementScreen.route) }
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT, true) }
             ),
-/*            DrawerItem(
-                imageRes = Icons.Default.VpnKey,
-                text = stringResource(id = R.string.change_password),
-                isChecked = false,
-                onCheckedChange = { navHostController.navigate(AppNavigationItems.ChangePasswordScreen.route) }
-            ),*/
             DrawerItem(
                 imageRes = Icons.Default.Settings,
                 text = stringResource(id = R.string.Configuration),
                 isChecked = false,
-                onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) }
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION, true) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Key,
                 text = stringResource(id = R.string.reactivate_device),
                 isChecked = false,
-                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE) }
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE, true) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,
                 text = stringResource(id = R.string.log_out),
                 isChecked = false,
-                onCheckedChange = { navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route) }
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_LOGOUT, false) }
             )
         )
 
