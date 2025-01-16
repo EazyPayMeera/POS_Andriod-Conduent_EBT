@@ -10,31 +10,29 @@ import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.navigation.AppNavigationItems
 import com.analogics.tpaymentsapos.rootUiScreens.activity.SharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class PasswordValidation {
+    data class Result(var isValid:Boolean) : PasswordValidation()
+}
+
 @HiltViewModel
 class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepository) : ViewModel() {
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
+    val event = MutableSharedFlow<PasswordValidation>()
 
     fun updatePassword(newValue: String):String {
         _password.value = newValue
         return _password.value
     }
 
-    fun navigateToInvoiceScreen(navHostController: NavHostController) {
-        viewModelScope.launch {
-            navHostController.popBackStack()
-            navHostController.navigate(AppNavigationItems.InvoiceScreen.route)
-        }
-    }
-
-    fun checkPassword(sharedViewModel: SharedViewModel, context: Context, enteredPassword:String, navHostController: NavHostController)
+    fun onVerifyPassword(sharedViewModel: SharedViewModel, context: Context, enteredPassword:String)
     {
         viewModelScope.launch {
             try {
@@ -51,11 +49,18 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
                 }
                 else
                 {
-                    navigateToInvoiceScreen(navHostController)
+                    event.emit(PasswordValidation.Result(true))
                 }
             } catch (e: Exception) {
                 Log.e("FetchStartDates", "Error fetching start dates: ${e.message}")
             }
+        }
+    }
+
+    fun onCancel()
+    {
+        viewModelScope.launch {
+            event.emit(PasswordValidation.Result(false))
         }
     }
 }

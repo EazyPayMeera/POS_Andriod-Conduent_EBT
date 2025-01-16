@@ -33,19 +33,14 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     private val _selectedButton = mutableStateOf<String?>(null)
     val selectedButton: State<String?> get() = _selectedButton
 
-    var LatestTransaction: TxnEntity? = null
     private val _lastTransactionList = MutableStateFlow<List<ObjRootAppPaymentDetails>>(emptyList())
     val lastTransactionList: StateFlow<List<ObjRootAppPaymentDetails>> = _lastTransactionList
 
 
 
-    fun onButtonClick(text: String, onClick: () -> Unit, sharedViewModel: SharedViewModel) {
+    fun onButtonClick(text: String, onClick: () -> Unit) {
         _selectedButton.value = text
         onClick()
-        /*val currentDateTime = getCurrentDateTime()
-        val formattedDate = currentDateTime.substring(0, 10).replace("-", "") // Extracts "20241005"
-
-        sharedViewModel.objPosConfig?.apply { batchId = formattedDate }?.saveToPrefs()*/
     }
 
     fun navigateTo(navHostController: NavHostController, route: String) {
@@ -61,8 +56,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
     fun fetchLastTransactions(
         sharedViewModel: SharedViewModel,
         context: Context,
-        customer: Boolean = false,
-        //txnDBRepository: TxnDBRepository // Assuming you need this parameter
+        customer: Boolean = false
     ) {
         Log.d("Fetch Last Transaction","In DashBoard View Model")
         viewModelScope.launch {

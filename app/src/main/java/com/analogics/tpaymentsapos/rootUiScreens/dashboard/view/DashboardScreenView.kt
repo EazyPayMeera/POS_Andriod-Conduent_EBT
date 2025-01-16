@@ -42,6 +42,7 @@ import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.model.DashboardItemList
 import com.analogics.tpaymentsapos.rootUiScreens.dashboard.viewModel.DashboardViewModel
 import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
+import com.analogics.tpaymentsapos.rootUiScreens.password.view.PasswordUtil
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.AppHeader
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CardWithImageText
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.CircularMenu
@@ -59,6 +60,7 @@ import kotlinx.coroutines.launch
 fun DashboardView(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
     val sharedViewModel= localSharedViewModel.current
+    val isPromptPassword = remember { mutableStateOf(false) }
 
     TrainingView(
         navHostController = navHostController,
@@ -67,8 +69,14 @@ fun DashboardView(navHostController: NavHostController) {
     ) {
         when(it)
         {
-            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE-> dashboardViewModel.onReactivate(navHostController, sharedViewModel)
+            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE-> isPromptPassword.value = true
             else -> null
+        }
+    }
+
+    if(isPromptPassword.value==true) {
+        PasswordUtil.VerifyUserPassword(navHostController = navHostController) {
+            isPromptPassword.value = false
         }
     }
 }
@@ -100,6 +108,13 @@ fun dashboardItemListData(
             stringResource(id = titleId),
             iconId,
             onClick = {
+                /*PasswordUtil.VerifyUserPassword(navHostController = navHostController){
+                    if (it==true){
+                        dashboardViewModel.navigateTo(navHostController, route)
+                        onClickState()
+                    }
+                }*/
+
                 dashboardViewModel.navigateTo(navHostController, route)
                 onClickState()
             }
@@ -201,7 +216,7 @@ fun TrainingView(
                         dashboardItemLists = dashboardItemLists,
                         selectedButton = selectedButton,
                         onButtonClick = { text, onClick ->
-                            dashboardViewModel.onButtonClick(text, onClick,sharedViewModel)
+                            dashboardViewModel.onButtonClick(text, onClick)
                         }
                     )
                 }
@@ -294,8 +309,7 @@ fun DashboardContentSurface(
                             text = config.text,
                             imageResId = config.iconResId,
                             isSelected = selectedButton == config.text,
-                            onClick = {
-                                onButtonClick(config.text, config.onClick) },
+                            onClick = { onButtonClick(config.text, config.onClick) },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(MaterialTheme.dimens.DP_4_CompactMedium)

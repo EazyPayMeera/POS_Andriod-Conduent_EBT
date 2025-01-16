@@ -26,7 +26,21 @@ object AppConstants {
     /* UI */
     const val BUTTON_CLICK_DISAPPEAR_DELAY_MS = 100L
 
-    const val BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE = "EVT_REACTIVATE_DEVICE"
+    /* Configuration Events */
+    const val BUTTON_CLICK_EVENT_SET_LANGUAGE =         "EVT_SET_LANGUAGE"
+    const val BUTTON_CLICK_EVENT_USER_MANAGEMENT =      "EVT_USER_MANAGEMENT"
+    const val BUTTON_CLICK_EVENT_CONFIGURATION =        "EVT_CONFIGURATION"
+    const val BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE =   "EVT_REACTIVATE_DEVICE"
+    const val BUTTON_CLICK_EVENT_LOGOUT =               "EVT_LOGOUT"
+
+    /* Dashboard Events */
+    const val BUTTON_CLICK_EVENT_PURCHASE =             "EVT_PURCHASE"
+    const val BUTTON_CLICK_EVENT_REFUND =               "EVT_REFUND"
+    const val BUTTON_CLICK_EVENT_PREAUTH =              "EVT_PREAUTH"
+    const val BUTTON_CLICK_EVENT_AUTH_CAPTURE =         "EVT_AUTH_CAPTURE"
+    const val BUTTON_CLICK_EVENT_VOID =                 "EVT_VOID"
+    const val BUTTON_CLICK_EVENT_TRANSACTIONS =         "EVT_TRANSACTIONS"
+
 
     const val BATCH_ID_START_VAL = 1
 
