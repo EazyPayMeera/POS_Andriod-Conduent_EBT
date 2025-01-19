@@ -129,7 +129,7 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
                     )
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
                     sharedViewModel.objRootAppPaymentDetail.originalTip = it.tip.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalCGST = it.CGST.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalVat = it.vat.toDecimalFormat()
                     sharedViewModel.objRootAppPaymentDetail.originalSGST = it.SGST.toDecimalFormat()
                     sharedViewModel.objRootAppPaymentDetail.originalCashback =it.cashback.toDecimalFormat()
                     sharedViewModel.objRootAppPaymentDetail.originalTtlAmount = it.ttlAmount.toDecimalFormat()

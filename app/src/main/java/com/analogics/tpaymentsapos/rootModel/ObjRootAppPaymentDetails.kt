@@ -70,7 +70,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("txnAmount") var txnAmount: Double? = 0.00,
     @SerializedName("tip") var tip: Double? = 0.00,
     @SerializedName("cashback") var cashback: Double? = 0.00,
-    @SerializedName("CGST") var CGST: Double? = 0.00,
+    @SerializedName("vat") var vat: Double? = 0.00,
     @SerializedName("SGST") var SGST: Double? = 0.00,
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
@@ -84,7 +84,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("originalTxnAmount")    var originalTxnAmount: String? = null,
     @SerializedName("originalTip")      var originalTip: String? = null,
     @SerializedName("originalCashback") var originalCashback: String? = null,
-    @SerializedName("originalCGST")     var originalCGST: String? = null,
+    @SerializedName("originalVat")     var originalVat: String? = null,
     @SerializedName("originalSGST")     var originalSGST: String? = null,
     @SerializedName("originalTtlAmount")    var originalTtlAmount: String? = null,
     @SerializedName("originalTxnRef")   var originalTxnRef: String? = null,
@@ -96,4 +96,4 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
     @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false,
 
-):Serializable
+    ):Serializable

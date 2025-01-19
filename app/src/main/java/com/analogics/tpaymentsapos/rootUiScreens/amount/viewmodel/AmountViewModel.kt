@@ -26,7 +26,6 @@ import com.analogics.tpaymentsapos.rootUiScreens.dialogs.CustomDialogBuilder
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.formatAmount
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.getCurrentDateTime
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.navigateAndClean
-import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.toDecimalFormat
 import com.analogics.tpaymentsapos.rootUtils.genericComposeUI.transformToAmountDouble
 import com.analogics.tpaymentsapos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -140,9 +139,9 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
 
                 if (sharedViewModel.objPosConfig?.isTaxEnabled == true) {
-                    sharedViewModel.objRootAppPaymentDetail.CGST = calculateTax(
+                    sharedViewModel.objRootAppPaymentDetail.vat = calculateTax(
                         sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
-                        sharedViewModel.objPosConfig?.CGSTPercent ?: 0.00
+                        sharedViewModel.objPosConfig?.vatPercent ?: 0.00
                     )
                     sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(
                         sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
@@ -152,7 +151,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
                 sharedViewModel.objRootAppPaymentDetail.ttlAmount =
                     (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) +
-                            (sharedViewModel.objRootAppPaymentDetail.CGST ?: 0.00) +
+                            (sharedViewModel.objRootAppPaymentDetail.vat ?: 0.00) +
                             (sharedViewModel.objRootAppPaymentDetail.SGST ?: 0.00)
             }
         }

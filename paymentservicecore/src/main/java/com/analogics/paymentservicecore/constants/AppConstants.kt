@@ -63,14 +63,14 @@ object AppConstants {
     const val DEFAULT_TIP_PERCENT_3 = 15
 
     const val DEFAULT_TAX_PERCENT_SGST = 5.00
-    const val DEFAULT_TAX_PERCENT_CGST = 5.00
+    const val DEFAULT_TAX_PERCENT_VAT = 14.00
 
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8
     const val MAX_LENGTH_MID = 15
 
     const val NAV_VAL_TAX_TYPE_SGST = "SGST"
-    const val NAV_VAL_TAX_TYPE_CGST = "CGST"
+    const val NAV_VAL_TAX_TYPE_VAT = "VAT"
 
     const val DEFAULT_EMV_CONFIG_FILE_PATH = "EmvConfig.json"
     const val DEFAULT_EMV_CAP_KEY_FILE_PATH = "EmvCAPKeys.json"

@@ -102,12 +102,20 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isBatchId.value = value
     }*/
 
-    fun onInactivityTimeoutChange(timeout: Int,sharedViewModel: SharedViewModel) {
-        sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()
+    fun onInactivityTimeoutChange(navHostController : NavHostController, timeout: Int,sharedViewModel: SharedViewModel) {
+        if (isAdmin.value != true) {
+            onShowAdminOnly(navHostController.context)
+        } else {
+            sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()
+        }
     }
 
-    fun onBatchIdChange(batchId: Int, sharedViewModel: SharedViewModel) {
-        sharedViewModel.objPosConfig?.apply { this.batchId = batchId.toString() }?.saveToPrefs()
+    fun onBatchIdChange(navHostController : NavHostController, batchId: Int, sharedViewModel: SharedViewModel) {
+        if (isAdmin.value != true) {
+            onShowAdminOnly(navHostController.context)
+        } else {
+            sharedViewModel.objPosConfig?.apply { this.batchId = batchId.toString() }?.saveToPrefs()
+        }
     }
 
     fun onTaxPercentChange(index: Int, navHostController: NavHostController) {
@@ -116,7 +124,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         } else {
             navHostController.currentBackStackEntry?.savedStateHandle?.set<String>(
                 AppConstants.NAV_KEY_TAX_TYPE,
-                if (index == 0) AppConstants.NAV_VAL_TAX_TYPE_SGST else AppConstants.NAV_VAL_TAX_TYPE_CGST
+                AppConstants.NAV_VAL_TAX_TYPE_VAT
             )
             navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
         }

@@ -36,7 +36,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("tipPercent1") var tipPercent1: Double? = null
     @SerializedName("tipPercent2") var tipPercent2: Double? = null
     @SerializedName("tipPercent3") var tipPercent3: Double? = null
-    @SerializedName("CGSTPercent") var CGSTPercent: Double? = null
+    @SerializedName("vatPercent")  var vatPercent: Double? = null
     @SerializedName("SGSTPercent") var SGSTPercent: Double? = null
 
     /* Receipt Specific Config */

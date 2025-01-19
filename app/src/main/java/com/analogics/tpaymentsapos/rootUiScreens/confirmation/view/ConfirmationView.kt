@@ -57,10 +57,10 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
     val sharedViewModel= localSharedViewModel.current
     val transAmount = sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00
     val sgstAmount = sharedViewModel.objRootAppPaymentDetail.SGST?:0.00
-    val cgstAmount = sharedViewModel.objRootAppPaymentDetail.CGST?:0.00
+    val vat = sharedViewModel.objRootAppPaymentDetail.vat?:0.00
     val tipAmount by remember {viewModel.tipAmount}
     var isTipEnabled by remember { viewModel.isTipButtonEnabled }
-    val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, cgstAmount)
+    val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, vat)
     var isDialogVisible by remember { mutableStateOf(false) }
 
     val totalAmountFetch = viewModel.totalAmountFetch.collectAsState().value
@@ -108,7 +108,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
         }
 
 
-        TransactionSummaryCard(transAmount, tipAmount, sgstAmount, cgstAmount, sharedViewModel)
+        TransactionSummaryCard(transAmount, tipAmount, sgstAmount, vat, sharedViewModel)
 
         sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
             GenericCard(
@@ -315,7 +315,7 @@ fun TransactionSummaryCard(
     amountDouble: Double,
     tipAmount: Double,
     sgstAmount: Double,
-    cgstAmount: Double,
+    vat: Double,
     sharedViewModel: SharedViewModel
 ) {
     GenericCard(
@@ -368,10 +368,10 @@ fun TransactionSummaryCard(
                     amount = sgstAmount
                 )
 
-                // CGST Amount
+                // VAT
                 TransactionSummaryItem(
-                    label = stringResource(id = R.string.cgst_amt),
-                    amount = cgstAmount
+                    label = stringResource(id = R.string.vat_amt),
+                    amount = vat
                 )
             }
         }

@@ -46,16 +46,14 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
     @Composable
     fun getPrompt(): String {
         return when (viewModel.taxType) {
-            TaxPercentageViewModel.TaxType.SGST ->  stringResource(id = R.string.tax_percent_change_prompt_sgst)
-            TaxPercentageViewModel.TaxType.CGST -> stringResource(id = R.string.tax_percent_change_prompt_cgst)
+            TaxPercentageViewModel.TaxType.VAT -> stringResource(id = R.string.tax_percent_change_prompt_vat)
         }
     }
 
     @Composable
     fun getCurrentTaxValue(): String {
         return stringResource(id = R.string.tax_current_value) + " : " + when (viewModel.taxType) {
-            TaxPercentageViewModel.TaxType.SGST ->  sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat()
-            TaxPercentageViewModel.TaxType.CGST -> sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat()
+            TaxPercentageViewModel.TaxType.VAT -> sharedViewModel.objPosConfig?.vatPercent.toPercentFormat()
         }
     }
 

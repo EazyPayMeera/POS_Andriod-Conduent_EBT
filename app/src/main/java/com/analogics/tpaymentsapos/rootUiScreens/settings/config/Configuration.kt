@@ -104,7 +104,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
         ),
         SettingsItem(
             imageRes = R.drawable.config_tax,
-            text = stringResource(id = R.string.taxes),
+            text = stringResource(id = R.string.vat),
             isChecked = viewModel.isTaxEnabled.value,
             onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
             isArrow = false,
@@ -142,19 +142,19 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             imageRes = R.drawable.time,
             text = stringResource(id = R.string.inactivity_timeout),
             isChecked = viewModel.isInactivity.value,
-            onCheckedChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
-            onArrowChange = { navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) },
-            isEnabled = true
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) else viewModel.onShowAdminOnly(context)},
+            isEnabled = isAdmin
         ),
         SettingsItem(
             imageRes = R.drawable.batch_id,
             text = stringResource(id = R.string.batch_id),
             isChecked = viewModel.isBatchId.value,
-            onCheckedChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.BatchIdScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
-            onArrowChange = { navHostController.navigate(AppNavigationItems.BatchIdScreen.route) },
-            isEnabled = true
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.BatchIdScreen.route) else viewModel.onShowAdminOnly(context)},
+            isEnabled = isAdmin
         ),
     )
 
@@ -243,8 +243,7 @@ fun TippingView(
             viewModel.getTipPercentLabel(TipButton.PERCENT3, sharedViewModel)
         )
         ConfigurableViewType.Taxes -> listOf(
-            stringResource(id = R.string.tax_label_sgst) + "\n" + sharedViewModel.objPosConfig?.SGSTPercent.toPercentFormat(),
-            stringResource(id = R.string.tax_label_cgst) + "\n" + sharedViewModel.objPosConfig?.CGSTPercent.toPercentFormat()
+            stringResource(id = R.string.tax_label_vat) + "\n" + sharedViewModel.objPosConfig?.vatPercent.toPercentFormat()
         )
         ConfigurableViewType.Inactivity_Timeout -> listOf(stringResource(R.string.set_timeout)) // Keep for consistency
         ConfigurableViewType.Batch_Id -> listOf(stringResource(R.string.set_batch_id))
@@ -308,6 +307,7 @@ fun TippingView(
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     viewModel.onInactivityTimeoutChange(
+                                        navHostController,
                                         timeoutDuration.toInt(),
                                         sharedViewModel
                                     )
@@ -341,7 +341,7 @@ fun TippingView(
                             ),
                             keyboardActions = KeyboardActions(
                                 onDone = {
-                                    viewModel.onBatchIdChange(batchId.toInt(), sharedViewModel)
+                                    viewModel.onBatchIdChange(navHostController,batchId.toInt(), sharedViewModel)
                                 }
                             )
                         )

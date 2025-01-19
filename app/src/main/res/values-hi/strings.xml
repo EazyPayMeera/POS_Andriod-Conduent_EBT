@@ -159,11 +159,11 @@
     <string name="abort">रद्द करें</string>
     <string name="ten">10%</string>
     <string name="tax_label_sgst">एसजीएसटी</string>
-    <string name="tax_label_cgst">सीजीएसटी</string>
+    <string name="tax_label_vat">सीजीएसटी</string>
     <string name="tip_percent_change_prompt">टिप प्रतिशत दर्ज करें</string>
     <string name="tip_current_value">वर्तमान टिप</string>
     <string name="tax_percent_change_prompt_sgst">एसजीएसटी प्रतिशत दर्ज करें</string>
-    <string name="tax_percent_change_prompt_cgst">सीजीएसटी प्रतिशत दर्ज करें</string>
+    <string name="tax_percent_change_prompt_vat">सीजीएसटी प्रतिशत दर्ज करें</string>
     <string name="tax_current_value">वर्तमान कर</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
@@ -179,7 +179,7 @@
     <string name="tnx_amount">लेन-देन राशि:</string>
     <string name="tip_amt">टिप राशि:</string>
     <string name="sgst_amt">एसजीएसटी राशि:</string>
-    <string name="cgst_amt">सीजीएसटी राशि:</string>
+    <string name="vat_amt">सीजीएसटी राशि:</string>
     <string name="igst_amt">आईजीएसटी राशि:</string>
 
     <string name="not_found">रिकॉर्ड नहीं मिला</string>
@@ -199,7 +199,8 @@
     <string name="prompt_invoice_no">इनवॉइस नंबर के लिए प्रॉम्प्ट</string>
     <string name="auto_print_merchant">ऑटो प्रिंट मर्चेंट रसीद</string>
     <string name="enable_tipping">टिपिंग सक्षम करें</string>
-    <string name="taxes">कर</string>
+    <string name="enable_service_charge">सेवा शुल्क</string>
+    <string name="vat">कर</string>
     <string name="inactivity_timeout">निष्क्रियता समय सीमा</string>
     <string name="enter_timeout">समय सीमा (सेकंड)</string>
     <string name="timeout">समय सीमा</string>
@@ -295,7 +296,7 @@
     <string name="receipt_auth_code">अधिकार कोड</string>
     <string name="receipt_tip">टिप</string>
     <string name="receipt_sgst">एसजीएसटी</string>
-    <string name="receipt_cgst">सीजीएसटी</string>
+    <string name="receipt_vat">सीजीएसटी</string>
     <string name="receipt_sign">x</string>
     <string name="receipt_card_holder_name">कार्डधारक का नाम</string>
     <string name="receipt_note">लेन-देन स्वीकार किया गया और भुगतान करने के लिए कार्डधारक की जिम्मेदारी की पुष्टि की गई</string>

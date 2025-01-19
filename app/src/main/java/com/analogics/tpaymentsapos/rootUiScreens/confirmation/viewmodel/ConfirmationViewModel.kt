@@ -69,7 +69,7 @@ class ConfirmationViewModel @Inject constructor(private val dbRepository: TxnDBR
                 tipAmount.doubleValue = 0.00
             }
         }
-        totalAmount.doubleValue = calculateTotalAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00, tipAmount.doubleValue, sharedViewModel.objRootAppPaymentDetail.CGST?:0.00, sharedViewModel.objRootAppPaymentDetail.SGST?:0.00)
+        totalAmount.doubleValue = calculateTotalAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00, tipAmount.doubleValue, sharedViewModel.objRootAppPaymentDetail.vat?:0.00, sharedViewModel.objRootAppPaymentDetail.SGST?:0.00)
     }
 
     fun onTipPercentChange(button : TipButton, sharedViewModel: SharedViewModel){

@@ -150,7 +150,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
         /* Default TAX Percent values */
         sharedViewModel?.objPosConfig?.SGSTPercent = AppConstants.DEFAULT_TAX_PERCENT_SGST
-        sharedViewModel?.objPosConfig?.CGSTPercent = AppConstants.DEFAULT_TAX_PERCENT_CGST
+        sharedViewModel?.objPosConfig?.vatPercent = AppConstants.DEFAULT_TAX_PERCENT_VAT
 
         sharedViewModel?.objPosConfig?.batchId = AppConstants.BATCH_ID_START_VAL.toString()
 

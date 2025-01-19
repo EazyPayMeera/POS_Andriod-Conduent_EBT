@@ -100,8 +100,8 @@ class ReceiptBuilder {
                 paymentDetails?.SGST?.toDoubleOrNull()?.takeIf { it>0.0 }?.let {
                     addField(context.getString(R.string.receipt_sgst), "", (paymentDetails.SGST?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
                 }
-                paymentDetails?.CGST?.toDoubleOrNull()?.takeIf { it>0.0 }?.let {
-                    addField(context.getString(R.string.receipt_cgst), "", (paymentDetails.CGST?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
+                paymentDetails?.vat?.toDoubleOrNull()?.takeIf { it>0.0 }?.let {
+                    addField(context.getString(R.string.receipt_vat), "", (paymentDetails.vat?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Small)
                 }
                 addField(context.getString(R.string.receipt_gray_line), "", "", Alignment.CENTER,FontSize.Small)
                 addField(context.getString(R.string.receipt_total), "", (paymentDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(), Alignment.NONE,FontSize.Medium)
