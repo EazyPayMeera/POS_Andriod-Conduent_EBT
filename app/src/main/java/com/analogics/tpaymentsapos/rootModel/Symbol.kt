@@ -1,7 +1,7 @@
 package com.analogics.tpaymentsapos.rootModel
 
 object DefaultSymbol {
-    var currency: Symbol.Currency = Symbol.Currency.INR
+    var currency: Symbol.Currency = Symbol.Currency.ZAR
     var position: Symbol.Position = Symbol.Position.START
     var noSpace : Boolean = false
 }
@@ -16,7 +16,8 @@ class Symbol(val position: Position=DefaultSymbol.position, val type: Type=Type.
 
     enum class Currency {
         INR,
-        USD
+        USD,
+        ZAR
     }
 
     enum class Position {
@@ -30,6 +31,7 @@ class Symbol(val position: Position=DefaultSymbol.position, val type: Type=Type.
                 when (currency) {
                     Currency.INR -> "₹"
                     Currency.USD -> "$"
+                    Currency.ZAR -> "R"
                 }
             }
 
