@@ -61,7 +61,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                 modifier = Modifier
                     .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                     .fillMaxWidth()
-                    .height(MaterialTheme.dimens.DP_250_CompactMedium)
+                    .height(MaterialTheme.dimens.DP_200_CompactMedium)
             ) {
                 // Fixed height and padding for header text
                 Text(
@@ -137,6 +137,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                     )
                 }
 
+                /*
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                 Divider(
@@ -190,6 +191,7 @@ fun LanguageView(navHostController: NavHostController, viewModel: LanguageViewMo
                         )
                     )
                 }
+                */
             }
         }
     }
