@@ -318,7 +318,7 @@ fun CommonTopAppBar(
                         .size(MaterialTheme.dimens.DP_60_CompactMedium) // Invisible touch area for better touch responsiveness
                         .clickable(
                             onClick = { onBackButtonClick() },
-                            indication = null, // Remove ripple effect if it's not required
+                            indication = LocalIndication.current, // Remove ripple effect if it's not required
                             interactionSource = remember { MutableInteractionSource() }
                         )
                 ) {
