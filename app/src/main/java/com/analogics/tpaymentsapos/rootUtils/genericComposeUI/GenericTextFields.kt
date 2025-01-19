@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,6 +48,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -86,10 +88,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.analogics.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.models.TxnType
 import com.analogics.tpaymentsapos.R
 import com.analogics.tpaymentsapos.rootUiScreens.activity.localSharedViewModel
 import com.analogics.tpaymentsapos.ui.theme.dimens
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -619,26 +623,25 @@ fun getFormattedDateTime(): String {
     return dateFormat.format(calendar.time)
 }
 
-
-
 @Composable
 fun CardWithImageText(
     text: String,
     imageResId: Int,
-    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isClicked = remember { mutableStateOf(false) }
+
     GenericCard(
         modifier = modifier
             .border(
                 width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
-                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent, // Orange color if selected, otherwise transparent
+                color = if (isClicked.value) MaterialTheme.colorScheme.primary else Color.Transparent, // Orange color if selected, otherwise transparent
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
             )
             .clickable(
-                onClick = onClick,
-                indication = LocalIndication.current, // Disable the default ripple effect if not needed
+                onClick = { onClick(); isClicked.value = true },
+                indication = null, // Disable the default ripple effect if not needed
                 interactionSource = remember { MutableInteractionSource() }
             ),
         backgroundColor = MaterialTheme.colorScheme.secondary,
@@ -666,6 +669,13 @@ fun CardWithImageText(
             )
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
             TextView(text = text, fontSize = MaterialTheme.dimens.SP_18_CompactMedium)
+        }
+    }
+
+    LaunchedEffect(isClicked.value) {
+        if(isClicked.value==true) {
+            delay(AppConstants.BUTTON_CLICK_EFFECT_MS)
+            isClicked.value = false
         }
     }
 }

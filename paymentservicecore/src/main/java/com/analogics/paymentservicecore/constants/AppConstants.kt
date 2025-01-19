@@ -24,7 +24,7 @@ object AppConstants {
     const val AUTO_PRINT_RECEIPT_DELAY_MS = 1000L
 
     /* UI */
-    const val BUTTON_CLICK_DISAPPEAR_DELAY_MS = 100L
+    const val BUTTON_CLICK_EFFECT_MS = 50L
 
     /* Configuration Events */
     const val BUTTON_CLICK_EVENT_SET_LANGUAGE =         "EVT_SET_LANGUAGE"
@@ -40,7 +40,6 @@ object AppConstants {
     const val BUTTON_CLICK_EVENT_AUTH_CAPTURE =         "EVT_AUTH_CAPTURE"
     const val BUTTON_CLICK_EVENT_VOID =                 "EVT_VOID"
     const val BUTTON_CLICK_EVENT_TRANSACTIONS =         "EVT_TRANSACTIONS"
-
 
     const val BATCH_ID_START_VAL = 1
 

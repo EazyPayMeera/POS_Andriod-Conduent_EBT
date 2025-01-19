@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,8 +63,17 @@ fun DashboardView(navHostController: NavHostController) {
     val isPasswordPrompt = remember { mutableStateOf(false) }
     val receivedEvent = remember { mutableStateOf("") }
 
+    // Helper function to set the transaction state
+    fun setTransactionType(txnType: TxnType) {
+        sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
+        sharedViewModel.objRootAppPaymentDetail.txnType = txnType
+        if(sharedViewModel.objPosConfig?.isPromptInvoiceNo!=true)
+            dashboardViewModel.setInvoiceNumber(sharedViewModel)
+    }
+
     fun handleDashboardTrigger(event: String) {
         when (event) {
+            /* Configuration Menu Events */
             AppConstants.BUTTON_CLICK_EVENT_SET_LANGUAGE -> navHostController.navigate(
                 AppNavigationItems.LanguageScreen.route
             )
@@ -82,6 +90,44 @@ fun DashboardView(navHostController: NavHostController) {
             AppConstants.BUTTON_CLICK_EVENT_LOGOUT -> navHostController.navigate(
                 AppNavigationItems.ConfirmShiftScreen.route
             )
+
+            /* Dashboard Menu Events */
+            AppConstants.BUTTON_CLICK_EVENT_PURCHASE -> {
+                setTransactionType(TxnType.PURCHASE)
+                navHostController.navigate(
+                    if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.AmountScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_REFUND -> {
+                setTransactionType(TxnType.REFUND)
+                navHostController.navigate(
+                    AppNavigationItems.InvoiceScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_PREAUTH -> {
+                setTransactionType(TxnType.PREAUTH)
+                navHostController.navigate(
+                    if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.AmountScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_AUTH_CAPTURE -> {
+                setTransactionType(TxnType.AUTHCAP)
+                navHostController.navigate(
+                    AppNavigationItems.InvoiceScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_VOID -> {
+                setTransactionType(TxnType.VOID)
+                navHostController.navigate(
+                    AppNavigationItems.InvoiceScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_TRANSACTIONS -> {
+                setTransactionType(TxnType.TXNLIST)
+                navHostController.navigate(
+                    AppNavigationItems.TxnListScreen.route
+                )
+            }
             else -> null
         }
     }
@@ -89,11 +135,7 @@ fun DashboardView(navHostController: NavHostController) {
     TrainingView(
         navHostController = navHostController,
         dashboardViewModel,
-        dashboardItemLists = dashboardItemListData(
-            navHostController,
-            dashboardViewModel,
-            sharedViewModel
-        )
+        dashboardItemLists = dashboardItemListData()
     ) { event, isPassword ->
         isPasswordPrompt.value = isPassword
         if (isPassword) {
@@ -114,41 +156,21 @@ fun DashboardView(navHostController: NavHostController) {
 
 @Composable
 fun dashboardItemListData(
-    navHostController: NavHostController,
-    dashboardViewModel: DashboardViewModel,
-    sharedViewModel : SharedViewModel
 ): List<DashboardItemList> {
-
-    // Helper function to set the transaction state
-    fun setTransactionType(txnType: TxnType) {
-        sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
-        sharedViewModel.objRootAppPaymentDetail.txnType = txnType
-        if(sharedViewModel.objPosConfig?.isPromptInvoiceNo!=true)
-            dashboardViewModel.setInvoiceNumber(sharedViewModel)
-    }
 
     // Helper function to create DashboardItemList
     @Composable
     fun createDashboardItem(
         titleId: Int,
         iconId: Int,
-        route: String,
-        onClickState: () -> Unit
+        event: String,
+        isPassword: Boolean = false
     ): DashboardItemList {
         return DashboardItemList(
             stringResource(id = titleId),
             iconId,
-            onClick = {
-                /*PasswordUtil.VerifyUserPassword(navHostController = navHostController){
-                    if (it==true){
-                        dashboardViewModel.navigateTo(navHostController, route)
-                        onClickState()
-                    }
-                }*/
-
-                dashboardViewModel.navigateTo(navHostController, route)
-                onClickState()
-            }
+            event = event,
+            isPassword = isPassword
         )
     }
 
@@ -156,38 +178,38 @@ fun dashboardItemListData(
         createDashboardItem(
             titleId = R.string.purchase,
             iconId = R.drawable.purchase,
-            route = if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { AppNavigationItems.InvoiceScreen.route} else {AppNavigationItems.AmountScreen.route},
-            onClickState = { setTransactionType(TxnType.PURCHASE) }
+            event = AppConstants.BUTTON_CLICK_EVENT_PURCHASE,
+            false
         ),
         createDashboardItem(
             titleId = R.string.refund,
             iconId = R.drawable.dashboard_refund,
-            route = AppNavigationItems.PasswordScreen.route,
-            onClickState = { setTransactionType(TxnType.REFUND) }
+            event = AppConstants.BUTTON_CLICK_EVENT_REFUND,
+            true
         ),
         createDashboardItem(
             titleId = R.string.pre_auth,
             iconId = R.drawable.dashboard_preauth,
-            route = if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { AppNavigationItems.InvoiceScreen.route} else {AppNavigationItems.AmountScreen.route},
-            onClickState = { setTransactionType(TxnType.PREAUTH) }
+            event = AppConstants.BUTTON_CLICK_EVENT_PREAUTH,
+            false
         ),
         createDashboardItem(
             titleId = R.string.auth_capture,
             iconId = R.drawable.dashboard_auth_capture,
-            route = if(sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) { AppNavigationItems.InvoiceScreen.route} else {AppNavigationItems.AmountScreen.route},
-            onClickState = { setTransactionType(TxnType.AUTHCAP) }
+            event = AppConstants.BUTTON_CLICK_EVENT_AUTH_CAPTURE,
+            false
         ),
         createDashboardItem(
             titleId = R.string.void_trans,
             iconId = R.drawable.dashboard_void,
-            route = AppNavigationItems.PasswordScreen.route,
-            onClickState = { setTransactionType(TxnType.VOID) }
+            event = AppConstants.BUTTON_CLICK_EVENT_VOID,
+            true
         ),
         createDashboardItem(
             titleId = R.string.transactions,
             iconId = R.drawable.dashboard_transaction,
-            route = AppNavigationItems.TxnListScreen.route,
-            onClickState = { setTransactionType(TxnType.TXNLIST) }
+            event = AppConstants.BUTTON_CLICK_EVENT_TRANSACTIONS,
+            true
         )
     )
 }
@@ -200,7 +222,6 @@ fun TrainingView(
     onMenuItemClick: (String, Boolean) -> Unit
 ) {
     val sharedViewModel= localSharedViewModel.current
-    val selectedButton = dashboardViewModel.selectedButton.value
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -211,6 +232,8 @@ fun TrainingView(
             if (open) drawerState.open() else drawerState.close()
         }
     }
+
+    HideSoftKeyboard()
 
     ModalDrawer(
         drawerState = drawerState,
@@ -241,13 +264,11 @@ fun TrainingView(
                         .padding(MaterialTheme.dimens.DP_11_CompactMedium)
                 ) {
                     DashboardContentSurface(
-                        navHostController = navHostController,
                         sharedViewModel = sharedViewModel,
                         viewModel = dashboardViewModel,
                         dashboardItemLists = dashboardItemLists,
-                        selectedButton = selectedButton,
-                        onButtonClick = { text, onClick ->
-                            dashboardViewModel.onButtonClick(text, onClick)
+                        onButtonClick = { event, isPassword ->
+                            onMenuItemClick(event, isPassword)
                         }
                     )
                 }
@@ -260,24 +281,20 @@ fun TrainingView(
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
-    
-    HideSoftKeyboard()
+
     CustomDialogBuilder.ShowComposed()
 }
 
 
 @Composable
 fun DashboardContentSurface(
-    navHostController: NavHostController,
     sharedViewModel: SharedViewModel,
     viewModel: DashboardViewModel,
     dashboardItemLists: List<DashboardItemList>,
-    selectedButton: String?,
-    onButtonClick: (String, () -> Unit) -> Unit
+    onButtonClick: (String, Boolean) -> Unit
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val transactions = viewModel.lastTransactionList.collectAsState().value
     Surface(
         color = MaterialTheme.colorScheme.onPrimary,
         modifier = Modifier
@@ -335,12 +352,11 @@ fun DashboardContentSurface(
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.DP_5_CompactMedium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    rowConfigs.forEach { config ->
+                    rowConfigs.forEach { item ->
                         CardWithImageText(
-                            text = config.text,
-                            imageResId = config.iconResId,
-                            isSelected = selectedButton == config.text,
-                            onClick = { onButtonClick(config.text, config.onClick) },
+                            text = item.text,
+                            imageResId = item.iconResId,
+                            onClick = { onButtonClick(item.event, item.isPassword) },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(MaterialTheme.dimens.DP_4_CompactMedium)
