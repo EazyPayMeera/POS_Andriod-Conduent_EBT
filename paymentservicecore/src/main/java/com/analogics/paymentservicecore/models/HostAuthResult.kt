@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.models
+package com.eazypaytech.paymentservicecore.models
 
 enum class HostAuthResult {
     ERROR,

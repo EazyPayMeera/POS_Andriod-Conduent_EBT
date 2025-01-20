@@ -1,8 +1,8 @@
-package com.analogics.securityframework.handler
+package com.eazypaytech.securityframework.handler
 
 import android.content.Context
-import com.analogics.securityframework.listener.ISharedPrefReqListener
-import com.analogics.securityframework.preferences.SecuredSharedPrefManager
+import com.eazypaytech.securityframework.listener.ISharedPrefReqListener
+import com.eazypaytech.securityframework.preferences.SecuredSharedPrefManager
 import javax.inject.Singleton
 
 @Singleton

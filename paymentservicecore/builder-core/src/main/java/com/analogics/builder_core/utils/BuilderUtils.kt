@@ -1,11 +1,11 @@
-package com.analogics.builder_core.utils
+package com.eazypaytech.builder_core.utils
 
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import com.analogics.builder_core.constants.BuilderConstants
-import com.analogics.networkservicecore.serviceutils.NetworkConstants
-import com.analogics.securityframework.preferences.SecuredSharedPrefManager
+import com.eazypaytech.builder_core.constants.BuilderConstants
+import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
+import com.eazypaytech.securityframework.preferences.SecuredSharedPrefManager
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody

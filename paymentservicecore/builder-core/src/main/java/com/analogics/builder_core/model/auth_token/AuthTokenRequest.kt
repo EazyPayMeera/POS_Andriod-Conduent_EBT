@@ -1,6 +1,6 @@
-package com.analogics.builder_core.model.auth_token
+package com.eazypaytech.builder_core.model.auth_token
 
-import com.analogics.networkservicecore.serviceutils.NetworkConstants
+import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.google.gson.annotations.SerializedName
 
 data class AuthTokenRequest(

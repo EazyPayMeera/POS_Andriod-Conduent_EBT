@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model.auth_capture
+package com.eazypaytech.builder_core.model.auth_capture
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,7 +1,7 @@
-package com.analogics.builder_core.listener.requestListener
+package com.eazypaytech.builder_core.listener.requestListener
 
-import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
-import com.analogics.networkservicecore.nComponent.ResultProvider
+import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
+import com.eazypaytech.networkservicecore.nComponent.ResultProvider
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 

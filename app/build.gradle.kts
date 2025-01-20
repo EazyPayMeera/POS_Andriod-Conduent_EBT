@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.analogics.tpaymentsapos"
+    namespace = "com.eazypaytech.posafrica"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.analogics.tpaymentsapos"
+        applicationId = "com.eazypaytech.posafrica"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -131,7 +131,7 @@ dependencies {
     implementation("androidx.compose.material:material:1.5.0") // Use the latest version
     api(project(":paymentservicecore"))
     api(project(":paymentservicecore:securityframework"))
-    api(project(":paymentservicecore:tpaymentcore"))
+    api(project(":paymentservicecore:hardwarecore"))
    // implementation(libs.google.gson)
 
 

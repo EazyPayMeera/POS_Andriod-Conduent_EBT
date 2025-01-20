@@ -1,13 +1,13 @@
-package com.analogics.securityframework.database.databaseClient
+package com.eazypaytech.securityframework.database.databaseClient
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.analogics.securityframework.database.dao.IBatchDao
-import com.analogics.securityframework.database.dao.ITxnDao
-import com.analogics.securityframework.database.dao.IUserManagementDao
-import com.analogics.securityframework.database.entity.BatchEntity
-import com.analogics.securityframework.database.entity.TxnEntity
-import com.analogics.securityframework.database.entity.UserManagementEntity
+import com.eazypaytech.securityframework.database.dao.IBatchDao
+import com.eazypaytech.securityframework.database.dao.ITxnDao
+import com.eazypaytech.securityframework.database.dao.IUserManagementDao
+import com.eazypaytech.securityframework.database.entity.BatchEntity
+import com.eazypaytech.securityframework.database.entity.TxnEntity
+import com.eazypaytech.securityframework.database.entity.UserManagementEntity
 
 
 //@Database(entities = [TxnDtlsEntity::class], version = 1)

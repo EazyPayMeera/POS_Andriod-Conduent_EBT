@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore
+package com.eazypaytech.paymentservicecore
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

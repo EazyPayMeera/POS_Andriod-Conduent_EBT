@@ -1,12 +1,12 @@
-package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
+package com.eazypaytech.posafrica.rootUtils.genericComposeUI
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import com.analogics.paymentservicecore.listeners.requestListener.ScannerRequestListener
-import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
-import com.analogics.tpaymentcore.listener.responseListener.IScannerHandlerListener
-import com.analogics.tpaymentcore.repository.ScannerHandler
+import com.eazypaytech.paymentservicecore.listeners.requestListener.ScannerRequestListener
+import com.eazypaytech.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
+import com.eazypaytech.tpaymentcore.listener.responseListener.IScannerHandlerListener
+import com.eazypaytech.tpaymentcore.repository.ScannerHandler
 import javax.inject.Inject
 
 class ScannerServiceRepository @Inject constructor() : ScannerRequestListener, IScannerHandlerListener {

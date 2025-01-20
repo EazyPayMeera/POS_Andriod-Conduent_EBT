@@ -1,4 +1,4 @@
-package com.analogics.builder_core
+package com.eazypaytech.builder_core
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

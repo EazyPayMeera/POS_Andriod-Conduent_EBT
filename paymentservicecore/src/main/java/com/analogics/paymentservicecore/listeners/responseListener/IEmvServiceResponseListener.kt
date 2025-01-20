@@ -1,7 +1,7 @@
-package com.analogics.paymentservicecore.listeners.responseListener
+package com.eazypaytech.paymentservicecore.listeners.responseListener
 
-import com.analogics.paymentservicecore.constants.EmvConstants
-import com.analogics.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
+import com.eazypaytech.paymentservicecore.constants.EmvConstants
+import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
 
 interface IEmvServiceResponseListener {
     fun onEmvServiceResponse(response: Any)

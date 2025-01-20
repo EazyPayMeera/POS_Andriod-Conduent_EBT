@@ -1,18 +1,18 @@
-package com.analogics.builder_core.requestBuilder
+package com.eazypaytech.builder_core.requestBuilder
 
 import android.content.Context
-import com.analogics.builder_core.constants.BuilderConstants
-import com.analogics.builder_core.model.BuilderServiceTxnDetails
-import com.analogics.builder_core.model.auth_capture.PostAuthRequest
-import com.analogics.builder_core.model.auth_capture.PreAuthRequest
-import com.analogics.builder_core.model.auth_token.AuthTokenRequest
-import com.analogics.builder_core.model.login.UserLoginRequest
-import com.analogics.builder_core.model.purchase.PurchaseRequest
-import com.analogics.builder_core.model.reund.RefundRequest
-import com.analogics.builder_core.model.reversal.ReversalReqeust
-import com.analogics.builder_core.model.void.VoidReqeust
-import com.analogics.builder_core.utils.BuilderUtils
-import com.analogics.networkservicecore.serviceutils.NetworkConstants
+import com.eazypaytech.builder_core.constants.BuilderConstants
+import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
+import com.eazypaytech.builder_core.model.auth_capture.PostAuthRequest
+import com.eazypaytech.builder_core.model.auth_capture.PreAuthRequest
+import com.eazypaytech.builder_core.model.auth_token.AuthTokenRequest
+import com.eazypaytech.builder_core.model.login.UserLoginRequest
+import com.eazypaytech.builder_core.model.purchase.PurchaseRequest
+import com.eazypaytech.builder_core.model.reund.RefundRequest
+import com.eazypaytech.builder_core.model.reversal.ReversalReqeust
+import com.eazypaytech.builder_core.model.void.VoidReqeust
+import com.eazypaytech.builder_core.utils.BuilderUtils
+import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
@@ -109,7 +109,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             txnAmount = builderServiceTxnDetails?.authAmount,
             tip = builderServiceTxnDetails?.tip,
             cashback = builderServiceTxnDetails?.cashback,
-            vat = builderServiceTxnDetails?.vat,
+            VAT = builderServiceTxnDetails?.VAT,
             SGST = builderServiceTxnDetails?.SGST,
             ttlAmount = builderServiceTxnDetails?.ttlAmount,
 
@@ -260,7 +260,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             txnAmount = builderServiceTxnDetails?.txnAmount,
             tip = builderServiceTxnDetails?.tip,
             cashback = builderServiceTxnDetails?.cashback,
-            vat = builderServiceTxnDetails?.vat,
+            VAT = builderServiceTxnDetails?.VAT,
             SGST = builderServiceTxnDetails?.SGST,
             ttlAmount = builderServiceTxnDetails?.ttlAmount,
 

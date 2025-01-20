@@ -1,12 +1,12 @@
-package com.analogics.paymentservicecore.listeners.requestListener
+package com.eazypaytech.paymentservicecore.listeners.requestListener
 
 import android.content.Context
-import com.analogics.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.model.emv.AidConfig
-import com.analogics.paymentservicecore.model.emv.CAPKey
-import com.analogics.paymentservicecore.model.emv.TermConfig
-import com.analogics.paymentservicecore.model.emv.TransConfig
+import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
+import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
+import com.eazypaytech.paymentservicecore.model.emv.AidConfig
+import com.eazypaytech.paymentservicecore.model.emv.CAPKey
+import com.eazypaytech.paymentservicecore.model.emv.TermConfig
+import com.eazypaytech.paymentservicecore.model.emv.TransConfig
 import java.io.File
 import java.nio.file.Files
 

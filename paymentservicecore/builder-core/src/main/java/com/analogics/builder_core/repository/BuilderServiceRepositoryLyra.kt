@@ -1,10 +1,10 @@
-package com.analogics.builder_core.repository
+package com.eazypaytech.builder_core.repository
 
 import android.util.Log
-import com.analogics.builder_core.listener.requestListener.IBuilderServiceRequestListenerLyra
-import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
-import com.analogics.networkservicecore.nComponent.NetworkCallProvider
-import com.analogics.networkservicecore.nComponent.ResultProvider
+import com.eazypaytech.builder_core.listener.requestListener.IBuilderServiceRequestListenerLyra
+import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.eazypaytech.networkservicecore.nComponent.NetworkCallProvider
+import com.eazypaytech.networkservicecore.nComponent.ResultProvider
 import javax.inject.Inject
 
 class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestListenerLyra{

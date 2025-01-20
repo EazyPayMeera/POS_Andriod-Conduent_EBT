@@ -1,4 +1,4 @@
-package com.analogics.networkservicecore.serviceutils
+package com.eazypaytech.networkservicecore.serviceutils
 
 object NetworkConstants {
         const val BASEURL = "https://apis.sandbox.globalpay.com"

@@ -1,10 +1,10 @@
-package com.analogics.builder_core.repository
+package com.eazypaytech.builder_core.repository
 
-import com.analogics.builder_core.listener.requestListener.IBuilderServiceRequestListener
-import com.analogics.builder_core.listener.responseListener.IBuilderServiceResponseListener
-import com.analogics.networkservicecore.nComponent.IAPIService
-import com.analogics.networkservicecore.nComponent.NetworkCallProvider
-import com.analogics.networkservicecore.nComponent.ResultProvider
+import com.eazypaytech.builder_core.listener.requestListener.IBuilderServiceRequestListener
+import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
+import com.eazypaytech.networkservicecore.nComponent.IAPIService
+import com.eazypaytech.networkservicecore.nComponent.NetworkCallProvider
+import com.eazypaytech.networkservicecore.nComponent.ResultProvider
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import javax.inject.Inject

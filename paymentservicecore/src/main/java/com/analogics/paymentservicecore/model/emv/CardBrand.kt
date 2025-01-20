@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.model.emv
+package com.eazypaytech.paymentservicecore.model.emv
 
 enum class CardBrand {
     MASTERCARD,

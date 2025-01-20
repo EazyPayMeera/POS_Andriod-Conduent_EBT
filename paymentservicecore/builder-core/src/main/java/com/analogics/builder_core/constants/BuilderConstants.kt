@@ -1,4 +1,4 @@
-package com.analogics.builder_core.constants
+package com.eazypaytech.builder_core.constants
 
 object BuilderConstants {
     const val SHARED_PREF_NAME = "BuilderSharedPref"

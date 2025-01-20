@@ -1,8 +1,8 @@
-package com.analogics.paymentservicecore.listeners.requestListener
+package com.eazypaytech.paymentservicecore.listeners.requestListener
 
 import android.content.Context
 import android.os.Bundle
-import com.analogics.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
+import com.eazypaytech.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
 
 interface ScannerRequestListener {
     suspend fun initScanner(

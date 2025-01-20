@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.constants
+package com.eazypaytech.paymentservicecore.constants
 
 object ConfigConstants {
     const val CONFIG_TYPE_APP = "AppConfig"

@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.constants
+package com.eazypaytech.paymentservicecore.constants
 
 object AppConstants {
     /* Acquirers Supported */

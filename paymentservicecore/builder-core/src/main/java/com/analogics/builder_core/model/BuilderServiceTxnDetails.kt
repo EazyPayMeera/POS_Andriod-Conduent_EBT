@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model
+package com.eazypaytech.builder_core.model
 
 import com.google.gson.annotations.SerializedName
 
@@ -64,7 +64,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("txnAmount") var txnAmount: String? = null,
     @SerializedName("tip") var tip: String? = null,
     @SerializedName("cashback") var cashback: String? = null,
-    @SerializedName("VAT") var vat: String? = null,
+    @SerializedName("VAT") var VAT: String? = null,
     @SerializedName("SGST") var SGST: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,

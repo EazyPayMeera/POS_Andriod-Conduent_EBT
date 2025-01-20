@@ -1,6 +1,6 @@
-package com.analogics.paymentservicecore.model.emv
+package com.eazypaytech.paymentservicecore.model.emv
 
-import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
+import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 
 sealed class EmvServiceResult(
     var status: Any? = null,

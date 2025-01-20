@@ -1,7 +1,7 @@
-package com.analogics.networkservicecore.nComponent
+package com.eazypaytech.networkservicecore.nComponent
 
 import android.util.Log
-import com.analogics.networkservicecore.serviceutils.NetworkConstants
+import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.ktor.network.selector.ActorSelectorManager

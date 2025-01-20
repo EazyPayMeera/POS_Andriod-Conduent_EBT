@@ -1,4 +1,4 @@
-package com.analogics.securityframework
+package com.eazypaytech.securityframework
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

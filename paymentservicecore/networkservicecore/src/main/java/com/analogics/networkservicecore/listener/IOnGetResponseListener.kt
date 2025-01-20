@@ -1,4 +1,4 @@
-package com.analogics.networkservicecore.listener
+package com.eazypaytech.networkservicecore.listener
 
 interface IOnGetResponseListener {
     fun getSuccessResponse(string: String)

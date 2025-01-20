@@ -1,5 +1,5 @@
 // AppLogger.kt
-package com.analogics.paymentservicecore.logger
+package com.eazypaytech.paymentservicecore.logger
 
 import android.util.Log
 

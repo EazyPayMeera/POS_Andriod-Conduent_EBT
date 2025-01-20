@@ -1,4 +1,4 @@
-package com.analogics.networkservicecore
+package com.eazypaytech.networkservicecore
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

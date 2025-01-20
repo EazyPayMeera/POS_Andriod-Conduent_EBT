@@ -1,13 +1,13 @@
-package com.analogics.tpaymentsapos.rootUtils.genericComposeUI
+package com.eazypaytech.posafrica.rootUtils.genericComposeUI
 
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import com.analogics.paymentservicecore.listeners.requestListener.PrinterRequestListener
-import com.analogics.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
-import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
-import com.analogics.tpaymentcore.listener.responseListener.IPrinterHandlerListener
-import com.analogics.tpaymentcore.repository.PrinterHandler
+import com.eazypaytech.paymentservicecore.listeners.requestListener.PrinterRequestListener
+import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterResultProviderListener
+import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
+import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterHandlerListener
+import com.eazypaytech.tpaymentcore.repository.PrinterHandler
 import javax.inject.Inject
 
 class PrinterServiceRepository @Inject constructor(

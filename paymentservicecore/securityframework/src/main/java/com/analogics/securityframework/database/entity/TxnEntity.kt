@@ -1,4 +1,4 @@
-package com.analogics.securityframework.database.entity
+package com.eazypaytech.securityframework.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -30,7 +30,7 @@ data class TxnEntity(
     @ColumnInfo(name = "TxnAmount") var txnAmount: String? = null,
     @ColumnInfo(name = "Tip") var tip: String? = null,
     @ColumnInfo(name = "Cashback") var cashback: String? = null,
-    @ColumnInfo(name = "Vat") var vat: String? = null,
+    @ColumnInfo(name = "VAT") var VAT: String? = null,
     @ColumnInfo(name = "SGST") var SGST: String? = null,
     @ColumnInfo(name = "TtlAmount") var ttlAmount: String? = null,
     @ColumnInfo(name = "TxnStatus") var txnStatus: String? = null,

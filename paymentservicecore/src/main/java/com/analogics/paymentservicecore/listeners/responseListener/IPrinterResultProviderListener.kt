@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.listeners.responseListener
+package com.eazypaytech.paymentservicecore.listeners.responseListener
 
 interface IPrinterResultProviderListener {
     fun onSuccess(result: Any?)

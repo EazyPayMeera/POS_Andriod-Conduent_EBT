@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.logger
+package com.eazypaytech.paymentservicecore.logger
 
 import android.util.Log
 import java.io.IOException

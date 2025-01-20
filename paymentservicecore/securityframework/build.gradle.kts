@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.analogics.securityframework"
+    namespace = "com.eazypaytech.securityframework"
     compileSdk = 34
 
     defaultConfig {

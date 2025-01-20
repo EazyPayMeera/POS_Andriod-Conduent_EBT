@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model.rkl
+package com.eazypaytech.builder_core.model.rkl
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,11 +1,11 @@
-package com.analogics.securityframework.database.databaseClient
+package com.eazypaytech.securityframework.database.databaseClient
 
 import android.content.Context
 import androidx.room.Room
-import com.analogics.securityframework.database.dao.IBatchDao
-import com.analogics.securityframework.database.dao.ITxnDao
-import com.analogics.securityframework.database.dao.IUserManagementDao
-import com.analogics.securityframework.database.dbConstant.DBConstant
+import com.eazypaytech.securityframework.database.dao.IBatchDao
+import com.eazypaytech.securityframework.database.dao.ITxnDao
+import com.eazypaytech.securityframework.database.dao.IUserManagementDao
+import com.eazypaytech.securityframework.database.dbConstant.DBConstant
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

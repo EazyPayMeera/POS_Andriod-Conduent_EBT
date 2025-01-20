@@ -1,4 +1,4 @@
-package com.analogics.securityframework.database.entity
+package com.eazypaytech.securityframework.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

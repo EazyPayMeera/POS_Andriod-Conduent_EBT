@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.analogics.builder_core"
+    namespace = "com.eazypaytech.builder_core"
     compileSdk = 34
 
     defaultConfig {

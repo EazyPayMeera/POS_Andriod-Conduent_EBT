@@ -1,7 +1,7 @@
-package com.analogics.paymentservicecore.listeners.responseListener
+package com.eazypaytech.paymentservicecore.listeners.responseListener
 
-import com.analogics.paymentservicecore.model.PaymentServiceTxnDetails
-import com.analogics.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 
 interface IApiServiceResponseListener {
     fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails)

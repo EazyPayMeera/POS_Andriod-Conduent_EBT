@@ -1,8 +1,8 @@
-package com.analogics.networkservicecore.di
+package com.eazypaytech.networkservicecore.di
 
 
-import com.analogics.networkservicecore.nComponent.IAPIService
-import com.analogics.networkservicecore.serviceutils.NetworkConstants
+import com.eazypaytech.networkservicecore.nComponent.IAPIService
+import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

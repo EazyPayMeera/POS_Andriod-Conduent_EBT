@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model.purchase
+package com.eazypaytech.builder_core.model.purchase
 
 import com.google.gson.annotations.SerializedName
 
@@ -22,7 +22,7 @@ data class PurchaseRequest (
     @SerializedName("TxnAmount")        var txnAmount: String? = "12455666",
     @SerializedName("Tip")              var tip: String? = "12455666",
     @SerializedName("Cashback")         var cashback: String? = "12455666",
-    @SerializedName("Vat")              var vat: String? = "12455666",
+    @SerializedName("VAT")              var VAT: String? = "12455666",
     @SerializedName("SGST")             var SGST: String? = "12455666",
     @SerializedName("TtlAmount")        var ttlAmount: String? = "12455666",
 

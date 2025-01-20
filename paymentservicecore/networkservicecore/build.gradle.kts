@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.analogics.networkservicecore"
+    namespace = "com.eazypaytech.networkservicecore"
     compileSdk = 34
 
     defaultConfig {

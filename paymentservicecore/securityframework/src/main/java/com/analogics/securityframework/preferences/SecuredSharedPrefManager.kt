@@ -1,4 +1,4 @@
-package com.analogics.securityframework.preferences
+package com.eazypaytech.securityframework.preferences
 
 import android.content.Context
 import android.content.SharedPreferences

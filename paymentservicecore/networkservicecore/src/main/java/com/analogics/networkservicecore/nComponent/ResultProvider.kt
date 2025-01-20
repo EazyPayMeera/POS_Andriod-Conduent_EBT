@@ -1,4 +1,4 @@
-package com.analogics.networkservicecore.nComponent
+package com.eazypaytech.networkservicecore.nComponent
 
 sealed class ResultProvider<out T> {
     data class Success<out T>(val data: T) : ResultProvider<T>()

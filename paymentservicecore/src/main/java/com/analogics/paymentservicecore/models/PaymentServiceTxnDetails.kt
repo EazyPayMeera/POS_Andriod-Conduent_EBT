@@ -1,8 +1,8 @@
-package com.analogics.paymentservicecore.model
+package com.eazypaytech.paymentservicecore.model
 
-import com.analogics.paymentservicecore.model.emv.CardBrand
-import com.analogics.paymentservicecore.model.emv.PosConditionCode
-import com.analogics.paymentservicecore.models.TxnType
+import com.eazypaytech.paymentservicecore.model.emv.CardBrand
+import com.eazypaytech.paymentservicecore.model.emv.PosConditionCode
+import com.eazypaytech.paymentservicecore.models.TxnType
 import com.google.gson.annotations.SerializedName
 
 data class PaymentServiceTxnDetails(
@@ -67,7 +67,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("txnAmount") var txnAmount: String? = null,
     @SerializedName("tip") var tip: String? = null,
     @SerializedName("cashback") var cashback: String? = null,
-    @SerializedName("Vat") var vat: String? = null,
+    @SerializedName("VAT") var VAT: String? = null,
     @SerializedName("SGST") var SGST: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,

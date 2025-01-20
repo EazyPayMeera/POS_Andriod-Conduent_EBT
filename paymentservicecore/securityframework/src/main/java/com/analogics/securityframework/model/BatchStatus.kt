@@ -1,4 +1,4 @@
-package com.analogics.securityframework.model
+package com.eazypaytech.securityframework.model
 
 enum class BatchStatus {
     OPEN,

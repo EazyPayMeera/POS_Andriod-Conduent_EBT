@@ -1,9 +1,9 @@
-package com.analogics.paymentservicecore.utils
+package com.eazypaytech.paymentservicecore.utils
 
-import com.analogics.builder_core.model.Symbol
-import com.analogics.builder_core.utils.formatAmount
-import com.analogics.securityframework.handler.SecureKeyHandler
-import com.analogics.tpaymentcore.utils.HardwareUtils
+import com.eazypaytech.builder_core.model.Symbol
+import com.eazypaytech.builder_core.utils.formatAmount
+import com.eazypaytech.securityframework.handler.SecureKeyHandler
+import com.eazypaytech.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.security.KeyPair

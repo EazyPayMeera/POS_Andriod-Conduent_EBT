@@ -1,9 +1,9 @@
 
 
-package com.analogics.builder_core.utils
+package com.eazypaytech.builder_core.utils
 
 import android.util.Log
-import com.analogics.builder_core.model.Symbol
+import com.eazypaytech.builder_core.model.Symbol
 import java.util.Locale
 import kotlin.experimental.or
 import kotlin.math.pow

@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 android {
-    namespace = "com.analogics.paymentservicecore"
+    namespace = "com.eazypaytech.paymentservicecore"
     compileSdk = 34
 
     defaultConfig {
@@ -60,7 +60,7 @@ dependencies {
 
     implementation ("com.google.mlkit:barcode-scanning:17.0.0")
 
-    implementation(project(":paymentservicecore:tpaymentcore"))
+    implementation(project(":paymentservicecore:hardwarecore"))
     api(project(":paymentservicecore:builder-core"))
     api(project(":paymentservicecore:securityframework"))
     kapt(libs.androidx.hilt.compiler)

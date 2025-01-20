@@ -1,10 +1,10 @@
-package com.analogics.securityframework.database.dao
+package com.eazypaytech.securityframework.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.analogics.securityframework.database.entity.UserManagementEntity
+import com.eazypaytech.securityframework.database.entity.UserManagementEntity
 
 @Dao
 interface IUserManagementDao {

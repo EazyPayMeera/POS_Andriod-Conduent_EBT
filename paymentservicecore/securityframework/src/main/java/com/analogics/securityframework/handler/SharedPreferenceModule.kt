@@ -1,7 +1,7 @@
-package com.analogics.securityframework.handler
+package com.eazypaytech.securityframework.handler
 
 import android.content.Context
-import com.analogics.securityframework.preferences.SecuredSharedPrefManager
+import com.eazypaytech.securityframework.preferences.SecuredSharedPrefManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

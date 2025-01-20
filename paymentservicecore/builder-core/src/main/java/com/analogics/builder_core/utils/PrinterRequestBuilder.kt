@@ -1,7 +1,7 @@
-package com.analogics.builder_core.utils
+package com.eazypaytech.builder_core.utils
 
-import com.analogics.builder_core.model.BuilderServiceTxnDetails
-import com.analogics.builder_core.model.printer.PrinterRequest
+import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
+import com.eazypaytech.builder_core.model.printer.PrinterRequest
 import javax.inject.Inject
 
 class PrinterRequestBuilder  @Inject constructor(){
@@ -27,7 +27,7 @@ class PrinterRequestBuilder  @Inject constructor(){
             txnAmount = builderServiceTxnDetails?.authAmount,
             tip = builderServiceTxnDetails?.tip,
             cashback = builderServiceTxnDetails?.cashback,
-            vat = builderServiceTxnDetails?.vat,
+            VAT = builderServiceTxnDetails?.VAT,
             SGST = builderServiceTxnDetails?.SGST,
             ttlAmount = builderServiceTxnDetails?.ttlAmount,
 

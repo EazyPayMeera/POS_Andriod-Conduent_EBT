@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model.printer
+package com.eazypaytech.builder_core.model.printer
 
 import com.google.gson.annotations.SerializedName
 
@@ -22,7 +22,7 @@ class PrinterRequest (
     @SerializedName("TxnAmount")        var txnAmount: String? = "",
     @SerializedName("Tip")              var tip: String? = "",
     @SerializedName("Cashback")         var cashback: String? = "",
-    @SerializedName("Vat")              var vat: String? = "",
+    @SerializedName("VAT")              var VAT: String? = "",
     @SerializedName("SGST")             var SGST: String? = "",
     @SerializedName("TtlAmount")        var ttlAmount: String? = "",
 

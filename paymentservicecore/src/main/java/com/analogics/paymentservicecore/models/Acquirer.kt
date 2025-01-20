@@ -1,6 +1,6 @@
-package com.analogics.paymentservicecore.models
+package com.eazypaytech.paymentservicecore.models
 
-import com.analogics.paymentservicecore.constants.AppConstants
+import com.eazypaytech.paymentservicecore.constants.AppConstants
 
 enum class Acquirer(val acquirerName: String) {
     LYRA(AppConstants.ACQUIRER_LYRA),

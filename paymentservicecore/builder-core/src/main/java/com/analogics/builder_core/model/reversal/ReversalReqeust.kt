@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model.reversal
+package com.eazypaytech.builder_core.model.reversal
 
 import com.google.gson.annotations.SerializedName
 
@@ -22,12 +22,12 @@ data class ReversalReqeust (
     @SerializedName("TxnAmount")        var txnAmount: String? = null,
     @SerializedName("Tip")              var tip: String? = null,
     @SerializedName("Cashback")         var cashback: String? = null,
-    @SerializedName("Vat")              var vat: String? = null,
+    @SerializedName("VAT")              var VAT: String? = null,
     @SerializedName("SGST")             var SGST: String? = null,
     @SerializedName("TtlAmount")        var ttlAmount: String? = null,
 
     /* Card Details */
-@SerializedName("CardEntryMode")    var cardEntryMode: String? = null,
+    @SerializedName("CardEntryMode")    var cardEntryMode: String? = null,
     @SerializedName("CardMaskedPan")    var cardMaskedPan: String? = null,
     @SerializedName("CardBrand")        var cardBrand: String? = null,
     @SerializedName("CardAuthMethod")   var cardAuthMethod: String? = null,

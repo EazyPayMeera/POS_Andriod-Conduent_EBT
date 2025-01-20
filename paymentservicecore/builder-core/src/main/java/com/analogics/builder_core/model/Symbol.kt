@@ -1,4 +1,4 @@
-package com.analogics.builder_core.model
+package com.eazypaytech.builder_core.model
 
 class Symbol(val position: Position=Position.START, val type: Type=Type.CURRENCY, val currency: Currency=Currency.INR, val noSpace : Boolean = false) {
 

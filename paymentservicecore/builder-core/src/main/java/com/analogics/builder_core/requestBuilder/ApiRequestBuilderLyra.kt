@@ -1,14 +1,14 @@
-package com.analogics.builder_core.requestBuilder
+package com.eazypaytech.builder_core.requestBuilder
 
 import android.content.Context
 import android.util.Log
-import com.analogics.builder_core.constants.BuilderConstants
-import com.analogics.builder_core.model.BuilderServiceTxnDetails
-import com.analogics.builder_core.model.CardEntryMode
-import com.analogics.builder_core.model.PosConditionCode
-import com.analogics.builder_core.utils.BuilderUtils
-import com.analogics.builder_core.utils.toBcd
-import com.analogics.builder_core.utils.toCurrencyLong
+import com.eazypaytech.builder_core.constants.BuilderConstants
+import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
+import com.eazypaytech.builder_core.model.CardEntryMode
+import com.eazypaytech.builder_core.model.PosConditionCode
+import com.eazypaytech.builder_core.utils.BuilderUtils
+import com.eazypaytech.builder_core.utils.toBcd
+import com.eazypaytech.builder_core.utils.toCurrencyLong
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
