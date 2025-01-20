@@ -62,7 +62,7 @@ object AppConstants {
     const val DEFAULT_TIP_PERCENT_2 = 10
     const val DEFAULT_TIP_PERCENT_3 = 15
 
-    const val DEFAULT_TAX_PERCENT_SGST = 5.00
+    const val DEFAULT_TAX_PERCENT_SGST = 0.00
     const val DEFAULT_TAX_PERCENT_VAT = 14.00
 
     const val MIN_LENGTH_PASSWORD = 6

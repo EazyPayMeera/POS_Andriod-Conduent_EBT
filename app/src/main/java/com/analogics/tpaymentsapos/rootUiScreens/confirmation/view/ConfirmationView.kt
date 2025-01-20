@@ -363,10 +363,10 @@ fun TransactionSummaryCard(
 
             sharedViewModel.objPosConfig?.isTaxEnabled?.takeIf { it == true }?.let {
                 // SGST Amount
-                TransactionSummaryItem(
+/*                TransactionSummaryItem(
                     label = stringResource(id = R.string.sgst_amt),
                     amount = sgstAmount
-                )
+                )*/
 
                 // VAT
                 TransactionSummaryItem(
