@@ -46,7 +46,7 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
     @Composable
     fun getPrompt(): String {
         return when (viewModel.taxType) {
-            TaxPercentageViewModel.TaxType.VAT -> stringResource(id = R.string.tax_percent_change_prompt_vat)
+            TaxPercentageViewModel.TaxType.VAT -> stringResource(id = R.string.tax_percent_prompt_vat)
         }
     }
 

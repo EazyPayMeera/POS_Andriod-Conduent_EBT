@@ -56,11 +56,11 @@ import com.eazypaytech.posafrica.ui.theme.tipBColor
 fun ConfirmationView(navHostController: NavHostController, customTipAmount : Double? =null, viewModel: ConfirmationViewModel = hiltViewModel()) {
     val sharedViewModel= localSharedViewModel.current
     val transAmount = sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00
-    val sgstAmount = sharedViewModel.objRootAppPaymentDetail.SGST?:0.00
+    val serviceCharge = sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00
     val vat = sharedViewModel.objRootAppPaymentDetail.VAT?:0.00
     val tipAmount by remember {viewModel.tipAmount}
     var isTipEnabled by remember { viewModel.isTipButtonEnabled }
-    val totalAmount = calculateTotalAmount(transAmount, tipAmount, sgstAmount, vat)
+    val totalAmount = calculateTotalAmount(transAmount, tipAmount, serviceCharge, vat)
     var isDialogVisible by remember { mutableStateOf(false) }
 
     val totalAmountFetch = viewModel.totalAmountFetch.collectAsState().value
@@ -108,7 +108,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
         }
 
 
-        TransactionSummaryCard(transAmount, tipAmount, sgstAmount, vat, sharedViewModel)
+        TransactionSummaryCard(transAmount, tipAmount, serviceCharge, vat, sharedViewModel)
 
         sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
             GenericCard(
@@ -362,7 +362,7 @@ fun TransactionSummaryCard(
             }
 
             sharedViewModel.objPosConfig?.isTaxEnabled?.takeIf { it == true }?.let {
-                // SGST Amount
+                // Service Charge
 /*                TransactionSummaryItem(
                     label = stringResource(id = R.string.sgst_amt),
                     amount = sgstAmount

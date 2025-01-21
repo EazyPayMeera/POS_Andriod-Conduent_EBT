@@ -158,12 +158,12 @@
     <string name="ok">ठीक है</string>
     <string name="abort">रद्द करें</string>
     <string name="ten">10%</string>
-    <string name="tax_label_sgst">एसजीएसटी</string>
+    <string name="tax_label_service_charge">एसजीएसटी</string>
     <string name="tax_label_vat">सीजीएसटी</string>
     <string name="tip_percent_change_prompt">टिप प्रतिशत दर्ज करें</string>
     <string name="tip_current_value">वर्तमान टिप</string>
-    <string name="tax_percent_change_prompt_sgst">एसजीएसटी प्रतिशत दर्ज करें</string>
-    <string name="tax_percent_change_prompt_vat">सीजीएसटी प्रतिशत दर्ज करें</string>
+    <string name="tax_percent_prompt_service_charge">एसजीएसटी प्रतिशत दर्ज करें</string>
+    <string name="tax_percent_prompt_vat">सीजीएसटी प्रतिशत दर्ज करें</string>
     <string name="tax_current_value">वर्तमान कर</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
@@ -178,7 +178,7 @@
     <string name="auth_cap">प्राधिकरण-कैप्चर</string>
     <string name="tnx_amount">लेन-देन राशि:</string>
     <string name="tip_amt">टिप राशि:</string>
-    <string name="sgst_amt">एसजीएसटी राशि:</string>
+    <string name="service_charge_amt">एसजीएसटी राशि:</string>
     <string name="vat_amt">सीजीएसटी राशि:</string>
     <string name="igst_amt">आईजीएसटी राशि:</string>
 
@@ -295,7 +295,7 @@
     <string name="receipt_invoice_no">इनवॉइस:</string>
     <string name="receipt_auth_code">अधिकार कोड</string>
     <string name="receipt_tip">टिप</string>
-    <string name="receipt_sgst">एसजीएसटी</string>
+    <string name="receipt_service_charge">एसजीएसटी</string>
     <string name="receipt_vat">सीजीएसटी</string>
     <string name="receipt_sign">x</string>
     <string name="receipt_card_holder_name">कार्डधारक का नाम</string>

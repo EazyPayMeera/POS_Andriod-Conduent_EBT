@@ -23,7 +23,7 @@ class PrinterRequest (
     @SerializedName("Tip")              var tip: String? = "",
     @SerializedName("Cashback")         var cashback: String? = "",
     @SerializedName("VAT")              var VAT: String? = "",
-    @SerializedName("SGST")             var SGST: String? = "",
+    @SerializedName("ServiceCharge")    var serviceCharge: String? = "",
     @SerializedName("TtlAmount")        var ttlAmount: String? = "",
 
     /* Card Details */
@@ -42,6 +42,6 @@ class PrinterRequest (
     @SerializedName("OriginalTip")      var originalTip: String? = "",
     @SerializedName("OriginalCashback") var originalCashback: String? = "",
     @SerializedName("OriginalVat")     var originalVat: String? = "",
-    @SerializedName("OriginalSGST")     var originalSGST: String? = "",
+    @SerializedName("OriginalServiceCharge")     var originalServiceCharge: String? = "",
     @SerializedName("OriginalTtlAmount")    var originalTtlAmount: String? = "",
     @SerializedName("OriginalTxnRef")   var originalTxnRef: String? = "" )

@@ -37,7 +37,9 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("tipPercent2") var tipPercent2: Double? = null
     @SerializedName("tipPercent3") var tipPercent3: Double? = null
     @SerializedName("vatPercent")  var vatPercent: Double? = null
-    @SerializedName("SGSTPercent") var SGSTPercent: Double? = null
+    @SerializedName("serviceChargePercent1") var serviceChargePercent1: Double? = null
+    @SerializedName("serviceChargePercent2") var serviceChargePercent2: Double? = null
+    @SerializedName("serviceChargePercent3") var serviceChargePercent3: Double? = null
 
     /* Receipt Specific Config */
     @SerializedName("header1") var header1: String? = null
@@ -56,6 +58,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("isAutoPrintCustomer") var isAutoPrintCustomer: Boolean? = false
     @SerializedName("isPromptInvoiceNo") var isPromptInvoiceNo: Boolean? = false
     @SerializedName("isTipEnabled") var isTipEnabled: Boolean? = false
+    @SerializedName("isServiceChargeEnabled") var isServiceChargeEnabled: Boolean? = false
     @SerializedName("isTaxEnabled") var isTaxEnabled: Boolean? = false
     @SerializedName("isInactivityTimeout") var isInactivityTimeout: Boolean? = false
     @SerializedName("isBatchId") var isBatchId: Boolean? = false

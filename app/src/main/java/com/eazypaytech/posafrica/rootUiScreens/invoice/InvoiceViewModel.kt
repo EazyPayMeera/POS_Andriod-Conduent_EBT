@@ -152,8 +152,8 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
                             it.tip.toDecimalFormat()
                         sharedViewModel.objRootAppPaymentDetail.originalVat =
                             it.VAT.toDecimalFormat()
-                        sharedViewModel.objRootAppPaymentDetail.originalSGST =
-                            it.SGST.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalServiceCharge =
+                            it.serviceCharge.toDecimalFormat()
                         sharedViewModel.objRootAppPaymentDetail.originalCashback =
                             it.cashback.toDecimalFormat()
                         sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =

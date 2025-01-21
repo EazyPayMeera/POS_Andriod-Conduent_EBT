@@ -31,7 +31,7 @@ data class TxnEntity(
     @ColumnInfo(name = "Tip") var tip: String? = null,
     @ColumnInfo(name = "Cashback") var cashback: String? = null,
     @ColumnInfo(name = "VAT") var VAT: String? = null,
-    @ColumnInfo(name = "SGST") var SGST: String? = null,
+    @ColumnInfo(name = "ServiceCharge") var serviceCharge: String? = null,
     @ColumnInfo(name = "TtlAmount") var ttlAmount: String? = null,
     @ColumnInfo(name = "TxnStatus") var txnStatus: String? = null,
 
@@ -62,7 +62,7 @@ data class TxnEntity(
     @ColumnInfo(name = "OriginalTip") var originalTip: String? = null,
     @ColumnInfo(name = "OriginalCashback") var originalCashback: String? = null,
     @ColumnInfo(name = "OriginalVat") var originalVat: String? = null,
-    @ColumnInfo(name = "OriginalSGST") var originalSGST: String? = null,
+    @ColumnInfo(name = "OriginalServiceCharge") var originalServiceCharge: String? = null,
     @ColumnInfo(name = "OriginalTtlAmount") var originalTtlAmount: String? = null,
     @ColumnInfo(name = "OriginalTxnRef") var originalTxnRef: String? = null,
 

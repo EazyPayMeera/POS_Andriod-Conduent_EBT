@@ -15,16 +15,22 @@ class SharedViewModel:ViewModel() {
 
    /* UI flags for transaction states */
    var isTipButtonEnabled: Boolean = false
+   var isServiceChargeEnabled: Boolean = false
    var selectedTipButton: TipButton = TipButton.NONE
+   var selectedServiceChargeButton: TipButton = TipButton.NONE
    var tipAmount: Double = 0.00
+   var serviceCharge: Double = 0.00
 
    /* Supporting Functions */
    fun clearTransData()
    {
       objRootAppPaymentDetail = ObjRootAppPaymentDetails()
       isTipButtonEnabled = objPosConfig?.isTipEnabled == true
+      isServiceChargeEnabled = objPosConfig?.isServiceChargeEnabled == true
       selectedTipButton = TipButton.NONE
+      selectedServiceChargeButton = TipButton.NONE
       tipAmount = 0.00
+      serviceCharge = 0.00
 
       /* Copy Config Data */
       objRootAppPaymentDetail.terminalId = objPosConfig?.terminalId

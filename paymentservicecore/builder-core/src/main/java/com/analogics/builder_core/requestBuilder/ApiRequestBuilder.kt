@@ -110,7 +110,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             tip = builderServiceTxnDetails?.tip,
             cashback = builderServiceTxnDetails?.cashback,
             VAT = builderServiceTxnDetails?.VAT,
-            SGST = builderServiceTxnDetails?.SGST,
+            serviceCharge = builderServiceTxnDetails?.serviceCharge,
             ttlAmount = builderServiceTxnDetails?.ttlAmount,
 
             )
@@ -136,7 +136,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             originalTip = builderServiceTxnDetails?.originalTip,
             originalCashback = builderServiceTxnDetails?.originalCashback,
             originalVat = builderServiceTxnDetails?.originalVat,
-            originalSGST = builderServiceTxnDetails?.originalSGST,
+            originalServiceCharge = builderServiceTxnDetails?.originalServiceCharge,
             originalTtlAmount = builderServiceTxnDetails?.originalTtlAmount,
             originalTxnRef = builderServiceTxnDetails?.originalTxnRef,
             originalHostTxnRef = builderServiceTxnDetails?.originalHostTxnRef
@@ -198,7 +198,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             originalTip = builderServiceTxnDetails?.tip,
             originalCashback = builderServiceTxnDetails?.cashback,
             originalVat = builderServiceTxnDetails?.originalVat,
-            originalSGST = builderServiceTxnDetails?.originalSGST,
+            originalServiceCharge = builderServiceTxnDetails?.originalServiceCharge,
             originalTtlAmount = builderServiceTxnDetails?.originalTtlAmount,
             originalTxnRef = builderServiceTxnDetails?.originalTxnRef,
             originalHostTxnRef = builderServiceTxnDetails?.originalHostTxnRef
@@ -261,7 +261,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             tip = builderServiceTxnDetails?.tip,
             cashback = builderServiceTxnDetails?.cashback,
             VAT = builderServiceTxnDetails?.VAT,
-            SGST = builderServiceTxnDetails?.SGST,
+            serviceCharge = builderServiceTxnDetails?.serviceCharge,
             ttlAmount = builderServiceTxnDetails?.ttlAmount,
 
 
@@ -280,7 +280,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             originalTip = builderServiceTxnDetails?.originalTip,
             originalCashback = builderServiceTxnDetails?.originalCashback,
             originalVat = builderServiceTxnDetails?.originalVat,
-            originalSGST = builderServiceTxnDetails?.originalSGST,
+            originalServiceCharge = builderServiceTxnDetails?.originalServiceCharge,
             originalTtlAmount = builderServiceTxnDetails?.originalTtlAmount,
             originalTxnRef = builderServiceTxnDetails?.originalTxnRef
         )

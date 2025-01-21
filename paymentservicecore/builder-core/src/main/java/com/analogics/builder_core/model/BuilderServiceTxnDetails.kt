@@ -65,7 +65,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("tip") var tip: String? = null,
     @SerializedName("cashback") var cashback: String? = null,
     @SerializedName("VAT") var VAT: String? = null,
-    @SerializedName("SGST") var SGST: String? = null,
+    @SerializedName("serviceCharge") var serviceCharge: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: String? = null,
@@ -78,7 +78,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("originalTip") var originalTip: String? = null,
     @SerializedName("originalCashback") var originalCashback: String? = null,
     @SerializedName("originalVat") var originalVat: String? = null,
-    @SerializedName("originalSGST") var originalSGST: String? = null,
+    @SerializedName("originalServiceCharge") var originalServiceCharge: String? = null,
     @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
     @SerializedName("acquirerName") var acquirerName:String?=null,
 

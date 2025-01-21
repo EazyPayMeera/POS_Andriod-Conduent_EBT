@@ -23,7 +23,7 @@ data class ReversalReqeust (
     @SerializedName("Tip")              var tip: String? = null,
     @SerializedName("Cashback")         var cashback: String? = null,
     @SerializedName("VAT")              var VAT: String? = null,
-    @SerializedName("SGST")             var SGST: String? = null,
+    @SerializedName("ServiceCharge")    var serviceCharge: String? = null,
     @SerializedName("TtlAmount")        var ttlAmount: String? = null,
 
     /* Card Details */
@@ -42,6 +42,6 @@ data class ReversalReqeust (
     @SerializedName("OriginalTip")      var originalTip: String? = null,
     @SerializedName("OriginalCashback") var originalCashback: String? = null,
     @SerializedName("OriginalVat")     var originalVat: String? = null,
-    @SerializedName("OriginalSGST")     var originalSGST: String? = null,
+    @SerializedName("OriginalServiceCharge")     var originalServiceCharge: String? = null,
     @SerializedName("OriginalTtlAmount")    var originalTtlAmount: String? = null,
     @SerializedName("OriginalTxnRef")   var originalTxnRef: String? = null)

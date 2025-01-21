@@ -46,6 +46,7 @@ object AppConstants {
     const val DEFAULT_DEMO_MODE = false
     const val DEFAULT_TIP_MODE = true
     const val DEFAULT_TAX_MODE = true
+    const val DEFAULT_SERVICE_CHARGE_MODE = true
     const val DEFAULT_INVOICE_MODE = true
 
     const val DEFAULT_HEADER_1 = "Bank Name"
@@ -62,14 +63,16 @@ object AppConstants {
     const val DEFAULT_TIP_PERCENT_2 = 10
     const val DEFAULT_TIP_PERCENT_3 = 15
 
-    const val DEFAULT_TAX_PERCENT_SGST = 0.00
+    const val DEFAULT_SERVICE_CHARGE_PERCENT_1 = 5.00
+    const val DEFAULT_SERVICE_CHARGE_PERCENT_2 = 10.00
+    const val DEFAULT_SERVICE_CHARGE_PERCENT_3 = 15.00
+
     const val DEFAULT_TAX_PERCENT_VAT = 14.00
 
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_TID = 8
     const val MAX_LENGTH_MID = 15
 
-    const val NAV_VAL_TAX_TYPE_SGST = "SGST"
     const val NAV_VAL_TAX_TYPE_VAT = "VAT"
 
     const val DEFAULT_EMV_CONFIG_FILE_PATH = "EmvConfig.json"

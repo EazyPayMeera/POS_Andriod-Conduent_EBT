@@ -140,6 +140,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         /* Default Flags */
         sharedViewModel?.objPosConfig?.isDemoMode = AppConstants.DEFAULT_DEMO_MODE
         sharedViewModel?.objPosConfig?.isTipEnabled = AppConstants.DEFAULT_TIP_MODE
+        sharedViewModel?.objPosConfig?.isServiceChargeEnabled = AppConstants.DEFAULT_SERVICE_CHARGE_MODE
         sharedViewModel?.objPosConfig?.isTaxEnabled = AppConstants.DEFAULT_TAX_MODE
         sharedViewModel?.objPosConfig?.isPromptInvoiceNo = AppConstants.DEFAULT_INVOICE_MODE
 
@@ -149,7 +150,10 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.tipPercent3 = AppConstants.DEFAULT_TIP_PERCENT_3.toDouble()
 
         /* Default TAX Percent values */
-        sharedViewModel?.objPosConfig?.SGSTPercent = AppConstants.DEFAULT_TAX_PERCENT_SGST
+        sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
+        sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
+        sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
+
         sharedViewModel?.objPosConfig?.vatPercent = AppConstants.DEFAULT_TAX_PERCENT_VAT
 
         sharedViewModel?.objPosConfig?.batchId = AppConstants.BATCH_ID_START_VAL.toString()

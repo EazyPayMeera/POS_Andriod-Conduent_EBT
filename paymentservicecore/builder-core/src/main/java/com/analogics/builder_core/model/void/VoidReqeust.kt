@@ -23,7 +23,7 @@ data class VoidReqeust (
     @SerializedName("OriginalTip")      var originalTip: String? = null,
     @SerializedName("OriginalCashback") var originalCashback: String? = null,
     @SerializedName("OriginalVat")     var originalVat: String? = null,
-    @SerializedName("OriginalSGST")     var originalSGST: String? = null,
+    @SerializedName("OriginalServiceCharge")     var originalServiceCharge: String? = null,
     @SerializedName("OriginalTtlAmount")    var originalTtlAmount: String? = null,
     @SerializedName("OriginalTxnRef")   var originalTxnRef: String? = null,
     @SerializedName("OriginalHostTxnRef")   var originalHostTxnRef: String? = null)

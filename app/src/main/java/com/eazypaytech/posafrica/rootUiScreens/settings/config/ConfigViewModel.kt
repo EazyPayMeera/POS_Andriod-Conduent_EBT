@@ -33,6 +33,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     var isPromptInvoiceNumber = mutableStateOf(false)
     var isAutoPrintMerchant = mutableStateOf(false)
     var isTippingEnabled = mutableStateOf(false)
+    var isServiceChargeEnabled = mutableStateOf(false)
     var isTaxEnabled = mutableStateOf(false)
     var isInactivity = mutableStateOf(false)
     var isBatchId = mutableStateOf(false)
@@ -44,6 +45,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isPromptInvoiceNumber.value = sharedViewModel.objPosConfig?.isPromptInvoiceNo == true
         isAutoPrintMerchant.value = sharedViewModel.objPosConfig?.isAutoPrintMerchant == true
         isTippingEnabled.value = sharedViewModel.objPosConfig?.isTipEnabled == true
+        isServiceChargeEnabled.value = sharedViewModel.objPosConfig?.isServiceChargeEnabled == true
         isTaxEnabled.value = sharedViewModel.objPosConfig?.isTaxEnabled == true
         isInactivity.value = sharedViewModel.objPosConfig?.isInactivityTimeout == true
         isBatchId.value = sharedViewModel.objPosConfig?.isBatchId == true
@@ -87,6 +89,11 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     fun onTippingEnabledChange(value: Boolean, sharedViewModel: SharedViewModel) {
         isTippingEnabled.value = value
         sharedViewModel.objPosConfig?.apply { this.isTipEnabled = value }?.saveToPrefs()
+    }
+
+    fun onServiceChargeEnabledChange(value: Boolean, sharedViewModel: SharedViewModel) {
+        isServiceChargeEnabled.value = value
+        sharedViewModel.objPosConfig?.apply { this.isServiceChargeEnabled = value }?.saveToPrefs()
     }
 
     fun onTaxEnabledChange(value: Boolean, sharedViewModel: SharedViewModel) {

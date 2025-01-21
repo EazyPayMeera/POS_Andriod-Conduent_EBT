@@ -143,16 +143,16 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
                         sharedViewModel.objPosConfig?.vatPercent ?: 0.00
                     )
-                    sharedViewModel.objRootAppPaymentDetail.SGST = calculateTax(
+                    sharedViewModel.objRootAppPaymentDetail.serviceCharge = calculateTax(
                         sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
-                        sharedViewModel.objPosConfig?.SGSTPercent ?: 0.00
+                        sharedViewModel.objPosConfig?.serviceChargePercent1 ?: 0.00
                     )
                 }
 
                 sharedViewModel.objRootAppPaymentDetail.ttlAmount =
                     (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) +
                             (sharedViewModel.objRootAppPaymentDetail.VAT ?: 0.00) +
-                            (sharedViewModel.objRootAppPaymentDetail.SGST ?: 0.00)
+                            (sharedViewModel.objRootAppPaymentDetail.serviceCharge ?: 0.00)
             }
         }
     }

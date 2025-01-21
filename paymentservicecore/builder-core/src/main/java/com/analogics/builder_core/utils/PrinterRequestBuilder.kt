@@ -28,7 +28,7 @@ class PrinterRequestBuilder  @Inject constructor(){
             tip = builderServiceTxnDetails?.tip,
             cashback = builderServiceTxnDetails?.cashback,
             VAT = builderServiceTxnDetails?.VAT,
-            SGST = builderServiceTxnDetails?.SGST,
+            serviceCharge = builderServiceTxnDetails?.serviceCharge,
             ttlAmount = builderServiceTxnDetails?.ttlAmount,
 
             )

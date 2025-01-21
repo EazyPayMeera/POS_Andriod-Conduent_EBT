@@ -159,12 +159,12 @@
     <string name="ok">OK</string>
     <string name="abort">ABORT</string>
     <string name="ten">10%</string>
-    <string name="tax_label_sgst">SGST</string>
+    <string name="tax_label_service_charge">Service Charge</string>
     <string name="tax_label_vat">VAT</string>
     <string name="tip_percent_change_prompt">Enter Tip Percentage for Button</string>
     <string name="tip_current_value">Current Tip</string>
-    <string name="tax_percent_change_prompt_sgst">Enter SGST Percentage</string>
-    <string name="tax_percent_change_prompt_vat">Enter VAT Percentage</string>
+    <string name="tax_percent_prompt_service_charge">Enter Percentage</string>
+    <string name="tax_percent_prompt_vat">Enter VAT Percentage</string>
     <string name="tax_current_value">Current VAT</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
@@ -179,7 +179,7 @@
     <string name="auth_cap">Auth-Capture</string>
     <string name="tnx_amount">Transaction Amount:</string>
     <string name="tip_amt">Tip Amount:</string>
-    <string name="sgst_amt">SGST Amount:</string>
+    <string name="service_charge_amt">Service Charge:</string>
     <string name="vat_amt">VAT:</string>
     <string name="igst_amt">IGST Amount:</string>
 
@@ -296,7 +296,7 @@
     <string name="receipt_invoice_no">INV:</string>
     <string name="receipt_auth_code">AUTH Code</string>
     <string name="receipt_tip">TIP</string>
-    <string name="receipt_sgst">SGST</string>
+    <string name="receipt_service_charge">Service Charge</string>
     <string name="receipt_vat">VAT</string>
     <string name="receipt_sign">x</string>
     <string name="receipt_card_holder_name">CARDHOLDER NAME</string>

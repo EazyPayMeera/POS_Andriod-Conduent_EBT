@@ -23,7 +23,7 @@ data class PurchaseRequest (
     @SerializedName("Tip")              var tip: String? = "12455666",
     @SerializedName("Cashback")         var cashback: String? = "12455666",
     @SerializedName("VAT")              var VAT: String? = "12455666",
-    @SerializedName("SGST")             var SGST: String? = "12455666",
+    @SerializedName("ServiceCharge")    var serviceCharge: String? = "12455666",
     @SerializedName("TtlAmount")        var ttlAmount: String? = "12455666",
 
     /* Card Details */
@@ -42,6 +42,6 @@ data class PurchaseRequest (
     @SerializedName("OriginalTip")      var originalTip: String? = "12455666",
     @SerializedName("OriginalCashback") var originalCashback: String? = "12455666",
     @SerializedName("OriginalVat")     var originalVat: String? = "12455666",
-    @SerializedName("OriginalSGST")     var originalSGST: String? = "12455666",
+    @SerializedName("OriginalServiceCharge")     var originalServiceCharge: String? = "12455666",
     @SerializedName("OriginalTtlAmount")    var originalTtlAmount: String? = "12455666",
     @SerializedName("OriginalTxnRef")   var originalTxnRef: String? = "12455666" )
