@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.eazypaytech.paymentservicecore.models.PosConfig
 import com.eazypaytech.securityframework.database.entity.BatchEntity
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
-import com.eazypaytech.posafrica.rootUiScreens.settings.config.TipButton
+import com.eazypaytech.posafrica.rootUiScreens.settings.config.PercentButton
 
 
 class SharedViewModel:ViewModel() {
@@ -16,8 +16,8 @@ class SharedViewModel:ViewModel() {
    /* UI flags for transaction states */
    var isTipButtonEnabled: Boolean = false
    var isServiceChargeEnabled: Boolean = false
-   var selectedTipButton: TipButton = TipButton.NONE
-   var selectedServiceChargeButton: TipButton = TipButton.NONE
+   var selectedTipButton: PercentButton = PercentButton.NONE
+   var selectedServiceChargeButton: PercentButton = PercentButton.NONE
    var tipAmount: Double = 0.00
    var serviceCharge: Double = 0.00
 
@@ -27,8 +27,8 @@ class SharedViewModel:ViewModel() {
       objRootAppPaymentDetail = ObjRootAppPaymentDetails()
       isTipButtonEnabled = objPosConfig?.isTipEnabled == true
       isServiceChargeEnabled = objPosConfig?.isServiceChargeEnabled == true
-      selectedTipButton = TipButton.NONE
-      selectedServiceChargeButton = TipButton.NONE
+      selectedTipButton = PercentButton.NONE
+      selectedServiceChargeButton = PercentButton.NONE
       tipAmount = 0.00
       serviceCharge = 0.00
 

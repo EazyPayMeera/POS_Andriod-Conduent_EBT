@@ -39,7 +39,7 @@ import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.confirmation.viewmodel.ConfirmationViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
-import com.eazypaytech.posafrica.rootUiScreens.settings.config.TipButton
+import com.eazypaytech.posafrica.rootUiScreens.settings.config.PercentButton
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CustomSwitch
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
@@ -60,12 +60,11 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
     val vat = sharedViewModel.objRootAppPaymentDetail.VAT?:0.00
     val tipAmount by remember {viewModel.tipAmount}
     var isTipEnabled by remember { viewModel.isTipButtonEnabled }
+    var isServiceChargeEnabled by remember { viewModel.isServiceChargeButtonEnabled }
     val totalAmount = calculateTotalAmount(transAmount, tipAmount, serviceCharge, vat)
     var isDialogVisible by remember { mutableStateOf(false) }
 
     val totalAmountFetch = viewModel.totalAmountFetch.collectAsState().value
-    val txnAmountFetch = viewModel.txnAmountFetch.collectAsState().value
-    val tipAmountFetch = viewModel.tipAmountFetch.collectAsState().value
 
     Column {
         CommonTopAppBar(
@@ -156,10 +155,10 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     ) {
 
                         Button(
-                            onClick = { viewModel.onTipPercentChange(TipButton.PERCENT1, sharedViewModel) },
+                            onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT1, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT1 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT1 && isTipEnabled) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -175,14 +174,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                                 disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                             )
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(TipButton.PERCENT1, sharedViewModel))
+                            Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT1, sharedViewModel))
                         }
 
                         Button(
-                            onClick = { viewModel.onTipPercentChange(TipButton.PERCENT2, sharedViewModel) },
+                            onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT2, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT2 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT2 && isTipEnabled) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -199,14 +198,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                             )
 
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(TipButton.PERCENT2, sharedViewModel))
+                            Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT2, sharedViewModel))
                         }
 
                         Button(
-                            onClick = { viewModel.onTipPercentChange(TipButton.PERCENT3, sharedViewModel) },
+                            onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT3, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.value == TipButton.PERCENT3 && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT3 && isTipEnabled) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -222,14 +221,14 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                                 disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                             )
                         ) {
-                            Text(text = viewModel.getTipPercentLabel(TipButton.PERCENT3, sharedViewModel))
+                            Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT3, sharedViewModel))
                         }
 
                         Button(
                             onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
                             enabled = isTipEnabled,
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = if (viewModel.selectedButton.value == TipButton.CUSTOM && isTipEnabled) {
+                                backgroundColor = if (viewModel.selectedButton.value == PercentButton.CUSTOM && isTipEnabled) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)

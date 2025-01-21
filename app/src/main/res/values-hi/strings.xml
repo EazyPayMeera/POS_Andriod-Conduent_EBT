@@ -132,6 +132,7 @@
     <string name="e_recp">ई-रसीद</string>
     <string name="cust_recp">ग्राहक रसीद</string>
     <string name="enter_tip_amount">टिप राशि दर्ज करें</string>
+    <string name="enter_service_charge">सेवा शुल्क दर्ज करें</string>
     <string name="amount">राशि</string>
     <string name="adjust">समायोजित करें</string>
     <string name="enter_the_percentage">प्रतिशत दर्ज करें</string>
@@ -161,7 +162,9 @@
     <string name="tax_label_service_charge">एसजीएसटी</string>
     <string name="tax_label_vat">सीजीएसटी</string>
     <string name="tip_percent_change_prompt">टिप प्रतिशत दर्ज करें</string>
+    <string name="service_charge_percent_change_prompt">सेवा शुल्क प्रतिशत दर्ज करें</string>
     <string name="tip_current_value">वर्तमान टिप</string>
+    <string name="service_charge_current_value">वर्तमान सेवा शुल्क</string>
     <string name="tax_percent_prompt_service_charge">एसजीएसटी प्रतिशत दर्ज करें</string>
     <string name="tax_percent_prompt_vat">सीजीएसटी प्रतिशत दर्ज करें</string>
     <string name="tax_current_value">वर्तमान कर</string>
@@ -178,7 +181,7 @@
     <string name="auth_cap">प्राधिकरण-कैप्चर</string>
     <string name="tnx_amount">लेन-देन राशि:</string>
     <string name="tip_amt">टिप राशि:</string>
-    <string name="service_charge_amt">एसजीएसटी राशि:</string>
+    <string name="service_charge">एसजीएसटी राशि:</string>
     <string name="vat_amt">सीजीएसटी राशि:</string>
     <string name="igst_amt">आईजीएसटी राशि:</string>
 

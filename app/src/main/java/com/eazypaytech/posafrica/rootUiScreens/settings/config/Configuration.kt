@@ -103,6 +103,15 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isEnabled = isAdmin
         ),
         SettingsItem(
+            imageRes = R.drawable.config_service_charge,
+            text = stringResource(id = R.string.enable_service_charge),
+            isChecked = viewModel.isServiceChargeEnabled.value,
+            onCheckedChange = { if(isAdmin) viewModel.onServiceChargeEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
+            isArrow = false,
+            onArrowChange = {},
+            isEnabled = isAdmin
+        ),
+        SettingsItem(
             imageRes = R.drawable.config_tax,
             text = stringResource(id = R.string.vat),
             isChecked = viewModel.isTaxEnabled.value,
@@ -179,11 +188,18 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
                         isEnabled = item.isEnabled
                     )
 
+                    /* Tip Percent Button */
                     if (index == 2 && item.isChecked) {
-                        TippingView(ConfigurableViewType.Percentage, navHostController, viewModel, sharedViewModel, item.isEnabled)
+                        TippingView(ConfigurableViewType.TipPercent, navHostController, viewModel, sharedViewModel, item.isEnabled)
                     }
 
+                    /* Service Charge Buttons */
                     if (index == 3 && item.isChecked) {
+                        TippingView(ConfigurableViewType.ServiceChargePercent, navHostController, viewModel, sharedViewModel, item.isEnabled)
+                    }
+
+                    /* Tax Buttons */
+                    if (index == 4 && item.isChecked) {
                         TippingView(ConfigurableViewType.Taxes, navHostController, viewModel, sharedViewModel, item.isEnabled)
                     }
 
@@ -237,10 +253,15 @@ fun TippingView(
     var timeoutDuration by remember { mutableStateOf(sharedViewModel.objPosConfig?.inactivityTimeout?.toString() ?: "") }
     var batchId by remember { mutableStateOf(sharedViewModel.objPosConfig?.batchId?.toString() ?: "") }
     val options = when (type) {
-        ConfigurableViewType.Percentage -> listOf(
-            viewModel.getTipPercentLabel(TipButton.PERCENT1, sharedViewModel),
-            viewModel.getTipPercentLabel(TipButton.PERCENT2, sharedViewModel),
-            viewModel.getTipPercentLabel(TipButton.PERCENT3, sharedViewModel)
+        ConfigurableViewType.TipPercent -> listOf(
+            viewModel.getTipPercentLabel(PercentButton.PERCENT1, sharedViewModel),
+            viewModel.getTipPercentLabel(PercentButton.PERCENT2, sharedViewModel),
+            viewModel.getTipPercentLabel(PercentButton.PERCENT3, sharedViewModel)
+        )
+        ConfigurableViewType.ServiceChargePercent -> listOf(
+            viewModel.getServiceChargePercentLabel(PercentButton.PERCENT1, sharedViewModel),
+            viewModel.getServiceChargePercentLabel(PercentButton.PERCENT2, sharedViewModel),
+            viewModel.getServiceChargePercentLabel(PercentButton.PERCENT3, sharedViewModel)
         )
         ConfigurableViewType.Taxes -> listOf(
             stringResource(id = R.string.tax_label_vat) + "\n" + sharedViewModel.objPosConfig?.vatPercent.toPercentFormat()
@@ -250,7 +271,8 @@ fun TippingView(
     }
 
     val title = when (type) {
-        ConfigurableViewType.Percentage -> stringResource(R.string.adjust_per)
+        ConfigurableViewType.TipPercent,
+        ConfigurableViewType.ServiceChargePercent,
         ConfigurableViewType.Taxes -> stringResource(R.string.adjust_per)
         ConfigurableViewType.Inactivity_Timeout -> stringResource(R.string.set_timeout)
         ConfigurableViewType.Batch_Id -> stringResource(R.string.set_batch_id)
@@ -366,12 +388,21 @@ fun TippingView(
                                     .height(cardHeight),
                                 onClick = {
                                     when (type) {
-                                        ConfigurableViewType.Percentage -> viewModel.onTipPercentChange(
+                                        ConfigurableViewType.TipPercent -> viewModel.onTipPercentChange(
                                             when (options.indexOf(option)) {
-                                                0 -> TipButton.PERCENT1
-                                                1 -> TipButton.PERCENT2
-                                                2 -> TipButton.PERCENT3
-                                                else -> TipButton.NONE
+                                                0 -> PercentButton.PERCENT1
+                                                1 -> PercentButton.PERCENT2
+                                                2 -> PercentButton.PERCENT3
+                                                else -> PercentButton.NONE
+                                            }, navHostController
+                                        )
+
+                                        ConfigurableViewType.ServiceChargePercent -> viewModel.onServiceChargePercentChange(
+                                            when (options.indexOf(option)) {
+                                                0 -> PercentButton.PERCENT1
+                                                1 -> PercentButton.PERCENT2
+                                                2 -> PercentButton.PERCENT3
+                                                else -> PercentButton.NONE
                                             }, navHostController
                                         )
 
@@ -416,13 +447,14 @@ fun TippingView(
 
 
 enum class ConfigurableViewType {
-    Percentage,
+    TipPercent,
+    ServiceChargePercent,
     Taxes,
     Inactivity_Timeout,
     Batch_Id
 }
 
-enum class TipButton(val value: Int) {
+enum class PercentButton(val value: Int) {
     NONE(0),
     PERCENT1(1),
     PERCENT2(2),

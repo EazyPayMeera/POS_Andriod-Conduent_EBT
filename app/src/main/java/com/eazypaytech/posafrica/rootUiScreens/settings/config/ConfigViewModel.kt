@@ -51,19 +51,34 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isBatchId.value = sharedViewModel.objPosConfig?.isBatchId == true
     }
 
-    private fun getTipPercent(button: TipButton, sharedViewModel: SharedViewModel) : Double
+    private fun getTipPercent(button: PercentButton, sharedViewModel: SharedViewModel) : Double
     {
         return when(button){
-            TipButton.PERCENT1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
-            TipButton.PERCENT2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
-            TipButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
+            PercentButton.PERCENT1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
+            PercentButton.PERCENT2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
+            PercentButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
             else -> 0.00
         }
     }
 
-    fun getTipPercentLabel(button: TipButton, sharedViewModel: SharedViewModel) : String
+    private fun getServiceChargePercent(button: PercentButton, sharedViewModel: SharedViewModel) : Double
+    {
+        return when(button){
+            PercentButton.PERCENT1 -> sharedViewModel.objPosConfig?.serviceChargePercent1?:0.00
+            PercentButton.PERCENT2 -> sharedViewModel.objPosConfig?.serviceChargePercent2?:0.00
+            PercentButton.PERCENT3 -> sharedViewModel.objPosConfig?.serviceChargePercent3?:0.00
+            else -> 0.00
+        }
+    }
+
+    fun getTipPercentLabel(button: PercentButton, sharedViewModel: SharedViewModel) : String
     {
         return formatAmount(getTipPercent(button, sharedViewModel), symbol = Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END, noSpace = true), decimalPlaces = 0)
+    }
+
+    fun getServiceChargePercentLabel(button: PercentButton, sharedViewModel: SharedViewModel) : String
+    {
+        return formatAmount(getServiceChargePercent(button, sharedViewModel), symbol = Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END, noSpace = true), decimalPlaces = 2)
     }
 
     fun onDemoModeChange(value: Boolean, sharedViewModel: SharedViewModel) {
@@ -137,7 +152,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         }
     }
 
-    fun onTipPercentChange(button: TipButton, navHostController: NavHostController) {
+    fun onTipPercentChange(button: PercentButton, navHostController: NavHostController) {
         if (isAdmin.value != true) {
             onShowAdminOnly(navHostController.context)
         } else {
@@ -146,6 +161,18 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
                 button.value
             )
             navHostController.navigate(AppNavigationItems.TipPercentageScreen.route)
+        }
+    }
+
+    fun onServiceChargePercentChange(button: PercentButton, navHostController: NavHostController) {
+        if (isAdmin.value != true) {
+            onShowAdminOnly(navHostController.context)
+        } else {
+            navHostController.currentBackStackEntry?.savedStateHandle?.set<Int>(
+                AppConstants.NAV_KEY_SERVICE_CHARGE_PERCENT_INDEX,
+                button.value
+            )
+            navHostController.navigate(AppNavigationItems.ServiceChargePercentageScreen.route)
         }
     }
 

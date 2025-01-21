@@ -1,4 +1,4 @@
-package com.eazypaytech.posafrica.rootUiScreens.tax.view
+package com.eazypaytech.posafrica.rootUiScreens.serviceCharge.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,8 @@ import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.Symbol
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
-import com.eazypaytech.posafrica.rootUiScreens.tax.viewmodel.TaxPercentageViewModel
+import com.eazypaytech.posafrica.rootUiScreens.serviceCharge.viewmodel.ServiceChargePercentageViewModel
+import com.eazypaytech.posafrica.rootUiScreens.settings.config.PercentButton
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.GenericCard
@@ -38,22 +39,28 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toPercentFormat
 import com.eazypaytech.posafrica.ui.theme.dimens
 
 @Composable
-fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercentageViewModel = hiltViewModel()) {
+fun ServiceChargePercentageView(navHostController: NavHostController, viewModel: ServiceChargePercentageViewModel = hiltViewModel()) {
 
     var isDialogVisible by remember { mutableStateOf(false) }
     var sharedViewModel = localSharedViewModel.current
 
     @Composable
     fun getPrompt(): String {
-        return when (viewModel.taxType) {
-            TaxPercentageViewModel.TaxType.VAT -> stringResource(id = R.string.tax_percent_prompt_vat)
+        return stringResource(id = R.string.service_charge_percent_change_prompt) + " " + when (viewModel.serviceChargeButton) {
+            PercentButton.PERCENT1 -> 1
+            PercentButton.PERCENT2 -> 2
+            PercentButton.PERCENT3 -> 3
+            else -> ""
         }
     }
 
     @Composable
-    fun getCurrentTaxValue(): String {
-        return stringResource(id = R.string.tax_current_value) + " : " + when (viewModel.taxType) {
-            TaxPercentageViewModel.TaxType.VAT -> sharedViewModel.objPosConfig?.vatPercent.toPercentFormat()
+    fun getCurrentTipValue(): String {
+        return stringResource(id = R.string.service_charge_current_value) + " : " + when (viewModel.serviceChargeButton) {
+            PercentButton.PERCENT1 ->  sharedViewModel.objPosConfig?.serviceChargePercent1.toPercentFormat(decimalPlaces = 2)
+            PercentButton.PERCENT2 ->  sharedViewModel.objPosConfig?.serviceChargePercent2.toPercentFormat(decimalPlaces = 2)
+            PercentButton.PERCENT3 -> sharedViewModel.objPosConfig?.serviceChargePercent3.toPercentFormat(decimalPlaces = 2)
+            else -> ""
         }
     }
 
@@ -87,7 +94,7 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
 
                 // Title Text
                 TextView(
-                    text = getCurrentTaxValue(),
+                    text = getCurrentTipValue(),
                     fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -106,14 +113,14 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                 )
 
                 OutlinedTextField(
-                    value = viewModel.taxPercent,
-                    onValueChange = {viewModel.onTaxChange(it)},
+                    value = viewModel.serviceChargePercent,
+                    onValueChange = {viewModel.onServiceChargeChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.Center),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
-                    visualTransformation = createAmountTransformation(Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END)),
+                    visualTransformation = createAmountTransformation(Symbol(type = Symbol.Type.PERCENT, position = Symbol.Position.END), decimalPlaces = 2),
                     amount = false,
                 )
 
@@ -123,7 +130,7 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
         // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible = true },
+            firstButtonOnClick = { isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
             closeKeypadOnSecondButton = true
@@ -138,10 +145,10 @@ fun TaxPercentageView(navHostController: NavHostController,viewModel: TaxPercent
                 .setCancelButtonText(stringResource(id = R.string.yes))
                 .setConfirmButtonText(stringResource(id = R.string.cancel_no))
                 .setCancelable(true)
-                .setAutoOff(false)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
+                .setAutoOff(false)
                 .setOnCancelAction {
                     navHostController.popBackStack()
                 }

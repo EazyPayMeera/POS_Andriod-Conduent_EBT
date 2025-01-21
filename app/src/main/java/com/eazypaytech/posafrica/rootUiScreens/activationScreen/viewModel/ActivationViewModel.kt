@@ -151,8 +151,8 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
         /* Default TAX Percent values */
         sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
-        sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
-        sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
+        sharedViewModel?.objPosConfig?.serviceChargePercent2 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_2
+        sharedViewModel?.objPosConfig?.serviceChargePercent3 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_3
 
         sharedViewModel?.objPosConfig?.vatPercent = AppConstants.DEFAULT_TAX_PERCENT_VAT
 

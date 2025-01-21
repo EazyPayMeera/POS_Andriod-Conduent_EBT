@@ -21,6 +21,7 @@ sealed class AppNavigationItems(val route: String) {
  object ConfirmShiftScreen : AppNavigationItems(NavScreensEnum.ConfirmShiftView.name)
  object TaxPercentageScreen : AppNavigationItems(NavScreensEnum.TaxPercentageView.name)
  object TipPercentageScreen : AppNavigationItems(NavScreensEnum.TipPercentageView.name)
+ object ServiceChargePercentageScreen : AppNavigationItems(NavScreensEnum.ServiceChargePercentageView.name)
  object PreauthScreen : AppNavigationItems(NavScreensEnum.PreauthView.name)
  object EnterEmailScreen : AppNavigationItems(NavScreensEnum.EnterEmailView.name)
  object InfoConfirmScreen : AppNavigationItems(NavScreensEnum.InfoConfirmView.name)

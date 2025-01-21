@@ -6,8 +6,10 @@ object AppConstants {
 
     /* Key constants */
     const val NAV_KEY_CUSTOM_TIP_AMOUNT = "customTipAmount"
+    const val NAV_KEY_CUSTOM_SERVICE_CHARGE = "customServiceCharge"
     const val NAV_KEY_TAX_TYPE = "taxType"
     const val NAV_KEY_TIP_PERCENT_INDEX = "tipPercentIndex"
+    const val NAV_KEY_SERVICE_CHARGE_PERCENT_INDEX = "serviceChargePercentIndex"
 
     /* Value constants */
     const val DEFAULT_UI_LANGUAGE_CODE = "en"
@@ -64,8 +66,8 @@ object AppConstants {
     const val DEFAULT_TIP_PERCENT_3 = 15
 
     const val DEFAULT_SERVICE_CHARGE_PERCENT_1 = 5.00
-    const val DEFAULT_SERVICE_CHARGE_PERCENT_2 = 10.00
-    const val DEFAULT_SERVICE_CHARGE_PERCENT_3 = 15.00
+    const val DEFAULT_SERVICE_CHARGE_PERCENT_2 = 7.00
+    const val DEFAULT_SERVICE_CHARGE_PERCENT_3 = 10.00
 
     const val DEFAULT_TAX_PERCENT_VAT = 14.00
 

@@ -26,7 +26,7 @@ import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.Symbol
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
-import com.eazypaytech.posafrica.rootUiScreens.settings.config.TipButton
+import com.eazypaytech.posafrica.rootUiScreens.settings.config.PercentButton
 import com.eazypaytech.posafrica.rootUiScreens.tax.viewmodel.TipPercentageViewModel
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
@@ -47,9 +47,9 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
     @Composable
     fun getPrompt(): String {
         return stringResource(id = R.string.tip_percent_change_prompt) + " " + when (viewModel.tipButton) {
-            TipButton.PERCENT1 -> 1
-            TipButton.PERCENT2 -> 2
-            TipButton.PERCENT3 -> 3
+            PercentButton.PERCENT1 -> 1
+            PercentButton.PERCENT2 -> 2
+            PercentButton.PERCENT3 -> 3
             else -> ""
         }
     }
@@ -57,9 +57,9 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
     @Composable
     fun getCurrentTipValue(): String {
         return stringResource(id = R.string.tip_current_value) + " : " + when (viewModel.tipButton) {
-            TipButton.PERCENT1 ->  sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
-            TipButton.PERCENT2 ->  sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
-            TipButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
+            PercentButton.PERCENT1 ->  sharedViewModel.objPosConfig?.tipPercent1.toPercentFormat(decimalPlaces = 0)
+            PercentButton.PERCENT2 ->  sharedViewModel.objPosConfig?.tipPercent2.toPercentFormat(decimalPlaces = 0)
+            PercentButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3.toPercentFormat(decimalPlaces = 0)
             else -> ""
         }
     }
@@ -68,7 +68,8 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
 
         // Top App Bar
         CommonTopAppBar(
-            onBackButtonClick = { navHostController.popBackStack() }
+            onBackButtonClick = { navHostController.popBackStack() },
+            closeKeypadOnBackButton = true
         )
 
         // Main Content
@@ -129,9 +130,10 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
         // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible = true },
+            firstButtonOnClick = { isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) }
+            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
+            closeKeypadOnSecondButton = true
         )
 
         if (isDialogVisible) {
@@ -148,10 +150,10 @@ fun TipPercentageView(navHostController: NavHostController,viewModel: TipPercent
                 .setShowProgressIndicator(false)
                 .setAutoOff(false)
                 .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
+                    navHostController.popBackStack()
                 }
                 .setOnConfirmAction {
-                    navHostController.navigate(AppNavigationItems.TaxPercentageScreen.route)
+
                 }
                 .setShowButtons(true)
                 .setNavAction {

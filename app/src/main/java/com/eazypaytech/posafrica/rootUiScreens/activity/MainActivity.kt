@@ -63,6 +63,7 @@ import com.eazypaytech.posafrica.rootUiScreens.pin.view.PinView
 import com.eazypaytech.posafrica.rootUiScreens.pleasewait.view.PleaseWaitView
 import com.eazypaytech.posafrica.rootUiScreens.preauth.view.PreauthView
 import com.eazypaytech.posafrica.rootUiScreens.receiptdetails.view.ReceiptDetailsView
+import com.eazypaytech.posafrica.rootUiScreens.serviceCharge.view.ServiceChargePercentageView
 import com.eazypaytech.posafrica.rootUiScreens.settings.SettingsView
 import com.eazypaytech.posafrica.rootUiScreens.settings.config.ConfigurationView
 import com.eazypaytech.posafrica.rootUiScreens.signature.SignatureView
@@ -283,6 +284,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.TipPercentageScreen.route) {
             TipPercentageView(navHostController)
+        }
+        composable(AppNavigationItems.ServiceChargePercentageScreen.route) {
+            ServiceChargePercentageView(navHostController)
         }
         composable(AppNavigationItems.PreauthScreen.route) {
             PreauthView(navHostController)

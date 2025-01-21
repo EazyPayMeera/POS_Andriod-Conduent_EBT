@@ -133,6 +133,7 @@
     <string name="e_recp">E-RECEIPT</string>
     <string name="cust_recp">Customer Receipt</string>
     <string name="enter_tip_amount">Enter the Tip Amount</string>
+    <string name="enter_service_charge">Enter the Service Charge</string>
     <string name="amount">Amount</string>
     <string name="adjust">Adjust</string>
     <string name="enter_the_percentage">Enter the Percentage</string>
@@ -162,7 +163,9 @@
     <string name="tax_label_service_charge">Service Charge</string>
     <string name="tax_label_vat">VAT</string>
     <string name="tip_percent_change_prompt">Enter Tip Percentage for Button</string>
+    <string name="service_charge_percent_change_prompt">Enter Service Charge Percentage for Button</string>
     <string name="tip_current_value">Current Tip</string>
+    <string name="service_charge_current_value">Current Service Charge</string>
     <string name="tax_percent_prompt_service_charge">Enter Percentage</string>
     <string name="tax_percent_prompt_vat">Enter VAT Percentage</string>
     <string name="tax_current_value">Current VAT</string>
@@ -179,7 +182,7 @@
     <string name="auth_cap">Auth-Capture</string>
     <string name="tnx_amount">Transaction Amount:</string>
     <string name="tip_amt">Tip Amount:</string>
-    <string name="service_charge_amt">Service Charge:</string>
+    <string name="service_charge">Service Charge:</string>
     <string name="vat_amt">VAT:</string>
     <string name="igst_amt">IGST Amount:</string>
 

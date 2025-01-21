@@ -297,8 +297,11 @@ fun CommonTopAppBar(
     onBackButtonClick: () -> Unit,
     backgroundColor: Color = Color(0xFFF8F8F7),
     modifier: Modifier = Modifier,
-    showBackIcon: Boolean = true // New parameter to control arrow visibility
+    showBackIcon: Boolean = true, // New parameter to control arrow visibility
+    closeKeypadOnBackButton : Boolean?=false,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     TopAppBar(
         title = {
             Text(
@@ -317,7 +320,7 @@ fun CommonTopAppBar(
                     modifier = Modifier
                         .size(MaterialTheme.dimens.DP_60_CompactMedium) // Invisible touch area for better touch responsiveness
                         .clickable(
-                            onClick = { onBackButtonClick() },
+                            onClick = { if(closeKeypadOnBackButton ==  true) keyboardController?.hide(); onBackButtonClick() },
                             indication = LocalIndication.current, // Remove ripple effect if it's not required
                             interactionSource = remember { MutableInteractionSource() }
                         )
@@ -460,6 +463,8 @@ fun FooterButtons(
     closeKeypadOnSecondButton : Boolean?=false
 ) {
     val isKeyboardVisible = remember { mutableStateOf(false) }
+    var isFirstButtonPressed by remember { mutableStateOf(false) }
+    var isSecondButtonPressed by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     fun updateKeyboardState(view: View) {
@@ -486,6 +491,12 @@ fun FooterButtons(
         updateKeyboardState(view)
     }
 
+    LaunchedEffect(isFirstButtonPressed,isSecondButtonPressed) {
+        delay(AppConstants.BUTTON_CLICK_EFFECT_MS)
+        isFirstButtonPressed = false
+        isSecondButtonPressed = false
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -498,8 +509,6 @@ fun FooterButtons(
                 .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            var isFirstButtonPressed by remember { mutableStateOf(false) }
-            var isSecondButtonPressed by remember { mutableStateOf(false) }
 
             // First Button
             firstButtonTitle?.let {
