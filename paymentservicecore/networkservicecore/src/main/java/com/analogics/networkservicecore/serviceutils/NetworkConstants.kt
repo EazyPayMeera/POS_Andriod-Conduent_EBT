@@ -14,5 +14,5 @@ object NetworkConstants {
 
         /* HOST Address */
         const val HOST_ADDRESS = "124.153.66.37"
-        const val HOST_PORT = 5191
+        const val HOST_PORT = 5167
 }

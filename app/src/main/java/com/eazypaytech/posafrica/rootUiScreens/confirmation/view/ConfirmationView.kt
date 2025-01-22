@@ -116,8 +116,8 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     .padding(
                         start = MaterialTheme.dimens.DP_24_CompactMedium,
                         end = MaterialTheme.dimens.DP_24_CompactMedium,
-                        top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
-                        bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                        //top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                        //bottom = MaterialTheme.dimens.DP_10_CompactMedium
                     ),
                 elevation = MaterialTheme.dimens.DP_10_CompactMedium,
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
@@ -277,7 +277,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
                 }
                 .setOnConfirmAction {
-                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
+                    //navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
                 }
                 .setShowButtons(true)
                 .setNavAction {
@@ -313,7 +313,7 @@ fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit
 fun TransactionSummaryCard(
     amountDouble: Double,
     tipAmount: Double,
-    sgstAmount: Double,
+    serviceCharge: Double,
     vat: Double,
     sharedViewModel: SharedViewModel
 ) {
@@ -339,10 +339,10 @@ fun TransactionSummaryCard(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+                    .padding(bottom = MaterialTheme.dimens.DP_2_CompactMedium)
             )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
+            //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
             // Transaction Amount
             sharedViewModel.objRootAppPaymentDetail.txnAmount?.toDouble()?.let {
@@ -360,13 +360,15 @@ fun TransactionSummaryCard(
                 )
             }
 
-            sharedViewModel.objPosConfig?.isTaxEnabled?.takeIf { it == true }?.let {
-                // Service Charge
-/*                TransactionSummaryItem(
-                    label = stringResource(id = R.string.sgst_amt),
-                    amount = sgstAmount
-                )*/
+            // Service Charge
+            sharedViewModel.objPosConfig?.isServiceChargeEnabled?.takeIf { it == true }?.let {
+                TransactionSummaryItem(
+                    label = stringResource(id = R.string.service_charge),
+                    amount = serviceCharge
+                )
+            }
 
+            sharedViewModel.objPosConfig?.isTaxEnabled?.takeIf { it == true }?.let {
                 // VAT
                 TransactionSummaryItem(
                     label = stringResource(id = R.string.vat_amt),
