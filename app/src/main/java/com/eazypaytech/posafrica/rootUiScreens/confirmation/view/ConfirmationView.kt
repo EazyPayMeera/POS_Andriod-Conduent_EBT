@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,15 +53,15 @@ import com.eazypaytech.posafrica.ui.theme.tipBColor
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ConfirmationView(navHostController: NavHostController, customTipAmount : Double? =null, viewModel: ConfirmationViewModel = hiltViewModel()) {
+fun ConfirmationView(navHostController: NavHostController, customTipAmount : Double? =null, customServiceCharge : Double?, viewModel: ConfirmationViewModel = hiltViewModel()) {
     val sharedViewModel= localSharedViewModel.current
     val transAmount = sharedViewModel.objRootAppPaymentDetail.txnAmount?:0.00
-    val serviceCharge = sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00
     val vat = sharedViewModel.objRootAppPaymentDetail.VAT?:0.00
     val tipAmount by remember {viewModel.tipAmount}
+    val serviceCharge by remember {viewModel.serviceCharge}
     var isTipEnabled by remember { viewModel.isTipButtonEnabled }
     var isServiceChargeEnabled by remember { viewModel.isServiceChargeButtonEnabled }
-    val totalAmount = calculateTotalAmount(transAmount, tipAmount, serviceCharge, vat)
+    val totalAmount = calculateTotalAmount(transAmount, tipAmount, vat, serviceCharge)
     var isDialogVisible by remember { mutableStateOf(false) }
 
     val totalAmountFetch = viewModel.totalAmountFetch.collectAsState().value
@@ -150,8 +151,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onLoad(customTipAmount,sharedViewModel)
-        //viewModel.getTotalAmountByInvoiceNo(sharedViewModel.objRootAppPaymentDetail.invoiceNo.toString())
+        viewModel.onLoad(customTipAmount,customServiceCharge,sharedViewModel)
     }
 }
 
@@ -212,7 +212,7 @@ fun AddTipCard(
                     Spacer(modifier = Modifier.weight(1f))
                     CustomSwitch(
                         checked = isTipEnabled,
-                        onCheckedChange = { viewModel.onTipToggle(it, sharedViewModel) },
+                        onCheckedChange = { viewModel.onTipToggle(it) },
                         checkedImage = R.drawable.switch_checked,
                         uncheckedImage = R.drawable.switch_unchecked,
                     )
@@ -230,7 +230,7 @@ fun AddTipCard(
                         onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT1, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT1 && isTipEnabled) {
+                            backgroundColor = if (viewModel.selectedTipButton.value == PercentButton.PERCENT1 && isTipEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -253,7 +253,7 @@ fun AddTipCard(
                         onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT2, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT2 && isTipEnabled) {
+                            backgroundColor = if (viewModel.selectedTipButton.value == PercentButton.PERCENT2 && isTipEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -277,7 +277,7 @@ fun AddTipCard(
                         onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT3, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT3 && isTipEnabled) {
+                            backgroundColor = if (viewModel.selectedTipButton.value == PercentButton.PERCENT3 && isTipEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -300,7 +300,7 @@ fun AddTipCard(
                         onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
                         enabled = isTipEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.CUSTOM && isTipEnabled) {
+                            backgroundColor = if (viewModel.selectedTipButton.value == PercentButton.CUSTOM && isTipEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isTipEnabled) 1f else 0.5f)
@@ -367,7 +367,7 @@ fun AddServiceChargeCard(
                     Spacer(modifier = Modifier.weight(1f))
                     CustomSwitch(
                         checked = isServiceChargeEnabled,
-                        onCheckedChange = { viewModel.onTipToggle(it, sharedViewModel) },
+                        onCheckedChange = { viewModel.onServiceChargeToggle(it) },
                         checkedImage = R.drawable.switch_checked,
                         uncheckedImage = R.drawable.switch_unchecked,
                     )
@@ -382,10 +382,10 @@ fun AddServiceChargeCard(
                 ) {
 
                     Button(
-                        onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT1, sharedViewModel) },
+                        onClick = { viewModel.onServiceChargePercentChange(PercentButton.PERCENT1, sharedViewModel) },
                         enabled = isServiceChargeEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT1 && isServiceChargeEnabled) {
+                            backgroundColor = if (viewModel.selectedServiceChargeButton.value == PercentButton.PERCENT1 && isServiceChargeEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
@@ -393,22 +393,23 @@ fun AddServiceChargeCard(
                             contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        modifier = Modifier,
+                            //.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
                             pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
                             disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
-                        )
+                        ),
+                        contentPadding = PaddingValues(horizontal = MaterialTheme.dimens.DP_15_CompactMedium, vertical = MaterialTheme.dimens.DP_10_CompactMedium)
                     ) {
-                        Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT1, sharedViewModel))
+                        Text(text = viewModel.getServiceChargePercentLabel(PercentButton.PERCENT1, sharedViewModel))
                     }
 
                     Button(
-                        onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT2, sharedViewModel) },
+                        onClick = { viewModel.onServiceChargePercentChange(PercentButton.PERCENT2, sharedViewModel) },
                         enabled = isServiceChargeEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT2 && isServiceChargeEnabled) {
+                            backgroundColor = if (viewModel.selectedServiceChargeButton.value == PercentButton.PERCENT2 && isServiceChargeEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
@@ -416,8 +417,9 @@ fun AddServiceChargeCard(
                             contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        modifier = Modifier,
+                        contentPadding = PaddingValues(horizontal = MaterialTheme.dimens.DP_15_CompactMedium, vertical = MaterialTheme.dimens.DP_10_CompactMedium),
+                            //.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
                             pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
@@ -425,14 +427,14 @@ fun AddServiceChargeCard(
                         )
 
                     ) {
-                        Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT2, sharedViewModel))
+                        Text(text = viewModel.getServiceChargePercentLabel(PercentButton.PERCENT2, sharedViewModel))
                     }
 
                     Button(
-                        onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT3, sharedViewModel) },
+                        onClick = { viewModel.onServiceChargePercentChange(PercentButton.PERCENT3, sharedViewModel) },
                         enabled = isServiceChargeEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT3 && isServiceChargeEnabled) {
+                            backgroundColor = if (viewModel.selectedServiceChargeButton.value == PercentButton.PERCENT3 && isServiceChargeEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
@@ -440,22 +442,23 @@ fun AddServiceChargeCard(
                             contentColor = MaterialTheme.colorScheme.tertiary
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        modifier = Modifier,
+                        contentPadding = PaddingValues(horizontal = MaterialTheme.dimens.DP_15_CompactMedium, vertical = MaterialTheme.dimens.DP_10_CompactMedium),
+                            //.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
                             pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
                             disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
                         )
                     ) {
-                        Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT3, sharedViewModel))
+                        Text(text = viewModel.getServiceChargePercentLabel(PercentButton.PERCENT3, sharedViewModel))
                     }
 
                     Button(
-                        onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
+                        onClick = { viewModel.onCustomServiceCharge(navHostController, sharedViewModel) },
                         enabled = isServiceChargeEnabled,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.CUSTOM && isServiceChargeEnabled) {
+                            backgroundColor = if (viewModel.selectedServiceChargeButton.value == PercentButton.CUSTOM && isServiceChargeEnabled) {
                                 MaterialTheme.colorScheme.primary
                             } else {
                                 tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
@@ -464,8 +467,9 @@ fun AddServiceChargeCard(
                         ),
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
                         //modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
-                        modifier = Modifier
-                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        modifier = Modifier,
+                        contentPadding = PaddingValues(horizontal = MaterialTheme.dimens.DP_15_CompactMedium, vertical = MaterialTheme.dimens.DP_10_CompactMedium),
+                            //.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
                             pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled

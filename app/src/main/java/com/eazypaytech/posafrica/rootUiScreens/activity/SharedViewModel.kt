@@ -15,7 +15,7 @@ class SharedViewModel:ViewModel() {
 
    /* UI flags for transaction states */
    var isTipButtonEnabled: Boolean = false
-   var isServiceChargeEnabled: Boolean = false
+   var isServiceChargeButtonEnabled: Boolean = false
    var selectedTipButton: PercentButton = PercentButton.NONE
    var selectedServiceChargeButton: PercentButton = PercentButton.NONE
    var tipAmount: Double = 0.00
@@ -26,7 +26,7 @@ class SharedViewModel:ViewModel() {
    {
       objRootAppPaymentDetail = ObjRootAppPaymentDetails()
       isTipButtonEnabled = objPosConfig?.isTipEnabled == true
-      isServiceChargeEnabled = objPosConfig?.isServiceChargeEnabled == true
+      isServiceChargeButtonEnabled = objPosConfig?.isServiceChargeEnabled == true
       selectedTipButton = PercentButton.NONE
       selectedServiceChargeButton = PercentButton.NONE
       tipAmount = 0.00

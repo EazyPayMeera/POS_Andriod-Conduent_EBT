@@ -13,6 +13,7 @@ sealed class AppNavigationItems(val route: String) {
 
  object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
  object TipScreen : AppNavigationItems(NavScreensEnum.TipView.name)
+ object ServiceChargeScreen : AppNavigationItems(NavScreensEnum.ServiceChargeView.name)
  object PasswordScreen : AppNavigationItems(NavScreensEnum.PasswordView.name)
  object RefundAmtScreen : AppNavigationItems(NavScreensEnum.RefundAmtView.name)
  object SettingsScreen : AppNavigationItems(NavScreensEnum.SettingsView.name)

@@ -44,8 +44,8 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
 
-fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, sgstAmount: Double, igstAmount: Double): Double {
-    return transactionAmount + tipAmount + sgstAmount + igstAmount
+fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, vat: Double, serviceCharge: Double): Double {
+    return transactionAmount + tipAmount + vat + serviceCharge
 }
 
 fun transformToAmountDouble(amount: String, decimalPlaces: Int = 2): Double {
@@ -95,7 +95,7 @@ fun Double?.toPercentFormat(decimalPlaces: Int = 2, noSpace: Boolean = true, wit
     return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }
 
-fun calculateTip(amount: Double, tip: Double): Double {
+fun multiplyValues(amount: Double, tip: Double): Double {
     return amount * tip
 }
 
