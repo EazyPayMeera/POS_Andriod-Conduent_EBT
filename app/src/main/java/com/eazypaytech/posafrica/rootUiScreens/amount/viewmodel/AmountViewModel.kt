@@ -138,14 +138,11 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 // Handle non-REFUND and non-PREAUTH cases
                 sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
 
+                /* TAX on TOP of Service Charge */
                 if (sharedViewModel.objPosConfig?.isTaxEnabled == true) {
                     sharedViewModel.objRootAppPaymentDetail.VAT = calculateTax(
-                        sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
+                        (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) + (sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00),
                         sharedViewModel.objPosConfig?.vatPercent ?: 0.00
-                    )
-                    sharedViewModel.objRootAppPaymentDetail.serviceCharge = calculateTax(
-                        sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00,
-                        sharedViewModel.objPosConfig?.serviceChargePercent1 ?: 0.00
                     )
                 }
 

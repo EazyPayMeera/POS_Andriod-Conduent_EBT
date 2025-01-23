@@ -68,7 +68,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("tip") var tip: String? = null,
     @SerializedName("cashback") var cashback: String? = null,
     @SerializedName("VAT") var VAT: String? = null,
-    @SerializedName("ServiceCharge") var serviceCharge: String? = null,
+    @SerializedName("serviceCharge") var serviceCharge: String? = null,
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: String? = null,
