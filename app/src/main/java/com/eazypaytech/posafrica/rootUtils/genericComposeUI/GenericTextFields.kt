@@ -500,13 +500,13 @@ fun FooterButtons(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium) // Adjust padding as needed
+            .padding(bottom = MaterialTheme.dimens.DP_30_CompactMedium) // Adjust padding as needed
     ) {
         Row(
             modifier = Modifier
                 .align(if (isKeyboardVisible.value) Alignment.TopCenter else alignment)
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
+                .fillMaxWidth(),
+                //.padding(vertical = MaterialTheme.dimens.DP_23_CompactMedium), // Adjust vertical padding if needed
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
 

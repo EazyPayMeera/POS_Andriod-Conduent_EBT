@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,7 +76,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     start = MaterialTheme.dimens.DP_24_CompactMedium,
                     end = MaterialTheme.dimens.DP_24_CompactMedium,
                     top = MaterialTheme.dimens.DP_24_CompactMedium,
-                    bottom = MaterialTheme.dimens.DP_5_CompactMedium
+                    //bottom = MaterialTheme.dimens.DP_5_CompactMedium
                 ),
             backgroundColor = MaterialTheme.colorScheme.primary,
             shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
@@ -93,7 +92,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                        .padding(bottom = MaterialTheme.dimens.DP_2_CompactMedium)
                         .align(Alignment.Start)
                 )
                 TextView(
@@ -110,6 +109,10 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
         TransactionSummaryCard(transAmount, tipAmount, serviceCharge, vat, sharedViewModel)
 
         AddTipCard(sharedViewModel,viewModel,navHostController,isTipEnabled)
+
+        //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
+
+        AddServiceChargeCard(sharedViewModel,viewModel,navHostController,isServiceChargeEnabled)
 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
@@ -167,7 +170,6 @@ fun TipOptionButton(tip: String, selectedTip: String, onSelect: (String) -> Unit
     }
 }
 
-
 @Composable
 fun AddTipCard(
     sharedViewModel: SharedViewModel,
@@ -183,7 +185,7 @@ fun AddTipCard(
                 .padding(
                     start = MaterialTheme.dimens.DP_24_CompactMedium,
                     end = MaterialTheme.dimens.DP_24_CompactMedium,
-                    //top = MaterialTheme.dimens.DP_4_CompactMedium, // Reduced top padding
+                    top = MaterialTheme.dimens.DP_10_CompactMedium,
                     //bottom = MaterialTheme.dimens.DP_10_CompactMedium
                 ),
             elevation = MaterialTheme.dimens.DP_10_CompactMedium,
@@ -203,7 +205,7 @@ fun AddTipCard(
                     TextView(
                         text = stringResource(id = R.string.add_tip),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
+                        color = if (isTipEnabled) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSecondary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = MaterialTheme.dimens.DP_2_CompactMedium)
                     )
@@ -219,7 +221,7 @@ fun AddTipCard(
                 //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium),
                     horizontalArrangement = Arrangement.SpaceEvenly
 
                 ) {
@@ -324,6 +326,161 @@ fun AddTipCard(
 }
 
 @Composable
+fun AddServiceChargeCard(
+    sharedViewModel: SharedViewModel,
+    viewModel: ConfirmationViewModel,
+    navHostController: NavHostController,
+    isServiceChargeEnabled : Boolean
+)
+{
+    sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
+        GenericCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = MaterialTheme.dimens.DP_24_CompactMedium,
+                    end = MaterialTheme.dimens.DP_24_CompactMedium,
+                    top = MaterialTheme.dimens.DP_10_CompactMedium,
+                    //bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                ),
+            elevation = MaterialTheme.dimens.DP_10_CompactMedium,
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        start = MaterialTheme.dimens.DP_20_CompactMedium,
+                        end = MaterialTheme.dimens.DP_20_CompactMedium
+                    )
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextView(
+                        text = stringResource(id = R.string.add_service_charge),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = if (isServiceChargeEnabled) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSecondary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = MaterialTheme.dimens.DP_2_CompactMedium)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    CustomSwitch(
+                        checked = isServiceChargeEnabled,
+                        onCheckedChange = { viewModel.onTipToggle(it, sharedViewModel) },
+                        checkedImage = R.drawable.switch_checked,
+                        uncheckedImage = R.drawable.switch_unchecked,
+                    )
+                }
+
+                //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_4_CompactMedium))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+
+                ) {
+
+                    Button(
+                        onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT1, sharedViewModel) },
+                        enabled = isServiceChargeEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT1 && isServiceChargeEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
+                            },
+                            contentColor = MaterialTheme.colorScheme.tertiary
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
+                    ) {
+                        Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT1, sharedViewModel))
+                    }
+
+                    Button(
+                        onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT2, sharedViewModel) },
+                        enabled = isServiceChargeEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT2 && isServiceChargeEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
+                            },
+                            contentColor = MaterialTheme.colorScheme.tertiary
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
+
+                    ) {
+                        Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT2, sharedViewModel))
+                    }
+
+                    Button(
+                        onClick = { viewModel.onTipPercentChange(PercentButton.PERCENT3, sharedViewModel) },
+                        enabled = isServiceChargeEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.PERCENT3 && isServiceChargeEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
+                            },
+                            contentColor = MaterialTheme.colorScheme.tertiary
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
+                    ) {
+                        Text(text = viewModel.getTipPercentLabel(PercentButton.PERCENT3, sharedViewModel))
+                    }
+
+                    Button(
+                        onClick = { viewModel.onCustomTip(navHostController, sharedViewModel) },
+                        enabled = isServiceChargeEnabled,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (viewModel.selectedButton.value == PercentButton.CUSTOM && isServiceChargeEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                tipBColor.copy(alpha = if (isServiceChargeEnabled) 1f else 0.5f)
+                            },
+                            contentColor = MaterialTheme.colorScheme.tertiary
+                        ),
+                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_15_CompactMedium),
+                        //modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        modifier = Modifier
+                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = MaterialTheme.dimens.DP_20_CompactMedium,
+                            pressedElevation = MaterialTheme.dimens.DP_20_CompactMedium, // Adjust pressed elevation based on isTipEnabled
+                            disabledElevation = MaterialTheme.dimens.DP_20_CompactMedium
+                        )
+                    ) {
+                        Text(text = stringResource(id = R.string.custom))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun TransactionSummaryCard(
     amountDouble: Double,
     tipAmount: Double,
@@ -337,7 +494,8 @@ fun TransactionSummaryCard(
             .padding(
                 start = MaterialTheme.dimens.DP_24_CompactMedium,
                 end = MaterialTheme.dimens.DP_24_CompactMedium,
-                bottom = MaterialTheme.dimens.DP_10_CompactMedium
+                top = MaterialTheme.dimens.DP_10_CompactMedium,
+                //bottom = MaterialTheme.dimens.DP_10_CompactMedium
             ),
         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
     ) {

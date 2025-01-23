@@ -111,7 +111,8 @@
     <string name="cancel_btn">Cancel</string>
     <string name="cancel_dialogue">Cancel?</string>
     <string name="yes">YES</string>
-    <string name="add_tip">Add Tip:</string> Select an application id
+    <string name="add_tip">Add Tip:</string>
+    <string name="add_service_charge">Service Charge:</string>
     <string name="txn_sum">Transaction Summary:</string>
     <string name="total_amt">Total Amount:</string>
     <string name="refund_amt_data">Refund Amount:</string>

@@ -110,7 +110,8 @@
     <string name="cancel_btn">रद्द करें</string>
     <string name="cancel_dialogue">रद्द करें?</string>
     <string name="yes">हाँ</string>
-    <string name="add_tip">टिप जोड़ें:</string> एक एप्लिकेशन आईडी का चयन करें
+    <string name="add_tip">टिप जोड़ें:</string>
+    <string name="add_service_charge">सेवा शुल्क:</string>
     <string name="txn_sum">लेन-देन सारांश:</string>
     <string name="total_amt">कुल राशि:</string>
     <string name="refund_amt_data">रिफंड राशि:</string>

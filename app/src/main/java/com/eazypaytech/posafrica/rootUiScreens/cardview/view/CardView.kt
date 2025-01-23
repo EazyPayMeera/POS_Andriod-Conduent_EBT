@@ -124,7 +124,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                 color = MaterialTheme.colorScheme.tertiary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
-                                    .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                                    .padding(bottom = MaterialTheme.dimens.DP_2_CompactMedium)
                                     .align(Alignment.Start)
                             )
 
