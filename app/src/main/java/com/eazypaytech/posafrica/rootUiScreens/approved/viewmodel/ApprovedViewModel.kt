@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
+import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
+import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
@@ -15,6 +17,9 @@ import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.R
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomAlertDialog
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +29,7 @@ import printReceipt
 import javax.inject.Inject
 
 @HiltViewModel
-class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository): ViewModel()
+class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepository, private var printerServiceRepository: PrinterServiceRepository): ViewModel()
 {
     lateinit var context: Context
     private val _hasDbRecord = MutableStateFlow<Boolean>(false)
@@ -37,6 +42,24 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 _hasDbRecord.value = true
             }
+            printerServiceRepository.initPrinter(context, object :IPrinterServiceResponseListener {
+                override fun onPrinterServiceResponse(response: Any) {
+                    when (response) {
+                        is PrinterServiceResult.InitResult -> {
+                            when (response.status) {
+                                PrinterServiceResult.InitStatus.SUCCESS -> { }
+                                PrinterServiceResult.InitStatus.FAILURE -> {
+                                    CustomDialogBuilder.composeAlertDialog(
+                                        title = context.resources.getString(R.string.printer_error_title),
+                                        message = context.resources.getString(R.string.printer_init_failed)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            )
 
             if (_hasDbRecord.value == true && sharedViewModel.objPosConfig?.isAutoPrintMerchant == true) {
                 viewModelScope.launch {

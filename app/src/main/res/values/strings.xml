@@ -269,6 +269,7 @@
     <string name="printer_busy">Printer is Busy</string>
     <string name="printer_Alert">Printing</string>
     <string name="printer_no_record">No Record Found</string>
+    <string name="printer_init_failed">Initialization Failed</string>
 
     <!-- Receipt Builder -->
     <string name="receipt_header">GLOBAL PAYMENTS</string>
