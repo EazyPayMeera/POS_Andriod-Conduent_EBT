@@ -15,7 +15,6 @@ import javax.inject.Inject
 class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestListener,
     IPrinterSdkResponseListener {
     private val printerSdkRequestRepository = PrinterSdkRequestRepository(this)
-    private val TAG = "PrinterServiceRepository"
     var iPrinterServiceResponseListener: IPrinterServiceResponseListener?=null
     var context: Context?=null
     var job: Job?=null

@@ -37,7 +37,7 @@ suspend fun getPrinterStatus(objRootAppPaymentDetail: ObjRootAppPaymentDetails, 
         val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
             PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
         )
-        PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)
+/*        PrinterServiceRepository(paymentServiceTxnDetails).getStatus(iPrinterResultProviderListener)*/
 
     } catch (e: Exception) {
         Log.e(TAG, "Failed to get printer status: ${e.message}")
@@ -65,7 +65,7 @@ suspend fun addLogo(context: Context, objRootAppPaymentDetail: ObjRootAppPayment
         }
 
         // Call the addImage function with format and image data
-        PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)
+        /*PrinterServiceRepository(paymentServiceTxnDetails).printImage(format,imageData,iPrinterResultProviderListener)*/
     } else {
         // Handle the case where the image data is null
         Log.e("ImageError", "Failed to get image bytes")
@@ -179,10 +179,10 @@ suspend fun initPrinter(
             }
 
             // Proceed with non-nullable paymentServiceTxnDetails
-            PrinterServiceRepository(paymentServiceTxnDetails).initPrinter(
+/*            PrinterServiceRepository(paymentServiceTxnDetails).initPrinter(
                 context,
                 iPrinterResultProviderListener
-            )
+            )*/
 
             if(isDetail)
             {
@@ -307,7 +307,7 @@ private suspend fun addReceiptDetails(
                 putSerializable("barcode_type", BarcodeFormat.CODE_39)
             }
 
-            PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(
+/*            PrinterServiceRepository(paymentServiceTxnDetails).printReceiptDetails(
                 format,
                 barcodeString,
                 receiptDetails,
@@ -315,7 +315,7 @@ private suspend fun addReceiptDetails(
                 alignmentText,
                 fontsize,
                 iPrinterResultProviderListener
-            )
+            )*/
         } else {
             Log.d("ReceiptBuilder", "Failed to create receipt.")
         }
@@ -330,7 +330,7 @@ suspend fun stopPrinting(objRootAppPaymentDetail: ObjRootAppPaymentDetails,iPrin
         val paymentServiceTxnDetails = PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(
             PaymentServiceUtils.objectToJsonString(objRootAppPaymentDetail)
         )
-        PrinterServiceRepository(paymentServiceTxnDetails).stopPrinting(iPrinterResultProviderListener)
+        /*PrinterServiceRepository(paymentServiceTxnDetails).stopPrinting(iPrinterResultProviderListener)*/
 
     } catch (e: Exception) {
         Log.e(TAG, "Failed to get printer status: ${e.message}")
@@ -409,13 +409,13 @@ suspend fun addDetailedReceipt(
                 else -> 24 // Default font size if no match
             }
         }
-        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
+/*        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
             labelList,
             valueList,
             descriptionList,
             fontsize,
             iPrinterResultProviderListener
-        )
+        )*/
     }
 }
 
@@ -443,13 +443,13 @@ suspend fun addSummaryDetails(
                 else -> 24 // Default font size if no match
             }
         }
-        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
+/*        PrinterServiceRepository(paymentServiceTxnDetails).printLeftCenterRightDetails(
             labelList,
             valueList,
             descriptionList,
             fontsize,
             iPrinterResultProviderListener
-        )
+        )*/
     }
 }
 

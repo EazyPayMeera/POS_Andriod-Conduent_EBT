@@ -1,6 +1,6 @@
-package com.eazypaytech.tpaymentcore.model.emv
+package com.eazypaytech.paymentservicecore.model.emv
 
-sealed class PrinterSdkResult(
+sealed class PrinterServiceResult(
     var status: Any? = null,
     var printerMsgId : PrinterMsgId? = null
 )
@@ -23,6 +23,6 @@ sealed class PrinterSdkResult(
         PRINTING
     }
 
-    class InitResult(status: InitStatus? = null, printerMsgId: PrinterMsgId? = null) : PrinterSdkResult(status, printerMsgId)
-    class PrinterResult(status: PrinterStatus? = null, printerMsgId: PrinterMsgId? = null) : PrinterSdkResult(status, printerMsgId)
+    class InitResult(status: InitStatus? = null, printerMsgId: PrinterMsgId? = null) : PrinterServiceResult(status, printerMsgId)
+    class PrinterResult(status: PrinterStatus? = null, printerMsgId: PrinterMsgId? = null) : PrinterServiceResult(status, printerMsgId)
 }
