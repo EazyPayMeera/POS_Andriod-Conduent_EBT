@@ -23,6 +23,51 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     var context: Context?=null
     var job: Job?=null
 
+    data class Format(val value: Int=0x00000000)
+    {
+        operator fun plus(increment: Any?): Format {
+            return when(increment) {
+                is FontSize -> Format(value or increment.value)
+                is Align -> Format(value or increment.value)
+                is LineSpacing -> Format(value or increment.value)
+                is Style -> Format(value or increment.value)
+                is FontName -> Format(value or increment.value)
+                else -> Format(value);
+            }
+        }
+    }
+
+    enum class FontSize(val value: Int) {
+        EXTRA_SMALL(0x00000001),
+        SMALL(0x00000002),
+        MEDIUM(0x00000004),
+        LARGE(0x00000008),
+        EXTRA_LARGE(0x00000010);
+    }
+
+    enum class Align(val value: Int) {
+        LEFT(0x00000100),
+        CENTER(0x00000200),
+        RIGHT(0x00000400)
+    }
+
+    enum class LineSpacing(val value: Int) {
+        EXTRA_SMALL(0x00001000),
+        SMALL(0x00002000),
+        MEDIUM(0x00004000),
+        LARGE(0x00008000),
+        EXTRA_LARGE(0x00010000);
+    }
+
+    enum class Style(val value: Int) {
+        BOLD(0x00100000),
+        NO_LINE_BREAK(0x00200000);
+    }
+
+    enum class FontName(val value: Int) {
+        SIMSUN(0x01000000)
+    }
+
     override fun print(
         context: Context,
         iPrinterServiceResponseListener: IPrinterServiceResponseListener

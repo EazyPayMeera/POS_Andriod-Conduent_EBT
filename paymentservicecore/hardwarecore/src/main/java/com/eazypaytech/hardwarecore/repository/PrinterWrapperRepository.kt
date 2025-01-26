@@ -8,22 +8,25 @@ import javax.inject.Inject
 
 class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListener: IPrinterSdkResponseListener)
 {
+
+
+    fun addText(text:String?, format : ULong) {
+
+    }
+
     fun print(context: Context)
     {
         try {
-            when (PrinterProviderImpl.getInstance(context).initPrint()) {
-                0 -> iPrinterSdkResponseListener.onPrinterSdkResponse(
+
+            /* Initialize Printer First */
+            if(PrinterProviderImpl.getInstance(context).initPrint()!=0) {
+                iPrinterSdkResponseListener.onPrinterSdkResponse(
                     PrinterSdkResult.Result(
-                        PrinterSdkResult.Status.INIT_SUCCESS
+                        PrinterSdkResult.Status.INIT_FAILURE
                     )
                 )
-                else ->
-                    iPrinterSdkResponseListener.onPrinterSdkResponse(
-                        PrinterSdkResult.Result(
-                            PrinterSdkResult.Status.INIT_FAILURE
-                        )
-                    )
             }
+
         } catch (exception: Exception) {
             iPrinterSdkResponseListener.onPrinterSdkResponse(
                 PrinterSdkResult.Result(
