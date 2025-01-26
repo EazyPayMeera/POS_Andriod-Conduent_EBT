@@ -3,8 +3,8 @@ package com.eazypaytech.posafrica.rootUtils.genericComposeUI
 import android.content.Context
 import com.eazypaytech.paymentservicecore.listeners.requestListener.IPrinterServiceRequestListener
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult.InitResult
-import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult.InitStatus
+import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult.Result
+import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult.Status
 import com.eazypaytech.paymentservicecore.model.error.PrinterServiceException
 import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterSdkResponseListener
 import com.eazypaytech.tpaymentcore.model.emv.PrinterSdkException
@@ -35,19 +35,22 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         }
     }
 
-    fun sdkToPrinterInitStatus(value: PrinterSdkResult.InitStatus) : InitStatus {
+    fun sdkToPrinterStatus(value: PrinterSdkResult.Status) : Status {
         return when (value) {
-            PrinterSdkResult.InitStatus.SUCCESS -> InitStatus.SUCCESS
-            else -> InitStatus.FAILURE
+            PrinterSdkResult.Status.INIT_SUCCESS -> Status.INIT_SUCCESS
+            PrinterSdkResult.Status.INIT_FAILURE -> Status.INIT_FAILURE
+            PrinterSdkResult.Status.PRINT_SUCCESS -> Status.PRINT_SUCCESS
+            PrinterSdkResult.Status.PRINT_FAILURE -> Status.PRINT_FAILURE
+            else -> Status.PRINT_FAILURE
         }
     }
 
     fun sdkToPrinterService(response: Any) : Any
     {
         return when(response) {
-            is PrinterSdkResult.InitResult -> {
-                InitResult(
-                    status = sdkToPrinterInitStatus(response.status as PrinterSdkResult.InitStatus)
+            is PrinterSdkResult.Result -> {
+                Result(
+                    status = sdkToPrinterStatus(response.status as PrinterSdkResult.Status)
                 )
             }
 
@@ -62,9 +65,5 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
 
     override fun onPrinterSdkResponse(response: Any) {
         iPrinterServiceResponseListener?.onPrinterServiceResponse(sdkToPrinterService(response))
-    }
-
-    override fun onPrinterDisplayMessage(printerMsgId: PrinterSdkResult.PrinterMsgId) {
-        iPrinterServiceResponseListener?.onPrinterServiceDisplayMessage(printerMsgId)
     }
 }
