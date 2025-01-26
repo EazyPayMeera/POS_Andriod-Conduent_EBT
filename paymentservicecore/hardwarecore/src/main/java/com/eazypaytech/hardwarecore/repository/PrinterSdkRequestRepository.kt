@@ -9,11 +9,11 @@ import kotlin.toString
 
 class PrinterSdkRequestRepository @Inject constructor(override var iPrinterSdkResponseListener: IPrinterSdkResponseListener) : IPrinterSdkRequestListener {
     private var printerWrapper = PrinterWrapperRepository(iPrinterSdkResponseListener)
-    override fun initPrinter(
+    override fun print(
     context: Context
     ) {
         try {
-            printerWrapper.initPrinter(context)
+            printerWrapper.print(context)
         } catch (exception: Exception) {
             iPrinterSdkResponseListener.onPrinterSdkResponse(PrinterSdkException(exception.message.toString()))
         }

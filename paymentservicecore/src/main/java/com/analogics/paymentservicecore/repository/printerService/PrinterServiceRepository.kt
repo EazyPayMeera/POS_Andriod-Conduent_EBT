@@ -23,7 +23,7 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     var context: Context?=null
     var job: Job?=null
 
-    override fun initPrinter(
+    override fun print(
         context: Context,
         iPrinterServiceResponseListener: IPrinterServiceResponseListener
     ) {
@@ -31,7 +31,7 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         this.iPrinterServiceResponseListener = iPrinterServiceResponseListener
         job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
-            printerSdkRequestRepository.initPrinter(context)
+            printerSdkRequestRepository.print(context)
         }
     }
 

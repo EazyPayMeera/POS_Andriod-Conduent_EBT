@@ -2,14 +2,12 @@ package com.eazypaytech.posafrica.rootUiScreens.approved.viewmodel
 
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
-import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
@@ -17,7 +15,6 @@ import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomAlertDialog
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,13 +39,13 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 _hasDbRecord.value = true
             }
-            printerServiceRepository.initPrinter(context, object :IPrinterServiceResponseListener {
+            printerServiceRepository.print(context, object :IPrinterServiceResponseListener {
                 override fun onPrinterServiceResponse(response: Any) {
                     when (response) {
-                        is PrinterServiceResult.InitResult -> {
+                        is PrinterServiceResult.Result -> {
                             when (response.status) {
-                                PrinterServiceResult.InitStatus.SUCCESS -> { }
-                                PrinterServiceResult.InitStatus.FAILURE -> {
+                                PrinterServiceResult.Status.INIT_SUCCESS -> { }
+                                PrinterServiceResult.Status.INIT_FAILURE -> {
                                     CustomDialogBuilder.composeAlertDialog(
                                         title = context.resources.getString(R.string.printer_error_title),
                                         message = context.resources.getString(R.string.printer_init_failed)
