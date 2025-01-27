@@ -23,16 +23,16 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     var context: Context?=null
     var job: Job?=null
 
-    data class Format(val value: Int=0x00000000)
+    data class LineFormat(val value: Int=0x00000000)
     {
-        operator fun plus(increment: Any?): Format {
+        operator fun plus(increment: Any?): LineFormat {
             return when(increment) {
-                is FontSize -> Format(value or increment.value)
-                is Align -> Format(value or increment.value)
-                is LineSpacing -> Format(value or increment.value)
-                is Style -> Format(value or increment.value)
-                is FontName -> Format(value or increment.value)
-                else -> Format(value);
+                is FontSize -> LineFormat(value or increment.value)
+                is Align -> LineFormat(value or increment.value)
+                is LineSpacing -> LineFormat(value or increment.value)
+                is Style -> LineFormat(value or increment.value)
+                is FontName -> LineFormat(value or increment.value)
+                else -> LineFormat(value)
             }
         }
     }
@@ -76,7 +76,10 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         this.iPrinterServiceResponseListener = iPrinterServiceResponseListener
         job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
-            printerSdkRequestRepository.print(context)
+            printerSdkRequestRepository.init(context).takeIf { it==0 }.let {
+                printerSdkRequestRepository.print()
+            }
+
         }
     }
 
@@ -98,12 +101,11 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
                     status = sdkToPrinterStatus(response.status as PrinterSdkResult.Status)
                 )
             }
-
             is PrinterSdkException ->{
                 PrinterServiceException(errorMessage = response.errorMessage)
             }
             else -> {
-                PrinterServiceException(errorMessage = "Unknown SDK Error")
+                PrinterServiceException(errorMessage = "Unknown Printer Error")
             }
         }
     }

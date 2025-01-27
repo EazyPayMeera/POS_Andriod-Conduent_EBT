@@ -43,6 +43,31 @@ object EmvConstants {
     const val UROVO_SDK_EMV_LOG_DISABLE   =             0
     const val UROVO_SDK_EMV_LOG_ENABLE   =              1
 
+    const val UROVO_SDK_PRINTER_KEY_FONT_SIZE   =           "font"
+    const val UROVO_SDK_PRINTER_KEY_FONT_NAME   =           "fontName"
+    const val UROVO_SDK_PRINTER_KEY_ALIGN   =               "align"
+    const val UROVO_SDK_PRINTER_KEY_BOLD_FONT   =           "fontBold"
+    const val UROVO_SDK_PRINTER_KEY_NEW_LINE   =            "newline"
+    const val UROVO_SDK_PRINTER_KEY_LINE_HEIGHT   =         "lineHeight"
+
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_SMALL = 1
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_SMALL =       2
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_MEDIUM =      3
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_LARGE =       4
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_LARGE = 5
+
+    const val UROVO_SDK_PRINTER_VAL_FONT_NAME_SIMSUN =      "simsun"
+
+    const val UROVO_SDK_PRINTER_VAL_ALIGN_LEFT =            0
+    const val UROVO_SDK_PRINTER_VAL_ALIGN_CENTER =          1
+    const val UROVO_SDK_PRINTER_VAL_ALIGN_RIGHT =           2
+
+    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_EXTRA_SMALL =   1
+    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_SMALL =         2
+    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_MEDIUM =        3
+    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_LARGE =         4
+    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_EXTRA_LARGE =   5
+
     /* Host Response */
     const val EMV_TAG_RESP_CODE =                           "8A"
     const val EMV_TAG_VAL_APPROVED_ONLINE =                 "3030"

@@ -9,5 +9,6 @@ import com.eazypaytech.tpaymentcore.model.emv.TransConfig
 interface IPrinterSdkRequestListener {
     var iPrinterSdkResponseListener : IPrinterSdkResponseListener
 
-    fun print(context: Context)
+    fun init(context: Context) : Int
+    fun print() : Int
 }
