@@ -66,6 +66,15 @@ class PrinterSdkRequestRepository @Inject constructor(override var iPrinterSdkRe
         return -1
     }
 
+    override fun addText(text: String, format: LineFormat?)
+    {
+        try {
+            printerWrapper.addText(text,format?: LineFormat())
+        } catch (exception: Exception) {
+            iPrinterSdkResponseListener.onPrinterSdkResponse(PrinterSdkException(exception.message.toString()))
+        }
+    }
+
     override fun print(
     ) : Int {
         try {

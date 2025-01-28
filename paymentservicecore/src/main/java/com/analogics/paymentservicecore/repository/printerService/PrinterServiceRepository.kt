@@ -20,21 +20,39 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     IPrinterSdkResponseListener {
     private val printerSdkRequestRepository = PrinterSdkRequestRepository(this)
     var iPrinterServiceResponseListener: IPrinterServiceResponseListener?=null
-    var context: Context?=null
+    lateinit var context : Context
     var job: Job?=null
 
-    data class LineFormat(val value: Int=0x00000000)
-    {
-        operator fun plus(increment: Any?): LineFormat {
-            return when(increment) {
-                is FontSize -> LineFormat(value or increment.value)
-                is Align -> LineFormat(value or increment.value)
-                is LineSpacing -> LineFormat(value or increment.value)
-                is Style -> LineFormat(value or increment.value)
-                is FontName -> LineFormat(value or increment.value)
-                else -> LineFormat(value)
-            }
+    class LineFormat(private var format: Int?=0x00000000) {
+        fun fontSize(size: FontSize): LineFormat {
+            format = format?.or(size.value)
+            return this
         }
+
+        fun align(align: Align): LineFormat {
+            format = format?.or(align.value)
+            return this
+        }
+
+        fun lineSpacing(spacing: LineSpacing): LineFormat {
+            format = format?.or(spacing.value)
+            return this
+        }
+
+        fun style(style: Style): LineFormat {
+            format = format?.or(style.value)
+            return this
+        }
+
+        fun font(name: FontName): LineFormat {
+            format = format?.or(name.value)
+            return this
+        }
+
+        fun getVal() : Int {
+            return format?:0x00000000
+        }
+
     }
 
     enum class FontSize(val value: Int) {
@@ -48,7 +66,7 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     enum class Align(val value: Int) {
         LEFT(0x00000100),
         CENTER(0x00000200),
-        RIGHT(0x00000400)
+        RIGHT(0x00000400);
     }
 
     enum class LineSpacing(val value: Int) {
@@ -65,22 +83,38 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     }
 
     enum class FontName(val value: Int) {
-        SIMSUN(0x01000000)
+        SIMSUN(0x01000000);
     }
 
-    override fun print(
+    override fun init(
         context: Context,
         iPrinterServiceResponseListener: IPrinterServiceResponseListener
-    ) {
+    ) : PrinterServiceRepository {
         this.context = context
         this.iPrinterServiceResponseListener = iPrinterServiceResponseListener
+        job = CoroutineScope(Dispatchers.Default).launch {
+            printerSdkRequestRepository.init(context)
+        }
+        return this
+    }
+
+    override fun addText(text : String, format : LineFormat?) : PrinterServiceRepository {
+        job = CoroutineScope(Dispatchers.Default).launch {
+            printerSdkRequestRepository.addText(text,toSdkLineFormat(format?: LineFormat()))
+        }
+        return this
+    }
+
+    override fun print( ): PrinterServiceRepository {
         job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
-            printerSdkRequestRepository.init(context).takeIf { it==0 }.let {
-                printerSdkRequestRepository.print()
-            }
-
+            printerSdkRequestRepository.print()
         }
+        return this
+    }
+
+    fun toSdkLineFormat(format: LineFormat) : PrinterSdkRequestRepository.LineFormat {
+        return PrinterSdkRequestRepository.LineFormat(format.getVal())
     }
 
     fun sdkToPrinterStatus(value: PrinterSdkResult.Status) : Status {

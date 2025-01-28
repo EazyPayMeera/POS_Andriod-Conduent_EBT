@@ -17,6 +17,9 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.LineFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +42,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 _hasDbRecord.value = true
             }
-            printerServiceRepository.print(context, object :IPrinterServiceResponseListener {
+            printerServiceRepository.init(context, object :IPrinterServiceResponseListener {
                 override fun onPrinterServiceResponse(response: Any) {
                     when (response) {
                         is PrinterServiceResult.Result -> {
@@ -56,7 +59,8 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     }
                 }
             }
-            )
+            ).addText("Hello There")
+                .print()
 
             if (_hasDbRecord.value == true && sharedViewModel.objPosConfig?.isAutoPrintMerchant == true) {
                 viewModelScope.launch {
@@ -88,20 +92,25 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     ) {
 
         viewModelScope.launch{
-            dbRepository.fetchLastTransaction()?.let {
-                var objPaymentDetail = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails()
-                viewModelScope.printReceipt(
-                    logoResId,
-                    sharedViewModel,
-                    context,
-                    customer,
-                    false,
-                    false,
-                    null,
-                    objPaymentDetail,
-                    lastTxn = false
-                )
+            printerServiceRepository.init(context, object :IPrinterServiceResponseListener {
+                override fun onPrinterServiceResponse(response: Any) {
+                    when (response) {
+                        is PrinterServiceResult.Result -> {
+                            when (response.status) {
+                                PrinterServiceResult.Status.INIT_SUCCESS -> { }
+                                PrinterServiceResult.Status.INIT_FAILURE -> {
+                                    CustomDialogBuilder.composeAlertDialog(
+                                        title = context.resources.getString(R.string.printer_error_title),
+                                        message = context.resources.getString(R.string.printer_init_failed)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            ).addText("Hello There", LineFormat().align(Align.CENTER).fontSize(FontSize.LARGE))
+                .print()
         }
     }
 }
