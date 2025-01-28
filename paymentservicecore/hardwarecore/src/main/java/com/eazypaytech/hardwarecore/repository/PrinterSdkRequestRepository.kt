@@ -10,7 +10,7 @@ import kotlin.toString
 class PrinterSdkRequestRepository @Inject constructor(override var iPrinterSdkResponseListener: IPrinterSdkResponseListener) : IPrinterSdkRequestListener {
     private var printerWrapper = PrinterWrapperRepository(iPrinterSdkResponseListener)
 
-    data class LineFormat(val value: Int=0x00000000)
+/*    data class LineFormat(val value: Int=0x00000000)
     {
         operator fun plus(increment: Any?): LineFormat {
             return when(increment) {
@@ -22,7 +22,7 @@ class PrinterSdkRequestRepository @Inject constructor(override var iPrinterSdkRe
                 else -> LineFormat(value)
             }
         }
-    }
+    }*/
 
     enum class FontSize(val value: Int) {
         EXTRA_SMALL(0x00000001),
@@ -66,10 +66,10 @@ class PrinterSdkRequestRepository @Inject constructor(override var iPrinterSdkRe
         return -1
     }
 
-    override fun addText(text: String, format: LineFormat?)
+    override fun addText(text: String, format: Int?)
     {
         try {
-            printerWrapper.addText(text,format?: LineFormat())
+            printerWrapper.addText(text,format?: 0x00000000)
         } catch (exception: Exception) {
             iPrinterSdkResponseListener.onPrinterSdkResponse(PrinterSdkException(exception.message.toString()))
         }

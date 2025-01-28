@@ -100,7 +100,7 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
 
     override fun addText(text : String, format : LineFormat?) : PrinterServiceRepository {
         job = CoroutineScope(Dispatchers.Default).launch {
-            printerSdkRequestRepository.addText(text,toSdkLineFormat(format?: LineFormat()))
+            printerSdkRequestRepository.addText(text,format?.getVal())
         }
         return this
     }
@@ -111,10 +111,6 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
             printerSdkRequestRepository.print()
         }
         return this
-    }
-
-    fun toSdkLineFormat(format: LineFormat) : PrinterSdkRequestRepository.LineFormat {
-        return PrinterSdkRequestRepository.LineFormat(format.getVal())
     }
 
     fun sdkToPrinterStatus(value: PrinterSdkResult.Status) : Status {
