@@ -1,6 +1,5 @@
 package com.eazypaytech.tpaymentcore.repository
 
-import android.R
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -95,9 +94,22 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         }
     }
 
-    fun addText(text:String?, format : Int) {
+    fun addText(col1:String?=null, col2:String?=null, col3:String?=null, format : Int) {
         try {
-            PrinterProviderImpl.getInstance(context).addText(convertToUrovoBundle(format), text)
+            if(col2!=null && col3!=null)
+                PrinterProviderImpl.getInstance(context).addTextLeft_Center_Right(convertToUrovoBundle(format), col1, col2, col3)
+            else if(col2!=null)
+                PrinterProviderImpl.getInstance(context).addTextLeft_Right(convertToUrovoBundle(format), col1, col2)
+            else if(col1!=null)
+                PrinterProviderImpl.getInstance(context).addText(convertToUrovoBundle(format), col1)
+        } catch (exception: Exception) {
+            Log.e(TAG, exception.message.toString())
+        }
+    }
+
+    fun feedLine(lines : Int?=1) {
+        try {
+            PrinterProviderImpl.getInstance(context).feedLine(lines?:1)
         } catch (exception: Exception) {
             Log.e(TAG, exception.message.toString())
         }

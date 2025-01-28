@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
-import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
@@ -19,13 +18,12 @@ import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.LineFormat
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.PrintFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import printReceipt
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,7 +57,7 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     }
                 }
             }
-            ).addText("Hello There")
+            ).addText("Start Printing").addText().addText().addText("End Of Receipt")
                 .print()
 
             if (_hasDbRecord.value == true && sharedViewModel.objPosConfig?.isAutoPrintMerchant == true) {
@@ -109,7 +107,27 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
                     }
                 }
             }
-            ).addText("Hello There", LineFormat().align(Align.CENTER).fontSize(FontSize.LARGE))
+            )
+                .addText("Start Printing")
+                .addText("Extra Small", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_SMALL))
+                .addText("Extra Small Bold", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_SMALL).style(
+                    PrinterServiceRepository.Style.BOLD))
+                .addText("Small", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.SMALL))
+                .addText("Medium", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.MEDIUM))
+                .addText("Large", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.LARGE))
+                .addText("Extra Large", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_LARGE).style(
+                    PrinterServiceRepository.Style.BOLD))
+                .addText()
+                .addText()
+                .feedLine()
+                .addText("Left", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_LARGE))
+                .addText("Center", format = PrintFormat().align(Align.CENTER).fontSize(FontSize.EXTRA_LARGE))
+                .addText("Right", format = PrintFormat().align(Align.RIGHT).fontSize(FontSize.EXTRA_SMALL))
+                .addText("123456789","12345678")
+                .addText("123456789", "123456789", "12345678",format = PrintFormat().fontSize(FontSize.EXTRA_SMALL))
+                .feedLine(2)
+                .addText("End Of Receipt")
+                .feedLine(5)
                 .print()
         }
     }

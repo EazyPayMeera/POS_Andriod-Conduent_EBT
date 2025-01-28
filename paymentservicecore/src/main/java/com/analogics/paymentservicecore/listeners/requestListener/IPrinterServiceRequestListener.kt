@@ -3,10 +3,11 @@ package com.eazypaytech.paymentservicecore.listeners.requestListener
 import android.content.Context
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.LineFormat
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.PrintFormat
 
 interface IPrinterServiceRequestListener {
     fun init(context: Context, iPrinterServiceResponseListener: IPrinterServiceResponseListener) : PrinterServiceRepository
-    fun addText(text: String, format: LineFormat?=null): PrinterServiceRepository
+    fun addText(col1: String?=null, col2: String?=null, col3: String?=null, format: PrintFormat?=null): PrinterServiceRepository
+    fun feedLine(lines : Int?=1) : PrinterServiceRepository
     fun print(): PrinterServiceRepository
 }

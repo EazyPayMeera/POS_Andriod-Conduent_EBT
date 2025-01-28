@@ -23,28 +23,28 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     lateinit var context : Context
     var job: Job?=null
 
-    class LineFormat(private var format: Int?=0x00000000) {
-        fun fontSize(size: FontSize): LineFormat {
+    class PrintFormat(private var format: Int?=0x00000000) {
+        fun fontSize(size: FontSize): PrintFormat {
             format = format?.or(size.value)
             return this
         }
 
-        fun align(align: Align): LineFormat {
+        fun align(align: Align): PrintFormat {
             format = format?.or(align.value)
             return this
         }
 
-        fun lineSpacing(spacing: LineSpacing): LineFormat {
+        fun lineSpacing(spacing: LineSpacing): PrintFormat {
             format = format?.or(spacing.value)
             return this
         }
 
-        fun style(style: Style): LineFormat {
+        fun style(style: Style): PrintFormat {
             format = format?.or(style.value)
             return this
         }
 
-        fun font(name: FontName): LineFormat {
+        fun font(name: FontName): PrintFormat {
             format = format?.or(name.value)
             return this
         }
@@ -98,10 +98,13 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         return this
     }
 
-    override fun addText(text : String, format : LineFormat?) : PrinterServiceRepository {
-        job = CoroutineScope(Dispatchers.Default).launch {
-            printerSdkRequestRepository.addText(text,format?.getVal())
-        }
+    override fun addText(col1 : String?, col2: String?, col3 : String?, format : PrintFormat?) : PrinterServiceRepository {
+        printerSdkRequestRepository.addText(col1, col2, col3, format?.getVal())
+        return this
+    }
+
+    override fun feedLine(lines : Int?) : PrinterServiceRepository {
+        printerSdkRequestRepository.feedLine(lines)
         return this
     }
 

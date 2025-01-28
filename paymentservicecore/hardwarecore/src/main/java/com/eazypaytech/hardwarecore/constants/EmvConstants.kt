@@ -43,18 +43,18 @@ object EmvConstants {
     const val UROVO_SDK_EMV_LOG_DISABLE   =             0
     const val UROVO_SDK_EMV_LOG_ENABLE   =              1
 
-    const val UROVO_SDK_PRINTER_KEY_FONT_SIZE   =           "font"
+    const val UROVO_SDK_PRINTER_KEY_FONT_SIZE   =           "fontSize"
     const val UROVO_SDK_PRINTER_KEY_FONT_NAME   =           "fontName"
     const val UROVO_SDK_PRINTER_KEY_ALIGN   =               "align"
     const val UROVO_SDK_PRINTER_KEY_BOLD_FONT   =           "fontBold"
     const val UROVO_SDK_PRINTER_KEY_NEW_LINE   =            "newline"
     const val UROVO_SDK_PRINTER_KEY_LINE_HEIGHT   =         "lineHeight"
 
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_SMALL = 1
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_SMALL =       2
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_MEDIUM =      3
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_LARGE =       4
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_LARGE = 5
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_SMALL = 12
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_SMALL =       16
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_MEDIUM =      24
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_LARGE =       32
+    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_LARGE = 40
 
     const val UROVO_SDK_PRINTER_VAL_FONT_NAME_SIMSUN =      "simsun"
 
