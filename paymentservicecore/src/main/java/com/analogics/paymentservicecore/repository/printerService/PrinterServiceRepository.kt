@@ -92,19 +92,26 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     ) : PrinterServiceRepository {
         this.context = context
         this.iPrinterServiceResponseListener = iPrinterServiceResponseListener
+        job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
             printerSdkRequestRepository.init(context)
+            job?.join()
+            job = null
         }
         return this
     }
 
-    override fun addText(col1 : String?, col2: String?, col3 : String?, format : PrintFormat?) : PrinterServiceRepository {
-        printerSdkRequestRepository.addText(col1, col2, col3, format?.getVal())
+    override fun addText(col1 : String?, col2: String?, col3 : String?, format : PrintFormat?, condition: Boolean?) : PrinterServiceRepository {
+        condition?.takeIf { it == true }?.let {
+            printerSdkRequestRepository.addText(col1, col2, col3, format?.getVal())
+        }
         return this
     }
 
-    override fun feedLine(lines : Int?) : PrinterServiceRepository {
-        printerSdkRequestRepository.feedLine(lines)
+    override fun feedLine(lines : Int?, condition: Boolean?) : PrinterServiceRepository {
+        condition?.takeIf { it == true }?.let {
+            printerSdkRequestRepository.feedLine(lines)
+        }
         return this
     }
 
@@ -112,6 +119,8 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
             printerSdkRequestRepository.print()
+            job?.join()
+            job = null
         }
         return this
     }

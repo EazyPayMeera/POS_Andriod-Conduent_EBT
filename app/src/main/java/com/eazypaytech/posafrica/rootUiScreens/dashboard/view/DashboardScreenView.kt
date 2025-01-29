@@ -20,7 +20,6 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -378,11 +377,11 @@ fun DashboardContentSurface(
                     onMenuOptionClick = { option ->
                         when (option) {
                             context.resources.getString((R.string.cust_recp)) -> {
-                                viewModel.fetchLastTransactions(sharedViewModel,context,true)
+                                viewModel.reprintLast(context,true)
                                 isDialogVisible = true
                             }
                             context.resources.getString((R.string.merchant_recp)) -> {
-                                viewModel.fetchLastTransactions(sharedViewModel,context)
+                                viewModel.reprintLast(context)
                                 isDialogVisible = true
                             }
                         }

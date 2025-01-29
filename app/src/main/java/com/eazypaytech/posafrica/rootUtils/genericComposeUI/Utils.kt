@@ -144,12 +144,17 @@ fun getCurrentDateTime(format : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT): 
     return sdf.format(Date())
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun convertLocalDateTimeToString(dateTime: LocalDateTime): String {
-    val formatter = DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT1)
-    return dateTime.format(formatter)
+fun convertDateTime(inputDateTime: String?=null, inputFormat : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT, outputFormat : String?=null): String {
+    val idf = SimpleDateFormat(inputFormat, Locale.getDefault())
+    val odf = SimpleDateFormat(outputFormat, Locale.getDefault())
+    return try {
+        val date = idf.parse(inputDateTime?:"")
+        odf.format(date?:"")
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
 }
-
 
 fun NavController.navigateAndClean(route: String) {
     navigate(route = route) {

@@ -17,6 +17,7 @@ import com.eazypaytech.posafrica.rootUiScreens.utility.ReceiptBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getBitmapBytes
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getLogoBitmap
+import com.eazypaytech.posafrica.rootUtils.miscellaneous.PrinterUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.BarcodeFormat
@@ -359,7 +360,8 @@ suspend fun fetchLastTransactions(
         val txnDataList = convertTxnEntityListToTxnDataList(listOf(latestTransaction))
         withContext(Dispatchers.Main) {
             _lastTransactionList.value = txnDataList
-            printReceipt(0, sharedViewModel, context, customer,false,false,null, sharedViewModel.objRootAppPaymentDetail,lastTxn = true)
+            PrinterUtils.printReceipt(context,sharedViewModel.objRootAppPaymentDetail,customer)
+            //printReceipt(0, sharedViewModel, context, customer,false,false,null, sharedViewModel.objRootAppPaymentDetail,lastTxn = true)
         }
     } else {
         withContext(Dispatchers.Main) {

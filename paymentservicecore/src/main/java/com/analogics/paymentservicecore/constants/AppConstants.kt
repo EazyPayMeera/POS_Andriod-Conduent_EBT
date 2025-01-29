@@ -15,7 +15,6 @@ object AppConstants {
     const val DEFAULT_UI_LANGUAGE_CODE = "en"
     const val DEFAULT_CURRENCY_CODE = "0356"    /* INR */
     const val DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
-    const val DEFAULT_DATE_TIME_FORMAT1 = "yyyy-MM-dd HH:mm"
     const val UNIQUE_ID_DATE_TIME_FORMAT = "yyMMddHHmmss"
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L
@@ -51,6 +50,7 @@ object AppConstants {
     const val DEFAULT_SERVICE_CHARGE_MODE = true
     const val DEFAULT_INVOICE_MODE = true
 
+    /* Receipt Constants */
     const val DEFAULT_HEADER_1 = "Bank Name"
     const val DEFAULT_HEADER_2 = "Address Line 1"
     const val DEFAULT_HEADER_3 = "Address Line 2"
@@ -60,6 +60,9 @@ object AppConstants {
     const val DEFAULT_FOOTER_2 = "THANK YOU"
     const val DEFAULT_FOOTER_3 = "VISIT AGAIN!"
     const val DEFAULT_FOOTER_4 = ""
+
+    const val DEFAULT_RECEIPT_DATE_FORMAT = "yy/MM/dd"
+    const val DEFAULT_RECEIPT_TIME_FORMAT = "HH:mm:ss"
 
     const val DEFAULT_TIP_PERCENT_1 = 5
     const val DEFAULT_TIP_PERCENT_2 = 10
