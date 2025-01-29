@@ -71,5 +71,15 @@ data class TxnEntity(
     @ColumnInfo(name = "IsCaptured") var isCaptured: Boolean? = false,
     @ColumnInfo(name = "IsVoided") var isVoided: Boolean? = false,
     @ColumnInfo(name = "IsRefunded") var isRefunded: Boolean? = false,
-    @ColumnInfo(name = "IsDemoMode") var isDemoMode: Boolean? = false
+    @ColumnInfo(name = "IsDemoMode") var isDemoMode: Boolean? = false,
+
+    /* Receipt Specific Config */
+    @ColumnInfo(name = "Header1") var header1: String? = null,
+    @ColumnInfo(name = "Header2") var header2: String? = null,
+    @ColumnInfo(name = "Header3") var header3: String? = null,
+    @ColumnInfo(name = "Header4") var header4: String? = null,
+    @ColumnInfo(name = "Footer1") var footer1: String? = null,
+    @ColumnInfo(name = "Footer2") var footer2: String? = null,
+    @ColumnInfo(name = "Footer3") var footer3: String? = null,
+    @ColumnInfo(name = "Footer4") var footer4: String? = null
     ) : Serializable

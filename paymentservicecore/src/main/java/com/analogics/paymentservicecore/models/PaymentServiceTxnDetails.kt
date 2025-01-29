@@ -98,5 +98,15 @@ data class PaymentServiceTxnDetails(
     @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,
     @SerializedName("encryptedIpek")    var encryptedIpek: String? = null,
     @SerializedName("ksn")              var ksn: String? = null,
-    @SerializedName("kcv")              var kcv: String? = null
+    @SerializedName("kcv")              var kcv: String? = null,
+
+    /* Receipt Specific Config */
+    @SerializedName("header1") var header1: String? = null,
+    @SerializedName("header2") var header2: String? = null,
+    @SerializedName("header3") var header3: String? = null,
+    @SerializedName("header4") var header4: String? = null,
+    @SerializedName("footer1") var footer1: String? = null,
+    @SerializedName("footer2") var footer2: String? = null,
+    @SerializedName("footer3") var footer3: String? = null,
+    @SerializedName("footer4") var footer4: String? = null
 )

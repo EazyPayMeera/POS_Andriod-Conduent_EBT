@@ -19,9 +19,9 @@ import javax.inject.Inject
 class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestListener,
     IPrinterSdkResponseListener {
     private val printerSdkRequestRepository = PrinterSdkRequestRepository(this)
-    var iPrinterServiceResponseListener: IPrinterServiceResponseListener?=null
-    lateinit var context : Context
-    var job: Job?=null
+    private var iPrinterServiceResponseListener: IPrinterServiceResponseListener?=null
+    private lateinit var context : Context
+    private var job: Job?=null
 
     class PrintFormat(private var format: Int?=0x00000000) {
         fun fontSize(size: FontSize): PrintFormat {
@@ -116,17 +116,21 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         return this
     }
 
-    fun sdkToPrinterStatus(value: PrinterSdkResult.Status) : Status {
+    private fun sdkToPrinterStatus(value: PrinterSdkResult.Status) : Status {
         return when (value) {
             PrinterSdkResult.Status.INIT_SUCCESS -> Status.INIT_SUCCESS
             PrinterSdkResult.Status.INIT_FAILURE -> Status.INIT_FAILURE
             PrinterSdkResult.Status.PRINT_SUCCESS -> Status.PRINT_SUCCESS
             PrinterSdkResult.Status.PRINT_FAILURE -> Status.PRINT_FAILURE
-            else -> Status.PRINT_FAILURE
+            PrinterSdkResult.Status.PRINTING -> Status.PRINTING
+            PrinterSdkResult.Status.OUT_OF_PAPER -> Status.OUT_OF_PAPER
+            PrinterSdkResult.Status.JAMMED -> Status.JAMMED
+            PrinterSdkResult.Status.ERROR -> Status.ERROR
+            else -> Status.NONE
         }
     }
 
-    fun sdkToPrinterService(response: Any) : Any
+    private fun sdkToPrinterService(response: Any) : Any
     {
         return when(response) {
             is PrinterSdkResult.Result -> {

@@ -10,6 +10,7 @@ sealed class PrinterServiceResult(
         INIT_FAILURE,
         PRINT_SUCCESS,
         PRINT_FAILURE,
+        PRINTING,
         OUT_OF_PAPER,
         JAMMED,
         ERROR

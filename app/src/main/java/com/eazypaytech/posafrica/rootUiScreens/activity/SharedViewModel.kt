@@ -39,5 +39,16 @@ class SharedViewModel:ViewModel() {
       objRootAppPaymentDetail.cashierId = objPosConfig?.cashierId
       objRootAppPaymentDetail.loginId = objPosConfig?.loginId
       objRootAppPaymentDetail.isDemoMode = objPosConfig?.isDemoMode
+
+      /* Copy Receipt Data */
+      objRootAppPaymentDetail.header1 = objPosConfig?.header1
+      objRootAppPaymentDetail.header2 = objPosConfig?.header2
+      objRootAppPaymentDetail.header3 = objPosConfig?.header3
+      objRootAppPaymentDetail.header4 = objPosConfig?.header4
+      objRootAppPaymentDetail.footer1 = objPosConfig?.footer1
+      objRootAppPaymentDetail.footer2 = objPosConfig?.footer2
+      objRootAppPaymentDetail.footer3 = objPosConfig?.footer3
+      objRootAppPaymentDetail.footer4 = objPosConfig?.footer4
+
    }
 }

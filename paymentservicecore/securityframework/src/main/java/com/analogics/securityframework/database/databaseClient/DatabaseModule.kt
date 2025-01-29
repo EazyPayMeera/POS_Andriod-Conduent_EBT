@@ -25,7 +25,10 @@ object DatabaseModule {
             appContext,
             AppDatabaseClient::class.java,
             DBConstant.TXN_DB_NAME
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

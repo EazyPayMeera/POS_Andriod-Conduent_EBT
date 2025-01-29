@@ -19,6 +19,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceReposi
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.PrintFormat
+import com.eazypaytech.posafrica.rootUtils.miscellaneous.PrinterUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,47 +89,8 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         customer: Boolean = false,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails
     ) {
-
         viewModelScope.launch{
-            printerServiceRepository.init(context, object :IPrinterServiceResponseListener {
-                override fun onPrinterServiceResponse(response: Any) {
-                    when (response) {
-                        is PrinterServiceResult.Result -> {
-                            when (response.status) {
-                                PrinterServiceResult.Status.INIT_SUCCESS -> { }
-                                PrinterServiceResult.Status.INIT_FAILURE -> {
-                                    CustomDialogBuilder.composeAlertDialog(
-                                        title = context.resources.getString(R.string.printer_error_title),
-                                        message = context.resources.getString(R.string.printer_init_failed)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            )
-                .addText("Start Printing")
-                .addText("Extra Small", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_SMALL))
-                .addText("Extra Small Bold", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_SMALL).style(
-                    PrinterServiceRepository.Style.BOLD))
-                .addText("Small", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.SMALL))
-                .addText("Medium", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.MEDIUM))
-                .addText("Large", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.LARGE))
-                .addText("Extra Large", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_LARGE).style(
-                    PrinterServiceRepository.Style.BOLD))
-                .addText()
-                .addText()
-                .feedLine()
-                .addText("Left", format = PrintFormat().align(Align.LEFT).fontSize(FontSize.EXTRA_LARGE))
-                .addText("Center", format = PrintFormat().align(Align.CENTER).fontSize(FontSize.EXTRA_LARGE))
-                .addText("Right", format = PrintFormat().align(Align.RIGHT).fontSize(FontSize.EXTRA_SMALL))
-                .addText("123456789","12345678")
-                .addText("123456789", "123456789", "12345678",format = PrintFormat().fontSize(FontSize.EXTRA_SMALL))
-                .feedLine(2)
-                .addText("End Of Receipt")
-                .feedLine(5)
-                .print()
+            PrinterUtils.printReceipt(context,objRootAppPaymentDetail,customer)
         }
     }
 }
