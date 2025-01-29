@@ -11,9 +11,12 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceReposi
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.PrintFormat
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.convertDateTime
 import com.eazypaytech.posafrica.R
+import com.eazypaytech.posafrica.rootModel.Symbol
+import com.eazypaytech.posafrica.rootModel.Symbol.Type
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Style
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toDecimalFormat
 
 object PrinterUtils {
 
@@ -32,6 +35,7 @@ object PrinterUtils {
                   }
               }
           })
+
             /* Headers */
             .addText(objRootAppPaymentDetails.header1,
                 format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
@@ -41,6 +45,7 @@ object PrinterUtils {
                 format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
             .addText(objRootAppPaymentDetails.header4,
                 format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+
             .feedLine(1)
 
             /* Date Time */
@@ -72,17 +77,11 @@ object PrinterUtils {
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
                 condition = objRootAppPaymentDetails.isDemoMode == true)
 
-            /* Transaction Type */
+            /* Transaction Type & Transaction Status */
             .addText(objRootAppPaymentDetails.txnType.toString(),
-                format = PrintFormat().align(Align.CENTER).fontSize(FontSize.LARGE).style(Style.BOLD)
+                objRootAppPaymentDetails.txnStatus.toString(),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
             )
-
-            /* Transaction Status */
-            .addText(context.getString(R.string.receipt_txn_status), objRootAppPaymentDetails.txnStatus.toString(),
-                format = PrintFormat().align(Align.CENTER).fontSize(FontSize.LARGE).style(Style.BOLD)
-            )
-
-            .feedLine()
 
             /* Card Brand & Number */
             .addText(context.getString(R.string.receipt_card_no),objRootAppPaymentDetails.cardBrand.toString() + " " + objRootAppPaymentDetails.cardMaskedPan,
@@ -101,16 +100,64 @@ object PrinterUtils {
                 condition = objRootAppPaymentDetails.hostAuthCode != null && objRootAppPaymentDetails.hostTxnRef != null
             )
 
+            /* Sub Total & Other Amounts */
+            .addText(context.getString(R.string.receipt_subtotal),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+            .addText(context.getString(R.string.receipt_tip),objRootAppPaymentDetails.tip?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = (objRootAppPaymentDetails.tip?:0.00)>0.00
+            )
+            .addText(context.getString(R.string.receipt_service_charge),objRootAppPaymentDetails.serviceCharge?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = (objRootAppPaymentDetails.serviceCharge?:0.00)>0.00
+            )
+            .addText(context.getString(R.string.receipt_vat),objRootAppPaymentDetails.VAT?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = (objRootAppPaymentDetails.VAT?:0.00)>0.00
+            )
+
+            /* Total Amount */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+            .addText(context.getString(R.string.receipt_total),objRootAppPaymentDetails.ttlAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            /* Customer Note */
+            .addText(context.getString(R.string.receipt_note),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER)
+            )
+
+            /* Customer Copy / Merchant Copy */
+            .addText(context.getString(R.string.receipt_custom_copy),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                condition = isCustomer
+            )
+            .addText(context.getString(R.string.receipt_merch_copy),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                condition = !isCustomer
+            )
+
             /*  Footers */
             .addText(objRootAppPaymentDetails.footer1,
-                format = PrintFormat().align(Align.CENTER))
+                format = PrintFormat().align(Align.CENTER),
+                condition = isCustomer
+            )
             .addText(objRootAppPaymentDetails.footer2,
-                format = PrintFormat().align(Align.CENTER))
+                format = PrintFormat().align(Align.CENTER),
+                condition = isCustomer)
             .addText(objRootAppPaymentDetails.footer3,
-                format = PrintFormat().align(Align.CENTER))
+                format = PrintFormat().align(Align.CENTER),
+                condition = isCustomer)
             .addText(objRootAppPaymentDetails.footer4,
-                format = PrintFormat().align(Align.CENTER))
-            .feedLine(2)
+                format = PrintFormat().align(Align.CENTER),
+                condition = isCustomer)
+            .feedLine(1)
             .print()
     }
 }
