@@ -84,26 +84,21 @@ object PrinterUtils {
 
             .feedLine()
 
-            /* Card Number */
-            .addText(context.getString(R.string.receipt_card_no),objRootAppPaymentDetails.cardMaskedPan,
-                format = PrintFormat().fontSize(FontSize.SMALL)
-            )
-
-            /* Card Brand */
-            .addText(context.getString(R.string.receipt_card_type),objRootAppPaymentDetails.cardBrand.toString(),
+            /* Card Brand & Number */
+            .addText(context.getString(R.string.receipt_card_no),objRootAppPaymentDetails.cardBrand.toString() + " " + objRootAppPaymentDetails.cardMaskedPan,
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
 
             /* Auth Code */
             .addText(context.getString(R.string.receipt_auth_code),objRootAppPaymentDetails.hostAuthCode,
                 format = PrintFormat().fontSize(FontSize.SMALL),
-                condition = objRootAppPaymentDetails?.hostAuthCode != null && objRootAppPaymentDetails.hostTxnRef != null
+                condition = objRootAppPaymentDetails.hostAuthCode != null && objRootAppPaymentDetails.hostTxnRef != null
             )
 
             /* Transaction Reference Number */
             .addText(context.getString(R.string.receipt_ref_no),objRootAppPaymentDetails.hostTxnRef,
                 format = PrintFormat().fontSize(FontSize.SMALL),
-                condition = objRootAppPaymentDetails?.hostAuthCode != null && objRootAppPaymentDetails.hostTxnRef != null
+                condition = objRootAppPaymentDetails.hostAuthCode != null && objRootAppPaymentDetails.hostTxnRef != null
             )
 
             /*  Footers */
