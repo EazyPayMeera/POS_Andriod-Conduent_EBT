@@ -37,7 +37,14 @@ object PrinterUtils {
                                   ),
                                   message = context.resources.getString(R.string.plz_wait)
                               )
-
+                              PrinterServiceResult.Status.INIT_FAILURE, PrinterServiceResult.Status.ERROR, PrinterServiceResult.Status.PRINT_FAILURE -> CustomDialogBuilder.composeAlertDialog(
+                                  title = context.resources.getString(R.string.printer_error_title),
+                                  message = context.resources.getString(R.string.printer_printing_failed)
+                              )
+                              PrinterServiceResult.Status.OUT_OF_PAPER -> CustomDialogBuilder.composeAlertDialog(
+                                  title = context.resources.getString(R.string.printer_error_title),
+                                  message = context.resources.getString(R.string.printer_out_of_paper)
+                              )
                               else -> CustomDialogBuilder.hideProgress()
                           }
                       }

@@ -269,6 +269,7 @@
     <string name="printer_Alert">अलर्ट</string>
     <string name="printer_no_record">कोई रिकॉर्ड नहीं मिला</string>
     <string name="printer_init_failed">प्रारंभिककरण विफल</string>
+    <string name="printer_printing_failed">प्रिंटिंग विफल हुई</string>
 
     <!-- Receipt Builder -->
     <string name="receipt_header">ग्लोबल पेमेंट्स</string>

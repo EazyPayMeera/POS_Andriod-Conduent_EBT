@@ -270,6 +270,7 @@
     <string name="printer_Alert">Printing</string>
     <string name="printer_no_record">No Record Found</string>
     <string name="printer_init_failed">Initialization Failed</string>
+    <string name="printer_printing_failed">Printing Failed</string>
 
     <!-- Receipt Builder -->
     <string name="receipt_header">GLOBAL PAYMENTS</string>

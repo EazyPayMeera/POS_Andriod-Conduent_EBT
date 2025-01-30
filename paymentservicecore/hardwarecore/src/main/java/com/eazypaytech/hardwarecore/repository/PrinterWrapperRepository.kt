@@ -119,26 +119,43 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
     {
         try {
             /* Notify that printing has started */
-            iPrinterSdkResponseListener.onPrinterSdkResponse(
-                PrinterSdkResult.Result(
-                    PrinterSdkResult.Status.PRINTING
-                )
-            )
-            /* Start Printing */
-            if(PrinterProviderImpl.getInstance(context).startPrint()!=0) {
+            if(PrinterProviderImpl.getInstance(context).status==0) {
                 iPrinterSdkResponseListener.onPrinterSdkResponse(
                     PrinterSdkResult.Result(
-                        PrinterSdkResult.Status.PRINT_FAILURE
+                        PrinterSdkResult.Status.PRINTING
                     )
                 )
             }
-            else
-            {
-                iPrinterSdkResponseListener.onPrinterSdkResponse(
-                    PrinterSdkResult.Result(
-                        PrinterSdkResult.Status.PRINT_SUCCESS
+            /* Start Printing */
+            when(PrinterProviderImpl.getInstance(context).startPrint()) {
+                EmvConstants.UROVO_SDK_PRINTER_RET_SUCCESS -> {
+                    iPrinterSdkResponseListener.onPrinterSdkResponse(
+                        PrinterSdkResult.Result(
+                            PrinterSdkResult.Status.PRINT_SUCCESS
+                        )
                     )
-                )
+                }
+                EmvConstants.UROVO_SDK_PRINTER_RET_OUT_OF_PAPER -> {
+                    iPrinterSdkResponseListener.onPrinterSdkResponse(
+                        PrinterSdkResult.Result(
+                            PrinterSdkResult.Status.OUT_OF_PAPER
+                        )
+                    )
+                }
+                EmvConstants.UROVO_SDK_PRINTER_RET_BUSY -> {
+                    iPrinterSdkResponseListener.onPrinterSdkResponse(
+                        PrinterSdkResult.Result(
+                            PrinterSdkResult.Status.BUSY
+                        )
+                    )
+                }
+                else->{
+                    iPrinterSdkResponseListener.onPrinterSdkResponse(
+                        PrinterSdkResult.Result(
+                            PrinterSdkResult.Status.PRINT_FAILURE
+                        )
+                    )
+                }
             }
         } catch (exception: Exception) {
             iPrinterSdkResponseListener.onPrinterSdkResponse(

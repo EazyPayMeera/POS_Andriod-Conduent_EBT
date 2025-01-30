@@ -291,6 +291,7 @@ class CustomDialogBuilder private constructor() {
 
         fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, okBtnText: String? = null, onOkClick: (() -> Unit)? = null, cancelBtnText: String? = null, onCancelClick: (() -> Unit)? = null) {
             showProgress.value = false
+            showPrinting.value = false
             showAlert.value = show != false
             _title = title
             _subtitle = subtitle
@@ -321,6 +322,7 @@ class CustomDialogBuilder private constructor() {
 
         fun composeProgressDialog(show: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null) {
             showAlert.value = false
+            showPrinting.value = false
             showProgress.value = show != false
             _title = title
             _subtitle = subtitle

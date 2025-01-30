@@ -128,6 +128,7 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
             PrinterSdkResult.Status.PRINT_FAILURE -> Status.PRINT_FAILURE
             PrinterSdkResult.Status.PRINTING -> Status.PRINTING
             PrinterSdkResult.Status.OUT_OF_PAPER -> Status.OUT_OF_PAPER
+            PrinterSdkResult.Status.BUSY -> Status.BUSY
             PrinterSdkResult.Status.JAMMED -> Status.JAMMED
             PrinterSdkResult.Status.ERROR -> Status.ERROR
             else -> Status.NONE

@@ -68,6 +68,14 @@ object EmvConstants {
     const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_LARGE =         4
     const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_EXTRA_LARGE =   5
 
+    const val UROVO_SDK_PRINTER_RET_SUCCESS =               0x00
+    const val UROVO_SDK_PRINTER_RET_OUT_OF_PAPER =          0xF0
+    const val UROVO_SDK_PRINTER_RET_OVERHEAT =              0xF3
+    const val UROVO_SDK_PRINTER_RET_LOW_POWER =             0xE1
+    const val UROVO_SDK_PRINTER_RET_BUSY =                  0xF7
+    const val UROVO_SDK_PRINTER_RET_ERROR =                 0xFB
+    const val UROVO_SDK_PRINTER_RET_HARDWARE_ERROR =        0xF2
+
     /* Host Response */
     const val EMV_TAG_RESP_CODE =                           "8A"
     const val EMV_TAG_VAL_APPROVED_ONLINE =                 "3030"

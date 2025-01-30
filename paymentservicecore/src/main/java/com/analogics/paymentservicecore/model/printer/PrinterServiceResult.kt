@@ -12,6 +12,7 @@ sealed class PrinterServiceResult(
         PRINT_FAILURE,
         PRINTING,
         OUT_OF_PAPER,
+        BUSY,
         JAMMED,
         ERROR
     }

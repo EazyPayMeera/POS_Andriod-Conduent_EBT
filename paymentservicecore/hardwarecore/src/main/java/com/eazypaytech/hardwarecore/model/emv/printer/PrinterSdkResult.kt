@@ -12,6 +12,7 @@ sealed class PrinterSdkResult(
         PRINT_FAILURE,
         PRINTING,
         OUT_OF_PAPER,
+        BUSY,
         JAMMED,
         ERROR
     }
