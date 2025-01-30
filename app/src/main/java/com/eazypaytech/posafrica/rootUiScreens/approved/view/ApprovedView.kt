@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,10 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.approved.viewmodel.ApprovedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
@@ -41,7 +38,6 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.OkButton
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusIconId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusStringId
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
 import com.eazypaytech.posafrica.ui.theme.dimens
 
@@ -51,12 +47,8 @@ import com.eazypaytech.posafrica.ui.theme.dimens
 fun ApprovedView(navHostController: NavHostController) {
     Log.d("Approved Screen","Inside Approved Screen")
     val context = LocalContext.current
-    //val viewModel: ApprovedViewModel = viewModel { ApprovedViewModel(context) }
     val viewModel: ApprovedViewModel = hiltViewModel()
-    val coroutineScope = rememberCoroutineScope() // Create a coroutine scope
-
     val sharedViewModel = localSharedViewModel.current
-
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
 
@@ -128,20 +120,17 @@ fun ApprovedView(navHostController: NavHostController) {
                                 when (option) {
                                     context.resources.getString((R.string.cust_recp)) -> {
                                         viewModel.printReceipt(
-                                            R.drawable.master_mono,
-                                            sharedViewModel,
                                             context,
-                                            true,
-                                            txnRecord
+                                            txnRecord,
+                                            true
                                         )
                                     }
 
                                     context.resources.getString((R.string.merchant_recp)) -> {
                                         viewModel.printReceipt(
-                                            R.drawable.master_mono,
-                                            sharedViewModel,
                                             context,
-                                            objRootAppPaymentDetail = txnRecord
+                                            txnRecord,
+                                            false
                                         )
                                     }
                                 }

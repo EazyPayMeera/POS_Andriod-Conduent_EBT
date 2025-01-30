@@ -216,10 +216,10 @@ fun TransactionDetailsView(navHostController: NavHostController) {
                             onMenuOptionClick = { option ->
                                 when (option) {
                                     context.resources.getString((R.string.cust_recp)) -> {
-                                        viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, true,sharedViewModel.objRootAppPaymentDetail)
+                                        viewModel.printReceipt(context, sharedViewModel.objRootAppPaymentDetail, true)
                                     }
                                     context.resources.getString((R.string.merchant_recp)) -> {
-                                        viewModel.printReceipt(R.drawable.master_mono,sharedViewModel,context, false,sharedViewModel.objRootAppPaymentDetail)
+                                        viewModel.printReceipt(context, sharedViewModel.objRootAppPaymentDetail, false)
                                     }
                                 }
                             },

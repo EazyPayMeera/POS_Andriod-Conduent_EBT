@@ -11,11 +11,11 @@ import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceReposi
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
-import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUtils.miscellaneous.PrinterUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import printReceipt
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,27 +25,15 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
     private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
 
-
     fun printReceipt(
-        logoResId: Int,
-        sharedViewModel: SharedViewModel,
         context: Context,
-        customer: Boolean = false,
-        objRootAppPaymentDetail: ObjRootAppPaymentDetails
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+        isCustomer: Boolean = false,
     ) {
-        viewModelScope.printReceipt(
-            logoResId,
-            sharedViewModel,
-            context,
-            customer,
-            false,
-            false,
-            null,
-            objRootAppPaymentDetail,
-            lastTxn = false
-        )
+        viewModelScope.launch{
+            PrinterUtils.printReceipt(context,objRootAppPaymentDetail,isCustomer)
+        }
     }
-
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
         PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {

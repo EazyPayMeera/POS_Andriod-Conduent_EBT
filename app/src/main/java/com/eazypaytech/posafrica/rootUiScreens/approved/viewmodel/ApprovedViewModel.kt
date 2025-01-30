@@ -6,19 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
-import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.PrintFormat
 import com.eazypaytech.posafrica.rootUtils.miscellaneous.PrinterUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -41,34 +34,14 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 _hasDbRecord.value = true
             }
-            printerServiceRepository.init(context, object :IPrinterServiceResponseListener {
-                override fun onPrinterServiceResponse(response: Any) {
-                    when (response) {
-                        is PrinterServiceResult.Result -> {
-                            when (response.status) {
-                                PrinterServiceResult.Status.INIT_SUCCESS -> { }
-                                PrinterServiceResult.Status.INIT_FAILURE -> {
-                                    CustomDialogBuilder.composeAlertDialog(
-                                        title = context.resources.getString(R.string.printer_error_title),
-                                        message = context.resources.getString(R.string.printer_init_failed)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            ).addText("Start Printing").addText().addText().addText("End Of Receipt")
-                .print()
 
             if (_hasDbRecord.value == true && sharedViewModel.objPosConfig?.isAutoPrintMerchant == true) {
                 viewModelScope.launch {
                     delay(AppConstants.AUTO_PRINT_RECEIPT_DELAY_MS)
                     printReceipt(
-                        R.drawable.master_mono,
-                        sharedViewModel,
                         context,
-                        objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail
+                        objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail,
+                        isCustomer = false
                     )
                 }
             }
@@ -83,14 +56,12 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
     }
 
     fun printReceipt(
-        logoResId: Int,
-        sharedViewModel: SharedViewModel,
         context: Context,
-        customer: Boolean = false,
-        objRootAppPaymentDetail: ObjRootAppPaymentDetails
+        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+        isCustomer: Boolean = false
     ) {
         viewModelScope.launch{
-            PrinterUtils.printReceipt(context,objRootAppPaymentDetail,customer)
+            PrinterUtils.printReceipt(context,objRootAppPaymentDetail,isCustomer)
         }
     }
 }

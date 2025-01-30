@@ -149,6 +149,8 @@ object PrinterUtils {
                 format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER)
             )
 
+            .feedLine()
+
             /* Customer Copy / Merchant Copy */
             .addText(context.getString(R.string.receipt_custom_copy),
                 format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
@@ -159,21 +161,23 @@ object PrinterUtils {
                 condition = !isCustomer
             )
 
+            .feedLine()
+
             /*  Footers */
             .addText(objRootAppPaymentDetails.footer1,
-                format = PrintFormat().align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
                 condition = isCustomer
             )
             .addText(objRootAppPaymentDetails.footer2,
-                format = PrintFormat().align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
                 condition = isCustomer)
             .addText(objRootAppPaymentDetails.footer3,
-                format = PrintFormat().align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
                 condition = isCustomer)
             .addText(objRootAppPaymentDetails.footer4,
-                format = PrintFormat().align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
                 condition = isCustomer)
-            .feedLine(1)
+            .feedLine()
             .print()
     }
 }
