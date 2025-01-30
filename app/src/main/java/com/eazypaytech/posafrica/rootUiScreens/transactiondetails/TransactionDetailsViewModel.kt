@@ -19,12 +19,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TransactionDetailsViewModel @Inject constructor(private val dbRepository: TxnDBRepository, val apiServiceRepository: ApiServiceRepository) : ViewModel(),
-    IApiServiceResponseListener {
-
-    private val objRoot = MutableStateFlow(ObjRootAppPaymentDetails())
-    var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
-
+class TransactionDetailsViewModel @Inject constructor() : ViewModel()
+{
     fun printReceipt(
         context: Context,
         objRootAppPaymentDetail: ObjRootAppPaymentDetails,
@@ -33,25 +29,5 @@ class TransactionDetailsViewModel @Inject constructor(private val dbRepository: 
         viewModelScope.launch{
             PrinterUtils.printReceipt(context,objRootAppPaymentDetail,isCustomer)
         }
-    }
-
-    override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {
-            objRoot.value = it
-        }
-    }
-
-    override fun onApiServiceError(paymentError: ApiServiceError) {
-        Log.e("API Response", paymentError.errorMessage)
-        userApiServiceErrorHolder.value = paymentError
-    }
-
-    override fun onApiServiceDisplayProgress(
-        show: Boolean,
-        title: String?,
-        subTitle: String?,
-        message: String?
-    ) {
-        CustomDialogBuilder.composeProgressDialog(show = show, title = title, subtitle = subTitle, message = message)
     }
 }
