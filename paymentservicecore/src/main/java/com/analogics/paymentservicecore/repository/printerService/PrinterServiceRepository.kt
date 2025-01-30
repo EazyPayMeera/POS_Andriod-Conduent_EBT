@@ -92,12 +92,7 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     ) : PrinterServiceRepository {
         this.context = context
         this.iPrinterServiceResponseListener = iPrinterServiceResponseListener
-        job?.cancel()
-        job = CoroutineScope(Dispatchers.Default).launch {
-            printerSdkRequestRepository.init(context)
-            job?.join()
-            job = null
-        }
+        printerSdkRequestRepository.init(context)
         return this
     }
 
