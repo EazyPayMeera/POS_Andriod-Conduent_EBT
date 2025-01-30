@@ -308,9 +308,8 @@
     <string name="receipt_custom_copy">***** ग्राहक प्रति *****</string>
     <string name="receipt_merch_copy">***** व्यापारी प्रति *****</string>
     <string name="receipt_train_mode">*** प्रशिक्षण मोड ***</string>
-
-
-
+    <string name="receipt_printing_merchant">व्यापारी प्रति</string>
+    <string name="receipt_printing_customer">ग्राहक प्रति</string>
 
     <!-- Summary Report -->
     <string name="summary_header">सारांश रिपोर्ट</string>

@@ -309,6 +309,8 @@
     <string name="receipt_custom_copy">***** CUSTOMER COPY *****</string>
     <string name="receipt_merch_copy">***** MERCHANT COPY *****</string>
     <string name="receipt_train_mode">*** Training Mode ***</string>
+    <string name="receipt_printing_merchant">Merchant Copy</string>
+    <string name="receipt_printing_customer">Customer Copy</string>
 
     <!-- Summary Report -->
     <string name="summary_header">SUMMARY REPORT</string>

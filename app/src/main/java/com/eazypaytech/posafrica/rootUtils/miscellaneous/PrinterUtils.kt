@@ -26,10 +26,19 @@ object PrinterUtils {
               override fun onPrinterServiceResponse(response: Any) {
                   when (response) {
                       is PrinterServiceResult.Result ->{
-                          when(response.status)
-                          {
-                              PrinterServiceResult.Status.PRINTING-> CustomDialogBuilder.composePrintingDialog()
-                              else->CustomDialogBuilder.hideProgress()
+                          when(response.status) {
+                              PrinterServiceResult.Status.PRINTING -> CustomDialogBuilder.composePrintingDialog(
+                                  title = context.resources.getString(R.string.printing),
+                                  subtitle = context.resources.getString(
+                                      if (isCustomer)
+                                          R.string.receipt_printing_customer
+                                      else
+                                          R.string.receipt_printing_merchant
+                                  ),
+                                  message = context.resources.getString(R.string.plz_wait)
+                              )
+
+                              else -> CustomDialogBuilder.hideProgress()
                           }
                       }
                   }
