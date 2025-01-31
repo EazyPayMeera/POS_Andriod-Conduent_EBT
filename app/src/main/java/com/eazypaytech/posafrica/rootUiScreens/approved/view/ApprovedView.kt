@@ -45,7 +45,7 @@ import com.eazypaytech.posafrica.ui.theme.dimens
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ApprovedView(navHostController: NavHostController) {
-    Log.d("Approved Screen","Inside Approved Screen")
+
     val context = LocalContext.current
     val viewModel: ApprovedViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
