@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
+import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
@@ -33,17 +34,12 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
         viewModelScope.launch {
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 _hasDbRecord.value = true
+                sharedViewModel.objRootAppPaymentDetail = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?:sharedViewModel.objRootAppPaymentDetail
             }
 
             if (_hasDbRecord.value == true && sharedViewModel.objPosConfig?.isAutoPrintMerchant == true) {
-                viewModelScope.launch {
-                    delay(AppConstants.AUTO_PRINT_RECEIPT_DELAY_MS)
-                    printReceipt(
-                        context,
-                        objRootAppPaymentDetail = sharedViewModel.objRootAppPaymentDetail,
-                        isCustomer = false
-                    )
-                }
+                delay(AppConstants.AUTO_PRINT_RECEIPT_DELAY_MS)
+                printReceipt(context, sharedViewModel, false)
             }
         }
     }
@@ -57,11 +53,13 @@ class ApprovedViewModel @Inject constructor(private var dbRepository: TxnDBRepos
 
     fun printReceipt(
         context: Context,
-        objRootAppPaymentDetail: ObjRootAppPaymentDetails,
+        sharedViewModel: SharedViewModel,
         isCustomer: Boolean = false
     ) {
         viewModelScope.launch{
-            PrinterUtils.printReceipt(context,objRootAppPaymentDetail,isCustomer)
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
+                PrinterUtils.printReceipt(context, PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails(), isCustomer)
+            }
         }
     }
 }

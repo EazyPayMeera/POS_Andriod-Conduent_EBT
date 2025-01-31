@@ -121,7 +121,7 @@ fun ApprovedView(navHostController: NavHostController) {
                                     context.resources.getString((R.string.cust_recp)) -> {
                                         viewModel.printReceipt(
                                             context,
-                                            txnRecord,
+                                            sharedViewModel,
                                             true
                                         )
                                     }
@@ -129,7 +129,7 @@ fun ApprovedView(navHostController: NavHostController) {
                                     context.resources.getString((R.string.merchant_recp)) -> {
                                         viewModel.printReceipt(
                                             context,
-                                            txnRecord,
+                                            sharedViewModel,
                                             false
                                         )
                                     }
