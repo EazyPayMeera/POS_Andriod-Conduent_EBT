@@ -252,10 +252,10 @@ fun TransactionListScreen(
                     onPrintClick = {
                         Log.d("Print","Clicked on Print Image")
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnAmount = formatAmount(
-                            viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP) - viewModel.totalPurchaseTransactions(TxnType.REFUND)
+                            viewModel.getNetTotal()
                         )
-                        sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND))
-                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP))
+                        sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.getRefundTotal())
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.getPurchaseTotal())
                         sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.AUTHCAP)
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (
                                 viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.AUTHCAP) + viewModel.totalTransactionsCount(TxnType.REFUND)
@@ -299,7 +299,7 @@ fun TransactionListScreen(
             DateTimePickerDialog(
                 onDismissRequest = { isSelectingEndDate.value = false},
                 onDateTimeSelected = { selectedDate ->
-                    selectedEndDate.value = selectedDate // Save selected start date
+                    selectedEndDate.value = selectedDate.plusSeconds(59) // Save selected end date with seconds set to 59
                     viewModel.onDateTimeFilterApplied(selectedStartDate.value, selectedEndDate.value)
                 }
             )
@@ -341,7 +341,7 @@ fun SummarySection(viewModel: TxnViewModel) {
             }
 
             Text(
-                formatAmount(viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP)),
+                formatAmount(viewModel.getPurchaseTotal()),
                 style = MaterialTheme.typography.body2
             )
         }
@@ -365,7 +365,7 @@ fun SummarySection(viewModel: TxnViewModel) {
             }
 
             Text(
-                formatAmount(viewModel.totalPurchaseTransactions(TxnType.REFUND)),
+                formatAmount(viewModel.getRefundTotal()),
                 style = MaterialTheme.typography.body2
             )
         }
@@ -542,9 +542,7 @@ fun HeaderSection(
                     .padding(horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium), // Consistent padding for the bottom row
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val dNetTotal = viewModel.totalPurchaseTransactions(TxnType.PURCHASE) + viewModel.totalPurchaseTransactions(TxnType.AUTHCAP) - viewModel.totalPurchaseTransactions(
-                    TxnType.REFUND
-                )
+                val dNetTotal = viewModel.getNetTotal()
                 val netTotal = formatAmount(dNetTotal)
 
                 Text(

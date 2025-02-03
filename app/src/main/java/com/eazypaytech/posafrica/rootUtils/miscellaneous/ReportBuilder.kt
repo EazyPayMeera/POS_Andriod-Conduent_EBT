@@ -80,4 +80,8 @@ class ReportBuilder(val list: List<ObjRootAppPaymentDetails>?) {
             TxnStatus.APPROVED
         )
     )
+
+    fun getNetTotal(): Double {
+        return getPurchaseTotal() - getRefundTotal()
+    }
 }

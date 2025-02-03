@@ -13,7 +13,6 @@ import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiService
 import com.eazypaytech.paymentservicecore.logger.AppLogger
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
-import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
@@ -24,6 +23,7 @@ import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUtils.miscellaneous.ReportBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import printReceipt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +47,7 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _showDateTimePicker = MutableStateFlow<Boolean>(false)
     private val _showProgress = MutableStateFlow<Boolean>(false)
     private val _isBatchOpen = MutableStateFlow<Boolean>(false)
+    private val _report = MutableStateFlow<ReportBuilder>(ReportBuilder(emptyList()))
 
     val txnList: StateFlow<List<ObjRootAppPaymentDetails>> = _txnList
     val batchList: StateFlow<List<BatchEntity>> = _batchList
@@ -87,8 +89,8 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         viewModelScope.launch {
             _showProgress.value = true
             dbRepository.getTransactionsByDateRange(
-                startDate?.toString() ?: "",
-                endDate?.toString() ?: ""
+                startDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT))?.toString() ?: "",
+                endDate?.format(DateTimeFormatter.ofPattern(AppConstants.DEFAULT_DATE_TIME_FORMAT))?.toString() ?: ""
             )?.let {
                 val txnDataList = convertTxnEntityListToTxnDataList(it)
                     .sortedByDescending { txnData -> txnData.dateTime }
@@ -183,12 +185,16 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
         return gson.fromJson(json, txnDataListType)
     }
 
-    fun totalPurchaseTransactions(txn: TxnType): Double {
-        return _txnList.value
-            .filter { it.txnType == txn && (it.txnStatus == TxnStatus.APPROVED || it.txnStatus == TxnStatus.REFUNDED) }
-            .sumOf {
-                it.ttlAmount ?: 0.0
-            }
+    fun getPurchaseTotal(): Double {
+        return ReportBuilder(_txnList.value).getPurchaseTotal()
+    }
+
+    fun getRefundTotal(): Double {
+        return ReportBuilder(_txnList.value).getRefundTotal()
+    }
+
+    fun getNetTotal(): Double {
+        return ReportBuilder(_txnList.value).getNetTotal()
     }
 
     fun totalTransactionsCount(txn: TxnType): Int {
