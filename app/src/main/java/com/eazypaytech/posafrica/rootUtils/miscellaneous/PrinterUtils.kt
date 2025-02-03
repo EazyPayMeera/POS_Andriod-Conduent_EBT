@@ -16,6 +16,8 @@ import com.eazypaytech.posafrica.rootModel.Symbol.Type
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Style
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toDecimalFormat
 
 object PrinterUtils {
@@ -177,6 +179,123 @@ object PrinterUtils {
             .addText(objRootAppPaymentDetails.footer4,
                 format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
                 condition = isCustomer)
+            .feedLine()
+            .print()
+    }
+
+    fun printSummary(context: Context, listObjRootAppPaymentDetails: List<ObjRootAppPaymentDetails>?)
+    {
+        var _report = ReportBuilder(listObjRootAppPaymentDetails)
+        PrinterServiceRepository().init(context, object : IPrinterServiceResponseListener {
+            override fun onPrinterServiceResponse(response: Any) {
+                when (response) {
+                    is PrinterServiceResult.Result ->{
+                        when(response.status) {
+                            PrinterServiceResult.Status.PRINTING -> CustomDialogBuilder.composePrintingDialog(
+                                title = context.resources.getString(R.string.printing),
+                                subtitle = context.resources.getString(
+                                        R.string.receipt_printing_summary
+                                ),
+                                message = context.resources.getString(R.string.plz_wait)
+                            )
+                            PrinterServiceResult.Status.INIT_FAILURE, PrinterServiceResult.Status.ERROR, PrinterServiceResult.Status.PRINT_FAILURE -> CustomDialogBuilder.composeAlertDialog(
+                                title = context.resources.getString(R.string.printer_error_title),
+                                message = context.resources.getString(R.string.printer_printing_failed)
+                            )
+                            PrinterServiceResult.Status.OUT_OF_PAPER -> CustomDialogBuilder.composeAlertDialog(
+                                title = context.resources.getString(R.string.printer_error_title),
+                                message = context.resources.getString(R.string.printer_out_of_paper)
+                            )
+                            else -> CustomDialogBuilder.hideProgress()
+                        }
+                    }
+                }
+            }
+        })
+
+            /* Headers */
+            .addText(
+                listObjRootAppPaymentDetails?.get(0)?.header1,
+                format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+            .addText(listObjRootAppPaymentDetails?.get(0)?.header2,
+                format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+            .addText(listObjRootAppPaymentDetails?.get(0)?.header3,
+                format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+            .addText(listObjRootAppPaymentDetails?.get(0)?.header4,
+                format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+
+            .feedLine()
+
+            /* Summary Title */
+            .addText(context.getString(R.string.summary_report),
+                format = PrintFormat().fontSize(FontSize.LARGE).align(Align.CENTER)
+            )
+
+            .feedLine()
+
+            /* Date Time */
+            .addText(convertDateTime(getCurrentDateTime(), outputFormat = AppConstants.DEFAULT_RECEIPT_DATE_FORMAT),
+                convertDateTime(getCurrentDateTime(), outputFormat = AppConstants.DEFAULT_RECEIPT_TIME_FORMAT),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            /* MID & TID */
+            .addText(listObjRootAppPaymentDetails?.get(0)?.merchantId,
+                listObjRootAppPaymentDetails?.get(0)?.terminalId,
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            /* Demo Mode Text */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
+                condition = listObjRootAppPaymentDetails?.get(0)?.isDemoMode == true)
+            .addText(context.getString(R.string.receipt_train_mode),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
+                condition = listObjRootAppPaymentDetails?.get(0)?.isDemoMode == true)
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
+                condition = listObjRootAppPaymentDetails?.get(0)?.isDemoMode == true)
+
+            /* Transaction Counts & Totals */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            .addText(context.getString(R.string.summary_purchase),"x"+_report.getPurchaseCount(), _report.getPurchaseTotal().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+            .addText(" " + context.getString(R.string.summary_subtotal), "x"+_report.getPurchaseCount(), _report.getSubTotal().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = _report.getSubTotal()!=_report.getPurchaseTotal()
+            )
+            .addText(" " + context.getString(R.string.summary_vat),"x"+_report.getVATCount(), _report.getVAT().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = _report.getVAT()>0.00
+            )
+            .addText(" " + context.getString(R.string.summary_tip),"x"+_report.getTipCount(), _report.getTip().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = _report.getTip()>0.00
+            )
+            .addText(" " + context.getString(R.string.summary_service_charge),"x"+_report.getServiceChargeCount(), _report.getServiceCharge().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = _report.getServiceCharge()>0.00
+            )
+            .feedLine()
+
+            .addText(context.getString(R.string.summary_refund), "x"+_report.getRefundCount(), _report.getRefundTotal().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = _report.getRefundTotal()>0.00
+            )
+
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            .addText(context.getString(R.string.summary_total), _report.getNetTotal().toAmountFormat(),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+
             .feedLine()
             .print()
     }

@@ -23,6 +23,7 @@ import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUtils.miscellaneous.PrinterUtils
 import com.eazypaytech.posafrica.rootUtils.miscellaneous.ReportBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -268,6 +269,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
             objRootAppPaymentDetail,
             lastTxn = false
         )
+    }
+
+    fun printSummary(
+        context: Context,
+        listObjRootAppPaymentDetail: List<ObjRootAppPaymentDetails>?
+    ) {
+        PrinterUtils.printSummary(context,listObjRootAppPaymentDetail)
     }
     
     override fun onApiServiceDisplayProgress(

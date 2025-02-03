@@ -311,13 +311,18 @@
     <string name="receipt_train_mode">*** प्रशिक्षण मोड ***</string>
     <string name="receipt_printing_merchant">व्यापारी प्रति</string>
     <string name="receipt_printing_customer">ग्राहक प्रति</string>
+    <string name="receipt_printing_summary">संक्षिप्त रिपोर्ट</string>
+    <string name="receipt_printing_detailed">विस्तृत रिपोर्ट</string>
 
     <!-- Summary Report -->
-    <string name="summary_header">सारांश रिपोर्ट</string>
+    <string name="summary_report">सारांश रिपोर्ट</string>
     <string name="summary_dot_line">---------------</string>
     <string name="summary_purchase">खरीद</string>
     <string name="summary_refund">रिफंड</string>
     <string name="summary_void">रद्द</string>
+    <string name="summary_subtotal">उप-योग</string>
+    <string name="summary_service_charge">सेवा शुल्क</string>
+    <string name="summary_vat">वैट</string>
     <string name="summary_tip">टिप</string>
     <string name="summary_cashback">कैशबैक</string>
     <string name="summary_total">कुल</string>

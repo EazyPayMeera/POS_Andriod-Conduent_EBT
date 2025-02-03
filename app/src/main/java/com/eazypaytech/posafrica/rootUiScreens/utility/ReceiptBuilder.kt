@@ -26,7 +26,7 @@ class ReceiptBuilder {
 
         reportBuilder
             .addSummaryField("", sharedViewModel.objPosConfig?.header1.toString(), "",FontSize.Small)
-            .addSummaryField("", context.getString(R.string.summary_header), "",FontSize.Small)
+            .addSummaryField("", context.getString(R.string.summary_report), "",FontSize.Small)
             .addSummaryField("", sharedViewModel.objPosConfig?.header2.toString(),"",FontSize.Small)
             .addSummaryField("", sharedViewModel.objPosConfig?.header3.toString(),"",FontSize.Small)
 

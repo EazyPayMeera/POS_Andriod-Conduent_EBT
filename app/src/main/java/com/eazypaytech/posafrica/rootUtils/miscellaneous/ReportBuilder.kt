@@ -58,6 +58,12 @@ class ReportBuilder(val list: List<ObjRootAppPaymentDetails>?) {
         }?:0.00
     }
 
+    fun getVATCount(listTxnType: List<TxnType>?= listOf(TxnType.PURCHASE, TxnType.AUTHCAP), listTxnStatus: List<TxnStatus>?= listOf(TxnStatus.APPROVED,TxnStatus.REFUNDED)) : Int {
+        return list?.filter {
+            listTxnType?.contains(it.txnType)==true && listTxnStatus?.contains(it.txnStatus)==true && (it.VAT?:0.00) > 0.00
+        }?.count()?:0
+    }
+
     fun getCount(listTxnType: List<TxnType>?= listOf(TxnType.PURCHASE, TxnType.AUTHCAP), listTxnStatus: List<TxnStatus>?= listOf(TxnStatus.APPROVED,TxnStatus.REFUNDED)) : Int {
         return list?.filter {
             listTxnType?.contains(it.txnType)==true && listTxnStatus?.contains(it.txnStatus)==true

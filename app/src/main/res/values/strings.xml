@@ -312,13 +312,18 @@
     <string name="receipt_train_mode">*** Training Mode ***</string>
     <string name="receipt_printing_merchant">Merchant Copy</string>
     <string name="receipt_printing_customer">Customer Copy</string>
+    <string name="receipt_printing_summary">Summary Report</string>
+    <string name="receipt_printing_detailed">Detailed Report</string>
 
     <!-- Summary Report -->
-    <string name="summary_header">SUMMARY REPORT</string>
+    <string name="summary_report">SUMMARY REPORT</string>
     <string name="summary_dot_line">---------------</string>
     <string name="summary_purchase">Purchase</string>
     <string name="summary_refund">Refund</string>
     <string name="summary_void">Void</string>
+    <string name="summary_subtotal">Sub</string>
+    <string name="summary_service_charge">Ser.Charge</string>
+    <string name="summary_vat">VAT</string>
     <string name="summary_tip">Tip</string>
     <string name="summary_cashback">CashBack</string>
     <string name="summary_total">Total</string>
