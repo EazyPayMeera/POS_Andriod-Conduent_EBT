@@ -127,12 +127,18 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         when (sharedViewModel.objRootAppPaymentDetail.txnType) {
             TxnType.REFUND -> {
                 sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(transAmount)
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = sharedViewModel.objRootAppPaymentDetail.ttlAmount?.
+                minus(sharedViewModel.objRootAppPaymentDetail.tip?:0.00)?.
+                minus(sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00)?.
+                minus(sharedViewModel.objRootAppPaymentDetail.VAT?:0.00)
             }
             TxnType.VOID -> {
                 sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
                 sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(transAmount)
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
+                sharedViewModel.objRootAppPaymentDetail.txnAmount = sharedViewModel.objRootAppPaymentDetail.ttlAmount?.
+                minus(sharedViewModel.objRootAppPaymentDetail.tip?:0.00)?.
+                minus(sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00)?.
+                minus(sharedViewModel.objRootAppPaymentDetail.VAT?:0.00)
             }
             else -> {
                 // Handle non-REFUND and non-PREAUTH cases
