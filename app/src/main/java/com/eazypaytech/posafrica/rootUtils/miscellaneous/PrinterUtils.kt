@@ -426,12 +426,12 @@ object PrinterUtils {
             .addText(context.getString(R.string.receipt_gray_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
-            /* Transaction Type, Invoice Number & Transaction Status */
-            .addText(context.getString(R.string.detail_txn_Type), context.getString(R.string.detail_invoice_no), context.getString(R.string.detail_txn_Status),
+            /* Transaction Type, Card Brand Last4 & Transaction Status */
+            .addText(context.getString(R.string.detail_txn_Type), context.getString(R.string.detail_card), context.getString(R.string.detail_txn_Status),
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
-            /* Txn Ref Number, Card Brand Last4 & Auth Code */
-            .addText(context.getString(R.string.detail_txn_ref), context.getString(R.string.detail_card), context.getString(R.string.detail_auth_code),
+            /* Txn Ref Number, Invoice Number & Auth Code */
+            .addText(context.getString(R.string.detail_txn_ref), context.getString(R.string.detail_invoice_no), context.getString(R.string.detail_auth_code),
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
             /* TIP, Service Charge, VAT */
@@ -447,14 +447,14 @@ object PrinterUtils {
             ).apply {
 
                 for (item in listObjRootAppPaymentDetails!!) {
-                    /* Transaction Type, Invoice Number & Transaction Status */
+                    /* Transaction Type, Card Brand Last4 & Transaction Status */
                     addText(
-                        item.txnType.toString(), item.invoiceNo.toString(), item.txnStatus.toString(),
+                        item.txnType.toString(), (item.cardBrand?.take(6)?.plus(" ")?:"").plus(item.cardMaskedPan?.takeLast(4)?:"-"), item.txnStatus.toString(),
                         format = PrintFormat().fontSize(FontSize.SMALL)
                     )
-                        /* Txn Ref Number & Auth Code */
+                        /* Txn Ref Number, Invoice Number & Auth Code */
                         .addText(
-                            item.hostTxnRef?:"-", (item.cardBrand?.take(6)?.plus(" ")?:"").plus(item.cardMaskedPan?.takeLast(4)?:"-"), item.hostAuthCode?:"-",
+                            item.hostTxnRef?:"-", item.invoiceNo.toString(), item.hostAuthCode?:"-",
                             format = PrintFormat().fontSize(FontSize.SMALL)
                         )
                         /* TIP, Service Charge & VAT */
