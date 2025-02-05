@@ -277,6 +277,13 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     ) {
         PrinterUtils.printSummary(context,listObjRootAppPaymentDetail)
     }
+
+    fun printDetailed(
+        context: Context,
+        listObjRootAppPaymentDetail: List<ObjRootAppPaymentDetails>?
+    ) {
+        PrinterUtils.printDetailed(context,listObjRootAppPaymentDetail)
+    }
     
     override fun onApiServiceDisplayProgress(
         show: Boolean,

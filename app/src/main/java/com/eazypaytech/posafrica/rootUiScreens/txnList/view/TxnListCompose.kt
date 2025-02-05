@@ -244,7 +244,7 @@ fun TransactionListScreen(
                                 viewModel.printSummary(context,txnList)
                             }
                             context.resources.getString((R.string.detail)) -> {
-                                viewModel.printReceipt(0,sharedViewModel,context, false,false,isDetail = true,sharedViewModel.objRootAppPaymentDetail)
+                                viewModel.printDetailed(context,txnList)
                             }
                         }
 

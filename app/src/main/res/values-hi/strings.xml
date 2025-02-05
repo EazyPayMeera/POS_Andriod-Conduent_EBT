@@ -312,7 +312,7 @@
     <string name="receipt_printing_merchant">व्यापारी प्रति</string>
     <string name="receipt_printing_customer">ग्राहक प्रति</string>
     <string name="receipt_printing_summary">संक्षिप्त रिपोर्ट</string>
-    <string name="receipt_printing_detailed">विस्तृत रिपोर्ट</string>
+    <string name="receipt_printing_detail">विस्तृत रिपोर्ट</string>
 
     <!-- Summary Report -->
     <string name="summary_report">सारांश रिपोर्ट</string>
@@ -341,7 +341,12 @@
     <string name="detail_invoice_no">चालान संख्या</string>
     <string name="detail_txn_amt">लेनदेन राशि</string>
     <string name="detail_total_amt">कुल राशि</string>
-    <string name="detail_auth_code">अधिकार कोड</string>
+    <string name="detail_txn_ref">संदर्भ</string>
+    <string name="detail_tip">टिप</string>
+    <string name="detail_vat">वैट</string>
+    <string name="detail_service_charge">शुल्क</string>
+    <string name="detail_auth_code">कोड</string>
+    <string name="detail_card">कार्ड</string>
 
     <!-- Recent Activity -->
     <string name="recentActivity">हाल की गतिविधि</string>

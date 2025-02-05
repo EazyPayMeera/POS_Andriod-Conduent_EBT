@@ -313,7 +313,7 @@
     <string name="receipt_printing_merchant">Merchant Copy</string>
     <string name="receipt_printing_customer">Customer Copy</string>
     <string name="receipt_printing_summary">Summary Report</string>
-    <string name="receipt_printing_detailed">Detailed Report</string>
+    <string name="receipt_printing_detail">Detail Report</string>
 
     <!-- Summary Report -->
     <string name="summary_report">SUMMARY REPORT</string>
@@ -336,13 +336,18 @@
     <string name="detail_header">Detail Transaction Summary</string>
     <string name="detail_txn">Transaction</string>
     <string name="detail_count">Count</string>
-    <string name="detail_txn_details">Transactions Details</string>
-    <string name="detail_txn_Type">TxnType</string>
+    <string name="detail_txn_details">Transactions</string>
+    <string name="detail_txn_Type">Txn Type</string>
     <string name="detail_txn_Status">Status</string>
-    <string name="detail_invoice_no">Invoice No</string>
-    <string name="detail_txn_amt">Txn_Amount</string>
-    <string name="detail_total_amt">TotalAmount</string>
-    <string name="detail_auth_code">AuthCode</string>
+    <string name="detail_invoice_no">Invoice</string>
+    <string name="detail_txn_amt">Amount</string>
+    <string name="detail_total_amt">Total</string>
+    <string name="detail_txn_ref">Txn Ref</string>
+    <string name="detail_tip">Tip</string>
+    <string name="detail_vat">VAT</string>
+    <string name="detail_service_charge">S.Chrg</string>
+    <string name="detail_auth_code">Auth Code</string>
+    <string name="detail_card">Card</string>
 
 
     <!--//txnlist -->
