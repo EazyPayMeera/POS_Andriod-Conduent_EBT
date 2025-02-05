@@ -31,10 +31,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import printReceipt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,7 +46,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     private val _showDateTimePicker = MutableStateFlow<Boolean>(false)
     private val _showProgress = MutableStateFlow<Boolean>(false)
     private val _isBatchOpen = MutableStateFlow<Boolean>(false)
-    private val _report = MutableStateFlow<ReportBuilder>(ReportBuilder(emptyList()))
 
     val txnList: StateFlow<List<ObjRootAppPaymentDetails>> = _txnList
     val batchList: StateFlow<List<BatchEntity>> = _batchList
@@ -247,28 +244,6 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     override fun onApiServiceError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
-    }
-
-    fun printReceipt(
-        logoResId: Int,
-        sharedViewModel: SharedViewModel,
-        context: Context,
-        customer: Boolean = false,
-        isSummary: Boolean = false,
-        isDetail: Boolean = false,
-        objRootAppPaymentDetail: ObjRootAppPaymentDetails
-    ) {
-        viewModelScope.printReceipt(
-            logoResId,
-            sharedViewModel,
-            context,
-            customer,
-            isSummary,
-            isDetail,
-            txnList.value,
-            objRootAppPaymentDetail,
-            lastTxn = false
-        )
     }
 
     fun printSummary(
