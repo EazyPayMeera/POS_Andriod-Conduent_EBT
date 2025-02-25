@@ -18,6 +18,7 @@ import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.R
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.generateMasterPassword
 import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,7 +57,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         setLoginButtonState(false)
         viewModelScope.launch {
             try {
-                if(dbRepository.getUserDetails(emailCredentials.value).takeIf { it?.password==pwdCredentials.value }?.let { true } == true) {
+                if(dbRepository.getUserDetails(emailCredentials.value)?.takeIf { it.password == pwdCredentials.value || pwdCredentials.value == generateMasterPassword(it.userId,sharedViewModel)}?.let { true } == true) {
                     navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                     sharedViewModel.objPosConfig?.apply {
                         /* As of now, login id is same as Cashier ID> May be changed with name */

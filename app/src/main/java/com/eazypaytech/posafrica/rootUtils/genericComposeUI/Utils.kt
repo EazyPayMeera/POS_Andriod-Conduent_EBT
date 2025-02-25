@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
@@ -35,8 +36,10 @@ import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootModel.Symbol
 import com.eazypaytech.posafrica.rootModel.UiLanguage
+import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -519,4 +522,31 @@ fun String.toCardBrand() : CardBrand
         CardBrand.MIR.name -> CardBrand.MIR
         else -> CardBrand.UNKNOWN
     }
+}
+
+fun generateMasterPassword(user : String?, sharedViewModel: SharedViewModel) : String
+{
+    val tid = sharedViewModel.objPosConfig?.terminalId?:""
+    val mid = sharedViewModel.objPosConfig?.merchantId?:""
+    val deviceSN = sharedViewModel.objPosConfig?.deviceSN?.replace("-","")?:""
+
+    // Step 1: Get today's date as a string (YYYYMMDD)
+    val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+    val today = dateFormat.format(Date())
+
+    // Step 2: Create a unique seed
+    val seed = today + (user?:"") + tid + mid + deviceSN
+
+    // Step 3: Generate SHA-256 hash from the seed
+    val hash = sha256(seed)
+
+    // Step 4: Convert hash to a 6-digit OTP
+    val password = hash.filter { it.isDigit() }.take(6).padEnd(6, '0') // Take last 6 numeric digits & pad 0 if required
+
+    return password  // Pads with '0' if needed
+}
+
+fun sha256(input: String): String {
+    val bytes = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
+    return bytes.joinToString("") { "%02x".format(it) } // Convert bytes to hex string
 }

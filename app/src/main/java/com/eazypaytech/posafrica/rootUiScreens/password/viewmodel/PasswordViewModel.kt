@@ -4,12 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.generateMasterPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +36,7 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
         viewModelScope.launch {
             try {
                 val password = dbRepository.fetchPassword(sharedViewModel.objPosConfig?.loginId.toString())
-                if(password != enteredPassword)
+                if(password != enteredPassword && password != generateMasterPassword(sharedViewModel.objPosConfig?.loginId, sharedViewModel))
                 {
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.resources.getString(
@@ -65,4 +64,5 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
             event.emit(PasswordValidation.Result(false))
         }
     }
+
 }
