@@ -538,12 +538,34 @@ fun generateMasterPassword(user : String?, sharedViewModel: SharedViewModel) : S
     val seed = today + (user?:"") + tid + mid + deviceSN
 
     // Step 3: Generate SHA-256 hash from the seed
-    val hash = sha256(seed)
+    val hash = simpleHash(simpleHash(seed))
 
     // Step 4: Convert hash to a 6-digit OTP
     val password = hash.filter { it.isDigit() }.take(6).padEnd(6, '0') // Take last 6 numeric digits & pad 0 if required
 
+    Log.d("PASSWORD","OTP for user '$user' is '$password'")
+
     return password  // Pads with '0' if needed
+}
+
+// **Simple Hash Function (Alternative to SHA-256)**
+fun simpleHash(input: String): String {
+    val hashParts = LongArray(10) { 0L }
+    val prime1 = 0x01000193L
+    val prime2 = 0x811C9DC5L
+
+    for (i in input.indices) {
+        val charCode = input[i].code.toLong()
+        val index = (i * prime1 % 10).toInt()
+        hashParts[index] = ((hashParts[index] xor (charCode * prime2)) and 0xFFFFFFFFL)
+        hashParts[index] = ((hashParts[index] * prime1 + prime2) and 0xFFFFFFFFL)
+    }
+
+    for (i in hashParts.indices) {
+        hashParts[i] = ((hashParts[i] xor ((hashParts[(i + 3) % 10] ushr 5) or (hashParts[(i + 7) % 10] shl 11))) and 0xFFFFFFFFL)
+    }
+
+    return hashParts.joinToString("") { "%08x".format(it) }
 }
 
 fun sha256(input: String): String {

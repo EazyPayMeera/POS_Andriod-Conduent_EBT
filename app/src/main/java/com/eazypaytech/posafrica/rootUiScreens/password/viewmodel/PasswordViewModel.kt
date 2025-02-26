@@ -36,7 +36,7 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
         viewModelScope.launch {
             try {
                 val password = dbRepository.fetchPassword(sharedViewModel.objPosConfig?.loginId.toString())
-                if(password != enteredPassword && password != generateMasterPassword(sharedViewModel.objPosConfig?.loginId, sharedViewModel))
+                if(password != enteredPassword && enteredPassword != generateMasterPassword(sharedViewModel.objPosConfig?.loginId, sharedViewModel))
                 {
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.resources.getString(

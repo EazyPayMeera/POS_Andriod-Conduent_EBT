@@ -11,6 +11,7 @@ import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.generateMasterPassword
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -57,7 +58,7 @@ class ChangePasswordViewModel @Inject constructor(
             try {
                 if (isFormValid) {
                     dbRepository.getUserDetails(sharedViewModel.objPosConfig?.loginId?:"")?.let {
-                        if(it.password != currentPassword.value)
+                        if(it.password != currentPassword.value && currentPassword.value != generateMasterPassword(sharedViewModel.objPosConfig?.loginId, sharedViewModel))
                             CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.change_password), subtitle = navHost.context.resources.getString(R.string.invalid_current_password))
                         else {
                             it.password = newPassword.value
@@ -78,7 +79,6 @@ class ChangePasswordViewModel @Inject constructor(
                     else
                         CustomDialogBuilder.composeAlertDialog(title = navHost.context.resources.getString(R.string.change_password), subtitle = navHost.context.resources.getString(R.string.clerk_min_password_length))
                 }
-
             } catch (e: Exception) {
                 e.printStackTrace()
             }
