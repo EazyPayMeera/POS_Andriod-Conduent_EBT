@@ -21,14 +21,20 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.rootUtils.miscellaneous.PrinterUtils
 import com.eazypaytech.posafrica.rootUtils.miscellaneous.readAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
 
+    private val _isAdmin = MutableStateFlow<Boolean>(false)
+    val isAdmin : StateFlow<Boolean> = _isAdmin
+
     fun clearTransData(sharedViewModel: SharedViewModel) {
         sharedViewModel.clearTransData()
+        checkIfAdmin(sharedViewModel)
     }
 
     fun reprintLast(
@@ -105,6 +111,14 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     subtitle = navHostController.context.resources.getString(R.string.batch_open)
                 )
             }
+            else if (!isAdmin.value) {
+                CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.resources.getString(
+                        R.string.restricted
+                    ),
+                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
+                )
+            }
             else{
                 CustomDialogBuilder.composeAlertDialog(
                     title = navHostController.context.getString(R.string.reactivate_device),
@@ -117,6 +131,16 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
                     },
                     cancelBtnText = navHostController.context.getString(R.string.cancel_no),
                 )
+            }
+        }
+    }
+
+    fun checkIfAdmin(sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            sharedViewModel.objPosConfig?.loginId?.let {
+                txnDBRepository.isAdmin(it).let {
+                    _isAdmin.value = it
+                }
             }
         }
     }

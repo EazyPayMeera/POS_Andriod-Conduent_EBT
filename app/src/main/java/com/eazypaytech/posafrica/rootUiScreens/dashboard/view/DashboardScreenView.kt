@@ -20,6 +20,7 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -223,6 +224,7 @@ fun TrainingView(
     val sharedViewModel= localSharedViewModel.current
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
+    val isAdmin = dashboardViewModel.isAdmin.collectAsState().value
     val context = LocalContext.current
 
     // Function to handle drawer open and close
@@ -238,6 +240,7 @@ fun TrainingView(
         drawerState = drawerState,
         drawerContent = {
             CustomDrawerContent(
+                isAdmin = isAdmin,
                 navHostController = navHostController,
                 onMenuItemClick = onMenuItemClick,
                 onCloseDrawer = { toggleDrawer(false) }

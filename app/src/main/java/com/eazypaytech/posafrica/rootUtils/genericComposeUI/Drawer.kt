@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -40,12 +41,15 @@ import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.posafrica.BuildConfig
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
+import com.eazypaytech.posafrica.rootUiScreens.dashboard.viewModel.DashboardViewModel
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.ui.theme.dimens
 
 @Composable
 fun CustomDrawerContent(
     onCloseDrawer: () -> Unit,
     navHostController: NavHostController,
+    isAdmin : Boolean,
     onMenuItemClick: (String, Boolean) -> Unit
 ) {
     Column(
@@ -111,7 +115,13 @@ fun CustomDrawerContent(
                 imageRes = Icons.Default.Key,
                 text = stringResource(id = R.string.reactivate_device),
                 isChecked = false,
-                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE, true) }
+                isEnabled = isAdmin,
+                onCheckedChange = { if(isAdmin) onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE, true) else CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.resources.getString(
+                        R.string.restricted
+                    ),
+                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
+                ) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,
@@ -131,7 +141,6 @@ fun CustomDrawerContent(
                 Column {
                     drawersItems.forEachIndexed { index, item ->
                         DrawersSurface(
-                            modifier = Modifier.fillMaxWidth(),
                             item = item
                         )
 
@@ -168,22 +177,23 @@ data class DrawerItem(
     val imageRes: ImageVector,
     val text: String,
     val isChecked: Boolean,
-    val onCheckedChange: (Boolean) -> Unit
+    val onCheckedChange: (Boolean) -> Unit,
+    var isEnabled: Boolean?=true
 )
 
 @Composable
 fun DrawersSurface(
-    modifier: Modifier = Modifier,
-    item: DrawerItem,
+    item: DrawerItem
 ) {
     Surface(
-        modifier = Modifier.height(MaterialTheme.dimens.DP_60_CompactMedium),
+        modifier = Modifier.height(MaterialTheme.dimens.DP_60_CompactMedium)
+            .then(if (item.isEnabled==false) Modifier.alpha(0.5f) else Modifier) // Dim surface when isAdmin is false
+            .clickable(enabled = item.isEnabled==true) {}, // Make it non-clickable if isAdmin is false,
         color = MaterialTheme.colorScheme.onPrimary
     ) {
         DrawersContent(
             item = item
         )
-
     }
 }
 
