@@ -872,71 +872,59 @@ fun OutlinedTextField(
     textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
     keyboardType: KeyboardType = KeyboardType.Text,
     onDoneAction: () -> Unit = {},
-    isPassword: Boolean = false, // New parameter to indicate if it's a password field
+    isPassword: Boolean = false,
     visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     modifier: Modifier = Modifier,
-    amount: Boolean = false, // New parameter to indicate if ₹ icon should be shown
+    amount: Boolean = false,
     trailingIcon: @Composable (() -> Unit)? = null,
     readOnly: Boolean = false,
 ) {
-    // Create a FocusRequester instance
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
 
-    // Handle value change with length restriction if `amount` flag is true
-    val handleValueChange: (TextFieldValue) -> Unit = { newValue ->
-        if (amount) {
-            if (removeNonDigits(newValue.text).length <= 12) onValueChange(formatAmount(newValue.text)) // Restrict input to 12 characters
-        } else {
-            onValueChange(newValue.text)
+    var textFieldValue by remember {
+        mutableStateOf(TextFieldValue(value, selection = TextRange(value.length)))
+    }
+
+    // Sync external value changes
+    LaunchedEffect(value) {
+        textFieldValue = TextFieldValue(value, selection = TextRange(value.length))
+    }
+
+    val handleValueChange: (String) -> Unit = { newText ->
+        val formattedText = if (amount) formatAmount(newText) else newText
+        if (!amount || removeNonDigits(formattedText).length <= 12) {
+            textFieldValue = TextFieldValue(formattedText, selection = TextRange(formattedText.length))
+            onValueChange(formattedText)
         }
     }
 
     OutlinedTextField(
-        value = TextFieldValue(value, selection = TextRange(value.length)),
-        onValueChange = handleValueChange,
+        value = textFieldValue,
+        onValueChange = { handleValueChange(it.text) },
         shape = shape,
-        label = { Text("") }, // Label is always empty
+        label = null,
         placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_23_CompactMedium) },
         textStyle = textStyle,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = { onDoneAction() }
-        ),
-        visualTransformation = visualTransformation, // Use passed visualTransformation
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { onDoneAction() }),
+        visualTransformation = visualTransformation,
         readOnly = readOnly,
         trailingIcon = trailingIcon,
         modifier = modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null // Removes ripple effect but keeps the clickable functionality
-            ) {
-                focusRequester.requestFocus() // Request focus when clicked
+            .clickable(interactionSource = interactionSource, indication = null) {
+                focusRequester.requestFocus()
             }
             .focusRequester(focusRequester)
             .padding(MaterialTheme.dimens.DP_2_CompactMedium)
             .width(MaterialTheme.dimens.DP_280_CompactMedium)
             .height(MaterialTheme.dimens.DP_70_CompactMedium),
-        prefix = if (amount) {
-            {
-                Text(
-                    text = "\u20B9", // Unicode for ₹ symbol
-                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium, // Adjust the size of the icon
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.tertiary, // Set the color to black,
-                    textAlign = TextAlign.Center
-                )
-            }
-        } else null,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary, // Orange color for focused state
-            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused state
-            focusedLabelColor = MaterialTheme.colorScheme.primary, // Orange color for focused label
-            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer, // Light grey color for unfocused label,
-            cursorColor = Color.Transparent
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer,
+            cursorColor = MaterialTheme.colorScheme.primary
         )
     )
 
