@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TPaymentsAPOS"
+rootProject.name = "EzeAndroidPOS"
 include(":app")
 
 include(":paymentservicecore")
