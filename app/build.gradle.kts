@@ -25,6 +25,7 @@ android {
         }
         buildConfigField ("Integer", "LOG_LEVEL", "2")
         buildConfigField ("String", "ACQUIRER_NAME", "\"LYRA\"")
+        buildConfigField ("String", "HW_TYPE", "\"MOREFUN\"")
     }
 
     buildTypes {
