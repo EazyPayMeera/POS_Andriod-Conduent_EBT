@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 configurations.maybeCreate("default")
-artifacts.add("default", file("urovo_sdk_v1.0.12.aar"))
+
 android {
     namespace = "com.eazypaytech.hardwarecore"
     compileSdk = 34
@@ -34,11 +34,22 @@ android {
     }
 }
 
+val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(files("libs/urovo_sdk_v1.0.12.aar"))
+    when (hwType) {
+        "UROVO" -> {
+            implementation(files("libs/urovo_sdk_v1.0.12.aar"))
+        }
+        "MOREFUN" -> {
+            implementation(files("libs/ysdk_6.01.276894c_24123015.jar"))
+            implementation(files("libs/urovo_sdk_v1.0.12.aar")) /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
+        }
+    }
+
     implementation("com.google.dagger:hilt-android:2.51")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.google.code.gson:gson:2.10.1")

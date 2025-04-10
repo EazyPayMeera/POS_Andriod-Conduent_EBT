@@ -6,6 +6,8 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
+
 android {
     namespace = "com.eazypaytech.posafrica"
     compileSdk = 34
@@ -25,7 +27,7 @@ android {
         }
         buildConfigField ("Integer", "LOG_LEVEL", "2")
         buildConfigField ("String", "ACQUIRER_NAME", "\"LYRA\"")
-        buildConfigField ("String", "HW_TYPE", "\"MOREFUN\"")
+        buildConfigField ("String", "HW_TYPE", "\"$hwType\"")
     }
 
     buildTypes {
