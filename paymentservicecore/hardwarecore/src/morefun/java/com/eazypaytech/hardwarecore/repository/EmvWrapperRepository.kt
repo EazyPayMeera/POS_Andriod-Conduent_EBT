@@ -24,7 +24,6 @@ import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult.TransStatus
 import com.eazypaytech.tpaymentcore.model.emv.TransConfig
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import com.urovo.i9000s.api.emv.ContantPara
-import com.urovo.i9000s.api.emv.ContantPara.CardSlot
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs

@@ -28,6 +28,8 @@ android {
         buildConfigField ("Integer", "LOG_LEVEL", "2")
         buildConfigField ("String", "ACQUIRER_NAME", "\"LYRA\"")
         buildConfigField ("String", "HW_TYPE", "\"$hwType\"")
+
+        manifestPlaceholders["enableMoreFunService"] = (hwType == "MOREFUN").toString()
     }
 
     buildTypes {

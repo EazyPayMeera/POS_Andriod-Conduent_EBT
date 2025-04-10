@@ -5,6 +5,8 @@ plugins {
 }
 configurations.maybeCreate("default")
 
+val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
+
 android {
     namespace = "com.eazypaytech.hardwarecore"
     compileSdk = 34
@@ -14,6 +16,26 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField ("String", "HW_TYPE", "\"$hwType\"")
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/java")
+
+            // Add platform-specific dirs based on HW_TYPE
+            when (hwType) {
+                "MOREFUN" -> {
+                    java.srcDir("src/morefun/java")
+                    manifest.srcFile("src/morefun/AndroidManifest.xml")
+                }
+                else -> {
+                    java.srcDir("src/urovo/java")
+                    manifest.srcFile("src/urovo/AndroidManifest.xml")
+                }
+            }
+        }
     }
 
     buildTypes {
@@ -33,8 +55,6 @@ android {
         jvmTarget = "1.8"
     }
 }
-
-val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
 
 dependencies {
     implementation(libs.androidx.core.ktx)
