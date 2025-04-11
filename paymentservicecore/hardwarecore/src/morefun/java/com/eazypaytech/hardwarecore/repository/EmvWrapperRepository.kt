@@ -1,11 +1,16 @@
 package com.eazypaytech.tpaymentcore.repository
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.device.SEManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.os.IInputActionListener
+import android.os.RemoteException
 import android.text.TextUtils
 import android.util.Log
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
@@ -23,6 +28,14 @@ import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult.InitStatus
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult.TransStatus
 import com.eazypaytech.tpaymentcore.model.emv.TransConfig
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
+import com.morefun.yapi.ServiceResult
+import com.morefun.yapi.device.pinpad.DispTextMode
+import com.morefun.yapi.device.pinpad.OnPinPadInputListener
+import com.morefun.yapi.device.pinpad.PinAlgorithmMode
+import com.morefun.yapi.device.pinpad.PinPadConstrants
+import com.morefun.yapi.emv.EmvTransDataConstrants
+import com.morefun.yapi.emv.OnEmvProcessListener
+import com.morefun.yapi.engine.DeviceServiceEngine
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -33,6 +46,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Hashtable
 import java.util.Locale
 import javax.inject.Inject
@@ -113,6 +128,164 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         var nfcTlv : String? = null
         var nfcDisplayMsgId : DisplayMsgId? = null
         var checkCardResult : ContantPara.CheckCardResult? = null
+        var deviceService: DeviceServiceEngine? = null
+        private val SERVICE_ACTION = "com.morefun.ysdk.service"
+        private val SERVICE_PACKAGE = "com.morefun.ysdk"
+
+        val emvConnection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+                deviceService = DeviceServiceEngine.Stub.asInterface(binder)
+                Log.d("MOREFUN", "Service connected")
+                deviceService?.emvHandler?.emvTrans(getTransBundle("454.454"), object : OnEmvProcessListener.Stub(){
+                    override fun onSelApp(
+                        p0: List<String?>?,
+                        p1: Boolean
+                    ) {
+                        Log.d("MOREFUN", "Service connected")
+                    }
+
+                    override fun onConfirmCardNo(p0: String?) {
+                        Log.d("MOREFUN", "onConfirmCardNo ${p0}")
+                        deviceService?.emvHandler?.onSetConfirmCardNoResponse(true)
+                    }
+
+                    override fun onCardHolderInputPin(
+                        p0: Boolean,
+                        p1: Int
+                    ) {
+                        Log.d("MOREFUN", "onCardHolderInputPin ${p0} ${p1}")
+                        if (p0) {
+                            inputOnlinePin(
+                                "476173200020023",
+                                amount = "1545.54") { pinBlock ->
+                                try {
+                                    deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
+                                } catch (e: RemoteException) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        } else {
+                            inputOfflinePin("476173200020023") { pinBlock ->
+                                try {
+                                    deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
+                                } catch (e: RemoteException) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onPinPress(p0: Byte) {
+                        Log.d("MOREFUN", "onPinPress ${p0}")
+                    }
+
+                    override fun onCertVerify(p0: String?, p1: String?) {
+                        Log.d("MOREFUN", "onCertVerify ${p0} ${p1}")
+                    }
+
+                    override fun onOnlineProc(p0: Bundle?) {
+                        Log.d("MOREFUN", "onOnlineProc ${p0}")
+                    }
+
+                    override fun onContactlessOnlinePlaceCardMode(p0: Int) {
+                        Log.d("MOREFUN", "onContactlessOnlinePlaceCardMode ${p0}")
+                    }
+
+                    override fun onFinish(p0: Int, p1: Bundle?) {
+                        Log.d("MOREFUN", "onFinish ${p0} ${p1}")
+                    }
+
+                    override fun onSetAIDParameter(p0: String?) {
+                        Log.d("MOREFUN", "onSetAIDParameter ${p0}")
+                    }
+
+                    override fun onSetCAPubkey(
+                        p0: String?,
+                        p1: Int,
+                        p2: Int
+                    ) {
+                        Log.d("MOREFUN", "onSetCAPubkey ${p0} ${p1} ${p2}")
+                    }
+
+                    override fun onTRiskManage(p0: String?, p1: String?) {
+                        Log.d("MOREFUN", "onTRiskManage ${p0} ${p1}")
+                    }
+
+                    override fun onSelectLanguage(p0: String?) {
+                        Log.d("MOREFUN", "onSelectLanguage ${p0}")
+                    }
+
+                    override fun onSelectAccountType(p0: List<String?>?) {
+                        Log.d("MOREFUN", "onSelectAccountType ${p0}")
+                    }
+
+                    override fun onIssuerVoiceReference(p0: String?) {
+                        Log.d("MOREFUN", "onIssuerVoiceReference ${p0}")
+                    }
+
+                    override fun onDisplayOfflinePin(p0: Int) {
+                        Log.d("MOREFUN", "onDisplayOfflinePin ${p0}")
+                    }
+
+                    override fun inputAmount(p0: Int) {
+                        Log.d("MOREFUN", "inputAmount ${p0}")
+                    }
+
+                    override fun onGetCardResult(
+                        p0: Int,
+                        p1: Bundle?
+                    ) {
+                        Log.d("MOREFUN", "onGetCardResult ${p0} ${p1}")
+                    }
+
+                    override fun onDisplayMessage() {
+                        Log.d("MOREFUN", "onDisplayMessage")
+                    }
+
+                    override fun onUpdateServiceAmount(p0: String?) {
+                        Log.d("MOREFUN", "Service connected")
+                    }
+
+                    override fun onCheckServiceBlackList(
+                        p0: String?,
+                        p1: String?
+                    ) {
+                        Log.d("MOREFUN", "onCheckServiceBlackList ${p0} ${p1}")
+                    }
+
+                    override fun onGetServiceDirectory(p0: ByteArray?) {
+                        Log.d("MOREFUN", "onGetServiceDirectory ${p0}")
+                    }
+
+                    override fun onRupayCallback(
+                        p0: Int,
+                        p1: Bundle?
+                    ) {
+                        Log.d("MOREFUN", "onRupayCallback ${p0} ${p1}")
+                    }
+                })
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                deviceService = null
+                Log.d("MOREFUN", "Service Disconnected")
+            }
+        }
+
+        suspend fun bindDeviceService(context: Context) {
+            val intent = Intent(SERVICE_ACTION).apply {
+                setPackage(SERVICE_PACKAGE)
+            }
+            deviceService?.emvHandler?.endPBOC()?.let {
+                context.unbindService(emvConnection)
+            }
+            val connected = context.bindService(intent, emvConnection, Context.BIND_AUTO_CREATE)
+            if (connected) {
+                Log.e("MOREFUN", "Service binding successful")
+            } else {
+                Log.e("MOREFUN", "Service binding failed")
+            }
+        }
 
         fun resetTransData()
         {
@@ -128,6 +301,141 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             nfcTlv = null
             nfcDisplayMsgId = null
             checkCardResult = null
+        }
+
+        private fun inputOnlinePin(
+            pan: String,
+            amount: String,
+            onResult: (pinBlock: ByteArray?) -> Unit
+        ) {
+            val panBlock = pan.toByteArray()
+
+            val bundle = Bundle().apply {
+                putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
+
+/*                if (HardwareUtils.getDeviceModel().contains("MF960") ||
+                    HardwareUtils.getDeviceModel().contains("H9PRO")) {
+                    putBoolean(PinPadConstrants.COMMON_IS_PHYSICAL_KEYBOARD, true)
+                }*/
+
+                putString(
+                    PinPadConstrants.TITLE_HEAD_CONTENT,
+                    "Please input the online pin \nAmount: $amount"
+                )
+            }
+
+            try {
+                deviceService?.pinPad?.apply {
+                    setTimeOut(10)
+                    setSupportPinLen(intArrayOf(0, 6))
+                    inputOnlinePin(bundle, panBlock, 0, PinAlgorithmMode.ISO9564FMT1,
+                        object : OnPinPadInputListener.Stub() {
+                            override fun onInputResult(ret: Int, pinBlock: ByteArray?, ksn: String?) {
+                                val builder = StringBuilder().apply {
+                                    append("ON INPUT RESULT: $ret\n")
+                                    append("PIN BLOCK: ${Funs.bytesToHexString(pinBlock)}\n")
+                                    append("KSN: $ksn")
+                                }
+
+                                Log.d("InputOnlinePin", builder.toString())
+                                onResult(pinBlock)
+                            }
+
+                            override fun onSendKey(keyCode: Byte) {
+                                if (keyCode == ServiceResult.PinPad_Input_Cancel.toByte()) {
+                                    onResult(null)
+                                }
+                            }
+                        }
+                    )
+                }
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+            }
+        }
+
+        private fun inputOfflinePin(pan: String, onResult: (pinBlock: ByteArray?) -> Unit) {
+            Log.d("PIN", "INPUT OFFLINE PIN: $pan")
+
+            val bundle = Bundle().apply {
+                putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
+                putString(PinPadConstrants.TITLE_HEAD_CONTENT, "Please Enter PIN")
+            }
+
+            try {
+                val minLength = 0
+                val maxLength = 6
+                deviceService?.pinPad?.apply {
+                    setSupportPinLen(intArrayOf(minLength, maxLength))
+                    inputText(bundle, object : OnPinPadInputListener.Stub() {
+                        override fun onInputResult(ret: Int, pinBlock: ByteArray?, ksn: String?) {
+                            val builder = StringBuilder().apply {
+                                append("INPUT PIN RESULT: $ret\n")
+                                append("PIN BLOCK: ${Funs.bytesToHexString(pinBlock)}\n")
+                                append("KSN: $ksn")
+                            }
+                            Log.d("PIN", builder.toString())
+
+                            onResult(pinBlock)
+                        }
+
+                        override fun onSendKey(keyCode: Byte) {
+                            if (keyCode == ServiceResult.PinPad_Input_Cancel.toByte()) {
+                                onResult(null)
+                            }
+                        }
+                    }, DispTextMode.PASSWORD)
+                }
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+            }
+        }
+
+        fun <T> createArrayList(vararg elements: T): java.util.ArrayList<T> {
+            val list = java.util.ArrayList<T>()
+            for (element in elements) {
+                list.add(element)
+            }
+            return list
+        }
+
+        fun getCurrentTime(format: String?): String {
+            val df = SimpleDateFormat(format)
+            val curDate = Date(System.currentTimeMillis())
+            return df.format(curDate)
+        }
+
+        fun getTransBundle(amount: String?): Bundle {
+            val bundle = Bundle()
+
+            val date: String = getCurrentTime("yyMMddHHmmss")
+
+            bundle.putBoolean(EmvTransDataConstrants.FORCE_ONLINE_CALL_PIN, true)
+            bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, true)
+            bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, true)
+            bundle.putBoolean(EmvTransDataConstrants.CONTACT_SERVICE_SWITCH, false)
+            bundle.putBoolean(EmvTransDataConstrants.SELECT_APP_RETURN_AID, false)
+            bundle.putBoolean(EmvTransDataConstrants.SELECT_APP_RETURN_PRIORITY, true)
+
+            bundle.putInt(EmvTransDataConstrants.CHECK_CARD_TIME_OUT, 30)
+            bundle.putInt(EmvTransDataConstrants.ISQPBOCFORCEONLINE, 1)
+
+            bundle.putByte(EmvTransDataConstrants.B9C, 0x00.toByte())
+
+            bundle.putString(EmvTransDataConstrants.TRANSDATE, date.substring(0, 6))
+            bundle.putString(EmvTransDataConstrants.TRANSTIME, date.substring(6, 12))
+            //        bundle.putString(EmvTransDataConstrants.SEQNO, "0001");
+            bundle.putString(EmvTransDataConstrants.TRANSAMT, amount)
+            bundle.putString(EmvTransDataConstrants.MERNAME, "MOREFUN")
+            bundle.putString(EmvTransDataConstrants.MERID, "488923")
+            bundle.putString(EmvTransDataConstrants.TERMID, "500")
+
+            bundle.putStringArrayList(
+                EmvTransDataConstrants.TERMINAL_TLVS,
+                createArrayList("DF840B06000000000001", "DF81190118")
+            )
+
+            return bundle
         }
 
         fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
@@ -149,12 +457,13 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
                         data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
                         data["isEnterAmtAfterReadRecord"] = false
                     }
-                    initEncryption()
-                    EmvNfcKernelApi.getInstance().setContext(context)
-                    EmvNfcKernelApi.getInstance().setListener(this)
+                    //initEncryption()
+                    //EmvNfcKernelApi.getInstance().setContext(context)
+                    //EmvNfcKernelApi.getInstance().setListener(this)
 
                     job = CoroutineScope(Dispatchers.Default).launch {
-                        EmvNfcKernelApi.getInstance().startKernel(data)
+                        bindDeviceService(context)
+                        //EmvNfcKernelApi.getInstance().startKernel(data)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -187,7 +496,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         {
             job?.cancel()
             job = null
-            EmvNfcKernelApi.getInstance().abortKernel()
+            //EmvNfcKernelApi.getInstance().abortKernel()
         }
 
         fun encryptThenRequestOnline(p0: String?=null, p1: String?=null)

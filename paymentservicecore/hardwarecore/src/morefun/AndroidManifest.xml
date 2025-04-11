@@ -2,5 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="com.morefun.yapi.engine.permission.BIND" tools:node="merge" />
+    <queries>
+        <package android:name="com.morefun.ysdk"/>
+    </queries>
 </manifest>
