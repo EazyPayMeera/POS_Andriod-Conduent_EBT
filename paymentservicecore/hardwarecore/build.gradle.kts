@@ -65,7 +65,7 @@ dependencies {
             implementation(files("libs/urovo_sdk_v1.0.12.aar"))
         }
         "MOREFUN" -> {
-            implementation(files("libs/ysdk_6.01.276894c_24123015.jar"))
+            implementation(files("libs/ysdk_6.03.2729e7f_25041014.jar"))
             implementation(files("libs/urovo_sdk_v1.0.12.aar")) /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
         }
     }
