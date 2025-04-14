@@ -129,8 +129,6 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         var nfcDisplayMsgId : DisplayMsgId? = null
         var checkCardResult : ContantPara.CheckCardResult? = null
         var deviceService: DeviceServiceEngine? = null
-        private val SERVICE_ACTION = "com.morefun.ysdk.service"
-        private val SERVICE_PACKAGE = "com.morefun.ysdk"
 
         val emvConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
@@ -273,8 +271,8 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
         }
 
         suspend fun bindDeviceService(context: Context) {
-            val intent = Intent(SERVICE_ACTION).apply {
-                setPackage(SERVICE_PACKAGE)
+            val intent = Intent(EmvConstants.MF_SERVICE_ACTION).apply {
+                setPackage(EmvConstants.MF_SERVICE_PACKAGE)
             }
             deviceService?.emvHandler?.endPBOC()?.let {
                 context.unbindService(emvConnection)
@@ -961,6 +959,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             var result = false
             /* Clear Aid Config first */
             EmvNfcKernelApi.getInstance().updateAID(ContantPara.Operation.CLEAR, null)
+
             aidConfig?.let {
                 result = addContactAid(it) && addContactlessAid(it)
             }

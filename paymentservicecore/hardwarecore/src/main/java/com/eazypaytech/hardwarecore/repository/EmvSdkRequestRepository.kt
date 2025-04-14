@@ -1,7 +1,6 @@
 package com.eazypaytech.tpaymentcore.repository
 
 import android.content.Context
-import com.eazypaytech.hardwarecore.BuildConfig
 import com.eazypaytech.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.eazypaytech.tpaymentcore.model.emv.AidConfig
@@ -12,10 +11,8 @@ import javax.inject.Inject
 import kotlin.toString
 
 class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
-    private var emvWrapper = when(BuildConfig.HW_TYPE) {
-        "MOREFUN" -> EmvWrapperRepository(iEmvSdkResponseListener)
-        else -> EmvWrapperRepository(iEmvSdkResponseListener)
-    }
+    private var emvWrapper = EmvWrapperRepository(iEmvSdkResponseListener)
+
     override fun initPaymentSDK(
         aidConfig: AidConfig?,
         capKeys: List<CAPKey>?
