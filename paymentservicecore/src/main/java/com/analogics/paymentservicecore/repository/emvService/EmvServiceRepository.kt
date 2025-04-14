@@ -37,6 +37,7 @@ import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult
 import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -46,12 +47,12 @@ import org.json.JSONObject
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServiceRepository) :
+class EmvServiceRepository @Inject constructor(@ApplicationContext context: Context, var apiServiceRepository: ApiServiceRepository) :
     IEmvServiceRequestListener,
     IEmvSdkResponseListener {
-    private val emvSdkRequestRepository = EmvSdkRequestRepository(this)
+    private val emvSdkRequestRepository = EmvSdkRequestRepository(context,this)
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
-    lateinit var context: Context
+    //lateinit var context: Context
     lateinit var paymentServiceTxnDetails : PaymentServiceTxnDetails
 
     fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) : InitStatus {
@@ -286,19 +287,13 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
             val jsonCapKeys = JSONObject(capKeys?:"").getJSONArray(AppConstants.EMV_CAP_KEY_ARRAY_FIELD_NAME).toString()
 
-            var sdkAidConfig : com.eazypaytech.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(aidConfig?:"",
+            var sdkAidConfig : com.eazypaytech.tpaymentcore.model.emv.AidConfig? = Gson().fromJson(aidConfig?:"",
                     com.eazypaytech.tpaymentcore.model.emv.AidConfig::class.java
                 )
-                else -> {null}
-            }
 
-            var sdkCapKeys : List<com.eazypaytech.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(jsonCapKeys,
+            var sdkCapKeys : List<com.eazypaytech.tpaymentcore.model.emv.CAPKey>? = Gson().fromJson(jsonCapKeys,
                     Array<com.eazypaytech.tpaymentcore.model.emv.CAPKey>::class.java
                 ).toList()
-                else -> {null}
-            }
 
             /* Override Terminal Specific Parameters */
             termConfig?.let {
@@ -326,19 +321,13 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     ) {
         try {
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
-            var sdkAidConfig : com.eazypaytech.tpaymentcore.model.emv.AidConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(Gson().toJson(aidConfig),
+            var sdkAidConfig : com.eazypaytech.tpaymentcore.model.emv.AidConfig? = Gson().fromJson(Gson().toJson(aidConfig),
                     com.eazypaytech.tpaymentcore.model.emv.AidConfig::class.java
                 )
-                else -> {null}
-            }
-            var sdkCapKeys : List<com.eazypaytech.tpaymentcore.model.emv.CAPKey>? = when(android.os.Build.MANUFACTURER.uppercase()) {
-                ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(
+            var sdkCapKeys : List<com.eazypaytech.tpaymentcore.model.emv.CAPKey>? = Gson().fromJson(
                     Gson().toJson(capKeys),
                     Array<com.eazypaytech.tpaymentcore.model.emv.CAPKey>::class.java
                 ).toList()
-                else -> {null}
-            }
 
             /* Override Terminal Specific Parameters */
             termConfig?.let {
@@ -365,17 +354,15 @@ class EmvServiceRepository @Inject constructor(var apiServiceRepository: ApiServ
     ) {
         this.paymentServiceTxnDetails = paymentServiceTxnDetails?: PaymentServiceTxnDetails()
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
-        this.context = context
+        //this.context = context
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
         var transConfig = getTransConfig(paymentServiceTxnDetails)
 
-        var sdkTransConfig : com.eazypaytech.tpaymentcore.model.emv.TransConfig? = when(android.os.Build.MANUFACTURER.uppercase()) {
-            ConfigConstants.CONFIG_VAL_DEVICE_TYPE_UROVO,ConfigConstants.CONFIG_VAL_DEVICE_TYPE_TIANYU -> Gson().fromJson(
+        var sdkTransConfig : com.eazypaytech.tpaymentcore.model.emv.TransConfig? = Gson().fromJson(
                 Gson().toJson(transConfig),
                 com.eazypaytech.tpaymentcore.model.emv.TransConfig::class.java
             )
-            else -> {null}
-        }
+
         emvSdkRequestRepository.startPayment(context, sdkTransConfig)
     }
 

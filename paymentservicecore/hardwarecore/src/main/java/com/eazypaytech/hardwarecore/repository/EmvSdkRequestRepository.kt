@@ -7,11 +7,12 @@ import com.eazypaytech.tpaymentcore.model.emv.AidConfig
 import com.eazypaytech.tpaymentcore.model.emv.CAPKey
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
 import com.eazypaytech.tpaymentcore.model.emv.TransConfig
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.toString
 
-class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
-    private var emvWrapper = EmvWrapperRepository(iEmvSdkResponseListener)
+class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: Context, override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
+    private var emvWrapper = EmvWrapperRepository(context, iEmvSdkResponseListener)
 
     override fun initPaymentSDK(
         aidConfig: AidConfig?,
@@ -29,7 +30,7 @@ class EmvSdkRequestRepository @Inject constructor(override var iEmvSdkResponseLi
         transConfig: TransConfig?
     ) {
         try {
-            EmvWrapperRepository.startPayment(context, transConfig, iEmvSdkResponseListener);
+            emvWrapper.startPayment(context, transConfig, iEmvSdkResponseListener);
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }

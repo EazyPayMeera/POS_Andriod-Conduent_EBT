@@ -1,6 +1,7 @@
 {
   "acquirerId" : "112233",
   "appSelIndicator" : "00",
+  "terminalType" : "21",
   "terminalCountryCode" : "0356",
   "terminalCapabilities" : "E0F8C8",
   "terminalFloorLimit" : "00000000",
@@ -20,6 +21,8 @@
   "enableRefundCVM" : "1",
   "forceInputPIN" : "0",
   "enableEmvLogs" : "0",
+  "merchantNameLocation" : "Test Merchant",
+  "merchantCategoryCode" : "5811",
   "additionalTags" : "",
 
   "contact": {
