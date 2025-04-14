@@ -29,6 +29,9 @@ object EmvConstants {
     const val EMV_TAG_ADDL_TERM_CAP =               "9F40"
     const val EMV_TAG_MERCH_NAME_LOC =              "9F4E"
 
+    /* Default Values */
+    const val EMV_DEFAULT_CTLS_RDR_LIMIT =          "999999999999"
+
     /* Custom SDK Tags */
     const val EMV_TAG_SUPPORT_RANDOM_TRANS =         "DF02"
     const val EMV_TAG_SUPPORT_EXCEP_FILE_CHECK =     "DF03"

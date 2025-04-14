@@ -70,7 +70,7 @@ class EmvWrapperRepository @Inject constructor(
     override var iEmvSdkResponseListener: IEmvSdkResponseListener
 ) :
     IEmvWrapperRequestListener, ServiceConnection {
-        private var TAG = "MOREFUN"
+    private var TAG = "MOREFUN"
     private var deviceService: DeviceServiceEngine? = null
     private var serviceConnected = CompletableDeferred<Boolean>()
 
@@ -78,8 +78,7 @@ class EmvWrapperRepository @Inject constructor(
         bindService(context)
     }
 
-    private fun bindService(context: Context)
-    {
+    private fun bindService(context: Context) {
         val intent = Intent(EmvConstants.MF_SERVICE_ACTION).apply {
             setPackage(EmvConstants.MF_SERVICE_PACKAGE)
         }
@@ -96,12 +95,10 @@ class EmvWrapperRepository @Inject constructor(
         deviceService?.emvHandler?.endPBOC()
         var bundle = Bundle()
         Log.d(TAG, "Service connected")
-        if(deviceService?.login(bundle,"09100000") == 0) {
+        if (deviceService?.login(bundle, "09100000") == 0) {
             serviceConnected.complete(true)
             Log.d(TAG, "Login Successful")
-        }
-        else
-        {
+        } else {
             serviceConnected.complete(false)
             Log.d(TAG, "Login Failure")
         }
@@ -114,9 +111,12 @@ class EmvWrapperRepository @Inject constructor(
         Log.d(TAG, "Service Disconnected")
     }
 
-    fun     getInitTermConfig(): Bundle {
+    fun getInitTermConfig(): Bundle {
         val bundle = Bundle()
-        bundle.putByteArray(EmvTermCfgConstrants.TERMCAP, byteArrayOf(0xE0.toByte(), 0xE0.toByte(), 0xC8.toByte()))
+        bundle.putByteArray(
+            EmvTermCfgConstrants.TERMCAP,
+            byteArrayOf(0xE0.toByte(), 0xE0.toByte(), 0xC8.toByte())
+        )
         bundle.putByteArray(
             EmvTermCfgConstrants.ADDTERMCAP,
             byteArrayOf(0xF2.toByte(), 0x00.toByte(), 0xF0.toByte(), 0xA0.toByte(), 0x01.toByte())
@@ -149,12 +149,16 @@ class EmvWrapperRepository @Inject constructor(
         //bundle.putByteArray(EmvTermCfgConstrants.PURE_CONTACTLESS_CAPABILITY, new byte[]{(byte) 0x03, (byte) 0x56});
         return bundle
     }
+
     @OptIn(ExperimentalStdlibApi::class)
     fun TerminalConfig(aidConfig: AidConfig?): Boolean {
         var result = true
         try {
             aidConfig?.merchantIdentifier?.let {
-                result = deviceService?.emvHandler?.setTlv(EmvConstants.EMV_TAG_MERCH_ID.hexToByteArray(),aidConfig.merchantIdentifier?.toByteArray()) == 0
+                result = deviceService?.emvHandler?.setTlv(
+                    EmvConstants.EMV_TAG_MERCH_ID.hexToByteArray(),
+                    aidConfig.merchantIdentifier?.toByteArray()
+                ) == 0
             }
             aidConfig?.terminalIdentifier?.let {
                 result = result && deviceService?.emvHandler?.setTlv(
@@ -162,12 +166,12 @@ class EmvWrapperRepository @Inject constructor(
                     aidConfig.terminalIdentifier?.toByteArray()
                 ) == 0
             }
-                aidConfig?.merchantNameLocation?.let {
-                    result = result && deviceService?.emvHandler?.setTlv(
-                        EmvConstants.EMV_TAG_MERCH_NAME_LOC.hexToByteArray(),
-                        aidConfig.merchantNameLocation?.toByteArray()
-                    ) == 0
-                }
+            aidConfig?.merchantNameLocation?.let {
+                result = result && deviceService?.emvHandler?.setTlv(
+                    EmvConstants.EMV_TAG_MERCH_NAME_LOC.hexToByteArray(),
+                    aidConfig.merchantNameLocation?.toByteArray()
+                ) == 0
+            }
             aidConfig?.merchantCategoryCode?.let {
                 result = result && deviceService?.emvHandler?.setTlv(
                     EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE.hexToByteArray(),
@@ -200,66 +204,66 @@ class EmvWrapperRepository @Inject constructor(
             }
 
 
-/*
-            var termTlvParams = TlvUtils()
-                .addTagValAscii(
-                    EmvConstants.EMV_TAG_MERCH_ID,
-                    aidConfig?.merchantIdentifier,
-                    15,
-                    15
-                )
-                .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier, 8, 8)
-                .addTagValAscii(
-                    EmvConstants.EMV_TAG_MERCH_NAME_LOC,
-                    aidConfig?.merchantNameLocation,
-                    0,
-                    40
-                )
-                .addTagValHex(
-                    EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE,
-                    aidConfig?.merchantCategoryCode,
-                    2,
-                    2
-                )
-                .addTagValHex(EmvConstants.EMV_TAG_IFD_SERIAL_NO, aidConfig?.ifdSerialNumber, 8, 8)
-                .addTagValHex(EmvConstants.EMV_TAG_TERM_CAP, aidConfig?.terminalCapabilities, 3, 3)
-                .addTagValHex(
-                    EmvConstants.EMV_TAG_ADDL_TERM_CAP,
-                    aidConfig?.addlTerminalCapabilities,
-                    5,
-                    5
-                )
-                .addTagValHex(
-                    EmvConstants.EMV_TAG_TERM_COUNTRY_CODE,
-                    aidConfig?.terminalCountryCode,
-                    2,
-                    2
-                )
-                .addTagValHex(EmvConstants.EMV_TAG_TERM_TYPE, aidConfig?.terminalType, 1, 1)
-                .addTagValHex(
-                    EmvConstants.EMV_TAG_TRANS_CURRENCY_EXPONENT,
-                    aidConfig?.currencyExponent,
-                    1,
-                    1
-                )
-                .addTagValBoolean(
-                    EmvConstants.EMV_TAG_SUPPORT_RANDOM_TRANS,
-                    aidConfig?.enableRandomTrans
-                )
-                .addTagValBoolean(
-                    EmvConstants.EMV_TAG_SUPPORT_EXCEP_FILE_CHECK,
-                    aidConfig?.supportExceptionFile
-                )
-                .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_SM, aidConfig?.supportSM)
-                .addTagValBoolean(
-                    EmvConstants.EMV_TAG_SUPPORT_VELOCITY_CHECK,
-                    aidConfig?.supportVelocityCheck
-                )
-                .toTlvString()
-           result = EmvNfcKernelApi.getInstance().updateTerminalParamters(
-                ContantPara.CardSlot.UNKNOWN,
-                termTlvParams
-            )*/
+            /*
+                        var termTlvParams = TlvUtils()
+                            .addTagValAscii(
+                                EmvConstants.EMV_TAG_MERCH_ID,
+                                aidConfig?.merchantIdentifier,
+                                15,
+                                15
+                            )
+                            .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier, 8, 8)
+                            .addTagValAscii(
+                                EmvConstants.EMV_TAG_MERCH_NAME_LOC,
+                                aidConfig?.merchantNameLocation,
+                                0,
+                                40
+                            )
+                            .addTagValHex(
+                                EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE,
+                                aidConfig?.merchantCategoryCode,
+                                2,
+                                2
+                            )
+                            .addTagValHex(EmvConstants.EMV_TAG_IFD_SERIAL_NO, aidConfig?.ifdSerialNumber, 8, 8)
+                            .addTagValHex(EmvConstants.EMV_TAG_TERM_CAP, aidConfig?.terminalCapabilities, 3, 3)
+                            .addTagValHex(
+                                EmvConstants.EMV_TAG_ADDL_TERM_CAP,
+                                aidConfig?.addlTerminalCapabilities,
+                                5,
+                                5
+                            )
+                            .addTagValHex(
+                                EmvConstants.EMV_TAG_TERM_COUNTRY_CODE,
+                                aidConfig?.terminalCountryCode,
+                                2,
+                                2
+                            )
+                            .addTagValHex(EmvConstants.EMV_TAG_TERM_TYPE, aidConfig?.terminalType, 1, 1)
+                            .addTagValHex(
+                                EmvConstants.EMV_TAG_TRANS_CURRENCY_EXPONENT,
+                                aidConfig?.currencyExponent,
+                                1,
+                                1
+                            )
+                            .addTagValBoolean(
+                                EmvConstants.EMV_TAG_SUPPORT_RANDOM_TRANS,
+                                aidConfig?.enableRandomTrans
+                            )
+                            .addTagValBoolean(
+                                EmvConstants.EMV_TAG_SUPPORT_EXCEP_FILE_CHECK,
+                                aidConfig?.supportExceptionFile
+                            )
+                            .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_SM, aidConfig?.supportSM)
+                            .addTagValBoolean(
+                                EmvConstants.EMV_TAG_SUPPORT_VELOCITY_CHECK,
+                                aidConfig?.supportVelocityCheck
+                            )
+                            .toTlvString()
+                       result = EmvNfcKernelApi.getInstance().updateTerminalParamters(
+                            ContantPara.CardSlot.UNKNOWN,
+                            termTlvParams
+                        )*/
 
 
 //            EmvNfcKernelApi.getInstance()
@@ -296,8 +300,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
 
-
-    val emvListener  = object:  OnEmvProcessListener.Stub() {
+    val emvListener = object : OnEmvProcessListener.Stub() {
         override fun onSelApp(
             p0: List<String?>?,
             p1: Boolean
@@ -635,11 +638,13 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun printAidInfo()
-    {
+    fun printAidInfo() {
         for (it in deviceService?.emvHandler?.getAidParaList() ?: listOf<EmvAidPara>()) {
             Log.d(TAG, "------------------ AID PARAM ------------------")
-            Log.d(TAG, "AID: ${it.aid.copyOf(it.aiD_Length).toHexString()}") // AID trimmed to actual length
+            Log.d(
+                TAG,
+                "AID: ${it.aid.copyOf(it.aiD_Length).toHexString()}"
+            ) // AID trimmed to actual length
             Log.d(TAG, "AID Length: ${it.aiD_Length}")
             Log.d(TAG, "AppSelIndicator: ${it.appSelIndicator}")
             Log.d(TAG, "TerminalPriority: ${it.terminalPriority}")
@@ -685,11 +690,11 @@ class EmvWrapperRepository @Inject constructor(
     fun initAidConfig(aidConfig: AidConfig?): Boolean {
         var result = false
         /* Clear Aid Config first */
-        printAidInfo()
         deviceService?.emvHandler?.clearAIDParam()
 
         aidConfig?.let {
             result = addContactAid(it) //&& addContactlessAid(it)
+            printAidInfo()
         }
         return result
     }
@@ -735,97 +740,202 @@ class EmvWrapperRepository @Inject constructor(
             for (aid in config.contact?.aidList ?: emptyList()) {
                 val aidPara = EmvAidPara()
                 (aid.aid ?: config.contact?.aid ?: config.aid)?.let {
-                    aidPara.aid = it.hexToByteArray()
-                    aidPara.aiD_Length = it.hexToByteArray().size
+                    var hex = it.hexToByteArray()
+                    aidPara.aiD_Length = minOf(hex.size, aidPara.aid.size)
+                    hex.copyInto(aidPara.aid, 0, 0, aidPara.aiD_Length)
                 }
                 (aid.appVersion ?: config.contact?.appVersion
                 ?: config.appVersion)?.let {
-                    aidPara.termAppVer = it.hexToByteArray().takeLast(aidPara.termAppVer.size).toByteArray()
+                    var hex = it.padEnd(aidPara.termAppVer.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.termAppVer, 0, 0, minOf(hex.size, aidPara.termAppVer.size))
                 }
                 (aid.terminalFloorLimit ?: config.contact?.terminalFloorLimit
                 ?: config.terminalFloorLimit)?.let {
-                    //aidPara.tfL_Domestic = it.hexToByteArray().takeLast(4).toByteArray()
-                    //aidPara.tfL_International = it.hexToByteArray().takeLast(4).toByteArray()
-                    //aidPara.eC_TFL = it.hexToByteArray().takeLast(4).toByteArray()
+                    var hex = it.padStart(12, '0').hexToByteArray()
+                    var binaryVal = bcdToBinaryArray(hex)
+                    binaryVal.copyInto(
+                        aidPara.tfL_Domestic,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.tfL_Domestic.size)
+                    )
+                    binaryVal.copyInto(
+                        aidPara.tfL_International,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.tfL_International.size)
+                    )
+                    hex.copyInto(aidPara.eC_TFL, 0, 0, minOf(hex.size, aidPara.eC_TFL.size))
                 }
                 (aid.terminalFloorLimitCheck ?: config.contact?.terminalFloorLimitCheck
                 ?: config.terminalFloorLimitCheck)?.let {
                 }
                 (aid.tacDefault ?: config.contact?.tacDefault
                 ?: config.tacDefault)?.let {
-                    aidPara.taC_Default = it.hexToByteArray()
+                    var hex = it.padEnd(aidPara.taC_Default.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.taC_Default,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.taC_Default.size)
+                    )
                 }
                 (aid.tacDenial ?: config.contact?.tacDenial
                 ?: config.tacDenial)?.let {
-                    aidPara.taC_Denial = it.hexToByteArray()
+                    var hex = it.padEnd(aidPara.taC_Denial.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.taC_Denial, 0, 0, minOf(hex.size, aidPara.taC_Denial.size))
                 }
                 (aid.tacOnline ?: config.contact?.tacOnline
                 ?: config.tacOnline)?.let {
-                    aidPara.taC_Online = it.hexToByteArray()
+                    var hex = it.padEnd(aidPara.taC_Online.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.taC_Online, 0, 0, minOf(hex.size, aidPara.taC_Online.size))
                 }
-
                 (aid.defaultDDOL ?: config.contact?.defaultDDOL
                 ?: config.defaultDDOL)?.let {
-                    //aidPara.ddol = it.hexToByteArray()
-                    //aidPara.ddoL_Length = it.hexToByteArray().size.toByte()
+                    var hex = it.hexToByteArray()
+                    aidPara.ddoL_Length = minOf(hex.size, aidPara.ddol.size).toByte()
+                    hex.copyInto(aidPara.ddol, 0, 0, aidPara.ddoL_Length.toInt())
                 }
                 (aid.defaultTDOL ?: config.contact?.defaultTDOL
                 ?: config.defaultTDOL)?.let {
-                    //aidPara.tdol = it.hexToByteArray()
-                    //aidPara.tdoL_Length = it.hexToByteArray().size
+                    var hex = it.hexToByteArray()
+                    aidPara.tdoL_Length = minOf(hex.size, aidPara.tdol.size)
+                    hex.copyInto(aidPara.tdol, 0, 0, aidPara.tdoL_Length)
                 }
                 (aid.acquirerId ?: config.contact?.acquirerId
                 ?: config.acquirerId)?.let {
-                    //aidPara.acquirerID = it.hexToByteArray()
+                    var hex = it.padStart(aidPara.acquirerID.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.acquirerID, 0, 0, minOf(hex.size, aidPara.acquirerID.size))
                 }
                 (aid.threshold ?: config.contact?.threshold
                 ?: config.threshold)?.let {
-                    //aidPara.thresholdValueDomestic = it.hexToByteArray()
-                    //aidPara.thresholdValueInt = it.hexToByteArray()
+                    var hex =
+                        it.padStart(aidPara.thresholdValueDomestic.size * 2, '0').hexToByteArray()
+                    var binaryVal = bcdToBinaryArray(hex)
+                    binaryVal.copyInto(
+                        aidPara.thresholdValueDomestic,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.thresholdValueDomestic.size)
+                    )
+                    binaryVal.copyInto(
+                        aidPara.thresholdValueInt,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.thresholdValueInt.size)
+                    )
                 }
                 (aid.targetPercentage ?: config.contact?.targetPercentage
                 ?: config.targetPercentage)?.let {
-                    //aidPara.targetPercentageDomestic = it.hexToByte()
-                    //aidPara.targetPercentageInt = it.hexToByte()
+                    aidPara.targetPercentageDomestic = it.hexToByte()
+                    aidPara.targetPercentageInt = it.hexToByte()
                 }
                 (aid.maxTargetPercentage ?: config.contact?.maxTargetPercentage
                 ?: config.maxTargetPercentage)?.let {
-                    //aidPara.maxTargetDomestic = it.hexToByte()
-                    //aidPara.maxTargetPercentageInt = it.hexToByte()
+                    aidPara.maxTargetDomestic = it.hexToByte()
+                    aidPara.maxTargetPercentageInt = it.hexToByte()
                 }
                 (aid.appSelIndicator ?: config.contact?.appSelIndicator
                 ?: config.appSelIndicator)?.let {
-                    //aidPara.appSelIndicator = it.hexToByte()
+                    aidPara.appSelIndicator = it.hexToByte()
                 }
                 (aid.terminalAppPriority ?: config.contact?.terminalAppPriority
                 ?: config.terminalAppPriority)?.let {
-                    //aidPara.terminalPriority = it.hexToByte()
+                    aidPara.terminalPriority = it.hexToByte()
                 }
                 (aid.terminalCapabilities ?: config.contact?.terminalCapabilities
                 ?: config.terminalCapabilities)?.let {
-                    aidPara.termCap = it.hexToByteArray()
+                    var hex = it.padEnd(aidPara.termCap.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.termCap, 0, 0, minOf(hex.size, aidPara.termCap.size))
+                }
+                (aid.addlTerminalCapabilities ?: config.contact?.addlTerminalCapabilities
+                ?: config.addlTerminalCapabilities)?.let {
+                    var hex = it.padEnd(aidPara.addTermCap.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.addTermCap, 0, 0, minOf(hex.size, aidPara.addTermCap.size))
                 }
                 (aid.terminalCountryCode ?: config.contact?.terminalCountryCode
                 ?: config.terminalCountryCode)?.let {
-                    aidPara.termCountryCode = it.hexToByteArray()
+                    var hex = it.padStart(aidPara.termCountryCode.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.termCountryCode,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.termCountryCode.size)
+                    )
                 }
                 (aid.rdrCVMRequiredLimit ?: config.contact?.rdrCVMRequiredLimit
                 ?: config.rdrCVMRequiredLimit)?.let {
-                    //aidPara.rfcvmLimit = it.hexToByteArray()
+                    var hex = it.padStart(aidPara.rfcvmLimit.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.rfcvmLimit, 0, 0, minOf(hex.size, aidPara.rfcvmLimit.size))
                 }
                 (aid.rdrCtlsFloorLimit ?: config.contact?.rdrCtlsFloorLimit
                 ?: config.rdrCtlsFloorLimit)?.let {
-                    //aidPara.rfOfflineLimit = it.hexToByteArray()
+                    var hex = it.padStart(aidPara.rfOfflineLimit.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.rfOfflineLimit,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.rfOfflineLimit.size)
+                    )
                 }
                 (aid.rdrCtlsTransLimit ?: config.contact?.rdrCtlsTransLimit
-                ?: config.rdrCtlsTransLimit)?.let {
-                    //aidPara.rfTransLimit = it.hexToByteArray()
+                ?: config.rdrCtlsTransLimit ?: EmvConstants.EMV_DEFAULT_CTLS_RDR_LIMIT).let {
+                    var hex = it.padStart(aidPara.rfTransLimit.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.rfTransLimit,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.rfTransLimit.size)
+                    )
+                }
+                (aid.merchantCategoryCode ?: config.contact?.merchantCategoryCode
+                ?: config.merchantCategoryCode)?.let {
+                    var hex = it.padStart(aidPara.merCateCode.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.merCateCode,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.merCateCode.size)
+                    )
+                }
+
+                (aid.currencyCode ?: config.contact?.currencyCode
+                ?: config.currencyCode)?.let {
+                    var hex = it.padStart(aidPara.trnCurrencyCode.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.trnCurrencyCode,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.trnCurrencyCode.size)
+                    )
+                }
+                (aid.currencyExponent ?: config.contact?.currencyExponent
+                ?: config.currencyExponent)?.let {
+                    aidPara.trnCurrencyExp = it.hexToByte()
+                }
+                (aid.terminalType ?: config.contact?.terminalType
+                ?: config.terminalType)?.let {
+                    aidPara.termType = it.hexToByte()
+                }
+                (aid.riskManagementData ?: config.contact?.riskManagementData
+                ?: config.riskManagementData)?.let {
+                    var hex = it.padEnd(aidPara.riskManagement9F1D.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.riskManagement9F1D,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.riskManagement9F1D.size)
+                    )
+                }
+                (aid.statusCheckSupported ?: config.contact?.statusCheckSupported
+                ?: config.statusCheckSupported)?.let {
+                    aidPara.statusCheck = it.hexToByte()
                 }
 
                 aidParaList = aidParaList.plus(aidPara)
             }
 
-            result = result && deviceService?.emvHandler?.setAidParaList(aidParaList)==0
+            result = result && deviceService?.emvHandler?.setAidParaList(aidParaList) == 0
         } catch (exception: Exception) {
             result = false
             exception.printStackTrace()
@@ -1034,7 +1144,6 @@ class EmvWrapperRepository @Inject constructor(
             nfcDisplayMsgId = null
             checkCardResult = null
         }
-
 
 
         @OptIn(ExperimentalStdlibApi::class)
@@ -1837,6 +1946,35 @@ class EmvWrapperRepository @Inject constructor(
 
         fun onError(p0: Int) {
             EmvNfcKernelApi.getInstance().cancelPinEntry()
+        }
+    }
+
+    private fun bcdToBinaryArray(bcdArray: ByteArray): ByteArray {
+        val decimalStr = buildString {
+            for (bcd in bcdArray) {
+                val high = (bcd.toInt() and 0xF0) ushr 4
+                val low = bcd.toInt() and 0x0F
+                if (high > 9 || low > 9) {
+                    throw IllegalArgumentException(
+                        "Invalid BCD byte: 0x${
+                            bcd.toString(16).padStart(2, '0')
+                        }"
+                    )
+                }
+                append(high)
+                append(low)
+            }
+        }
+
+        // Convert the decimal string to a BigInteger, then to a byte array
+        val bigInt = decimalStr.toBigInteger()
+        val fullByteArray = bigInt.toByteArray()
+
+        // Ensure it's unsigned: remove leading 0x00 if present for positive values
+        return if (fullByteArray[0] == 0x00.toByte()) {
+            fullByteArray.drop(1).toByteArray()
+        } else {
+            fullByteArray
         }
     }
 }
