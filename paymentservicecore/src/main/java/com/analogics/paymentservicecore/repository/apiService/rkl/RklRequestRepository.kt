@@ -1,5 +1,6 @@
 package com.eazypaytech.paymentservicecore.repository.apiService.rkl
 
+import android.content.Context
 import android.util.Log
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
@@ -11,11 +12,14 @@ import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.handler.SecureKeyHandler
+import dagger.hilt.android.internal.Contexts
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class RklRequestRepository@Inject constructor(
+    @ApplicationContext val context: Context,
     var apiRequestBuilder: ApiRequestBuilderLyra,
     private var builderServiceRepository: BuilderServiceRepositoryLyra
 )  {

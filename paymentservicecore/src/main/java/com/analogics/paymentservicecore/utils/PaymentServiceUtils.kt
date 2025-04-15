@@ -1,5 +1,6 @@
 package com.eazypaytech.paymentservicecore.utils
 
+import android.content.Context
 import com.eazypaytech.builder_core.model.Symbol
 import com.eazypaytech.builder_core.utils.formatAmount
 import com.eazypaytech.securityframework.handler.SecureKeyHandler
@@ -42,10 +43,10 @@ object PaymentServiceUtils {
         return HardwareUtils.getDeviceSN()
     }
 
-    fun injectKeys(ipek: String?, ksn: String?, kcv: String?) : Boolean {
+    fun injectKeys(ipek: String?, ksn: String?, kcv: String?, context : Context?=null) : Boolean {
         if (ipek?.isNotEmpty() == true && ksn?.isNotEmpty() == true && kcv?.isNotEmpty() == true) {
             /* Here DUKPT Pin Key serves as main key as well. Used for encryption of track data */
-            return HardwareUtils.injectTMK(ipek, kcv) && HardwareUtils.injectDukptPinKey(ipek,ksn)
+            return HardwareUtils.injectTMK(ipek, kcv, context) && HardwareUtils.injectDukptPinKey(ipek,ksn, context)
         }
         return false
     }

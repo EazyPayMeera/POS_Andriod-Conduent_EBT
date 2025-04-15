@@ -29,8 +29,10 @@ import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult.TransStatus
 import com.eazypaytech.tpaymentcore.model.emv.TransConfig
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import com.morefun.yapi.ServiceResult
+import com.morefun.yapi.device.pinpad.CheckKeyEnum
 import com.morefun.yapi.device.pinpad.DispTextMode
 import com.morefun.yapi.device.pinpad.DukptCalcObj
+import com.morefun.yapi.device.pinpad.DukptLoadObj
 import com.morefun.yapi.device.pinpad.OnPinPadInputListener
 import com.morefun.yapi.device.pinpad.PinAlgorithmMode
 import com.morefun.yapi.device.pinpad.PinPadConstrants
@@ -68,45 +70,13 @@ class EmvWrapperRepository @Inject constructor(
     @ApplicationContext context: Context,
     override var iEmvSdkResponseListener: IEmvSdkResponseListener
 ) :
-    IEmvWrapperRequestListener, ServiceConnection {
+    IEmvWrapperRequestListener {
     private var TAG = "MOREFUN"
-    private var deviceService: DeviceServiceEngine? = null
-    private var serviceConnected = CompletableDeferred<Boolean>()
 
     init {
-        bindService(context)
-    }
-
-    private fun bindService(context: Context) {
-        val intent = Intent(EmvConstants.MF_SERVICE_ACTION).apply {
-            setPackage(EmvConstants.MF_SERVICE_PACKAGE)
+        CoroutineScope(Dispatchers.Default).launch {
+            bindService(context)
         }
-        val connected = context.bindService(intent, this, Context.BIND_AUTO_CREATE)
-        if (connected) {
-            Log.d(TAG, "Service binding successful")
-        } else {
-            Log.d(TAG, "Service binding failed")
-        }
-    }
-
-    override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-        deviceService = DeviceServiceEngine.Stub.asInterface(binder)
-        deviceService?.emvHandler?.endPBOC()
-        var bundle = Bundle()
-        Log.d(TAG, "Service connected")
-        if (deviceService?.login(bundle, EmvConstants.MF_BUSINESS_ID_CLEAR_TRACK) == 0) {
-            serviceConnected.complete(true)
-            Log.d(TAG, "Login Successful")
-        } else {
-            serviceConnected.complete(false)
-            Log.d(TAG, "Login Failure")
-        }
-    }
-
-    override fun onServiceDisconnected(name: ComponentName?) {
-        deviceService = null
-        serviceConnected.complete(false)
-        Log.d(TAG, "Service Disconnected")
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -1142,8 +1112,7 @@ class EmvWrapperRepository @Inject constructor(
         return null
     }
 
-
-    companion object {
+    companion object  : ServiceConnection{
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
         var job: Job? = null
         var _amount: Long = 0L
@@ -1153,6 +1122,56 @@ class EmvWrapperRepository @Inject constructor(
         var nfcTlv: String? = null
         var nfcDisplayMsgId: DisplayMsgId? = null
         var checkCardResult: ContantPara.CheckCardResult? = null
+        private var deviceService: DeviceServiceEngine? = null
+        private var serviceConnected = CompletableDeferred<Boolean>()
+        private var TAG = "MOREFUN"
+
+        private fun bindService(context: Context?=null, recreate : Boolean? = false) {
+            try {
+                deviceService?.emvHandler?.endPBOC()
+                deviceService?.takeIf { recreate == true }?.let {
+                    context?.unbindService(this)
+                    deviceService?.logout()
+                    deviceService = null
+                    serviceConnected = CompletableDeferred<Boolean>()
+                }
+
+                deviceService ?: let {
+                    val intent = Intent(EmvConstants.MF_SERVICE_ACTION).apply {
+                        setPackage(EmvConstants.MF_SERVICE_PACKAGE)
+                    }
+                    context?.bindService(intent, this, Context.BIND_AUTO_CREATE)?.let {
+                        if (it == true) {
+                            Log.d(TAG, "Service binding successful")
+                        } else {
+                            Log.d(TAG, "Service binding failed")
+                        }
+                    }
+                }
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+            }
+        }
+
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            deviceService = DeviceServiceEngine.Stub.asInterface(binder)
+
+            var bundle = Bundle()
+            Log.d(TAG, "Service connected")
+            if (deviceService?.login(bundle, EmvConstants.MF_BUSINESS_ID_CLEAR_TRACK) == 0) {
+                serviceConnected.complete(true)
+                Log.d(TAG, "Login Successful")
+            } else {
+                serviceConnected.complete(false)
+                Log.d(TAG, "Login Failure")
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            deviceService = null
+            serviceConnected.complete(false)
+            Log.d(TAG, "Service Disconnected")
+        }
 
         fun resetTransData() {
             /* Interrupt existing thread if any */
@@ -1169,6 +1188,87 @@ class EmvWrapperRepository @Inject constructor(
             checkCardResult = null
         }
 
+        fun getDeviceService(context: Context?=null) : DeviceServiceEngine?
+        {
+            CoroutineScope(Dispatchers.Default).launch {
+                bindService(context)
+            }
+            var iServiceTimeout  = 10000
+            while (serviceConnected.isActive && iServiceTimeout>0){
+                Thread.sleep(100)
+                iServiceTimeout-=100;
+            }
+
+            return deviceService
+        }
+
+        @OptIn(ExperimentalStdlibApi::class)
+        fun injectTMK(tmk: String, kcv: String, context: Context?=null): Boolean {
+
+            Log.d("HARDWARE_UTILS", "injectTMK() called")
+            Log.d("HARDWARE_UTILS", "TMK: $tmk")
+            Log.d("HARDWARE_UTILS", "KCV: $kcv")
+            Log.d("HARDWARE_UTILS", "TMK Length: ${tmk.length}")
+
+            try {
+                val tmkByteArray = tmk.hexToByteArray()
+                Log.d("HARDWARE_UTILS", "Converted TMK to ByteArray: ${tmkByteArray.joinToString()}")
+
+                var result = getDeviceService(context)?.pinPad?.loadPlainDesKey(
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY,
+                    tmkByteArray,
+                    tmkByteArray.size
+                )
+
+                Log.d("HARDWARE_UTILS", "loadPlainMKey() result: $result")
+
+                val isSuccess = result == 0
+                Log.d("HARDWARE_UTILS", "TMK Injection Success: $isSuccess")
+
+                var checkKey = deviceService?.pinPad?.getKeyKcv(CheckKeyEnum.DES_MASTER_KEY,EncryptionConstants.KEY_INDEX_MAIN_KEY)
+
+                Log.d("HARDWARE_UTILS", "Key KCV: ${checkKey?.kcv}")
+
+                val kcvMatches = kcv==checkKey?.kcv
+
+                Log.d("HARDWARE_UTILS", "KCV Matches : $kcvMatches")
+
+                return isSuccess && kcvMatches
+            } catch (exception: Exception) {
+                Log.e("HARDWARE_UTILS", "Exception during TMK injection: ${exception.message}")
+                exception.printStackTrace()
+                return false
+            }
+        }
+
+        fun injectDukptPinKey(ipek: String, ksn: String, context: Context?=null): Boolean {
+            Log.d("HARDWARE_UTILS", "injectDukptPinKey() called")
+            Log.d("HARDWARE_UTILS", "IPEK: $ipek")
+            Log.d("HARDWARE_UTILS", "KSN: $ksn")
+
+            return try {
+                val dukptLoadObj = DukptLoadObj(
+                    ipek,
+                    ksn,
+                    DukptLoadObj.DukptKeyTypeEnum.DUKPT_IPEK_PLAINTEXT,
+                    DukptLoadObj.DukptKeyIndexEnum.KEY_INDEX_5
+                )
+
+                Log.d("HARDWARE_UTILS", "DukptLoadObj created: $dukptLoadObj")
+
+                val result = getDeviceService(context)?.pinPad?.dukptLoad(dukptLoadObj)
+                Log.d("HARDWARE_UTILS", "dukptLoad() result: $result")
+
+                val isSuccess = result == 0
+                Log.d("HARDWARE_UTILS", "DUKPT PIN Key Injection Success: $isSuccess")
+
+                isSuccess
+            } catch (e: Exception) {
+                Log.e("HARDWARE_UTILS", "Exception during DUKPT key injection: ${e.message}")
+                e.printStackTrace()
+                false
+            }
+        }
 
         @OptIn(ExperimentalStdlibApi::class)
         fun getEmvTag(tag: String?): String? {
