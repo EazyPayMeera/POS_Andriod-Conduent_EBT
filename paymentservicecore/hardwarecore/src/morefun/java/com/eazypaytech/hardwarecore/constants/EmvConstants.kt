@@ -42,6 +42,8 @@ object EmvConstants {
     /* MoreFun Specific values */
     const val MF_SERVICE_PACKAGE =                      "com.morefun.ysdk"
     const val MF_SERVICE_ACTION =                       "com.morefun.ysdk.service"
+    const val MF_BUSINESS_ID_CLEAR_TRACK =               "09100000"
+
     const val UROVO_SDK_KEY_EMV_DATA =                  "EMVDATA"
     const val UROVO_SDK_KEY_MSR_DATA =                  "StripInfo"
     const val UROVO_SDK_KEY_MSR_TRACK1 =                "D1"

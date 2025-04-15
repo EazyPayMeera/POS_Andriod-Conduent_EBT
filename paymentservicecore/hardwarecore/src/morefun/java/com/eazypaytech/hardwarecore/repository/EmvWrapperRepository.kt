@@ -36,6 +36,7 @@ import com.morefun.yapi.device.pinpad.PinAlgorithmMode
 import com.morefun.yapi.device.pinpad.PinPadConstrants
 import com.morefun.yapi.emv.EmvAidPara
 import com.morefun.yapi.emv.EmvCapk
+import com.morefun.yapi.emv.EmvTermCfgConstrants
 import com.morefun.yapi.emv.EmvTransDataConstrants
 import com.morefun.yapi.emv.OnEmvProcessListener
 import com.morefun.yapi.engine.DeviceServiceEngine
@@ -92,14 +93,13 @@ class EmvWrapperRepository @Inject constructor(
         deviceService?.emvHandler?.endPBOC()
         var bundle = Bundle()
         Log.d(TAG, "Service connected")
-        if (deviceService?.login(bundle, "09100000") == 0) {
+        if (deviceService?.login(bundle, EmvConstants.MF_BUSINESS_ID_CLEAR_TRACK) == 0) {
             serviceConnected.complete(true)
             Log.d(TAG, "Login Successful")
         } else {
             serviceConnected.complete(false)
             Log.d(TAG, "Login Failure")
         }
-
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
@@ -111,57 +111,37 @@ class EmvWrapperRepository @Inject constructor(
     @OptIn(ExperimentalStdlibApi::class)
     fun TerminalConfig(aidConfig: AidConfig?): Boolean {
         var result = true
+
         try {
+            var bundle = Bundle()
             aidConfig?.merchantIdentifier?.let {
-                result = deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_MERCH_ID.hexToByteArray(),
-                    aidConfig.merchantIdentifier?.toByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.MERID_ANS_9F16,it.toByteArray())
             }
             aidConfig?.terminalIdentifier?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_TERM_ID.hexToByteArray(),
-                    aidConfig.terminalIdentifier?.toByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.TERMID,it.toByteArray())
             }
             aidConfig?.merchantNameLocation?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_MERCH_NAME_LOC.hexToByteArray(),
-                    aidConfig.merchantNameLocation?.toByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.MERNAMELOC,it.toByteArray())
             }
             aidConfig?.merchantCategoryCode?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE.hexToByteArray(),
-                    aidConfig.merchantCategoryCode?.hexToByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.MERCATRE_CODE_N_9F15,it.padStart(4,'0').hexToByteArray())
             }
             aidConfig?.ifdSerialNumber?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_IFD_SERIAL_NO.hexToByteArray(),
-                    aidConfig.ifdSerialNumber?.hexToByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.IFD_AN_9F1E,it.toByteArray())
             }
             aidConfig?.terminalCapabilities?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_TERM_CAP.hexToByteArray(),
-                    aidConfig.terminalCapabilities.hexToByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.TERMCAP,it.hexToByteArray())
             }
             aidConfig?.terminalCountryCode?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_TERM_COUNTRY_CODE.hexToByteArray(),
-                    aidConfig.terminalCountryCode.hexToByteArray()
-                ) == 0
+                bundle.putByteArray(EmvTermCfgConstrants.COUNTRYCODE,it.padStart(4,'0').hexToByteArray())
             }
             aidConfig?.terminalType?.let {
-                result = result && deviceService?.emvHandler?.setTlv(
-                    EmvConstants.EMV_TAG_TERM_TYPE.hexToByteArray(),
-                    aidConfig.terminalType.hexToByteArray()
-                ) == 0
+                bundle.putByte(EmvTermCfgConstrants.TERMTYPE,it.hexToByte())
             }
 
+            result = deviceService?.emvHandler?.initTermConfig(bundle) == 0
         } catch (exception: Exception) {
+            result = false
             Log.e("EMV_APP", exception.message.toString())
         }
         return result
