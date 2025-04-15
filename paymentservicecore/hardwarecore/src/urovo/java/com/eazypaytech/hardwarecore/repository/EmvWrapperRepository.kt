@@ -29,6 +29,7 @@ import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
 import com.urovo.sdk.pinpad.listener.PinInputListener
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -44,7 +45,7 @@ import kotlin.text.toInt
 import kotlin.text.uppercase
 import kotlin.toString
 
-class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
+class EmvWrapperRepository @Inject constructor(@ApplicationContext context: Context,override var iEmvSdkResponseListener: IEmvSdkResponseListener) :
     IEmvWrapperRequestListener {
 
         fun overrideTerminalConfig(aidConfig: AidConfig?) : Boolean
@@ -102,6 +103,42 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             }
         }.start()
     }
+    fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
+        resetTransData()
+        /*thread = Thread {*/
+        try {
+            this.iEmvSdkResponseListener = iEmvSdkResponseListener
+            EmvWrapperRepository.iEmvSdkResponseListener = iEmvSdkResponseListener
+            val data = Hashtable<String, Any>()
+            transConfig?.let {
+                it.amount?.let { data["amount"] = it; _amount = it.toLongOrNull()?:0L }
+                it.cashbackAmount?.let { data["cashbackAmount"] = it; _cashbackAmount = it.toLongOrNull()?:0L }
+                it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
+                it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
+                (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.sdkValue }
+                it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
+                it.enableBeeper?.let { data["enableBeeper"] = it }
+                it.supportFallback?.let { if(it == true) data["FallbackSwitch"] = "1" else data["FallbackSwitch"] = "0"}
+                it.supportDRL?.let { data["supportDRL"] = it }
+                data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
+                data["isEnterAmtAfterReadRecord"] = false
+            }
+            initEncryption()
+            EmvNfcKernelApi.getInstance().setContext(context)
+            EmvNfcKernelApi.getInstance().setListener(EmvWrapperRepository)
+
+            job = CoroutineScope(Dispatchers.Default).launch {
+                EmvNfcKernelApi.getInstance().startKernel(data)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            this.iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkException(errorMessage = e.message.toString()))
+        }
+        /*
+                    }
+                    thread?.start()
+        */
+    }
 
     companion object : EmvListener, PinInputListener {
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
@@ -130,41 +167,7 @@ class EmvWrapperRepository @Inject constructor(override var iEmvSdkResponseListe
             checkCardResult = null
         }
 
-        fun startPayment(context: Context, transConfig: TransConfig?, iEmvSdkResponseListener: IEmvSdkResponseListener) {
-            resetTransData()
-            /*thread = Thread {*/
-                try {
-                    this.iEmvSdkResponseListener = iEmvSdkResponseListener
-                    val data = Hashtable<String, Any>()
-                    transConfig?.let {
-                        it.amount?.let { data["amount"] = it; _amount = it.toLongOrNull()?:0L }
-                        it.cashbackAmount?.let { data["cashbackAmount"] = it; _cashbackAmount = it.toLongOrNull()?:0L }
-                        it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
-                        it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
-                        (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.sdkValue }
-                        it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
-                        it.enableBeeper?.let { data["enableBeeper"] = it }
-                        it.supportFallback?.let { if(it == true) data["FallbackSwitch"] = "1" else data["FallbackSwitch"] = "0"}
-                        it.supportDRL?.let { data["supportDRL"] = it }
-                        data["emvOption"] = if(it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
-                        data["isEnterAmtAfterReadRecord"] = false
-                    }
-                    initEncryption()
-                    EmvNfcKernelApi.getInstance().setContext(context)
-                    EmvNfcKernelApi.getInstance().setListener(this)
 
-                    job = CoroutineScope(Dispatchers.Default).launch {
-                        EmvNfcKernelApi.getInstance().startKernel(data)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    this.iEmvSdkResponseListener?.onEmvSdkResponse(EmvSdkException(errorMessage = e.message.toString()))
-                }
-/*
-            }
-            thread?.start()
-*/
-        }
 
         @OptIn(ExperimentalStdlibApi::class)
         fun getEmvTag(tag : String?) : String?
