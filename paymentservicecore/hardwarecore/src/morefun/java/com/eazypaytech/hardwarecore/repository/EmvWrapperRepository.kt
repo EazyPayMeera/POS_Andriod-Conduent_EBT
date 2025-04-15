@@ -1,6 +1,5 @@
 package com.eazypaytech.tpaymentcore.repository
 
-import android.R
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -31,11 +30,13 @@ import com.eazypaytech.tpaymentcore.model.emv.TransConfig
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import com.morefun.yapi.ServiceResult
 import com.morefun.yapi.device.pinpad.DispTextMode
+import com.morefun.yapi.device.pinpad.DukptCalcObj
 import com.morefun.yapi.device.pinpad.OnPinPadInputListener
 import com.morefun.yapi.device.pinpad.PinAlgorithmMode
 import com.morefun.yapi.device.pinpad.PinPadConstrants
 import com.morefun.yapi.emv.EmvAidPara
 import com.morefun.yapi.emv.EmvCapk
+import com.morefun.yapi.emv.EmvDataSource
 import com.morefun.yapi.emv.EmvTermCfgConstrants
 import com.morefun.yapi.emv.EmvTransDataConstrants
 import com.morefun.yapi.emv.OnEmvProcessListener
@@ -109,7 +110,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun TerminalConfig(aidConfig: AidConfig?): Boolean {
+    fun initTermConfig(aidConfig: AidConfig?): Boolean {
         var result = true
 
         try {
@@ -153,7 +154,7 @@ class EmvWrapperRepository @Inject constructor(
             var result = true
             try {
                 aidConfig?.let {
-                    result = result && initAidConfig(it) && TerminalConfig(it)
+                    result = result && initAidConfig(it) && initTermConfig(it)
                 }
                 capKeys?.let { result = result && initCAPKeys(it) }
 
@@ -189,9 +190,10 @@ class EmvWrapperRepository @Inject constructor(
             p1: Int
         ) {
             Log.d(TAG, "onCardHolderInputPin ${p0} ${p1}")
-            /* if (p0) {
+            var pan = readPan()?:""
+             if (p0) {
              inputOnlinePin(
-                 "476173200020023",
+                 pan,
                  amount = "1545.54") { pinBlock ->
                  try {
                      deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
@@ -200,14 +202,14 @@ class EmvWrapperRepository @Inject constructor(
                  }
              }
          } else {
-             inputOfflinePin("476173200020023") { pinBlock ->
+             inputOfflinePin(pan) { pinBlock ->
                  try {
                      deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
                  } catch (e: RemoteException) {
                      e.printStackTrace()
                  }
              }
-         }*/
+         }
         }
 
         override fun onPinPress(p0: Byte) {
@@ -320,7 +322,7 @@ class EmvWrapperRepository @Inject constructor(
         val panBlock = pan.toByteArray()
 
         val bundle = Bundle().apply {
-            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
+            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, true)
 
             /*                if (HardwareUtils.getDeviceModel().contains("MF960") ||
                                 HardwareUtils.getDeviceModel().contains("H9PRO")) {
@@ -430,7 +432,7 @@ class EmvWrapperRepository @Inject constructor(
         bundle.putBoolean(EmvTransDataConstrants.FORCE_ONLINE_CALL_PIN, true)
         bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, true)
         bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, true)
-        bundle.putBoolean(EmvTransDataConstrants.CONTACT_SERVICE_SWITCH, false)
+
         bundle.putBoolean(EmvTransDataConstrants.SELECT_APP_RETURN_AID, false)
         bundle.putBoolean(EmvTransDataConstrants.SELECT_APP_RETURN_PRIORITY, true)
 
@@ -439,8 +441,7 @@ class EmvWrapperRepository @Inject constructor(
 
         bundle.putByte(EmvTransDataConstrants.B9C, 0x00.toByte())
 
-        bundle.putString(EmvTransDataConstrants.TRANSDATE, date.substring(0, 6))
-        bundle.putString(EmvTransDataConstrants.TRANSTIME, date.substring(6, 12))
+
         //        bundle.putString(EmvTransDataConstrants.SEQNO, "0001");
         bundle.putString(EmvTransDataConstrants.TRANSAMT, amount)
         bundle.putString(EmvTransDataConstrants.MERNAME, "MOREFUN")
@@ -465,29 +466,60 @@ class EmvWrapperRepository @Inject constructor(
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener
             val data = Hashtable<String, Any>()
+            val date: String = getCurrentTime("yyMMddHHmmss")
+            val bundle = Bundle()
+            bundle.putString(EmvTransDataConstrants.TRANSDATE, date.substring(0, 6))
+            bundle.putString(EmvTransDataConstrants.TRANSTIME, date.substring(6, 12))
+
             transConfig?.let {
-                it.amount?.let { data["amount"] = it; _amount = it.toLongOrNull() ?: 0L }
+                it.amount?.let { bundle.putString(EmvTransDataConstrants.TRANSAMT, it); _amount = it.toLongOrNull() ?: 0L }
                 it.cashbackAmount?.let {
-                    data["cashbackAmount"] = it; _cashbackAmount = it.toLongOrNull() ?: 0L
+                    bundle.putString(EmvTransDataConstrants.CASHBACKAMT, it); _cashbackAmount = it.toLongOrNull() ?: 0L
                 }
-                it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
+                //it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
                 it.transactionType?.let {
-                    data["transactionType"] = it.takeLast(2)
+                    bundle.putByte(EmvTransDataConstrants.B9C, it.take(2).toByte())
                 }    //00-goods 01-cash 09-cashback 20-refund
                 (it.cardCheckMode ?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let {
-                    data["checkCardMode"] = it.sdkValue
+                    //data["checkCardMode"] = it.sdkValue
+                    if(it in listOf(CardCheckMode.INSERT, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP))
+                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, true)
+                    else
+                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, false)
+
+                    if(it in listOf(CardCheckMode.TAP, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP))
+                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, true)
+                    else
+                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, false)
                 }
-                it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
-                it.enableBeeper?.let { data["enableBeeper"] = it }
+                it.cardCheckTimeout?.let { bundle.putInt(EmvTransDataConstrants.CHECK_CARD_TIME_OUT, it.toInt()) }
+                //it.enableBeeper?.let { data["enableBeeper"] = it }
                 it.supportFallback?.let {
-                    if (it == true) data["FallbackSwitch"] =
-                        "1" else data["FallbackSwitch"] =
-                        "0"
+                    if (it == true)
+                        bundle.putBoolean(EmvTransDataConstrants.CONTACT_SERVICE_SWITCH, true)
+                    else
+                        bundle.putBoolean(EmvTransDataConstrants.CONTACT_SERVICE_SWITCH, false)
                 }
-                it.supportDRL?.let { data["supportDRL"] = it }
-                data["emvOption"] =
-                    if (it.forceOnline == true) ContantPara.EmvOption.START_WITH_FORCE_ONLINE else ContantPara.EmvOption.START // START_WITH_FORCE_ONLINE
-                data["isEnterAmtAfterReadRecord"] = false
+                //it.supportDRL?.let { data["supportDRL"] = it }
+                it.forceOnline?.let {
+                    if (it == true)
+                        bundle.putBoolean(EmvTransDataConstrants.ISQPBOCFORCEONLINE, true)
+                    else
+                        bundle.putBoolean(EmvTransDataConstrants.ISQPBOCFORCEONLINE, false)
+
+                }
+                it.forceOnlinePin?.let {
+                    if (it == true)
+                        bundle.putBoolean(EmvTransDataConstrants.FORCE_ONLINE_CALL_PIN, true)
+                    else
+                        bundle.putBoolean(EmvTransDataConstrants.FORCE_ONLINE_CALL_PIN, false)
+
+                }
+                //data["isEnterAmtAfterReadRecord"] = false
+                /*bundle.putStringArrayList(
+                    EmvTransDataConstrants.TERMINAL_TLVS,
+                    createArrayList("DF840B06000000000001", "DF81190118")
+                )*/
             }
             //initEncryption()
             //EmvNfcKernelApi.getInstance().setContext(context)
@@ -495,7 +527,7 @@ class EmvWrapperRepository @Inject constructor(
 
             job = CoroutineScope(Dispatchers.Default).launch {
                 serviceConnected.await()
-                deviceService?.emvHandler?.emvTrans(getTransBundle("552.00"), emvListener)
+                deviceService?.emvHandler?.emvTrans(bundle, emvListener)
                 //bindDeviceService(context)                //EmvNfcKernelApi.getInstance().startKernel(data)
             }
         } catch (e: Exception) {
@@ -565,26 +597,7 @@ class EmvWrapperRepository @Inject constructor(
 
         aidConfig?.let {
             result = addContactAid(it) && addContactlessAid(it)
-            printAidInfo()
-        }
-        return result
-    }
-
-    fun addCapKey(key: CAPKey): Boolean {
-        var result = true
-        try {
-            val capKey: Hashtable<String?, String?> = Hashtable<String?, String?>()
-            capKey["Rid"] = key.rid
-            capKey["Index"] = key.index
-            capKey["Exponent"] = key.exponent
-            capKey["Modulus"] = key.modulus
-            capKey["Checksum"] = key.checksum
-            result = result && EmvNfcKernelApi.getInstance()
-                .updateCAPK(ContantPara.Operation.ADD, capKey)
-            capKey.clear()
-        } catch (exception: Exception) {
-            result = false
-            exception.printStackTrace()
+            //printAidInfo()
         }
         return result
     }
@@ -1070,6 +1083,63 @@ class EmvWrapperRepository @Inject constructor(
         }
 
         return result
+    }
+
+    fun readPan(): String? {
+        val pan = getPbocData("5A", true)
+        if (pan.isNullOrEmpty()) {
+            return getPanFromTrack2()
+        }
+        return if (pan.endsWith("F")) {
+            pan.substring(0, pan.length - 1)
+        } else {
+            pan
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun getPbocData(tagName: String, isHex: Boolean): String? {
+        return try {
+            val data = ByteArray(512)
+            val bundle = Bundle().apply {
+                putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, 0)
+            }
+
+            val len = deviceService?.emvHandler?.readEmvData(arrayOf(tagName.uppercase()), data, bundle)
+            len?.let {
+                if (it > 0) {
+                    val tlvData = data.sliceArray(0..len)
+                    if (isHex) tlvData.toHexString() else tlvData.decodeToString()
+                } else {
+                    null
+                }
+            }
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun readTrack2(): String? {
+        val track2 = getPbocData(EmvDataSource.GET_TRACK2_TAG_6B, true)
+        return if (!track2.isNullOrEmpty() && track2.endsWith("F")) {
+            track2.substring(0, track2.length - 1)
+        } else {
+            track2
+        }
+    }
+
+    private fun getPanFromTrack2(): String? {
+        val track2 = readTrack2()
+        if (track2 != null) {
+            for (i in track2.indices) {
+                if (track2[i] == '=' || track2[i] == 'D') {
+                    val endIndex = minOf(i, 19)
+                    return track2.substring(0, endIndex)
+                }
+            }
+        }
+        return null
     }
 
 

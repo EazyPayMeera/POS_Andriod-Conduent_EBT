@@ -12,5 +12,6 @@ data class TransConfig(
     @SerializedName("enableBeeper")         var enableBeeper : Boolean? = null,
     @SerializedName("supportFallback")      val supportFallback : Boolean? = null,
     @SerializedName("supportDRL")           val supportDRL : Boolean? = null,
-    @SerializedName("forceOnline")          val forceOnline : Boolean? = null
+    @SerializedName("forceOnline")          val forceOnline : Boolean? = null,
+    @SerializedName("forceOnlinePin")       val forceOnlinePin : Boolean? = null
 )

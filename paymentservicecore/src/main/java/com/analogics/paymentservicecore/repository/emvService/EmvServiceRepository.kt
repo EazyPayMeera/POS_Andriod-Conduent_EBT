@@ -379,6 +379,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
             cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
             cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
+            forceOnlinePin = true,
             supportDRL = false
         )
     }
