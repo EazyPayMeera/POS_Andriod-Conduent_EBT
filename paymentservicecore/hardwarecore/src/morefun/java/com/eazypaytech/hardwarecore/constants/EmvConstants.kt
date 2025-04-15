@@ -31,6 +31,7 @@ object EmvConstants {
 
     /* Default Values */
     const val EMV_DEFAULT_CTLS_RDR_LIMIT =          "999999999999"
+    const val EMV_HASH_ALG_SHA1 =                   "01"
 
     /* Custom SDK Tags */
     const val EMV_TAG_SUPPORT_RANDOM_TRANS =         "DF02"

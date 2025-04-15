@@ -35,22 +35,19 @@ import com.morefun.yapi.device.pinpad.OnPinPadInputListener
 import com.morefun.yapi.device.pinpad.PinAlgorithmMode
 import com.morefun.yapi.device.pinpad.PinPadConstrants
 import com.morefun.yapi.emv.EmvAidPara
-import com.morefun.yapi.emv.EmvTermCfgConstrants
+import com.morefun.yapi.emv.EmvCapk
 import com.morefun.yapi.emv.EmvTransDataConstrants
 import com.morefun.yapi.emv.OnEmvProcessListener
 import com.morefun.yapi.engine.DeviceServiceEngine
 import com.urovo.i9000s.api.emv.ContantPara
-import com.urovo.i9000s.api.emv.EmvListener
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
 import com.urovo.sdk.pinpad.PinPadProviderImpl
-import com.urovo.sdk.pinpad.listener.PinInputListener
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -111,45 +108,6 @@ class EmvWrapperRepository @Inject constructor(
         Log.d(TAG, "Service Disconnected")
     }
 
-    fun getInitTermConfig(): Bundle {
-        val bundle = Bundle()
-        bundle.putByteArray(
-            EmvTermCfgConstrants.TERMCAP,
-            byteArrayOf(0xE0.toByte(), 0xE0.toByte(), 0xC8.toByte())
-        )
-        bundle.putByteArray(
-            EmvTermCfgConstrants.ADDTERMCAP,
-            byteArrayOf(0xF2.toByte(), 0x00.toByte(), 0xF0.toByte(), 0xA0.toByte(), 0x01.toByte())
-        )
-        bundle.putByteArray(
-            EmvTermCfgConstrants.ADD_TERMCAP_EX,
-            byteArrayOf(0xF2.toByte(), 0x00.toByte(), 0xF0.toByte(), 0xA0.toByte(), 0x01.toByte())
-        )
-        bundle.putByte(EmvTermCfgConstrants.TERMTYPE, 0x22.toByte())
-        bundle.putByteArray(
-            EmvTermCfgConstrants.COUNTRYCODE,
-            byteArrayOf(0x03.toByte(), 0x56.toByte())
-        )
-        bundle.putByteArray(
-            EmvTermCfgConstrants.CURRENCYCODE,
-            byteArrayOf(0x03.toByte(), 0x56.toByte())
-        )
-        bundle.putByteArray(
-            EmvTermCfgConstrants.TRANS_PROP_9F66,
-            byteArrayOf(0x36, 0x00.toByte(), 0xc0.toByte(), 0x00.toByte())
-        )
-
-        //bundle.putByteArray(EmvTermCfgConstrants.PURE_ATOL, new byte[]{(byte) 0x01, (byte) 0x02});
-        //bundle.putByte(EmvTermCfgConstrants.PURE_ATOL_LEN, (byte) 0x02);
-        //bundle.putByteArray(EmvTermCfgConstrants.PURE_MTOL, new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
-        //bundle.putByte(EmvTermCfgConstrants.PURE_MTOL_LEN, (byte) 0x03);
-        //bundle.putByteArray(EmvTermCfgConstrants.PURE_ATDOL, new byte[]{0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04});
-        //bundle.putByte(EmvTermCfgConstrants.PURE_ATDOL_LEN, (byte) 0x04);
-        //bundle.putByte(EmvTermCfgConstrants.PURE_POSIO, (byte) 0x00);
-        //bundle.putByteArray(EmvTermCfgConstrants.PURE_CONTACTLESS_CAPABILITY, new byte[]{(byte) 0x03, (byte) 0x56});
-        return bundle
-    }
-
     @OptIn(ExperimentalStdlibApi::class)
     fun TerminalConfig(aidConfig: AidConfig?): Boolean {
         var result = true
@@ -203,73 +161,6 @@ class EmvWrapperRepository @Inject constructor(
                 ) == 0
             }
 
-
-            /*
-                        var termTlvParams = TlvUtils()
-                            .addTagValAscii(
-                                EmvConstants.EMV_TAG_MERCH_ID,
-                                aidConfig?.merchantIdentifier,
-                                15,
-                                15
-                            )
-                            .addTagValAscii(EmvConstants.EMV_TAG_TERM_ID, aidConfig?.terminalIdentifier, 8, 8)
-                            .addTagValAscii(
-                                EmvConstants.EMV_TAG_MERCH_NAME_LOC,
-                                aidConfig?.merchantNameLocation,
-                                0,
-                                40
-                            )
-                            .addTagValHex(
-                                EmvConstants.EMV_TAG_MERCH_CATEGORY_CODE,
-                                aidConfig?.merchantCategoryCode,
-                                2,
-                                2
-                            )
-                            .addTagValHex(EmvConstants.EMV_TAG_IFD_SERIAL_NO, aidConfig?.ifdSerialNumber, 8, 8)
-                            .addTagValHex(EmvConstants.EMV_TAG_TERM_CAP, aidConfig?.terminalCapabilities, 3, 3)
-                            .addTagValHex(
-                                EmvConstants.EMV_TAG_ADDL_TERM_CAP,
-                                aidConfig?.addlTerminalCapabilities,
-                                5,
-                                5
-                            )
-                            .addTagValHex(
-                                EmvConstants.EMV_TAG_TERM_COUNTRY_CODE,
-                                aidConfig?.terminalCountryCode,
-                                2,
-                                2
-                            )
-                            .addTagValHex(EmvConstants.EMV_TAG_TERM_TYPE, aidConfig?.terminalType, 1, 1)
-                            .addTagValHex(
-                                EmvConstants.EMV_TAG_TRANS_CURRENCY_EXPONENT,
-                                aidConfig?.currencyExponent,
-                                1,
-                                1
-                            )
-                            .addTagValBoolean(
-                                EmvConstants.EMV_TAG_SUPPORT_RANDOM_TRANS,
-                                aidConfig?.enableRandomTrans
-                            )
-                            .addTagValBoolean(
-                                EmvConstants.EMV_TAG_SUPPORT_EXCEP_FILE_CHECK,
-                                aidConfig?.supportExceptionFile
-                            )
-                            .addTagValBoolean(EmvConstants.EMV_TAG_SUPPORT_SM, aidConfig?.supportSM)
-                            .addTagValBoolean(
-                                EmvConstants.EMV_TAG_SUPPORT_VELOCITY_CHECK,
-                                aidConfig?.supportVelocityCheck
-                            )
-                            .toTlvString()
-                       result = EmvNfcKernelApi.getInstance().updateTerminalParamters(
-                            ContantPara.CardSlot.UNKNOWN,
-                            termTlvParams
-                        )*/
-
-
-//            EmvNfcKernelApi.getInstance()
-//                .LogOutEnable(if (aidConfig?.enableEmvLogs == true) EmvConstants.UROVO_SDK_EMV_LOG_ENABLE else EmvConstants.UROVO_SDK_EMV_LOG_DISABLE)
-
-            //Log.d("EMV_APP", "Term Config : $termTlvParams")
         } catch (exception: Exception) {
             Log.e("EMV_APP", exception.message.toString())
         }
@@ -284,7 +175,7 @@ class EmvWrapperRepository @Inject constructor(
                 aidConfig?.let {
                     result = result && initAidConfig(it) && TerminalConfig(it)
                 }
-                //capKeys?.let { result = result && initCAPKeys(it) }
+                capKeys?.let { result = result && initCAPKeys(it) }
 
                 when (result) {
                     true ->
@@ -693,7 +584,7 @@ class EmvWrapperRepository @Inject constructor(
         deviceService?.emvHandler?.clearAIDParam()
 
         aidConfig?.let {
-            result = addContactAid(it) //&& addContactlessAid(it)
+            result = addContactAid(it) && addContactlessAid(it)
             printAidInfo()
         }
         return result
@@ -718,15 +609,49 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     fun initCAPKeys(capKeys: List<CAPKey>?): Boolean {
         var result = true
         capKeys?.let {
             /* Clear CAP Keys first */
-            EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null)
+            //EmvNfcKernelApi.getInstance().updateCAPK(ContantPara.Operation.CLEAR, null)
+            deviceService?.emvHandler?.clearCAPKParam()
+
             /* Add CAP Keys */
+            var capkList = listOf<EmvCapk>()
             for (key in it) {
-                result = result && addCapKey(key)
+                val capk = EmvCapk()
+                key.rid?.let {
+                    var hex = it.hexToByteArray()
+                    hex.copyInto(capk.rid, 0, 0, minOf(hex.size, capk.rid.size))
+                }
+                key.index?.let {
+                    capk.cA_PKIndex = it.hexToByte()
+                }
+                key.exponent?.let {
+                    var hex = it.hexToByteArray()
+                    var length = minOf(hex.size, capk.capkExponent.size)
+                    capk.lengthOfCAPKExponent = length
+                    hex.copyInto(capk.capkExponent, capk.capkExponent.size-length, 0, length)
+                }
+                key.modulus?.let {
+                    var hex = it.hexToByteArray()
+                    var length = minOf(hex.size, capk.capkModulus.size)
+                    capk.lengthOfCAPKModulus = length
+                    hex.copyInto(capk.capkModulus, 0, 0, length)
+                }
+                key.checksum?.let {
+                    var hex = it.hexToByteArray()
+                    hex.copyInto(capk.checksumHash, 0, 0, minOf(hex.size, capk.checksumHash.size))
+                }
+
+                /* Hard coded constants for algorithm SHA1 */
+                capk.cA_PKAlgoIndicator = EmvConstants.EMV_HASH_ALG_SHA1.hexToByte()
+                capk.cA_HashAlgoIndicator = EmvConstants.EMV_HASH_ALG_SHA1.hexToByte()
+
+                capkList = capkList.plus(capk)
             }
+            result = deviceService?.emvHandler?.setCAPKList(capkList) == 0
         }
         return result
     }
@@ -948,168 +873,217 @@ class EmvWrapperRepository @Inject constructor(
     fun addContactlessAid(config: AidConfig): Boolean {
         var result = true
         try {
-            /* Add Contactless Configuration */
+            /* Add Contact Configuration */
+            var aidParaList = deviceService?.emvHandler?.aidParaList    // Read the existing list added for contact
             for (aid in config.contactless?.aidList ?: emptyList()) {
-                val aidData = Hashtable<String, String>()
-
-                (aid.aid ?: config.contactless?.aid
-                ?: config.aid)?.let { aidData["ApplicationIdentifier"] = it }
-                getSdkCardType(
-                    aidData["ApplicationIdentifier"] ?: ""
-                ).let { aidData["CardType"] = it }
-                (aid.transactionType ?: config.contactless?.transactionType
-                ?: config.transactionType)?.let { aidData["TransactionType"] = it }
-                (aid.acquirerId ?: config.contactless?.acquirerId
-                ?: config.acquirerId)?.let { aidData["AcquirerIdentifier"] = it }
-                (aid.addlTerminalCapabilities
-                    ?: config.contactless?.addlTerminalCapabilities
-                    ?: config.addlTerminalCapabilities)?.let {
-                    aidData["AdditionalTerminalCapabilities"] = it
+                val aidPara = EmvAidPara()
+                (aid.aid ?: config.contactless?.aid ?: config.aid)?.let {
+                    var hex = it.hexToByteArray()
+                    aidPara.aiD_Length = minOf(hex.size, aidPara.aid.size)
+                    hex.copyInto(aidPara.aid, 0, 0, aidPara.aiD_Length)
                 }
                 (aid.appVersion ?: config.contactless?.appVersion
-                ?: config.appVersion)?.let { aidData["ApplicationVersionNumber"] = it }
-                (aid.cardDataInputCapability ?: config.contactless?.cardDataInputCapability
-                ?: config.cardDataInputCapability)?.let {
-                    aidData["CardDataInputCapability"] = it
+                ?: config.appVersion)?.let {
+                    var hex = it.padEnd(aidPara.termAppVer.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.termAppVer, 0, 0, minOf(hex.size, aidPara.termAppVer.size))
                 }
-                (aid.kernelConfiguration ?: config.contactless?.kernelConfiguration
-                ?: config.kernelConfiguration)?.let { aidData["KernelConfiguration"] = it }
-                (aid.cvmCapabilityCVMRequired
-                    ?: config.contactless?.cvmCapabilityCVMRequired
-                    ?: config.cvmCapabilityCVMRequired)?.let {
-                    aidData["CVMCapabilityPerCVMRequired"] = it
+                (aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit
+                ?: config.terminalFloorLimit)?.let {
+                    var hex = it.padStart(12, '0').hexToByteArray()
+                    var binaryVal = bcdToBinaryArray(hex)
+                    binaryVal.copyInto(
+                        aidPara.tfL_Domestic,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.tfL_Domestic.size)
+                    )
+                    binaryVal.copyInto(
+                        aidPara.tfL_International,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.tfL_International.size)
+                    )
+                    hex.copyInto(aidPara.eC_TFL, 0, 0, minOf(hex.size, aidPara.eC_TFL.size))
                 }
-                (aid.cvmCapabilityNoCVMRequired
-                    ?: config.contactless?.cvmCapabilityNoCVMRequired
-                    ?: config.cvmCapabilityNoCVMRequired)?.let {
-                    aidData["CVMCapabilityNoCVMRequired"] = it
+                (aid.terminalFloorLimitCheck ?: config.contactless?.terminalFloorLimitCheck
+                ?: config.terminalFloorLimitCheck)?.let {
                 }
-                (aid.magCVMCapabilityCVMRequired
-                    ?: config.contactless?.magCVMCapabilityCVMRequired
-                    ?: config.magCVMCapabilityCVMRequired)?.let {
-                    aidData["MagStripeCVMCapabilityCVMRequired"] = it
+                (aid.tacDefault ?: config.contactless?.tacDefault
+                ?: config.tacDefault)?.let {
+                    var hex = it.padEnd(aidPara.taC_Default.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.taC_Default,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.taC_Default.size)
+                    )
                 }
-                (aid.magCVMCapabilityNoCVMRequired
-                    ?: config.contactless?.magCVMCapabilityNoCVMRequired
-                    ?: config.magCVMCapabilityNoCVMRequired)?.let {
-                    aidData["MagStripeCVMCapabilityPerNoCVMRequired"] = it
+                (aid.tacDenial ?: config.contactless?.tacDenial
+                ?: config.tacDenial)?.let {
+                    var hex = it.padEnd(aidPara.taC_Denial.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.taC_Denial, 0, 0, minOf(hex.size, aidPara.taC_Denial.size))
                 }
-                (aid.securityCapability ?: config.contactless?.securityCapability
-                ?: config.securityCapability)?.let { aidData["SecurityCapability"] = it }
-                (aid.ifdSerialNumber ?: config.contactless?.ifdSerialNumber
-                ?: config.ifdSerialNumber)?.let {
-                    aidData["IFDsn"] = it.toByteArray().toHexString()
+                (aid.tacOnline ?: config.contactless?.tacOnline
+                ?: config.tacOnline)?.let {
+                    var hex = it.padEnd(aidPara.taC_Online.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.taC_Online, 0, 0, minOf(hex.size, aidPara.taC_Online.size))
+                }
+                (aid.defaultDDOL ?: config.contactless?.defaultDDOL
+                ?: config.defaultDDOL)?.let {
+                    var hex = it.hexToByteArray()
+                    aidPara.ddoL_Length = minOf(hex.size, aidPara.ddol.size).toByte()
+                    hex.copyInto(aidPara.ddol, 0, 0, aidPara.ddoL_Length.toInt())
+                }
+                (aid.defaultTDOL ?: config.contactless?.defaultTDOL
+                ?: config.defaultTDOL)?.let {
+                    var hex = it.hexToByteArray()
+                    aidPara.tdoL_Length = minOf(hex.size, aidPara.tdol.size)
+                    hex.copyInto(aidPara.tdol, 0, 0, aidPara.tdoL_Length)
+                }
+                (aid.acquirerId ?: config.contactless?.acquirerId
+                ?: config.acquirerId)?.let {
+                    var hex = it.padStart(aidPara.acquirerID.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.acquirerID, 0, 0, minOf(hex.size, aidPara.acquirerID.size))
+                }
+                (aid.threshold ?: config.contactless?.threshold
+                ?: config.threshold)?.let {
+                    var hex =
+                        it.padStart(aidPara.thresholdValueDomestic.size * 2, '0').hexToByteArray()
+                    var binaryVal = bcdToBinaryArray(hex)
+                    binaryVal.copyInto(
+                        aidPara.thresholdValueDomestic,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.thresholdValueDomestic.size)
+                    )
+                    binaryVal.copyInto(
+                        aidPara.thresholdValueInt,
+                        0,
+                        0,
+                        minOf(binaryVal.size, aidPara.thresholdValueInt.size)
+                    )
+                }
+                (aid.targetPercentage ?: config.contactless?.targetPercentage
+                ?: config.targetPercentage)?.let {
+                    aidPara.targetPercentageDomestic = it.hexToByte()
+                    aidPara.targetPercentageInt = it.hexToByte()
+                }
+                (aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage
+                ?: config.maxTargetPercentage)?.let {
+                    aidPara.maxTargetDomestic = it.hexToByte()
+                    aidPara.maxTargetPercentageInt = it.hexToByte()
+                }
+                (aid.appSelIndicator ?: config.contactless?.appSelIndicator
+                ?: config.appSelIndicator)?.let {
+                    aidPara.appSelIndicator = it.hexToByte()
+                }
+                (aid.terminalAppPriority ?: config.contactless?.terminalAppPriority
+                ?: config.terminalAppPriority)?.let {
+                    aidPara.terminalPriority = it.hexToByte()
+                }
+                (aid.terminalCapabilities ?: config.contactless?.terminalCapabilities
+                ?: config.terminalCapabilities)?.let {
+                    var hex = it.padEnd(aidPara.termCap.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.termCap, 0, 0, minOf(hex.size, aidPara.termCap.size))
+                }
+                (aid.addlTerminalCapabilities ?: config.contactless?.addlTerminalCapabilities
+                ?: config.addlTerminalCapabilities)?.let {
+                    var hex = it.padEnd(aidPara.addTermCap.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.addTermCap, 0, 0, minOf(hex.size, aidPara.addTermCap.size))
+                }
+                (aid.terminalCountryCode ?: config.contactless?.terminalCountryCode
+                ?: config.terminalCountryCode)?.let {
+                    var hex = it.padStart(aidPara.termCountryCode.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.termCountryCode,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.termCountryCode.size)
+                    )
+                }
+                (aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit
+                ?: config.rdrCVMRequiredLimit)?.let {
+                    var hex = it.padStart(aidPara.rfcvmLimit.size * 2, '0').hexToByteArray()
+                    hex.copyInto(aidPara.rfcvmLimit, 0, 0, minOf(hex.size, aidPara.rfcvmLimit.size))
+                }
+                (aid.rdrCtlsFloorLimit ?: config.contactless?.rdrCtlsFloorLimit
+                ?: config.rdrCtlsFloorLimit)?.let {
+                    var hex = it.padStart(aidPara.rfOfflineLimit.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.rfOfflineLimit,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.rfOfflineLimit.size)
+                    )
+                }
+                (aid.rdrCtlsTransLimit ?: config.contactless?.rdrCtlsTransLimit
+                ?: config.rdrCtlsTransLimit ?: EmvConstants.EMV_DEFAULT_CTLS_RDR_LIMIT).let {
+                    var hex = it.padStart(aidPara.rfTransLimit.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.rfTransLimit,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.rfTransLimit.size)
+                    )
                 }
                 (aid.merchantCategoryCode ?: config.contactless?.merchantCategoryCode
                 ?: config.merchantCategoryCode)?.let {
-                    aidData["MerchantCategoryCode"] = it
+                    var hex = it.padStart(aidPara.merCateCode.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.merCateCode,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.merCateCode.size)
+                    )
                 }
-                (aid.merchantIdentifier ?: config.contactless?.merchantIdentifier
-                ?: config.merchantIdentifier)?.let {
-                    aidData["MerchantIdentifier"] = it.toByteArray().toHexString()
+
+                (aid.currencyCode ?: config.contactless?.currencyCode
+                ?: config.currencyCode)?.let {
+                    var hex = it.padStart(aidPara.trnCurrencyCode.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.trnCurrencyCode,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.trnCurrencyCode.size)
+                    )
                 }
-                (aid.merchantNameLocation ?: config.contactless?.merchantNameLocation
-                ?: config.merchantNameLocation)?.let {
-                    aidData["MerchantNameAndLocation"] = it.toByteArray().toHexString()
+                (aid.currencyExponent ?: config.contactless?.currencyExponent
+                ?: config.currencyExponent)?.let {
+                    aidPara.trnCurrencyExp = it.hexToByte()
                 }
-                (aid.defaultUDOL ?: config.contactless?.defaultUDOL
-                ?: config.defaultUDOL)?.let { aidData["DefaultUDOL"] = it }
-                (aid.terminalFloorLimit ?: config.contactless?.terminalFloorLimit
-                ?: config.terminalFloorLimit)?.let { aidData["FloorLimit"] = it }
-                (aid.rdrCtlsFloorLimit ?: config.contactless?.rdrCtlsFloorLimit
-                ?: config.rdrCtlsFloorLimit)?.let {
-                    aidData["ReaderContactlessFloorLimit"] = it
+                (aid.terminalType ?: config.contactless?.terminalType
+                ?: config.terminalType)?.let {
+                    aidPara.termType = it.hexToByte()
                 }
-                (aid.rdrCtlsTransLimitNoODCVM
-                    ?: config.contactless?.rdrCtlsTransLimitNoODCVM
-                    ?: config.rdrCtlsTransLimitNoODCVM)?.let {
-                    aidData["NoOnDeviceCVM"] = it
-                }
-                (aid.rdrCtlsTransLimitODCVM ?: config.contactless?.rdrCtlsTransLimitODCVM
-                ?: config.rdrCtlsTransLimitODCVM)?.let { aidData["OnDeviceCVM"] = it }
-                (aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit
-                ?: config.rdrCVMRequiredLimit)?.let {
-                    aidData["ReaderCVMRequiredLimit"] = it
-                }
-                (aid.tacDefault ?: config.contactless?.tacDefault
-                ?: config.tacDefault)?.let { aidData["TerminalActionCodesDefault"] = it }
-                (aid.tacDenial ?: config.contactless?.tacDenial
-                ?: config.tacDenial)?.let { aidData["TerminalActionCodesDenial"] = it }
-                (aid.tacOnline ?: config.contactless?.tacOnline
-                ?: config.tacOnline)?.let { aidData["TerminalActionCodesOnLine"] = it }
                 (aid.riskManagementData ?: config.contactless?.riskManagementData
                 ?: config.riskManagementData)?.let {
-                    aidData["TerminalRiskManagement"] = it
-                }
-                (aid.terminalCountryCode ?: config.contactless?.terminalCountryCode
-                ?: config.terminalCountryCode)?.let { aidData["TerminalCountryCode"] = it }
-                (aid.terminalType ?: config.contactless?.terminalType
-                ?: config.terminalType)?.let { aidData["TerminalType"] = it }
-                (aid.dsvnTerm ?: config.contactless?.dsvnTerm
-                ?: config.dsvnTerm)?.let { aidData["DSVNTerm"] = it }
-                (aid.appSelIndicator ?: config.contactless?.appSelIndicator
-                ?: config.appSelIndicator)?.let { aidData["AppSelIndicator"] = it }
-                (aid.defaultDDOL ?: config.contactless?.defaultDDOL
-                ?: config.defaultDDOL)?.let { aidData["DefaultDDOL"] = it }
-                (aid.defaultTDOL ?: config.contactless?.defaultTDOL
-                ?: config.defaultTDOL)?.let { aidData["DefaultTDOL"] = it }
-
-                /* Visa Specific */
-                (aid.ttq ?: config.contactless?.ttq
-                ?: config.ttq)?.let { aidData["TerminalTransactionQualifiers"] = it }
-                (aid.rdrCVMRequiredLimit ?: config.contactless?.rdrCVMRequiredLimit
-                ?: config.rdrCVMRequiredLimit)?.let { aidData["CvmRequiredLimit"] = it }
-                (aid.rdrCtlsTransLimit ?: config.contactless?.rdrCtlsTransLimit
-                ?: config.rdrCtlsTransLimit)?.let { aidData["TransactionLimit"] = it }
-                (aid.disableProcRestrictions ?: config.contactless?.disableProcRestrictions
-                ?: config.disableProcRestrictions)?.let {
-                    aidData["ProRestrictionDisable"] = it
-                }
-                (aid.limitSwitch ?: config.contactless?.limitSwitch
-                ?: config.limitSwitch)?.let { aidData["LimitSwitch"] = it }
-                (aid.programID ?: config.contactless?.programID
-                ?: config.programID)?.let { aidData["ProgramID"] = it }
-                (aid.terminalCapabilities ?: config.contactless?.terminalCapabilities
-                ?: config.terminalCapabilities)?.let {
-                    aidData["TerminalCapabilities"] = it
-                }
-
-                /* Amex Specific */
-                (aid.ctlsRdrCapabilities ?: config.contactless?.ctlsRdrCapabilities
-                ?: config.ctlsRdrCapabilities)?.let {
-                    aidData["ContactlessReaderCapabilities"] = it
-                }
-
-                /* Rupay Specific */
-                (aid.addlTerminalCapabilitiesExtension
-                    ?: config.contactless?.addlTerminalCapabilitiesExtension
-                    ?: config.addlTerminalCapabilitiesExtension)?.let {
-                    aidData["AdditionalTerminalCapabilitiesExtension"] = it
-                }
-                (aid.serviceDataFormat ?: config.contactless?.serviceDataFormat
-                ?: config.serviceDataFormat)?.let { aidData["ServiceFormatData"] = it }
-                (aid.threshold ?: config.contactless?.threshold
-                ?: config.threshold)?.let { aidData["ThresholdValue"] = it }
-                (aid.targetPercentage ?: config.contactless?.targetPercentage
-                ?: config.targetPercentage)?.let { aidData["TargetPercentage"] = it }
-                (aid.maxTargetPercentage ?: config.contactless?.maxTargetPercentage
-                ?: config.maxTargetPercentage)?.let { aidData["MaxTargetPercentage"] = it }
-
-                /* Entry Point Specific */
-                (aid.zeroAmountAllowed ?: config.contactless?.zeroAmountAllowed
-                ?: config.zeroAmountAllowed)?.let { aidData["ZeroAmountCheckFlag"] = it }
-                (aid.zeroAmountOfflineAllowed
-                    ?: config.contactless?.zeroAmountOfflineAllowed
-                    ?: config.zeroAmountOfflineAllowed)?.let {
-                    aidData["ZeroAmountAllowedOfflineFlag"] = it
+                    var hex = it.padEnd(aidPara.riskManagement9F1D.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.riskManagement9F1D,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.riskManagement9F1D.size)
+                    )
                 }
                 (aid.statusCheckSupported ?: config.contactless?.statusCheckSupported
-                ?: config.statusCheckSupported)?.let { aidData["StatusCheckFlag"] = it }
+                ?: config.statusCheckSupported)?.let {
+                    aidPara.statusCheck = it.hexToByte()
+                }
+                (aid.ttq ?: config.contactless?.ttq
+                ?: config.ttq)?.let {
+                    var hex = it.padEnd(aidPara.transProp.size * 2, '0').hexToByteArray()
+                    hex.copyInto(
+                        aidPara.transProp,
+                        0,
+                        0,
+                        minOf(hex.size, aidPara.transProp.size)
+                    )
+                }
 
-                result = result && EmvNfcKernelApi.getInstance()
-                    .updateAID(ContantPara.Operation.ADD, aidData) //master
-                aidData.clear()
+                aidParaList = aidParaList?.plus(aidPara)
             }
+
+            result = result && deviceService?.emvHandler?.setAidParaList(aidParaList) == 0
         } catch (exception: Exception) {
             result = false
             exception.printStackTrace()
