@@ -42,6 +42,7 @@ import com.morefun.yapi.emv.EmvDataSource
 import com.morefun.yapi.emv.EmvTermCfgConstrants
 import com.morefun.yapi.emv.EmvTransDataConstrants
 import com.morefun.yapi.emv.OnEmvProcessListener
+import com.morefun.yapi.engine.DeviceInfoConstrants
 import com.morefun.yapi.engine.DeviceServiceEngine
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
@@ -164,7 +165,7 @@ class EmvWrapperRepository @Inject constructor(
              if (p0) {
              inputOnlinePin(
                  pan,
-                 amount = "1545.54") { pinBlock ->
+                 amount = _sAmount) { pinBlock ->
                  try {
                      deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
                  } catch (e: RemoteException) {
@@ -174,6 +175,7 @@ class EmvWrapperRepository @Inject constructor(
          } else {
              inputOfflinePin(pan) { pinBlock ->
                  try {
+                     Companion.pinBlock
                      deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
                  } catch (e: RemoteException) {
                      e.printStackTrace()
@@ -284,21 +286,20 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun inputOnlinePin(
-        pan: String,
+        pan: String?,
         amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit
     ) {
-        val panBlock = pan.toByteArray()
-
+        val panBlock = pan?.toByteArray() ?: ByteArray(16)
         val bundle = Bundle().apply {
             putBoolean(PinPadConstrants.COMMON_IS_RANDOM, true)
-
-            /*                if (HardwareUtils.getDeviceModel().contains("MF960") ||
-                                HardwareUtils.getDeviceModel().contains("H9PRO")) {
-                                putBoolean(PinPadConstrants.COMMON_IS_PHYSICAL_KEYBOARD, true)
-                            }*/
-
+            if (getDeviceModel().contains("MF960") ||
+                getDeviceModel().contains("H9PRO")
+            ) {
+                putBoolean(PinPadConstrants.COMMON_IS_PHYSICAL_KEYBOARD, true)
+            }
             putString(
                 PinPadConstrants.TITLE_HEAD_CONTENT,
                 "Please input the online pin \nAmount: $amount"
@@ -307,15 +308,18 @@ class EmvWrapperRepository @Inject constructor(
 
         try {
             deviceService?.pinPad?.apply {
-                setTimeOut(10)
+                setTimeOut(30)
                 setSupportPinLen(intArrayOf(0, 6))
-                inputOnlinePin(bundle, panBlock, 0, PinAlgorithmMode.ISO9564FMT1,
+                inputOnlinePin(bundle, panBlock, DukptLoadObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal, PinAlgorithmMode.ISO9564FMT1,
                     object : OnPinPadInputListener.Stub() {
                         override fun onInputResult(
                             ret: Int,
                             pinBlock: ByteArray?,
                             ksn: String?
                         ) {
+                            Companion.pinBlock = pinBlock?.toHexString()
+                            Companion.ksn = ksn
+
                             val builder = StringBuilder().apply {
                                 append("ON INPUT RESULT: $ret\n")
                                 append("PIN BLOCK: ${Funs.bytesToHexString(pinBlock)}\n")
@@ -339,8 +343,8 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-    private fun inputOfflinePin(pan: String, onResult: (pinBlock: ByteArray?) -> Unit) {
-        Log.d("PIN", "INPUT OFFLINE PIN: $pan")
+    private fun inputOfflinePin(pan: String?, onResult: (pinBlock: ByteArray?) -> Unit) {
+        //Log.d("PIN", "INPUT OFFLINE PIN: $pan")
 
         val bundle = Bundle().apply {
             putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
@@ -394,6 +398,16 @@ class EmvWrapperRepository @Inject constructor(
         return df.format(curDate)
     }
 
+    fun getDeviceModel(): String {
+        return try {
+            val devInfo = deviceService?.getDevInfo()
+            devInfo?.getString(DeviceInfoConstrants.COMMOM_MODEL_EX) ?: ""
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
     fun getTransBundle(amount: String?): Bundle {
         val bundle = Bundle()
 
@@ -442,7 +456,7 @@ class EmvWrapperRepository @Inject constructor(
             bundle.putString(EmvTransDataConstrants.TRANSTIME, date.substring(6, 12))
 
             transConfig?.let {
-                it.amount?.let { bundle.putString(EmvTransDataConstrants.TRANSAMT, it); _amount = it.toLongOrNull() ?: 0L }
+                it.amount?.let { bundle.putString(EmvTransDataConstrants.TRANSAMT, it); _sAmount = it ;_amount = it.toLongOrNull() ?: 0L }
                 it.cashbackAmount?.let {
                     bundle.putString(EmvTransDataConstrants.CASHBACKAMT, it); _cashbackAmount = it.toLongOrNull() ?: 0L
                 }
@@ -1056,7 +1070,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     fun readPan(): String? {
-        val pan = getPbocData("5A", true)
+        val pan = getPbocData("5A")
         if (pan.isNullOrEmpty()) {
             return getPanFromTrack2()
         }
@@ -1068,21 +1082,21 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun getPbocData(tagName: String, isHex: Boolean): String? {
+    private fun getPbocData(tagName: String, isHex: Boolean?=true): String? {
         return try {
-            val data = ByteArray(512)
             val bundle = Bundle().apply {
-                putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, 0)
+                putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal)
             }
 
-            val len = deviceService?.emvHandler?.readEmvData(arrayOf(tagName.uppercase()), data, bundle)
-            len?.let {
-                if (it > 0) {
-                    val tlvData = data.sliceArray(0..len)
-                    if (isHex) tlvData.toHexString() else tlvData.decodeToString()
+            (deviceService?.emvHandler?.getTlvs(tagName.hexToByteArray(), EmvDataSource.FROMKERNEL, bundle) ?:
+            deviceService?.emvHandler?.getTlvs(tagName.hexToByteArray(), EmvDataSource.FROMCARD, bundle))?.let {
+                if (it.isNotEmpty()) {
+                    if (isHex==true) it.toHexString() else it.decodeToString()
                 } else {
                     null
                 }
+            } ?:let {
+                null
             }
         } catch (e: RemoteException) {
             e.printStackTrace()
@@ -1091,7 +1105,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     private fun readTrack2(): String? {
-        val track2 = getPbocData(EmvDataSource.GET_TRACK2_TAG_6B, true)
+        val track2 = getPbocData(EmvDataSource.GET_TRACK2_TAG_6B)
         return if (!track2.isNullOrEmpty() && track2.endsWith("F")) {
             track2.substring(0, track2.length - 1)
         } else {
@@ -1116,6 +1130,7 @@ class EmvWrapperRepository @Inject constructor(
         var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
         var job: Job? = null
         var _amount: Long = 0L
+        var _sAmount: String = ""
         var _cashbackAmount: Long = 0L
         var pinBlock: String? = null
         var ksn: String? = null
