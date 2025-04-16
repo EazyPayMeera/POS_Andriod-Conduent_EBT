@@ -86,6 +86,10 @@ object EmvConstants {
 
     /* Host Response */
     const val EMV_TAG_RESP_CODE =                           "8A"
+    const val EMV_TAG_AUTH_CODE =                           "89"
+    const val EMV_TAG_ISSUER_AUTH_DATA =                    "91"
+    const val EMV_TAG_SCRIPT_71 =                           "71"
+    const val EMV_TAG_SCRIPT_72 =                           "72"
     const val EMV_TAG_VAL_APPROVED_ONLINE =                 "3030"
     const val EMV_TAG_VAL_DECLINED_ONLINE =                 "3035"
     const val EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_APPROVE =     "5933"

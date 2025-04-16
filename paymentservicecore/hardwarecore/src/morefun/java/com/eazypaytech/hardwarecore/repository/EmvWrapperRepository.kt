@@ -39,6 +39,7 @@ import com.morefun.yapi.device.pinpad.PinPadConstrants
 import com.morefun.yapi.emv.EmvAidPara
 import com.morefun.yapi.emv.EmvCapk
 import com.morefun.yapi.emv.EmvDataSource
+import com.morefun.yapi.emv.EmvOnlineResult
 import com.morefun.yapi.emv.EmvTermCfgConstrants
 import com.morefun.yapi.emv.EmvTransDataConstrants
 import com.morefun.yapi.emv.OnEmvProcessListener
@@ -47,7 +48,6 @@ import com.morefun.yapi.engine.DeviceServiceEngine
 import com.urovo.i9000s.api.emv.ContantPara
 import com.urovo.i9000s.api.emv.EmvNfcKernelApi
 import com.urovo.i9000s.api.emv.Funs
-import com.urovo.sdk.pinpad.PinPadProviderImpl
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -73,11 +73,63 @@ class EmvWrapperRepository @Inject constructor(
 ) :
     IEmvWrapperRequestListener {
     private var TAG = "MOREFUN"
+    val arqcTLVTags: Array<String> = arrayOf(
+        "9F26",
+        "9F27",
+        "9F10",
+        "9F37",
+        "9F36",
+        "95",
+        "9A",
+        "9C",
+        "9F02",
+        "5F2A",
+        "82",
+        "9F1A",
+        "9F33",
+        "9F34",
+        "9F35",
+        "9F1E",
+        "84",
+        "9F09",
+        "9F63",
+        "50",
+        "9F12",
+        "5F34"
+    )
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
             bindService(context)
         }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun collectTlvData(tags: Array<String>): String? {
+
+        for (i in tags.indices) {
+            tags[i] = tags[i].uppercase(Locale.getDefault())
+        }
+
+        try {
+            val buffer = ByteArray(3096)
+            val bundle = Bundle()
+            bundle.putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal)
+
+            val bytesRead = deviceService?.emvHandler?.readEmvData(tags, buffer, bundle)?:0
+
+            return if (bytesRead > 0) {
+                val hexData = buffer.slice(0..bytesRead-1).toByteArray().toHexString().uppercase()
+                Log.d("TLV", "🔡 Hex Data Extracted: $hexData")
+                hexData
+            } else {
+                Log.w("TLV", "⚠️ No data read from EMV")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("TLV", "❗ Unexpected exception occurred", e)
+        }
+        return null
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -194,6 +246,7 @@ class EmvWrapperRepository @Inject constructor(
 
         override fun onOnlineProc(p0: Bundle?) {
             Log.d(TAG, "onOnlineProc ${p0}")
+            encryptThenRequestOnline(collectTlvData(arqcTLVTags))
         }
 
         override fun onContactlessOnlinePlaceCardMode(p0: Int) {
@@ -208,6 +261,14 @@ class EmvWrapperRepository @Inject constructor(
                     Log.d(TAG, "Bundle key: $key, value: $value")
                 }
             }
+
+            iEmvSdkResponseListener?.onEmvSdkResponse(
+                EmvSdkResult.TransResult(
+                    ysdkToEmvTransResult(
+                        p0
+                    )
+                )
+            )
         }
 
         override fun onSetAIDParameter(p0: String?) {
@@ -449,6 +510,7 @@ class EmvWrapperRepository @Inject constructor(
         /*thread = Thread {*/
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener
+            Companion.iEmvSdkResponseListener = iEmvSdkResponseListener
             val data = Hashtable<String, Any>()
             val date: String = getCurrentTime("yyMMddHHmmss")
             val bundle = Bundle()
@@ -505,13 +567,12 @@ class EmvWrapperRepository @Inject constructor(
                     createArrayList("DF840B06000000000001", "DF81190118")
                 )*/
             }
-            //initEncryption()
+            initEncryption()
             //EmvNfcKernelApi.getInstance().setContext(context)
             //EmvNfcKernelApi.getInstance().setListener(this)
 
             job = CoroutineScope(Dispatchers.Default).launch {
-                serviceConnected.await()
-                deviceService?.emvHandler?.emvTrans(bundle, emvListener)
+                getDeviceService(context)?.emvHandler?.emvTrans(bundle, emvListener)
                 //bindDeviceService(context)                //EmvNfcKernelApi.getInstance().startKernel(data)
             }
         } catch (e: Exception) {
@@ -1127,16 +1188,16 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     companion object  : ServiceConnection{
-        var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
-        var job: Job? = null
-        var _amount: Long = 0L
-        var _sAmount: String = ""
-        var _cashbackAmount: Long = 0L
-        var pinBlock: String? = null
-        var ksn: String? = null
-        var nfcTlv: String? = null
-        var nfcDisplayMsgId: DisplayMsgId? = null
-        var checkCardResult: ContantPara.CheckCardResult? = null
+        private var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
+        private var job: Job? = null
+        private var _amount: Long = 0L
+        private var _sAmount: String = ""
+        private var _cashbackAmount: Long = 0L
+        private var pinBlock: String? = null
+        private var ksn: String? = null
+        private var nfcTlv: String? = null
+        private var nfcDisplayMsgId: DisplayMsgId? = null
+        private var checkCardResult: ContantPara.CheckCardResult? = null
         private var deviceService: DeviceServiceEngine? = null
         private var serviceConnected = CompletableDeferred<Boolean>()
         private var TAG = "MOREFUN"
@@ -1284,18 +1345,35 @@ class EmvWrapperRepository @Inject constructor(
 
         @OptIn(ExperimentalStdlibApi::class)
         fun getEmvTag(tag: String?): String? {
-            var tagVal: String? = null
-            try {
-                tag?.let {
-                    EmvNfcKernelApi.getInstance().getValByTag(tag.hexToInt())
-                        ?.takeIf { it.isNotEmpty() }?.let {
-                            tagVal = it
-                        }
+            return try {
+                val bundle = Bundle().apply {
+                    putInt(
+                        DukptCalcObj.Param.DUKPT_KEY_INDEX,
+                        DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal
+                    )
                 }
-            } catch (e: Exception) {
+
+                (deviceService?.emvHandler?.getTlvs(
+                    tag?.hexToByteArray(),
+                    EmvDataSource.FROMKERNEL,
+                    bundle
+                ) ?: deviceService?.emvHandler?.getTlvs(
+                    tag?.hexToByteArray(),
+                    EmvDataSource.FROMCARD,
+                    bundle
+                ))?.let {
+                    if (it.isNotEmpty()) {
+                        it.toHexString().uppercase()
+                    } else {
+                        null
+                    }
+                } ?: let {
+                    null
+                }
+            } catch (e: RemoteException) {
                 e.printStackTrace()
+                null
             }
-            return tagVal
         }
 
         fun abortPayment() {
@@ -1304,6 +1382,7 @@ class EmvWrapperRepository @Inject constructor(
             //EmvNfcKernelApi.getInstance().abortKernel()
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
         fun encryptThenRequestOnline(p0: String? = null, p1: String? = null) {
             try {
                 var tlvMap = TlvUtils(p0).tlvMap.apply {
@@ -1314,19 +1393,25 @@ class EmvWrapperRepository @Inject constructor(
                     var tlvTags = TlvUtils(it)
                     var hasOnlineResp =
                         tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
+                    var hasIssuerAuth =
+                        tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_ISSUER_AUTH_DATA)
+                    var hasAuthCode =
+                        tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_AUTH_CODE)
+                    var isApprovedOnline = hasOnlineResp
+                            && tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
+                            && tlvTags.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] == EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE
+                    var isDeclineOnline = hasOnlineResp && !isApprovedOnline
+
                     when (checkCardResult) {
                         ContantPara.CheckCardResult.MSR -> {
                             /* Magstripe Conditions */
-                            if (hasOnlineResp
-                                && tlvTags.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)
-                                && tlvTags.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] == EmvConstants.EMV_TAG_VAL_APPROVED_ONLINE
-                            ) {
+                            if (isApprovedOnline == true) {
                                 iEmvSdkResponseListener?.onEmvSdkResponse(
                                     EmvSdkResult.TransResult(
                                         TransStatus.APPROVED_ONLINE
                                     )
                                 )
-                            } else if (hasOnlineResp == true) {
+                            } else if (isDeclineOnline) {
                                 iEmvSdkResponseListener?.onEmvSdkResponse(
                                     EmvSdkResult.TransResult(
                                         TransStatus.DECLINED_ONLINE
@@ -1341,8 +1426,33 @@ class EmvWrapperRepository @Inject constructor(
                             }
                         }
 
-                        else -> EmvNfcKernelApi.getInstance()
-                            .sendOnlineProcessResult(hasOnlineResp, tlvTags.toTlvString())
+                        else ->
+                        {
+                            try {
+                                val onlineResp = Bundle().apply {
+                                    if(hasOnlineResp == true) {
+                                        putString(
+                                            EmvOnlineResult.REJCODE,
+                                            tlvTags.tlvMap[EmvConstants.EMV_TAG_RESP_CODE]
+                                        )
+                                        putByteArray(
+                                            EmvOnlineResult.RECVARPC_DATA,
+                                            tlvTags.toTlvString().hexToByteArray()
+                                        )
+                                    }
+                                    if(hasAuthCode == true)
+                                        putString(EmvOnlineResult.AUTHCODE, tlvTags.tlvMap[EmvConstants.EMV_TAG_AUTH_CODE])
+                                }
+                                deviceService?.emvHandler?.onSetOnlineProcResponse(
+                                    if(isApprovedOnline || isDeclineOnline)
+                                        ServiceResult.Success else ServiceResult.Fail,
+                                    onlineResp
+                                )
+                            } catch (e: Exception) {
+                                Log.e("OnlineProc", "❌ Exception in callback", e)
+                            }
+
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -1351,23 +1461,15 @@ class EmvWrapperRepository @Inject constructor(
         }
 
         fun initEncryption() {
-            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH / 2)
-            PinPadProviderImpl.getInstance()
-                .DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_TDK, ksnBytes)
-            PinPadProviderImpl.getInstance()
-                .DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_EMV, ksnBytes)
-            PinPadProviderImpl.getInstance()
-                .DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_PIN, ksnBytes)
-            PinPadProviderImpl.getInstance()
-                .DukptGetKsn(EncryptionConstants.DUKPT_KEY_SET_MAC, ksnBytes)
+            deviceService?.pinPad?.increaseKSN(DukptLoadObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal,true)
             pinBlock = null
+            ksn = null
         }
 
         @OptIn(ExperimentalStdlibApi::class)
         fun getEncryptedData(tlvMap: HashMap<String, String>): HashMap<String, String> {
             var hashMap = HashMap<String, String>()
-            var trackData =
-                EmvNfcKernelApi.getInstance().getValByTag(EmvConstants.EMV_TAG_TRACK2_HEX)
+            var trackData = (getEmvTag(EmvConstants.EMV_TAG_TRACK2)?:"").uppercase()
             trackData.takeIf { it.isEmpty() == true && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2) }
                 ?.let {
                     trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
@@ -1376,7 +1478,9 @@ class EmvWrapperRepository @Inject constructor(
             var cardPan = trackData.substringBefore('=')
 
             /* Clear PAN is OK to send to service layer. Service layer will filter it */
-            hashMap[EmvConstants.EMV_TAG_PAN] = cardPan
+            cardPan.let {
+                hashMap[EmvConstants.EMV_TAG_PAN] = it
+            }
 
             trackData.takeIf {
                 (it.length % 8) != 0
@@ -1392,71 +1496,59 @@ class EmvWrapperRepository @Inject constructor(
 
             var trackDataBytes = trackData.toByteArray()
             var cardPanBytes = cardPan.toByteArray()
-            var encryptedBytes = ByteArray(trackDataBytes.size)
-            var encryptedLen = IntArray(1)
-            var ksnBytes = ByteArray(EncryptionConstants.DUKPT_KSN_MAX_LENGTH / 2)
-            var ksnLen = IntArray(1)
-            var ivBytes = ByteArray(EncryptionConstants.TDES_IV_LENGTH)
 
-            /* Encrypt Track2 */
-            if (PinPadProviderImpl.getInstance().DukptEncryptDataIV(
-                    EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                    EncryptionConstants.DUKPT_KEY_SET_PIN,
-                    EncryptionConstants.DUKPT_MODE_ENCRYPT_ECB,
-                    ivBytes,
-                    ivBytes.size,
-                    trackDataBytes,
-                    trackDataBytes.size,
-                    encryptedBytes,
-                    encryptedLen,
-                    ksnBytes,
-                    ksnLen
-                ) == 0
-            ) {
-                hashMap[EmvConstants.EMV_TAG_ENC_TRACK] =
-                    encryptedBytes.toHexString().uppercase()
-                hashMap[EmvConstants.EMV_TAG_ENC_KSN] =
-                    ksnBytes.slice(0 until ksnLen[0]).toByteArray().toHexString().uppercase()
-                //Log.d("ENCRYPTION", "INPUT TRACK DATA (ASCII)    : "+trackDataBytes.decodeToString())
-                Log.d(
-                    "ENCRYPTION",
-                    "ENCRYPTED TRACK DATA (LYRA) : " + encryptedBytes.toHexString().uppercase()
+            /* Encrypt Track2 Data */
+            try {
+                val trackCalcObj = DukptCalcObj(
+                    DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5,
+                    DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1,
+                    DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT,
+                    DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB,
+                    trackDataBytes.toHexString()
                 )
-                Log.d(
-                    "ENCRYPTION",
-                    "KSN TRACK DATA (LYRA)       : " + ksnBytes.slice(0 until ksnLen[0])
-                        .toByteArray().toHexString().uppercase()
-                )
+                Log.d("ENCRYPTION", "🚀 Encrypting Track2: $trackCalcObj")
+                deviceService?.pinPad?.dukptCalcDes(trackCalcObj)?.let {
+                    val encryptedTrack = it.getString(DukptCalcObj.DUKPT_DATA)?.uppercase()
+                    val ksn = it.getString(DukptCalcObj.DUKPT_KSN)?.uppercase()
+                    if (!encryptedTrack.isNullOrEmpty()) {
+                        hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedTrack
+                        Log.d("ENCRYPTION", "✅ ENCRYPTED TRACK DATA (LYRA): $encryptedTrack")
+                    } else {
+                        Log.w("ENCRYPTION", "⚠️ Encrypted track data is null or empty.")
+                    }
+                    if (!ksn.isNullOrEmpty()) {
+                        hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksn
+                        Log.d("ENCRYPTION", "🔑 KSN TRACK DATA (LYRA): $ksn")
+                    } else {
+                        Log.w("ENCRYPTION", "⚠️ KSN is null or empty.")
+                    }
+                }
+            } catch (e: RemoteException) {
+                Log.e("ENCRYPTION", "❌ Exception encrypting Track2", e)
             }
 
             /* Encrypt PAN */
-            if (PinPadProviderImpl.getInstance().DukptEncryptDataIV(
-                    EncryptionConstants.DUKPT_KEY_TYPE_TRACK_DATA,
-                    EncryptionConstants.DUKPT_KEY_SET_PIN,
-                    EncryptionConstants.DUKPT_MODE_ENCRYPT_ECB,
-                    ivBytes,
-                    ivBytes.size,
-                    cardPanBytes,
-                    cardPanBytes.size,
-                    encryptedBytes,
-                    encryptedLen,
-                    ksnBytes,
-                    ksnLen
-                ) == 0
-            ) {
-                hashMap[EmvConstants.EMV_TAG_ENC_PAN] =
-                    encryptedBytes.sliceArray(0 until encryptedLen[0]).toHexString().uppercase()
-                //Log.d("ENCRYPTION", "INPUT PAN (ASCII)    : "+cardPanBytes.decodeToString())
-                Log.d(
-                    "ENCRYPTION",
-                    "ENCRYPTED PAN (LYRA) : " + encryptedBytes.sliceArray(0 until encryptedLen[0])
-                        .toHexString().uppercase()
-                )
-                Log.d(
-                    "ENCRYPTION",
-                    "KSN PAN (LYRA)       : " + ksnBytes.slice(0 until ksnLen[0]).toByteArray()
-                        .toHexString().uppercase()
-                )
+            try {
+                val panCalcObj = DukptCalcObj(DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5, DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1, DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT, DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB, cardPanBytes.toHexString())
+                    deviceService?.pinPad?.dukptCalcDes(panCalcObj)?.let {
+                        val encryptedPan = it.getString(DukptCalcObj.DUKPT_DATA)?.uppercase()
+                        val ksn = it.getString(DukptCalcObj.DUKPT_KSN)?.uppercase()
+                        if (!encryptedPan.isNullOrEmpty()) {
+                            hashMap[EmvConstants.EMV_TAG_ENC_PAN] = encryptedPan
+                            Log.d("ENCRYPTION", "✅ ENCRYPTED PAN (LYRA): $encryptedPan")
+                        } else {
+                            Log.w("ENCRYPTION", "⚠️ Encrypted PAN is null or empty.")
+                        }
+
+                        if (!ksn.isNullOrEmpty()) {
+                            hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksn
+                            Log.d("ENCRYPTION", "🔑 KSN TRACK DATA (LYRA): $ksn")
+                        } else {
+                            Log.w("ENCRYPTION", "⚠️ KSN is null or empty.")
+                        }
+                    }
+            } catch (e: RemoteException) {
+                Log.e("ENCRYPTION", "❌ Exception encrypting PAN", e)
             }
 
             /* Set Pin Block */
@@ -1633,6 +1725,26 @@ class EmvWrapperRepository @Inject constructor(
 
         fun onNFCErrorInfor(p0: ContantPara.NfcErrMessageID?, p1: String?) {
             Log.d("EMV_APP", "NFC Trans Error:" + p0?.toString())
+        }
+
+        fun ysdkToEmvTransResult(result : Int): TransStatus? {
+            return when (result) {
+                0 -> TransStatus.APPROVED_ONLINE
+//                ContantPara.TransactionResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
+//                ContantPara.TransactionResult.ONLINE_DECLINED -> TransStatus.DECLINED_ONLINE
+//                ContantPara.TransactionResult.OFFLINE_DECLINED -> TransStatus.DECLINED_OFFLINE
+//                ContantPara.TransactionResult.CANCELED -> TransStatus.CANCELED
+//                ContantPara.TransactionResult.CANCELED_OR_TIMEOUT -> TransStatus.CANCELED
+//                ContantPara.TransactionResult.TERMINATED -> TransStatus.TERMINATED
+//                ContantPara.TransactionResult.CARD_BLOCKED_APP_FAIL -> TransStatus.CARD_BLOCKED
+//                ContantPara.TransactionResult.APPLICATION_BLOCKED_APP_FAIL -> TransStatus.APP_BLOCKED
+//                ContantPara.TransactionResult.NO_EMV_APPS -> TransStatus.NO_EMV_APPS
+//                ContantPara.TransactionResult.SELECT_APP_FAIL -> TransStatus.APP_SELECTION_FAILED
+//                ContantPara.TransactionResult.INVALID_ICC_DATA -> TransStatus.INVALID_ICC_CARD
+//                ContantPara.TransactionResult.ICC_CARD_REMOVED -> TransStatus.CARD_REMOVED
+
+                else -> TransStatus.ERROR
+            }
         }
 
         fun urovoToEmvTransResult(transactionResult: ContantPara.TransactionResult?): TransStatus? {
