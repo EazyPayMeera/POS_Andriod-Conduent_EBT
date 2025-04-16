@@ -36,6 +36,7 @@ import com.morefun.yapi.device.pinpad.DukptLoadObj
 import com.morefun.yapi.device.pinpad.OnPinPadInputListener
 import com.morefun.yapi.device.pinpad.PinAlgorithmMode
 import com.morefun.yapi.device.pinpad.PinPadConstrants
+import com.morefun.yapi.device.reader.icc.ICCSearchResult
 import com.morefun.yapi.emv.EmvAidPara
 import com.morefun.yapi.emv.EmvCapk
 import com.morefun.yapi.emv.EmvDataSource
@@ -318,6 +319,72 @@ class EmvWrapperRepository @Inject constructor(
                     Log.d(TAG, "Bundle key: $key, value: $value")
                 }
             }
+
+            when(p0) {
+                ServiceResult.Success -> {
+                    // 7: TAP card 1:DIP card
+                    var type = p1?.getInt(ICCSearchResult.CARDOTHER) ?: 0
+                    iEmvSdkResponseListener?.onEmvSdkResponse(
+                        EmvSdkResult.CardCheckResult(
+                            status = ysdkToCheckCardStatus(
+                                type
+                            )
+                        )
+                    )
+                }
+                ServiceResult.TimeOut ->{
+                    iEmvSdkResponseListener?.onEmvSdkResponse(
+                        EmvSdkResult.CardCheckResult(
+                            status = EmvSdkResult.CardCheckStatus.TIMEOUT
+                        )
+                    )
+                }
+                else -> {
+                    iEmvSdkResponseListener?.onEmvSdkResponse(
+                        EmvSdkResult.CardCheckResult(
+                            status = EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
+                        )
+                    )
+                }
+            }/*else {
+                iEmvSdkResponseListener?.onEmvSdkResponse(
+                    EmvSdkResult.CardCheckResult(
+                        status = EmvSdkResult.CardCheckStatus.ERROR
+                    )
+                )
+            }*/
+
+                /*            iEmvSdkResponseListener?.onEmvSdkResponse(
+                                EmvSdkResult.CardCheckResult(
+                                    status = urovoToCheckCardStatus(
+                                        p0
+                                    )
+                                )
+                            )
+
+                            *//* Process MSR from here only *//*
+            p0.takeIf { it == ContantPara.CheckCardResult.MSR && p1?.containsKey(EmvConstants.UROVO_SDK_KEY_MSR_DATA) == true }
+                ?.let {
+                    var msrTlv = TlvUtils(p1?.get(EmvConstants.UROVO_SDK_KEY_MSR_DATA) ?: "")
+                    var nfcTlv = TlvUtils()
+                    checkCardResult = ContantPara.CheckCardResult.MSR
+
+                    msrTlv.tlvMap.containsKey(EmvConstants.UROVO_SDK_KEY_MSR_TRACK2)
+                        .takeIf { it == true }?.let {
+                            msrTlv.tlvMap[EmvConstants.UROVO_SDK_KEY_MSR_TRACK2]?.let {
+                                var trackData =
+                                    it.hexToByteArray().decodeToString().replace('=', 'D')
+                                nfcTlv.addTagValHex(
+                                    EmvConstants.EMV_TAG_TRACK2,
+                                    trackData,
+                                    0,
+                                    trackData.length
+                                )
+                            }
+                        }
+                    encryptThenRequestOnline(nfcTlv.toTlvString())
+                }
+        }*/
         }
 
         override fun onDisplayMessage() {
@@ -537,6 +604,11 @@ class EmvWrapperRepository @Inject constructor(
                         bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, true)
                     else
                         bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, false)
+
+                    if(it in listOf(CardCheckMode.SWIPE, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP))
+                        bundle.putBoolean(EmvTransDataConstrants.SUPPORT_MAG_CARD, true)
+                    else
+                        bundle.putBoolean(EmvTransDataConstrants.SUPPORT_MAG_CARD, false)
                 }
                 it.cardCheckTimeout?.let { bundle.putInt(EmvTransDataConstrants.CHECK_CARD_TIME_OUT, it.toInt()) }
                 //it.enableBeeper?.let { data["enableBeeper"] = it }
@@ -1130,7 +1202,7 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
-    fun readPan(): String? {
+    private fun readPan(): String? {
         val pan = getPbocData("5A")
         if (pan.isNullOrEmpty()) {
             return getPanFromTrack2()
@@ -1204,7 +1276,7 @@ class EmvWrapperRepository @Inject constructor(
 
         private fun bindService(context: Context?=null, recreate : Boolean? = false) {
             try {
-                Log.d(TAG, "Binding Service with context $context")
+                //Log.d(TAG, "Binding Service with context $context")
                 deviceService?.emvHandler?.endPBOC()
                 deviceService?.takeIf { recreate == true }?.let {
                     Log.d(TAG, "Unbinding earlier service")
@@ -1779,6 +1851,25 @@ class EmvWrapperRepository @Inject constructor(
                 ContantPara.NfcTransResult.OTHER_INTERFACES -> TransStatus.TRY_ANOTHER_INTERFACE
 
                 else -> TransStatus.ERROR
+            }
+        }
+
+        fun ysdkToCheckCardStatus(checkCardResult : Int): EmvSdkResult.CardCheckStatus? {
+            return when (checkCardResult) {
+                    1 -> EmvSdkResult.CardCheckStatus.CARD_INSERTED
+                    7 -> EmvSdkResult.CardCheckStatus.CARD_TAPPED
+//                ContantPara.CheckCardResult.MSR -> EmvSdkResult.CardCheckStatus.CARD_SWIPED
+//                ContantPara.CheckCardResult.NOT_ICC -> EmvSdkResult.CardCheckStatus.NOT_ICC_CARD
+//                ContantPara.CheckCardResult.USE_ICC_CARD -> EmvSdkResult.CardCheckStatus.USE_ICC_CARD
+//                ContantPara.CheckCardResult.BAD_SWIPE -> EmvSdkResult.CardCheckStatus.BAD_SWIPE
+//                ContantPara.CheckCardResult.NEED_FALLBACK -> EmvSdkResult.CardCheckStatus.NEED_FALLBACK
+//                ContantPara.CheckCardResult.MULT_CARD -> EmvSdkResult.CardCheckStatus.MULTIPLE_CARDS
+//                ContantPara.CheckCardResult.TIMEOUT -> EmvSdkResult.CardCheckStatus.TIMEOUT
+//                ContantPara.CheckCardResult.CANCEL -> EmvSdkResult.CardCheckStatus.CANCEL
+//                ContantPara.CheckCardResult.DEVICE_BUSY -> EmvSdkResult.CardCheckStatus.DEVICE_BUSY
+//                ContantPara.CheckCardResult.NO_CARD -> EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
+                else -> EmvSdkResult.CardCheckStatus.ERROR
+
             }
         }
 
