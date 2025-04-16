@@ -21,7 +21,6 @@ object HardwareUtils {
     {
         try {
             return EmvWrapperRepository.injectTMK(tmk, kcv, context)
-            //return PinPadProviderImpl.getInstance().loadMainKey(EncryptionConstants.KEY_INDEX_MAIN_KEY, tmk.hexToByteArray(), kcv.hexToByteArray())
         }catch (exception : Exception)
         {
             Log.e("HARDWARE_UTILS", exception.message.toString())
@@ -33,14 +32,7 @@ object HardwareUtils {
     suspend fun injectDukptPinKey(ipek: String, ksn: String,context: Context?=null) : Boolean
     {
         try {
-            var ipekBytes = ipek.hexToByteArray()
-            var ksnBytes = ksn.hexToByteArray()
             return EmvWrapperRepository.injectDukptPinKey(ipek, ksn, context)
-/*
-            return PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_PIN, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0 &&
-                    PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_TDK, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0 &&
-                    PinPadProviderImpl.getInstance().downloadKeyDukpt(EncryptionConstants.DUKPT_KEY_SET_EMV, null,0, ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size) == 0
-*/
         }catch (exception : Exception)
         {
             Log.e("HARDWARE_UTILS", exception.message.toString())

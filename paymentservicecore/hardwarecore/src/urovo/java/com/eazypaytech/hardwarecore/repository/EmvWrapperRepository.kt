@@ -167,7 +167,32 @@ class EmvWrapperRepository @Inject constructor(@ApplicationContext context: Cont
             checkCardResult = null
         }
 
+         @OptIn(ExperimentalStdlibApi::class)
+         suspend fun injectTMK(tmk : String, kcv : String, context : Context?=null) : Boolean {
+             return PinPadProviderImpl.getInstance().loadMainKey(
+                 EncryptionConstants.KEY_INDEX_MAIN_KEY,
+                 tmk.hexToByteArray(),
+                 kcv.hexToByteArray()
+             )
+         }
 
+        @OptIn(ExperimentalStdlibApi::class)
+        suspend fun injectDukptPinKey(ipek : String, ksn : String, context : Context?=null) : Boolean {
+            var ipekBytes = ipek.hexToByteArray()
+            var ksnBytes = ksn.hexToByteArray()
+            return PinPadProviderImpl.getInstance().downloadKeyDukpt(
+                EncryptionConstants.DUKPT_KEY_SET_PIN, null, 0,
+                ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size
+            ) == 0 &&
+                    PinPadProviderImpl.getInstance().downloadKeyDukpt(
+                        EncryptionConstants.DUKPT_KEY_SET_TDK, null, 0,
+                        ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size
+                    ) == 0 &&
+                    PinPadProviderImpl.getInstance().downloadKeyDukpt(
+                        EncryptionConstants.DUKPT_KEY_SET_EMV, null, 0,
+                        ksnBytes, ksnBytes.size, ipekBytes, ipekBytes.size
+                    ) == 0
+        }
 
         @OptIn(ExperimentalStdlibApi::class)
         fun getEmvTag(tag : String?) : String?
