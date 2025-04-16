@@ -1128,8 +1128,10 @@ class EmvWrapperRepository @Inject constructor(
 
         private fun bindService(context: Context?=null, recreate : Boolean? = false) {
             try {
+                Log.d(TAG, "Binding Service with context $context")
                 deviceService?.emvHandler?.endPBOC()
                 deviceService?.takeIf { recreate == true }?.let {
+                    Log.d(TAG, "Unbinding earlier service")
                     context?.unbindService(this)
                     deviceService?.logout()
                     deviceService = null
@@ -1140,6 +1142,7 @@ class EmvWrapperRepository @Inject constructor(
                     val intent = Intent(EmvConstants.MF_SERVICE_ACTION).apply {
                         setPackage(EmvConstants.MF_SERVICE_PACKAGE)
                     }
+                    Log.d(TAG, "Binding new service")
                     context?.bindService(intent, this, Context.BIND_AUTO_CREATE)?.let {
                         if (it == true) {
                             Log.d(TAG, "Service binding successful")
@@ -1188,22 +1191,16 @@ class EmvWrapperRepository @Inject constructor(
             checkCardResult = null
         }
 
-        fun getDeviceService(context: Context?=null) : DeviceServiceEngine?
+        suspend fun getDeviceService(context: Context?=null) : DeviceServiceEngine?
         {
-            CoroutineScope(Dispatchers.Default).launch {
-                bindService(context)
-            }
-            var iServiceTimeout  = 10000
-            while (serviceConnected.isActive && iServiceTimeout>0){
-                Thread.sleep(100)
-                iServiceTimeout-=100;
-            }
-
+            bindService(context)
+            if(serviceConnected.isActive)
+                serviceConnected.await()
             return deviceService
         }
 
         @OptIn(ExperimentalStdlibApi::class)
-        fun injectTMK(tmk: String, kcv: String, context: Context?=null): Boolean {
+        suspend fun injectTMK(tmk: String, kcv: String, context: Context?=null): Boolean {
 
             Log.d("HARDWARE_UTILS", "injectTMK() called")
             Log.d("HARDWARE_UTILS", "TMK: $tmk")
@@ -1241,7 +1238,7 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
-        fun injectDukptPinKey(ipek: String, ksn: String, context: Context?=null): Boolean {
+        suspend fun injectDukptPinKey(ipek: String, ksn: String, context: Context?=null): Boolean {
             Log.d("HARDWARE_UTILS", "injectDukptPinKey() called")
             Log.d("HARDWARE_UTILS", "IPEK: $ipek")
             Log.d("HARDWARE_UTILS", "KSN: $ksn")

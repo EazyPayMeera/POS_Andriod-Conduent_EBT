@@ -13,11 +13,11 @@ object HardwareUtils {
     fun getDeviceSN() : String
     {
         //return DeviceManager().deviceId
-        return "80042414067318" // TODO:Hardcoded as of now for testing
+        return "80042414067304" // TODO:Hardcoded as of now for testing with EP000101 - EPTEST000000101
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun injectTMK(tmk: String, kcv: String, context: Context?=null) : Boolean
+    suspend fun injectTMK(tmk: String, kcv: String, context: Context?=null) : Boolean
     {
         try {
             return EmvWrapperRepository.injectTMK(tmk, kcv, context)
@@ -30,7 +30,7 @@ object HardwareUtils {
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun injectDukptPinKey(ipek: String, ksn: String,context: Context?=null) : Boolean
+    suspend fun injectDukptPinKey(ipek: String, ksn: String,context: Context?=null) : Boolean
     {
         try {
             var ipekBytes = ipek.hexToByteArray()

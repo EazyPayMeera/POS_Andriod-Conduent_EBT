@@ -43,7 +43,7 @@ object PaymentServiceUtils {
         return HardwareUtils.getDeviceSN()
     }
 
-    fun injectKeys(ipek: String?, ksn: String?, kcv: String?, context : Context?=null) : Boolean {
+    suspend fun injectKeys(ipek: String?, ksn: String?, kcv: String?, context : Context?=null) : Boolean {
         if (ipek?.isNotEmpty() == true && ksn?.isNotEmpty() == true && kcv?.isNotEmpty() == true) {
             /* Here DUKPT Pin Key serves as main key as well. Used for encryption of track data */
             return HardwareUtils.injectTMK(ipek, kcv, context) && HardwareUtils.injectDukptPinKey(ipek,ksn, context)

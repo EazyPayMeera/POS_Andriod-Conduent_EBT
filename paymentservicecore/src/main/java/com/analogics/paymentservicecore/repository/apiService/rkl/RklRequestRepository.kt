@@ -14,6 +14,9 @@ import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.handler.SecureKeyHandler
 import dagger.hilt.android.internal.Contexts
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -35,37 +38,46 @@ class RklRequestRepository@Inject constructor(
             builderServiceRepository.networkServiceRequest(
                 object : IBuilderServiceResponseListenerLyra{
                     override fun onBuilderSuccess(response: ByteArray) {
-                        /* Parse Response Packet to Object */
-                        var keyInjectResult = false
-                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseRklResponse(response)
-                        resPaymentServiceTxnDetails.let {
-                            if(it.encryptedIpek?.isNotEmpty()==true && it.ksn?.isNotEmpty()==true && it.kcv?.isNotEmpty()==true) {
-                                var ipek = SecureKeyHandler.decryptRSA(
-                                    it.encryptedIpek,
-                                    paymentServiceTxnDetails?.devicePrivateKey
-                                )
-                                keyInjectResult =
-                                    PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv)
+                        CoroutineScope(Dispatchers.Default).launch {
+                            /* Parse Response Packet to Object */
+                            var keyInjectResult = false
+                            var resPaymentServiceTxnDetails =
+                                apiRequestBuilder.parseRklResponse(response)
+                            resPaymentServiceTxnDetails.let {
+                                if (it.encryptedIpek?.isNotEmpty() == true && it.ksn?.isNotEmpty() == true && it.kcv?.isNotEmpty() == true) {
+                                    var ipek = SecureKeyHandler.decryptRSA(
+                                        it.encryptedIpek,
+                                        paymentServiceTxnDetails?.devicePrivateKey
+                                    )
+                                    keyInjectResult =
+                                        PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv, context)
 
-                                Log.d("RKL","Private Key    :${paymentServiceTxnDetails?.devicePrivateKey}")
-                                Log.d("RKL","Public Key     :${paymentServiceTxnDetails?.devicePublicKey}")
-                                Log.d("RKL","Encrypted IPEK :${it.encryptedIpek}")
-                                Log.d("RKL","Decrypted IPEK :$ipek")
-                                Log.d("RKL","KSN            :${it.ksn}")
-                                Log.d("RKL","KCV            :${it.kcv}")
-                                Log.d("RKL","RKL Success    :${keyInjectResult}")
+                                    Log.d(
+                                        "RKL",
+                                        "Private Key    :${paymentServiceTxnDetails?.devicePrivateKey}"
+                                    )
+                                    Log.d(
+                                        "RKL",
+                                        "Public Key     :${paymentServiceTxnDetails?.devicePublicKey}"
+                                    )
+                                    Log.d("RKL", "Encrypted IPEK :${it.encryptedIpek}")
+                                    Log.d("RKL", "Decrypted IPEK :$ipek")
+                                    Log.d("RKL", "KSN            :${it.ksn}")
+                                    Log.d("RKL", "KCV            :${it.kcv}")
+                                    Log.d("RKL", "RKL Success    :${keyInjectResult}")
+                                }
                             }
-                        }
 
-                        paymentServiceTxnDetails?.let {
-                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                            paymentServiceTxnDetails?.let {
+                                it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
 
-                            if(it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED && keyInjectResult == true)
-                                it.txnStatus = TxnStatus.APPROVED.toString()
-                            else
-                                it.txnStatus = TxnStatus.DECLINED.toString()
+                                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED && keyInjectResult == true)
+                                    it.txnStatus = TxnStatus.APPROVED.toString()
+                                else
+                                    it.txnStatus = TxnStatus.DECLINED.toString()
 
-                            onAPIServiceResponse(it)
+                                onAPIServiceResponse(it)
+                            }
                         }
                     }
 
