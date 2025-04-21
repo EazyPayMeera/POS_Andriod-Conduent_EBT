@@ -42,7 +42,7 @@ object EmvConstants {
     /* MoreFun Specific values */
     const val MF_SERVICE_PACKAGE =                      "com.morefun.ysdk"
     const val MF_SERVICE_ACTION =                       "com.morefun.ysdk.service"
-    const val MF_BUSINESS_ID_CLEAR_TRACK =               "09100000"
+    const val MF_BUSINESS_ID_CLEAR_TRACK =              "09100000"
 
     const val UROVO_SDK_KEY_EMV_DATA =                  "EMVDATA"
     const val UROVO_SDK_KEY_MSR_DATA =                  "StripInfo"
@@ -51,38 +51,12 @@ object EmvConstants {
     const val UROVO_SDK_EMV_LOG_DISABLE   =             0
     const val UROVO_SDK_EMV_LOG_ENABLE   =              1
 
-    const val UROVO_SDK_PRINTER_KEY_FONT_SIZE   =           "fontSize"
-    const val UROVO_SDK_PRINTER_KEY_FONT_NAME   =           "fontName"
-    const val UROVO_SDK_PRINTER_KEY_ALIGN   =               "align"
-    const val UROVO_SDK_PRINTER_KEY_BOLD_FONT   =           "fontBold"
-    const val UROVO_SDK_PRINTER_KEY_NEW_LINE   =            "newline"
-    const val UROVO_SDK_PRINTER_KEY_LINE_HEIGHT   =         "lineHeight"
-
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_SMALL = 12
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_SMALL =       16
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_MEDIUM =      24
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_LARGE =       32
-    const val UROVO_SDK_PRINTER_VAL_FONT_SIZE_EXTRA_LARGE = 40
-
-    const val UROVO_SDK_PRINTER_VAL_FONT_NAME_SIMSUN =      "simsun"
-
-    const val UROVO_SDK_PRINTER_VAL_ALIGN_LEFT =            0
-    const val UROVO_SDK_PRINTER_VAL_ALIGN_CENTER =          1
-    const val UROVO_SDK_PRINTER_VAL_ALIGN_RIGHT =           2
-
-    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_EXTRA_SMALL =   1
-    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_SMALL =         2
-    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_MEDIUM =        3
-    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_LARGE =         4
-    const val UROVO_SDK_PRINTER_VAL_LINE_HEIGHT_EXTRA_LARGE =   5
-
-    const val UROVO_SDK_PRINTER_RET_SUCCESS =               0x00
-    const val UROVO_SDK_PRINTER_RET_OUT_OF_PAPER =          0xF0
-    const val UROVO_SDK_PRINTER_RET_OVERHEAT =              0xF3
-    const val UROVO_SDK_PRINTER_RET_LOW_POWER =             0xE1
-    const val UROVO_SDK_PRINTER_RET_BUSY =                  0xF7
-    const val UROVO_SDK_PRINTER_RET_ERROR =                 0xFB
-    const val UROVO_SDK_PRINTER_RET_HARDWARE_ERROR =        0xF2
+    const val MF_PRINTER_RET_SUCCESS =                      0
+    const val MF_PRINTER_RET_ERROR =                        -1001
+    const val MF_PRINTER_RET_BUSY =                         -1004
+    const val MF_PRINTER_RET_OUT_OF_PAPER =                 -1005
+    const val MF_PRINTER_RET_HARDWARE_ERROR =               -1007
+    const val MF_PRINTER_RET_LOW_POWER =                    -1013
 
     /* Host Response */
     const val EMV_TAG_RESP_CODE =                           "8A"

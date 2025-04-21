@@ -1274,7 +1274,7 @@ class EmvWrapperRepository @Inject constructor(
         private var serviceConnected = CompletableDeferred<Boolean>()
         private var TAG = "MOREFUN"
 
-        private fun bindService(context: Context?=null, recreate : Boolean? = false) {
+        private suspend fun bindService(context: Context?=null, recreate : Boolean? = false) {
             try {
                 //Log.d(TAG, "Binding Service with context $context")
                 deviceService?.emvHandler?.endPBOC()
