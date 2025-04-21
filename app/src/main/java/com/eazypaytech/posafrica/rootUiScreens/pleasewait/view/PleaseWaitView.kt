@@ -25,71 +25,19 @@ import kotlinx.coroutines.delay
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PleaseWaitView(navHostController: NavHostController) {
-    val isMerchantReceipt = true
-    val isCustomerReceipt = false
 
-    val context = LocalContext.current
-    val viewModel: PleaseWaitViewModel = viewModel { PleaseWaitViewModel(context) }
-    var isPrintingStarted by remember { mutableStateOf(false) }
     var isDialogVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        if (isMerchantReceipt) {
-            // Phase 1: Show "Please Wait" for a few seconds
-            delay(2000) // Delay for 4 seconds before starting the printing process
-            isPrintingStarted = true
-
-            // Phase 2: Printing process
-            val bitmap = viewModel.getLogoBitmap(context, R.drawable.master_mono)
-            val imageData: ByteArray = viewModel.getBitmapBytes(bitmap) ?: ByteArray(0)
-            var format = Bundle().apply {
-                putInt("align", -1)
-                putInt("width", 300)
-                putInt("height", 100)
-                putInt("offset", 0)
-            }
-            viewModel.addImage(format, imageData)
-
-            format = Bundle().apply {
-                putInt("align", 1)
-                putInt("width", 300)
-                putInt("height", 100)
-                putSerializable("barcode_type", BarcodeFormat.CODE_39)
-            }
-
-           /* viewModel.addReceiptDetails(format, object : IPrinterResultProviderListener {
-                override fun onSuccess(result: Any?) {
-                    if (result == true) {
-                        Log.d(TAG, "Receipt printed successfully")
-                    } else {
-                        Log.d(TAG, "Receipt print failed")
-                    }
-                }
-
-                override fun onFailure(exception: Exception) {
-                    Log.e(TAG, "Receipt print failed with exception: ${exception.message}")
-                }
-            })*/
-
-
+    CustomDialogBuilder.create()
+        .setTitle(stringResource(id = R.string.processing))
+        .setSubtitle(stringResource(id = R.string.plz_wait))
+        .setSmallText(stringResource(id = R.string.processing))
+        .setShowCloseButton(true) // Can set to false if you don't want the close button
+        .setCancelable(true)
+        .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
+        .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+        .setNavAction {
+            navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
         }
-        delay(2000) // Additional delay to ensure the printing completes
-
-    }
-
-    /*if (isMerchantReceipt || isCustomerReceipt) {*/
-        CustomDialogBuilder.create()
-            .setTitle(stringResource(id = R.string.processing))
-            .setSubtitle(stringResource(id = R.string.plz_wait))
-            .setSmallText(stringResource(id = R.string.processing))
-            .setShowCloseButton(true) // Can set to false if you don't want the close button
-            .setCancelable(true)
-            .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-            .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
-            .setNavAction {
-                navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-            }
-            .buildDialog(onClose = { isDialogVisible = false })
-
-
+        .buildDialog(onClose = { isDialogVisible = false })
 }

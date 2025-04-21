@@ -4,6 +4,7 @@ import android.content.Context
 import android.device.DeviceManager
 import android.device.SEManager
 import android.util.Log
+import com.eazypaytech.hardwarecore.BuildConfig
 import com.eazypaytech.tpaymentcore.constants.EncryptionConstants
 import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
 import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
@@ -13,7 +14,10 @@ object HardwareUtils {
     fun getDeviceSN() : String
     {
         //return DeviceManager().deviceId
-        return "80042414067304" // TODO:Hardcoded as of now for testing with EP000101 - EPTEST000000101
+        return if(BuildConfig.HW_TYPE == "MOREFUN") "80042414067304" else "80042414067318"
+        // TODO:Hardcoded as of now for testing with
+        // 80042414067304 = EP000101 - EPTEST000000101
+        // 80042414067318 = YL000002 - YLTEST000000002
     }
 
     @OptIn(ExperimentalStdlibApi::class)
