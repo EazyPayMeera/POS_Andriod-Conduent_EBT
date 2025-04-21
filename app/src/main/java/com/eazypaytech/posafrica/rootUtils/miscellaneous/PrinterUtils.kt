@@ -136,30 +136,18 @@ object PrinterUtils {
 
             /* Total Amount */
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
             .addText(context.getString(R.string.receipt_total),objRootAppPaymentDetails.ttlAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
 
             /* Customer Note */
             .addText(context.getString(R.string.receipt_note),
                 format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER)
-            )
-
-            .feedLine()
-
-            /* Customer Copy / Merchant Copy */
-            .addText(context.getString(R.string.receipt_custom_copy),
-                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
-                condition = isCustomer
-            )
-            .addText(context.getString(R.string.receipt_merch_copy),
-                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
-                condition = !isCustomer
             )
 
             .feedLine()
@@ -178,6 +166,17 @@ object PrinterUtils {
             .addText(objRootAppPaymentDetails.footer4,
                 format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
                 condition = isCustomer)
+            .feedLine(condition = isCustomer)
+
+            /* Customer Copy / Merchant Copy */
+            .addText(context.getString(R.string.receipt_custom_copy),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                condition = isCustomer
+            )
+            .addText(context.getString(R.string.receipt_merch_copy),
+                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                condition = !isCustomer
+            )
             .feedLine()
             .print()
     }
