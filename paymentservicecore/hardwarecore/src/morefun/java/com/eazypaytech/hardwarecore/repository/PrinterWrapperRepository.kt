@@ -78,8 +78,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         )
     }
 
-    private fun toYSDKFont(format: Int) : Int
-    {
+    private fun toYSDKFont(format: Int): Int {
         /* Font Size */
         return if (format.and(FontSize.LARGE.value) == FontSize.LARGE.value)
             FontFamily.BIG
@@ -89,7 +88,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
             FontFamily.MIDDLE
     }
 
-    private fun toYSDKAlign(format: Int) : Int {
+    private fun toYSDKAlign(format: Int): Int {
         /* Font Size */
         return if (format.and(Align.RIGHT.value) == Align.RIGHT.value)
             Gravity.RIGHT
@@ -104,26 +103,33 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
             if (col2 != null && col3 != null) {
                 printer?.appendPrnStr(
                     makeLine(
-                        format,
-                        makeItem(format,col1),
-                        makeItem(format,col2),
-                        makeItem(format,col3),
+                        format = format,
+                        columnPercents = listOf(0.4f, 0.2f, 0.4f),
+                        maxLinesPerColumn = 2,
+                        addEllipsis = true,
+                        makeItem(format, col1),
+                        makeItem(format, col2),
+                        makeItem(format, col3),
                     ), toYSDKFont(format), format.and(Style.BOLD.value) == Style.BOLD.value
                 )
-            }
-            else if(col2!=null) {
+            } else if (col2 != null) {
                 printer?.appendPrnStr(
                     makeLine(
                         format,
+                        columnPercents = listOf(0.45f, 0.55f),
+                        maxLinesPerColumn = 2,
+                        addEllipsis = true,
                         makeItem(format, col1),
                         makeItem(format, col2),
                     ), toYSDKFont(format), format.and(Style.BOLD.value) == Style.BOLD.value
                 )
-            }
-            else if(col1!=null) {
+            } else if (col1 != null) {
                 printer?.appendPrnStr(
                     makeLine(
                         format,
+                        columnPercents = listOf(1.0f),
+                        maxLinesPerColumn = 2,
+                        addEllipsis = true,
                         makeItem(format, col1)
                     ), toYSDKFont(format), format.and(Style.BOLD.value) == Style.BOLD.value
                 )
@@ -135,7 +141,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
 
     fun feedLine(lines: Int? = 1) {
         try {
-            printer?.feedPaper(lines?:1, FeedUnit.LINE)
+            printer?.feedPaper(lines ?: 1, FeedUnit.LINE)
         } catch (exception: Exception) {
             Log.e(TAG, exception.message.toString())
         }
@@ -144,7 +150,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
     fun print() {
         try {
             /* Notify that printing has started */
-            if(printer?.status==0) {
+            if (printer?.status == 0) {
                 iPrinterSdkResponseListener.onPrinterSdkResponse(
                     PrinterSdkResult.Result(
                         PrinterSdkResult.Status.PRINTING
@@ -156,7 +162,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
             printer?.startPrint(object : OnPrintListener.Stub() {
                 override fun onPrintResult(p0: Int) {
                     Log.e(TAG, "Printer Result : $p0")
-                    when(p0) {
+                    when (p0) {
                         EmvConstants.MF_PRINTER_RET_SUCCESS -> {
                             iPrinterSdkResponseListener.onPrinterSdkResponse(
                                 PrinterSdkResult.Result(
@@ -164,7 +170,8 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
                                 )
                             )
                         }
-                        else-> notifyPrintStatus(p0)
+
+                        else -> notifyPrintStatus(p0)
                     }
                 }
             })
@@ -190,64 +197,153 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         return textItem
     }
 
-    private fun makeLine(format: Int, vararg textItems: TextItem): String {
-        var totalPX = 0f
-        val resultText = StringBuilder()
+    private fun makeLine(
+        format: Int,
+        columnPercents: List<Float>,
+        maxLinesPerColumn: Int = 2,
+        addEllipsis: Boolean = true,
+        vararg textItems: TextItem
+    ): String {
 
-        /* Adjust alignment */
-        if(textItems.size == 3)
-        {
+        val columnWidthsPX = columnPercents.map { it * printerPixelWidth }
+        val wrappedColumns = textItems.mapIndexed { index, item ->
+            wrapText(
+                item.originalText,
+                item.font,
+                columnWidthsPX[index],
+                maxLinesPerColumn,
+                addEllipsis
+            )
+        }
+
+        if (textItems.size == 3) {
             textItems[0].setPaddingAlign(Gravity.LEFT)
             textItems[1].setPaddingAlign(Gravity.CENTER)
             textItems[2].setPaddingAlign(Gravity.RIGHT)
-        }
-        else if(textItems.size == 2)
-        {
+        } else if (textItems.size == 2) {
             textItems[0].setPaddingAlign(Gravity.LEFT)
             textItems[1].setPaddingAlign(Gravity.RIGHT)
-        }
-        else
-        {
+        } else {
             textItems[0].setPaddingAlign(toYSDKAlign(format))
         }
 
-        for (textItem in textItems) {
-            val text = textItem.getText()
-            val textPX = measureTextPX(text, textItem.font)
-            totalPX += textPX
+        val maxLines = wrappedColumns.maxOfOrNull { it.size } ?: 0
+        val resultLines = mutableListOf<String>()
 
-            when (textItem.getAlign()) {
-                Gravity.RIGHT -> {
-                    val fillSpaceNum = when (textItem.font) {
-                        FontFamily.BIG -> ((printerPixelWidth - totalPX) / 8).toInt()
-                        FontFamily.SMALL -> ((printerPixelWidth - totalPX) / 4).toInt()
-                        else -> ((printerPixelWidth - totalPX) / 6).toInt()
-                    }
-                    textItem.setFillSpaceNum(fillSpaceNum)
+        for (lineIndex in 0 until maxLines) {
+            val lineBuilder = StringBuilder()
+
+            for (i in textItems.indices) {
+                val item = textItems[i]
+                val colWidthPX = columnWidthsPX[i]
+                val text = wrappedColumns[i].getOrNull(lineIndex) ?: ""
+                val textPX = measureTextPX(text, item.font)
+
+                val spaceLeft = colWidthPX - textPX
+                val spaceChars = when (item.font) {
+                    FontFamily.BIG -> (spaceLeft / 8).toInt()
+                    FontFamily.SMALL -> (spaceLeft / 4).toInt()
+                    else -> (spaceLeft / 6).toInt()
+                }.coerceAtLeast(0)
+
+                val alignedText = when (item.getAlign()) {
+                    Gravity.CENTER -> item.copy(originalText = text).addBothSidePadding(spaceChars)
+                    Gravity.RIGHT -> item.copy(originalText = text).addLeftPadding(spaceChars)
+                    else -> item.copy(originalText = text).addRightPadding(spaceChars)
                 }
-                Gravity.CENTER -> {
-                    val fillSpaceNum = when (textItem.font) {
-                        FontFamily.BIG -> ((printerPixelWidth - totalPX) / 8).toInt()
-                        FontFamily.SMALL -> ((printerPixelWidth - totalPX) / 4).toInt()
-                        else -> ((printerPixelWidth - totalPX) / 6).toInt()
-                    }
-                    textItem.setFillSpaceNum(fillSpaceNum/2)
-                }
-                Gravity.FILL_HORIZONTAL -> {
-                    if (textItem.getPxSize() > textPX) {
-                        val fillSpaceNum = when (textItem.font) {
-                            FontFamily.BIG -> ((textItem.getPxSize() - textPX) / 8).toInt()
-                            FontFamily.SMALL -> ((textItem.getPxSize() - textPX) / 4).toInt()
-                            else -> ((textItem.getPxSize() - textPX) / 6).toInt()
-                        }
-                        textItem.setFillSpaceNum(fillSpaceNum)
-                    }
-                }
+
+                // Ensure column stays in place by padding to full column width
+                val fixedColumnChars = getSpaceWidth(item.font).toInt()
+                val paddedFixedWidth = alignedText.padEnd(fixedColumnChars, ' ')
+                lineBuilder.append(paddedFixedWidth)
             }
-            resultText.append(textItem.getText())
+
+            resultLines.add(lineBuilder.toString())
         }
 
-        return resultText.toString()
+        return resultLines.joinToString("\n")
+    }
+
+    private fun getSpaceWidth(font: Int): Float {
+        val paint = Paint()
+        paint.textSize = when (font) {
+            FontFamily.BIG -> 32f
+            FontFamily.SMALL -> 16f
+            else -> 24f
+        }
+        return paint.measureText(" ")  // Measure width of space character dynamically
+    }
+
+    private fun wrapText(
+        text: String,
+        font: Int,
+        maxWidth: Float,
+        maxLines: Int? = null,
+        addEllipsis: Boolean = false
+    ): List<String> {
+        val paint = Paint().apply {
+            textSize = when (font) {
+                FontFamily.BIG -> 32f
+                FontFamily.SMALL -> 16f
+                else -> 24f
+            }
+        }
+
+        val lines = mutableListOf<String>()
+        var currentLine = ""
+
+        fun finalizeLine() {
+            if (currentLine.isNotEmpty()) {
+                lines.add(currentLine)
+                currentLine = ""
+            }
+        }
+
+        val words = text.split(" ")
+        for (word in words) {
+            val testLine = if (currentLine.isEmpty()) word else "$currentLine $word"
+            if (paint.measureText(testLine) <= maxWidth) {
+                currentLine = testLine
+            } else {
+                if (paint.measureText(word) > maxWidth) {
+                    // Break word by characters
+                    finalizeLine()
+                    var part = ""
+                    for (char in word) {
+                        val tryPart = part + char
+                        if (paint.measureText(tryPart) > maxWidth) {
+                            lines.add(part)
+                            part = "$char"
+                            if (maxLines != null && lines.size >= maxLines) break
+                        } else {
+                            part = tryPart
+                        }
+                    }
+                    if (part.isNotEmpty() && (maxLines == null || lines.size < maxLines)) {
+                        lines.add(part)
+                    }
+                } else {
+                    finalizeLine()
+                    currentLine = word
+                }
+
+                if (maxLines != null && lines.size >= maxLines) break
+            }
+        }
+
+        finalizeLine()
+
+        if (maxLines != null && lines.size > maxLines) {
+            val truncated = lines.take(maxLines).toMutableList()
+            if (addEllipsis && truncated.isNotEmpty()) {
+                val last = truncated.last()
+                val shortLast = last.dropLast(3).takeIf { it.length >= 3 } ?: last
+                truncated[truncated.lastIndex] = "$shortLast..."
+            }
+            return truncated
+        }
+
+        return lines
     }
 
     private fun measureTextPX(text: String, font: Int): Float {
@@ -264,8 +360,6 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         var font: Int = FontFamily.MIDDLE
             private set
         private var paddingAlign: Int = Gravity.LEFT
-        private var fillSpaceNum: Int = 0
-        private var pxSize: Float = 0f
 
         fun setFont(font: Int): TextItem {
             this.font = font
@@ -277,37 +371,28 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
             return this
         }
 
-        fun setFillSpaceNum(num: Int): TextItem {
-            this.fillSpaceNum = num
-            return this
-        }
-
-        fun getText(): String {
-            if (originalText.isEmpty()) return ""
-            return when (paddingAlign) {
-                Gravity.RIGHT, Gravity.CENTER -> addPadding(originalText, true, ' ', fillSpaceNum)
-                Gravity.FILL_HORIZONTAL -> addPadding(originalText, false, ' ', fillSpaceNum)
-                else -> originalText
-            }
-        }
-
-        fun setText(text: String) {
-            this.originalText = text
-        }
-
         fun getAlign(): Int = paddingAlign
 
-        fun getPxSize(): Float = pxSize
-
-        fun setPxSize(pxSize: Float): TextItem {
-            this.pxSize = pxSize
-            return this
+        // Padding helpers
+        fun addLeftPadding(numSpaces: Int): String {
+            return " ".repeat(numSpaces) + originalText
         }
 
-        private fun addPadding(src: String, isLeft: Boolean, padding: Char, fixLen: Int): String {
-            val paddingStr = padding.toString().repeat(fixLen)
-            return if (isLeft) paddingStr + src else src + paddingStr
+        fun addRightPadding(numSpaces: Int): String {
+            return originalText + " ".repeat(numSpaces)
         }
+
+        fun addBothSidePadding(totalSpaces: Int): String {
+            val half = totalSpaces / 2
+            val left = " ".repeat(half)
+            val right = " ".repeat(totalSpaces - half)
+            return "$left$originalText$right"
+        }
+
+        fun copy(originalText: String = this.originalText): TextItem {
+            return TextItem(originalText).setFont(font).setPaddingAlign(paddingAlign)
+        }
+
     }
 }
 
