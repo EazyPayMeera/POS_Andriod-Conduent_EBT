@@ -225,7 +225,7 @@ object PrinterUtils {
             .feedLine()
 
             /* Summary Title */
-            .addText(context.getString(R.string.summary_report),
+            .addText(context.getString(R.string.receipt_printing_summary),
                 format = PrintFormat().fontSize(FontSize.LARGE).align(Align.CENTER)
             )
 
@@ -256,7 +256,7 @@ object PrinterUtils {
 
             /* Transaction Counts & Totals */
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
 
             .addText(context.getString(R.string.summary_purchase),"x"+_report.getPurchaseCount(), _report.getPurchaseTotal().toAmountFormat(),
@@ -286,7 +286,7 @@ object PrinterUtils {
             )
 
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
 
             .addText(context.getString(R.string.summary_total), _report.getNetTotal().toAmountFormat(),
@@ -373,7 +373,7 @@ object PrinterUtils {
 
             /* Transaction Counts & Totals */
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
 
             .addText(context.getString(R.string.summary_purchase),"x"+_report.getPurchaseCount(), _report.getPurchaseTotal().toAmountFormat(),
@@ -403,7 +403,7 @@ object PrinterUtils {
             )
 
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
 
             .addText(context.getString(R.string.summary_total), _report.getNetTotal().toAmountFormat(),
@@ -411,7 +411,7 @@ object PrinterUtils {
             )
 
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
 
 
@@ -423,7 +423,7 @@ object PrinterUtils {
 
             /* Headers for Transaction Record */
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
             /* Transaction Type, Card Brand Last4 & Transaction Status */
             .addText(context.getString(R.string.detail_txn_Type), context.getString(R.string.detail_card), context.getString(R.string.detail_txn_Status),
@@ -442,7 +442,7 @@ object PrinterUtils {
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
             .addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             ).apply {
 
                 for (item in listObjRootAppPaymentDetails!!) {
@@ -468,7 +468,7 @@ object PrinterUtils {
                             format = PrintFormat().fontSize(FontSize.SMALL)
                         )
                         .addText(context.getString(R.string.receipt_gray_line),
-                            format = PrintFormat().fontSize(FontSize.MEDIUM)
+                            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
                         )
                 }
             }
