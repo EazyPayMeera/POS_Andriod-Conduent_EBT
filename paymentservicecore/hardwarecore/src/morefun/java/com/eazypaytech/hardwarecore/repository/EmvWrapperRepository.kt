@@ -115,7 +115,7 @@ class EmvWrapperRepository @Inject constructor(
         try {
             val buffer = ByteArray(3096)
             val bundle = Bundle()
-            bundle.putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal)
+            bundle.putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, EncryptionConstants.KEY_INDEX_DATA_KEY.ordinal)
 
             val bytesRead = deviceService?.emvHandler?.readEmvData(tags, buffer, bundle)?:0
 
@@ -438,7 +438,7 @@ class EmvWrapperRepository @Inject constructor(
             deviceService?.pinPad?.apply {
                 setTimeOut(30)
                 setSupportPinLen(intArrayOf(0, 6))
-                inputOnlinePin(bundle, panBlock, DukptLoadObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal, PinAlgorithmMode.ISO9564FMT1,
+                inputOnlinePin(bundle, panBlock, EncryptionConstants.KEY_INDEX_PIN_KEY.ordinal, PinAlgorithmMode.ISO9564FMT1,
                     object : OnPinPadInputListener.Stub() {
                         override fun onInputResult(
                             ret: Int,
@@ -1218,7 +1218,7 @@ class EmvWrapperRepository @Inject constructor(
     private fun getPbocData(tagName: String, isHex: Boolean?=true): String? {
         return try {
             val bundle = Bundle().apply {
-                putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal)
+                putInt(DukptCalcObj.Param.DUKPT_KEY_INDEX, EncryptionConstants.KEY_INDEX_DATA_KEY.ordinal)
             }
 
             (deviceService?.emvHandler?.getTlvs(tagName.hexToByteArray(), EmvDataSource.FROMKERNEL, bundle) ?:
@@ -1360,7 +1360,7 @@ class EmvWrapperRepository @Inject constructor(
                 Log.d("HARDWARE_UTILS", "Converted TMK to ByteArray: ${tmkByteArray.joinToString()}")
 
                 var result = getDeviceService(context)?.pinPad?.loadPlainDesKey(
-                    EncryptionConstants.KEY_INDEX_MAIN_KEY,
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
                     tmkByteArray,
                     tmkByteArray.size
                 )
@@ -1370,7 +1370,7 @@ class EmvWrapperRepository @Inject constructor(
                 val isSuccess = result == 0
                 Log.d("HARDWARE_UTILS", "TMK Injection Success: $isSuccess")
 
-                var checkKey = deviceService?.pinPad?.getKeyKcv(CheckKeyEnum.DES_MASTER_KEY,EncryptionConstants.KEY_INDEX_MAIN_KEY)
+                var checkKey = deviceService?.pinPad?.getKeyKcv(CheckKeyEnum.DES_MASTER_KEY,EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal)
 
                 Log.d("HARDWARE_UTILS", "Key KCV: ${checkKey?.kcv}")
 
@@ -1396,7 +1396,7 @@ class EmvWrapperRepository @Inject constructor(
                     ipek,
                     ksn,
                     DukptLoadObj.DukptKeyTypeEnum.DUKPT_IPEK_PLAINTEXT,
-                    DukptLoadObj.DukptKeyIndexEnum.KEY_INDEX_5
+                    EncryptionConstants.KEY_LOAD_INDEX_PIN_KEY
                 )
 
                 Log.d("HARDWARE_UTILS", "DukptLoadObj created: $dukptLoadObj")
@@ -1421,7 +1421,7 @@ class EmvWrapperRepository @Inject constructor(
                 val bundle = Bundle().apply {
                     putInt(
                         DukptCalcObj.Param.DUKPT_KEY_INDEX,
-                        DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal
+                        EncryptionConstants.KEY_INDEX_DATA_KEY.ordinal
                     )
                 }
 
@@ -1533,7 +1533,8 @@ class EmvWrapperRepository @Inject constructor(
         }
 
         fun initEncryption() {
-            deviceService?.pinPad?.increaseKSN(DukptLoadObj.DukptKeyIndexEnum.KEY_INDEX_5.ordinal,true)
+            /* Pin & Data key is same for lyra. Increase only one */
+            deviceService?.pinPad?.increaseKSN(EncryptionConstants.KEY_INDEX_DATA_KEY.ordinal,true)
             pinBlock = null
             ksn = null
         }
@@ -1572,7 +1573,7 @@ class EmvWrapperRepository @Inject constructor(
             /* Encrypt Track2 Data */
             try {
                 val trackCalcObj = DukptCalcObj(
-                    DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5,
+                    EncryptionConstants.KEY_INDEX_DATA_KEY,
                     DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1,
                     DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT,
                     DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB,
@@ -1601,7 +1602,7 @@ class EmvWrapperRepository @Inject constructor(
 
             /* Encrypt PAN */
             try {
-                val panCalcObj = DukptCalcObj(DukptCalcObj.DukptKeyIndexEnum.KEY_INDEX_5, DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1, DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT, DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB, cardPanBytes.toHexString())
+                val panCalcObj = DukptCalcObj(EncryptionConstants.KEY_INDEX_DATA_KEY, DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1, DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT, DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB, cardPanBytes.toHexString())
                     deviceService?.pinPad?.dukptCalcDes(panCalcObj)?.let {
                         val encryptedPan = it.getString(DukptCalcObj.DUKPT_DATA)?.uppercase()
                         val ksn = it.getString(DukptCalcObj.DUKPT_KSN)?.uppercase()

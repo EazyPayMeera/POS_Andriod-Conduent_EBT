@@ -25,7 +25,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
     val TAG: String = "PRINTER_WRAPPER"
     lateinit var context: Context
     private var printer: Printer? = null
-    private val printerPixelWidth = 376
+    private val printerPixelWidth = 384
 
     fun init(context: Context): Int {
         var printerInit = CountDownLatch(1);
