@@ -1,6 +1,7 @@
 package com.eazypaytech.posafrica.rootUtils.miscellaneous
 
 import android.content.Context
+import androidx.compose.ui.res.stringResource
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
@@ -15,7 +16,10 @@ import com.eazypaytech.posafrica.rootModel.Symbol.Type
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Style
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCardEntryStringId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusStringId
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnTypeStringId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toDecimalFormat
 
@@ -95,13 +99,18 @@ object PrinterUtils {
                 condition = objRootAppPaymentDetails.isDemoMode == true)
 
             /* Transaction Type & Transaction Status */
-            .addText(objRootAppPaymentDetails.txnType.toString(),
-                objRootAppPaymentDetails.txnStatus.toString(),
+            .addText(context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)),
+                context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
                 format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
             )
 
             /* Card Brand & Number */
             .addText(context.getString(R.string.receipt_card_no),objRootAppPaymentDetails.cardBrand.toString() + " " + objRootAppPaymentDetails.cardMaskedPan,
+                format = PrintFormat().fontSize(FontSize.SMALL)
+            )
+
+            /* Card Entry Mode */
+            .addText(context.getString(R.string.receipt_card_entry_mode), context.getString(getCardEntryStringId(objRootAppPaymentDetails.cardEntryMode)),
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
 
