@@ -1451,7 +1451,7 @@ class EmvWrapperRepository @Inject constructor(
         fun abortPayment() {
             job?.cancel()
             job = null
-            //EmvNfcKernelApi.getInstance().abortKernel()
+            deviceService?.emvHandler?.endPBOC()
         }
 
         @OptIn(ExperimentalStdlibApi::class)
@@ -1505,11 +1505,18 @@ class EmvWrapperRepository @Inject constructor(
                                     if(hasOnlineResp == true) {
                                         putString(
                                             EmvOnlineResult.REJCODE,
-                                            tlvTags.tlvMap[EmvConstants.EMV_TAG_RESP_CODE]
+                                            tlvTags.tlvMap[EmvConstants.EMV_TAG_RESP_CODE]?.hexToByteArray()?.decodeToString()
                                         )
                                         putByteArray(
                                             EmvOnlineResult.RECVARPC_DATA,
-                                            tlvTags.toTlvString().hexToByteArray()
+                                            tlvTags.toTlvString(listOf(
+                                                EmvConstants.EMV_TAG_RESP_CODE,
+                                                EmvConstants.EMV_TAG_ISSUER_AUTH_DATA,
+                                                EmvConstants.EMV_TAG_AUTH_CODE,
+                                                EmvConstants.EMV_TAG_SCRIPT_71,
+                                                EmvConstants.EMV_TAG_SCRIPT_72,
+                                                )
+                                            ).hexToByteArray()
                                         )
                                     }
                                     if(hasAuthCode == true)
@@ -1802,7 +1809,14 @@ class EmvWrapperRepository @Inject constructor(
 
         fun ysdkToEmvTransResult(result : Int): TransStatus? {
             return when (result) {
-                0 -> TransStatus.APPROVED_ONLINE
+                EmvConstants.MF_EMV_RET_SUCCESS -> TransStatus.APPROVED_ONLINE
+                EmvConstants.MF_EMV_RET_DECLINED -> TransStatus.DECLINED_ONLINE
+                EmvConstants.MF_EMV_RET_CANCELLED -> TransStatus.CANCELED
+                EmvConstants.MF_EMV_RET_TERMINATED -> TransStatus.TERMINATED
+                EmvConstants.MF_EMV_RET_APP_BLOCKED -> TransStatus.APP_BLOCKED
+                EmvConstants.MF_EMV_RET_FALLBACK -> TransStatus.TRY_ANOTHER_INTERFACE
+                EmvConstants.MF_EMV_RET_OTHER_ERROR -> TransStatus.ERROR
+
 //                ContantPara.TransactionResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
 //                ContantPara.TransactionResult.ONLINE_DECLINED -> TransStatus.DECLINED_ONLINE
 //                ContantPara.TransactionResult.OFFLINE_DECLINED -> TransStatus.DECLINED_OFFLINE

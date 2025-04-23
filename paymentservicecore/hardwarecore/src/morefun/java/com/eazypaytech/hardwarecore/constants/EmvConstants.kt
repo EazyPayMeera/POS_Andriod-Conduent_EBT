@@ -51,6 +51,18 @@ object EmvConstants {
     const val UROVO_SDK_EMV_LOG_DISABLE   =             0
     const val UROVO_SDK_EMV_LOG_ENABLE   =              1
 
+
+    const val MF_EMV_RET_SUCCESS =                      0
+    const val MF_EMV_RET_QPBOC_ONLINE =                 -8003
+    const val MF_EMV_RET_PARAM_ERROR =                  -8011
+    const val MF_EMV_RET_APP_BLOCKED =                  -8013
+    const val MF_EMV_RET_FALLBACK =                     -8014
+    const val MF_EMV_RET_SEND_ONLINE =                  -8019
+    const val MF_EMV_RET_CANCELLED =                    -8020
+    const val MF_EMV_RET_DECLINED =                     -8021
+    const val MF_EMV_RET_TERMINATED =                   -8022
+    const val MF_EMV_RET_OTHER_ERROR =                  -8999
+
     const val MF_PRINTER_RET_SUCCESS =                      0
     const val MF_PRINTER_RET_ERROR =                        -1001
     const val MF_PRINTER_RET_BUSY =                         -1004
