@@ -37,6 +37,8 @@ import com.morefun.yapi.device.pinpad.OnPinPadInputListener
 import com.morefun.yapi.device.pinpad.PinAlgorithmMode
 import com.morefun.yapi.device.pinpad.PinPadConstrants
 import com.morefun.yapi.device.reader.icc.ICCSearchResult
+import com.morefun.yapi.device.reader.mag.MagCardInfoEntity
+import com.morefun.yapi.device.reader.mag.OnSearchMagCardListener
 import com.morefun.yapi.emv.EmvAidPara
 import com.morefun.yapi.emv.EmvCapk
 import com.morefun.yapi.emv.EmvDataSource
@@ -74,6 +76,7 @@ class EmvWrapperRepository @Inject constructor(
 ) :
     IEmvWrapperRequestListener {
     private var TAG = "MOREFUN"
+    private var isMagSupported = false
     val arqcTLVTags: Array<String> = arrayOf(
         "9F26",
         "9F27",
@@ -195,6 +198,51 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    val magCardListener = object :  OnSearchMagCardListener.Stub() {
+        override fun onSearchResult(
+            p0: Int,
+            p1: MagCardInfoEntity?
+        ) {
+            Log.d(TAG, "Card Swiped......: $p0")
+            Log.d(TAG, "Card No..........: ${p1?.cardNo}")
+            Log.d(TAG, "Card Holder Name.: ${p1?.cardholderName}")
+            Log.d(TAG, "Expiry Date......: ${p1?.expDate}")
+            Log.d(TAG, "Service Code.....: ${p1?.serviceCode}")
+
+
+
+            p0.takeIf {
+                it == ServiceResult.Success &&
+                        p1?.tk2ValidResult == ServiceResult.Success
+            }?.let {
+                checkCardResult = ContantPara.CheckCardResult.MSR
+                iEmvSdkResponseListener?.onEmvSdkResponse(
+                    EmvSdkResult.CardCheckResult(
+                        status = EmvSdkResult.CardCheckStatus.CARD_SWIPED
+                    )
+                )
+
+                var msrTlv = TlvUtils()
+                var trackData = p1?.tk2?.uppercase()?.replace('=', 'D')?.trim('F')
+                msrTlv.addTagValHex(
+                    EmvConstants.EMV_TAG_TRACK2,
+                    trackData,
+                    0,
+                    trackData?.length ?: 0
+                )
+                encryptThenRequestOnline(msrTlv.toTlvString())
+            } ?:let {
+                iEmvSdkResponseListener?.onEmvSdkResponse(
+                    EmvSdkResult.CardCheckResult(
+                        status = EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
+                    )
+                )
+
+                deviceService?.magCardReader?.searchCard(this,30, Bundle())
+                deviceService?.magCardReader?.setIsCheckLrc(true)
+            }
+        }
+    }
 
     val emvListener = object : OnEmvProcessListener.Stub() {
         override fun onSelApp(
@@ -595,20 +643,10 @@ class EmvWrapperRepository @Inject constructor(
                 }    //00-goods 01-cash 09-cashback 20-refund
                 (it.cardCheckMode ?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let {
                     //data["checkCardMode"] = it.sdkValue
-                    if(it in listOf(CardCheckMode.INSERT, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP))
-                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, true)
-                    else
-                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, false)
-
-                    if(it in listOf(CardCheckMode.TAP, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP))
-                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, true)
-                    else
-                        bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, false)
-
-                    if(it in listOf(CardCheckMode.SWIPE, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP))
-                        bundle.putBoolean(EmvTransDataConstrants.SUPPORT_MAG_CARD, true)
-                    else
-                        bundle.putBoolean(EmvTransDataConstrants.SUPPORT_MAG_CARD, false)
+                    bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, it in listOf(CardCheckMode.INSERT, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP))
+                    bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, it in listOf(CardCheckMode.TAP, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP))
+                    isMagSupported = it in listOf(CardCheckMode.SWIPE, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP)
+                    bundle.putBoolean(EmvTransDataConstrants.SUPPORT_MAG_CARD, isMagSupported)
                 }
                 it.cardCheckTimeout?.let { bundle.putInt(EmvTransDataConstrants.CHECK_CARD_TIME_OUT, it.toInt()) }
                 //it.enableBeeper?.let { data["enableBeeper"] = it }
@@ -644,7 +682,17 @@ class EmvWrapperRepository @Inject constructor(
             //EmvNfcKernelApi.getInstance().setListener(this)
 
             job = CoroutineScope(Dispatchers.Default).launch {
-                getDeviceService(context)?.emvHandler?.emvTrans(bundle, emvListener)
+                getDeviceService(context)?.let {
+                    it.emvHandler?.emvTrans(bundle, emvListener)
+                    if(isMagSupported) {
+                        it.magCardReader?.searchCard(magCardListener,
+                            transConfig?.cardCheckTimeout?.toInt()
+                                ?: EmvConstants.EMV_DEFAULT_CARD_READ_TIMEOUT,
+                            Bundle()
+                        )
+                        it.magCardReader?.setIsCheckLrc(true)
+                    }
+                }
                 //bindDeviceService(context)                //EmvNfcKernelApi.getInstance().startKernel(data)
             }
         } catch (e: Exception) {
@@ -1203,7 +1251,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     private fun readPan(): String? {
-        val pan = getPbocData("5A")
+        val pan = getPbocData(EmvConstants.EMV_TAG_PAN)
         if (pan.isNullOrEmpty()) {
             return getPanFromTrack2()
         }
@@ -1224,7 +1272,7 @@ class EmvWrapperRepository @Inject constructor(
             (deviceService?.emvHandler?.getTlvs(tagName.hexToByteArray(), EmvDataSource.FROMKERNEL, bundle) ?:
             deviceService?.emvHandler?.getTlvs(tagName.hexToByteArray(), EmvDataSource.FROMCARD, bundle))?.let {
                 if (it.isNotEmpty()) {
-                    if (isHex==true) it.toHexString() else it.decodeToString()
+                    if (isHex==true) it.toHexString().uppercase() else it.decodeToString()
                 } else {
                     null
                 }
@@ -1278,6 +1326,7 @@ class EmvWrapperRepository @Inject constructor(
             try {
                 //Log.d(TAG, "Binding Service with context $context")
                 deviceService?.emvHandler?.endPBOC()
+                deviceService?.magCardReader?.stopSearch()
                 deviceService?.takeIf { recreate == true }?.let {
                     Log.d(TAG, "Unbinding earlier service")
                     context?.unbindService(this)
@@ -1452,6 +1501,7 @@ class EmvWrapperRepository @Inject constructor(
             job?.cancel()
             job = null
             deviceService?.emvHandler?.endPBOC()
+            deviceService?.magCardReader?.stopSearch()
         }
 
         @OptIn(ExperimentalStdlibApi::class)
