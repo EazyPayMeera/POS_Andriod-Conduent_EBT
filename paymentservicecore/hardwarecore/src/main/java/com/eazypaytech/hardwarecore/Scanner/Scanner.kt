@@ -4,9 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.eazypaytech.tpaymentcore.listener.responseListener.IScannerHandlerListener
-import com.urovo.file.logfile
-import com.urovo.sdk.scanner.InnerScannerImpl
-import com.urovo.sdk.scanner.listener.ScannerListener
 
 class Scanner private constructor() {
 
@@ -20,37 +17,15 @@ class Scanner private constructor() {
             }
     }
 
-    private var innerScanner: InnerScannerImpl? = null
-
     // Initialize the scanner
     fun initScanner(context: Context) {
-        logfile.printLog("===initScanner in Scanner kt")
-        if (innerScanner == null) {
-            innerScanner = InnerScannerImpl.getInstance(context)
-        }
+
     }
 
     // Start scanning
     fun startScan(data: Bundle, cameraId: Int, timeout: Long, scannerHandlerListener: IScannerHandlerListener) {
         try {
-            innerScanner?.startScan(innerScanner?.mContext ?: return, data, cameraId, timeout, object : ScannerListener {
-                override fun onSuccess(result: String) {
-                    Log.d("Scanner", "Scan successful in scanner kt: $result")
-                    scannerHandlerListener.onScannerRespHandler(result)
-                }
 
-                override fun onError(code: Int, message: String) {
-                    scannerHandlerListener.onScannerRespHandler("FAIL")
-                }
-
-                override fun onCancel() {
-                    scannerHandlerListener.onScannerRespHandler("FAIL")
-                }
-
-                override fun onTimeout() {
-                    scannerHandlerListener.onScannerRespHandler("FAIL")
-                }
-            })
         } catch (e: Exception) {
             Log.e("Scanner", "Error starting scan: ${e.message}")
         }
@@ -59,7 +34,6 @@ class Scanner private constructor() {
     // Stop scanning
     fun stopScan() {
         try {
-            innerScanner?.stopScan()
         } catch (e: Exception) {
             Log.e("Scanner", "Error stopping scan: ${e.message}")
         }

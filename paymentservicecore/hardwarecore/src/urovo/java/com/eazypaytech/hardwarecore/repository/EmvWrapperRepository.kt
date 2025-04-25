@@ -115,7 +115,7 @@ class EmvWrapperRepository @Inject constructor(@ApplicationContext context: Cont
                 it.cashbackAmount?.let { data["cashbackAmount"] = it; _cashbackAmount = it.toLongOrNull()?:0L }
                 it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
                 it.transactionType?.let { data["transactionType"] = it.takeLast(2) }    //00-goods 01-cash 09-cashback 20-refund
-                (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = it.sdkValue }
+                (it.cardCheckMode?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let { data["checkCardMode"] = toUrovoCheckCardMode(it) }
                 it.cardCheckTimeout?.let { data["checkCardTimeout"] = it }
                 it.enableBeeper?.let { data["enableBeeper"] = it }
                 it.supportFallback?.let { if(it == true) data["FallbackSwitch"] = "1" else data["FallbackSwitch"] = "0"}
@@ -508,6 +508,21 @@ class EmvWrapperRepository @Inject constructor(@ApplicationContext context: Cont
                 ContantPara.NfcTransResult.OTHER_INTERFACES -> TransStatus.TRY_ANOTHER_INTERFACE
 
                 else -> TransStatus.ERROR
+            }
+        }
+
+        fun toUrovoCheckCardMode(cardCheckMode : CardCheckMode?) : ContantPara.CheckCardMode?
+        {
+            return when(cardCheckMode)
+            {
+                CardCheckMode.SWIPE -> ContantPara.CheckCardMode.SWIPE
+                CardCheckMode.INSERT -> ContantPara.CheckCardMode.INSERT
+                CardCheckMode.TAP -> ContantPara.CheckCardMode.TAP
+                CardCheckMode.SWIPE_OR_INSERT -> ContantPara.CheckCardMode.SWIPE_OR_INSERT
+                CardCheckMode.SWIPE_OR_TAP -> ContantPara.CheckCardMode.SWIPE_OR_TAP
+                CardCheckMode.INSERT_OR_TAP -> ContantPara.CheckCardMode.INSERT_OR_TAP
+                CardCheckMode.SWIPE_OR_INSERT_OR_TAP -> ContantPara.CheckCardMode.SWIPE_OR_INSERT_OR_TAP
+                else -> null
             }
         }
 
