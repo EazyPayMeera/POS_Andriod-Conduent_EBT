@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("org.jetbrains.kotlin.kapt")
 }
-configurations.maybeCreate("default")
+
 
 val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
 
@@ -62,11 +62,11 @@ dependencies {
     implementation(libs.material)
     when (hwType) {
         "UROVO" -> {
-            implementation(files("libs/urovo_sdk_v1.0.12.aar"))
+            implementation("urovo-sdk:urovo-sdk:1.0.12")
         }
         "MOREFUN" -> {
             implementation(files("libs/ysdk_6.03.2729e7f_25041014.jar"))
-            implementation(files("libs/urovo_sdk_v1.0.12.aar")) /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
+            implementation("urovo-sdk:urovo-sdk:1.0.12") /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
         }
     }
 
