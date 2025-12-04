@@ -1340,6 +1340,22 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        fun loadAndVerifyWorkingPinKey(
+            workingKeyHex: String,
+            keyIndex: Int = 1
+        ): Boolean {
+
+            val keyBytes = workingKeyHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+
+            // Load Key
+            val loadResult = deviceService?.pinPad?.loadWKey(0, keyIndex, keyBytes, 1)
+            if (loadResult != 0) return false
+
+            // Verify KCV
+            val kcv = deviceService?.pinPad?.calcWKeyKCV(0, keyIndex)
+            return kcv != null && kcv.isNotEmpty()
+        }
+
         suspend fun injectDukptPinKey(ipek: String, ksn: String, context: Context?=null): Boolean {
             Log.d("HARDWARE_UTILS", "injectDukptPinKey() called")
             Log.d("HARDWARE_UTILS", "IPEK: $ipek")
@@ -1640,6 +1656,9 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
     }
+
+
+
 
     private fun bcdToBinaryArray(bcdArray: ByteArray): ByteArray {
         val decimalStr = buildString {

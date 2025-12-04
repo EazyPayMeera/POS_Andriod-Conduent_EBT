@@ -1,6 +1,7 @@
 package com.eazypaytech.posafrica.rootUiScreens.activationScreen.viewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,17 +32,16 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository, private var txnDBRepository: TxnDBRepository) :
     ViewModel(),
     IApiServiceResponseListener {
-    var tidInput = mutableStateOf("")
+    var procIdInput = mutableStateOf("")
     var midInput = mutableStateOf("")
     val isActivationBtnEnabled = mutableStateOf(true)
     lateinit var navHostController: NavHostController
     var sharedViewModel : SharedViewModel? = null
     val isFormValid: Boolean
-        get() = tidInput.value.isNotBlank() && tidInput.value.length == AppConstants.MAX_LENGTH_TID &&
-                midInput.value.isNotBlank() &&  midInput.value.length == AppConstants.MAX_LENGTH_MID
+        get() = procIdInput.value.isNotBlank() && procIdInput.value.length == AppConstants.MAX_LENGTH_PROC_ID
 
     fun onTidChange(tid: String) {
-        tidInput.value = tid
+        procIdInput.value = tid
     }
 
     fun onMidChange(mid: String) {
@@ -64,19 +64,17 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     @OptIn(ExperimentalEncodingApi::class)
     fun collectActivationData()
     {
-        sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
+        sharedViewModel?.objRootAppPaymentDetail?.terminalId = procIdInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
         sharedViewModel?.objPosConfig?.apply {
-            terminalId = tidInput.value
+            terminalId = procIdInput.value
             merchantId = midInput.value
         }?.saveToPrefs()
     }
 
     fun onInvalidFormData(context: Context) {
-        var message = if(tidInput.value.length != AppConstants.MAX_LENGTH_TID)
+        var message = if(procIdInput.value.length != AppConstants.MAX_LENGTH_PROC_ID)
             context.resources.getString(R.string.act_tid_length)
-        else if(midInput.value.length != AppConstants.MAX_LENGTH_MID)
-            context.resources.getString(R.string.act_mid_length)
         else
             context.resources.getString(R.string.act_empty_tid_mid)
 
@@ -93,7 +91,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
                 // Collect required activation data
                 collectActivationData()
-
+                Log.d("Conduent","Start Activation Process")
                 // Uncomment the following line if needed to make the API request with the transformed object
                 apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
@@ -209,7 +207,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     fun onLoad(sharedViewModel : SharedViewModel)
     {
-        sharedViewModel.objPosConfig?.terminalId?.let { tidInput.value = it }
+        sharedViewModel.objPosConfig?.terminalId?.let { procIdInput.value = it }
         sharedViewModel.objPosConfig?.merchantId?.let { midInput.value = it }
     }
 }

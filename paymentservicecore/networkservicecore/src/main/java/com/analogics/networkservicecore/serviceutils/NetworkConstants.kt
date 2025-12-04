@@ -1,7 +1,8 @@
 package com.eazypaytech.networkservicecore.serviceutils
 
 object NetworkConstants {
-        const val BASEURL = "https://apis.sandbox.globalpay.com"
+        //const val BASEURL = "https://http://posuat.services.conduent.com"
+        const val BASEURL = "https://posuat.services.conduent.com/"
         const val PATH_ACCESS_TOKEN = "/ucp/accesstoken"
 
 
@@ -13,6 +14,6 @@ object NetworkConstants {
         const val DIGEST_ALGORITHM = "SHA-512"
 
         /* HOST Address */
-        const val HOST_ADDRESS = "124.153.66.37"
-        const val HOST_PORT = 5167
+        const val HOST_ADDRESS = "posuat.services.conduent.com"
+        const val HOST_PORT = 54811
 }

@@ -277,50 +277,74 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     /* Request Builders */
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
-    fun createRklRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
-        val stan = getSTAN()
+//    fun createRklRequest(): ByteArray {
+//        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+//        val stan = getSTAN()
+//
+//        message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
+//
+//        /* TPDU Header */
+//        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
+//            this[3] = ((stan/100)%100).toInt().toBcd()
+//            this[4] = (stan%100).toInt().toBcd()
+//        }
+//
+//        /* Field 3, Processing Code, N6, Mandatory */
+//        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
+//
+//        /* Field 11, STAN, N6, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_STAN,
+//                stan, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
+//
+//        /* Field 12, Time, N6, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_TIME,
+//            BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT), IsoType.TIME,BuilderConstants.ISO_FIELD_TIME_LENGTH)
+//
+//        /* Field 13, Date, N4, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_DATE,
+//            BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_DATE_FORMAT), IsoType.DATE4,BuilderConstants.ISO_FIELD_DATE_LENGTH)
+//
+//        /* Field 24, NII, N3, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_NII_LENGTH)
+//
+//        /* Field 41, TID, ANS8, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+//
+//        /* Field 42, MID, ANS15, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
+//
+//        /* Field 60, Serial No, ANS...999, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_TERM_SR_NO, builderServiceTxnDetails?.deviceSN, IsoType.LLLVAR,builderServiceTxnDetails?.deviceSN?.length?:0)
+//
+//        /* Field 62, Working Key, ANS...999, Mandatory */
+//            .setValue(BuilderConstants.ISO_FIELD_WORKING_KEY, builderServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,builderServiceTxnDetails?.devicePublicKey?.length?:0)
+//
+//        return appendIsoLength(message.writeData())
+//    }
 
-        message = messageFactory.newMessage(BuilderConstants.MTI_NETWORK_REQ)
-
-        /* TPDU Header */
-        message.binaryIsoHeader = BuilderConstants.ISO_HEADER.apply {
-            this[3] = ((stan/100)%100).toInt().toBcd()
-            this[4] = (stan%100).toInt().toBcd()
-        }
-
-        /* Field 3, Processing Code, N6, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_PROC_CODE, BuilderConstants.PROC_CODE_RKL_FULL_SN, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_PROC_CODE_LENGTH)
-
-        /* Field 11, STAN, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_STAN,
-                stan, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_STAN_LENGTH)
-
-        /* Field 12, Time, N6, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TIME,
-            BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT), IsoType.TIME,BuilderConstants.ISO_FIELD_TIME_LENGTH)
-
-        /* Field 13, Date, N4, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_DATE,
-            BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_DATE_FORMAT), IsoType.DATE4,BuilderConstants.ISO_FIELD_DATE_LENGTH)
-
-        /* Field 24, NII, N3, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_NII_LENGTH)
-
-        /* Field 41, TID, ANS8, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
-
-        /* Field 42, MID, ANS15, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
-
-        /* Field 60, Serial No, ANS...999, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TERM_SR_NO, builderServiceTxnDetails?.deviceSN, IsoType.LLLVAR,builderServiceTxnDetails?.deviceSN?.length?:0)
-
-        /* Field 62, Working Key, ANS...999, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_WORKING_KEY, builderServiceTxnDetails?.devicePublicKey, IsoType.LLLVAR,builderServiceTxnDetails?.devicePublicKey?.length?:0)
-
-        return appendIsoLength(message.writeData())
+    fun createRklRequest(): ByteArray {
+        // ---------- Dynamic Fields ----------
+        val de007 = BuilderUtils.getCurrentDateTime("MMddHHmmss") // Transmission date/time MMDDhhmmss
+        val stan = getSTAN()                                      // STAN (6 digits)
+        val de011 = stan.toString().padStart(6, '0')             // Ensure 6-digit STAN
+        val de032 = "00004000002"                                 // Acquirer ID
+        val de032Prefixed = de032.length.toString().padStart(2, '0') + de032 // LLVAR
+        val de070 = "180".padStart(3, '0')                       // Network Management Code
+        val de096 = "04000007"                                    // Key Management Data
+        val de096Prefixed = de096.length.toString().padStart(3, '0') + de096 // LLLVAR
+        val bitmapPrimary = "8220000100000000"
+        val bitmapSecondary = "0400000100000000"
+        val bitmap = bitmapPrimary + bitmapSecondary
+        val mti = "0800"
+        val messageStr = mti + bitmap + de007 + de011 + de032Prefixed + de070 + de096Prefixed
+        val bodyBytes = messageStr.toByteArray(Charsets.US_ASCII)
+        return bodyBytes
     }
+
+
+
+
+
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun parseRklResponse(response: ByteArray): BuilderServiceTxnDetails {

@@ -17,6 +17,7 @@
 
     <!-- Activation Screen -->
     <string name="act_title">अभी सक्रिय करें</string>
+    <string name="act_label_enter_Proc_id">कृपया प्रोसेसर आईडी दर्ज करें</string>
     <string name="act_prompt_activate">कृपया डिवाइस सक्रिय करने के लिए TID और MID दर्ज करें</string>
     <string name="act_label_enter_tid">कृपया TID दर्ज करें</string>
     <string name="act_label_enter_Mid">कृपया MID दर्ज करें</string>
@@ -149,6 +150,7 @@
     <string name="scan_qr">क्यूआर/बारकोड स्कैन करें</string>
     <string name="password_">पासवर्ड भूल गए?</string>
     <string name="call_customercare">पासवर्ड के लिए ग्राहक सेवा को कॉल करें</string>
+    <string name="proc_id">प्रोसेसर आईडी:</string>
     <string name="mid">एमआईडी:</string>
     <string name="tid">टीआईडी:</string>
     <string name="sr_no">क्रमांक:</string>

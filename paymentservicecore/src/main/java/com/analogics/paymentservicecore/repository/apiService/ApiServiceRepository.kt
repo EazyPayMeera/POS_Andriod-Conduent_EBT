@@ -177,13 +177,16 @@ class ApiServiceRepository @Inject constructor(
      ) {
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-
-         rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){
-             onApiServiceResponse(it)
+         Log.d("Conduent","apiServiceRklRequest")
+         // Call the Echo Test request
+         rklRequestRepository.apiRklRequest { response ->
+             // Forward the response to listener
+             //iApiServiceResponseListener.onApiServiceResponse(response)
          }
      }
 
-    override suspend fun apiServiceBatch(
+
+     override suspend fun apiServiceBatch(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {

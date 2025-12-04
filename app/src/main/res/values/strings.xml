@@ -18,11 +18,12 @@
 
     <!-- Activation Screen -->
     <string name="act_title">Activate Now</string>
-    <string name="act_prompt_activate">Please Enter TID and MID to Activate Device</string>
+    <string name="act_prompt_activate">Enter Processor ID to Activate Device</string>
+    <string name="act_label_enter_Proc_id">Please Enter Processor ID</string>
     <string name="act_label_enter_tid">Please Enter TID</string>
     <string name="act_label_enter_Mid">Please Enter MID</string>
-    <string name="act_empty_tid_mid">TID and MID should not be empty</string>
-    <string name="act_tid_length">TID length should be 8</string>
+    <string name="act_empty_tid_mid">Processor ID should not be empty</string>
+    <string name="act_tid_length">Processor ID should be 11</string>
     <string name="act_mid_length">MID length should be 15</string>
     <string name="act_failed">Activation Failed</string>
 
@@ -150,6 +151,7 @@
     <string name="scan_qr">Scan QR/Barcode</string>
     <string name="password_">Forget Password ?</string>
     <string name="call_customercare">Call Customer Care for Password</string>
+    <string name="proc_id">Processor ID:</string>
     <string name="mid">MID:</string>
     <string name="tid">TID:</string>
     <string name="sr_no">Sr.No:</string>

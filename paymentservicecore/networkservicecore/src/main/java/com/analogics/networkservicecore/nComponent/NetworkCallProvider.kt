@@ -17,7 +17,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.CoroutineContext
 
 
@@ -45,43 +53,133 @@ object NetworkCallProvider {
         }
     }
 
-    suspend fun
-            safeApiCall(request: ByteArray): ResultProvider<ByteArray> {
-        return try {
-            withContext(Dispatchers.IO)
-            {
-                val socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
-                    .connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT))
-                val input = socket.openReadChannel()
-                val output = socket.openWriteChannel(autoFlush = true)
-                var response = ByteArray(0)
-                var packetLength : Int = 0
-                output.writeFully(request)
-                do {
-                    delay(100)
-                    if (input.isClosedForRead) break
-                    if(input.availableForRead>0) {
-                        var chunk = ByteArray(input.availableForRead)
-                        input.readAvailable(chunk, 0, chunk.size)
-                        response += chunk
-                        if(response.size>=2)
-                            packetLength = (response[0] * 256) + (response[1] % 256)
-                    }
-                }while (input.isClosedForRead.not() && (packetLength==0 || response.size<packetLength))
-                socket.close()
+//    suspend fun safeApiCall(request: ByteArray): ResultProvider<ByteArray> {
+//        return try {
+//            withContext(Dispatchers.IO)
+//            {
+//                val socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
+//                    .connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT))
+//                val input = socket.openReadChannel()
+//                val output = socket.openWriteChannel(autoFlush = true)
+//                var response = ByteArray(0)
+//                var packetLength : Int = 0
+//                output.writeFully(request)
+//                do {
+//                    delay(100)
+//                    if (input.isClosedForRead) break
+//                    if(input.availableForRead>0) {
+//                        var chunk = ByteArray(input.availableForRead)
+//                        input.readAvailable(chunk, 0, chunk.size)
+//                        response += chunk
+//                        if(response.size>=2)
+//                            packetLength = (response[0] * 256) + (response[1] % 256)
+//                    }
+//                }while (input.isClosedForRead.not() && (packetLength==0 || response.size<packetLength))
+//                socket.close()
+//
+//                if(response.isNotEmpty())
+//                    ResultProvider.Success(response)
+//                else
+//                    ResultProvider.Error(Exception("No Response"))
+//            }
+//        } catch (e: Exception) {
+//            Log.d("exception",e.toString())
+//            ResultProvider.Error(
+//                e
+//            )
+//        }
+//    }
 
-                if(response.isNotEmpty())
-                    ResultProvider.Success(response)
-                else
-                    ResultProvider.Error(Exception("No Response"))
+
+
+    suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
+        return try {
+            Log.d("Conduent", "safeApiCall started")
+            withContext(Dispatchers.IO) {
+
+                // --- Create SSL context (Trust all for testing) ---
+                Log.d("Conduent", "Creating SSL context")
+                val sslContext = SSLContext.getInstance("TLSv1.2")
+                sslContext.init(null, arrayOf(object : X509TrustManager {
+                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                    override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                }), SecureRandom())
+
+                // --- Connect using SSLSocket ---
+                Log.d("Conduent", "Connecting to ${NetworkConstants.HOST_ADDRESS}:${NetworkConstants.HOST_PORT}")
+                val sslSocket = sslContext.socketFactory.createSocket(
+                    NetworkConstants.HOST_ADDRESS,
+                    NetworkConstants.HOST_PORT
+                ) as SSLSocket
+
+                Log.d("Conduent", "Starting handshake")
+                sslSocket.startHandshake()
+                Log.d("Conduent", "Handshake successful")
+
+                val output = sslSocket.outputStream
+                val input = sslSocket.inputStream
+
+                // --- Add 2-byte length prefix ---
+                val lenPrefix = byteArrayOf((requestBytes.size / 256).toByte(), (requestBytes.size % 256).toByte())
+                val finalMessage = lenPrefix + requestBytes
+                Log.d("Conduent", "Sending request with length ${requestBytes.size} (total bytes with prefix: ${finalMessage.size})")
+
+                // --- Send request ---
+                output.write(finalMessage)
+                output.flush()
+                Log.d("Conduent", "Request sent")
+
+                // --- Read response ---
+                val responseBuffer = ByteArrayOutputStream()
+
+                // First, read 2-byte length prefix
+                val lenBytes = ByteArray(2)
+                var readLen = 0
+                while (readLen < 2) {
+                    val n = input.read(lenBytes, readLen, 2 - readLen)
+                    if (n == -1) throw Exception("No response received (length prefix)")
+                    readLen += n
+                }
+
+                val expectedLength = ((lenBytes[0].toInt() and 0xFF) * 256) + (lenBytes[1].toInt() and 0xFF)
+                Log.d("Conduent", "Expected response length from prefix: $expectedLength")
+
+                // Then, read the full message based on length
+                val tempBuffer = ByteArray(4096)
+                var totalRead = 0
+                while (totalRead < expectedLength) {
+                    val toRead = minOf(tempBuffer.size, expectedLength - totalRead)
+                    val n = input.read(tempBuffer, 0, toRead)
+                    if (n == -1) throw Exception("Stream closed before full response")
+                    responseBuffer.write(tempBuffer, 0, n)
+                    totalRead += n
+                    Log.d("Conduent", "Total bytes read so far: $totalRead")
+                }
+
+                sslSocket.close()
+                Log.d("Conduent", "Socket closed")
+
+                val finalResponse = responseBuffer.toByteArray()
+                Log.d("Conduent", "Final response received, total bytes: ${finalResponse.size}")
+                Log.d("Conduent", "Response HEX: ${finalResponse.joinToString(" ") { "%02X".format(it) }}")
+
+                ResultProvider.Success(finalResponse)
             }
         } catch (e: Exception) {
-            Log.d("exception",e.toString())
-            ResultProvider.Error(
-                e
-            )
+            Log.e("Conduent", "Exception: ${e.message}")
+            ResultProvider.Error(e)
         }
     }
+
+
+
+
+
+
+
+
+
 
 
     suspend fun <T> apiCallCommon(apiCall: suspend () -> Response<T>): ResultProvider<T> {

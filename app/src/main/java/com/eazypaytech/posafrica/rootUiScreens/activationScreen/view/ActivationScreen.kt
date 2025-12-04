@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.eazypaytech.posafrica.R
@@ -63,38 +65,29 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
-                        .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
+                        .padding(top = MaterialTheme.dimens.DP_125_CompactMedium)
                 ) {
                     ImageView(
                         imageId =  R.drawable.unlock, // Decorative image
-                        size = MaterialTheme.dimens.DP_40_CompactMedium,
-                        contentDescription = ""
+                        size = MaterialTheme.dimens.DP_60_CompactMedium,
+                        contentDescription = "",
                     )
 
                     TextView(
                         text = stringResource(id = R.string.act_prompt_activate),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 25.dp, horizontal = MaterialTheme.dimens.DP_20_CompactMedium)
                     )
 
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
-                        inputValue = viewModel.tidInput.value,
+                        inputValue = viewModel.procIdInput.value,
                         onChange = { viewModel.onTidChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(id = R.string.tid),
-                        placeHolder = stringResource(id = R.string.act_label_enter_tid),
-                        icon = Icons.Outlined.Numbers,
-                        keyboardType = KeyboardType.Ascii
-                    )
-                    InputTextField(
-                        enabled = viewModel.isActivationBtnEnabled.value,
-                        inputValue = viewModel.midInput.value,
-                        onChange = { viewModel.onMidChange(it) },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(id = R.string.mid),
-                        placeHolder = stringResource(id = R.string.act_label_enter_Mid),
+                        label = stringResource(id = R.string.proc_id),
+                        placeHolder = stringResource(id = R.string.act_label_enter_Proc_id),
                         icon = Icons.Outlined.Numbers,
                         keyboardType = KeyboardType.Ascii
                     )

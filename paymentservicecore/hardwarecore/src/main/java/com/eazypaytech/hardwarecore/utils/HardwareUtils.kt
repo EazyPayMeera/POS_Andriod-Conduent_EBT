@@ -32,6 +32,15 @@ object HardwareUtils {
         }
     }
 
+    suspend fun injectWorkingPinKey(workingKeyHex: String, context: Context? = null): Boolean {
+        return try {
+            EmvWrapperRepository.loadAndVerifyWorkingPinKey(workingKeyHex)
+        } catch (exception: Exception) {
+            Log.e("HARDWARE_UTILS", exception.message.toString())
+            false
+        }
+    }
+
     @OptIn(ExperimentalStdlibApi::class)
     suspend fun injectDukptPinKey(ipek: String, ksn: String,context: Context?=null) : Boolean
     {

@@ -1,12 +1,15 @@
 package com.eazypaytech.paymentservicecore.utils
 
 import android.content.Context
+import android.util.Log
 import com.eazypaytech.builder_core.model.Symbol
 import com.eazypaytech.builder_core.utils.formatAmount
 import com.eazypaytech.securityframework.handler.SecureKeyHandler
 import com.eazypaytech.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.security.KeyPair
 
 object PaymentServiceUtils {
@@ -50,6 +53,19 @@ object PaymentServiceUtils {
         }
         return false
     }
+
+    suspend fun injectWorkingPinKey(
+        workingKeyHex: String,
+        context: Context? = null
+    ): Boolean = withContext(Dispatchers.IO) {
+        try {
+            HardwareUtils.injectWorkingPinKey(workingKeyHex, context)
+        } catch (exception: Exception) {
+            Log.e("HARDWARE_UTILS", exception.message.toString())
+            false
+        }
+    }
+
 
 }
 
