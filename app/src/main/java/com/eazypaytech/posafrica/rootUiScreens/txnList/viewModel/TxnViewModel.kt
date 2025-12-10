@@ -202,11 +202,11 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun totalTipAmount(): Double {
         val purchaseTipTotal = _txnList.value
-            .filter { it.txnType == TxnType.PURCHASE }
+            .filter { it.txnType == TxnType.FOOD_PURCHASE }
             .sumOf { it.tip ?: 0.0 } // Convert BigDecimal to Double
 
         val refundTipTotal = _txnList.value
-            .filter { it.txnType == TxnType.REFUND }
+            .filter { it.txnType == TxnType.FOODSTAMP_RETURN }
             .sumOf { it.tip ?: 0.0 } // Convert BigDecimal to Double
 
         return purchaseTipTotal - refundTipTotal
@@ -214,10 +214,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     fun totalTipCount(): Int {
         val purchaseTipCount = _txnList.value
-            .filter { it.txnType == TxnType.PURCHASE && it.tip != null && it.tip != 0.0 } // Count PURCHASE transactions with a valid tip
+            .filter { it.txnType == TxnType.FOOD_PURCHASE && it.tip != null && it.tip != 0.0 } // Count PURCHASE transactions with a valid tip
 
         val refundTipCount = _txnList.value
-            .filter { it.txnType == TxnType.REFUND && it.tip != null && it.tip != 0.0 } // Count REFUND transactions with a valid tip
+            .filter { it.txnType == TxnType.FOODSTAMP_RETURN && it.tip != null && it.tip != 0.0 } // Count REFUND transactions with a valid tip
 
         return purchaseTipCount.size - refundTipCount.size // Subtract the refund count from the purchase count
     }

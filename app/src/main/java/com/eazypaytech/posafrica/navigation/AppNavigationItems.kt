@@ -10,7 +10,8 @@ sealed class AppNavigationItems(val route: String) {
  object AmountScreen : AppNavigationItems(NavScreensEnum.AmountView.name)
  object CardScreen : AppNavigationItems(NavScreensEnum.CardView.name)
  object ConfirmationScreen : AppNavigationItems(NavScreensEnum.ConfirmationView.name)
-
+ object CashBackScreen : AppNavigationItems(NavScreensEnum.CashBackView.name)
+ object ManualCardScreen : AppNavigationItems(NavScreensEnum.ManualCardView.name)
  object InvoiceScreen : AppNavigationItems(NavScreensEnum.InvoiceView.name)
  object TipScreen : AppNavigationItems(NavScreensEnum.TipView.name)
  object ServiceChargeScreen : AppNavigationItems(NavScreensEnum.ServiceChargeView.name)

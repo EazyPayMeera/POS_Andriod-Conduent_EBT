@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AmountViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository,private val dbRepository: TxnDBRepository) : ViewModel() {
+class CashBackViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository,private val dbRepository: TxnDBRepository) : ViewModel() {
 
     var transAmount by mutableStateOf("")
         private set
@@ -98,16 +98,15 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         }
         else {
             calculateTotal(sharedViewModel)
+            Log.d("TXN_TYPE", "Current Transaction Type: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
             when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-                TxnType.FOODSTAMP_RETURN, TxnType.VOID_LAST-> {
+                TxnType.PURCHASE_CASHBACK-> {
                     navHostController.navigate(AppNavigationItems.CardScreen.route)
                 }
-
                 TxnType.VOID_LAST -> {
                     Log.d("Database", "Go to update when void")
                     authenticateTransaction(sharedViewModel, navHostController)
                 }
-
                 else -> {
                     navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
                 }

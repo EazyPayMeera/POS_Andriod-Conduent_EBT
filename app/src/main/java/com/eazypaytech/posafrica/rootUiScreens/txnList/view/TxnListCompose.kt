@@ -94,7 +94,7 @@ fun TransactionListScreen(
 
     Column {
         CommonTopAppBar(
-            title = stringResource(R.string.transactions),
+            title = stringResource(R.string.ebt_void_last),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -256,11 +256,11 @@ fun TransactionListScreen(
                         )
                         sharedViewModel.objRootAppPaymentDetail.ttlRefundAmount = formatAmount(viewModel.getRefundTotal())
                         sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount = formatAmount(viewModel.getPurchaseTotal())
-                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.AUTHCAP)
+                        sharedViewModel.objRootAppPaymentDetail.ttlPurchaseCount = viewModel.totalTransactionsCount(TxnType.FOOD_PURCHASE)
                         sharedViewModel.objRootAppPaymentDetail.ttlTxnCount = (
-                                viewModel.totalTransactionsCount(TxnType.PURCHASE) + viewModel.totalTransactionsCount(TxnType.AUTHCAP) + viewModel.totalTransactionsCount(TxnType.REFUND)
+                                viewModel.totalTransactionsCount(TxnType.FOOD_PURCHASE) + viewModel.totalTransactionsCount(TxnType.FOODSTAMP_RETURN)
                                 )
-                        sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.REFUND)
+                        sharedViewModel.objRootAppPaymentDetail.ttlRefundCount = viewModel.totalTransactionsCount(TxnType.FOODSTAMP_RETURN)
                         sharedViewModel.objRootAppPaymentDetail.ttlTipAmount = viewModel.totalTipAmount().toString()
                         sharedViewModel.objRootAppPaymentDetail.ttlTipCount = viewModel.totalTipCount()
                         Log.d("TotalPurchaseAmount", "Total Purchase Amount: ${sharedViewModel.objRootAppPaymentDetail.ttlPurchaseAmount}")
@@ -337,7 +337,7 @@ fun SummarySection(viewModel: TxnViewModel) {
                     modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed
                 )
                 Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between image and text
-                Text(stringResource(id = R.string.purchase), style = MaterialTheme.typography.body2, color = Color.Gray)
+                Text(stringResource(id = R.string.ebt_food_purchase), style = MaterialTheme.typography.body2, color = Color.Gray)
             }
 
             Text(
@@ -361,7 +361,7 @@ fun SummarySection(viewModel: TxnViewModel) {
                     modifier = Modifier.size(androidx.compose.material3.MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed
                 )
                 Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between image and text
-                Text(stringResource(id = R.string.refund), style = MaterialTheme.typography.body2, color = Color.Gray)
+                Text(stringResource(id = R.string.ebt_foodstamp_return), style = MaterialTheme.typography.body2, color = Color.Gray)
             }
 
             Text(

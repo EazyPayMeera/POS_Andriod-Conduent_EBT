@@ -76,32 +76,36 @@ fun CardDetectView(navHostController: NavHostController) {
                         backgroundColor = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
-                        ) {
-                            Text(
-                                text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
-                                    id = R.string.total_amt
-                                ),
-                                fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                                    .align(Alignment.Start)
-                            )
+                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
+                            ) {
+                                Text(
+                                    text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN) stringResource(
+                                        id = R.string.refund_amt_data
+                                    ) else stringResource(
+                                        id = R.string.total_amt
+                                    ),
+                                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
+                                        .align(Alignment.Start)
+                                )
 
-                            // Display the totalAmount here
-                            Text(
-                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
-                                fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .align(Alignment.Start)
-                            )
+                                // Display the totalAmount here
+                                Text(
+                                    text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .align(Alignment.Start)
+                                )
+                            }
                         }
                     }
 

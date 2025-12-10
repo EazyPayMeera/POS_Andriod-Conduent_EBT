@@ -39,6 +39,7 @@ import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activationScreen.view.ActivationScreen
 import com.eazypaytech.posafrica.rootUiScreens.addClerk.view.AddClerkScreen
 import com.eazypaytech.posafrica.rootUiScreens.amount.view.AmountView
+import com.eazypaytech.posafrica.rootUiScreens.amount.view.CashBackView
 import com.eazypaytech.posafrica.rootUiScreens.approved.view.ApprovedView
 import com.eazypaytech.posafrica.rootUiScreens.barcode.BarcodeView
 import com.eazypaytech.posafrica.rootUiScreens.batchId.view.BatchIdView
@@ -57,6 +58,7 @@ import com.eazypaytech.posafrica.rootUiScreens.invoice.InvoiceView
 import com.eazypaytech.posafrica.rootUiScreens.isinfo.InfoConfirmView
 import com.eazypaytech.posafrica.rootUiScreens.language.view.LanguageView
 import com.eazypaytech.posafrica.rootUiScreens.login.view.LoginScreenView
+import com.eazypaytech.posafrica.rootUiScreens.manualentry.ManualCardView
 import com.eazypaytech.posafrica.rootUiScreens.onBoarding.view.OnBoardSlideView
 import com.eazypaytech.posafrica.rootUiScreens.password.view.PasswordView
 import com.eazypaytech.posafrica.rootUiScreens.pin.view.PinView
@@ -332,6 +334,12 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.SignatureScreen.route) {
             SignatureView(navHostController)
+        }
+        composable(AppNavigationItems.CashBackScreen.route) {
+            CashBackView(navHostController)
+        }
+        composable(AppNavigationItems.ManualCardScreen.route) {
+            ManualCardView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

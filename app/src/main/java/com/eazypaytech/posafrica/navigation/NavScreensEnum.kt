@@ -2,5 +2,5 @@ package com.eazypaytech.posafrica.navigation
 
 enum class NavScreensEnum {
     SplashScreen,DashBoardView,OnBoardingView,LoginScreen,ForgetPasswordView,PleaseWaitView,AmountView,InvoiceView,ConfirmationView,TipView,ServiceChargeView,CardView,CardDetectView,PinView,ApprovedView,PasswordView,EmailView,RefundAmtView,SettingsView,LanguageView,ConfigurationView,ConfirmShiftView,TaxPercentageView,TipPercentageView,ServiceChargePercentageView,PreauthView,EnterEmailView,DeclineView,Drawer,TxnListView,InfoConfirmView,SucessView,ChangePasswordView,BarcodeView,TransactionDetailsView,ReceiptDetailsView,UserManagementView,BatchIdView,InactivityTimeoutView,SignatureView
-    ,AddClerkScreen,ActivationScreen
+    ,AddClerkScreen,ActivationScreen,CashBackView,ManualCardView
 }

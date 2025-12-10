@@ -437,7 +437,7 @@ fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : In
         R.drawable.captured
     else if(objRootAppPaymentDetails.txnStatus == TxnStatus.APPROVED)
         when(objRootAppPaymentDetails.txnType) {
-            TxnType.PREAUTH -> R.drawable.authorized
+            TxnType.PURCHASE_CASHBACK -> R.drawable.authorized
             else -> R.drawable.approved
         }
     else if(objRootAppPaymentDetails.txnStatus == TxnStatus.DECLINED)
@@ -446,18 +446,20 @@ fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : In
         R.drawable.error
 }
 
-fun getTxnTypeStringId(txnType: TxnType?) : Int
-{
-    return when(txnType) {
-        TxnType.PURCHASE -> R.string.purchase
-        TxnType.REFUND -> R.string.refund
-        TxnType.PREAUTH -> R.string.pre_auth
-        TxnType.AUTHCAP -> R.string.auth_capture
-        TxnType.VOID -> R.string.void_trans
-        TxnType.TXNLIST -> R.string.transactions
+fun getTxnTypeStringId(txnType: TxnType?): Int {
+    return when (txnType) {
+        TxnType.PURCHASE_CASHBACK -> R.string.ebt_purchase_cashback
+        TxnType.BALANCE_ENQUIRY -> R.string.ebt_bal_enquiry
+        TxnType.VOUCHER_CLEAR -> R.string.ebt_voucher_clear
+        TxnType.VOUCHER_RETURN -> R.string.ebt_voucher_return
+        TxnType.VOID_LAST -> R.string.ebt_void_last
+        TxnType.FOOD_PURCHASE -> R.string.ebt_food_purchase
+        TxnType.FOODSTAMP_RETURN -> R.string.ebt_foodstamp_return
+        TxnType.E_VOUCHER -> R.string.ebt_e_voucher
         else -> R.string.empty
     }
 }
+
 
 fun getTxnStatusStringId(txnStatus: TxnStatus?) : Int
 {

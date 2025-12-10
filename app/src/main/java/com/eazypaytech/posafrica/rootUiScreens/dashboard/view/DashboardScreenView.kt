@@ -1,6 +1,7 @@
 package com.eazypaytech.posafrica.rootUiScreens.dashboard.view
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,7 @@ fun DashboardView(navHostController: NavHostController) {
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
         if(sharedViewModel.objPosConfig?.isPromptInvoiceNo!=true)
             dashboardViewModel.setInvoiceNumber(sharedViewModel)
+        Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
 
     fun handleDashboardTrigger(event: String) {
@@ -92,40 +94,58 @@ fun DashboardView(navHostController: NavHostController) {
             )
 
             /* Dashboard Menu Events */
-            AppConstants.BUTTON_CLICK_EVENT_PURCHASE -> {
-                setTransactionType(TxnType.PURCHASE)
+            AppConstants.BUTTON_CLICK_EVENT_FOOD_PURCHASE -> {
+                setTransactionType(TxnType.FOOD_PURCHASE)
                 navHostController.navigate(
                     if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.AmountScreen.route
                 )
             }
-            AppConstants.BUTTON_CLICK_EVENT_REFUND -> {
-                setTransactionType(TxnType.REFUND)
+            AppConstants.BUTTON_CLICK_EVENT_CASH_PURCHASE -> {
+                setTransactionType(TxnType.CASH_PURCHASE)
+                navHostController.navigate(
+                    AppNavigationItems.AmountScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_FOODSTAMP_RETURN -> {
+                setTransactionType(TxnType.FOODSTAMP_RETURN)
                 navHostController.navigate(
                     AppNavigationItems.InvoiceScreen.route
                 )
             }
-            AppConstants.BUTTON_CLICK_EVENT_PREAUTH -> {
-                setTransactionType(TxnType.PREAUTH)
+            AppConstants.BUTTON_CLICK_EVENT_PURCHASE_CASHBACK -> {
+                setTransactionType(TxnType.PURCHASE_CASHBACK)
                 navHostController.navigate(
-                    if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.AmountScreen.route
+                    AppNavigationItems.AmountScreen.route
                 )
             }
-            AppConstants.BUTTON_CLICK_EVENT_AUTH_CAPTURE -> {
-                setTransactionType(TxnType.AUTHCAP)
+            AppConstants.BUTTON_CLICK_EVENT_E_VOUCHER -> {
+                setTransactionType(TxnType.E_VOUCHER)
                 navHostController.navigate(
-                    AppNavigationItems.InvoiceScreen.route
+                    AppNavigationItems.ManualCardScreen.route
                 )
             }
-            AppConstants.BUTTON_CLICK_EVENT_VOID -> {
-                setTransactionType(TxnType.VOID)
-                navHostController.navigate(
-                    AppNavigationItems.InvoiceScreen.route
-                )
-            }
-            AppConstants.BUTTON_CLICK_EVENT_TRANSACTIONS -> {
-                setTransactionType(TxnType.TXNLIST)
+            AppConstants.BUTTON_CLICK_EVENT_VOID_LAST -> {
+                setTransactionType(TxnType.VOID_LAST)
                 navHostController.navigate(
                     AppNavigationItems.TxnListScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY -> {
+                setTransactionType(TxnType.BALANCE_ENQUIRY)
+                navHostController.navigate(
+                    AppNavigationItems.CardScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_VOUCHER_CLEAR -> {
+                setTransactionType(TxnType.VOUCHER_CLEAR)
+                navHostController.navigate(
+                    AppNavigationItems.TxnListScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_VOUCHER_RETURN -> {
+                setTransactionType(TxnType.VOUCHER_RETURN)
+                navHostController.navigate(
+                    AppNavigationItems.ManualCardScreen.route
                 )
             }
             else -> null
@@ -176,41 +196,60 @@ fun dashboardItemListData(
 
     return listOf(
         createDashboardItem(
-            titleId = R.string.purchase,
-            iconId = R.drawable.purchase,
-            event = AppConstants.BUTTON_CLICK_EVENT_PURCHASE,
+            titleId = R.string.ebt_food_purchase,
+            iconId = R.drawable.ebt_dashboard_food_purchase,
+            event = AppConstants.BUTTON_CLICK_EVENT_FOOD_PURCHASE,
             false
         ),
         createDashboardItem(
-            titleId = R.string.refund,
-            iconId = R.drawable.dashboard_refund,
-            event = AppConstants.BUTTON_CLICK_EVENT_REFUND,
-            true
-        ),
-        createDashboardItem(
-            titleId = R.string.pre_auth,
-            iconId = R.drawable.dashboard_preauth,
-            event = AppConstants.BUTTON_CLICK_EVENT_PREAUTH,
+            titleId = R.string.ebt_cash,
+            iconId = R.drawable.ebt_dashboard_purchase,
+            event = AppConstants.BUTTON_CLICK_EVENT_CASH_PURCHASE,
             false
         ),
         createDashboardItem(
-            titleId = R.string.auth_capture,
-            iconId = R.drawable.dashboard_auth_capture,
-            event = AppConstants.BUTTON_CLICK_EVENT_AUTH_CAPTURE,
+            titleId = R.string.ebt_foodstamp_return,
+            iconId = R.drawable.ebt_dashboard_food_return,
+            event = AppConstants.BUTTON_CLICK_EVENT_FOODSTAMP_RETURN,
             false
         ),
         createDashboardItem(
-            titleId = R.string.void_trans,
-            iconId = R.drawable.dashboard_void,
-            event = AppConstants.BUTTON_CLICK_EVENT_VOID,
-            true
+            titleId = R.string.ebt_purchase_cashback,
+            iconId = R.drawable.ebt_dashboard_cash_purchase,
+            event = AppConstants.BUTTON_CLICK_EVENT_PURCHASE_CASHBACK,
+            false
         ),
         createDashboardItem(
-            titleId = R.string.transactions,
-            iconId = R.drawable.dashboard_transaction,
-            event = AppConstants.BUTTON_CLICK_EVENT_TRANSACTIONS,
-            true
+            titleId = R.string.ebt_e_voucher,
+            iconId = R.drawable.ebt_dashboard_e_voucher,
+            event = AppConstants.BUTTON_CLICK_EVENT_E_VOUCHER,
+            false
+        ),
+        createDashboardItem(
+            titleId = R.string.ebt_void_last,
+            iconId = R.drawable.ebt_dashboard_void_last,
+            event = AppConstants.BUTTON_CLICK_EVENT_VOID_LAST,
+            false
+        ),
+        createDashboardItem(
+            titleId = R.string.ebt_bal_enquiry,
+            iconId = R.drawable.ebt_dashboard_bal_inquiry,
+            event = AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY,
+            false
+        ),
+        createDashboardItem(
+            titleId = R.string.ebt_voucher_clear,
+            iconId = R.drawable.ebt_dashboard_voucher_clear,
+            event = AppConstants.BUTTON_CLICK_EVENT_VOUCHER_CLEAR,
+            false
+        ),
+        createDashboardItem(
+            titleId = R.string.ebt_voucher_return,
+            iconId = R.drawable.ebt_dashboard_voucher_return,
+            event = AppConstants.BUTTON_CLICK_EVENT_VOUCHER_RETURN,
+            false
         )
+
     )
 }
 
@@ -283,7 +322,6 @@ fun TrainingView(
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
-
     CustomDialogBuilder.ShowComposed()
 }
 
@@ -342,7 +380,7 @@ fun DashboardContentSurface(
                 }
             }
 
-            dashboardItemLists.chunked(2).forEach { rowConfigs ->
+            dashboardItemLists.chunked(3).forEach { rowConfigs ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -366,6 +404,7 @@ fun DashboardContentSurface(
                     }
                 }
             }
+
 
             Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
             

@@ -81,7 +81,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                txnRecord.txnType.takeIf { it != TxnType.VOID }?.let {
+                txnRecord.txnType.takeIf { it != TxnType.VOID_LAST }?.let {
                     Text(
                         text = txnRecord.ttlAmount.toAmountFormat(),
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,

@@ -97,7 +97,7 @@ fun ConfirmationView(navHostController: NavHostController, customTipAmount : Dou
                         .align(Alignment.Start)
                 )
                 TextView(
-                    text = (if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND) totalAmountFetch else formatAmount(totalAmount)) ?: "",
+                    text = (if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN) totalAmountFetch else formatAmount(totalAmount)) ?: "",
                     fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -178,7 +178,7 @@ fun AddTipCard(
     isTipEnabled : Boolean
 )
 {
-    sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
+    sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.FOOD_PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
         GenericCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -333,7 +333,7 @@ fun AddServiceChargeCard(
     isServiceChargeEnabled : Boolean
 )
 {
-    sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
+    sharedViewModel.objRootAppPaymentDetail.txnType.takeIf { it == TxnType.FOOD_PURCHASE && sharedViewModel.objPosConfig?.isTipEnabled==true }?.let {
         GenericCard(
             modifier = Modifier
                 .fillMaxWidth()

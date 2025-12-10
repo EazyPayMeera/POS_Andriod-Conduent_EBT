@@ -57,6 +57,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("isAutoPrintMerchant") var isAutoPrintMerchant: Boolean? = false
     @SerializedName("isAutoPrintCustomer") var isAutoPrintCustomer: Boolean? = false
     @SerializedName("isPromptInvoiceNo") var isPromptInvoiceNo: Boolean? = false
+    @SerializedName("isCashback") var isCashback: Boolean? = false
     @SerializedName("isTipEnabled") var isTipEnabled: Boolean? = false
     @SerializedName("isServiceChargeEnabled") var isServiceChargeEnabled: Boolean? = false
     @SerializedName("isTaxEnabled") var isTaxEnabled: Boolean? = false

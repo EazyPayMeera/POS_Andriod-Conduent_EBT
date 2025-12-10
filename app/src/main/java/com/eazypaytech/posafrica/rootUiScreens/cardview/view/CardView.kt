@@ -111,32 +111,36 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         backgroundColor = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
-                        ) {
-                            Text(
-                                text = if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.REFUND) stringResource(id = R.string.refund_amt_data) else stringResource(
-                                    id = R.string.total_amt
-                                ),
-                                fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .padding(bottom = MaterialTheme.dimens.DP_2_CompactMedium)
-                                    .align(Alignment.Start)
-                            )
+                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY) {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
+                            ) {
+                                Text(
+                                    text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN) stringResource(
+                                        id = R.string.refund_amt_data
+                                    ) else stringResource(
+                                        id = R.string.total_amt
+                                    ),
+                                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .padding(bottom = MaterialTheme.dimens.DP_2_CompactMedium)
+                                        .align(Alignment.Start)
+                                )
 
-                            // Display the totalAmount here
-                            Text(
-                                text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
-                                fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .align(Alignment.Start)
-                            )
+                                // Display the totalAmount here
+                                Text(
+                                    text = sharedViewModel.objRootAppPaymentDetail.ttlAmount.toAmountFormat(),
+                                    fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .align(Alignment.Start)
+                                )
+                            }
                         }
                     }
 
@@ -194,7 +198,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
-                    Row(
+                    /*Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(MaterialTheme.dimens.DP_160_CompactMedium)
@@ -206,7 +210,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             if (viewModel.emvInProgress.value == false) {
-                                if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE) {
+                                if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOOD_PURCHASE) {
                                     Log.d("Batch Id", "EMV Progress Value is False")
                                     TextView(
                                         text = stringResource(id = R.string.upi_separator),
@@ -217,7 +221,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                             .align(Alignment.CenterHorizontally)
                                     )
 
-                                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
+                                    *//*Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
 
                                     Button(
                                         onClick = { viewModel.onUpiClick(navHostController) },
@@ -236,7 +240,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                                 .fillMaxSize(),
                                             tint = Color.Unspecified // Keeps the original colors of the icon
                                         )
-                                    }
+                                    }*//*
                                 }
 
                             }
@@ -267,7 +271,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                             }
                         }
 
-                    }
+                    }*/
                 }
             }
         }

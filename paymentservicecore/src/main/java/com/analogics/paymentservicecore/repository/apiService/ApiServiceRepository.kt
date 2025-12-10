@@ -74,11 +74,11 @@ class ApiServiceRepository @Inject constructor(
 
         when(paymentServiceTxnDetails?.txnType.toString())
         {
-            TxnType.PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.REFUND.toString() -> apiServiceRefund(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.PREAUTH.toString() -> apiServicePreAuth(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.VOID.toString() -> apiServiceVoid(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.AUTHCAP.toString() -> apiServiceAuthCapture(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.FOOD_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.CASH_PURCHASE.toString() -> apiServiceRefund(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.FOODSTAMP_RETURN.toString() -> apiServicePreAuth(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.PURCHASE_CASHBACK.toString() -> apiServiceVoid(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.E_VOUCHER.toString() -> apiServiceAuthCapture(paymentServiceTxnDetails,iApiServiceResponseListener)
             else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }

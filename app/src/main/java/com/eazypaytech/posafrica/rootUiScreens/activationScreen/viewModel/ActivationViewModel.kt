@@ -92,6 +92,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 // Collect required activation data
                 collectActivationData()
                 Log.d("Conduent","Start Activation Process")
+                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 // Uncomment the following line if needed to make the API request with the transformed object
                 apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(

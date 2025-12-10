@@ -53,7 +53,7 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
     {
         //sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
         this.navHostController = navHostController
-        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PREAUTH)
+        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOOD_PURCHASE)
             navigateToAmountScreen(navHostController, sharedViewModel)
         else
             getTxnDetailsByInvoiceNo(navHostController.context,sharedViewModel)
@@ -63,11 +63,7 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
     fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.invoiceNo = invoiceno.value
         viewModelScope.launch {
-            if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP) {
-                navHostController.navigate(AppNavigationItems.InfoConfirmScreen.route)
-            } else {
-                navHostController.navigate(AppNavigationItems.AmountScreen.route)
-            }
+            navHostController.navigate(AppNavigationItems.AmountScreen.route)
         }
     }
 
@@ -115,26 +111,26 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
     fun getTxnDetailsByInvoiceNo(context: Context, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             dbRepository.fetchTransactionByInvoiceNo(invoiceno.value)?.takeIf{ it.isNotEmpty() }?.let {
-                if(it[0].isVoided==true || it[0].txnType==TxnType.VOID.toString())
+                if(it[0].isVoided==true || it[0].txnType==TxnType.VOID_LAST.toString())
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
                         message = context.getString(R.string.err_txn_already_voided))
-                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND && it[0].isRefunded==true)
+                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN && it[0].isRefunded==true)
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
                         message = context.getString(R.string.err_txn_already_refunded))
-                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.REFUND && (it[0].txnType!= TxnType.PURCHASE.toString()))
+                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN && (it[0].txnType!= TxnType.FOOD_PURCHASE.toString()))
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
                         message = context.getString(R.string.err_only_purchase_can_be_refunded))
-                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].txnType!= TxnType.PREAUTH.toString())
-                    CustomDialogBuilder.composeAlertDialog(
-                        title = context.getString(R.string.default_alert_title_error),
-                        message = context.getString(R.string.err_only_preauth_can_be_captured))
-                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].isCaptured==true)
-                    CustomDialogBuilder.composeAlertDialog(
-                        title = context.getString(R.string.default_alert_title_error),
-                        message = context.getString(R.string.err_txn_already_captured))
+//                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].txnType!= TxnType.PREAUTH.toString())
+//                    CustomDialogBuilder.composeAlertDialog(
+//                        title = context.getString(R.string.default_alert_title_error),
+//                        message = context.getString(R.string.err_only_preauth_can_be_captured))
+//                else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.AUTHCAP && it[0].isCaptured==true)
+//                    CustomDialogBuilder.composeAlertDialog(
+//                        title = context.getString(R.string.default_alert_title_error),
+//                        message = context.getString(R.string.err_txn_already_captured))
                 else if(it[0].isDemoMode != sharedViewModel.objRootAppPaymentDetail.isDemoMode)
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
@@ -174,7 +170,7 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
     }
 
     fun onLoad(sharedViewModel: SharedViewModel) {
-        if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PREAUTH) {
+        if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOOD_PURCHASE) {
         viewModelScope.launch {
                 dbRepository.getLastInvoiceNumber().let {
                     _invoiceno.value = (it + 1).toString()

@@ -1,5 +1,6 @@
 package com.eazypaytech.posafrica.rootUiScreens.confirmation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -149,11 +150,16 @@ class ConfirmationViewModel @Inject constructor(private val dbRepository: TxnDBR
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = totalAmount.doubleValue
         sharedViewModel.objRootAppPaymentDetail.tip = tipAmount.doubleValue
         sharedViewModel.objRootAppPaymentDetail.serviceCharge = serviceCharge.doubleValue
+        Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
         when(sharedViewModel.objRootAppPaymentDetail.txnType) {
-            TxnType.PURCHASE,TxnType.REFUND,TxnType.PREAUTH -> {
+            TxnType.FOOD_PURCHASE,TxnType.FOODSTAMP_RETURN ,TxnType.CASH_PURCHASE-> {
                 navHostController.navigate(AppNavigationItems.CardScreen.route)
             }
-            TxnType.VOID,TxnType.AUTHCAP -> {
+            TxnType.PURCHASE_CASHBACK ->
+            {
+                navHostController.navigate(AppNavigationItems.CashBackScreen.route)
+            }
+            TxnType.VOID_LAST , TxnType.E_VOUCHER,TxnType.VOUCHER_RETURN-> {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
             }
             else -> {

@@ -81,7 +81,7 @@
     <string name="invalid_current_password">Invalid current password</string>
 
     <!-- Dashboard -->
-    <string name="refund">Refund</string>
+    <string name="ebt_cash">Cash</string>
     <string name="net_total">Net Total</string>
     <string name="refund_amt">Enter the Refund Amount</string>
     <string name="enter_invoice">Enter the Invoice Number</string>
@@ -91,9 +91,7 @@
     <string name="authcap_amt">Enter the Auth Captured Amount</string>
     <string name="void_pur">Void Purchase</string>
     <string name="purchase_amt">Enter the Transaction Amount</string>
-    <string name="purchase">Purchase</string>
-    <string name="pre_auth">Pre-Auth</string>
-    <string name="void_trans">Void</string>
+    <string name="cashback_amt">Enter the Cashback Amount</string>
     <string name="enter_Pin">Please Enter The Pin</string>
     <string name="pin">Pin</string>
     <string name="org_amt">Original Amount</string>
@@ -196,7 +194,7 @@
     <string name="footer">Footers</string>
 
 
-    <string name="auth_capture">Auth-Capture</string>
+
     <string name="settings">Settings</string>
 
     <string name="Configuration">Configuration</string>
@@ -231,8 +229,15 @@
     <string name="default_alert_title_success">SUCCESS!</string>
     <string name="default_alert_subtitle_wrong_password">Wrong Password</string>
 
-    <!-- Transaction Details Screen -->
-    <string name="transactions">Transactions</string>
+    <!-- EBT DashBoard Screen -->
+    <string name="ebt_purchase_cashback">CashBack</string>
+    <string name="ebt_bal_enquiry">Bal Enquiry</string>
+    <string name="ebt_voucher_clear">Voucher Clear</string>
+    <string name="ebt_voucher_return">Return</string>
+    <string name="ebt_void_last">Void Last</string>
+    <string name="ebt_food_purchase">Food</string>
+    <string name="ebt_foodstamp_return">Return</string>
+    <string name="ebt_e_voucher">E-Voucher</string>
 
     <!-- Transaction List Screen -->
     <string name="select_date">Select Date</string>Filter by Batch Number

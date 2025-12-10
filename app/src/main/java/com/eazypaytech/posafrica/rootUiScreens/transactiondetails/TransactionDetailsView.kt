@@ -48,7 +48,7 @@ fun TransactionDetailsView(navHostController: NavHostController) {
     Column {
 
         CommonTopAppBar(
-            title = stringResource(id = R.string.transactions),
+            title = stringResource(id = R.string.ebt_void_last),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 

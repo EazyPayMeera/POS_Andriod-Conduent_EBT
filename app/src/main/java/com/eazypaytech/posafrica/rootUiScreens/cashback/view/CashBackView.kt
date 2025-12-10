@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +33,7 @@ import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel.AmountViewModel
+import com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel.CashBackViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
@@ -46,7 +48,7 @@ import com.eazypaytech.posafrica.ui.theme.dimens
 @SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
+fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewModel = hiltViewModel()){
 
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
@@ -69,7 +71,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_PURCHASE) stringResource(R.string.ebt_cash) else if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else stringResource(R.string.purchase_amt),
+                    text = stringResource(R.string.cashback_amt),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,

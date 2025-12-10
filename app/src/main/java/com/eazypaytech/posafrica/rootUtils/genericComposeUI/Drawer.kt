@@ -109,7 +109,7 @@ fun CustomDrawerContent(
                 imageRes = Icons.Default.Settings,
                 text = stringResource(id = R.string.Configuration),
                 isChecked = false,
-                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION, true) }
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION, false) }
             ),
             DrawerItem(
                 imageRes = Icons.Default.Key,

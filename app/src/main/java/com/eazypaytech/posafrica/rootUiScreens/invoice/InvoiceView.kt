@@ -151,7 +151,7 @@ fun InvoiceView(navHostController: NavHostController) {
                     },
                     isPassword = false,
                     trailingIcon = if (sharedViewModel.objRootAppPaymentDetail.txnType in listOf(
-                            TxnType.REFUND, TxnType.VOID, TxnType.AUTHCAP)) {
+                            TxnType.FOODSTAMP_RETURN, TxnType.VOID_LAST)) {
                         {
                             Icon(
                                 imageVector = Icons.Default.QrCode,  // Your QR code icon

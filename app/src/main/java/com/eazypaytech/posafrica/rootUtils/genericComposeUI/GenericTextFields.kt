@@ -275,19 +275,22 @@ fun LoginButton(
 
 
 @Composable
-fun getTransTypeString() : String
-{
+fun getTransTypeString(): String {
     val sharedViewModel = localSharedViewModel.current
-    return when(sharedViewModel.objRootAppPaymentDetail.txnType){
-        TxnType.PURCHASE -> stringResource(id = R.string.purchase)
-        TxnType.REFUND -> stringResource(id = R.string.refund)
-        TxnType.PREAUTH -> stringResource(id = R.string.pre_auth)
-        TxnType.AUTHCAP -> stringResource(id = R.string.auth_capture)
-        TxnType.VOID -> stringResource(id = R.string.void_trans)
-        TxnType.TXNLIST -> stringResource(id=R.string.auth_capture)
+    return when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+        TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_purchase_cashback)
+        TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash)
+        TxnType.BALANCE_ENQUIRY -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
+        TxnType.VOUCHER_RETURN -> stringResource(id = R.string.ebt_voucher_return)
+        TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)
+        TxnType.FOOD_PURCHASE -> stringResource(id = R.string.ebt_food_purchase)
+        TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.ebt_foodstamp_return)
+        TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
         null -> stringResource(id = R.string.app_name)
     }
 }
+
 
 
 
@@ -676,8 +679,8 @@ fun CardWithImageText(
                     .align(Alignment.CenterHorizontally),
                 contentDescription = "" // Center the image
             )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_20_CompactMedium))
-            TextView(text = text, fontSize = MaterialTheme.dimens.SP_18_CompactMedium)
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_12_CompactMedium))
+            TextView(text = text, fontSize = MaterialTheme.dimens.SP_8_CompactMedium)
         }
     }
 
