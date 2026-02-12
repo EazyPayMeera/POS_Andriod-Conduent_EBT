@@ -158,6 +158,7 @@ object NetworkCallProvider {
                 val finalResponse = responseBuffer.toByteArray()
                 Log.d("Conduent", "Final response received, total bytes: ${finalResponse.size}")
                 Log.d("Conduent", "Response HEX: ${finalResponse.joinToString(" ") { "%02X".format(it) }}")
+                Log.d("Conduent","Response ASCII: ${String(finalResponse, Charsets.US_ASCII)}")
 
                 ResultProvider.Success(finalResponse)
             }

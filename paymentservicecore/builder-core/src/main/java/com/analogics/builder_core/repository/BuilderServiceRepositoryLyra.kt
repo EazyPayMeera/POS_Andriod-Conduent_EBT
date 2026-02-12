@@ -15,6 +15,7 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
         Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
+        Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
         NetworkCallProvider.safeApiCall(requestBody).let {
             onNetworkServiceResponse(it)
         }
