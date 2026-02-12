@@ -64,7 +64,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     @OptIn(ExperimentalEncodingApi::class)
     fun collectActivationData()
     {
-        sharedViewModel?.objRootAppPaymentDetail?.terminalId = procIdInput.value
+        sharedViewModel?.objRootAppPaymentDetail?.procId = procIdInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
         sharedViewModel?.objPosConfig?.apply {
             terminalId = procIdInput.value
@@ -93,25 +93,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 collectActivationData()
                 Log.d("Conduent","Start Activation Process")
                 navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                // Uncomment the following line if needed to make the API request with the transformed object
                 apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                         sharedViewModel?.objRootAppPaymentDetail
                     ), this@ActivationViewModel
                 )
-
-                // Inject keys and activate the device if key injection is successful
-                /*
-                val keyInjectionSuccess = PaymentServiceUtils.injectKeys(
-                    "FB7BB5FC24E765B61E1FB80F6AD4FB83",
-                    "FFFF6986499C2C600000",
-                    "44934E"
-                )
-
-                if (keyInjectionSuccess) {
-                    activateDevice()
-                }
-                 */
 
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "Unknown error occurred during activation.")

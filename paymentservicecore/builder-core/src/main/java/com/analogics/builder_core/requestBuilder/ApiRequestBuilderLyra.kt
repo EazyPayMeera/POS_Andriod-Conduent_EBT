@@ -275,6 +275,37 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             "8A023035"
     }
 
+    fun generateAsciiBitmap(fields: Set<Int>): String {
+        val bits = BooleanArray(128)
+
+        fields.forEach { field ->
+            if (field in 1..128) {
+                bits[field - 1] = true
+            }
+        }
+
+        // Secondary bitmap present?
+        if (fields.any { it > 64 }) {
+            bits[0] = true
+        }
+
+        val hex = StringBuilder()
+
+        for (i in bits.indices step 4) {
+            val nibble =
+                (if (bits[i]) 8 else 0) +
+                        (if (bits[i + 1]) 4 else 0) +
+                        (if (bits[i + 2]) 2 else 0) +
+                        (if (bits[i + 3]) 1 else 0)
+
+            hex.append(Integer.toHexString(nibble).uppercase())
+        }
+
+        return if (bits[0]) hex.substring(0, 32) + hex.substring(32, 64)
+        else hex.substring(0, 32)
+    }
+
+
     /* Request Builders */
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
 //    fun createRklRequest(): ByteArray {
@@ -322,67 +353,308 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 //        return appendIsoLength(message.writeData())
 //    }
 
-    fun createRklRequest(): ByteArray {
-        // ---------- Dynamic Fields ----------
-        val de007 = BuilderUtils.getCurrentDateTime("MMddHHmmss") // Transmission date/time MMDDhhmmss
-        val stan = getSTAN()                                      // STAN (6 digits)
-        val de011 = stan.toString().padStart(6, '0')             // Ensure 6-digit STAN
-        val de032 = "00004000002"                                 // Acquirer ID
-        val de032Prefixed = de032.length.toString().padStart(2, '0') + de032 // LLVAR
-        val de070 = "180".padStart(3, '0')                       // Network Management Code
-        val de096 = "04000007"                                    // Key Management Data
-        val de096Prefixed = de096.length.toString().padStart(3, '0') + de096 // LLLVAR
-        val bitmapPrimary = "8220000100000000"
-        val bitmapSecondary = "0400000100000000"
-        val bitmap = bitmapPrimary + bitmapSecondary
-        val mti = "0800"
-        val messageStr = mti + bitmap + de007 + de011 + de032Prefixed + de070 + de096Prefixed
-        val bodyBytes = messageStr.toByteArray(Charsets.US_ASCII)
-        return bodyBytes
+    fun createSignOnRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val iso = IsoMessage()
+        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
+        val stan = getSTAN().toString().padStart(6, '0')
+        iso.setValue(BuilderConstants.STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
+        iso.setValue(BuilderConstants.ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_ON_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
+        val de096 = "04000007"
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setBinaryHeader(false)        // Use ASCII header
+        iso.setBinaryFields(false)        // Use ASCII fields
+        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
+        iso.setIsoHeader("") // no custom header
+        return iso.writeData()
     }
 
+    fun createSignOffRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val iso = IsoMessage()
+        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
+        val stan = getSTAN().toString().padStart(6, '0')
+        iso.setValue(BuilderConstants.STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
+        iso.setValue(BuilderConstants.ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_OFF_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
+        val de096 = "04000007"
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setBinaryHeader(false)        // Use ASCII header
+        iso.setBinaryFields(false)        // Use ASCII fields
+        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
+        iso.setIsoHeader("") // no custom header
+        return iso.writeData()
+    }
+
+    fun createHandShakeRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val iso = IsoMessage()
+        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
+        val stan = getSTAN().toString().padStart(6, '0')
+        iso.setValue(BuilderConstants.STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
+        iso.setValue(BuilderConstants.ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.HANDSHAKE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
+        val de096 = "04000007"
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setBinaryHeader(false)        // Use ASCII header
+        iso.setBinaryFields(false)        // Use ASCII fields
+        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
+        iso.setIsoHeader("") // no custom header
+        return iso.writeData()
+    }
+
+    fun createKeyRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val iso = IsoMessage()
+        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
+        val stan = getSTAN().toString().padStart(6, '0')
+        iso.setValue(BuilderConstants.STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
+        iso.setValue(BuilderConstants.ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE, IsoType.NUMERIC, 3) // Fixed-length numeric
+        val de096 = "04000007"
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setBinaryHeader(false)        // Use ASCII header
+        iso.setBinaryFields(false)        // Use ASCII fields
+        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
+        iso.setIsoHeader("") // no custom header
+        return iso.writeData()
+    }
+
+    fun createKeyChangeRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val iso = IsoMessage()
+        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
+        val stan = getSTAN().toString().padStart(6, '0')
+        iso.setValue(BuilderConstants.STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
+        iso.setValue(BuilderConstants.ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
+        val de096 = "04000007"
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setBinaryHeader(false)        // Use ASCII header
+        iso.setBinaryFields(false)        // Use ASCII fields
+        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
+        iso.setIsoHeader("") // no custom header
+        return iso.writeData()
+    }
+
+    fun createFinancial0200Request(txn: BuilderServiceTxnDetails): ByteArray {
+
+        val iso = IsoMessage()
+
+        // ---------------- MTI ----------------
+        iso.setType(0x0200)   // Financial transaction request
+
+        // ---------------- Fixed Fields ----------------
+        iso.setValue(2, "6005281234560300", IsoType.LLVAR, 19)          // DE002 PAN
+        iso.setValue(3, "009800", IsoType.NUMERIC, 6)                   // DE003 Processing Code
+        iso.setValue(4, "000000000298", IsoType.NUMERIC, 12)            // DE004 Amount
+        iso.setValue(7, "1024214918", IsoType.NUMERIC, 10)              // DE007 Transmission DateTime
+        iso.setValue(11, "570554", IsoType.NUMERIC, 6)                  // DE011 STAN
+        iso.setValue(12, "154918", IsoType.NUMERIC, 6)                  // DE012 Local Time
+        iso.setValue(13, "1024", IsoType.NUMERIC, 4)                    // DE013 Local Date
+        iso.setValue(15, "1024", IsoType.NUMERIC, 4)                    // DE015 Settlement Date
+        iso.setValue(17, "1024", IsoType.NUMERIC, 4)                    // DE017 Capture Date
+        iso.setValue(18, "5499", IsoType.NUMERIC, 4)                    // DE018 Merchant Type
+        iso.setValue(22, "021", IsoType.NUMERIC, 3)                     // DE022 POS Entry Mode
+
+        // ---------------- LLVAR Fields ----------------
+        iso.setValue(32, "00004000002", IsoType.LLVAR, 11)              // DE032 Acquirer ID
+        iso.setValue(35, "6005281234560300=4912120782", IsoType.LLVAR, 37) // DE035 Track 2
+
+        // ---------------- Fixed Alphanumeric ----------------
+        iso.setValue(37, "529700038968", IsoType.ALPHA, 12)              // DE037 RRN
+        iso.setValue(41, "86887658", IsoType.ALPHA, 8)                   // DE041 Terminal ID
+        iso.setValue(42, "000008042086887", IsoType.ALPHA, 15)           // DE042 Merchant ID
+        iso.setValue(43,
+            "1388A TAYLOR AVE   US  PARKVILLE    MDUS".padEnd(40),
+            IsoType.ALPHA,
+            40
+        )                                                                 // DE043 Name/Location
+
+        // ---------------- LLLVAR Fields ----------------
+        iso.setValue(48, "APPLE 1 MINI MAR", IsoType.LLLVAR, 16)         // DE048
+        iso.setValue(49, "840", IsoType.NUMERIC, 3)                      // DE049 Currency
+
+        // PIN block (hex but sent as ASCII if your lib expects ASCII)
+        iso.setValue(52, "096D6CBA5BB6411D", IsoType.ALPHA, 16)          // DE052
+
+        iso.setValue(58, "0000000001", IsoType.LLLVAR, 10)               // DE058
+        iso.setValue(111, "EB0070901664", IsoType.LLLVAR, 12)            // DE111
+        iso.setValue(127, "10242149180000000000", IsoType.LLLVAR, 20)    // DE127
+
+        // ---------------- Encoding Settings ----------------
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
+
+        return iso.writeData()
+    }
+
+//    fun createReversal0420(txn: BuilderServiceTxnDetails): ByteArray {
+//
+//        val iso = IsoMessage()
+//
+//        // MTI 0420 = Reversal Advice
+//        iso.setType(0x0420)
+//
+//        iso.setValue(3, txn.processingCode, IsoType.NUMERIC, 6)
+//        iso.setValue(4, txn.amount, IsoType.NUMERIC, 12)
+//        iso.setValue(7, txn.transmissionDateTime, IsoType.NUMERIC, 10)
+//        iso.setValue(11, txn.stan, IsoType.NUMERIC, 6)
+//        iso.setValue(12, txn.localTime, IsoType.NUMERIC, 6)
+//        iso.setValue(13, txn.localDate, IsoType.NUMERIC, 4)
+//
+//        iso.setValue(37, txn.rrn, IsoType.ALPHA, 12)      // Original RRN
+//        iso.setValue(41, txn.terminalId, IsoType.ALPHA, 8)
+//        iso.setValue(42, txn.merchantId, IsoType.ALPHA, 15)
+//
+//        // DE90 – Original Data Elements (MANDATORY for reversal)
+//        // Format: MTI + STAN + TransmissionDT + AcquirerID + ForwardingID
+//        val originalData =
+//            "0200" +
+//                    txn.stan +
+//                    txn.transmissionDateTime +
+//                    txn.acquirerId.padStart(11, '0') +
+//                    "00000000000"   // forwarding ID if not used
+//
+//        iso.setValue(90, originalData, IsoType.NUMERIC, 42)
+//
+//        iso.setBinaryHeader(false)
+//        iso.setBinaryFields(false)
+//        iso.setForceStringEncoding(true)
+//        iso.setIsoHeader("")
+//
+//        return iso.writeData()
+//    }
+
+//    fun createReconciliation0500(txn: BuilderServiceTxnDetails, isRepeat: Boolean
+//    ): ByteArray {
+//
+//        val iso = IsoMessage()
+//
+//        // MTI 0500 = Reconciliation
+//        // MTI 0501 = Repeat Reconciliation
+//        iso.setType(if (isRepeat) 0x0501 else 0x0500)
+//
+//        val transmissionDateTime =
+//            BuilderUtils.getCurrentDateTime("MMddHHmmss")
+//
+//        val stan = getSTAN().toString().padStart(6, '0')
+//
+//        // ---------------- Mandatory Fields ----------------
+//        iso.setValue(7, transmissionDateTime, IsoType.NUMERIC, 10)
+//        iso.setValue(11, stan, IsoType.NUMERIC, 6)
+//        iso.setValue(15, txn.settlementDate, IsoType.NUMERIC, 4)
+//
+//        iso.setValue(32, txn.acquirerId, IsoType.LLVAR, 11)
+//
+//        // ---------------- Counters ----------------
+//        iso.setValue(74, txn.creditsCount.padStart(10, '0'), IsoType.NUMERIC, 10)
+//        iso.setValue(75, txn.creditsReversalCount.padStart(10, '0'), IsoType.NUMERIC, 10)
+//        iso.setValue(76, txn.debitsCount.padStart(10, '0'), IsoType.NUMERIC, 10)
+//        iso.setValue(77, txn.debitsReversalCount.padStart(10, '0'), IsoType.NUMERIC, 10)
+//        iso.setValue(80, txn.inquiriesCount.padStart(10, '0'), IsoType.NUMERIC, 10)
+//        iso.setValue(81, txn.authorizationsCount.padStart(10, '0'), IsoType.NUMERIC, 10)
+//
+//        // ---------------- Amount Totals ----------------
+//        iso.setValue(86, txn.creditsAmount.padStart(16, '0'), IsoType.NUMERIC, 16)
+//        iso.setValue(87, txn.creditsReversalAmount.padStart(16, '0'), IsoType.NUMERIC, 16)
+//        iso.setValue(88, txn.debitsAmount.padStart(16, '0'), IsoType.NUMERIC, 16)
+//        iso.setValue(89, txn.debitsReversalAmount.padStart(16, '0'), IsoType.NUMERIC, 16)
+//
+//        // ---------------- Net Settlement ----------------
+//        // Format: C/D + 16 digit amount (total 17)
+//        val de97 = txn.netSettlementSign + txn.netSettlementAmount.padStart(16, '0')
+//        iso.setValue(97, de97, IsoType.ALPHA, 17)
+//
+//        // ---------------- Settlement Institution ----------------
+//        iso.setValue(99, txn.settlementInstitutionId, IsoType.LLVAR, 11)
+//
+//        // ---------------- Encoding ----------------
+//        iso.setBinaryHeader(false)
+//        iso.setBinaryFields(false)
+//        iso.setForceStringEncoding(true)
+//        iso.setIsoHeader("")
+//
+//        return iso.writeData()
+//    }
 
 
 
-
-
-    @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun parseRklResponse(response: ByteArray): BuilderServiceTxnDetails {
-        return try {
-            message = messageFactory.parseMessage(
-                extractIsoPayload(response),
-                BuilderConstants.ISO_HEADER.size,
-                true
+        Log.d("Log", "Inside parseRklResponse")
+
+        val details = BuilderServiceTxnDetails()
+
+        try {
+            Log.d("RKLResponse", "Raw bytes length = ${response.size}")
+            Log.d(
+                "RKLResponse",
+                "Raw ASCII = ${response.toString(Charsets.US_ASCII)}"
             )
 
-            builderServiceTxnDetails.apply {
-                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESP_CODE)
-                    ?.let { hostRespCode = it }
-                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDL_DATA_KSN)?.let {
-                    if (it.slice(0 until BuilderConstants.ISO_FIELD_KSN_TAG.length) == BuilderConstants.ISO_FIELD_KSN_TAG) {
-                        var length =
-                            it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length until BuilderConstants.ISO_FIELD_KSN_TAG.length + 3)
-                                .toInt()
-                        if (it.length == length + BuilderConstants.ISO_FIELD_KSN_TAG.length + 3)
-                            ksn =
-                                it.slice(BuilderConstants.ISO_FIELD_KSN_TAG.length + 3 until it.length)
-                    }
-                }
-                message.getObjectValue<String>(BuilderConstants.ISO_FIELD_WORKING_KEY)?.let {
-                    if (it.length > BuilderConstants.ISO_FIELD_KCV_LENGTH) {
-                        kcv = it.slice(0 until BuilderConstants.ISO_FIELD_KCV_LENGTH)
-                        encryptedIpek =
-                            it.slice(BuilderConstants.ISO_FIELD_KCV_LENGTH until it.length)
-                    }
-                }
+            // ✅ Parse ISO message (ASCII bitmap, secondary bitmap supported)
+            val isoMsg = messageFactory.parseMessage(response, 0)
+
+            fun fieldString(de: Int): String? =
+                isoMsg.getField<Any>(de)?.value?.toString()
+
+            // ---- Standard fields ----
+            val de7  = fieldString(7)     // Transmission Date & Time
+            val de11 = fieldString(11)    // STAN
+            val de32 = fieldString(32)    // Acquirer ID
+            val de39 = fieldString(39)    // Response Code
+            val de70 = fieldString(70)    // Network Management Info Code
+
+            // ---- Text response ("Approved") usually here ----
+            val de62 = fieldString(62) ?: fieldString(63)
+
+            // ---- Binary field example (IPEK / key block) ----
+            val de96Bytes = isoMsg.getField<Any>(96)?.value as? ByteArray
+            val de96Hex = de96Bytes?.joinToString("") { "%02X".format(it) }
+
+            // ---- Logs ----
+            Log.d("RKLResponse", "MTI              = ${isoMsg.type}")
+            Log.d("RKLResponse", "DE07 (DateTime)  = $de7")
+            Log.d("RKLResponse", "DE11 (STAN)      = $de11")
+            Log.d("RKLResponse", "DE32 (Acquirer)  = $de32")
+            Log.d("RKLResponse", "DE39 (RespCode)  = $de39")
+            Log.d("RKLResponse", "DE70 (NMIC)      = $de70")
+            Log.d("RKLResponse", "DE62/63 (Text)   = $de62")
+            Log.d("RKLResponse", "DE96 (HEX)       = $de96Hex")
+
+            // ---- Populate response object ----
+            details.apply {
+                dateTime = de7
+                stan = de11
+                merchantId = de32
+                hostRespCode = de39
+                hostTxnRef = de70
+                cardBrand = de62      // ← "Approved"
+                encryptedIpek = de96Hex
             }
+
         } catch (e: Exception) {
-            e.printStackTrace()
-            builderServiceTxnDetails.apply {
-                hostRespCode = null
-            }
+            Log.e("RKLResponse", "ISO parse failed", e)
         }
+
+        return details
     }
+
+
+
+
+
+
+
+
 
     fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
@@ -443,7 +715,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLBIN,encryptedTrack2Data?.length?:0)
 
             /* Field 41, TID, ANS8, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+            //.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
             /* Field 42, MID, ANS15, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
@@ -528,7 +800,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLBIN,encryptedTrack2Data?.length?:0)
 
             /* Field 41, TID, ANS8, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+            //.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
             /* Field 42, MID, ANS15, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
@@ -616,7 +888,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLBIN,encryptedTrack2Data?.length?:0)
 
             /* Field 41, TID, ANS8, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+            //.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
             /* Field 42, MID, ANS15, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
@@ -720,7 +992,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_RESP_CODE, builderServiceTxnDetails?.hostRespCode, IsoType.ALPHA,BuilderConstants.ISO_FIELD_RESP_CODE_LENGTH)
 
             /* Field 41, TID, ANS8, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+            //.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
             /* Field 42, MID, ANS15, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
@@ -814,7 +1086,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA,BuilderConstants.ISO_FIELD_RRN_LENGTH)
 
             /* Field 41, TID, ANS8, Mandatory */
-            .setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+            //.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
             /* Field 42, MID, ANS15, Mandatory */
             .setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)

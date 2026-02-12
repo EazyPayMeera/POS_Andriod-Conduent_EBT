@@ -9,7 +9,7 @@ class PrinterRequestBuilder  @Inject constructor(){
     fun createPrinterRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): PrinterRequest {
         return PrinterRequest(
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,

@@ -177,12 +177,10 @@ class ApiServiceRepository @Inject constructor(
      ) {
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-         Log.d("Conduent","apiServiceRklRequest")
-         // Call the Echo Test request
-         rklRequestRepository.apiRklRequest { response ->
-             // Forward the response to listener
-             //iApiServiceResponseListener.onApiServiceResponse(response)
+         rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){
+             onApiServiceResponse(it)
          }
+
      }
 
 

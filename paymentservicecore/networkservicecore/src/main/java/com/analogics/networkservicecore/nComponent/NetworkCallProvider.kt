@@ -30,8 +30,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 object NetworkCallProvider {
-    suspend fun <T>
-            safeApiCall(apiCall: suspend () -> Response<T>): ResultProvider<T> {
+    suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): ResultProvider<T> {
         return try {
             val response = apiCall.invoke()
             if (response.isSuccessful) {
@@ -94,11 +93,7 @@ object NetworkCallProvider {
 
     suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
         return try {
-            Log.d("Conduent", "safeApiCall started")
             withContext(Dispatchers.IO) {
-
-                // --- Create SSL context (Trust all for testing) ---
-                Log.d("Conduent", "Creating SSL context")
                 val sslContext = SSLContext.getInstance("TLSv1.2")
                 sslContext.init(null, arrayOf(object : X509TrustManager {
                     override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
@@ -107,15 +102,15 @@ object NetworkCallProvider {
                 }), SecureRandom())
 
                 // --- Connect using SSLSocket ---
-                Log.d("Conduent", "Connecting to ${NetworkConstants.HOST_ADDRESS}:${NetworkConstants.HOST_PORT}")
+                //Log.d("Conduent", "Connecting to ${NetworkConstants.HOST_ADDRESS}:${NetworkConstants.HOST_PORT}")
                 val sslSocket = sslContext.socketFactory.createSocket(
                     NetworkConstants.HOST_ADDRESS,
                     NetworkConstants.HOST_PORT
                 ) as SSLSocket
 
-                Log.d("Conduent", "Starting handshake")
+
                 sslSocket.startHandshake()
-                Log.d("Conduent", "Handshake successful")
+
 
                 val output = sslSocket.outputStream
                 val input = sslSocket.inputStream
@@ -123,12 +118,12 @@ object NetworkCallProvider {
                 // --- Add 2-byte length prefix ---
                 val lenPrefix = byteArrayOf((requestBytes.size / 256).toByte(), (requestBytes.size % 256).toByte())
                 val finalMessage = lenPrefix + requestBytes
-                Log.d("Conduent", "Sending request with length ${requestBytes.size} (total bytes with prefix: ${finalMessage.size})")
+                //Log.d("Conduent", "Sending request with length ${requestBytes.size} (total bytes with prefix: ${finalMessage.size})")
 
                 // --- Send request ---
                 output.write(finalMessage)
                 output.flush()
-                Log.d("Conduent", "Request sent")
+                //Log.d("Conduent", "Request sent")
 
                 // --- Read response ---
                 val responseBuffer = ByteArrayOutputStream()

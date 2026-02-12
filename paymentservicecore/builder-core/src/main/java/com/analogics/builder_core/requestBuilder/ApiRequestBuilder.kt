@@ -49,7 +49,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
         message.setValue(BuilderConstants.ISO_FIELD_NII, BuilderConstants.DEFAULT_ISO8583_NII, IsoType.NUMERIC,BuilderConstants.ISO_FIELD_NII_LENGTH)
 
         /* Field 41, TID, ANS8, Mandatory */
-        message.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
+        //message.setValue(BuilderConstants.ISO_FIELD_TID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_TID_LENGTH)
 
         /* Field 42, MID, ANS15, Mandatory */
         message.setValue(BuilderConstants.ISO_FIELD_MID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA,BuilderConstants.ISO_FIELD_MID_LENGTH)
@@ -79,7 +79,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
     fun createLoginRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): UserLoginRequest {
         return UserLoginRequest(
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             loginId = builderServiceTxnDetails?.loginId,
             loginPassword = builderServiceTxnDetails?.loginPassword,
             deviceSN = builderServiceTxnDetails?.deviceSN,
@@ -91,7 +91,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
     fun createPurchaseRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): PurchaseRequest {
         return PurchaseRequest(
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,
@@ -119,7 +119,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
     fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): VoidReqeust {
         return VoidReqeust(
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,
@@ -147,7 +147,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
         return RefundRequest(
 
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,
@@ -181,7 +181,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
     fun createAuthCaptureRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): PostAuthRequest {
         return PostAuthRequest(
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,
@@ -210,7 +210,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
         return PreAuthRequest(
 
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+            //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,
@@ -242,7 +242,7 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
     fun createReversalRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ReversalReqeust {
         return ReversalReqeust(
             merchantId = builderServiceTxnDetails?.merchantId,
-            terminalId = builderServiceTxnDetails?.terminalId,
+           //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,
             deviceSN = builderServiceTxnDetails?.deviceSN,
             deviceMake = builderServiceTxnDetails?.deviceMake,

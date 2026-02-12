@@ -1,7 +1,6 @@
 package com.eazypaytech.posafrica.rootUtils.miscellaneous
 
 import android.content.Context
-import androidx.compose.ui.res.stringResource
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
@@ -77,7 +76,7 @@ object PrinterUtils {
 
             /* MID & TID */
             .addText(context.getString(R.string.receipt_merchant_id)+objRootAppPaymentDetails.merchantId,
-                context.getString(R.string.receipt_terminal_id)+objRootAppPaymentDetails.terminalId,
+                context.getString(R.string.receipt_terminal_id)+objRootAppPaymentDetails.procId,
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
 
@@ -248,7 +247,7 @@ object PrinterUtils {
 
             /* MID & TID */
             .addText(listObjRootAppPaymentDetails?.get(0)?.merchantId,
-                listObjRootAppPaymentDetails?.get(0)?.terminalId,
+                listObjRootAppPaymentDetails?.get(0)?.procId,
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
 
@@ -365,7 +364,7 @@ object PrinterUtils {
 
             /* MID & TID */
             .addText(listObjRootAppPaymentDetails?.get(0)?.merchantId,
-                listObjRootAppPaymentDetails?.get(0)?.terminalId,
+                listObjRootAppPaymentDetails?.get(0)?.procId,
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
 

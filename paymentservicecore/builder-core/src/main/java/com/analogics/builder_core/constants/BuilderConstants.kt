@@ -26,6 +26,7 @@ object BuilderConstants {
     const val MTI_VOID_RES = 0x0230
 
 
+
     /* TPDU */
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
     const val ISO_HEADER_LENGTH = 5
@@ -234,5 +235,18 @@ object BuilderConstants {
     const val ISO_FIELD_TRANSMISSION_DATE = 7   // DE007
     const val ISO_FIELD_NET_MGMT_INFO_CODE = 70 // DE070
     const val ISO_FIELD_KEY_MGMT_DATA = 96      // DE096
+    const val ISO_FIELD_NETWORK_MGMT_CODE = 180
+    const val STAN = 11
+    const val ACQUIRER_ID = 32
+    const val ISO_DATE_FORMAT = "MMddHHmmss"
+    const val ISO_TYPE_SIGN_ON: Int = 0x0800
+    const val ISO_FIELD_PROC_ID_LENGTH = 11
+
+    // Network Management Request
+    const val SIGN_ON_REQUEST = 1
+    const val SIGN_OFF_REQUEST = 2
+    const val HANDSHAKE_REQUEST = 301
+    const val KEY_CHANGE = 101
+    const val KEY_CHANGE_REQUEST = 180
 
 }
