@@ -251,14 +251,10 @@ object BuilderConstants {
     const val ISO_FIELD_MERCHANT_BANK = 48
     const val ISO_FIELD_CURRENCY_CODE = 49
     const val ISO_FIELD_ADD_AMOUNT = 54
-    const val ISO_FIELD_RESERVED_PRIVATE = 60     // DE060
     const val ISO_FIELD_POS_CONDITION_CODE = 58
-    const val ISO_FIELD_ADDITIONAL_DATA = 111
-    const val ISO_FIELD_NET_MGMT_INFO_CODE = 70 // DE070
-    const val ISO_FIELD_KEY_MGMT_DATA = 96      // DE096
-    const val ISO_FIELD_ORIGINAL_DATA = 90        // DE090
-
+    const val ISO_FIELD_RESERVED_PRIVATE = 60     // DE060
     const val ISO_FIELD_SETTLEMENT_CODE = 66
+    const val ISO_FIELD_NET_MGMT_INFO_CODE = 70
     const val ISO_FIELD_CREDITS_NUMBER = 74
     const val ISO_FIELD_CREDITS_REV_NUMBER = 75
     const val ISO_FIELD_DEBITS_NUMBER = 76
@@ -269,10 +265,12 @@ object BuilderConstants {
     const val ISO_FIELD_CREDITS_REV_AMOUNT = 87
     const val ISO_FIELD_DEBITS_AMOUNT = 88
     const val ISO_FIELD_DEBITS_REV_AMOUNT = 89
+    const val ISO_FIELD_ORIGINAL_DATA = 90
+    const val ISO_FIELD_KEY_MGMT_DATA = 96
     const val ISO_FIELD_NET_SETTLEMENT = 97
     const val ISO_FIELD_SETTLEMENT_INST_ID = 99
-
-    const val ISO_FIELD_NETWORK_MGMT_CODE = 180
+    const val ISO_FIELD_ADDITIONAL_DATA = 111
+    const val ISO_FIELD_RESPONSE_TEXT = 127
 
 
     const val ISO_DATE_FORMAT = "MMddHHmmss"
@@ -281,7 +279,7 @@ object BuilderConstants {
 
 
 
-    const val ISO_FIELD_RESPONSE_TEXT = 127      // DE096
+
 
 
     // Network Management Request
