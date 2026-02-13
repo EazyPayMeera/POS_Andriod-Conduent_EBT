@@ -67,7 +67,7 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
             viewModelScope.launch {
                 emvServiceRepository.initPaymentSDK(
                     termConfig = TermConfig(
-                        terminalIdentifier = sharedViewModel.objPosConfig?.terminalId,
+                        terminalIdentifier = sharedViewModel.objPosConfig?.procId,
                         merchantIdentifier = sharedViewModel.objPosConfig?.merchantId
                     ),
                     aidConfig = readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH),

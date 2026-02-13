@@ -1,7 +1,6 @@
 package com.eazypaytech.paymentservicecore.repository.apiService.rkl
 
 import android.content.Context
-import android.util.Log
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
@@ -27,7 +26,6 @@ class RklRequestRepository@Inject constructor(
 )  {
         @OptIn(ExperimentalStdlibApi::class, ExperimentalEncodingApi::class)
         suspend fun apiRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-
             /* Override Security Parameters from Payment Service. Don't expose in App Module */
             var activationKey = PaymentServiceUtils.generateRsaKey()
             paymentServiceTxnDetails?.devicePublicKey = Base64.encode(activationKey.public.encoded)
@@ -37,17 +35,11 @@ class RklRequestRepository@Inject constructor(
             builderServiceRepository.networkServiceRequest(
                 object : IBuilderServiceResponseListenerLyra{
                     override fun onBuilderSuccess(response: ByteArray) {
-                        val responseAscii = response.map { if (it in 32..126) it.toChar() else '.' }.joinToString("")
-                        Log.d("RKL", "=== Raw Response Before Parsing ===")
-                        Log.d("RKL", "HEX: ${response.joinToString(" ") { "%02X".format(it) }}")
-                        Log.d("RKL", "ASCII: $responseAscii")
-                        Log.d("RKL", "Size: ${response.size}")
-                        Log.d("RKL", "=================================")
                         CoroutineScope(Dispatchers.Default).launch {
                             /* Parse Response Packet to Object */
                             var keyInjectResult = false
                             var resPaymentServiceTxnDetails =
-                                apiRequestBuilder.parseRklResponse(response)
+                                apiRequestBuilder.parseNetworkManResponse(context,response)
                             resPaymentServiceTxnDetails.let {
                                 if (it.encryptedIpek?.isNotEmpty() == true && it.ksn?.isNotEmpty() == true && it.kcv?.isNotEmpty() == true) {
                                     var ipek = SecureKeyHandler.decryptRSA(
@@ -57,25 +49,11 @@ class RklRequestRepository@Inject constructor(
                                     keyInjectResult =
                                         PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv, context)
 
-                                    Log.d(
-                                        "RKL",
-                                        "Private Key    :${paymentServiceTxnDetails?.devicePrivateKey}"
-                                    )
-                                    Log.d(
-                                        "RKL",
-                                        "Public Key     :${paymentServiceTxnDetails?.devicePublicKey}"
-                                    )
-                                    Log.d("RKL", "Encrypted IPEK :${it.encryptedIpek}")
-                                    Log.d("RKL", "Decrypted IPEK :$ipek")
-                                    Log.d("RKL", "KSN            :${it.ksn}")
-                                    Log.d("RKL", "KCV            :${it.kcv}")
-                                    Log.d("RKL", "RKL Success    :${keyInjectResult}")
                                 }
                             }
 
                             paymentServiceTxnDetails?.let {
                                 it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
-
                                 if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED && keyInjectResult == true)
                                     it.txnStatus = TxnStatus.APPROVED.toString()
                                 else

@@ -175,6 +175,10 @@ class ApiServiceRepository @Inject constructor(
          paymentServiceTxnDetails: PaymentServiceTxnDetails?,
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
+         Log.d(
+             "ISO_DEBUG",
+             "procId = ${paymentServiceTxnDetails?.procId}"
+         )
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
          rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){

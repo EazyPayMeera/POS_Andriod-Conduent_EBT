@@ -32,7 +32,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository, private var txnDBRepository: TxnDBRepository) :
     ViewModel(),
     IApiServiceResponseListener {
-    var procIdInput = mutableStateOf("")
+    var procIdInput = mutableStateOf("00004000007")
     var midInput = mutableStateOf("")
     val isActivationBtnEnabled = mutableStateOf(true)
     lateinit var navHostController: NavHostController
@@ -67,7 +67,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objRootAppPaymentDetail?.procId = procIdInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
         sharedViewModel?.objPosConfig?.apply {
-            terminalId = procIdInput.value
+            procId = procIdInput.value
             merchantId = midInput.value
         }?.saveToPrefs()
     }
@@ -91,6 +91,10 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
                 // Collect required activation data
                 collectActivationData()
+                Log.d(
+                    "ISO_DEBUG",
+                    "procId = ${sharedViewModel?.objRootAppPaymentDetail?.procId}"
+                )
                 Log.d("Conduent","Start Activation Process")
                 navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 apiServiceRepository.apiServiceRklRequest(
@@ -194,7 +198,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     fun onLoad(sharedViewModel : SharedViewModel)
     {
-        sharedViewModel.objPosConfig?.terminalId?.let { procIdInput.value = it }
+        sharedViewModel.objPosConfig?.procId?.let { procIdInput.value = it }
         sharedViewModel.objPosConfig?.merchantId?.let { midInput.value = it }
     }
 }

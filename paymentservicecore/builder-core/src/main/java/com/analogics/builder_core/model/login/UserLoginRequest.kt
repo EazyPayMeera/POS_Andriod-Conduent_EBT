@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UserLoginRequest (
 @SerializedName("MerchantId") var merchantId: String? = null,
-@SerializedName("TerminalId") var terminalId: String? = null,
+@SerializedName("procId") var procId: String? = null,
 @SerializedName("LoginId") var loginId: String? = null,
 @SerializedName("LoginPassword") var loginPassword: String? = null,
 @SerializedName("DeviceSN") var deviceSN: String? = null,

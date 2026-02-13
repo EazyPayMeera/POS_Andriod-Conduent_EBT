@@ -120,7 +120,7 @@ fun ForgetPasswordView(navHostController: NavHostController) {
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_20_CompactMedium)) // Space between icon and text
                         Text(
-                            text = stringResource(id = R.string.tid) + " " + (sharedViewModel.objPosConfig?.terminalId?:""),
+                            text = stringResource(id = R.string.tid) + " " + (sharedViewModel.objPosConfig?.procId?:""),
                             fontSize = MaterialTheme.dimens.SP_22_CompactMedium,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold

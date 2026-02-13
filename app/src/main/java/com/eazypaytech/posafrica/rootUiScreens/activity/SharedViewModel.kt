@@ -33,7 +33,7 @@ class SharedViewModel:ViewModel() {
       serviceCharge = 0.00
 
       /* Copy Config Data */
-      objRootAppPaymentDetail.procId = objPosConfig?.terminalId
+      objRootAppPaymentDetail.procId = objPosConfig?.procId
       objRootAppPaymentDetail.merchantId = objPosConfig?.merchantId
       objRootAppPaymentDetail.batchId = objPosConfig?.batchId
       objRootAppPaymentDetail.cashierId = objPosConfig?.cashierId

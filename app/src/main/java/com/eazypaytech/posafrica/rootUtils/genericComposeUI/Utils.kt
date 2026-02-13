@@ -528,7 +528,7 @@ fun String.toCardBrand() : CardBrand
 
 fun generateMasterPassword(user : String?, sharedViewModel: SharedViewModel) : String
 {
-    val tid = sharedViewModel.objPosConfig?.terminalId?:""
+    val tid = sharedViewModel.objPosConfig?.procId?:""
     val mid = sharedViewModel.objPosConfig?.merchantId?:""
     val deviceSN = sharedViewModel.objPosConfig?.deviceSN?.replace("-","")?:""
 

@@ -5,39 +5,40 @@
     <parse type="0810">
         <field num="7"  type="NUMERIC" length="10"/>
         <field num="11" type="NUMERIC" length="6"/>
-        <field num="32" type="NUMERIC" length="11"/>
-        <field num="39" type="ALPHA" length="2"/>
-        <field num="62" type="LLLVAR"/>
-        <field num="63" type="LLLVAR"/>
+        <field num="32" type="LLVAR"   length="11"/>
+        <field num="39" type="ALPHA"   length="2"/>
         <field num="70" type="NUMERIC" length="3"/>
-        <field num="96" type="LLLBIN"/>
+        <field num="96"  type="ALPHA" length="8"/>
+        <field num="127" type="LLLVAR"/>
     </parse>
 
     <!-- ================= 0210 ================= -->
     <parse type="0210">
+        <field num="2"  type="LLVAR"  length="19"/>
         <field num="3"  type="NUMERIC" length="6"/>
         <field num="4"  type="NUMERIC" length="12"/>
+        <field num="7"  type="NUMERIC" length="10"/>
         <field num="11" type="NUMERIC" length="6"/>
         <field num="12" type="TIME"/>
         <field num="13" type="DATE4"/>
+        <field num="15" type="DATE4"/>
+        <field num="17" type="DATE4"/>
+        <field num="18" type="NUMERIC" length="4"/>
         <field num="22" type="NUMERIC" length="3"/>
-        <field num="23" type="NUMERIC" length="3"/>
-        <field num="24" type="NUMERIC" length="3"/>
-        <field num="25" type="NUMERIC" length="2"/>
-        <field num="35" type="LLLBIN"/>
+        <field num="32" type="LLVAR" length="11"/>
+        <field num="35" type="LLVAR" length="37"/>
         <field num="37" type="ALPHA" length="12"/>
         <field num="38" type="ALPHA" length="6"/>
         <field num="39" type="ALPHA" length="2"/>
         <field num="41" type="ALPHA" length="8"/>
         <field num="42" type="ALPHA" length="15"/>
-        <field num="48" type="LLLVAR"/>
-        <field num="49" type="ALPHA" length="3"/>
-        <field num="52" type="BINARY" length="8"/>
-        <field num="55" type="LLLBIN"/>
-        <field num="60" type="LLLVAR"/>
-        <field num="61" type="LLLVAR"/>
-        <field num="62" type="LLLVAR"/>
-        <field num="63" type="LLLVAR"/>
+        <field num="43" type="ALPHA" length="40"/>
+        <field num="48" type="LLLVAR" length="25"/>
+        <field num="49" type="NUMERIC" length="3"/>
+        <field num="54" type="LLLVAR" length="120"/>
+        <field num="58" type="LLLVAR" length="11"/>
+        <field num="111" type="LLLVAR" length="255"/>
+        <field num="127" type="LLLVAR" length="100"/>
     </parse>
 
     <!-- ================= 0230 ================= -->
@@ -65,5 +66,27 @@
         <field num="62" type="LLLVAR"/>
         <field num="63" type="LLLVAR"/>
     </parse>
+
+    <parse type="0510">
+        <field num="7"  type="NUMERIC" length="10"/>
+        <field num="11" type="NUMERIC" length="6"/>
+        <field num="15" type="NUMERIC" length="4"/>
+        <field num="32" type="LLVAR" length="11"/>
+        <field num="66" type="NUMERIC" length="1"/>
+        <field num="74" type="NUMERIC" length="10"/>
+        <field num="75" type="NUMERIC" length="10"/>
+        <field num="76" type="NUMERIC" length="10"/>
+        <field num="77" type="NUMERIC" length="10"/>
+        <field num="80" type="NUMERIC" length="10"/>
+        <field num="81" type="NUMERIC" length="10"/>
+        <field num="86" type="NUMERIC" length="16"/>
+        <field num="87" type="NUMERIC" length="16"/>
+        <field num="88" type="NUMERIC" length="16"/>
+        <field num="89" type="NUMERIC" length="16"/>
+        <field num="97" type="ALPHA" length="16"/>
+        <field num="99" type="LLVAR" length="11"/>
+
+    </parse>
+
 
 </j8583-config>

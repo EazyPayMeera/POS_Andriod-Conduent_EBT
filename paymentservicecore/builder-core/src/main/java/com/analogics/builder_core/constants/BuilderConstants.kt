@@ -46,7 +46,7 @@ object BuilderConstants {
     const val PROC_CODE_VOID_PRE_AUTH = 32
 
     /* AMOUNT */
-    const val ISO_FIELD_AMOUNT = 4
+    //const val ISO_FIELD_AMOUNT = 4
     const val ISO_FIELD_AMOUNT_LENGTH = 12
 
     /* STAN */
@@ -75,15 +75,12 @@ object BuilderConstants {
     const val ISO_FIELD_NII_LENGTH = 4
 
     /* POS Condition Code */
-    const val ISO_FIELD_POS_CONDITION_CODE = 25
     const val ISO_FIELD_POS_CONDITION_CODE_LENGTH = 2
 
     /* Track 2 Data */
-    const val ISO_FIELD_TRACK2_DATA = 35
     const val ISO_FIELD_TRACK2_DATA_MAX_LEN = 40
 
     /* RRN */
-    const val ISO_FIELD_RRN = 37
     const val ISO_FIELD_RRN_LENGTH = 12
 
     /* Auth Code */
@@ -231,16 +228,61 @@ object BuilderConstants {
 
 
     // for Conduent
-    const val ISO_FIELD_ACQUIRER_ID = 32  // DE032
+    const val ISO_FIELD_PAN_NO = 2   // DE007
+    const val ISO_FIELD_PROCESSING_CODE = 3
+    const val ISO_FIELD_AMOUNT = 4
     const val ISO_FIELD_TRANSMISSION_DATE = 7   // DE007
+    const val ISO_FIELD_PROC_ID = 11
+    const val ISO_FIELD_LOC_TIME = 12      // DE096
+    const val ISO_FIELD_LOC_DATE = 13      // DE096
+    const val ISO_FIELD_EXPIRY_DATE = 14   // DE007
+    const val ISO_FIELD_SET_DATE = 15   // DE007
+    const val ISO_FIELD_CAP_DATE = 17   // DE007
+    const val ISO_FIELD_MERCHANT_TYPE = 18  // DE007
+    const val ISO_FIELD_ENTRY_MODE = 22  // DE007
+    const val ISO_FIELD_ACQUIRER_ID = 32
+    const val ISO_FIELD_TRACK2_DATA = 35  // DE007
+    const val ISO_FIELD_RRN = 37  // DE007
+    const val ISO_FIELD_AUTH_ID = 38  // DE007
+    const val ISO_FIELD_RESPONSE_CODE = 39
+    const val ISO_FIELD_TERMINAL_ID = 41
+    const val ISO_FIELD_MERCHANT_ID = 42
+    const val ISO_FIELD_MERCHANT_NAME = 43
+    const val ISO_FIELD_MERCHANT_BANK = 48
+    const val ISO_FIELD_CURRENCY_CODE = 49
+    const val ISO_FIELD_ADD_AMOUNT = 54
+    const val ISO_FIELD_RESERVED_PRIVATE = 60     // DE060
+    const val ISO_FIELD_POS_CONDITION_CODE = 58
+    const val ISO_FIELD_ADDITIONAL_DATA = 111
     const val ISO_FIELD_NET_MGMT_INFO_CODE = 70 // DE070
     const val ISO_FIELD_KEY_MGMT_DATA = 96      // DE096
+    const val ISO_FIELD_ORIGINAL_DATA = 90        // DE090
+
+    const val ISO_FIELD_SETTLEMENT_CODE = 66
+    const val ISO_FIELD_CREDITS_NUMBER = 74
+    const val ISO_FIELD_CREDITS_REV_NUMBER = 75
+    const val ISO_FIELD_DEBITS_NUMBER = 76
+    const val ISO_FIELD_DEBITS_REV_NUMBER = 77
+    const val ISO_FIELD_INQUIRIES_NUMBER = 80
+    const val ISO_FIELD_AUTH_NUMBER = 81
+    const val ISO_FIELD_CREDITS_AMOUNT = 86
+    const val ISO_FIELD_CREDITS_REV_AMOUNT = 87
+    const val ISO_FIELD_DEBITS_AMOUNT = 88
+    const val ISO_FIELD_DEBITS_REV_AMOUNT = 89
+    const val ISO_FIELD_NET_SETTLEMENT = 97
+    const val ISO_FIELD_SETTLEMENT_INST_ID = 99
+
     const val ISO_FIELD_NETWORK_MGMT_CODE = 180
-    const val STAN = 11
-    const val ACQUIRER_ID = 32
+
+
     const val ISO_DATE_FORMAT = "MMddHHmmss"
     const val ISO_TYPE_SIGN_ON: Int = 0x0800
-    const val ISO_FIELD_PROC_ID_LENGTH = 11
+
+
+
+
+    const val ISO_FIELD_RESPONSE_TEXT = 127      // DE096
+
 
     // Network Management Request
     const val SIGN_ON_REQUEST = 1
@@ -248,5 +290,8 @@ object BuilderConstants {
     const val HANDSHAKE_REQUEST = 301
     const val KEY_CHANGE = 101
     const val KEY_CHANGE_REQUEST = 180
+
+
+    const val ISO_FIELD_PROC_ID_LENGTH = 11
 
 }

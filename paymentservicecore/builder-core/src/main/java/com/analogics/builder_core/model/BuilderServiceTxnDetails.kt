@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class BuilderServiceTxnDetails(
     @SerializedName("id") var id: Long? = null,
-    @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("procId") var procId: String? = null,
     @SerializedName("cashierId") var cashierId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,
@@ -14,7 +13,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("deviceModel") var deviceModel: String? = null,
 
     /* Host Authorization */
-    @SerializedName("authAmount") var authAmount: String? = null,
+
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
@@ -36,13 +35,57 @@ data class BuilderServiceTxnDetails(
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
     @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
 
-    /* Card Details */
+    /* Conduent Details */
+    @SerializedName("cardPan") var cardPan: String? = null,
+    @SerializedName("stan") var stan: String? = null,
+    @SerializedName("authAmount") var authAmount: String? = null,
+    @SerializedName("dateTime") var dateTime: String? = null,
+    @SerializedName("expiryDate") var expiryDate: String? = null,
+    @SerializedName("processingCode") var processingCode: String? = null,
+    @SerializedName("localTime") var localTime: String? = null,
+    @SerializedName("localDate") var localDate: String? = null,
+    @SerializedName("SettlementDate") var SettlementDate: String? = null,
+    @SerializedName("captureDate") var captureDate: String? = null,
+    @SerializedName("merchantType") var merchantType: String? = null,
+    @SerializedName("posEntryMode") var posEntryMode: String? = null,
+    @SerializedName("acquirerId") var acquirerId: String? = null,
+    @SerializedName("track2Data") var track2Data: String? = null,
+    @SerializedName("rrn") var rrn: String? = null,
+    @SerializedName("authId") var authId: String? = null,
+    @SerializedName("responseCode") var responseCode: String? = null,
+    @SerializedName("merchantId") var merchantId: String? = null,
+    @SerializedName("terminalId") var terminalId: String? = null,
+    @SerializedName("merchantName") var merchantName: String? = null,
+    @SerializedName("merchantBank") var merchantBank: String? = null,
+    @SerializedName("currencyCode") var currencyCode: String? = null,
+    @SerializedName("additionalAmt") var additionalAmt: String? = null,
+    @SerializedName("posCondition") var posCondition: String? = null,
+    @SerializedName("privateData") var privateData: String? = null,
+    @SerializedName("acquirerTrace") var acquirerTrace: String? = null,
+    @SerializedName("reservedPrivate") var reservedPrivate: String? = null,
+    @SerializedName("originalData") var originalData: String? = null,
+    @SerializedName("settlementCode") var settlementCode: String? = null,
+    @SerializedName("creditsNumber") var creditsNumber: String? = null,
+    @SerializedName("creditsReversalNumber") var creditsReversalNumber: String? = null,
+    @SerializedName("debitsNumber") var debitsNumber: String? = null,
+    @SerializedName("debitsReversalNumber") var debitsReversalNumber: String? = null,
+    @SerializedName("inquiriesNumber") var inquiriesNumber: String? = null,
+    @SerializedName("authorizationsNumber") var authorizationsNumber: String? = null,
+    @SerializedName("creditsAmount") var creditsAmount: String? = null,
+    @SerializedName("creditsReversalAmount") var creditsReversalAmount: String? = null,
+    @SerializedName("debitsAmount") var debitsAmount: String? = null,
+    @SerializedName("debitsReversalAmount") var debitsReversalAmount: String? = null,
+    @SerializedName("netSettlementAmount") var netSettlementAmount: String? = null,
+    @SerializedName("settlementInstitutionId") var settlementInstitutionId: String? = null,
+
+
+/* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
     @SerializedName("trackData")        var trackData: String? = null,
     @SerializedName("pinBlock")        var pinBlock: String? = null,
     @SerializedName("posConditionCode") var posConditionCode: String? = null,
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
-    @SerializedName("cardPan") var cardPan: String? = null,
+
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
     @SerializedName("cardBrand") var cardBrand: String? = null,
     @SerializedName("cardSeqNum") var cardSeqNum: String? = null,
@@ -54,9 +97,8 @@ data class BuilderServiceTxnDetails(
     /* Transaction Details */
     @SerializedName("batchId") var batchId: String? = null,
     @SerializedName("invoiceNo") var invoiceNo: String? = null,
-    @SerializedName("stan") var stan: String? = null,
     @SerializedName("purchaseOrderNo") var purchaseOrderNo: String? = null,
-    @SerializedName("dateTime") var dateTime: String? = null,
+
     @SerializedName("timeZone") var timeZone: String? = null,
     @SerializedName("txnType") var txnType: String? = null,
     @SerializedName("accountType") var accountType: String? = null,
