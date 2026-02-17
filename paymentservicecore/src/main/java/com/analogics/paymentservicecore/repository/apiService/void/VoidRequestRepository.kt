@@ -30,62 +30,62 @@ class VoidRequestRepository @Inject constructor (
 
     //lateinit var paymentServiceTxnDetails:PaymentServiceTxnDetails
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-
-        if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA) {
-            var request = apiRequestBuilderLyra.CreateVoidRequest(
-                PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
-                    paymentServiceTxnDetails
-                )
-            )
-
-            if(paymentServiceTxnDetails.isDemoMode == true)
-            {
-                onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,
-                    apiRequestBuilderLyra.buildDummyVoidResponse()))
-            }
-            else {
-                builderServiceRepositoryLyra.networkServiceRequest(
-                    object :
-                        IBuilderServiceResponseListenerLyra {
-                        override fun onBuilderSuccess(response: ByteArray) {
-                            onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,response))
-                        }
-
-                        override fun onBuilderFailure(error: Any) {
-                            onAPIServiceResponse(ApiServiceError(error.toString()))
-                        }
-                    },
-                    request
-                )
-            }
-        }
-        else {
-            builderServiceRepository.apiPurchase(
-                object : IBuilderServiceResponseListener {
-                    override fun onBuilderSuccess(response: String) {
-                        onAPIServiceResponse(response)
-                        Log.d("record insert", "onApiSuccessRes")
-
-                    }
-
-                    override fun onBuilderFailure(error: Any) {
-                        Log.d("record insert", "onApiFailureRes")
-                        onAPIServiceResponse(ApiServiceError(error.toString()))
-                        paymentServiceTxnDetails?.let { onAPIServiceResponse(it) }
-                    }
-                },
-                BuilderUtils.prepareApiRequestBody(
-                    apiRequestBuilder.createVoidRequest(
-                        PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
-                            paymentServiceTxnDetails
-                        )
-                    )
-                )
-
-            )
-        }
-    }
+//    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+//
+//        if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA) {
+//            var request = apiRequestBuilderLyra.CreateVoidRequest(
+//                PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
+//                    paymentServiceTxnDetails
+//                )
+//            )
+//
+//            if(paymentServiceTxnDetails.isDemoMode == true)
+//            {
+//                onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,
+//                    apiRequestBuilderLyra.buildDummyVoidResponse()))
+//            }
+//            else {
+//                builderServiceRepositoryLyra.networkServiceRequest(
+//                    object :
+//                        IBuilderServiceResponseListenerLyra {
+//                        override fun onBuilderSuccess(response: ByteArray) {
+//                            onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,response))
+//                        }
+//
+//                        override fun onBuilderFailure(error: Any) {
+//                            onAPIServiceResponse(ApiServiceError(error.toString()))
+//                        }
+//                    },
+//                    request
+//                )
+//            }
+//        }
+//        else {
+//            builderServiceRepository.apiPurchase(
+//                object : IBuilderServiceResponseListener {
+//                    override fun onBuilderSuccess(response: String) {
+//                        onAPIServiceResponse(response)
+//                        Log.d("record insert", "onApiSuccessRes")
+//
+//                    }
+//
+//                    override fun onBuilderFailure(error: Any) {
+//                        Log.d("record insert", "onApiFailureRes")
+//                        onAPIServiceResponse(ApiServiceError(error.toString()))
+//                        paymentServiceTxnDetails?.let { onAPIServiceResponse(it) }
+//                    }
+//                },
+//                BuilderUtils.prepareApiRequestBody(
+//                    apiRequestBuilder.createVoidRequest(
+//                        PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
+//                            paymentServiceTxnDetails
+//                        )
+//                    )
+//                )
+//
+//            )
+//        }
+//    }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {

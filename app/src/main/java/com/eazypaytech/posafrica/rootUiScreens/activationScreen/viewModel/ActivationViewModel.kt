@@ -24,6 +24,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getAcquirer
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getIsoResponseCodeString
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -86,22 +87,42 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     fun startActivateProcess() {
         viewModelScope.launch {
             try {
-                // Disable the activation button to prevent multiple clicks
                 setActivationButtonState(false)
-
-                // Collect required activation data
                 collectActivationData()
-                Log.d(
-                    "ISO_DEBUG",
-                    "procId = ${sharedViewModel?.objRootAppPaymentDetail?.procId}"
-                )
-                Log.d("Conduent","Start Activation Process")
-                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 apiServiceRepository.apiServiceRklRequest(
                     PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
                         sharedViewModel?.objRootAppPaymentDetail
-                    ), this@ActivationViewModel
+                    ),
+                    object : IApiServiceResponseListener {
+
+                        override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+
+                            Log.d("RKL_RESPONSE", "HostRespCode = ${response.hostRespCode}")
+                            Log.d("RKL_RESPONSE", "TxnStatus = ${response.txnStatus}")
+
+                            if (response.hostRespCode == "00" &&
+                                response.txnStatus == TxnStatus.DECLINED.toString()
+                            ) {
+
+                                viewModelScope.launch(Dispatchers.Main) {
+                                    navHostController.navigateAndClean(
+                                        AppNavigationItems.DashBoardScreen.route
+                                    )
+                                }
+
+                            } else {
+                                setActivationButtonState(true)
+                            }
+                        }
+
+                        override fun onApiServiceError(error: ApiServiceError) {
+
+                            //Log.e("RKL_RESPONSE", "Error = ${error.message}")
+                            setActivationButtonState(true)
+                        }
+                    }
                 )
+
 
             } catch (e: Exception) {
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "Unknown error occurred during activation.")

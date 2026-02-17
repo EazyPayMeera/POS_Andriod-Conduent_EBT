@@ -1,6 +1,7 @@
 package com.eazypaytech.paymentservicecore.repository.apiService.rkl
 
 import android.content.Context
+import android.util.Log
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
@@ -54,6 +55,7 @@ class RklRequestRepository@Inject constructor(
 
                             paymentServiceTxnDetails?.let {
                                 it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                                Log.d("ISO_DEBUG", "Host Response Code = ${it.hostRespCode}")
                                 if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED && keyInjectResult == true)
                                     it.txnStatus = TxnStatus.APPROVED.toString()
                                 else

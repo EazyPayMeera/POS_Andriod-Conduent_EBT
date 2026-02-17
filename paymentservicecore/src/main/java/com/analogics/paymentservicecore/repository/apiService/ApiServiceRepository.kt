@@ -89,9 +89,9 @@ class ApiServiceRepository @Inject constructor(
     ) {
         Log.d("Request_date","apiServiceRefund")
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
-            onApiServiceResponse(it)
-        }
+//        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
+//            onApiServiceResponse(it)
+//        }
     }
 
      @RequiresApi(Build.VERSION_CODES.O)
@@ -101,9 +101,9 @@ class ApiServiceRepository @Inject constructor(
      ) {
          Log.d("Request_date","apiServiceRefund")
          this.iApiServiceResponseListener = iApiServiceResponseListener
-         preAuthRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
-             onApiServiceResponse(it)
-         }
+//         preAuthRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
+//             onApiServiceResponse(it)
+//         }
      }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -112,9 +112,9 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
-            onApiServiceResponse(it)
-        }
+//        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
+//            onApiServiceResponse(it)
+//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -123,9 +123,9 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
-            onApiServiceResponse(it)
-        }
+//        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
+//            onApiServiceResponse(it)
+//        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -134,9 +134,9 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        authCaptureRequestRepository.sendAuthCapRequest(paymentServiceTxnDetails){
-                onApiServiceResponse(it)
-        }
+//        authCaptureRequestRepository.sendAuthCapRequest(paymentServiceTxnDetails){
+//                onApiServiceResponse(it)
+//        }
     }
 
     override suspend fun apiServiceReversal(
