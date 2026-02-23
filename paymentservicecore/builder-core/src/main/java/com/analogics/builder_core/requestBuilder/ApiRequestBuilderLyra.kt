@@ -54,17 +54,30 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         messageFactory.isBinaryHeader = true
     }
 
-    fun getIsoPosEntryMode() : String?
-    {
-        return when(builderServiceTxnDetails.cardEntryMode)
-        {
-            CardEntryMode.MANUAL.toString()->"0110"
-            CardEntryMode.MAGSTRIPE.toString()->"0210"
-            CardEntryMode.CONTACT.toString()->"0510"
-            CardEntryMode.CONTACLESS.toString()->"0710"
-            CardEntryMode.FALLBACK_MAGSTRIPE.toString()->"8010"
-            CardEntryMode.CONTACLESS_MAGSTRIPE.toString()->"9110"
-            else -> "0010"
+//    fun getIsoPosEntryMode() : String?
+//    {
+//        return when(builderServiceTxnDetails.cardEntryMode)
+//        {
+//            CardEntryMode.MANUAL.toString()->"0110"
+//            CardEntryMode.MAGSTRIPE.toString()->"0210"
+//            CardEntryMode.CONTACT.toString()->"0510"
+//            CardEntryMode.CONTACLESS.toString()->"0710"
+//            CardEntryMode.FALLBACK_MAGSTRIPE.toString()->"8010"
+//            CardEntryMode.CONTACLESS_MAGSTRIPE.toString()->"9110"
+//            else -> "0010"
+//        }
+//    }
+
+    fun getIsoPosEntryMode(): String {
+        return when (builderServiceTxnDetails.cardEntryMode) {
+
+            CardEntryMode.MANUAL.toString() -> "010"        // Manual, no PIN
+            CardEntryMode.MAGSTRIPE.toString() -> "021"     // Magstripe + PIN
+            CardEntryMode.CONTACT.toString() -> "051"       // Chip + PIN
+            CardEntryMode.CONTACLESS.toString() -> "071"    // Contactless + PIN
+            CardEntryMode.FALLBACK_MAGSTRIPE.toString() -> "801"
+            CardEntryMode.CONTACLESS_MAGSTRIPE.toString() -> "911"
+            else -> "010"
         }
     }
 
@@ -88,6 +101,15 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     {
         var pan : String? =null
         builderServiceTxnDetails.cardPan?.let {
+            pan = it
+        }
+        return pan
+    }
+
+    fun getMaskedPAN() : String?
+    {
+        var pan : String? =null
+        builderServiceTxnDetails.cardMaskedPan?.let {
             pan = it
         }
         return pan
@@ -254,6 +276,13 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             null
     }
 
+    fun String.hexToByteArray(): ByteArray {
+        require(length % 2 == 0)
+        return ByteArray(length / 2) { i ->
+            ((this[i * 2].digitToInt(16) shl 4) + this[i * 2 + 1].digitToInt(16)).toByte()
+        }
+    }
+
     fun isDummyResponseApproval() : Boolean
     {
         /* Approve EVEN amount & decline ODD amount */
@@ -402,7 +431,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_OFF_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         val de096 = "04000007"
-        iso.setValue(96, de096, IsoType.LLLVAR, 8) // LLLVAR length auto-handled
+        iso.setValue(96, de096, IsoType.ALPHA, 8) // LLLVAR length auto-handled
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -420,7 +449,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.HANDSHAKE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         val de096 = "04000007"
-        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.ALPHA, de096.length) // LLLVAR length auto-handled
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -428,6 +457,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return iso.writeData()
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     fun createKeyRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
@@ -438,7 +468,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE, IsoType.NUMERIC, 3) // Fixed-length numeric
         val de096 = "04000007"
-        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.ALPHA, de096.length) // LLLVAR length auto-handled
+        val workingKeyAscii = "03625118864C4A99CBF0E2D95B635046621D7DF"
+        iso.setValue(125, workingKeyAscii, IsoType.LLLVAR, workingKeyAscii.length) // 39 characters
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -456,7 +488,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         val de096 = "04000007"
-        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.LLLVAR, de096.length) // LLLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.ALPHA, de096.length) // LLLVAR length auto-handled
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -464,96 +496,106 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return iso.writeData()
     }
 
-//    fun createFinancial0200Request(txn: BuilderServiceTxnDetails): ByteArray {
-//
-//        val iso = IsoMessage()
-//
-//        // ---------------- MTI ----------------
-//        iso.setType(0x0200)   // Financial transaction request
-//
-//        // ---------------- Fixed Fields ----------------
-//        iso.setValue(2, "6005281234560300", IsoType.LLVAR, 19)          // DE002 PAN
-//        iso.setValue(3, "009800", IsoType.NUMERIC, 6)                   // DE003 Processing Code
-//        iso.setValue(4, "000000000298", IsoType.NUMERIC, 12)            // DE004 Amount
-//        iso.setValue(7, "1024214918", IsoType.NUMERIC, 10)              // DE007 Transmission DateTime
-//        iso.setValue(11, "570554", IsoType.NUMERIC, 6)                  // DE011 STAN
-//        iso.setValue(12, "154918", IsoType.NUMERIC, 6)                  // DE012 Local Time
-//        iso.setValue(13, "1024", IsoType.NUMERIC, 4)                    // DE013 Local Date
-//        iso.setValue(15, "1024", IsoType.NUMERIC, 4)                    // DE015 Settlement Date
-//        iso.setValue(17, "1024", IsoType.NUMERIC, 4)                    // DE017 Capture Date
-//        iso.setValue(18, "5499", IsoType.NUMERIC, 4)                    // DE018 Merchant Type
-//        iso.setValue(22, "021", IsoType.NUMERIC, 3)                     // DE022 POS Entry Mode
-//
-//        // ---------------- LLVAR Fields ----------------
-//        iso.setValue(32, "00004000002", IsoType.LLVAR, 11)              // DE032 Acquirer ID
-//        iso.setValue(35, "6005281234560300=4912120782", IsoType.LLVAR, 37) // DE035 Track 2
-//
-//        // ---------------- Fixed Alphanumeric ----------------
-//        iso.setValue(37, "529700038968", IsoType.ALPHA, 12)              // DE037 RRN
-//        iso.setValue(41, "86887658", IsoType.ALPHA, 8)                   // DE041 Terminal ID
-//        iso.setValue(42, "000008042086887", IsoType.ALPHA, 15)           // DE042 Merchant ID
-//        iso.setValue(43,
-//            "1388A TAYLOR AVE   US  PARKVILLE    MDUS".padEnd(40),
-//            IsoType.ALPHA,
-//            40
-//        )                                                                 // DE043 Name/Location
-//
-//        // ---------------- LLLVAR Fields ----------------
-//        iso.setValue(48, "APPLE 1 MINI MAR", IsoType.LLLVAR, 16)         // DE048
-//        iso.setValue(49, "840", IsoType.NUMERIC, 3)                      // DE049 Currency
-//
-//        // PIN block (hex but sent as ASCII if your lib expects ASCII)
-//        iso.setValue(52, "096D6CBA5BB6411D", IsoType.ALPHA, 16)          // DE052
-//
-//        iso.setValue(58, "0000000001", IsoType.LLLVAR, 10)               // DE058
-//        iso.setValue(111, "EB0070901664", IsoType.LLLVAR, 12)            // DE111
-//        iso.setValue(127, "10242149180000000000", IsoType.LLLVAR, 20)    // DE127
-//
-//        // ---------------- Encoding Settings ----------------
-//        iso.setBinaryHeader(false)
-//        iso.setBinaryFields(false)
-//        iso.setForceStringEncoding(true)
-//        iso.setIsoHeader("")
-//
-//        return iso.writeData()
-//    }
+    fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+        val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
+        val posEntryMode = getIsoPosEntryMode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        val stan = getSTAN()
+        val iso = IsoMessage()
+        val pinBlock = getPinBlock()
+        val maskedPan = getMaskedPAN()
+        val localTime = BuilderUtils.getLocalTime()
+        val localDate = BuilderUtils.getLocalDate()
+        val currencyCode = getCurrencyCode()
 
-//    fun createReversal0420(txn: BuilderServiceTxnDetails): ByteArray {
-//
-//        val iso = IsoMessage()
-//
-//        // MTI 0420 = Reversal Advice
-//        iso.setType(0x0420)
-//
-//        iso.setValue(3, txn.processingCode, IsoType.NUMERIC, 6)
-//        iso.setValue(4, txn.amount, IsoType.NUMERIC, 12)
-//        iso.setValue(7, txn.transmissionDateTime, IsoType.NUMERIC, 10)
-//        iso.setValue(11, txn.stan, IsoType.NUMERIC, 6)
-//        iso.setValue(12, txn.localTime, IsoType.NUMERIC, 6)
-//        iso.setValue(13, txn.localDate, IsoType.NUMERIC, 4)
-//
-//        iso.setValue(37, txn.rrn, IsoType.ALPHA, 12)      // Original RRN
-//        iso.setValue(41, txn.terminalId, IsoType.ALPHA, 8)
-//        iso.setValue(42, txn.merchantId, IsoType.ALPHA, 15)
-//
-//        // DE90 – Original Data Elements (MANDATORY for reversal)
-//        // Format: MTI + STAN + TransmissionDT + AcquirerID + ForwardingID
-//        val originalData =
-//            "0200" +
-//                    txn.stan +
-//                    txn.transmissionDateTime +
-//                    txn.acquirerId.padStart(11, '0') +
-//                    "00000000000"   // forwarding ID if not used
-//
-//        iso.setValue(90, originalData, IsoType.NUMERIC, 42)
-//
-//        iso.setBinaryHeader(false)
-//        iso.setBinaryFields(false)
-//        iso.setForceStringEncoding(true)
-//        iso.setIsoHeader("")
-//
-//        return iso.writeData()
-//    }
+        Log.d("DEBUG", " PAN: $maskedPan")
+        // ---------------- MTI ----------------
+        iso.setType(0x0200)   // Financial transaction request
+
+        // ---------------- Fixed Fields ----------------
+        iso.setValue(2, maskedPan, IsoType.LLVAR, 19)          // DE002 PAN
+        iso.setValue(3, "009800", IsoType.NUMERIC, 6)          // DE003 Processing Code
+        iso.setValue(4, amount, IsoType.NUMERIC, 12)            // DE004 Amount
+        iso.setValue(7, BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT), IsoType.NUMERIC, 10)              // DE007 Transmission DateTime
+        iso.setValue(11, stan, IsoType.NUMERIC, 6)                  // DE011 STAN
+        iso.setValue(12, localTime, IsoType.NUMERIC, 6)                  // DE012 Local Time
+        iso.setValue(13, localDate, IsoType.NUMERIC, 4)                    // DE013 Local Date
+        iso.setValue(15, localDate, IsoType.NUMERIC, 4)                    // DE015 Settlement Date
+        iso.setValue(17, localDate, IsoType.NUMERIC, 4)                    // DE017 Capture Date
+        iso.setValue(18, "5499", IsoType.NUMERIC, 4)                    // DE018 Merchant Type
+        iso.setValue(22, posEntryMode, IsoType.NUMERIC, 3)                     // DE022 POS Entry Mode
+
+        // ---------------- LLVAR Fields ----------------
+        iso.setValue(32, "00004000002", IsoType.LLVAR, 11)              // DE032 Acquirer ID
+        iso.setValue(35, encryptedTrack2Data, IsoType.LLVAR, 37) // DE035 Track 2
+
+        // ---------------- Fixed Alphanumeric ----------------
+        iso.setValue(37, "529700038968", IsoType.ALPHA, 12)              // DE037 RRN
+        iso.setValue(41, "86887658", IsoType.ALPHA, 8)                   // DE041 Terminal ID
+        iso.setValue(42, "000008042086887", IsoType.ALPHA, 15)           // DE042 Merchant ID
+        iso.setValue(43,
+            "1388A TAYLOR AVE   US  PARKVILLE    MDUS".padEnd(40),
+            IsoType.ALPHA,
+            40
+        )                                                                 // DE043 Name/Location
+
+        // ---------------- LLLVAR Fields ----------------
+        iso.setValue(48, "APPLE 1 MINI MAR", IsoType.LLLVAR, 16)         // DE048
+        iso.setValue(49, currencyCode, IsoType.NUMERIC, 3)                      // DE049 Currency
+
+        // PIN block (hex but sent as ASCII if your lib expects ASCII)
+        iso.setValue(52, pinBlock, IsoType.ALPHA, 16)          // DE052
+
+        iso.setValue(58, "0000000001", IsoType.LLLVAR, 10)               // DE058
+        iso.setValue(111, "EB0070901664", IsoType.LLLVAR, 12)            // DE111
+        iso.setValue(127, "10242149180000000000", IsoType.LLLVAR, 20)    // DE127
+
+        // ---------------- Encoding Settings ----------------
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
+
+        return iso.writeData()
+    }
+
+    fun createReversal0420(txn: BuilderServiceTxnDetails): ByteArray {
+
+        val iso = IsoMessage()
+
+        // MTI 0420 = Reversal Advice
+        iso.setType(0x0420)
+
+        iso.setValue(3, txn.processingCode, IsoType.NUMERIC, 6)
+        iso.setValue(4, txn.txnAmount, IsoType.NUMERIC, 12)
+        iso.setValue(7, txn.dateTime, IsoType.NUMERIC, 10)
+        iso.setValue(11, txn.stan, IsoType.NUMERIC, 6)
+        iso.setValue(12, txn.localTime, IsoType.NUMERIC, 6)
+        iso.setValue(13, txn.localDate, IsoType.NUMERIC, 4)
+
+        iso.setValue(37, txn.rrn, IsoType.ALPHA, 12)      // Original RRN
+        iso.setValue(41, txn.terminalId, IsoType.ALPHA, 8)
+        iso.setValue(42, txn.merchantId, IsoType.ALPHA, 15)
+
+        // DE90 – Original Data Elements (MANDATORY for reversal)
+        // Format: MTI + STAN + TransmissionDT + AcquirerID + ForwardingID
+        val originalData =
+            "0200" +
+                    txn.stan +
+                    txn.dateTime +
+                    txn.acquirerId?.padStart(11, '0') +
+                    "00000000000"   // forwarding ID if not used
+
+        iso.setValue(90, originalData, IsoType.NUMERIC, 42)
+
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
+
+        return iso.writeData()
+    }
 
 //    fun createReconciliation0500(txn: BuilderServiceTxnDetails, isRepeat: Boolean
 //    ): ByteArray {
@@ -622,8 +664,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                     hostRespCode = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_CODE)
                     hostTxnRef   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE)
                     deviceSN     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA)
+                    workKey     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_KEY_DATA)
                     deviceModel     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
                 }
+
 
         } catch (e: Exception) {
             Log.e("ISO", "Parse error", e)
@@ -631,6 +675,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         return details
     }
+
     // Financial Transaction Response Parsing 0210  // Added By Rushikesh Testing Pending
     fun parsePurchaseResponse(context: Context, response: ByteArray): BuilderServiceTxnDetails {
         val details = BuilderServiceTxnDetails()

@@ -40,6 +40,7 @@ sealed class AppNavigationItems(val route: String) {
  object BatchIdScreen:AppNavigationItems(NavScreensEnum.BatchIdView.name)
  object InactivityTimeoutScreen:AppNavigationItems(NavScreensEnum.InactivityTimeoutView.name)
  object SignatureScreen:AppNavigationItems(NavScreensEnum.SignatureView.name)
+ object EBTSelScreen:AppNavigationItems(NavScreensEnum.EBTSelectionView.name)
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
 

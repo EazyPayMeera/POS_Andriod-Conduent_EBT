@@ -1,14 +1,14 @@
 package com.eazypaytech.tpaymentcore.utils
 
 import android.content.Context
-import android.device.DeviceManager
-import android.device.SEManager
+//import android.device.DeviceManager
+//import android.device.SEManager
 import android.util.Log
 import com.eazypaytech.hardwarecore.BuildConfig
 import com.eazypaytech.tpaymentcore.constants.EncryptionConstants
 import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
 import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
-import com.urovo.sdk.pinpad.PinPadProviderImpl
+//import com.urovo.sdk.pinpad.PinPadProviderImpl
 
 object HardwareUtils {
     fun getDeviceSN() : String
@@ -34,7 +34,7 @@ object HardwareUtils {
 
     suspend fun injectWorkingPinKey(workingKeyHex: String, context: Context? = null): Boolean {
         return try {
-            EmvWrapperRepository.loadAndVerifyWorkingPinKey(workingKeyHex)
+            EmvWrapperRepository.loadAndVerifyWorkingPinKey(workingKeyHex,context)
         } catch (exception: Exception) {
             Log.e("HARDWARE_UTILS", exception.message.toString())
             false

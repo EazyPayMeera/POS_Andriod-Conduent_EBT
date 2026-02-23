@@ -84,3 +84,13 @@ fun maskPAN(pan: String): String {
     return "$maskedPart$lastPart".chunked(4)
         .joinToString(" ")
 }
+
+fun maskPANReceiptStyle(pan: String): String {
+    if (pan.length <= 10) return pan // too short to mask middle
+
+    val first6 = pan.take(6)                 // first 6 digits
+    val last4 = pan.takeLast(4)              // last 4 digits
+    val middleMask = "x".repeat(pan.length - 10) // middle digits as x
+
+    return first6 + middleMask + last4
+}

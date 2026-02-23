@@ -25,38 +25,15 @@ class RklRequestRepository@Inject constructor(
     var apiRequestBuilder: ApiRequestBuilderLyra,
     private var builderServiceRepository: BuilderServiceRepositoryLyra
 )  {
-        @OptIn(ExperimentalStdlibApi::class, ExperimentalEncodingApi::class)
-        suspend fun apiRklRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-            /* Override Security Parameters from Payment Service. Don't expose in App Module */
-            var activationKey = PaymentServiceUtils.generateRsaKey()
-            paymentServiceTxnDetails?.devicePublicKey = Base64.encode(activationKey.public.encoded)
-            paymentServiceTxnDetails?.devicePrivateKey = Base64.encode(activationKey.private.encoded)
-            paymentServiceTxnDetails?.deviceSN = PaymentServiceUtils.getDeviceSN()
-
+        suspend fun signOnRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
             builderServiceRepository.networkServiceRequest(
                 object : IBuilderServiceResponseListenerLyra{
                     override fun onBuilderSuccess(response: ByteArray) {
                         CoroutineScope(Dispatchers.Default).launch {
-                            /* Parse Response Packet to Object */
-                            var keyInjectResult = false
-                            var resPaymentServiceTxnDetails =
-                                apiRequestBuilder.parseNetworkManResponse(context,response)
-                            resPaymentServiceTxnDetails.let {
-                                if (it.encryptedIpek?.isNotEmpty() == true && it.ksn?.isNotEmpty() == true && it.kcv?.isNotEmpty() == true) {
-                                    var ipek = SecureKeyHandler.decryptRSA(
-                                        it.encryptedIpek,
-                                        paymentServiceTxnDetails?.devicePrivateKey
-                                    )
-                                    keyInjectResult =
-                                        PaymentServiceUtils.injectKeys(ipek, it.ksn, it.kcv, context)
-
-                                }
-                            }
-
+                            var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
                             paymentServiceTxnDetails?.let {
                                 it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
-                                Log.d("ISO_DEBUG", "Host Response Code = ${it.hostRespCode}")
-                                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED && keyInjectResult == true)
+                                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
                                     it.txnStatus = TxnStatus.APPROVED.toString()
                                 else
                                     it.txnStatus = TxnStatus.DECLINED.toString()
@@ -74,4 +51,72 @@ class RklRequestRepository@Inject constructor(
             )
         }
 
+    suspend fun keyExchangeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+        builderServiceRepository.networkServiceRequest(
+            object : IBuilderServiceResponseListenerLyra{
+                override fun onBuilderSuccess(response: ByteArray) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
+                        resPaymentServiceTxnDetails?.let {
+                            var keyInjectResult = false
+                            val workKey = it.workKey
+
+                            if (!workKey.isNullOrEmpty()) {
+                                val encryptedPinKey = workKey.substring(0, 32)
+                                val checkValue = workKey.substring(32)
+
+                                Log.d("KEY_DEBUG", "Encrypted Key: $encryptedPinKey")
+                                Log.d("KEY_DEBUG", "KCV From Host: $checkValue")
+
+                                keyInjectResult =
+                                    PaymentServiceUtils.injectWorkingPinKey(encryptedPinKey, context)
+
+                                Log.d("KEY_DEBUG", "Injection Result: $keyInjectResult")
+                            }
+                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+                                Log.d("Response", "Aprroved and Key Injection pass")
+                                it.txnStatus = TxnStatus.APPROVED.toString()
+                            }
+                            else
+                                it.txnStatus = TxnStatus.DECLINED.toString()
+
+                            onAPIServiceResponse(it)
+                        }
+                    }
+                }
+
+                override fun onBuilderFailure(error: Any) {
+                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                }
+            },
+            apiRequestBuilder.createKeyChangeRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+        )
+    }
+
+    suspend fun keyChangeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+        builderServiceRepository.networkServiceRequest(
+            object : IBuilderServiceResponseListenerLyra{
+                override fun onBuilderSuccess(response: ByteArray) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
+                        paymentServiceTxnDetails?.let {
+                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
+                                it.txnStatus = TxnStatus.APPROVED.toString()
+                            else
+                                it.txnStatus = TxnStatus.DECLINED.toString()
+
+                            onAPIServiceResponse(it)
+                        }
+                    }
+                }
+
+                override fun onBuilderFailure(error: Any) {
+                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                }
+            },
+            apiRequestBuilder.createKeyRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+        )
+    }
 }

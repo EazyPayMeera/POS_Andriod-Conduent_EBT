@@ -169,15 +169,6 @@ object NetworkCallProvider {
     }
 
 
-
-
-
-
-
-
-
-
-
     suspend fun <T> apiCallCommon(apiCall: suspend () -> Response<T>): ResultProvider<T> {
         return try {
             val response = apiCall.invoke()

@@ -30,7 +30,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ApiServiceRepository @Inject constructor(
     private val accessTokenRequestRepository: AccessTokenRequestRepository,
@@ -123,9 +122,9 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-//        purchaseRequestRepository.sendPurchaseRequest(paymentServiceTxnDetails){
-//            onApiServiceResponse(it)
-//        }
+        purchaseRequestRepository.purchaseRequest(paymentServiceTxnDetails){
+            onApiServiceResponse(it)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -170,33 +169,40 @@ class ApiServiceRepository @Inject constructor(
         }
     }
 
-     @OptIn(ExperimentalEncodingApi::class)
-     override suspend fun apiServiceRklRequest(
+
+     override suspend fun signOnRequest(
          paymentServiceTxnDetails: PaymentServiceTxnDetails?,
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
-         Log.d(
-             "ISO_DEBUG",
-             "procId = ${paymentServiceTxnDetails?.procId}"
-         )
+
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-         rklRequestRepository.apiRklRequest(paymentServiceTxnDetails){
+         rklRequestRepository.signOnRequest(paymentServiceTxnDetails){
              onApiServiceResponse(it)
          }
 
      }
 
 
-     override suspend fun apiServiceBatch(
+     override suspend fun keyExchange(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-        batchRequestRepository.sendBatchRequest(paymentServiceTxnDetails){
+         rklRequestRepository.keyExchangeRequest(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
     }
+
+     override suspend fun keyChange(
+         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+         iApiServiceResponseListener: IApiServiceResponseListener
+     ) {
+         this.iApiServiceResponseListener = iApiServiceResponseListener
+         rklRequestRepository.keyChangeRequest(paymentServiceTxnDetails){
+             onApiServiceResponse(it)
+         }
+     }
 
     override fun onApiServiceResponse(response: Any) {
         iApiServiceResponseListener.onApiServiceDisplayProgress(false)

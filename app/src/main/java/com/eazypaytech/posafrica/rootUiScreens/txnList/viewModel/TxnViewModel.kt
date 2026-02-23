@@ -223,18 +223,18 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
     }
 
 
-    fun onApiBatchClose() {
-        viewModelScope.launch {
-            try {
-                val requestDetails =
-                    PaymentServiceUtils.objectToJsonString(_txnList.value)
-                apiServiceRepository.apiServiceBatch(
-                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@TxnViewModel)
-            } catch (e: Exception) {
-                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
-            }
-        }
-    }
+//    fun onApiBatchClose() {
+//        viewModelScope.launch {
+//            try {
+//                val requestDetails =
+//                    PaymentServiceUtils.objectToJsonString(_txnList.value)
+//                apiServiceRepository.apiServiceBatch(
+//                    PaymentServiceUtils.jsonStringToObject<PaymentServiceTxnDetails>(requestDetails), this@TxnViewModel)
+//            } catch (e: Exception) {
+//                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
+//            }
+//        }
+//    }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
         PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(paymentServiceTxnDetails)?.let {

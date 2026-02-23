@@ -125,6 +125,8 @@
     <string name="decline">Decline</string>
     <string name="decline_u">DECLINE</string>
     <string name="done">Done</string>
+    <string name="snap">SNAP</string>
+    <string name="cash">CASH</string>
     <string name="clear">Clear</string>
     <string name="open">Open</string>
     <string name="training">Training</string>
@@ -233,7 +235,7 @@
     <string name="ebt_purchase_cashback">CashBack</string>
     <string name="ebt_bal_enquiry">Bal Enquiry</string>
     <string name="ebt_voucher_clear">Voucher Clear</string>
-    <string name="ebt_voucher_return">Return</string>
+    <string name="ebt_voucher_return">Transactions</string>
     <string name="ebt_void_last">Void Last</string>
     <string name="ebt_food_purchase">Food</string>
     <string name="ebt_foodstamp_return">Return</string>

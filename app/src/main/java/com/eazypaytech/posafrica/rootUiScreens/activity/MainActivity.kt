@@ -50,6 +50,7 @@ import com.eazypaytech.posafrica.rootUiScreens.confirmation.view.ConfirmationVie
 import com.eazypaytech.posafrica.rootUiScreens.confirmshift.view.ConfirmShiftView
 import com.eazypaytech.posafrica.rootUiScreens.dashboard.view.DashboardView
 import com.eazypaytech.posafrica.rootUiScreens.decline.view.DeclineView
+import com.eazypaytech.posafrica.rootUiScreens.ebtSelection.EBTSelectionView
 import com.eazypaytech.posafrica.rootUiScreens.email.view.EmailView
 import com.eazypaytech.posafrica.rootUiScreens.enteremail.view.EnterEmailView
 import com.eazypaytech.posafrica.rootUiScreens.forgetpassword.view.ForgetPasswordView
@@ -340,6 +341,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.ManualCardScreen.route) {
             ManualCardView(navHostController)
+        }
+        composable(AppNavigationItems.EBTSelScreen.route) {
+            EBTSelectionView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

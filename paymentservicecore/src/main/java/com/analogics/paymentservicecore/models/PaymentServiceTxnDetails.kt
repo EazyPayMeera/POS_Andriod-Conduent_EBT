@@ -39,6 +39,8 @@ data class PaymentServiceTxnDetails(
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
     @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
 
+    @SerializedName("workKey") var workKey: String? = null,
+
     /* Card Details */
     @SerializedName("emvData") var emvData: String? = null,
     @SerializedName("trackData")        var trackData: String? = null,

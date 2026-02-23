@@ -1340,21 +1340,55 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
-        fun loadAndVerifyWorkingPinKey(
+        suspend fun loadAndVerifyWorkingPinKey(
             workingKeyHex: String,
-            keyIndex: Int = 1
+            context: Context?=null,
+            keyIndex: Int = 1,
+
         ): Boolean {
+            try {
+                Log.d("KEY_DEBUG", "Starting loadAndVerifyWorkingPinKey()")
+                Log.d("KEY_DEBUG", "Input Working Key Hex: $workingKeyHex")
+                Log.d("KEY_DEBUG", "Key Index: $keyIndex")
 
-            val keyBytes = workingKeyHex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
+                // Convert hex to byte array
+                val keyBytes = workingKeyHex.chunked(2)
+                    .map { it.toInt(16).toByte() }
+                    .toByteArray()
+                Log.d("KEY_DEBUG", "Key Bytes: ${keyBytes.joinToString("") { "%02X".format(it) }}")
 
-            // Load Key
-            val loadResult = deviceService?.pinPad?.loadWKey(0, keyIndex, keyBytes, 1)
-            if (loadResult != 0) return false
+                // Load the key
+                val loadResult = getDeviceService(context)?.pinPad?.loadWKey(1, keyIndex, keyBytes, 2)
+                Log.d("KEY_DEBUG", "loadWKey result code: $loadResult")
+                if (loadResult != 0) {
+                    Log.e("KEY_DEBUG", "Failed to load working key. loadWKey returned $loadResult")
+                    return false
+                } else {
+                    Log.d("KEY_DEBUG", "Working key loaded successfully.")
+                }
 
-            // Verify KCV
-            val kcv = deviceService?.pinPad?.calcWKeyKCV(0, keyIndex)
-            return kcv != null && kcv.isNotEmpty()
+                // Calculate KCV
+                val kcv = getDeviceService(context)?.pinPad?.calcWKeyKCV(1, keyIndex)
+                if (kcv == null) {
+                    Log.e("KEY_DEBUG", "calcWKeyKCV returned null")
+                    return false
+                }
+                Log.d(
+                    "KEY_DEBUG",
+                    "Calculated KCV: ${kcv.joinToString("") { "%02X".format(it) }}"
+                )
+
+
+                val result = kcv.isNotEmpty()
+                Log.d("KEY_DEBUG", "Key injection result: $result")
+                return result
+
+            } catch (e: Exception) {
+                Log.e("KEY_DEBUG", "Exception in loadAndVerifyWorkingPinKey: ${e.message}")
+                return false
+            }
         }
+
 
         suspend fun injectDukptPinKey(ipek: String, ksn: String, context: Context?=null): Boolean {
             Log.d("HARDWARE_UTILS", "injectDukptPinKey() called")

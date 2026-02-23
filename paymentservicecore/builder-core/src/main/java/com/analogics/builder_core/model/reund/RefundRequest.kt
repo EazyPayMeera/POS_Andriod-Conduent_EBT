@@ -20,6 +20,7 @@ data class RefundRequest(
     @SerializedName("AccountType") var accountType: String? = null,
     @SerializedName("TxnCurrencyCode") var txnCurrencyCode: String? = null,
     @SerializedName("TxnAmount") var txnAmount: String? = null,
+    @SerializedName("workKey") var workKey: String? = null,
 
     /* Card Details */
     @SerializedName("CardEntryMode") var cardEntryMode: String? = null,

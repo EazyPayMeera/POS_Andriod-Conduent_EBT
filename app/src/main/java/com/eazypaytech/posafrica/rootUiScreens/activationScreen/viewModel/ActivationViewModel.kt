@@ -18,116 +18,52 @@ import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
+import com.eazypaytech.posafrica.rootUiScreens.activationScreen.ActivationState
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getAcquirer
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getIsoResponseCodeString
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @HiltViewModel
 class ActivationViewModel@Inject constructor(private var apiServiceRepository: ApiServiceRepository, private var txnDBRepository: TxnDBRepository) :
     ViewModel(),
     IApiServiceResponseListener {
-    var procIdInput = mutableStateOf("00004000007")
+    var procIdInput = mutableStateOf("00004000002")
     var midInput = mutableStateOf("")
+    private var currentStep = ActivationState.SIGN_ON
     val isActivationBtnEnabled = mutableStateOf(true)
     lateinit var navHostController: NavHostController
     var sharedViewModel : SharedViewModel? = null
     val isFormValid: Boolean
         get() = procIdInput.value.isNotBlank() && procIdInput.value.length == AppConstants.MAX_LENGTH_PROC_ID
 
-    fun onTidChange(tid: String) {
-        procIdInput.value = tid
-    }
 
-    fun onMidChange(mid: String) {
-        midInput.value = mid
-    }
     fun setActivationButtonState(enabled: Boolean)  { isActivationBtnEnabled.value = enabled }
-    fun onActivationClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
-        this.navHostController = navHost!!
-        this.sharedViewModel = sharedViewModel
 
-        viewModelScope.launch {
-            try {
-                startActivateProcess()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    @OptIn(ExperimentalEncodingApi::class)
     fun collectActivationData()
     {
-        sharedViewModel?.objRootAppPaymentDetail?.procId = procIdInput.value
+        sharedViewModel?.objRootAppPaymentDetail?.procId = "00004000002"
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
         sharedViewModel?.objPosConfig?.apply {
-            procId = procIdInput.value
+            procId = "00004000007"
             merchantId = midInput.value
         }?.saveToPrefs()
     }
 
-    fun onInvalidFormData(context: Context) {
-        var message = if(procIdInput.value.length != AppConstants.MAX_LENGTH_PROC_ID)
-            context.resources.getString(R.string.act_tid_length)
-        else
-            context.resources.getString(R.string.act_empty_tid_mid)
-
-        CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.default_alert_title_error),
-            message = message
+    suspend fun startActivateProcess() {
+        setActivationButtonState(false)
+        collectActivationData()
+        currentStep = ActivationState.SIGN_ON
+        apiServiceRepository.signOnRequest(
+            PaymentServiceUtils.transformObject(
+                sharedViewModel?.objRootAppPaymentDetail
+            ),
+            this   // 👈 use ViewModel as listener
         )
-    }
-
-    fun startActivateProcess() {
-        viewModelScope.launch {
-            try {
-                setActivationButtonState(false)
-                collectActivationData()
-                apiServiceRepository.apiServiceRklRequest(
-                    PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
-                        sharedViewModel?.objRootAppPaymentDetail
-                    ),
-                    object : IApiServiceResponseListener {
-
-                        override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-
-                            Log.d("RKL_RESPONSE", "HostRespCode = ${response.hostRespCode}")
-                            Log.d("RKL_RESPONSE", "TxnStatus = ${response.txnStatus}")
-
-                            if (response.hostRespCode == "00" &&
-                                response.txnStatus == TxnStatus.DECLINED.toString()
-                            ) {
-
-                                viewModelScope.launch(Dispatchers.Main) {
-                                    navHostController.navigateAndClean(
-                                        AppNavigationItems.DashBoardScreen.route
-                                    )
-                                }
-
-                            } else {
-                                setActivationButtonState(true)
-                            }
-                        }
-
-                        override fun onApiServiceError(error: ApiServiceError) {
-
-                            //Log.e("RKL_RESPONSE", "Error = ${error.message}")
-                            setActivationButtonState(true)
-                        }
-                    }
-                )
-
-
-            } catch (e: Exception) {
-                AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "Unknown error occurred during activation.")
-            }
-        }
     }
 
     fun activateDevice() {
@@ -136,12 +72,13 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             isActivationDone = true
         }?.saveToPrefs()
         viewModelScope.launch {
-            txnDBRepository.getUserCount().let {
-                if(it>0)
-                    navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-                else
-                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-            }
+            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+//            txnDBRepository.getUserCount().let {
+//                if(it>0)
+//                    navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+//                else
+//                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+//            }
         }
     }
 
@@ -187,21 +124,53 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-        if (paymentServiceTxnDetails.txnStatus == TxnStatus.APPROVED.toString()) {
-            activateDevice()
-        } else {
-            CustomDialogBuilder.composeAlertDialog(
-                title = navHostController.context.resources?.getString(
-                    R.string.default_alert_title_error
-                ),
-                message = getIsoResponseCodeString(
-                    navHostController.context,
-                    paymentServiceTxnDetails.hostRespCode
-                )
-            )
+
+        if (paymentServiceTxnDetails.txnStatus != TxnStatus.APPROVED.toString() ||
+            paymentServiceTxnDetails.hostRespCode != "00"
+        ) {
             setActivationButtonState(true)
+            return
+        }
+
+        when (currentStep) {
+            ActivationState.SIGN_ON -> {
+                currentStep = ActivationState.KEY_EXCHANGE
+
+                viewModelScope.launch {
+                    apiServiceRepository.keyExchange(
+                        PaymentServiceUtils.transformObject(
+                            sharedViewModel?.objRootAppPaymentDetail
+                        ),
+                        this@ActivationViewModel
+                    )
+                }
+            }
+
+            ActivationState.KEY_EXCHANGE -> {
+                viewModelScope.launch(Dispatchers.Main) {
+                    currentStep = ActivationState.KEY_CHANGE
+                    navHostController.navigateAndClean(
+                        AppNavigationItems.DashBoardScreen.route
+                    )
+                }
+//                viewModelScope.launch {
+//                    apiServiceRepository.keyChange(
+//                        PaymentServiceUtils.transformObject(
+//                            sharedViewModel?.objRootAppPaymentDetail
+//                        ),
+//                        this@ActivationViewModel
+//                    )
+//                }
+            }
+
+            ActivationState.KEY_CHANGE -> {
+                navHostController.navigateAndClean(
+                    AppNavigationItems.DashBoardScreen.route
+                )
+            }
         }
     }
+
 
     override fun onApiServiceError(apiServiceError: ApiServiceError) {
         setActivationButtonState(true)
@@ -219,6 +188,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     fun onLoad(sharedViewModel : SharedViewModel)
     {
+
         sharedViewModel.objPosConfig?.procId?.let { procIdInput.value = it }
         sharedViewModel.objPosConfig?.merchantId?.let { midInput.value = it }
     }

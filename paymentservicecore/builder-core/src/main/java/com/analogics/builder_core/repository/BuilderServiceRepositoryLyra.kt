@@ -21,6 +21,8 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         }
     }
 
+
+
     @OptIn(ExperimentalStdlibApi::class)
     override fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ByteArray>) {
         when (apiResultProvider) {

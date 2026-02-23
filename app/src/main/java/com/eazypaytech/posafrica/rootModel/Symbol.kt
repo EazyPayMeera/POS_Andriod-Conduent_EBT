@@ -39,5 +39,7 @@ class Symbol(val position: Position=DefaultSymbol.position, val type: Type=Type.
             Type.NONE -> ""
         }
     }
+
+
 }
 

@@ -77,6 +77,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("debitsReversalAmount") var debitsReversalAmount: String? = null,
     @SerializedName("netSettlementAmount") var netSettlementAmount: String? = null,
     @SerializedName("settlementInstitutionId") var settlementInstitutionId: String? = null,
+    @SerializedName("workKey") var workKey: String? = null,
 
 
 /* Card Details */

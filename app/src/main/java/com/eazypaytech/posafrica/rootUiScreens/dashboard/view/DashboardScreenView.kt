@@ -127,25 +127,25 @@ fun DashboardView(navHostController: NavHostController) {
             AppConstants.BUTTON_CLICK_EVENT_VOID_LAST -> {
                 setTransactionType(TxnType.VOID_LAST)
                 navHostController.navigate(
-                    AppNavigationItems.TxnListScreen.route
+                    AppNavigationItems.AmountScreen.route
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY -> {
                 setTransactionType(TxnType.BALANCE_ENQUIRY)
                 navHostController.navigate(
-                    AppNavigationItems.CardScreen.route
+                    AppNavigationItems.EBTSelScreen.route
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_VOUCHER_CLEAR -> {
                 setTransactionType(TxnType.VOUCHER_CLEAR)
                 navHostController.navigate(
-                    AppNavigationItems.TxnListScreen.route
+                    AppNavigationItems.InvoiceScreen.route
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_VOUCHER_RETURN -> {
                 setTransactionType(TxnType.VOUCHER_RETURN)
                 navHostController.navigate(
-                    AppNavigationItems.ManualCardScreen.route
+                    AppNavigationItems.TxnListScreen.route
                 )
             }
             else -> null

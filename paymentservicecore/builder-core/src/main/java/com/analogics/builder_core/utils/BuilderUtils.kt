@@ -12,7 +12,9 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -79,5 +81,17 @@ object BuilderUtils {
     fun getCurrentDateTime(format : String?=BuilderConstants.DEFAULT_ISO8583_DATE_TIME_FORMAT): String {
         val sdf = SimpleDateFormat(format, Locale.getDefault())
         return sdf.format(Date())
+    }
+
+    fun getLocalTime(): String {
+        val currentTime = LocalTime.now()  // device local time
+        val formatter = DateTimeFormatter.ofPattern("HHmmss")  // ISO8583 DE012 format
+        return currentTime.format(formatter)
+    }
+
+    fun getLocalDate(): String {
+        val currentDate = LocalDate.now()  // device local date
+        val formatter = DateTimeFormatter.ofPattern("MMdd")
+        return currentDate.format(formatter)
     }
 }

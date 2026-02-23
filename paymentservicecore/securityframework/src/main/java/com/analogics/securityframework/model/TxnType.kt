@@ -8,3 +8,4 @@ enum class TxnType {
     VOID,
     TXNLIST
 }
+

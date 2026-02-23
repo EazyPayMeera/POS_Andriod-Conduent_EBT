@@ -30,6 +30,7 @@ import com.eazypaytech.paymentservicecore.model.error.EmvServiceException
 import com.eazypaytech.paymentservicecore.models.toEmvTransType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.maskPAN
+import com.eazypaytech.paymentservicecore.utils.maskPANReceiptStyle
 import com.eazypaytech.paymentservicecore.utils.toDecimalFormat
 import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
@@ -269,6 +270,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
         try {
             CoroutineScope(Dispatchers.Default).launch {
+                Log.d("Online","GOING FOR EMV SDK ONLINE REQUEST")
                 onEmvServiceRequestOnline(emvTags, onResponse)
             }
         }catch (e: Exception)
@@ -444,11 +446,13 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     private fun prepareHostTlvData(emvTags: HashMap<String, String>)
     {
         try {
+            Log.d("DEBUG_EMV_TAGS", "Input EMV Tags: $emvTags")
             /* Masked PAN */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_PAN)) {
-                paymentServiceTxnDetails.cardMaskedPan = maskPAN(emvTags[EmvConstants.EMV_TAG_PAN].toString())
+                paymentServiceTxnDetails.cardMaskedPan = maskPANReceiptStyle(emvTags[EmvConstants.EMV_TAG_PAN].toString())
                 emvTags.remove(EmvConstants.EMV_TAG_PAN)
             }
+
 
             /* Encrypted PAN */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_PAN)) {
