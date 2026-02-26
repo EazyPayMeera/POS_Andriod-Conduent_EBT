@@ -97,7 +97,7 @@ fun DashboardView(navHostController: NavHostController) {
             AppConstants.BUTTON_CLICK_EVENT_FOOD_PURCHASE -> {
                 setTransactionType(TxnType.FOOD_PURCHASE)
                 navHostController.navigate(
-                    if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.AmountScreen.route
+                    if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.InvoiceScreen.route
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_CASH_PURCHASE -> {
@@ -131,7 +131,7 @@ fun DashboardView(navHostController: NavHostController) {
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY -> {
-                setTransactionType(TxnType.BALANCE_ENQUIRY)
+                //setTransactionType(TxnType.BALANCE_ENQUIRY)
                 navHostController.navigate(
                     AppNavigationItems.EBTSelScreen.route
                 )

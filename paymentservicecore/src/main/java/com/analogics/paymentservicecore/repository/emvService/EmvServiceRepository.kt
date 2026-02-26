@@ -269,6 +269,13 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
         try {
+            Log.d("EMV_DEBUG", "========== EMV TAGS START ==========")
+
+            emvTags.forEach { (tag, value) ->
+                Log.d("EMV_DEBUG", "Tag: $tag  |  Value: $value")
+            }
+
+            Log.d("EMV_DEBUG", "========== EMV TAGS END ==========")
             CoroutineScope(Dispatchers.Default).launch {
                 Log.d("Online","GOING FOR EMV SDK ONLINE REQUEST")
                 onEmvServiceRequestOnline(emvTags, onResponse)
@@ -449,7 +456,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             Log.d("DEBUG_EMV_TAGS", "Input EMV Tags: $emvTags")
             /* Masked PAN */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_PAN)) {
-                paymentServiceTxnDetails.cardMaskedPan = maskPANReceiptStyle(emvTags[EmvConstants.EMV_TAG_PAN].toString())
+                paymentServiceTxnDetails.cardMaskedPan = emvTags[EmvConstants.EMV_TAG_PAN].toString()
                 emvTags.remove(EmvConstants.EMV_TAG_PAN)
             }
 
@@ -461,11 +468,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             }
 
             /* Encrypted Track2 */
-            if (emvTags.containsKey(EmvConstants.EMV_TAG_ENC_TRACK)) {
-                paymentServiceTxnDetails.trackData = emvTags[EmvConstants.EMV_TAG_ENC_TRACK]
-                emvTags.remove(EmvConstants.EMV_TAG_ENC_TRACK)
+            if (emvTags.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
+                paymentServiceTxnDetails.trackData = emvTags[EmvConstants.EMV_TAG_TRACK2]
+                emvTags.remove(EmvConstants.EMV_TAG_TRACK2)
             }
-
+            Log.d("DEBUG_TRACK2", "Plain Track2 : ${paymentServiceTxnDetails.trackData}")
             /* Remove Track2 */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
                 emvTags.remove(EmvConstants.EMV_TAG_TRACK2)

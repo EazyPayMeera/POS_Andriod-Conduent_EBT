@@ -6,9 +6,9 @@ object BuilderConstants {
 
     const val DEFAULT_ISO8583_CURRENCY_CODE = "840"
     const val DEFAULT_ISO8583_NII = "0110"
-    const val DEFAULT_ISO8583_DATE_TIME_FORMAT = "MMddHHmmss"
+    const val DEFAULT_ISO8583_DATE_TIME_FORMAT = "MMDDhhmmss"
     const val DEFAULT_ISO8583_DATE_FORMAT = "MMdd"
-    const val DEFAULT_ISO8583_TIME_FORMAT = "HHmmss"
+    const val DEFAULT_ISO8583_TIME_FORMAT = "MMddHHmmss"
 
     /* For Dummy Host Response */
     const val DUMMY_RANDOM_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -29,10 +29,7 @@ object BuilderConstants {
 
     /* TPDU */
     val ISO_HEADER = byteArrayOf(0x60.toByte(),0x00.toByte(),0x11.toByte(),0x00.toByte(),0x00.toByte())
-    const val ISO_HEADER_LENGTH = 5
 
-    /* PAN */
-    const val ISO_FIELD_PAN = 2
 
     /* Processing Code */
     const val ISO_FIELD_PROC_CODE = 3
@@ -45,13 +42,7 @@ object BuilderConstants {
     const val PROC_CODE_VOID_REFUND = 22
     const val PROC_CODE_VOID_PRE_AUTH = 32
 
-    /* AMOUNT */
-    //const val ISO_FIELD_AMOUNT = 4
-    const val ISO_FIELD_AMOUNT_LENGTH = 12
 
-    /* STAN */
-    const val ISO_FIELD_STAN = 11
-    const val ISO_FIELD_STAN_LENGTH = 6
     const val ISO_FIELD_STAN_MAX_VAL = 999999
 
     /* Time */
@@ -62,9 +53,6 @@ object BuilderConstants {
     const val ISO_FIELD_DATE = 13
     const val ISO_FIELD_DATE_LENGTH = 4
 
-    /* POS Entry Mode */
-    const val ISO_FIELD_POS_ENTRY_MODE = 22
-    const val ISO_FIELD_POS_ENTRY_MODE_LENGTH = 3
 
     /* POS Entry Mode */
     const val ISO_FIELD_PAN_SEQ_NO = 23
@@ -74,14 +62,7 @@ object BuilderConstants {
     const val ISO_FIELD_NII = 24
     const val ISO_FIELD_NII_LENGTH = 4
 
-    /* POS Condition Code */
-    const val ISO_FIELD_POS_CONDITION_CODE_LENGTH = 2
 
-    /* Track 2 Data */
-    const val ISO_FIELD_TRACK2_DATA_MAX_LEN = 40
-
-    /* RRN */
-    const val ISO_FIELD_RRN_LENGTH = 12
 
     /* Auth Code */
     const val ISO_FIELD_AUTH_CODE = 38
@@ -110,8 +91,7 @@ object BuilderConstants {
     const val ISO_FIELD_CURRENCY_CODE_LEN = 3
 
     /* Pin Block */
-    const val ISO_FIELD_PIN_BLOCK = 52
-    const val ISO_FIELD_PIN_BLOCK_LENGTH = 8
+
 
     /* ICC Related Data */
     const val ISO_FIELD_ICC_DATA = 55
@@ -227,31 +207,75 @@ object BuilderConstants {
     const val ISO_RESP_CODE_REVERSAL_RESPONSE_CODE = "E2" // Reversal Response code - Terminal does not receive final application cryptogram from the chip
 
 
+
+
     // for Conduent
     const val ISO_FIELD_PAN_NO = 2   // DE007
+    const val ISO_FIELD_PAN_NO_LENGTH = 19
+
     const val ISO_FIELD_PROCESSING_CODE = 3
+    const val ISO_FIELD_PROCESSING_CODE_LENGTH = 6
+
     const val ISO_FIELD_AMOUNT = 4
+    const val ISO_FIELD_AMOUNT_LENGTH = 12
+
     const val ISO_FIELD_TRANSMISSION_DATE = 7   // DE007
-    const val ISO_FIELD_PROC_ID = 11
+    const val ISO_FIELD_TRANSMISSION_DATE_LENGTH = 10   // DE007
+
+    const val ISO_FIELD_STAN = 11
+    const val ISO_FIELD_STAN_LENGTH = 6
+
     const val ISO_FIELD_LOC_TIME = 12      // DE096
+    const val ISO_FIELD_LOC_TIME_LENGTH = 6
+
     const val ISO_FIELD_LOC_DATE = 13      // DE096
+    const val ISO_FIELD_LOC_DATE_LENGTH = 4
+
     const val ISO_FIELD_EXPIRY_DATE = 14   // DE007
     const val ISO_FIELD_SET_DATE = 15   // DE007
     const val ISO_FIELD_CAP_DATE = 17   // DE007
+
     const val ISO_FIELD_MERCHANT_TYPE = 18  // DE007
+    const val ISO_FIELD_MERCHANT_TYPE_LENGTH = 4  // DE007
+
     const val ISO_FIELD_ENTRY_MODE = 22  // DE007
+    const val ISO_FIELD_ENTRY_MODE_LENGTH = 3  // DE007
+
+
     const val ISO_FIELD_ACQUIRER_ID = 32
+    const val ISO_FIELD_ACQUIRER_ID_LENGTH = 11
+
     const val ISO_FIELD_TRACK2_DATA = 35  // DE007
+    const val ISO_FIELD_TRACK2_DATA_LENGTH = 37  // DE007
+
     const val ISO_FIELD_RRN = 37  // DE007
+    const val ISO_FIELD_RRN_LENGTH = 12
+
     const val ISO_FIELD_AUTH_ID = 38  // DE007
     const val ISO_FIELD_RESPONSE_CODE = 39
+
     const val ISO_FIELD_TERMINAL_ID = 41
+    const val ISO_FIELD_TERMINAL_ID_LENGTH = 8
+
     const val ISO_FIELD_MERCHANT_ID = 42
+    const val ISO_FIELD_MERCHANT_ID_LENGTH = 15
+
     const val ISO_FIELD_MERCHANT_NAME = 43
+    const val ISO_FIELD_MERCHANT_NAME_LENGTH = 40
+
     const val ISO_FIELD_MERCHANT_BANK = 48
+    const val ISO_FIELD_MERCHANT_BANK_LENGTH = 16
+
     const val ISO_FIELD_CURRENCY_CODE = 49
+    const val ISO_FIELD_CURRENCY_CODE_LENGTH = 3
+
+    const val ISO_FIELD_PIN_BLOCK = 52
+    const val ISO_FIELD_PIN_BLOCK_LENGTH = 16
+
     const val ISO_FIELD_ADD_AMOUNT = 54
     const val ISO_FIELD_POS_CONDITION_CODE = 58
+    const val ISO_FIELD_POS_CONDITION_CODE_LENGTH = 10
+
     const val ISO_FIELD_RESERVED_PRIVATE = 60     // DE060
     const val ISO_FIELD_SETTLEMENT_CODE = 66
     const val ISO_FIELD_NET_MGMT_INFO_CODE = 70
@@ -265,12 +289,22 @@ object BuilderConstants {
     const val ISO_FIELD_CREDITS_REV_AMOUNT = 87
     const val ISO_FIELD_DEBITS_AMOUNT = 88
     const val ISO_FIELD_DEBITS_REV_AMOUNT = 89
+
     const val ISO_FIELD_ORIGINAL_DATA = 90
+    const val ISO_FIELD_ORIGINAL_DATA_LENGTH = 42
+
     const val ISO_FIELD_KEY_MGMT_DATA = 96
     const val ISO_FIELD_NET_SETTLEMENT = 97
     const val ISO_FIELD_SETTLEMENT_INST_ID = 99
+
     const val ISO_FIELD_ADDITIONAL_DATA = 111
+    const val ISO_FIELD_ADDITIONAL_DATA_LENGTH = 12
+
     const val ISO_FIELD_KEY_DATA = 125
+
+    const val ISO_FIELD_ACQ_TRACE_DATA = 127
+    const val ISO_FIELD_ACQ_TRACE_DATA_LENGTH = 20
+
     const val ISO_FIELD_RESPONSE_TEXT = 127
 
 
@@ -279,6 +313,8 @@ object BuilderConstants {
 
 
 
+    const val MTI_FINANCIAL_REQ = 0x0200
+    const val MTI_REVERSAL_REQ = 0x0420
 
 
 

@@ -100,9 +100,6 @@ object NetworkCallProvider {
                     override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
                 }), SecureRandom())
-
-                // --- Connect using SSLSocket ---
-                //Log.d("Conduent", "Connecting to ${NetworkConstants.HOST_ADDRESS}:${NetworkConstants.HOST_PORT}")
                 val sslSocket = sslContext.socketFactory.createSocket(
                     NetworkConstants.HOST_ADDRESS,
                     NetworkConstants.HOST_PORT

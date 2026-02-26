@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +31,6 @@ import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
-import com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel.AmountViewModel
 import com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel.CashBackViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
@@ -90,8 +88,8 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
                 )
 
                 OutlinedTextField(
-                    value = viewModel.transAmount,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    value = viewModel.cashBackAmount,
+                    onValueChange = {viewModel.onCashBackAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),

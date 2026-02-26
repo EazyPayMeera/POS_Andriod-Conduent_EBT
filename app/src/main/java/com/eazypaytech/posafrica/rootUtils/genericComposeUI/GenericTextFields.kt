@@ -280,7 +280,8 @@ fun getTransTypeString(): String {
     return when (sharedViewModel.objRootAppPaymentDetail.txnType) {
         TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_purchase_cashback)
         TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash)
-        TxnType.BALANCE_ENQUIRY -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_enquiry)
         TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
         TxnType.VOUCHER_RETURN -> stringResource(id = R.string.ebt_voucher_return)
         TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)

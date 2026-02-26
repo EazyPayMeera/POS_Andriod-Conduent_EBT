@@ -157,7 +157,7 @@ class ConfirmationViewModel @Inject constructor(private val dbRepository: TxnDBR
             }
             TxnType.PURCHASE_CASHBACK ->
             {
-                navHostController.navigate(AppNavigationItems.CashBackScreen.route)
+                navHostController.navigate(AppNavigationItems.CardScreen.route)
             }
             TxnType.VOID_LAST , TxnType.E_VOUCHER,TxnType.VOUCHER_RETURN-> {
                 navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)

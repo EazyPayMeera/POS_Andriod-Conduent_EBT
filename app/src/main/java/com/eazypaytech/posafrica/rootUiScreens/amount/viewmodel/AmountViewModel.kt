@@ -102,12 +102,14 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 TxnType.FOODSTAMP_RETURN, TxnType.VOID_LAST-> {
                     navHostController.navigate(AppNavigationItems.CardScreen.route)
                 }
-
                 TxnType.VOID_LAST -> {
                     Log.d("Database", "Go to update when void")
                     authenticateTransaction(sharedViewModel, navHostController)
                 }
-
+                TxnType.PURCHASE_CASHBACK -> {
+                    Log.d("Database", "Go to update when void")
+                    navHostController.navigate(AppNavigationItems.CashBackScreen.route)
+                }
                 else -> {
                     navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
                 }

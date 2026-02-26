@@ -76,7 +76,7 @@ fun CardDetectView(navHostController: NavHostController) {
                         backgroundColor = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
-                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY) {
+                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_CASH || sharedViewModel.objRootAppPaymentDetail.txnType !=TxnType.BALANCE_ENQUIRY_SNAP) {
                             Column(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,

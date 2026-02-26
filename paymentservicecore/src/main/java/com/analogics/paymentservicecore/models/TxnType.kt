@@ -3,7 +3,8 @@ package com.eazypaytech.paymentservicecore.models
 enum class TxnType {
     PURCHASE_CASHBACK,
     CASH_PURCHASE,
-    BALANCE_ENQUIRY,
+    BALANCE_ENQUIRY_CASH,
+    BALANCE_ENQUIRY_SNAP,
     VOUCHER_CLEAR,
     VOUCHER_RETURN,
     VOID_LAST,
@@ -13,17 +14,19 @@ enum class TxnType {
 }
 
 
-fun TxnType.toEmvTransType(): String {  // DO TO Need to change as per Conduent
+
+fun TxnType.toEmvTransType(): String {  // Change as per Conduent
     return when (this) {
-        TxnType.PURCHASE_CASHBACK -> "00"
-        TxnType.CASH_PURCHASE -> "43"
-        TxnType.BALANCE_ENQUIRY -> "31"
-        TxnType.VOUCHER_CLEAR -> "40"
-        TxnType.VOUCHER_RETURN -> "41"
-        TxnType.VOID_LAST -> "20"
-        TxnType.FOOD_PURCHASE -> "50"
-        TxnType.FOODSTAMP_RETURN -> "51"
-        TxnType.E_VOUCHER -> "60"
+        TxnType.CASH_PURCHASE -> "00"          // EMV purchase
+        TxnType.PURCHASE_CASHBACK -> "09"     // EMV purchase with cashback
+        TxnType.FOOD_PURCHASE -> "00"         // EMV food stamp purchase
+        TxnType.BALANCE_ENQUIRY_CASH -> "31"       // EMV balance inquiry
+        TxnType.BALANCE_ENQUIRY_SNAP -> "31"
+        TxnType.VOUCHER_CLEAR -> "20"         // EMV food stamp return
+        TxnType.VOUCHER_RETURN -> "20"        // EMV food stamp return
+        TxnType.VOID_LAST -> "20"             // EMV void
+        TxnType.FOODSTAMP_RETURN -> "20"      // EMV food stamp return
+        TxnType.E_VOUCHER -> "60"             // EMV eVoucher
     }
 }
 

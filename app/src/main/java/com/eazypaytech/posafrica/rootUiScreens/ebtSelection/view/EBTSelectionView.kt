@@ -1,6 +1,7 @@
-package com.eazypaytech.posafrica.rootUiScreens.ebtSelection
+package com.eazypaytech.posafrica.rootUiScreens.ebtSelection.view
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.eazypaytech.paymentservicecore.constants.AppConstants
+import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
@@ -26,6 +29,8 @@ import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.BackgroundScreen
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.OkButton
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.removeNonDigits
 import com.eazypaytech.posafrica.ui.theme.dimens
 
 
@@ -36,6 +41,12 @@ fun EBTSelectionView(navHostController: NavHostController) {
     val context = LocalContext.current
     val viewModel: ApprovedViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
+
+    fun setTransactionType(txnType: TxnType) {
+        sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
+        sharedViewModel.objRootAppPaymentDetail.txnType = txnType
+        Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+    }
 
     Column {
         CommonTopAppBar(
@@ -64,6 +75,7 @@ fun EBTSelectionView(navHostController: NavHostController) {
                     OkButton(
                         onClick = {
                             navHostController.navigate(AppNavigationItems.CardScreen.route)
+                            setTransactionType(TxnType.BALANCE_ENQUIRY_SNAP)
                         },
                         title = stringResource(id = R.string.snap),
                     )
@@ -77,6 +89,7 @@ fun EBTSelectionView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
+                            setTransactionType(TxnType.BALANCE_ENQUIRY_CASH)
                             navHostController.navigate(AppNavigationItems.CardScreen.route)
                         },
                         title = stringResource(id = R.string.cash),

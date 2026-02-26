@@ -1553,90 +1553,71 @@ class EmvWrapperRepository @Inject constructor(
 
         @OptIn(ExperimentalStdlibApi::class)
         fun getEncryptedData(tlvMap: HashMap<String, String>): HashMap<String, String> {
-            var hashMap = HashMap<String, String>()
-            var trackData = (getEmvTag(EmvConstants.EMV_TAG_TRACK2)?:"").uppercase()
-            trackData.takeIf { it.isEmpty() == true && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2) }
-                ?.let {
-                    trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
-                }
-            trackData = trackData.replace('D', '=').removeSuffix("F")
-            var cardPan = trackData.substringBefore('=')
+            val hashMap = HashMap<String, String>()
 
-            /* Clear PAN is OK to send to service layer. Service layer will filter it */
-            cardPan.let {
-                hashMap[EmvConstants.EMV_TAG_PAN] = it
+            // 1️⃣ Get EMV Track2
+            var trackData = (getEmvTag(EmvConstants.EMV_TAG_TRACK2) ?: "").uppercase()
+            if (trackData.isEmpty() && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
+                trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
             }
 
-            trackData.takeIf {
-                (it.length % 8) != 0
-            }?.let {
-                trackData = it.padStart(it.length + (8 - it.length % 8), '0')
+            if (trackData.isEmpty()) {
+                Log.w("ENCRYPTION", "⚠️ Track2 not available")
+                return hashMap
             }
 
-            cardPan.takeIf {
-                (it.length % 8) != 0
-            }?.let {
-                cardPan = it.padStart(it.length + (8 - it.length % 8), '0')
+            // 2️⃣ Convert EMV Track2 → ISO format
+            val plainTrack2Full = trackData.replace('D', '=').removeSuffix("F")
+            val plainPan = plainTrack2Full.substringBefore('=')
+            val afterEqual = plainTrack2Full.substringAfter('=').take(10) // Only first 10 digits after '='
+
+            // ✅ Track2 in Conduent-ready format
+            val track2ForHost = "$plainPan=$afterEqual"
+
+            // Store plain values
+            hashMap[EmvConstants.EMV_TAG_TRACK2] = track2ForHost
+            hashMap[EmvConstants.EMV_TAG_PAN] = plainPan
+            Log.d("ENCRYPTION", "✅ Plain Track2 (Conduent): $track2ForHost")
+            Log.d("ENCRYPTION", "✅ Plain PAN: $plainPan")
+
+            // 3️⃣ Prepare PAN for encryption (pad to multiple of 8 for DES)
+            var panForEncryption = plainPan
+            if (panForEncryption.length % 8 != 0) {
+                panForEncryption = panForEncryption.padEnd(
+                    panForEncryption.length + (8 - panForEncryption.length % 8),
+                    '0'
+                )
             }
 
-            var trackDataBytes = trackData.toByteArray()
-            var cardPanBytes = cardPan.toByteArray()
-
-            /* Encrypt Track2 Data */
+            // 4️⃣ Encrypt PAN using DUKPT
             try {
-                val trackCalcObj = DukptCalcObj(
+                val panCalcObj = DukptCalcObj(
                     EncryptionConstants.KEY_INDEX_DATA_KEY,
                     DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1,
                     DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT,
                     DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB,
-                    trackDataBytes.toHexString()
+                    panForEncryption.toByteArray().toHexString()
                 )
-                Log.d("ENCRYPTION", "🚀 Encrypting Track2: $trackCalcObj")
-                deviceService?.pinPad?.dukptCalcDes(trackCalcObj)?.let {
-                    val encryptedTrack = it.getString(DukptCalcObj.DUKPT_DATA)?.uppercase()
+
+                deviceService?.pinPad?.dukptCalcDes(panCalcObj)?.let {
+                    val encryptedPan = it.getString(DukptCalcObj.DUKPT_DATA)?.uppercase()
                     val ksn = it.getString(DukptCalcObj.DUKPT_KSN)?.uppercase()
-                    if (!encryptedTrack.isNullOrEmpty()) {
-                        hashMap[EmvConstants.EMV_TAG_ENC_TRACK] = encryptedTrack
-                        Log.d("ENCRYPTION", "✅ ENCRYPTED TRACK DATA (LYRA): $encryptedTrack")
-                    } else {
-                        Log.w("ENCRYPTION", "⚠️ Encrypted track data is null or empty.")
+
+                    if (!encryptedPan.isNullOrEmpty()) {
+                        hashMap[EmvConstants.EMV_TAG_ENC_PAN] = encryptedPan
+                        Log.d("ENCRYPTION", "✅ Encrypted PAN: $encryptedPan")
                     }
+
                     if (!ksn.isNullOrEmpty()) {
                         hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksn
-                        Log.d("ENCRYPTION", "🔑 KSN TRACK DATA (LYRA): $ksn")
-                    } else {
-                        Log.w("ENCRYPTION", "⚠️ KSN is null or empty.")
+                        Log.d("ENCRYPTION", "🔑 KSN: $ksn")
                     }
                 }
-            } catch (e: RemoteException) {
-                Log.e("ENCRYPTION", "❌ Exception encrypting Track2", e)
-            }
-
-            /* Encrypt PAN */
-            try {
-                val panCalcObj = DukptCalcObj(EncryptionConstants.KEY_INDEX_DATA_KEY, DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1, DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT, DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB, cardPanBytes.toHexString())
-                    deviceService?.pinPad?.dukptCalcDes(panCalcObj)?.let {
-                        val encryptedPan = it.getString(DukptCalcObj.DUKPT_DATA)?.uppercase()
-                        val ksn = it.getString(DukptCalcObj.DUKPT_KSN)?.uppercase()
-                        if (!encryptedPan.isNullOrEmpty()) {
-                            hashMap[EmvConstants.EMV_TAG_ENC_PAN] = encryptedPan
-                            Log.d("ENCRYPTION", "✅ ENCRYPTED PAN (LYRA): $encryptedPan")
-                        } else {
-                            Log.w("ENCRYPTION", "⚠️ Encrypted PAN is null or empty.")
-                        }
-
-                        if (!ksn.isNullOrEmpty()) {
-                            hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksn
-                            Log.d("ENCRYPTION", "🔑 KSN TRACK DATA (LYRA): $ksn")
-                        } else {
-                            Log.w("ENCRYPTION", "⚠️ KSN is null or empty.")
-                        }
-                    }
             } catch (e: RemoteException) {
                 Log.e("ENCRYPTION", "❌ Exception encrypting PAN", e)
             }
 
-            /* Set Pin Block */
+            // 5️⃣ Set PIN block if available
             pinBlock?.let {
                 hashMap[EmvConstants.EMV_TAG_ENC_PIN_BLOCK] = it
             }

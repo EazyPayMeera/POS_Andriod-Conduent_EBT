@@ -74,10 +74,13 @@ class ApiServiceRepository @Inject constructor(
         when(paymentServiceTxnDetails?.txnType.toString())
         {
             TxnType.FOOD_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.CASH_PURCHASE.toString() -> apiServiceRefund(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.FOODSTAMP_RETURN.toString() -> apiServicePreAuth(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.PURCHASE_CASHBACK.toString() -> apiServiceVoid(paymentServiceTxnDetails,iApiServiceResponseListener)
-            TxnType.E_VOUCHER.toString() -> apiServiceAuthCapture(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.CASH_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.FOODSTAMP_RETURN.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.PURCHASE_CASHBACK.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.E_VOUCHER.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+            TxnType.BALANCE_ENQUIRY_CASH.toString(),
+            TxnType.BALANCE_ENQUIRY_SNAP.toString() ->
+                apiServicePurchase(paymentServiceTxnDetails, iApiServiceResponseListener)
             else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }

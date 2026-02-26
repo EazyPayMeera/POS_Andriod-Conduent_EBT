@@ -1,5 +1,7 @@
 package com.eazypaytech.paymentservicecore.repository.apiService.purchase
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -21,79 +23,24 @@ import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.securityframework.database.entity.TxnEntity
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 class PurchaseRequestRepository @Inject constructor(
-    var apiRequestBuilder: ApiRequestBuilder,
+    @ApplicationContext val context: Context,
+    var apiRequestBuilder: ApiRequestBuilderLyra,
     private var builderServiceRepository: BuilderServiceRepository,
     var apiRequestBuilderLyra: ApiRequestBuilderLyra,
     private var builderServiceRepositoryLyra: BuilderServiceRepositoryLyra
 ) {
-    //lateinit var paymentServiceTxnDetails:PaymentServiceTxnDetails
-    @RequiresApi(Build.VERSION_CODES.O)
-//    suspend fun sendPurchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-//
-//        if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA) {
-//            var request = apiRequestBuilderLyra.createPurchaseRequest(
-//                PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
-//                    paymentServiceTxnDetails
-//                )
-//            )
-//
-//            if(paymentServiceTxnDetails.isDemoMode == true)
-//            {
-//                onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,
-//                    apiRequestBuilderLyra.buildDummyPurchaseResponse()))
-//            }
-//            else {
-//                builderServiceRepositoryLyra.networkServiceRequest(
-//                    object :
-//                        IBuilderServiceResponseListenerLyra {
-//                        override fun onBuilderSuccess(response: ByteArray) {
-//                            onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,response))
-//                        }
-//
-//                        override fun onBuilderFailure(error: Any) {
-//                            onAPIServiceResponse(ApiServiceError(error.toString()))
-//                        }
-//                    },
-//                    request
-//                )
-//            }
-//        }
-//        else {
-//            builderServiceRepository.apiPurchase(
-//                object : IBuilderServiceResponseListener {
-//                    override fun onBuilderSuccess(response: String) {
-//                        onAPIServiceResponse(response)
-//                        Log.d("record insert", "onApiSuccessRes")
-//
-//                    }
-//
-//                    override fun onBuilderFailure(error: Any) {
-//                        Log.d("record insert", "onApiFailureRes")
-//                        onAPIServiceResponse(ApiServiceError(error.toString()))
-//                        paymentServiceTxnDetails?.let { onAPIServiceResponse(it) }
-//                    }
-//                },
-//                BuilderUtils.prepareApiRequestBody(
-//                    apiRequestBuilder.createPurchaseRequest(
-//                        PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
-//                            paymentServiceTxnDetails
-//                        )
-//                    )
-//                )
-//
-//            )
-//        }
-//    }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun parseIsoRespMessage(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-            apiRequestBuilderLyra.parsePurchaseResponse(response).let {
+    fun parseIsoRespMessage123(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
+            apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
                 paymentServiceTxnDetails.stan = it.stan
                 paymentServiceTxnDetails.hostRespCode = it.hostRespCode
                 paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
@@ -106,7 +53,7 @@ class PurchaseRequestRepository @Inject constructor(
                     }
                 }
                 paymentServiceTxnDetails.emvData = tlv.toTlvString()
-                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_FORMAT_ERROR) {
                     paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                     paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
                 }
@@ -115,6 +62,7 @@ class PurchaseRequestRepository @Inject constructor(
                     paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
                 }
             }
+
         return paymentServiceTxnDetails
     }
 
@@ -122,19 +70,15 @@ class PurchaseRequestRepository @Inject constructor(
     suspend fun purchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepositoryLyra.networkServiceRequest(
             object : IBuilderServiceResponseListenerLyra{
+                @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
-//                    CoroutineScope(Dispatchers.Default).launch {
-//                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
-//                        paymentServiceTxnDetails?.let {
-//                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
-//                            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
-//                                it.txnStatus = TxnStatus.APPROVED.toString()
-//                            else
-//                                it.txnStatus = TxnStatus.DECLINED.toString()
-//
-//                            onAPIServiceResponse(it)
-//                        }
-//                    }
+                    paymentServiceTxnDetails?.let { details ->
+                        onAPIServiceResponse(parseIsoRespMessage123(details, response))
+                    } ?: run {
+                        onAPIServiceResponse(ApiServiceError("paymentServiceTxnDetails is null"))
+                    }
+
+
                 }
 
                 override fun onBuilderFailure(error: Any) {
@@ -148,3 +92,8 @@ class PurchaseRequestRepository @Inject constructor(
 
 
 }
+
+
+
+
+

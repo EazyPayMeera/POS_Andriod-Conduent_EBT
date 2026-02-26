@@ -150,7 +150,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 viewModelScope.launch(Dispatchers.Main) {
                     currentStep = ActivationState.KEY_CHANGE
                     navHostController.navigateAndClean(
-                        AppNavigationItems.DashBoardScreen.route
+                        AppNavigationItems.AddClerkScreen.route
                     )
                 }
 //                viewModelScope.launch {

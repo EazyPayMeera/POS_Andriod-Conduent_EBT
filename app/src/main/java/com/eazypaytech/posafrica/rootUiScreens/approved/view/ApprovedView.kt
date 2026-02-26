@@ -52,6 +52,11 @@ fun ApprovedView(navHostController: NavHostController) {
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
 
+    Log.d("APPROVED_VIEW_DEBUG", "txnRecord on load: $txnRecord")
+    Log.d("APPROVED_VIEW_DEBUG", "txnStatus: ${txnRecord.txnStatus}")
+    Log.d("APPROVED_VIEW_DEBUG", "hostRespCode: ${txnRecord.hostRespCode}")
+    Log.d("APPROVED_VIEW_DEBUG", "ttlAmount: ${txnRecord.ttlAmount}")
+
     Column {
         CommonTopAppBar(
             onBackButtonClick = { },
@@ -165,6 +170,9 @@ fun ApprovedView(navHostController: NavHostController) {
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(context,sharedViewModel)
+        Log.d("APPROVED_VIEW_DEBUG", "After ViewModel onLoad -> txnRecord: ${sharedViewModel.objRootAppPaymentDetail}")
+        Log.d("APPROVED_VIEW_DEBUG", "txnStatus after ViewModel load: ${sharedViewModel.objRootAppPaymentDetail.txnStatus}")
+        Log.d("APPROVED_VIEW_DEBUG", "hostRespCode after ViewModel load: ${sharedViewModel.objRootAppPaymentDetail.hostRespCode}")
     }
 }
 

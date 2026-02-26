@@ -2,42 +2,29 @@ package com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
-import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
-import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
-import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
-import com.eazypaytech.securityframework.database.entity.TxnEntity
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
-import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.formatAmount
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.transformToAmountDouble
 import com.eazypaytech.posafrica.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CashBackViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository,private val dbRepository: TxnDBRepository) : ViewModel() {
+class CashBackViewModel @Inject constructor() : ViewModel() {
 
-    var transAmount by mutableStateOf("")
+    var cashBackAmount by mutableStateOf("")
         private set
 
     var isReadOnly by mutableStateOf(true)
@@ -49,39 +36,22 @@ class CashBackViewModel @Inject constructor(private  var apiServiceRepository: A
     val origTotalAmount: StateFlow<String?> = _origTotalAmount
 
     private val _timeDate = MutableStateFlow<String?>(null)
-    val timeDate: StateFlow<String?> = _timeDate
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(sharedViewModel: SharedViewModel)
     {
-        transAmount.ifEmpty {
-            when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-                TxnType.VOID_LAST, TxnType.FOODSTAMP_RETURN -> {
-                    transAmount =
-                        formatAmount(sharedViewModel.objRootAppPaymentDetail.ttlAmount ?: 0.00)
-                    _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
-                    _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
-                }
-                TxnType.VOID_LAST -> {
-                    transAmount =
-                        formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTxnAmount?.toDoubleOrNull() ?: 0.00)
-                    _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
-                    _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
-                    isReadOnly = false
-                }
-                else -> {
-                    transAmount =
-                        formatAmount(sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00)
-                    isReadOnly = false
-                }
-            }
+        cashBackAmount.ifEmpty {
+            cashBackAmount = formatAmount(sharedViewModel.objRootAppPaymentDetail.cashback ?: 0.00)
+            _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
+            _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
+            isReadOnly = false
         }
     }
 
-    fun onAmountChange(newValue: String) :String{
-        transAmount = formatAmount(newValue)
+    fun onCashBackAmountChange(newValue: String) :String{
+        cashBackAmount = formatAmount(newValue)
         return transformToAmountDouble(newValue).toString()
     }
 
@@ -90,7 +60,7 @@ class CashBackViewModel @Inject constructor(private  var apiServiceRepository: A
         if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE_CASHBACK) {
             sharedViewModel.objPosConfig?.apply { isCashback = false }
         }
-        if(transformToAmountDouble(transAmount)<0.01) {
+        if(transformToAmountDouble(cashBackAmount)<0.01) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
                 message = navHostController.context.getString(R.string.err_zero_amt_not_allowed)
@@ -98,19 +68,7 @@ class CashBackViewModel @Inject constructor(private  var apiServiceRepository: A
         }
         else {
             calculateTotal(sharedViewModel)
-            Log.d("TXN_TYPE", "Current Transaction Type: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
-            when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-                TxnType.PURCHASE_CASHBACK-> {
-                    navHostController.navigate(AppNavigationItems.CardScreen.route)
-                }
-                TxnType.VOID_LAST -> {
-                    Log.d("Database", "Go to update when void")
-                    authenticateTransaction(sharedViewModel, navHostController)
-                }
-                else -> {
-                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
-                }
-            }
+            navHostController.navigate(AppNavigationItems.CardScreen.route)
         }
     }
 
@@ -118,79 +76,12 @@ class CashBackViewModel @Inject constructor(private  var apiServiceRepository: A
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
-    private fun calculateTax(txnAmount: Double, percent: Double) : Double {
-        return txnAmount * percent / 100.00
-    }
-
     @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel) {
-        when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-            TxnType.FOODSTAMP_RETURN -> {
-                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(transAmount)
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = sharedViewModel.objRootAppPaymentDetail.ttlAmount?.
-                minus(sharedViewModel.objRootAppPaymentDetail.tip?:0.00)?.
-                minus(sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00)?.
-                minus(sharedViewModel.objRootAppPaymentDetail.VAT?:0.00)
-            }
-            TxnType.VOID_LAST -> {
-                sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
-                sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(transAmount)
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = sharedViewModel.objRootAppPaymentDetail.ttlAmount?.
-                minus(sharedViewModel.objRootAppPaymentDetail.tip?:0.00)?.
-                minus(sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00)?.
-                minus(sharedViewModel.objRootAppPaymentDetail.VAT?:0.00)
-            }
-            else -> {
-                // Handle non-REFUND and non-PREAUTH cases
-                sharedViewModel.objRootAppPaymentDetail.txnAmount = transformToAmountDouble(transAmount)
-
-                /* TAX on TOP of Service Charge */
-                if (sharedViewModel.objPosConfig?.isTaxEnabled == true) {
-                    sharedViewModel.objRootAppPaymentDetail.VAT = calculateTax(
-                        (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) + (sharedViewModel.objRootAppPaymentDetail.serviceCharge?:0.00),
-                        sharedViewModel.objPosConfig?.vatPercent ?: 0.00
-                    )
-                }
-
-                sharedViewModel.objRootAppPaymentDetail.ttlAmount =
-                    (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.00) +
-                            (sharedViewModel.objRootAppPaymentDetail.VAT ?: 0.00) +
-                            (sharedViewModel.objRootAppPaymentDetail.serviceCharge ?: 0.00)
-            }
-        }
+        sharedViewModel.objRootAppPaymentDetail.ttlAmount =
+            (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.0) +
+                    transformToAmountDouble(cashBackAmount)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
-    {
-        Log.d("Database","Go to update ")
-        viewModelScope.launch {
-            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
-        }
-    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
-        viewModelScope.launch {
-            try {
-                Log.d("AuthTransaction","Going For Authenticate the transaction")
-                apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
-                    IApiServiceResponseListener {
-
-                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-                    }
-
-                    override fun onApiServiceError(error: ApiServiceError) {
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-                    }
-                })
-            } catch (e: Exception) {
-                // Handle any exceptions that may occur
-                Log.e("ApiCallException", e.message ?: "Unknown error")
-                navHostController.navigate(AppNavigationItems.DeclineScreen.route)
-            }
-        }
-    }
 }

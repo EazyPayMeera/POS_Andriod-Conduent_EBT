@@ -111,7 +111,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         backgroundColor = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
                     ) {
-                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY) {
+                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_CASH || sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_SNAP) {
                             Column(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -280,6 +280,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
     FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
 
     LaunchedEffect(Unit) {
+        Log.d("Payment","Start Payment Call")
         viewModel.startPayment(context, sharedViewModel, navHostController)
     }
 

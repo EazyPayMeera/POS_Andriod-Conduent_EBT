@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -50,7 +51,7 @@ import com.eazypaytech.posafrica.rootUiScreens.confirmation.view.ConfirmationVie
 import com.eazypaytech.posafrica.rootUiScreens.confirmshift.view.ConfirmShiftView
 import com.eazypaytech.posafrica.rootUiScreens.dashboard.view.DashboardView
 import com.eazypaytech.posafrica.rootUiScreens.decline.view.DeclineView
-import com.eazypaytech.posafrica.rootUiScreens.ebtSelection.EBTSelectionView
+import com.eazypaytech.posafrica.rootUiScreens.ebtSelection.view.EBTSelectionView
 import com.eazypaytech.posafrica.rootUiScreens.email.view.EmailView
 import com.eazypaytech.posafrica.rootUiScreens.enteremail.view.EnterEmailView
 import com.eazypaytech.posafrica.rootUiScreens.forgetpassword.view.ForgetPasswordView
@@ -91,6 +92,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var sharedViewModel:SharedViewModel= ViewModelProvider(this)[SharedViewModel::class.java]
+
+        window.setFlags(    // to avoid screenshot and Screen Recording
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
 
         if (!checkStoragePermissions(this))
             requestStoragePermissions(this)
