@@ -83,6 +83,7 @@ object AppConstants {
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_PROC_ID = 11
     const val MAX_LENGTH_MID = 15
+    const val MAX_LENGTH_TID = 8
 
     const val NAV_VAL_TAX_TYPE_VAT = "VAT"
 

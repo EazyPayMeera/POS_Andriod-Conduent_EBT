@@ -13,15 +13,18 @@ import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.paymentservicecore.utils.toDecimalFormat
+import com.eazypaytech.posafrica.R
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.securityframework.database.entity.TxnEntity
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.formatAmount
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getFormattedDateTime
@@ -106,6 +109,10 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
 
                     override fun onApiServiceError(error: ApiServiceError) {
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                    }
+                    override  fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(
+                            R.string.default_alert_title_error),message = apiServiceTimeout.message)
                     }
                 })
             } catch (e: Exception) {

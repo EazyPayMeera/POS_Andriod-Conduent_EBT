@@ -18,6 +18,7 @@ import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
@@ -27,6 +28,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
@@ -82,7 +84,23 @@ class PurchaseRequestRepository @Inject constructor(
                 }
 
                 override fun onBuilderFailure(error: Any) {
-                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                    // ✅ Detect timeout properly
+                    if (error is SocketTimeoutException ||
+                        error.toString().contains("timed out", true)
+                    ) {
+
+                        // 🔥 Return timeout separately
+                        onAPIServiceResponse(
+                            ApiServiceTimeout("Transaction Timed Out")
+                        )
+
+                    } else {
+
+                        // Normal error
+                        onAPIServiceResponse(
+                            ApiServiceError(error.toString())
+                        )
+                    }
                 }
             },
             apiRequestBuilderLyra.createFinancial0200Request(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))

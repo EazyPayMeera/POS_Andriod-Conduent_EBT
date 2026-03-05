@@ -11,13 +11,23 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
     lateinit var iBuilderServiceResponseListener:IBuilderServiceResponseListenerLyra
 
     @OptIn(ExperimentalStdlibApi::class)
-    override suspend fun networkServiceRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
-    {
+    override suspend fun networkServiceRequest(
+        iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra,
+        requestBody: ByteArray
+    ) {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
         Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
-        NetworkCallProvider.safeApiCall(requestBody).let {
-            onNetworkServiceResponse(it)
+
+        try {
+            // Collect each message emitted by the flow
+            NetworkCallProvider.safeApiCall(requestBody).collect { message ->
+                // Wrap each message in ResultProvider.Success
+                val result = ResultProvider.Success(message)
+                onNetworkServiceResponse(result)
+            }
+        } catch (e: Exception) {
+            onNetworkServiceResponse(ResultProvider.Error(e))
         }
     }
 

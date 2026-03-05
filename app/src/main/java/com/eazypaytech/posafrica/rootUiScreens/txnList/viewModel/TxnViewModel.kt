@@ -13,6 +13,7 @@ import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiService
 import com.eazypaytech.paymentservicecore.logger.AppLogger
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
@@ -244,6 +245,10 @@ class TxnViewModel @Inject constructor(private val dbRepository: TxnDBRepository
 
     override fun onApiServiceError(paymentError: ApiServiceError) {
         Log.e("API Response", paymentError.errorMessage)
+    }
+
+    override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceTimeout.message)
     }
 
     fun printSummary(

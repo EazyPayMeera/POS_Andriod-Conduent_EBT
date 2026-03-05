@@ -58,6 +58,11 @@ interface IApiServiceRequestListener {
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
+    suspend fun handShakeRequest(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iApiServiceResponseListener: IApiServiceResponseListener
+    )
+
     suspend fun keyExchange(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener

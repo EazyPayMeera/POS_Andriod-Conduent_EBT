@@ -175,103 +175,15 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         ImageView(
-                            imageId = R.drawable.master,
+                            imageId = R.drawable.ebt,
                             shape = RectangleShape,
                             modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
                             contentDescription = ""
                         )
 
-                        ImageView(
-                            imageId = R.drawable.visa,
-                            shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
-                            contentDescription = ""
-                        )
-
-                        ImageView(
-                            imageId = R.drawable.rupay,
-                            shape = RectangleShape,
-                            modifier = Modifier.size(MaterialTheme.dimens.DP_50_CompactMedium),
-                            contentDescription = ""
-                        )
                     }
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-
-                    /*Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(MaterialTheme.dimens.DP_160_CompactMedium)
-                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            if (viewModel.emvInProgress.value == false) {
-                                if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOOD_PURCHASE) {
-                                    Log.d("Batch Id", "EMV Progress Value is False")
-                                    TextView(
-                                        text = stringResource(id = R.string.upi_separator),
-                                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                                        color = MaterialTheme.colorScheme.tertiary,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier
-                                            .align(Alignment.CenterHorizontally)
-                                    )
-
-                                    *//*Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-
-                                    Button(
-                                        onClick = { viewModel.onUpiClick(navHostController) },
-                                        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.onPrimary),
-                                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-                                        modifier = Modifier
-                                            .width(MaterialTheme.dimens.DP_160_CompactMedium)
-                                            .height(MaterialTheme.dimens.DP_70_CompactMedium)
-                                            .padding(horizontal = MaterialTheme.dimens.DP_4_CompactMedium)
-                                            .padding(bottom = MaterialTheme.dimens.DP_21_CompactMedium)
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.upi),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .fillMaxSize(),
-                                            tint = Color.Unspecified // Keeps the original colors of the icon
-                                        )
-                                    }*//*
-                                }
-
-                            }
-                            else
-                            {
-                                Log.d("Batch Id", "EMV Progress Value is True")
-                                    TextView(
-                                        text = getEmvMsgIdString(displayMsgId = viewModel.displayInfoMsgId.value),
-                                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier
-                                            .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-                                            .align(Alignment.CenterHorizontally)
-                                    )
-
-                                viewModel.showProgressVar.value.takeIf { it == true }?.let {
-                                    Log.d("Batch Id", "Fetched batches: Card Inserted")
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .padding(MaterialTheme.dimens.DP_10_CompactMedium)
-                                            .size(MaterialTheme.dimens.DP_70_CompactMedium),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
-                                    )
-                                }
-                            }
-                        }
-
-                    }*/
                 }
             }
         }

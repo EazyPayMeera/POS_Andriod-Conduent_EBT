@@ -1,5 +1,7 @@
 package com.eazypaytech.paymentservicecore.repository.apiService.preauth
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -19,79 +21,33 @@ import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class VoidRequestRepository @Inject constructor (
+    @ApplicationContext val context: Context,
     var apiRequestBuilder: ApiRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository,
     var apiRequestBuilderLyra: ApiRequestBuilderLyra,
     private var builderServiceRepositoryLyra: BuilderServiceRepositoryLyra
 ) {
 
-    //lateinit var paymentServiceTxnDetails:PaymentServiceTxnDetails
-    @RequiresApi(Build.VERSION_CODES.O)
-//    suspend fun sendVoidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-//
-//        if(paymentServiceTxnDetails?.acquirerName == AppConstants.ACQUIRER_LYRA) {
-//            var request = apiRequestBuilderLyra.CreateVoidRequest(
-//                PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
-//                    paymentServiceTxnDetails
-//                )
-//            )
-//
-//            if(paymentServiceTxnDetails.isDemoMode == true)
-//            {
-//                onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,
-//                    apiRequestBuilderLyra.buildDummyVoidResponse()))
-//            }
-//            else {
-//                builderServiceRepositoryLyra.networkServiceRequest(
-//                    object :
-//                        IBuilderServiceResponseListenerLyra {
-//                        override fun onBuilderSuccess(response: ByteArray) {
-//                            onAPIServiceResponse(parseIsoRespMessage(paymentServiceTxnDetails,response))
-//                        }
-//
-//                        override fun onBuilderFailure(error: Any) {
-//                            onAPIServiceResponse(ApiServiceError(error.toString()))
-//                        }
-//                    },
-//                    request
-//                )
-//            }
-//        }
-//        else {
-//            builderServiceRepository.apiPurchase(
-//                object : IBuilderServiceResponseListener {
-//                    override fun onBuilderSuccess(response: String) {
-//                        onAPIServiceResponse(response)
-//                        Log.d("record insert", "onApiSuccessRes")
-//
-//                    }
-//
-//                    override fun onBuilderFailure(error: Any) {
-//                        Log.d("record insert", "onApiFailureRes")
-//                        onAPIServiceResponse(ApiServiceError(error.toString()))
-//                        paymentServiceTxnDetails?.let { onAPIServiceResponse(it) }
-//                    }
-//                },
-//                BuilderUtils.prepareApiRequestBody(
-//                    apiRequestBuilder.createVoidRequest(
-//                        PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(
-//                            paymentServiceTxnDetails
-//                        )
-//                    )
-//                )
-//
-//            )
-//        }
-//    }
-
     @OptIn(ExperimentalStdlibApi::class)
-    fun parseIsoRespMessage(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-        apiRequestBuilderLyra.parseVoidResponse(response).let {
+    fun parseIsoRespMessage123(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
+        apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
+            paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
-            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+            paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
+            paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
+            var tlv = TlvUtils(it.emvData)
+            /* Extract tag 8A from ISO field if required */
+            if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
+                it.hostRespCode?.encodeToByteArray()?.toHexString()?.let {
+                    tlv.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] = it
+                }
+            }
+            paymentServiceTxnDetails.emvData = tlv.toTlvString()
+            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_FORMAT_ERROR) {
                 paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                 paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
             }
@@ -100,6 +56,30 @@ class VoidRequestRepository @Inject constructor (
                 paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
             }
         }
+
         return paymentServiceTxnDetails
+    }
+
+
+    suspend fun voidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+        builderServiceRepositoryLyra.networkServiceRequest(
+            object : IBuilderServiceResponseListenerLyra{
+                @SuppressLint("NewApi")
+                override fun onBuilderSuccess(response: ByteArray) {
+                    paymentServiceTxnDetails?.let { details ->
+                        onAPIServiceResponse(parseIsoRespMessage123(details, response))
+                    } ?: run {
+                        onAPIServiceResponse(ApiServiceError("paymentServiceTxnDetails is null"))
+                    }
+
+
+                }
+
+                override fun onBuilderFailure(error: Any) {
+                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                }
+            },
+            apiRequestBuilderLyra.createReversal0420(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+        )
     }
 }

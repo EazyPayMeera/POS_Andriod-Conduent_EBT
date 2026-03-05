@@ -9,6 +9,7 @@ import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiService
 import com.eazypaytech.paymentservicecore.logger.AppLogger
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
@@ -114,6 +115,10 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         Log.e("API Response", apiServiceError.errorMessage)
         userApiServiceErrorHolder.value = apiServiceError
         setLoginButtonState(true)
+    }
+
+    override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceTimeout.message)
     }
 
     override fun onApiServiceDisplayProgress(

@@ -4,29 +4,18 @@ import android.util.Log
 import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import io.ktor.network.selector.ActorSelectorManager
-import io.ktor.network.sockets.InetSocketAddress
-import io.ktor.network.sockets.aSocket
-import io.ktor.network.sockets.openReadChannel
-import io.ktor.network.sockets.openWriteChannel
-import io.ktor.utils.io.availableForRead
-import io.ktor.utils.io.readAvailable
-import io.ktor.utils.io.writeFully
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.Response
-import java.io.ByteArrayOutputStream
+import java.net.Socket
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
-import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.X509TrustManager
-import kotlin.coroutines.CoroutineContext
 
 
 object NetworkCallProvider {
@@ -91,79 +80,107 @@ object NetworkCallProvider {
 
 
 
-    suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
-        return try {
-            withContext(Dispatchers.IO) {
-                val sslContext = SSLContext.getInstance("TLSv1.2")
-                sslContext.init(null, arrayOf(object : X509TrustManager {
-                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+
+    fun safeApiCall(requestBytes: ByteArray): Flow<ByteArray> = callbackFlow {
+        try {
+            val sslContext = SSLContext.getInstance("TLSv1.2")
+            sslContext.init(
+                null,
+                arrayOf(object : X509TrustManager {
+                    override fun checkClientTrusted(
+                        chain: Array<out X509Certificate>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    override fun checkServerTrusted(
+                        chain: Array<out X509Certificate>?,
+                        authType: String?
+                    ) {
+                    }
+
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-                }), SecureRandom())
-                val sslSocket = sslContext.socketFactory.createSocket(
+                }),
+                SecureRandom()
+            )
+
+            val plainSocket = Socket()
+
+            plainSocket.connect(
+                java.net.InetSocketAddress(
                     NetworkConstants.HOST_ADDRESS,
                     NetworkConstants.HOST_PORT
-                ) as SSLSocket
+                ),
+                30_000
+            )
 
+            val sslSocket = sslContext.socketFactory.createSocket(
+                plainSocket,
+                NetworkConstants.HOST_ADDRESS,
+                NetworkConstants.HOST_PORT,
+                true
+            ) as SSLSocket
 
-                sslSocket.startHandshake()
+            sslSocket.soTimeout = 0 // infinite read
+            sslSocket.startHandshake()
 
+            val output = sslSocket.outputStream
+            val input = sslSocket.inputStream
 
-                val output = sslSocket.outputStream
-                val input = sslSocket.inputStream
+            // Send the request
+            val lenPrefix = byteArrayOf(
+                (requestBytes.size shr 8).toByte(),
+                (requestBytes.size and 0xFF).toByte()
+            )
+            output.write(lenPrefix + requestBytes)
+            output.flush()
+            Log.d("Conduent", "Request sent: ${String(requestBytes, Charsets.US_ASCII)}")
 
-                // --- Add 2-byte length prefix ---
-                val lenPrefix = byteArrayOf((requestBytes.size / 256).toByte(), (requestBytes.size % 256).toByte())
-                val finalMessage = lenPrefix + requestBytes
-                //Log.d("Conduent", "Sending request with length ${requestBytes.size} (total bytes with prefix: ${finalMessage.size})")
+            val receivedMTIs = mutableSetOf<String>()
 
-                // --- Send request ---
-                output.write(finalMessage)
-                output.flush()
-                //Log.d("Conduent", "Request sent")
-
-                // --- Read response ---
-                val responseBuffer = ByteArrayOutputStream()
-
-                // First, read 2-byte length prefix
+            while (true) {
+                // Read length prefix
                 val lenBytes = ByteArray(2)
-                var readLen = 0
-                while (readLen < 2) {
-                    val n = input.read(lenBytes, readLen, 2 - readLen)
-                    if (n == -1) throw Exception("No response received (length prefix)")
-                    readLen += n
+                val read = input.read(lenBytes)
+                if (read < 2) {
+                    Log.w("Conduent", "Host closed connection")
+                    break
                 }
 
-                val expectedLength = ((lenBytes[0].toInt() and 0xFF) * 256) + (lenBytes[1].toInt() and 0xFF)
-                Log.d("Conduent", "Expected response length from prefix: $expectedLength")
+                val expectedLength =
+                    ((lenBytes[0].toInt() and 0xFF) shl 8) + (lenBytes[1].toInt() and 0xFF)
 
-                // Then, read the full message based on length
-                val tempBuffer = ByteArray(4096)
+                // Read full message
+                val msgBuffer = ByteArray(expectedLength)
                 var totalRead = 0
                 while (totalRead < expectedLength) {
-                    val toRead = minOf(tempBuffer.size, expectedLength - totalRead)
-                    val n = input.read(tempBuffer, 0, toRead)
-                    if (n == -1) throw Exception("Stream closed before full response")
-                    responseBuffer.write(tempBuffer, 0, n)
+                    val n = input.read(msgBuffer, totalRead, expectedLength - totalRead)
+                    if (n == -1) break
                     totalRead += n
-                    Log.d("Conduent", "Total bytes read so far: $totalRead")
                 }
 
-                sslSocket.close()
-                Log.d("Conduent", "Socket closed")
+                val isoMessage = String(msgBuffer, Charsets.US_ASCII)
+                val mti = isoMessage.take(4)
+                Log.d("Conduent", "Received MTI: $mti, full message: $isoMessage")
 
-                val finalResponse = responseBuffer.toByteArray()
-                Log.d("Conduent", "Final response received, total bytes: ${finalResponse.size}")
-                Log.d("Conduent", "Response HEX: ${finalResponse.joinToString(" ") { "%02X".format(it) }}")
-                Log.d("Conduent","Response ASCII: ${String(finalResponse, Charsets.US_ASCII)}")
+                // Emit each MTI only once (0810 and 0800)
+                if (!receivedMTIs.contains(mti) && (mti == "0810" || mti == "0800")) {
+                    trySend(msgBuffer).isSuccess
+                    receivedMTIs.add(mti)
+                }
 
-                ResultProvider.Success(finalResponse)
+                // Stop after both messages are received
+                if (receivedMTIs.containsAll(listOf("0810", "0800"))) break
             }
+
+            sslSocket.close()
         } catch (e: Exception) {
-            Log.e("Conduent", "Exception: ${e.message}")
-            ResultProvider.Error(e)
+            close(e) // close flow on error
         }
+
+        awaitClose { /* Cleanup socket if needed */ }
     }
+        .flowOn(Dispatchers.IO)
 
 
     suspend fun <T> apiCallCommon(apiCall: suspend () -> Response<T>): ResultProvider<T> {

@@ -10,6 +10,7 @@ import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiService
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.PosConfig
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.access_token.AccessTokenRequestRepository
@@ -81,6 +82,7 @@ class ApiServiceRepository @Inject constructor(
             TxnType.BALANCE_ENQUIRY_CASH.toString(),
             TxnType.BALANCE_ENQUIRY_SNAP.toString() ->
                 apiServicePurchase(paymentServiceTxnDetails, iApiServiceResponseListener)
+            TxnType.VOID_LAST.toString() -> apiServiceVoid(paymentServiceTxnDetails,iApiServiceResponseListener)
             else -> iApiServiceResponseListener.onApiServiceError(ApiServiceError(errorMessage = "Transaction Not Supported"))
         }
      }
@@ -114,9 +116,9 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
-//        voidRequestRepository.sendVoidRequest(paymentServiceTxnDetails){
-//            onApiServiceResponse(it)
-//        }
+        voidRequestRepository.voidRequest(paymentServiceTxnDetails){
+            onApiServiceResponse(it)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -186,6 +188,19 @@ class ApiServiceRepository @Inject constructor(
 
      }
 
+     override suspend fun handShakeRequest(
+         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+         iApiServiceResponseListener: IApiServiceResponseListener
+     ) {
+
+         this.iApiServiceResponseListener = iApiServiceResponseListener
+         this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
+         rklRequestRepository.handShakeRequest(paymentServiceTxnDetails){
+             onApiServiceResponse(it)
+         }
+
+     }
+
 
      override suspend fun keyExchange(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -210,6 +225,10 @@ class ApiServiceRepository @Inject constructor(
     override fun onApiServiceResponse(response: Any) {
         iApiServiceResponseListener.onApiServiceDisplayProgress(false)
         when (response) {
+            is ApiServiceTimeout -> {
+                iApiServiceResponseListener.onApiServiceTimeout(ApiServiceTimeout(response.toString()))
+
+            }
             is ApiServiceError -> {
                 iApiServiceResponseListener.onApiServiceError(ApiServiceError(response.toString()))
             }

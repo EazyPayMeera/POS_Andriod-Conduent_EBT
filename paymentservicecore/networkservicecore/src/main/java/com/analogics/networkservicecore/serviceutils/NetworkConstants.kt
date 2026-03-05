@@ -1,7 +1,6 @@
 package com.eazypaytech.networkservicecore.serviceutils
 
 object NetworkConstants {
-        //const val BASEURL = "https://http://posuat.services.conduent.com"
         const val BASEURL = "https://posuat.services.conduent.com/"
         const val PATH_ACCESS_TOKEN = "/ucp/accesstoken"
 

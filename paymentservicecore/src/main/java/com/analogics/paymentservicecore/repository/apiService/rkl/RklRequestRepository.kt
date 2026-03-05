@@ -11,14 +11,12 @@ import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
-import com.eazypaytech.securityframework.handler.SecureKeyHandler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+
 
 class RklRequestRepository@Inject constructor(
     @ApplicationContext val context: Context,
@@ -29,6 +27,9 @@ class RklRequestRepository@Inject constructor(
             builderServiceRepository.networkServiceRequest(
                 object : IBuilderServiceResponseListenerLyra{
                     override fun onBuilderSuccess(response: ByteArray) {
+                        val isoStr = String(response, Charsets.US_ASCII)
+                        val mti = isoStr.take(4)
+                        Log.d("Conduent", "Received MTI in listener: $isoStr")
                         CoroutineScope(Dispatchers.Default).launch {
                             var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
                             paymentServiceTxnDetails?.let {
@@ -60,7 +61,7 @@ class RklRequestRepository@Inject constructor(
                         resPaymentServiceTxnDetails?.let {
                             var keyInjectResult = false
                             val workKey = it.workKey
-
+                            Log.d("KEY_DEBUG", "Work Key: $workKey")
                             if (!workKey.isNullOrEmpty()) {
                                 val encryptedPinKey = workKey.substring(0, 32)
                                 val checkValue = workKey.substring(32)
@@ -117,6 +118,32 @@ class RklRequestRepository@Inject constructor(
                 }
             },
             apiRequestBuilder.createKeyRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+        )
+    }
+
+    suspend fun handShakeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+        builderServiceRepository.networkServiceRequest(
+            object : IBuilderServiceResponseListenerLyra{
+                override fun onBuilderSuccess(response: ByteArray) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
+                        paymentServiceTxnDetails?.let {
+                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
+                                it.txnStatus = TxnStatus.APPROVED.toString()
+                            else
+                                it.txnStatus = TxnStatus.DECLINED.toString()
+
+                            onAPIServiceResponse(it)
+                        }
+                    }
+                }
+
+                override fun onBuilderFailure(error: Any) {
+                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                }
+            },
+            apiRequestBuilder.createHandShakeRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
 }

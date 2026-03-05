@@ -85,6 +85,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         }
     }
 
+    fun getTermNameAndLocation(): String? {
+        return  builderServiceTxnDetails.ternNameLoc
+    }
+
     fun getIsoPosConditionCode() : String?
     {
         return when(builderServiceTxnDetails.posConditionCode)
@@ -387,10 +391,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
 
     fun createSignOnRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-        Log.d(
-            "ISO_DEBUG inside ",
-            "procId = ${builderServiceTxnDetails?.procId}"
-        )
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
@@ -498,6 +498,19 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val processingCode = getProcessingCode(this.builderServiceTxnDetails.txnType)
         val rrn = generateRRN(stan.toString())
         val iccData = getIccData()
+//        Log.d("ICC_DEBUG", "pin block : $pinBlock")
+//        Log.d("ICC_DEBUG", "ICC RAW STRING : $iccData")
+//        Log.d("ICC_DEBUG", "ICC CHAR LENGTH: ${iccData?.length}")
+//
+//// Calculate actual byte length (HEX → bytes)
+//        val byteLength = iccData?.length // 2
+//        Log.d("ICC_DEBUG", "ICC BYTE LENGTH: $byteLength")
+//
+//        val iccBytes = iccData?.chunked(2)
+//            ?.map { it.toInt(16).toByte() }
+//            ?.toByteArray()
+//
+//        Log.d("ICC_DEBUG", "ICC BYTE LENGTH CORRECT: ${iccBytes?.size}")
 
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)   // Financial transaction request
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, maskedPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)          // DE002 PAN
@@ -507,10 +520,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)                  // DE011 STAN
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)                  // DE012 Local Time
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)                    // DE013 Local Date
-        iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)                    // DE015 Settlement Date
-        iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)                    // DE017 Capture Date
+        iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, localDate, IsoType.NUMERIC, 4)                    // DE015 Settlement Date
+        iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, localDate, IsoType.NUMERIC, 4)                    // DE017 Capture Date
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, "5499", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
-        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
+        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, "021", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, "00004000002", IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         iso.setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLVAR, BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH) // DE035 Track 2
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
@@ -523,7 +536,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         )                                                                 // DE043 Name/Location
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, "APPLE 1 MINI MAR", IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
-        iso.setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.ALPHA, BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)          // DE052
+        iso.setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.ALPHA, BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, "0000000001", IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)               // DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, "EB0070901664", IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)            // DE111
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, "10242149180000000000", IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
@@ -561,28 +574,28 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return iso.writeData()
     }
 
-    fun createReversal0420(txn: BuilderServiceTxnDetails): ByteArray {
+    fun createReversal0420(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
 
         val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_REVERSAL_REQ)
-        iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, txn.processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, txn.txnAmount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, txn.dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_STAN, txn.stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, txn.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, txn.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, builderServiceTxnDetails?.txnAmount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, builderServiceTxnDetails?.dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_STAN, builderServiceTxnDetails?.stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, builderServiceTxnDetails?.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
 
-        iso.setValue(BuilderConstants.ISO_FIELD_RRN, txn.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)      // Original RRN
-        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, txn.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, txn.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)      // Original RRN
+        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
 
         // DE90 – Original Data Elements (MANDATORY for reversal)
         // Format: MTI + STAN + TransmissionDT + AcquirerID + ForwardingID
         val originalData =
             "0200" +
-                    txn.stan +
-                    txn.dateTime +
-                    txn.acquirerId?.padStart(11, '0') +
+                    builderServiceTxnDetails?.stan +
+                    builderServiceTxnDetails?.dateTime +
+                    builderServiceTxnDetails?.acquirerId?.padStart(11, '0') +
                     "00000000000"   // forwarding ID if not used
 
         iso.setValue(BuilderConstants.ISO_FIELD_ORIGINAL_DATA, originalData, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ORIGINAL_DATA_LENGTH)
@@ -653,6 +666,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 val mf = createMessageFactory(context)
                 val isoMsg = mf.parseMessage(response, 0)
 
+
                 details.apply {
                     dateTime     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE)
                     stan         = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_STAN)
@@ -664,6 +678,13 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                     deviceModel     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
                 }
 
+            // 🔹 Print all present fields
+            for (i in 1..128) { // ISO 8583 standard 1-128 fields
+                if (isoMsg.hasField(i)) {
+                    val value = isoMsg.getObjectValue<Any>(i)
+                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
+                }
+            }
 
         } catch (e: Exception) {
             Log.e("ISO", "Parse error", e)

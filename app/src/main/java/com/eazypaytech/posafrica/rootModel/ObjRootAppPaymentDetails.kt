@@ -86,6 +86,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("emvData")          var emvData: String? = null,
     @SerializedName("trackData")        var trackData: String? = null,
     @SerializedName("pinBlock")         var pinBlock: String? = null,
+    @SerializedName("ternNameLoc")        var ternNameLoc: String? = null,
     @SerializedName("ksn")              var ksn: String? = null,
     @SerializedName("posConditionCode") var posConditionCode: PosConditionCode? = null,
     @SerializedName("cardEntryMode")    var cardEntryMode: CardEntryMode? = null,

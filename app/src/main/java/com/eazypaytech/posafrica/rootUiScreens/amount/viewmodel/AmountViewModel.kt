@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
@@ -188,6 +189,10 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     override fun onApiServiceError(error: ApiServiceError) {
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
+                    override  fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceTimeout.message)
+                    }
+
                 })
             } catch (e: Exception) {
                 // Handle any exceptions that may occur

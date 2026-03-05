@@ -1,7 +1,7 @@
 package com.eazypaytech.posafrica.rootModel
 
 object DefaultSymbol {
-    var currency: Symbol.Currency = Symbol.Currency.ZAR
+    var currency: Symbol.Currency = Symbol.Currency.USD
     var position: Symbol.Position = Symbol.Position.START
     var noSpace : Boolean = false
 }

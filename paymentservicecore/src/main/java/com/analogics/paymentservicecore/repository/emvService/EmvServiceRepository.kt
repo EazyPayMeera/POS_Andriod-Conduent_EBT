@@ -26,6 +26,7 @@ import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.TransStatus
 import com.eazypaytech.paymentservicecore.model.emv.TermConfig
 import com.eazypaytech.paymentservicecore.model.emv.TransConfig
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.model.error.EmvServiceException
 import com.eazypaytech.paymentservicecore.models.toEmvTransType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
@@ -419,6 +420,10 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 override fun onApiServiceError(apiServiceError: ApiServiceError) {
                     onResponse(responseEmvTags)
                 }
+
+                override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                    TODO("Not yet implemented")
+                }
             })
     }
 
@@ -490,6 +495,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 emvTags.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
             }
 
+//            if (emvTags.containsKey(EmvConstants.EMV_TAG_MERCH_NAME_LOC)) {
+//                paymentServiceTxnDetails.ternNameLoc = emvTags[EmvConstants.EMV_TAG_MERCH_NAME_LOC]
+//                emvTags.remove(EmvConstants.EMV_TAG_MERCH_NAME_LOC)
+//            }
+//            Log.d("DEBUG_NAME_LOC", "NAME AND LOC : ${paymentServiceTxnDetails.ternNameLoc}")
             /* TLV string for Host Communication */
             paymentServiceTxnDetails.emvData = TlvUtils(emvTags).toTlvString()
 
