@@ -25,6 +25,7 @@ import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getAcquirer
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
+import com.eazypaytech.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -138,21 +139,28 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         )
     }
 
-    fun activateDevice() {
-        loadDefaultValues(sharedViewModel)
-
-        viewModelScope.launch {
-            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-//            txnDBRepository.getUserCount().let {
-//                if(it>0)
-//                    navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-//                else
-//                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-//            }
+    suspend fun injectKeys(tmk: String,pinKey: String,kcv: String,context: Context? = null) : Boolean {   // TODO USED FOR KEY INJECTION PROCESS FOR MASTER AND SESSION KEY AS PER CONDUENT
+        if (tmk.isNotEmpty() == true && pinKey.isNotEmpty() == true && kcv.isNotEmpty() == true) {
+            return PaymentServiceUtils.injectKeys(tmk, pinKey,kcv, context)
         }
+        return false
     }
 
-    fun copyConfigToExternal(context: Context) {
+//    fun activateDevice() {
+//        loadDefaultValues(sharedViewModel)
+//
+//        viewModelScope.launch {
+//            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+////            txnDBRepository.getUserCount().let {
+////                if(it>0)
+////                    navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+////                else
+////                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+////            }
+//        }
+//    }
+
+    fun copyConfigToExternal(context: Context) {                                             // TODO TO COPY CONFIGURATION FILE TO EXTERNAL STORAGE
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
         if (!configFile.exists()) {
             try {
@@ -170,7 +178,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }
     }
 
-    fun readMasterKEK(context: Context): String? {
+    fun readMasterKEK(context: Context): String? {                                          // TODO TO READ CONFIGURATION FILE TO EXTERNAL STORAGE
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
         if (!configFile.exists()) {
             Log.d("ConfigRead", "Config file does not exist!")

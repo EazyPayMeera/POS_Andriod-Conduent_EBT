@@ -225,6 +225,9 @@ object BuilderConstants {
     const val ISO_FIELD_STAN = 11
     const val ISO_FIELD_STAN_LENGTH = 6
 
+    const val ISO_FIELD_NETWORK_CODE = 41
+    const val ISO_FIELD_NETWORK_CODE_LENGTH = 6
+
     const val ISO_FIELD_LOC_TIME = 12      // DE096
     const val ISO_FIELD_LOC_TIME_LENGTH = 6
 

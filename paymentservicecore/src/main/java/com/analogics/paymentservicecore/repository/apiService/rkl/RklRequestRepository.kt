@@ -23,34 +23,59 @@ class RklRequestRepository@Inject constructor(
     var apiRequestBuilder: ApiRequestBuilderLyra,
     private var builderServiceRepository: BuilderServiceRepositoryLyra
 )  {
-        suspend fun signOnRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-            builderServiceRepository.networkServiceRequest(
-                object : IBuilderServiceResponseListenerLyra{
-                    override fun onBuilderSuccess(response: ByteArray) {
-                        val isoStr = String(response, Charsets.US_ASCII)
-                        val mti = isoStr.take(4)
-                        Log.d("Conduent", "Received MTI in listener: $isoStr")
-                        CoroutineScope(Dispatchers.Default).launch {
-                            var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
-                            paymentServiceTxnDetails?.let {
-                                it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
-                                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
-                                    it.txnStatus = TxnStatus.APPROVED.toString()
-                                else
-                                    it.txnStatus = TxnStatus.DECLINED.toString()
+    suspend fun signOnRequest(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        onAPIServiceResponse: (Any) -> Unit
+    ) {
+        builderServiceRepository.networkServiceRequest(
+            object : IBuilderServiceResponseListenerLyra {
+                override fun onBuilderSuccess(response: ByteArray) {
+                    val isoStr = String(response, Charsets.US_ASCII)
+                    val mti = isoStr.take(4)
+                    Log.d("Conduent", "Received MTI in listener: $isoStr")
 
-                                onAPIServiceResponse(it)
+                    CoroutineScope(Dispatchers.Default).launch {
+                        val resPaymentServiceTxnDetails = try {
+                            when (mti) {
+                                "0810" -> apiRequestBuilder.parseNetworkManResponse(context, response)
+                                "0800" -> apiRequestBuilder.parseEcoResponse(context, response)
+                                else -> BuilderServiceTxnDetails() // Unknown MTI
                             }
+                        } catch (e: Exception) {
+                            Log.e("ISO_PARSE", "Failed to parse MTI $mti", e)
+                            BuilderServiceTxnDetails()
+                        }
+
+                        paymentServiceTxnDetails?.let {
+                            // Update host response and txn status only for Sign-On (0810)
+                            if (mti == "0810") {
+                                it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                                it.txnStatus = if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED)
+                                    TxnStatus.APPROVED.toString()
+                                else
+                                    TxnStatus.DECLINED.toString()
+                            }
+
+                            // You can also update Echo-specific fields if needed
+                            if (mti == "0800") {
+                                it.ternNameLoc = resPaymentServiceTxnDetails.terminalId
+                                it.deviceSN   = resPaymentServiceTxnDetails.deviceSN
+                            }
+
+                            onAPIServiceResponse(it)
                         }
                     }
+                }
 
-                    override fun onBuilderFailure(error: Any) {
-                        onAPIServiceResponse(ApiServiceError(error.toString()))
-                    }
-                },
-                apiRequestBuilder.createSignOnRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+                override fun onBuilderFailure(error: Any) {
+                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                }
+            },
+            apiRequestBuilder.createSignOnRequest(
+                PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails)
             )
-        }
+        )
+    }
 
     suspend fun keyExchangeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceRequest(

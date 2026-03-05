@@ -693,6 +693,42 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return details
     }
 
+
+    fun parseEcoResponse(context: Context, response: ByteArray): BuilderServiceTxnDetails {
+        val details = BuilderServiceTxnDetails()
+        try {
+            val isoStr = String(response, Charsets.US_ASCII)
+            val mti = isoStr.take(4)
+            Log.d("ISO", "Received MTI: $mti, full message: $isoStr")
+
+            val mf = createMessageFactory(context)
+            val isoMsg = mf.parseMessage(response, 0)
+
+            // 🔹 Fill BuilderServiceTxnDetails safely
+            details.apply {
+                if (isoMsg.hasField(7))   dateTime    = isoMsg.getObjectValue<String>(7)
+                if (isoMsg.hasField(11))  stan        = isoMsg.getObjectValue<String>(11)
+                if (isoMsg.hasField(41))  terminalId  = isoMsg.getObjectValue<String>(41)
+                if (isoMsg.hasField(70))  hostTxnRef  = isoMsg.getObjectValue<String>(70)
+                if (isoMsg.hasField(96))  deviceSN    = isoMsg.getObjectValue<String>(96)
+                if (isoMsg.hasField(125)) workKey     = isoMsg.getObjectValue<String>(125) // 36-char key
+            }
+
+            // 🔹 Print all present fields for debugging
+            for (i in 1..128) {
+                if (isoMsg.hasField(i)) {
+                    val value = isoMsg.getObjectValue<Any>(i)
+                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e("ISO", "Failed to parse Echo response", e)
+        }
+
+        return details
+    }
+
     // Financial Transaction Response Parsing 0210  // Added By Rushikesh Testing Pending
     fun parsePurchaseResponse123(context: Context, response: ByteArray): BuilderServiceTxnDetails {
         val details = BuilderServiceTxnDetails()
