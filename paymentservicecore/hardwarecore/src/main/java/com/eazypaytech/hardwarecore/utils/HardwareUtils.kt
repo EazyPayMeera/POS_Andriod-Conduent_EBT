@@ -32,6 +32,15 @@ object HardwareUtils {
         }
     }
 
+    suspend fun injectTMKKey(tmk: String,kcv: String,context: Context? = null): Boolean {
+        return try {
+            EmvWrapperRepository.injectTMKKey(tmk, kcv, context)
+        } catch (exception: Exception) {
+            Log.e("HARDWARE_UTILS", exception.message.toString())
+            false
+        }
+    }
+
     suspend fun injectWorkingPinKey(workingKeyHex: String, context: Context? = null): Boolean {
         return try {
             EmvWrapperRepository.loadAndVerifyWorkingPinKey(workingKeyHex,context)
@@ -46,6 +55,17 @@ object HardwareUtils {
     {
         try {
             return EmvWrapperRepository.injectDukptPinKey(ipek, ksn, context)
+        }catch (exception : Exception)
+        {
+            Log.e("HARDWARE_UTILS", exception.message.toString())
+            return false
+        }
+    }
+
+    suspend fun injectWorkingKey(pinKey: String, context: Context? = null) : Boolean
+    {
+        try {
+            return EmvWrapperRepository.injectWorkingKey(pinKey, context)
         }catch (exception : Exception)
         {
             Log.e("HARDWARE_UTILS", exception.message.toString())

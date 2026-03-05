@@ -46,10 +46,10 @@ object PaymentServiceUtils {
         return HardwareUtils.getDeviceSN()
     }
 
-    suspend fun injectKeys(ipek: String?, ksn: String?, kcv: String?, context : Context?=null) : Boolean {
-        if (ipek?.isNotEmpty() == true && ksn?.isNotEmpty() == true && kcv?.isNotEmpty() == true) {
-            /* Here DUKPT Pin Key serves as main key as well. Used for encryption of track data */
-            return HardwareUtils.injectTMK(ipek, kcv, context) && HardwareUtils.injectDukptPinKey(ipek,ksn, context)
+
+    suspend fun injectKeys(tmk: String,pinKey: String,kcv: String,context: Context? = null) : Boolean {
+        if (tmk.isNotEmpty() == true && pinKey.isNotEmpty() == true && kcv.isNotEmpty() == true) {
+            return HardwareUtils.injectTMKKey(tmk, kcv, context) && HardwareUtils.injectWorkingKey(pinKey, context)
         }
         return false
     }

@@ -1340,6 +1340,48 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
+        suspend fun injectTMKKey(tmk: String,kcv: String,context: Context? = null): Boolean {
+
+            try {
+
+                Log.d("HARDWARE_UTILS", "Injecting TMK")
+                Log.d("HARDWARE_UTILS", "TMK: $tmk")
+
+                val pinPad = getDeviceService(context)?.pinPad ?: return false
+                val tmkBytes = tmk.hexToByteArray()
+
+                if (tmkBytes.size != 24) {
+                    Log.e("HARDWARE_UTILS", "Invalid TMK length. Expected 24 bytes.")
+                    return false
+                }
+
+                val result = pinPad.loadPlainMKey(
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
+                    tmkBytes,
+                    tmkBytes.size,
+                    false
+                )
+
+                Log.d("HARDWARE_UTILS", "loadPlainMKey result: $result")
+
+                if (result != 0) return false
+
+                val deviceKcv = pinPad.getKeyKcv(
+                    CheckKeyEnum.DES_MASTER_KEY,
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal
+                )?.kcv
+
+                Log.d("HARDWARE_UTILS", "Device KCV: $deviceKcv")
+
+                return deviceKcv.equals(kcv, ignoreCase = true)
+
+            } catch (e: Exception) {
+                Log.e("HARDWARE_UTILS", "TMK injection exception", e)
+                return false
+            }
+        }
+
         suspend fun loadAndVerifyWorkingPinKey(
             workingKeyHex: String,
             context: Context?=null,
@@ -1386,6 +1428,27 @@ class EmvWrapperRepository @Inject constructor(
             } catch (e: Exception) {
                 Log.e("KEY_DEBUG", "Exception in loadAndVerifyWorkingPinKey: ${e.message}")
                 return false
+            }
+        }
+
+        @OptIn(ExperimentalStdlibApi::class)
+        suspend fun injectWorkingKey(pinKey: String, context: Context? = null): Boolean {
+
+            return try {
+
+                val keyBytes = pinKey.hexToByteArray()
+
+                val result = getDeviceService(context)?.pinPad?.loadPlainWKey(
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
+                    CheckKeyEnum.DES_PIN_KEY.toInt(),
+                    keyBytes,
+                    keyBytes.size
+                )
+
+                result == 0
+
+            } catch (e: Exception) {
+                false
             }
         }
 
