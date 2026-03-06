@@ -40,6 +40,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("stan") var stan: String? = null,
     @SerializedName("authAmount") var authAmount: String? = null,
     @SerializedName("dateTime") var dateTime: String? = null,
+    @SerializedName("masterKey") var masterKey: String? = null,
     @SerializedName("expiryDate") var expiryDate: String? = null,
     @SerializedName("processingCode") var processingCode: String? = null,
     @SerializedName("localTime") var localTime: String? = null,

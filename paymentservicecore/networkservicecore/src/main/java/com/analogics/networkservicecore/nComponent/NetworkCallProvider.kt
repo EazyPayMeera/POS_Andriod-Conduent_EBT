@@ -9,8 +9,11 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.net.Socket
+import java.net.SocketTimeoutException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
@@ -79,9 +82,108 @@ object NetworkCallProvider {
 //    }
 
 
+    suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
+        return try {
+            withContext(Dispatchers.IO) {
+
+                val sslContext = SSLContext.getInstance("TLSv1.2")
+                sslContext.init(
+                    null,
+                    arrayOf(object : X509TrustManager {
+                        override fun checkClientTrusted(
+                            chain: Array<out X509Certificate>?,
+                            authType: String?
+                        ) {}
+
+                        override fun checkServerTrusted(
+                            chain: Array<out X509Certificate>?,
+                            authType: String?
+                        ) {}
+
+                        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                    }),
+                    SecureRandom()
+                )
+
+                // Create plain socket
+                val plainSocket = Socket()
+
+                // ✅ 30 sec connection timeout (NO type issue here)
+                plainSocket.connect(
+                    java.net.InetSocketAddress(
+                        NetworkConstants.HOST_ADDRESS,
+                        NetworkConstants.HOST_PORT
+                    ),
+                    30_000
+                )
+
+                // Wrap with SSL
+                val sslSocket = sslContext.socketFactory
+                    .createSocket(
+                        plainSocket,
+                        NetworkConstants.HOST_ADDRESS,
+                        NetworkConstants.HOST_PORT,
+                        true
+                    ) as SSLSocket
+
+                // ✅ 30 sec read timeout
+                sslSocket.soTimeout = 30_000
+
+                sslSocket.startHandshake()
+
+                val output = sslSocket.outputStream
+                val input = sslSocket.inputStream
+
+                // Length prefix (2 bytes)
+                val lenPrefix = byteArrayOf(
+                    (requestBytes.size shr 8).toByte(),
+                    (requestBytes.size and 0xFF).toByte()
+                )
+
+                output.write(lenPrefix + requestBytes)
+                output.flush()
+
+                // Read response length
+                val lenBytes = ByteArray(2)
+                input.read(lenBytes)
+
+                val expectedLength =
+                    ((lenBytes[0].toInt() and 0xFF) shl 8) +
+                            (lenBytes[1].toInt() and 0xFF)
+
+                val responseBuffer = ByteArrayOutputStream()
+                val tempBuffer = ByteArray(4096)
+                var totalRead = 0
+
+                while (totalRead < expectedLength) {
+                    val n = input.read(
+                        tempBuffer,
+                        0,
+                        minOf(tempBuffer.size, expectedLength - totalRead)
+                    )
+                    if (n == -1) throw Exception("Stream closed early")
+                    responseBuffer.write(tempBuffer, 0, n)
+                    totalRead += n
+                }
+
+                sslSocket.close()
+
+                ResultProvider.Success(responseBuffer.toByteArray())
+            }
+
+        } catch (e: SocketTimeoutException) {
+            Log.e("Conduent", "Timeout after 30 seconds")
+            ResultProvider.Error(Exception("Connection timed out"))
+
+        } catch (e: Exception) {
+            Log.e("Conduent", "Exception: ${e.message}")
+            ResultProvider.Error(e)
+        }
+    }
 
 
-    fun safeApiCall(requestBytes: ByteArray): Flow<ByteArray> = callbackFlow {
+
+    fun safeApiNetworkCall(requestBytes: ByteArray): Flow<ByteArray> = callbackFlow {
         try {
             val sslContext = SSLContext.getInstance("TLSv1.2")
             sslContext.init(
@@ -121,7 +223,7 @@ object NetworkCallProvider {
                 true
             ) as SSLSocket
 
-            sslSocket.soTimeout = 0 // infinite read
+            sslSocket.soTimeout = 30_000 // infinite read
             sslSocket.startHandshake()
 
             val output = sslSocket.outputStream
@@ -150,7 +252,6 @@ object NetworkCallProvider {
                 val expectedLength =
                     ((lenBytes[0].toInt() and 0xFF) shl 8) + (lenBytes[1].toInt() and 0xFF)
 
-                // Read full message
                 val msgBuffer = ByteArray(expectedLength)
                 var totalRead = 0
                 while (totalRead < expectedLength) {
@@ -169,8 +270,13 @@ object NetworkCallProvider {
                     receivedMTIs.add(mti)
                 }
 
-                // Stop after both messages are received
-                if (receivedMTIs.containsAll(listOf("0810", "0800"))) break
+                if (receivedMTIs.containsAll(listOf("0810", "0800")))
+                {
+                    Log.d("Conduent", "Both Received Break the Loop")
+                    break
+                }
+
+
             }
 
             sslSocket.close()
@@ -179,8 +285,7 @@ object NetworkCallProvider {
         }
 
         awaitClose { /* Cleanup socket if needed */ }
-    }
-        .flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.IO)
 
 
     suspend fun <T> apiCallCommon(apiCall: suspend () -> Response<T>): ResultProvider<T> {

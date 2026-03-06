@@ -678,13 +678,13 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                     deviceModel     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
                 }
 
-            // 🔹 Print all present fields
-            for (i in 1..128) { // ISO 8583 standard 1-128 fields
-                if (isoMsg.hasField(i)) {
-                    val value = isoMsg.getObjectValue<Any>(i)
-                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
-                }
-            }
+//            // 🔹 Print all present fields
+//            for (i in 1..128) { // ISO 8583 standard 1-128 fields
+//                if (isoMsg.hasField(i)) {
+//                    val value = isoMsg.getObjectValue<Any>(i)
+//                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
+//                }
+//            }
 
         } catch (e: Exception) {
             Log.e("ISO", "Parse error", e)
@@ -714,13 +714,13 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 if (isoMsg.hasField(125)) workKey     = isoMsg.getObjectValue<String>(125) // 36-char key
             }
 
-            // 🔹 Print all present fields for debugging
-            for (i in 1..128) {
-                if (isoMsg.hasField(i)) {
-                    val value = isoMsg.getObjectValue<Any>(i)
-                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
-                }
-            }
+//            // 🔹 Print all present fields for debugging
+//            for (i in 1..128) {
+//                if (isoMsg.hasField(i)) {
+//                    val value = isoMsg.getObjectValue<Any>(i)
+//                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
+//                }
+//            }
 
         } catch (e: Exception) {
             Log.e("ISO", "Failed to parse Echo response", e)

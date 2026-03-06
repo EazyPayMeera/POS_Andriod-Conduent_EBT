@@ -5,5 +5,6 @@ import com.eazypaytech.networkservicecore.nComponent.ResultProvider
 
 interface IBuilderServiceRequestListenerLyra {
     suspend fun networkServiceRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
+    suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
     fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ByteArray>)
 }

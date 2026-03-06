@@ -179,7 +179,7 @@ class ApiServiceRepository @Inject constructor(
          paymentServiceTxnDetails: PaymentServiceTxnDetails?,
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
-
+         Log.d("SIGNON_DEBUG", "Master KEK in request: ${paymentServiceTxnDetails?.masterKey}")
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
          rklRequestRepository.signOnRequest(paymentServiceTxnDetails){

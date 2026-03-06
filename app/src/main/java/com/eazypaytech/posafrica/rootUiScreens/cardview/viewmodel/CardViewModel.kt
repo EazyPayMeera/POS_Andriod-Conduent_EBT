@@ -183,13 +183,20 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     if(restart==true) {
                         viewModelScope.launch {
                             delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
-                            startPayment(context, sharedViewModel, navHostController)
+                            navHostController.navigateAndClean(AppNavigationItems.ManualCardScreen.route)
+                            //startPayment(context, sharedViewModel, navHostController)
                         }
                     }
                 }?:let {
                     abortPayment(navHostController)
                 }
         })
+
+//        displayMsgId?.let { msgId ->
+//            if (msgId == EmvServiceResult.DisplayMsgId.TRY_ANOTHER_INTERFACE) {
+//
+//            }
+//        }
     }
 
     fun isCardCheckStatusInProgress(status: Any?) : Boolean

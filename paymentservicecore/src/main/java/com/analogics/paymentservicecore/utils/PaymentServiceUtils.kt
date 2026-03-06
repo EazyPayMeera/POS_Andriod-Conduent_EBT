@@ -47,24 +47,36 @@ object PaymentServiceUtils {
     }
 
 
-    suspend fun injectKeys(tmk: String,pinKey: String,kcv: String,context: Context? = null) : Boolean {
-        if (tmk.isNotEmpty() == true && pinKey.isNotEmpty() == true && kcv.isNotEmpty() == true) {
-            return HardwareUtils.injectTMKKey(tmk, kcv, context) && HardwareUtils.injectWorkingKey(pinKey, context)
+    suspend fun injectKeys(
+        tmk: String,
+        pinKey: String,
+        kcv: String,
+        context: Context? = null
+    ): Boolean {
+
+        Log.d("KEY_INJECT", "----- Inject Keys Start -----")
+        Log.d("KEY_INJECT", "TMK: $tmk")
+        Log.d("KEY_INJECT", "PIN Key: $pinKey")
+        Log.d("KEY_INJECT", "KCV: $kcv")
+        val pin = pinKey.take(32)
+        if (tmk.isNotEmpty() && pinKey.isNotEmpty() && kcv.isNotEmpty()) {
+
+            val tmkResult = HardwareUtils.injectTMKKey(tmk, kcv, context)
+            Log.d("KEY_INJECT", "TMK Injection Result: $tmkResult")
+
+            val pinResult = HardwareUtils.injectWorkingKey(pin, context)
+            Log.d("KEY_INJECT", "Working Key Injection Result: $pinResult")
+
+            val finalResult = tmkResult && pinResult
+            Log.d("KEY_INJECT", "Final Result: $finalResult")
+
+            return finalResult
         }
+
+        Log.e("KEY_INJECT", "Keys are empty!")
         return false
     }
 
-    suspend fun injectWorkingPinKey(
-        workingKeyHex: String,
-        context: Context? = null
-    ): Boolean = withContext(Dispatchers.IO) {
-        try {
-            HardwareUtils.injectWorkingPinKey(workingKeyHex, context)
-        } catch (exception: Exception) {
-            Log.e("HARDWARE_UTILS", exception.message.toString())
-            false
-        }
-    }
 
 
 }

@@ -46,7 +46,7 @@ class ManualCardViewModel @Inject constructor(private  var apiServiceRepository:
             )
         }
         else {
-            navHostController.navigate(AppNavigationItems.AmountScreen.route)
+            navHostController.navigate(AppNavigationItems.PinScreen.route)
 
         }
     }

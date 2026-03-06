@@ -1341,7 +1341,7 @@ class EmvWrapperRepository @Inject constructor(
         }
 
         @OptIn(ExperimentalStdlibApi::class)
-        suspend fun injectTMKKey(tmk: String,kcv: String,context: Context? = null): Boolean {
+        suspend fun injectTMKKey(tmk: String, kcv: String, context: Context? = null): Boolean {
 
             try {
 
@@ -1370,11 +1370,14 @@ class EmvWrapperRepository @Inject constructor(
                 val deviceKcv = pinPad.getKeyKcv(
                     CheckKeyEnum.DES_MASTER_KEY,
                     EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal
-                )?.kcv
+                )?.kcv?.uppercase()
 
+                val expectedKcv = kcv.uppercase()
+
+                Log.d("HARDWARE_UTILS", "Expected KCV: $expectedKcv")
                 Log.d("HARDWARE_UTILS", "Device KCV: $deviceKcv")
 
-                return deviceKcv.equals(kcv, ignoreCase = true)
+                return deviceKcv == expectedKcv
 
             } catch (e: Exception) {
                 Log.e("HARDWARE_UTILS", "TMK injection exception", e)
@@ -1436,18 +1439,49 @@ class EmvWrapperRepository @Inject constructor(
 
             return try {
 
+                Log.d("KEY_INJECT", "Starting Working Key Injection")
+                Log.d("KEY_INJECT", "PIN Key (HEX): $pinKey")
+                Log.d("KEY_INJECT", "PIN Key Length: ${pinKey.length}")
+
                 val keyBytes = pinKey.hexToByteArray()
 
-                val result = getDeviceService(context)?.pinPad?.loadPlainWKey(
+                Log.d("KEY_INJECT", "Converted keyBytes size: ${keyBytes.size}")
+
+                val deviceService = getDeviceService(context)
+
+                if (deviceService == null) {
+                    Log.e("KEY_INJECT", "Device service is NULL")
+                    return false
+                }
+
+                Log.d("KEY_INJECT", "Device service connected successfully")
+
+                val result = deviceService.pinPad.loadPlainWKey(
                     EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
-                    CheckKeyEnum.DES_PIN_KEY.toInt(),
+                    0, // PIN KEY TYPE
                     keyBytes,
                     keyBytes.size
                 )
+                if (result != 0) return false
+                val kcvObj = deviceService.pinPad.getKeyKcv(
+                    CheckKeyEnum.DES_PIN_KEY,
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal
+                )
 
-                result == 0
+                if (kcvObj?.kcv.isNullOrEmpty()) {
+                    Log.e("KEY_DEBUG", "getKeyKcv returned null or empty")
+                    return false
+                }
+
+
+                val kcvHex = kcvObj.kcv.uppercase()
+                Log.d("KEY_DEBUG", "Calculated KCV: $kcvHex")
+
+
+                return kcvHex.isNotEmpty()
 
             } catch (e: Exception) {
+                Log.e("KEY_INJECT", "Exception during key injection: ${e.message}", e)
                 false
             }
         }

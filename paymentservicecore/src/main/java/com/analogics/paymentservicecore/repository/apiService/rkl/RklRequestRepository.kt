@@ -7,6 +7,7 @@ import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceRes
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
 import com.eazypaytech.builder_core.repository.BuilderServiceRepositoryLyra
 import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilderLyra
+import com.eazypaytech.builder_core.utils.BuilderUtils
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.models.TxnStatus
@@ -27,6 +28,8 @@ class RklRequestRepository@Inject constructor(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         onAPIServiceResponse: (Any) -> Unit
     ) {
+        val masterKey = paymentServiceTxnDetails?.masterKey
+
         builderServiceRepository.networkServiceRequest(
             object : IBuilderServiceResponseListenerLyra {
                 override fun onBuilderSuccess(response: ByteArray) {
@@ -60,8 +63,20 @@ class RklRequestRepository@Inject constructor(
                             if (mti == "0800") {
                                 it.ternNameLoc = resPaymentServiceTxnDetails.terminalId
                                 it.deviceSN   = resPaymentServiceTxnDetails.deviceSN
+                                it.workKey = resPaymentServiceTxnDetails.workKey
                             }
-
+                            val kcv = BuilderUtils.calculateKCV(paymentServiceTxnDetails.masterKey)
+                            Log.d("KEY_DEBUG", "Master Key: $masterKey")
+                            Log.d("KEY_DEBUG", "Work Key: ${resPaymentServiceTxnDetails.workKey}")
+                            Log.d("KEY_DEBUG", "KCV (last 6 of master): $kcv")
+                            if (masterKey != null) {
+                                resPaymentServiceTxnDetails.workKey?.let { it1 ->
+                                    if (kcv != null) {
+                                        PaymentServiceUtils.injectKeys(masterKey,
+                                            it1,kcv,context)
+                                    }
+                                }
+                            }
                             onAPIServiceResponse(it)
                         }
                     }
@@ -86,19 +101,16 @@ class RklRequestRepository@Inject constructor(
                         resPaymentServiceTxnDetails?.let {
                             var keyInjectResult = false
                             val workKey = it.workKey
-                            Log.d("KEY_DEBUG", "Work Key: $workKey")
-                            if (!workKey.isNullOrEmpty()) {
-                                val encryptedPinKey = workKey.substring(0, 32)
-                                val checkValue = workKey.substring(32)
 
-                                Log.d("KEY_DEBUG", "Encrypted Key: $encryptedPinKey")
-                                Log.d("KEY_DEBUG", "KCV From Host: $checkValue")
-
-                                keyInjectResult =
-                                    PaymentServiceUtils.injectWorkingPinKey(encryptedPinKey, context)
-
-                                Log.d("KEY_DEBUG", "Injection Result: $keyInjectResult")
-                            }
+//                            if (!workKey.isNullOrEmpty()) {
+//                                val encryptedPinKey = workKey.substring(0, 32)
+//                                val checkValue = workKey.substring(32)
+//
+//                                Log.d("KEY_DEBUG", "Encrypted Key: $encryptedPinKey")
+//                                Log.d("KEY_DEBUG", "KCV From Host: $checkValue")
+//
+//                                Log.d("KEY_DEBUG", "Injection Result: $keyInjectResult")
+//                            }
                             it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
                             if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
                                 Log.d("Response", "Aprroved and Key Injection pass")

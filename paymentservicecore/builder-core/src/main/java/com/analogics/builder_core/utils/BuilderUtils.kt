@@ -3,6 +3,7 @@ package com.eazypaytech.builder_core.utils
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.eazypaytech.securityframework.preferences.SecuredSharedPrefManager
@@ -18,6 +19,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 
 object BuilderUtils {
 
@@ -83,15 +86,44 @@ object BuilderUtils {
         return sdf.format(Date())
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getLocalTime(): String {
         val currentTime = LocalTime.now()  // device local time
         val formatter = DateTimeFormatter.ofPattern("HHmmss")  // ISO8583 DE012 format
         return currentTime.format(formatter)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getLocalDate(): String {
         val currentDate = LocalDate.now()  // device local date
         val formatter = DateTimeFormatter.ofPattern("MMdd")
         return currentDate.format(formatter)
+    }
+
+    fun calculateKCV(keyHex: String?): String {
+        // Convert HEX string to bytes
+        val keyBytes = keyHex?.chunked(2)?.map { it.toInt(16).toByte() }?.toByteArray()
+
+        // Data to encrypt: 8 bytes of zeros
+        val zeroBlock = ByteArray(8) { 0x00 }
+
+        // Choose DES or DESede based on key length
+        val cipherAlgorithm = when (keyBytes?.size) {
+            8 -> "DES/ECB/NoPadding"       // single-length DES
+            16, 24 -> "DESede/ECB/NoPadding" // double or triple-length 3DES
+            else -> throw IllegalArgumentException("Invalid key length: ${keyBytes?.size}")
+        }
+
+        val secretKey = when (keyBytes.size) {
+            8 -> SecretKeySpec(keyBytes, "DES")
+            16, 24 -> SecretKeySpec(keyBytes, "DESede")
+            else -> throw IllegalArgumentException("Invalid key length: ${keyBytes.size}")
+        }
+
+        val cipher = Cipher.getInstance(cipherAlgorithm)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+
+        val encrypted = cipher.doFinal(zeroBlock)
+        return encrypted.take(3).joinToString("") { "%02X".format(it) }
     }
 }

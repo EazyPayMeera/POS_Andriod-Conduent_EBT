@@ -131,6 +131,10 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         setActivationButtonState(false)
         collectActivationData()
         currentStep = ActivationState.SIGN_ON
+        Log.d(
+            "SIGNON_DEBUG",
+            "Master KEK before transform: ${sharedViewModel?.objRootAppPaymentDetail?.procId}"
+        )
         apiServiceRepository.signOnRequest(
             PaymentServiceUtils.transformObject(
                 sharedViewModel?.objRootAppPaymentDetail
@@ -139,12 +143,19 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         )
     }
 
-    suspend fun injectKeys(tmk: String,pinKey: String,kcv: String,context: Context? = null) : Boolean {   // TODO USED FOR KEY INJECTION PROCESS FOR MASTER AND SESSION KEY AS PER CONDUENT
-        if (tmk.isNotEmpty() == true && pinKey.isNotEmpty() == true && kcv.isNotEmpty() == true) {
-            return PaymentServiceUtils.injectKeys(tmk, pinKey,kcv, context)
-        }
-        return false
-    }
+//    suspend fun injectKeys(tmk: String,pinKey: String,kcv: String,context: Context? = null) : Boolean {   // TODO USED FOR KEY INJECTION PROCESS FOR MASTER AND SESSION KEY AS PER CONDUENT
+//        if (tmk.isNotEmpty() == true && pinKey.isNotEmpty() == true && kcv.isNotEmpty() == true) {
+//            return PaymentServiceUtils.injectKeys(tmk, pinKey,kcv, context)
+//        }
+//        return false
+//    }
+//
+//    suspend fun injectTTMK(tmk: String,kcv: String,context: Context? = null) : Boolean {   // TODO USED FOR KEY INJECTION PROCESS FOR MASTER AND SESSION KEY AS PER CONDUENT
+//        if (tmk.isNotEmpty() == true && kcv.isNotEmpty() == true) {
+//            return HardwareUtils.injectTMKKey(tmk, kcv, context)
+//        }
+//        return false
+//    }
 
 //    fun activateDevice() {
 //        loadDefaultValues(sharedViewModel)
@@ -178,8 +189,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }
     }
 
-    fun readMasterKEK(context: Context): String? {                                          // TODO TO READ CONFIGURATION FILE TO EXTERNAL STORAGE
+    fun readMasterKEK(context: Context,sharedViewModel: SharedViewModel): String? {
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
+
         if (!configFile.exists()) {
             Log.d("ConfigRead", "Config file does not exist!")
             return null
@@ -188,8 +200,18 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         return try {
             val json = configFile.readText()
             val jsonObject = Gson().fromJson(json, JsonObject::class.java)
-            val masterKEK = jsonObject.get("master_kek").asString
-            masterKEK // this is your local variable
+
+            // Safely get the master_kek value
+            val masterKey = jsonObject.get("master_kek")?.asString
+
+            if (masterKey.isNullOrEmpty()) {
+                Log.d("ConfigRead", "Master KEK is missing or empty in config!")
+                null
+            } else {
+                // Assign to sharedViewModel safely
+                sharedViewModel.objRootAppPaymentDetail.masterKey = masterKey
+                masterKey
+            }
         } catch (e: Exception) {
             Log.e("ConfigRead", "Error reading config: ${e.message}", e)
             null
@@ -238,61 +260,53 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+        Log.d("ActivationCheck", "txnStatus = ${paymentServiceTxnDetails.txnStatus}, hostRespCode = ${paymentServiceTxnDetails.hostRespCode}")
 
-        if (paymentServiceTxnDetails.txnStatus != TxnStatus.APPROVED.toString() ||
-            paymentServiceTxnDetails.hostRespCode != "00"
-        ) {
-            setActivationButtonState(true)
-            return
-        }
+        viewModelScope.launch(Dispatchers.Main) {
 
-        when (currentStep) {
-            ActivationState.SIGN_ON -> {
-                currentStep = ActivationState.KEY_CHANGE
-
-//                viewModelScope.launch {
-//                    apiServiceRepository.keyExchange(
-//                        PaymentServiceUtils.transformObject(
-//                            sharedViewModel?.objRootAppPaymentDetail
-//                        ),
-//                        this@ActivationViewModel
-//                    )
-//                }
+            if (paymentServiceTxnDetails.txnStatus != TxnStatus.APPROVED.toString() ||
+                paymentServiceTxnDetails.hostRespCode != "00"
+            ) {
+                setActivationButtonState(true) // UI update
+                return@launch
             }
 
-            ActivationState.KEY_EXCHANGE -> {
-//                viewModelScope.launch(Dispatchers.Main) {
-//                    currentStep = ActivationState.HAND_SHAKE
-//                    sharedViewModel?.objPosConfig?.apply {
-//                        isActivationDone = true
-//                    }?.saveToPrefs()
-//                    viewModelScope.launch {
-//                        txnDBRepository.getUserCount().let {
-//                            if(it>0)
-//                                navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-//                            else
-//                                navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-//                        }
-//                    }
-//                }
-////                viewModelScope.launch {
-////                    apiServiceRepository.keyChange(
-////                        PaymentServiceUtils.transformObject(
-////                            sharedViewModel?.objRootAppPaymentDetail
-////                        ),
-////                        this@ActivationViewModel
-////                    )
-////                }
-            }
+            when (currentStep) {
+                ActivationState.SIGN_ON -> {
+                    currentStep = ActivationState.KEY_CHANGE
+                    // launch key exchange here if needed
+                }
 
-            ActivationState.KEY_CHANGE -> {
-                navHostController.navigateAndClean(
-                    AppNavigationItems.DashBoardScreen.route
-                )
-            }
+                ActivationState.KEY_EXCHANGE -> {
+                    currentStep = ActivationState.HAND_SHAKE
+                    sharedViewModel?.objPosConfig?.apply {
+                        isActivationDone = true
+                    }?.saveToPrefs()
 
-            ActivationState.HAND_SHAKE -> {
-                startKeepAlive()
+                    txnDBRepository.getUserCount().let {
+                        if (it > 0)
+                            navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+                        else
+                            navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+                    }
+                }
+
+                ActivationState.KEY_CHANGE -> {
+                    sharedViewModel?.objPosConfig?.apply {
+                        isActivationDone = true
+                    }?.saveToPrefs()
+
+                    txnDBRepository.getUserCount().let {
+                        if (it > 0)
+                            navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+                        else
+                            navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+                    }
+                }
+
+                ActivationState.HAND_SHAKE -> {
+                    startKeepAlive()
+                }
             }
         }
     }

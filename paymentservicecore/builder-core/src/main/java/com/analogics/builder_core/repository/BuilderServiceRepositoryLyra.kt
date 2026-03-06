@@ -20,9 +20,7 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
 
         try {
-            // Collect each message emitted by the flow
-            NetworkCallProvider.safeApiCall(requestBody).collect { message ->
-                // Wrap each message in ResultProvider.Success
+            NetworkCallProvider.safeApiNetworkCall(requestBody).collect { message ->
                 val result = ResultProvider.Success(message)
                 onNetworkServiceResponse(result)
             }
@@ -31,6 +29,16 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
+    override suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
+    {
+        this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
+        Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
+        Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
+        NetworkCallProvider.safeApiCall(requestBody).let {
+            onNetworkServiceResponse(it)
+        }
+    }
 
 
     @OptIn(ExperimentalStdlibApi::class)

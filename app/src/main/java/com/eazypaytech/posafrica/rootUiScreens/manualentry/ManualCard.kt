@@ -89,7 +89,7 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "Enter Card Number",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
-                    keyboardType = KeyboardType.Uri,
+                    keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     amount = false,
                 )

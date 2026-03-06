@@ -70,7 +70,7 @@ class PurchaseRequestRepository @Inject constructor(
 
 
     suspend fun purchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-        builderServiceRepositoryLyra.networkServiceRequest(
+        builderServiceRepositoryLyra.networkServiceFinancialRequest(
             object : IBuilderServiceResponseListenerLyra{
                 @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
