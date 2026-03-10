@@ -94,7 +94,7 @@ fun TransactionListScreen(
 
     Column {
         CommonTopAppBar(
-            title = stringResource(R.string.ebt_void_last),
+            title = stringResource(R.string.ebt_voucher_return),
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
@@ -272,18 +272,6 @@ fun TransactionListScreen(
         }
     }
 
-    if (showBatchPicker) {
-        ListDialogueBuilder.create()
-            .setTitle(stringResource(id = R.string.sel_batch_id))
-            .BatchListDialog(
-                onClose = { viewModel.onDismissMenu() },
-                batchList = batchList,
-                onItemSelected = { selectedId ->
-                    viewModel.filterTransactionsByBatchId(selectedId)
-                }
-
-            )
-    }
 
     if (showDateTimePicker) {
         DateTimePickerDialog(
@@ -512,26 +500,6 @@ fun HeaderSection(
                     )
                 }
 
-                Row ()
-                {
-
-                    Spacer(modifier = Modifier.width(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)) // Optional spacing between icon and button
-
-                    Button(
-                        onClick = { isDialogVisible=true },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .height(androidx.compose.material3.MaterialTheme.dimens.DP_36_CompactMedium),
-                        enabled = isBatchOpen,
-                        contentPadding = PaddingValues(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium) // Smaller padding for compact button
-                    ) {
-                        TextView(
-                            text = stringResource(id = R.string.close_batch),
-                            fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_14_CompactMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium))

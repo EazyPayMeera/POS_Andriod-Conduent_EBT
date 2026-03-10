@@ -58,6 +58,7 @@ import com.eazypaytech.posafrica.rootUiScreens.forgetpassword.view.ForgetPasswor
 import com.eazypaytech.posafrica.rootUiScreens.inactivityTimeout.InactivityTimeoutView
 import com.eazypaytech.posafrica.rootUiScreens.invoice.InvoiceView
 import com.eazypaytech.posafrica.rootUiScreens.isinfo.InfoConfirmView
+import com.eazypaytech.posafrica.rootUiScreens.keyManagement.KeyEntryView
 import com.eazypaytech.posafrica.rootUiScreens.language.view.LanguageView
 import com.eazypaytech.posafrica.rootUiScreens.login.view.LoginScreenView
 import com.eazypaytech.posafrica.rootUiScreens.manualentry.ManualCardView
@@ -79,6 +80,7 @@ import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipPercentageView
 import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipView
 import com.eazypaytech.posafrica.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.eazypaytech.posafrica.rootUiScreens.txnList.view.TransactionListScreen
+import com.eazypaytech.posafrica.rootUiScreens.txnSel.view.TxnSelectionView
 import com.eazypaytech.posafrica.rootUiScreens.usermanagement.view.UserManagementView
 import com.eazypaytech.posafrica.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -350,6 +352,12 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.EBTSelScreen.route) {
             EBTSelectionView(navHostController)
+        }
+        composable(AppNavigationItems.TxnSelScreen.route) {
+            TxnSelectionView(navHostController)
+        }
+        composable(AppNavigationItems.KeyEntryScreen.route) {
+            KeyEntryView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

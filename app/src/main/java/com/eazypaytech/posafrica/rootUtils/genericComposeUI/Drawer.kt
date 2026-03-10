@@ -20,8 +20,11 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Summarize
+import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -106,13 +109,29 @@ fun CustomDrawerContent(
                 onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT, true) }
             ),
             DrawerItem(
-                imageRes = Icons.Default.Settings,
-                text = stringResource(id = R.string.Configuration),
+                imageRes = Icons.Default.Summarize,
+                text = stringResource(id = R.string.summary),
                 isChecked = false,
-                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION, false) }
+                onCheckedChange = { if(isAdmin) onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_SUMMARY, true) else CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.resources.getString(
+                        R.string.restricted
+                    ),
+                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
+                ) }
             ),
             DrawerItem(
-                imageRes = Icons.Default.Key,
+                imageRes = Icons.Default.VpnKey,
+                text = stringResource(id = R.string.key_man),
+                isChecked = false,
+                onCheckedChange = { if(isAdmin) onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_KEY_MAN, true) else CustomDialogBuilder.composeAlertDialog(
+                    title = navHostController.context.resources.getString(
+                        R.string.restricted
+                    ),
+                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
+                ) }
+            ),
+            DrawerItem(
+                imageRes = Icons.Default.LockOpen,
                 text = stringResource(id = R.string.reactivate_device),
                 isChecked = false,
                 isEnabled = isAdmin,

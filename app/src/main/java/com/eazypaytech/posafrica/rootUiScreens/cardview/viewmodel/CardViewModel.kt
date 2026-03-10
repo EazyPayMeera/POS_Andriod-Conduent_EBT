@@ -40,11 +40,17 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     lateinit var context: Context
     lateinit var sharedViewModel: SharedViewModel
     lateinit var navHostController : NavHostController
+    var cardRetryCount = 0
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            Log.d("Approved Screen","Going to Approved Screen")
             navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
+        }
+    }
+
+    fun navigateToManualScreen(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigate(AppNavigationItems.ManualCardScreen.route) // Navigate to the desired screen
         }
     }
 
@@ -108,7 +114,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-                                Log.d("EMVServiceResponse", "Transaction Status: ${response.status}")
                                 /* Update Transaction Result & Store in DB */
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     if(isStatusTryAnotherCard(response.status)==true)
@@ -170,6 +175,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
         /* Display error & restart payment */
+
         emvInProgress.value = false
         var message : String? = null
         emvMsgIdToStringId(displayMsgId)?.let {
@@ -181,10 +187,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             onOkClick = {
                 abort?.takeIf { it == false }?.let {
                     if(restart==true) {
-                        viewModelScope.launch {
-                            delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
-                            navHostController.navigateAndClean(AppNavigationItems.ManualCardScreen.route)
-                            //startPayment(context, sharedViewModel, navHostController)
+                        if (cardRetryCount < AppConstants.CARD_RETRY_COUNT) {
+                            cardRetryCount++
+                            viewModelScope.launch {
+                                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                                startPayment(context, sharedViewModel, navHostController)
+                            }
+                        }else {
+                            cardRetryCount = 0
+                            navigateToManualScreen(navHostController)
                         }
                     }
                 }?:let {
@@ -192,11 +203,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 }
         })
 
-//        displayMsgId?.let { msgId ->
-//            if (msgId == EmvServiceResult.DisplayMsgId.TRY_ANOTHER_INTERFACE) {
-//
-//            }
-//        }
+
     }
 
     fun isCardCheckStatusInProgress(status: Any?) : Boolean

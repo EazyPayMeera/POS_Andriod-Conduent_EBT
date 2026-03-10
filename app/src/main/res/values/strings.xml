@@ -16,13 +16,27 @@
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
 
-    <!-- Activation Screen -->
+    <!-- Conduent Screen -->
+    <string name="procid">Processor ID:</string>
+    <string name="mid">MID:</string>
+    <string name="tid">TID:</string>
+    <string name="act_label_enter_ProcId">Please Enter Processor ID</string>
+    <string name="ebt_cash">Cash</string>
+    <string name="ebt_cash_amount">Enter Cash Amount</string>
+    <string name="ebt_cash_benefit">Cash Purchase</string>
+    <string name="cashback_amt">Enter Cashback Amount</string>
+    <string name="return_amt">Enter Return Amount</string>
+    <string name="food">FOOD</string>
+    <string name="snap">SNAP</string>
+    <string name="cash">CASH</string>
+    <string name="key_man">Key Management</string>
+
     <string name="act_title">Activate Now</string>
     <string name="act_prompt_activate">Enter TID , MID AND PROCESSOR ID</string>
     <string name="act_label_enter_Proc_id">Please Enter Processor ID</string>
     <string name="act_label_enter_tid">Please Enter TID</string>
     <string name="act_label_enter_Mid">Please Enter MID</string>
-    <string name="act_label_enter_ProcId">Please Enter Processor ID</string>
+
     <string name="act_empty_tid_mid">Processor ID should not be empty</string>
     <string name="act_tid_length">Processor ID should be 11</string>
     <string name="act_mid_length">MID length should be 15</string>
@@ -82,7 +96,7 @@
     <string name="invalid_current_password">Invalid current password</string>
 
     <!-- Dashboard -->
-    <string name="ebt_cash">Cash</string>
+
     <string name="net_total">Net Total</string>
     <string name="refund_amt">Enter the Refund Amount</string>
     <string name="enter_invoice">Enter the Invoice Number</string>
@@ -91,8 +105,7 @@
     <string name="auth_amt">Enter the Authorisation Amount</string>
     <string name="authcap_amt">Enter the Auth Captured Amount</string>
     <string name="void_pur">Void Purchase</string>
-    <string name="purchase_amt">Enter the Transaction Amount</string>
-    <string name="cashback_amt">Enter the Cashback Amount</string>
+    <string name="purchase_amt">Enter Transaction Amount</string>
     <string name="enter_Pin">Please Enter The Pin</string>
     <string name="pin">Pin</string>
     <string name="org_amt">Original Amount</string>
@@ -126,8 +139,7 @@
     <string name="decline">Decline</string>
     <string name="decline_u">DECLINE</string>
     <string name="done">Done</string>
-    <string name="snap">SNAP</string>
-    <string name="cash">CASH</string>
+
     <string name="clear">Clear</string>
     <string name="open">Open</string>
     <string name="training">Training</string>
@@ -153,9 +165,7 @@
     <string name="password_">Forget Password ?</string>
     <string name="call_customercare">Call Customer Care for Password</string>
     <string name="proc_id">Processor ID:</string>
-    <string name="mid">MID:</string>
-    <string name="procid">Processor ID:</string>
-    <string name="tid">TID:</string>
+
     <string name="sr_no">Sr.No:</string>
     <string name="call_center">Call Center:</string>
     <string name="email">Email</string>
@@ -234,13 +244,13 @@
     <string name="default_alert_subtitle_wrong_password">Wrong Password</string>
 
     <!-- EBT DashBoard Screen -->
-    <string name="ebt_purchase_cashback">CashBack</string>
+    <string name="ebt_purchase_cashback">Purchase With Cashback</string>
     <string name="ebt_bal_enquiry">Bal Enquiry</string>
     <string name="ebt_voucher_clear">Voucher Clear</string>
     <string name="ebt_voucher_return">Transactions</string>
     <string name="ebt_void_last">Void Last</string>
-    <string name="ebt_food_purchase">Food</string>
-    <string name="ebt_foodstamp_return">Return</string>
+    <string name="ebt_food_purchase">Food Purchase</string>
+    <string name="ebt_foodstamp_return">Food Stamp Return</string>
     <string name="ebt_e_voucher">E-Voucher</string>
 
     <!-- Transaction List Screen -->

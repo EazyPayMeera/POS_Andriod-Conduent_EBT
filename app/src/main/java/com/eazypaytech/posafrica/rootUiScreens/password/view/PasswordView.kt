@@ -56,6 +56,7 @@ fun PasswordView(navHostController: NavHostController, showPrompt: Boolean? = tr
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column {
                     CommonTopAppBar(
+                        title = "",
                         onBackButtonClick = { viewModel.onCancel() }
                     )
                     GenericCard(

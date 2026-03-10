@@ -116,6 +116,7 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
+        this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
         voidRequestRepository.voidRequest(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
@@ -127,6 +128,7 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
+        this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
         purchaseRequestRepository.purchaseRequest(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
@@ -148,6 +150,7 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
+        this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
         reversalRequestRepository.sendReversal(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
@@ -158,6 +161,7 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
+        this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
         loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
@@ -207,6 +211,7 @@ class ApiServiceRepository @Inject constructor(
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
         this.iApiServiceResponseListener = iApiServiceResponseListener
+         this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
          rklRequestRepository.keyExchangeRequest(paymentServiceTxnDetails){
             onApiServiceResponse(it)
         }
@@ -217,14 +222,16 @@ class ApiServiceRepository @Inject constructor(
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
          this.iApiServiceResponseListener = iApiServiceResponseListener
+         this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
          rklRequestRepository.keyChangeRequest(paymentServiceTxnDetails){
              onApiServiceResponse(it)
          }
      }
 
     override fun onApiServiceResponse(response: Any) {
-        iApiServiceResponseListener.onApiServiceDisplayProgress(false)
+
         when (response) {
+
             is ApiServiceTimeout -> {
                 iApiServiceResponseListener.onApiServiceTimeout(ApiServiceTimeout(response.toString()))
 
@@ -246,6 +253,7 @@ class ApiServiceRepository @Inject constructor(
                             response
                         ) ?: PaymentServiceTxnDetails()
                     )
+                    iApiServiceResponseListener.onApiServiceDisplayProgress(false)
                 }catch (e : Exception)
                 {
                     e.printStackTrace()
@@ -254,4 +262,6 @@ class ApiServiceRepository @Inject constructor(
             }
         }
     }
+
+
 }

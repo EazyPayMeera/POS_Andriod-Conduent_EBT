@@ -1351,7 +1351,7 @@ class EmvWrapperRepository @Inject constructor(
                 val pinPad = getDeviceService(context)?.pinPad ?: return false
                 val tmkBytes = tmk.hexToByteArray()
 
-                if (tmkBytes.size != 24) {
+                if (tmkBytes.size != 16) {
                     Log.e("HARDWARE_UTILS", "Invalid TMK length. Expected 24 bytes.")
                     return false
                 }

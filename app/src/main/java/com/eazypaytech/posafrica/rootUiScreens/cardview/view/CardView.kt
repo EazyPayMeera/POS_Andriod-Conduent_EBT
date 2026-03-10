@@ -103,15 +103,19 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    // Second GenericCard at the top of the first card
-                    GenericCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        backgroundColor = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
-                    ) {
-                        if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_CASH || sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_SNAP) {
+                    if(sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_CASH && sharedViewModel.objRootAppPaymentDetail.txnType != TxnType.BALANCE_ENQUIRY_SNAP) {// Second GenericCard at the top of the first card
+                        GenericCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            backgroundColor = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(MaterialTheme.dimens.DP_18_CompactMedium),
+                        ) {
+                            Log.d(
+                                "TRANSACTION_TYPE_CARD",
+                                "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}"
+                            )
+
                             Column(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -141,6 +145,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                                         .align(Alignment.Start)
                                 )
                             }
+
                         }
                     }
 
@@ -160,10 +165,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                         text = stringResource(id = R.string.tap_swipe_insert),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        onClick = {
-                            navHostController.navigate(AppNavigationItems. CardDetectScreen.route)
-                        }
+                        fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))

@@ -273,6 +273,7 @@ object NetworkCallProvider {
                 if (receivedMTIs.containsAll(listOf("0810", "0800")))
                 {
                     Log.d("Conduent", "Both Received Break the Loop")
+                    close()
                     break
                 }
 

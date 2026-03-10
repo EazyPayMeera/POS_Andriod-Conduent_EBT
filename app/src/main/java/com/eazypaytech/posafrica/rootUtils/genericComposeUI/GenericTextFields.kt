@@ -279,7 +279,7 @@ fun getTransTypeString(): String {
     val sharedViewModel = localSharedViewModel.current
     return when (sharedViewModel.objRootAppPaymentDetail.txnType) {
         TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_purchase_cashback)
-        TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash)
+        TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash_benefit)
         TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_enquiry)
         TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_enquiry)
         TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
@@ -288,7 +288,7 @@ fun getTransTypeString(): String {
         TxnType.FOOD_PURCHASE -> stringResource(id = R.string.ebt_food_purchase)
         TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.ebt_foodstamp_return)
         TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
-        null -> stringResource(id = R.string.app_name)
+        null -> stringResource(id = R.string.ebt_bal_enquiry)
     }
 }
 
@@ -638,7 +638,7 @@ fun getFormattedDateTime(): String {
 
 @Composable
 fun CardWithImageText(
-    text: String,
+    //text: String,
     imageResId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -669,19 +669,19 @@ fun CardWithImageText(
                 .padding(
                     start = MaterialTheme.dimens.DP_22_CompactMedium,
                     end = MaterialTheme.dimens.DP_22_CompactMedium,
-                    top = MaterialTheme.dimens.DP_11_CompactMedium,
-                    bottom = MaterialTheme.dimens.DP_11_CompactMedium
+                    top = MaterialTheme.dimens.DP_23_CompactMedium,
+                    bottom = MaterialTheme.dimens.DP_23_CompactMedium
                 )
         ) {
             ImageView(
                 imageId = imageResId,
                 modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_40_CompactMedium) // Adjust the size as needed
+                    .size(MaterialTheme.dimens.DP_100_CompactMedium) // Adjust the size as needed
                     .align(Alignment.CenterHorizontally),
                 contentDescription = "" // Center the image
             )
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_12_CompactMedium))
-            TextView(text = text, fontSize = MaterialTheme.dimens.SP_8_CompactMedium)
+            //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium))
+            //TextView(text = text, fontSize = MaterialTheme.dimens.SP_8_CompactMedium)
         }
     }
 
@@ -915,6 +915,7 @@ fun OutlinedTextField(
         visualTransformation = visualTransformation,
         readOnly = readOnly,
         trailingIcon = trailingIcon,
+        singleLine = true,
         modifier = modifier
             .clickable(interactionSource = interactionSource, indication = null) {
                 focusRequester.requestFocus()

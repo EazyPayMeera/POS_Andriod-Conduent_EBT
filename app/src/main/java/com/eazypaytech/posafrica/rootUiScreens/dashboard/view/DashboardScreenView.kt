@@ -82,8 +82,11 @@ fun DashboardView(navHostController: NavHostController) {
             AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT -> navHostController.navigate(
                 AppNavigationItems.UserManagementScreen.route
             )
-            AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION -> navHostController.navigate(
-                AppNavigationItems.ConfigurationScreen.route
+            AppConstants.BUTTON_CLICK_EVENT_SUMMARY -> navHostController.navigate(
+                AppNavigationItems.TxnListScreen.route
+            )
+            AppConstants.BUTTON_CLICK_EVENT_KEY_MAN -> navHostController.navigate(
+                AppNavigationItems.KeyEntryScreen.route
             )
             AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE -> dashboardViewModel.onReactivate(
                 navHostController,
@@ -95,21 +98,15 @@ fun DashboardView(navHostController: NavHostController) {
 
             /* Dashboard Menu Events */
             AppConstants.BUTTON_CLICK_EVENT_FOOD_PURCHASE -> {
-                setTransactionType(TxnType.FOOD_PURCHASE)
                 navHostController.navigate(
-                    if (sharedViewModel.objPosConfig?.isPromptInvoiceNo == true) AppNavigationItems.InvoiceScreen.route else AppNavigationItems.InvoiceScreen.route
+                    AppNavigationItems.TxnSelScreen.route
                 )
             }
-            AppConstants.BUTTON_CLICK_EVENT_CASH_PURCHASE -> {
-                setTransactionType(TxnType.CASH_PURCHASE)
-                navHostController.navigate(
-                    AppNavigationItems.AmountScreen.route
-                )
-            }
+
             AppConstants.BUTTON_CLICK_EVENT_FOODSTAMP_RETURN -> {
                 setTransactionType(TxnType.FOODSTAMP_RETURN)
                 navHostController.navigate(
-                    AppNavigationItems.InvoiceScreen.route
+                    AppNavigationItems.AmountScreen.route
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_PURCHASE_CASHBACK -> {
@@ -131,21 +128,8 @@ fun DashboardView(navHostController: NavHostController) {
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY -> {
-                //setTransactionType(TxnType.BALANCE_ENQUIRY)
                 navHostController.navigate(
                     AppNavigationItems.EBTSelScreen.route
-                )
-            }
-            AppConstants.BUTTON_CLICK_EVENT_VOUCHER_CLEAR -> {
-                setTransactionType(TxnType.VOUCHER_CLEAR)
-                navHostController.navigate(
-                    AppNavigationItems.InvoiceScreen.route
-                )
-            }
-            AppConstants.BUTTON_CLICK_EVENT_VOUCHER_RETURN -> {
-                setTransactionType(TxnType.VOUCHER_RETURN)
-                navHostController.navigate(
-                    AppNavigationItems.TxnListScreen.route
                 )
             }
             else -> null
@@ -202,12 +186,6 @@ fun dashboardItemListData(
             false
         ),
         createDashboardItem(
-            titleId = R.string.ebt_cash,
-            iconId = R.drawable.ebt_dashboard_purchase,
-            event = AppConstants.BUTTON_CLICK_EVENT_CASH_PURCHASE,
-            false
-        ),
-        createDashboardItem(
             titleId = R.string.ebt_foodstamp_return,
             iconId = R.drawable.ebt_dashboard_food_return,
             event = AppConstants.BUTTON_CLICK_EVENT_FOODSTAMP_RETURN,
@@ -235,18 +213,6 @@ fun dashboardItemListData(
             titleId = R.string.ebt_bal_enquiry,
             iconId = R.drawable.ebt_dashboard_bal_inquiry,
             event = AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY,
-            false
-        ),
-        createDashboardItem(
-            titleId = R.string.ebt_voucher_clear,
-            iconId = R.drawable.ebt_dashboard_voucher_clear,
-            event = AppConstants.BUTTON_CLICK_EVENT_VOUCHER_CLEAR,
-            false
-        ),
-        createDashboardItem(
-            titleId = R.string.ebt_voucher_return,
-            iconId = R.drawable.ebt_dashboard_voucher_return,
-            event = AppConstants.BUTTON_CLICK_EVENT_VOUCHER_RETURN,
             false
         )
 
@@ -380,7 +346,7 @@ fun DashboardContentSurface(
                 }
             }
 
-            dashboardItemLists.chunked(3).forEach { rowConfigs ->
+            dashboardItemLists.chunked(2).forEach { rowConfigs ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -394,7 +360,7 @@ fun DashboardContentSurface(
                 ) {
                     rowConfigs.forEach { item ->
                         CardWithImageText(
-                            text = item.text,
+                            //text = item.text,
                             imageResId = item.iconResId,
                             onClick = { onButtonClick(item.event, item.isPassword) },
                             modifier = Modifier

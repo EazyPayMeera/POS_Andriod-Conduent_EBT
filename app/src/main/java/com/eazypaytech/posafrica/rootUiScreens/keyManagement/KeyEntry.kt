@@ -1,9 +1,7 @@
-// CashBackView.kt
-package com.eazypaytech.posafrica.rootUiScreens.amount.view
+package com.eazypaytech.posafrica.rootUiScreens.keyManagement
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +31,6 @@ import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
-import com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel.AmountViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
@@ -41,18 +38,16 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.GenericCard
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.ImageView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.OutlinedTextField
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.createAmountTransformation
 import com.eazypaytech.posafrica.ui.theme.dimens
-
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
+fun KeyEntryView(navHostController: NavHostController, viewModel: KeyEntryViewModel = hiltViewModel()){
     val context = LocalContext.current
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
-    Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+
     Column {
 
         // Top App Bar
@@ -71,7 +66,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_PURCHASE) stringResource(R.string.ebt_cash_amount) else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN) stringResource(R.string.return_amt) else if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else stringResource(R.string.purchase_amt),
+                    text = "Enter Key Here",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -82,7 +77,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
 
                 // Image View
                 ImageView(
-                    imageId = if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID_LAST || sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.FOODSTAMP_RETURN) R.drawable.void_amt else R.drawable.card,
+                    imageId = if(sharedViewModel.objRootAppPaymentDetail.txnType== TxnType.VOID_LAST || sharedViewModel.objRootAppPaymentDetail.txnType== TxnType.FOODSTAMP_RETURN) R.drawable.void_amt else R.drawable.card,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
@@ -90,19 +85,17 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                 )
 
                 OutlinedTextField(
-                    value = viewModel.transAmount,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    value = viewModel.key,
+                    onValueChange = {viewModel.onCardNoChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = stringResource(id = R.string.auth_amt),
+                    placeholder = "Enter Key",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
-                    keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
-                    visualTransformation = createAmountTransformation(),
+                    keyboardType = KeyboardType.Uri,
+                    onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},
                     amount = false,
-                    readOnly = viewModel.isReadOnly
                 )
 
-                if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID_LAST) {
+                if (sharedViewModel.objRootAppPaymentDetail.txnType== TxnType.VOID_LAST) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
                     TextView(
                         text = "",
@@ -114,45 +107,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
                             .align(Alignment.Start)
                     )
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-
-                    listOf(
-                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:""), //+ (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
-//                        stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
-//                        stringResource(id = R.string.ref_id) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
-//                        stringResource(id = R.string.inc_no) + (sharedViewModel.objRootAppPaymentDetail.invoiceNo?:"-"),
-                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-")
-                    ).forEach {
-                        TextView(
-                            text = it,
-                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                                .align(Alignment.Start)
-                        )
-                    }
                 }
 
-                if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST ) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
-
-                    listOf(
-                        stringResource(id = R.string.original_amount) + " " + viewModel.origTotalAmount.value,
-                        stringResource(id = R.string.date) + " " + viewModel.origDateTime.value
-                    ).forEach {
-                        TextView(
-                            text = it,
-                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                                .align(Alignment.Start)
-                        )
-                    }
-                }
             }
         }
 
@@ -160,8 +116,8 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
-            secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
+            secondButtonTitle = stringResource(id = R.string.save_btn),
+            secondButtonOnClick = { viewModel.onConfirm(context,navHostController, sharedViewModel) },
             closeKeypadOnSecondButton = true
         )
 
@@ -194,14 +150,9 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
     }
 
     LaunchedEffect(Unit) {
-        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
-            viewModel.fetchLastTransaction(navHostController, context, sharedViewModel)
-        }
-        viewModel.onLoad(navHostController,context,sharedViewModel)
+        viewModel.onLoad(context,sharedViewModel)
     }
 
     CustomDialogBuilder.ShowComposed()
 
 }
-
-

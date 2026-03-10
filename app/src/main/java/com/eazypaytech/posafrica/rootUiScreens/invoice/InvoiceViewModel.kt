@@ -131,10 +131,10 @@ class InvoiceViewModel @Inject constructor(private val dbRepository: TxnDBReposi
 //                    CustomDialogBuilder.composeAlertDialog(
 //                        title = context.getString(R.string.default_alert_title_error),
 //                        message = context.getString(R.string.err_txn_already_captured))
-                else if(it[0].isDemoMode != sharedViewModel.objRootAppPaymentDetail.isDemoMode)
-                    CustomDialogBuilder.composeAlertDialog(
-                        title = context.getString(R.string.default_alert_title_error),
-                        message = context.getString(R.string.err_cant_mix_demo_trans))
+//                else if(it[0].isDemoMode != sharedViewModel.objRootAppPaymentDetail.isDemoMode)
+//                    CustomDialogBuilder.composeAlertDialog(
+//                        title = context.getString(R.string.default_alert_title_error),
+//                        message = context.getString(R.string.err_cant_mix_demo_trans))
                 else {
                     PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it[0])?.let {
                         sharedViewModel.objRootAppPaymentDetail = it.copy(

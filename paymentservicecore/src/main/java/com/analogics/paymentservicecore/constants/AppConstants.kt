@@ -30,7 +30,8 @@ object AppConstants {
     /* Configuration Events */
     const val BUTTON_CLICK_EVENT_SET_LANGUAGE =         "EVT_SET_LANGUAGE"
     const val BUTTON_CLICK_EVENT_USER_MANAGEMENT =      "EVT_USER_MANAGEMENT"
-    const val BUTTON_CLICK_EVENT_CONFIGURATION =        "EVT_CONFIGURATION"
+    const val BUTTON_CLICK_EVENT_SUMMARY =        "EVT_SUMMARY"
+    const val BUTTON_CLICK_EVENT_KEY_MAN =        "EVT_KEY_MAN"
     const val BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE =   "EVT_REACTIVATE_DEVICE"
     const val BUTTON_CLICK_EVENT_LOGOUT =               "EVT_LOGOUT"
 
@@ -46,7 +47,7 @@ object AppConstants {
     const val BUTTON_CLICK_EVENT_VOUCHER_RETURN =   "EVT_VOUCHER_RETURN"
 
 
-
+    const val CARD_RETRY_COUNT = 2
 
     const val BATCH_ID_START_VAL = 1
 

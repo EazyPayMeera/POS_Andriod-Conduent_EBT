@@ -1,6 +1,7 @@
 package com.eazypaytech.posafrica.rootUiScreens.amount.viewmodel
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -18,6 +19,7 @@ import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
+import com.eazypaytech.paymentservicecore.utils.toDecimalFormat
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.securityframework.database.entity.TxnEntity
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
@@ -55,17 +57,15 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     val origDateTime: StateFlow<String?> = _origDateTime
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onLoad(sharedViewModel: SharedViewModel)
+    fun onLoad(navHostController: NavHostController,context: Context,sharedViewModel: SharedViewModel)
     {
         transAmount.ifEmpty {
             when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-                TxnType.VOID_LAST, TxnType.FOODSTAMP_RETURN -> {
-                    transAmount =
-                        formatAmount(sharedViewModel.objRootAppPaymentDetail.ttlAmount ?: 0.00)
-                    _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
-                    _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
-                }
                 TxnType.VOID_LAST -> {
+                    Log.d(
+                        "FETCH_TXN",
+                        "OriginalAmount123: ${sharedViewModel.objRootAppPaymentDetail.originalTxnAmount}"
+                    )
                     transAmount =
                         formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTxnAmount?.toDoubleOrNull() ?: 0.00)
                     _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
@@ -87,6 +87,105 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun fetchLastTransaction(
+        navHostController: NavHostController,
+        context: Context,
+        sharedViewModel: SharedViewModel
+    ) {
+
+
+            Log.d("FETCH_TXN", "Starting fetchLastTransaction")
+
+            val lastTxn = dbRepository.fetchLastTransaction()
+
+            Log.d("FETCH_TXN", "DB Result: $lastTxn")
+
+            lastTxn?.let {
+
+                Log.d("FETCH_TXN", "TxnType: ${it.txnType}")
+                Log.d("FETCH_TXN", "IsVoided: ${it.isVoided}")
+                Log.d("FETCH_TXN", "TTL Amount: ${it.ttlAmount}")
+                Log.d("FETCH_TXN", "Txn Amount: ${it.txnAmount}")
+                Log.d("FETCH_TXN", "Cashback: ${it.cashback}")
+                Log.d("FETCH_TXN", "HostTxnRef: ${it.hostTxnRef}")
+
+                if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
+
+                    Log.d("FETCH_TXN", "Transaction already voided")
+
+                    CustomDialogBuilder.composeAlertDialog(
+                        title = context.getString(R.string.default_alert_title_error),
+                        message = context.getString(R.string.err_txn_already_voided)
+                    )
+
+                } else {
+
+                    val transformedTxn =
+                        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
+
+                    Log.d("FETCH_TXN", "Transformed Object: $transformedTxn")
+
+                    transformedTxn?.let {
+
+                        sharedViewModel.objRootAppPaymentDetail = it.copy(
+                            id = sharedViewModel.objRootAppPaymentDetail.id,
+                            txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
+                            txnStatus = sharedViewModel.objRootAppPaymentDetail.txnStatus,
+                            hostAuthResult = sharedViewModel.objRootAppPaymentDetail.hostAuthResult
+                        )
+
+                        Log.d("FETCH_TXN", "Copied Object: ${sharedViewModel.objRootAppPaymentDetail}")
+
+                        sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
+                        sharedViewModel.objRootAppPaymentDetail.originalCashback =
+                            it.cashback.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =
+                            it.ttlAmount.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalTxnAmount =
+                            it.txnAmount.toDecimalFormat()
+                        sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
+
+                        Log.d(
+                            "FETCH_TXN",
+                            "OriginalTxnType: ${sharedViewModel.objRootAppPaymentDetail.originalTxnType}"
+                        )
+                        Log.d(
+                            "FETCH_TXN",
+                            "OriginalAmount: ${sharedViewModel.objRootAppPaymentDetail.originalTxnAmount}"
+                        )
+                        Log.d(
+                            "FETCH_TXN",
+                            "OriginalTotal: ${sharedViewModel.objRootAppPaymentDetail.originalTtlAmount}"
+                        )
+                        Log.d(
+                            "FETCH_TXN",
+                            "OriginalHostRef: ${sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef}"
+                        )
+                    }
+
+                    Log.d("FETCH_TXN", "Navigating to Amount Screen")
+
+                    //navigateToAmountScreen(navHostController, sharedViewModel)
+                }
+
+            } ?: run {
+
+                Log.d("FETCH_TXN", "No transaction found in DB")
+
+                CustomDialogBuilder.composeAlertDialog(
+                    title = context.getString(R.string.default_alert_title_error),
+                    message = context.getString(R.string.err_txn_not_found)
+                )
+            }
+    }
+
+    fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            navHostController.navigate(AppNavigationItems.AmountScreen.route)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE_CASHBACK) {
             sharedViewModel.objPosConfig?.apply { isCashback = false }
@@ -100,7 +199,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         else {
             calculateTotal(sharedViewModel)
             when (sharedViewModel.objRootAppPaymentDetail.txnType) {
-                TxnType.FOODSTAMP_RETURN, TxnType.VOID_LAST-> {
+                TxnType.FOODSTAMP_RETURN-> {
                     navHostController.navigate(AppNavigationItems.CardScreen.route)
                 }
                 TxnType.VOID_LAST -> {
@@ -112,7 +211,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     navHostController.navigate(AppNavigationItems.CashBackScreen.route)
                 }
                 else -> {
-                    navHostController.navigate(AppNavigationItems.ConfirmationScreen.route)
+                    navHostController.navigate(AppNavigationItems.CardScreen.route)
                 }
             }
         }
