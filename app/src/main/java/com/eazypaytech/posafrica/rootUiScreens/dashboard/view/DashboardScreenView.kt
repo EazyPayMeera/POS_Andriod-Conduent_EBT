@@ -118,7 +118,7 @@ fun DashboardView(navHostController: NavHostController) {
             AppConstants.BUTTON_CLICK_EVENT_E_VOUCHER -> {
                 setTransactionType(TxnType.E_VOUCHER)
                 navHostController.navigate(
-                    AppNavigationItems.ManualCardScreen.route
+                    AppNavigationItems.VoucherScreen.route
                 )
             }
             AppConstants.BUTTON_CLICK_EVENT_VOID_LAST -> {

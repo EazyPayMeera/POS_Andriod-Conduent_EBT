@@ -82,6 +82,7 @@ import com.eazypaytech.posafrica.rootUiScreens.transactiondetails.TransactionDet
 import com.eazypaytech.posafrica.rootUiScreens.txnList.view.TransactionListScreen
 import com.eazypaytech.posafrica.rootUiScreens.txnSel.view.TxnSelectionView
 import com.eazypaytech.posafrica.rootUiScreens.usermanagement.view.UserManagementView
+import com.eazypaytech.posafrica.rootUiScreens.voucher.VoucherCardView
 import com.eazypaytech.posafrica.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -358,6 +359,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.KeyEntryScreen.route) {
             KeyEntryView(navHostController)
+        }
+        composable(AppNavigationItems.VoucherScreen.route) {
+            VoucherCardView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

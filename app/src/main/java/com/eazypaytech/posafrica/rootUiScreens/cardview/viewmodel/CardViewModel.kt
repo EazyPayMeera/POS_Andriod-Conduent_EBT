@@ -51,6 +51,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     fun navigateToManualScreen(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigate(AppNavigationItems.ManualCardScreen.route) // Navigate to the desired screen
+            emvServiceRepository.abortPayment()
         }
     }
 
@@ -134,7 +135,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                     }
                                 }
                                 else if(isCardCheckStatusAbort(response.status)) {
-                                    displayEmvError(response.displayMsgId, abort =  true)
+                                    displayEmvError(response.displayMsgId)
                                 }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
@@ -174,8 +175,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
 
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
-        /* Display error & restart payment */
-
         emvInProgress.value = false
         var message : String? = null
         emvMsgIdToStringId(displayMsgId)?.let {
@@ -191,6 +190,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             cardRetryCount++
                             viewModelScope.launch {
                                 delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                                emvServiceRepository.abortPayment()
                                 startPayment(context, sharedViewModel, navHostController)
                             }
                         }else {

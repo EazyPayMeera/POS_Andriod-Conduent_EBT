@@ -543,7 +543,7 @@ class EmvWrapperRepository @Inject constructor(
         /*thread = Thread {*/
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener
-            Companion.iEmvSdkResponseListener = iEmvSdkResponseListener
+//            Companion.iEmvSdkResponseListener = iEmvSdkResponseListener
             val date: String = getCurrentTime("yyMMddHHmmss")
             val bundle = Bundle()
             bundle.putString(EmvTransDataConstrants.TRANSDATE, date.substring(0, 6))
@@ -1554,6 +1554,7 @@ class EmvWrapperRepository @Inject constructor(
             job = null
             deviceService?.emvHandler?.endPBOC()
             deviceService?.magCardReader?.stopSearch()
+
         }
 
         @OptIn(ExperimentalStdlibApi::class)

@@ -43,6 +43,7 @@ sealed class AppNavigationItems(val route: String) {
  object EBTSelScreen:AppNavigationItems(NavScreensEnum.EBTSelectionView.name)
  object TxnSelScreen:AppNavigationItems(NavScreensEnum.TxnSelectionView.name)
  object KeyEntryScreen:AppNavigationItems(NavScreensEnum.KeyEntryView.name)
+ object VoucherScreen:AppNavigationItems(NavScreensEnum.VoucherCardView.name)
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
 
