@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName
 data class PaymentServiceTxnDetails(
     @SerializedName("id") var id: Long? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
+    @SerializedName("terminalId") var terminalId: String? = null,
     @SerializedName("procId") var procId: String? = null,
     @SerializedName("cashierId") var cashierId: String? = null,
     @SerializedName("loginId") var loginId: String? = null,
@@ -15,6 +16,10 @@ data class PaymentServiceTxnDetails(
     @SerializedName("deviceSN") var deviceSN: String? = null,
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
+
+    @SerializedName("merchantNameLocation") var merchantNameLocation: String? = null,
+    @SerializedName("merchantBankName") var merchantBankName: String? = null,
+    @SerializedName("merchantType") var merchantType: String? = null,
 
     /* Host Authorization */
     @SerializedName("authAmount") var authAmount: String? = null,

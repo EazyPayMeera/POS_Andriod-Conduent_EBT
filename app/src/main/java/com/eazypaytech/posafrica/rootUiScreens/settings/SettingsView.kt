@@ -1,166 +1,204 @@
 package com.eazypaytech.posafrica.rootUiScreens.settings
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.navigation.AppNavigationItems
+import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.SettingsLowerSurface
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.SettingsMiddleSurface
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.SettingsUpperSurface
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.GenericCard
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.OkButton
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
 import com.eazypaytech.posafrica.ui.theme.dimens
-
 
 @Composable
 fun SettingsView(navHostController: NavHostController) {
+
+    val viewModel: SettingsViewModel = hiltViewModel()
+    val sharedViewModel = localSharedViewModel.current
+
+    val merchantNameLocation = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.merchantNameLocation ?: "")
+    }
+
+
+    val merchantBankName = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.merchantBankName ?: "")
+    }
+
+    val merchantType = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.merchantType ?: "")
+    }
+
+    val configChanged = remember { mutableStateOf(false) }
+
     Column {
+
         CommonTopAppBar(
-            title = stringResource(id = R.string.settings),
+            title = "Merchant Configuration",
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        // Custom Surface with top and bottom padding, and clickable
-        SettingsUpperSurface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium) // Horizontal padding
-                .padding(top = MaterialTheme.dimens.DP_22_CompactMedium) // Top and bottom padding
-                .clickable { navHostController.navigate(AppNavigationItems.LanguageScreen.route) },
-            elevation = MaterialTheme.dimens.DP_21_CompactMedium, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = MaterialTheme.dimens.DP_60_CompactMedium // Customizable height parameter
+        GenericCard(
+            modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium),
+            elevation = MaterialTheme.dimens.DP_10_CompactMedium
         ) {
-            // Use Row to place text and images horizontally
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Adjust padding as needed
-                horizontalArrangement = Arrangement.Start, // Space between elements
-                verticalAlignment = Alignment.CenterVertically // Center vertically
-            ) {
-                // Leading image
-                Image(
-                    painter = painterResource(id = R.drawable.lan), // Replace with your image resource
-                    contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // need to change here
-                )
 
-                // Set Language text
-                Text(
-                    text = stringResource(id = R.string.set_lang),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium) // Space between text and images
-                )
-                // Spacer between Upper and Middle Surface
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_125_CompactMedium)) // Adjust the height as needed
-                // Trailing image
-                Image(
-                    painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // Need to change here
-                )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
+            ) {
+
+                LazyColumn {
+
+                    item {
+
+                        TextView(
+                            text = "Merchant Details",
+                            fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+
+                    item {
+
+                        ConfigRow(
+                            label = "Merchant Name and Location",
+                            value = merchantNameLocation.value,
+                            onValueChange = {
+                                merchantNameLocation.value = it
+                                configChanged.value = true
+                                viewModel.updateMerchantLocation(it)
+                            }
+                        )
+                    }
+
+                    item {
+
+                        ConfigRow(
+                            label = "Merchant Bank Name",
+                            value = merchantBankName.value,
+                            onValueChange = {
+                                merchantBankName.value = it
+                                configChanged.value = true
+                                viewModel.updateMerchantBankName(it)
+                            }
+                        )
+                    }
+
+                    item {
+
+                        ConfigRow(
+                            label = "Merchant Type (MCC)",
+                            value = merchantType.value,
+                            onValueChange = {
+                                merchantType.value = it
+                                configChanged.value = true
+                                viewModel.updateMerchantType(it)
+                            },
+                            keyboardType = KeyboardType.Number
+                        )
+                    }
+
+                    item {
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+
+                            OkButton(
+                                onClick = {
+
+                                    viewModel.onSaveMerchantConfig(
+                                        navHostController,
+                                        sharedViewModel,
+                                        merchantNameLocation.value,
+                                        merchantBankName.value,
+                                        merchantType.value
+                                    )
+
+                                    configChanged.value = false
+                                },
+                                title = stringResource(id = R.string.save_btn),
+                                enabled = configChanged.value
+                            )
+                        }
+                    }
+                }
             }
         }
+    }
 
-        SettingsMiddleSurface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium) // Horizontal padding
-                .padding(top = MaterialTheme.dimens.DP_1_CompactMedium) // Top and bottom padding
-                .clickable { /* Handle click for SettingsMiddleSurface */ },
-            elevation = MaterialTheme.dimens.DP_21_CompactMedium, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Adjust padding as needed
-                horizontalArrangement = Arrangement.Start, // Space between elements
-                verticalAlignment = Alignment.CenterVertically // Center vertically
-            ) {
-                // Leading image
-                Image(
-                    painter = painterResource(id = R.drawable.password), // Replace with your image resource
-                    contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed // need to change here
-                )
+    LaunchedEffect(Unit) {
+        viewModel.onLoad(sharedViewModel)
+    }
+}
 
-                // Change Password text
-                Text(
-                    text = stringResource(id = R.string.change_password),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium) // Space between text and images
-                )
+@Composable
+fun ConfigRow(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
 
-                // Spacer between Upper and Middle Surface
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_90_CompactMedium)) // Adjust the height as needed
-                // Trailing image
-                Image(
-                    painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium), // Adjust size as needed // Need to change here 24.dp
-                )
-            }
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+    ) {
 
-        // Lower Surface with top and bottom padding, and clickable
-        SettingsLowerSurface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium) // Horizontal padding
-                .padding(top = MaterialTheme.dimens.DP_1_CompactMedium) // Top and bottom padding
-                .clickable { navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) },
-            elevation = MaterialTheme.dimens.DP_21_CompactMedium, // Elevation for shadow effect
-            color = MaterialTheme.colorScheme.background, // Background color for Surface
-            height = MaterialTheme.dimens.DP_60_CompactMedium // Customizable height parameter
-        ) {
-            // Use Row to place text and images horizontally
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium), // Adjust padding as needed
-                horizontalArrangement = Arrangement.Start, // Space between elements
-                verticalAlignment = Alignment.CenterVertically // Center vertically
-            ) {
-                // Leading image
-                Image(
-                    painter = painterResource(id = R.drawable.settings), // Replace with your image resource
-                    contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed Need to change here 24.dp
-                )
-                Text(
-                    text = stringResource(id = R.string.Configuration),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_20_CompactMedium) // Space between text and images
-                )
+        Text(
+            text = label,
+            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+            fontWeight = FontWeight.Medium
+        )
 
-                // Spacer between Upper and Middle Surface
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_120_CompactMedium)) // Adjust the height as needed
-
-                // Trailing image
-                Image(
-                    painter = painterResource(id = R.drawable.rightarrow), // Replace with your image resource
-                    contentDescription = "",
-                    modifier = Modifier.size(MaterialTheme.dimens.DP_23_CompactMedium) // Adjust size as needed need to change here 24.dp
-                )
-            }
-        }
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.Start
+            ),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.tertiary
+            ),
+            singleLine = true
+        )
     }
 }
 

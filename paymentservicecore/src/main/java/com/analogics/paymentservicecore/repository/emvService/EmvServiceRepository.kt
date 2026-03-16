@@ -407,10 +407,13 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         prepareHostTlvData(emvTags)
 
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.PROCESSING_ONLINE)
+        Log.d("EMV","Sending Request online")
+
         apiServiceRepository.apiServiceRequestOnlineAuth(
             paymentServiceTxnDetails, object : IApiServiceResponseListener {
 
                 override fun onApiServiceSuccess(apiPaymentServiceTxnDetails: PaymentServiceTxnDetails) {
+                    Log.d("EMV","Response Received")
                     paymentServiceTxnDetails = apiPaymentServiceTxnDetails.copy(emvData = paymentServiceTxnDetails.emvData)
                     responseEmvTags =
                         TlvUtils(apiPaymentServiceTxnDetails.emvData).tlvMap
@@ -418,11 +421,38 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 }
 
                 override fun onApiServiceError(apiServiceError: ApiServiceError) {
+                    Log.d("EMV", "Received Error: ${apiServiceError.errorMessage}")
+                    Log.d("EMV","Received Error ")
                     onResponse(responseEmvTags)
                 }
 
                 override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                    TODO("Not yet implemented")
+                    Log.d("EMV","Received Timeout ")
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        apiServiceRepository.apiServiceReversal(
+                            paymentServiceTxnDetails,
+                            object : IApiServiceResponseListener {
+
+                                override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                                    Log.d("EMV","Response Received")
+                                    paymentServiceTxnDetails = response.copy(emvData = paymentServiceTxnDetails.emvData)
+                                    responseEmvTags =
+                                        TlvUtils(response.emvData).tlvMap
+                                    onResponse(responseEmvTags)
+                                }
+
+                                override fun onApiServiceError(error: ApiServiceError) {
+                                    // handle error
+                                }
+
+                                override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                                    // handle timeout
+                                }
+                            }
+                        )
+
+                    }
                 }
             })
     }

@@ -3,31 +3,21 @@ package com.eazypaytech.paymentservicecore.repository.apiService.purchase
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.builder_core.constants.BuilderConstants
-import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
 import com.eazypaytech.builder_core.repository.BuilderServiceRepository
 import com.eazypaytech.builder_core.repository.BuilderServiceRepositoryLyra
-import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
 import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilderLyra
-import com.eazypaytech.builder_core.utils.BuilderUtils
-import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
-import com.eazypaytech.securityframework.database.entity.TxnEntity
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
@@ -69,6 +59,7 @@ class PurchaseRequestRepository @Inject constructor(
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun purchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepositoryLyra.networkServiceFinancialRequest(
             object : IBuilderServiceResponseListenerLyra{
@@ -83,13 +74,20 @@ class PurchaseRequestRepository @Inject constructor(
 
                 }
 
+//                override fun onBuilderTimeout(error: Any) {
+//
+//                    onAPIServiceResponse(
+//                        ApiServiceTimeout("Transaction Timed Out")
+//                    )
+//
+//                }
+
                 override fun onBuilderFailure(error: Any) {
                     // ✅ Detect timeout properly
                     if (error is SocketTimeoutException ||
                         error.toString().contains("timed out", true)
                     ) {
 
-                        // 🔥 Return timeout separately
                         onAPIServiceResponse(
                             ApiServiceTimeout("Transaction Timed Out")
                         )
@@ -102,13 +100,11 @@ class PurchaseRequestRepository @Inject constructor(
                         )
                     }
                 }
+
             },
             apiRequestBuilderLyra.createFinancial0200Request(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
-
-
-
 }
 
 

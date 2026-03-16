@@ -10,6 +10,7 @@ import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilderLyra
 import com.eazypaytech.builder_core.utils.BuilderUtils
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
+import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -59,7 +60,6 @@ class RklRequestRepository@Inject constructor(
                                     TxnStatus.DECLINED.toString()
                             }
 
-                            // You can also update Echo-specific fields if needed
                             if (mti == "0800") {
                                 it.ternNameLoc = resPaymentServiceTxnDetails.terminalId
                                 it.deviceSN   = resPaymentServiceTxnDetails.deviceSN

@@ -47,7 +47,6 @@ fun TxnSelectionView(navHostController: NavHostController) {
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
         Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
-
     Column {
         CommonTopAppBar(
             title = "Purchase",

@@ -1,12 +1,10 @@
-package com.eazypaytech.posafrica.rootUiScreens.manualentry
+package com.eazypaytech.posafrica.rootUiScreens.authCode
 
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +42,7 @@ import kotlinx.coroutines.delay
 @SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardViewModel = hiltViewModel()){
+fun AuthCodeView(navHostController: NavHostController, viewModel: AuthCodeViewModel = hiltViewModel()){
 
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
@@ -67,7 +65,7 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
             ) {
                 // Title Text
                 TextView(
-                    text = "Enter Your Card Number",
+                    text = "Enter Authorization Code",
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -86,10 +84,10 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
                 )
 
                 OutlinedTextField(
-                    value = viewModel.cardnumber,
+                    value = viewModel.authCode,
                     onValueChange = {viewModel.onCardNoChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = "Enter Card Number",
+                    placeholder = "Authorization Code",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
@@ -134,10 +132,6 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
                 .buildDialog(onClose = { isDialogVisible = false })
 
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.onLoad(sharedViewModel)
     }
 
     LaunchedEffect(Unit) {

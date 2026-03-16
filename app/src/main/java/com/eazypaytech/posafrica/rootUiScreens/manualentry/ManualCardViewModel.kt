@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
@@ -39,13 +40,18 @@ class ManualCardViewModel @Inject constructor(private  var apiServiceRepository:
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
-        if(cardnumber.isEmpty()) {
+
+        if (cardnumber.isEmpty()) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
                 message = "Please Enter Card Details"
             )
-        }
-        else {
+        } else if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER) {
+
+            navHostController.navigate(AppNavigationItems.AuthCodeScreen.route)
+
+        } else {
+
             navHostController.navigate(AppNavigationItems.PinScreen.route)
 
         }

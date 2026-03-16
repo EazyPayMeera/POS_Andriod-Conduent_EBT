@@ -9,12 +9,14 @@ import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult
 import com.eazypaytech.paymentservicecore.model.emv.TermConfig
+import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
+import com.eazypaytech.posafrica.rootUiScreens.activationScreen.ActivationState
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
@@ -27,11 +29,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
+class DashboardViewModel @Inject constructor(private var apiServiceRepository: ApiServiceRepository, private var emvServiceRepository:EmvServiceRepository, val txnDBRepository: TxnDBRepository)  : ViewModel() {
 
     private val _isAdmin = MutableStateFlow<Boolean>(false)
     val isAdmin : StateFlow<Boolean> = _isAdmin
-
+    var sharedViewModel : SharedViewModel? = null
     fun clearTransData(sharedViewModel: SharedViewModel) {
         sharedViewModel.clearTransData()
         checkIfAdmin(sharedViewModel)
@@ -144,4 +146,5 @@ class DashboardViewModel @Inject constructor(private var emvServiceRepository:Em
             }
         }
     }
+
 }

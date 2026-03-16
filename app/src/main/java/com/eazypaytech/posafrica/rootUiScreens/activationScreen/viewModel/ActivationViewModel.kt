@@ -55,6 +55,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             while (isActive) {
                 try {
                     keepAliveProcess()  // 'this' inside keepAliveProcess will be ViewModel
+                    delay(5 * 60 * 1000L)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -109,6 +110,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     {
         sharedViewModel?.objRootAppPaymentDetail?.procId = procIdInput.value
         sharedViewModel?.objRootAppPaymentDetail?.merchantId = midInput.value
+        sharedViewModel?.objRootAppPaymentDetail?.terminalId = tidInput.value
         sharedViewModel?.objPosConfig?.apply {
             terminalId = tidInput.value
             procId = procIdInput.value
@@ -143,33 +145,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         )
     }
 
-//    suspend fun injectKeys(tmk: String,pinKey: String,kcv: String,context: Context? = null) : Boolean {   // TODO USED FOR KEY INJECTION PROCESS FOR MASTER AND SESSION KEY AS PER CONDUENT
-//        if (tmk.isNotEmpty() == true && pinKey.isNotEmpty() == true && kcv.isNotEmpty() == true) {
-//            return PaymentServiceUtils.injectKeys(tmk, pinKey,kcv, context)
-//        }
-//        return false
-//    }
-//
-//    suspend fun injectTTMK(tmk: String,kcv: String,context: Context? = null) : Boolean {   // TODO USED FOR KEY INJECTION PROCESS FOR MASTER AND SESSION KEY AS PER CONDUENT
-//        if (tmk.isNotEmpty() == true && kcv.isNotEmpty() == true) {
-//            return HardwareUtils.injectTMKKey(tmk, kcv, context)
-//        }
-//        return false
-//    }
-
-//    fun activateDevice() {
-//        loadDefaultValues(sharedViewModel)
-//
-//        viewModelScope.launch {
-//            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-////            txnDBRepository.getUserCount().let {
-////                if(it>0)
-////                    navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-////                else
-////                    navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-////            }
-//        }
-//    }
 
     fun copyConfigToExternal(context: Context) {                                             // TODO TO COPY CONFIGURATION FILE TO EXTERNAL STORAGE
         val configFile = File(context.getExternalFilesDir(null), "Config.json")

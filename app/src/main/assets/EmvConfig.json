@@ -2,7 +2,7 @@
   "acquirerId" : "112233",
   "appSelIndicator" : "00",
   "terminalType" : "21",
-  "terminalCountryCode" : "0356",
+  "terminalCountryCode" : "0840",
   "terminalCapabilities" : "E0F8C8",
   "terminalFloorLimit" : "00000000",
   "terminalAppPriority" : "00",
@@ -28,7 +28,7 @@
   "contact": {
     "aidList": [
       {
-        "aid": "A0000000031010",
+        "aid": "A0000000044542",
         "appVersion": "0002",
         "tacDenial": "0010000000"
       },

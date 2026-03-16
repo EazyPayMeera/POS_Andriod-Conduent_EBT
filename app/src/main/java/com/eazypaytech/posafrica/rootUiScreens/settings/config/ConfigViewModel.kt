@@ -37,6 +37,7 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     var isTaxEnabled = mutableStateOf(false)
     var isInactivity = mutableStateOf(false)
     var isBatchId = mutableStateOf(false)
+    var isSettings = mutableStateOf(false)
 
     private fun loadPreferences(sharedViewModel: SharedViewModel)
     {

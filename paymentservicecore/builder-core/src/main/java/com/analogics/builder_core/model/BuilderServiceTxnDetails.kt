@@ -12,6 +12,10 @@ data class BuilderServiceTxnDetails(
     @SerializedName("deviceMake") var deviceMake: String? = null,
     @SerializedName("deviceModel") var deviceModel: String? = null,
 
+    @SerializedName("merchantNameLocation") var merchantNameLocation: String? = null,
+    @SerializedName("merchantBankName") var merchantBankName: String? = null,
+    @SerializedName("merchantType") var merchantType: String? = null,
+
     /* Host Authorization */
 
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
@@ -47,7 +51,6 @@ data class BuilderServiceTxnDetails(
     @SerializedName("localDate") var localDate: String? = null,
     @SerializedName("SettlementDate") var SettlementDate: String? = null,
     @SerializedName("captureDate") var captureDate: String? = null,
-    @SerializedName("merchantType") var merchantType: String? = null,
     @SerializedName("posEntryMode") var posEntryMode: String? = null,
     @SerializedName("acquirerId") var acquirerId: String? = null,
     @SerializedName("track2Data") var track2Data: String? = null,

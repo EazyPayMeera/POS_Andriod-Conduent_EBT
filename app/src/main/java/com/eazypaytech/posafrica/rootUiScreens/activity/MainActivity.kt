@@ -42,6 +42,7 @@ import com.eazypaytech.posafrica.rootUiScreens.addClerk.view.AddClerkScreen
 import com.eazypaytech.posafrica.rootUiScreens.amount.view.AmountView
 import com.eazypaytech.posafrica.rootUiScreens.amount.view.CashBackView
 import com.eazypaytech.posafrica.rootUiScreens.approved.view.ApprovedView
+import com.eazypaytech.posafrica.rootUiScreens.authCode.AuthCodeView
 import com.eazypaytech.posafrica.rootUiScreens.barcode.BarcodeView
 import com.eazypaytech.posafrica.rootUiScreens.batchId.view.BatchIdView
 import com.eazypaytech.posafrica.rootUiScreens.carddetect.view.CardDetectView
@@ -362,6 +363,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.VoucherScreen.route) {
             VoucherCardView(navHostController)
+        }
+        composable(AppNavigationItems.AuthCodeScreen.route) {
+            AuthCodeView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

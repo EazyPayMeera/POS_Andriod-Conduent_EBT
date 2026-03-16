@@ -44,43 +44,6 @@ object NetworkCallProvider {
         }
     }
 
-//    suspend fun safeApiCall(request: ByteArray): ResultProvider<ByteArray> {
-//        return try {
-//            withContext(Dispatchers.IO)
-//            {
-//                val socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
-//                    .connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT))
-//                val input = socket.openReadChannel()
-//                val output = socket.openWriteChannel(autoFlush = true)
-//                var response = ByteArray(0)
-//                var packetLength : Int = 0
-//                output.writeFully(request)
-//                do {
-//                    delay(100)
-//                    if (input.isClosedForRead) break
-//                    if(input.availableForRead>0) {
-//                        var chunk = ByteArray(input.availableForRead)
-//                        input.readAvailable(chunk, 0, chunk.size)
-//                        response += chunk
-//                        if(response.size>=2)
-//                            packetLength = (response[0] * 256) + (response[1] % 256)
-//                    }
-//                }while (input.isClosedForRead.not() && (packetLength==0 || response.size<packetLength))
-//                socket.close()
-//
-//                if(response.isNotEmpty())
-//                    ResultProvider.Success(response)
-//                else
-//                    ResultProvider.Error(Exception("No Response"))
-//            }
-//        } catch (e: Exception) {
-//            Log.d("exception",e.toString())
-//            ResultProvider.Error(
-//                e
-//            )
-//        }
-//    }
-
 
     suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
         return try {
@@ -104,11 +67,7 @@ object NetworkCallProvider {
                     }),
                     SecureRandom()
                 )
-
-                // Create plain socket
                 val plainSocket = Socket()
-
-                // ✅ 30 sec connection timeout (NO type issue here)
                 plainSocket.connect(
                     java.net.InetSocketAddress(
                         NetworkConstants.HOST_ADDRESS,
@@ -117,7 +76,6 @@ object NetworkCallProvider {
                     30_000
                 )
 
-                // Wrap with SSL
                 val sslSocket = sslContext.socketFactory
                     .createSocket(
                         plainSocket,
@@ -126,27 +84,18 @@ object NetworkCallProvider {
                         true
                     ) as SSLSocket
 
-                // ✅ 30 sec read timeout
                 sslSocket.soTimeout = 30_000
-
                 sslSocket.startHandshake()
-
                 val output = sslSocket.outputStream
                 val input = sslSocket.inputStream
-
-                // Length prefix (2 bytes)
                 val lenPrefix = byteArrayOf(
                     (requestBytes.size shr 8).toByte(),
                     (requestBytes.size and 0xFF).toByte()
                 )
-
                 output.write(lenPrefix + requestBytes)
                 output.flush()
-
-                // Read response length
                 val lenBytes = ByteArray(2)
                 input.read(lenBytes)
-
                 val expectedLength =
                     ((lenBytes[0].toInt() and 0xFF) shl 8) +
                             (lenBytes[1].toInt() and 0xFF)
@@ -165,15 +114,13 @@ object NetworkCallProvider {
                     responseBuffer.write(tempBuffer, 0, n)
                     totalRead += n
                 }
-
                 sslSocket.close()
-
                 ResultProvider.Success(responseBuffer.toByteArray())
             }
 
         } catch (e: SocketTimeoutException) {
             Log.e("Conduent", "Timeout after 30 seconds")
-            ResultProvider.Error(Exception("Connection timed out"))
+            ResultProvider.Error(e)
 
         } catch (e: Exception) {
             Log.e("Conduent", "Exception: ${e.message}")

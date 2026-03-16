@@ -135,7 +135,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                     }
                                 }
                                 else if(isCardCheckStatusAbort(response.status)) {
-                                    displayEmvError(response.displayMsgId)
+                                    displayEmvError(response.displayMsgId, abort = true)
                                 }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
@@ -189,8 +189,8 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         if (cardRetryCount < AppConstants.CARD_RETRY_COUNT) {
                             cardRetryCount++
                             viewModelScope.launch {
-                                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
                                 emvServiceRepository.abortPayment()
+                                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
                                 startPayment(context, sharedViewModel, navHostController)
                             }
                         }else {

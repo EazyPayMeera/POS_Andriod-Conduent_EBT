@@ -210,6 +210,10 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     Log.d("Database", "Go to update when void")
                     navHostController.navigate(AppNavigationItems.CashBackScreen.route)
                 }
+                TxnType.E_VOUCHER -> {
+                    Log.d("Database", "Go to update when void")
+                    navHostController.navigate(AppNavigationItems.ManualCardScreen.route)
+                }
                 else -> {
                     navHostController.navigate(AppNavigationItems.CardScreen.route)
                 }

@@ -65,25 +65,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
 
 
     val settingsItems = listOf(
-        SettingsItem(
-            imageRes = R.drawable.config_training_mode,
-            text = stringResource(id = R.string.training_mode),
-            isChecked = viewModel.isTrainingMode.value,
-            onCheckedChange = {
-                if (isAdmin) {
-                    if (isBatchOpen != true) {
-                        viewModel.onDemoModeChange(it, sharedViewModel)
-                    } else {
-                        viewModel.onShowBatchOpen(context)
-                    }
-                } else {
-                    viewModel.onShowAdminOnly(context)
-                }
-            },
-            isArrow = false,
-            onArrowChange = {},
-            isEnabled = isAdmin
-        ),
+
         SettingsItem(
             imageRes = R.drawable.config_invoice_prompt,
             text = stringResource(id = R.string.prompt_invoice_no),
@@ -93,33 +75,7 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onArrowChange = {},
             isEnabled = isAdmin
         ),
-        SettingsItem(
-            imageRes = R.drawable.config_tipping,
-            text = stringResource(id = R.string.enable_tipping),
-            isChecked = viewModel.isTippingEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onTippingEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
-            isArrow = false,
-            onArrowChange = {},
-            isEnabled = isAdmin
-        ),
-        SettingsItem(
-            imageRes = R.drawable.config_service_charge,
-            text = stringResource(id = R.string.enable_service_charge),
-            isChecked = viewModel.isServiceChargeEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onServiceChargeEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
-            isArrow = false,
-            onArrowChange = {},
-            isEnabled = isAdmin
-        ),
-        SettingsItem(
-            imageRes = R.drawable.config_tax,
-            text = stringResource(id = R.string.vat),
-            isChecked = viewModel.isTaxEnabled.value,
-            onCheckedChange = { if(isAdmin) viewModel.onTaxEnabledChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
-            isArrow = false,
-            onArrowChange = {},
-            isEnabled = isAdmin
-        ),
+
         SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
@@ -130,41 +86,15 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             isEnabled = isAdmin
         ),
         SettingsItem(
-            imageRes = R.drawable.config_auto_print_report,
-            text = stringResource(id = R.string.auto_report_print),
-            isChecked = viewModel.isAutoPrintReport.value,
-            onCheckedChange = { viewModel.onAutoPrintReportChange(it, sharedViewModel) },
-            isArrow = false,
-            onArrowChange = {},
-            isEnabled = true
-        ),
-        SettingsItem(
-            imageRes = R.drawable.config_auto_m_print,
-            text = stringResource(id = R.string.auto_print_merchant),
-            isChecked = viewModel.isAutoPrintMerchant.value,
-            onCheckedChange = { viewModel.onAutoPrintMerchantChange(it, sharedViewModel) },
-            isArrow = false,
-            onArrowChange = { },
-            isEnabled = true
-        ),
-        SettingsItem(
-            imageRes = R.drawable.time,
-            text = stringResource(id = R.string.inactivity_timeout),
-            isChecked = viewModel.isInactivity.value,
-            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) else viewModel.onShowAdminOnly(context)},
+            imageRes = R.drawable.settings,
+            text = stringResource(id = R.string.settings),
+            isChecked = viewModel.isSettings.value,
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. SettingsScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
-            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.InactivityTimeoutScreen.route) else viewModel.onShowAdminOnly(context)},
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. SettingsScreen.route) else viewModel.onShowAdminOnly(context)},
             isEnabled = isAdmin
-        ),
-        SettingsItem(
-            imageRes = R.drawable.batch_id,
-            text = stringResource(id = R.string.batch_id),
-            isChecked = viewModel.isBatchId.value,
-            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.BatchIdScreen.route) else viewModel.onShowAdminOnly(context)},
-            isArrow = true,
-            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.BatchIdScreen.route) else viewModel.onShowAdminOnly(context)},
-            isEnabled = isAdmin
-        ),
+        )
+
     )
 
     Column {

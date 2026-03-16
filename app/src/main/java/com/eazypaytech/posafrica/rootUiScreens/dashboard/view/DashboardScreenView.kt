@@ -88,6 +88,9 @@ fun DashboardView(navHostController: NavHostController) {
             AppConstants.BUTTON_CLICK_EVENT_KEY_MAN -> navHostController.navigate(
                 AppNavigationItems.KeyEntryScreen.route
             )
+            AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION -> navHostController.navigate(
+                AppNavigationItems.ConfigurationScreen.route
+            )
             AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE -> dashboardViewModel.onReactivate(
                 navHostController,
                 sharedViewModel

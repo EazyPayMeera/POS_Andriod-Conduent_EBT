@@ -145,10 +145,12 @@ class ApiServiceRepository @Inject constructor(
 //        }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun apiServiceReversal(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     ) {
+        Log.d("REVERSAL_TXN", "paymentServiceTxnDetails: $paymentServiceTxnDetails")
         this.iApiServiceResponseListener = iApiServiceResponseListener
         this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
         reversalRequestRepository.sendReversal(paymentServiceTxnDetails){
@@ -183,7 +185,6 @@ class ApiServiceRepository @Inject constructor(
          paymentServiceTxnDetails: PaymentServiceTxnDetails?,
          iApiServiceResponseListener: IApiServiceResponseListener
      ) {
-         Log.d("SIGNON_DEBUG", "Master KEK in request: ${paymentServiceTxnDetails?.masterKey}")
          this.iApiServiceResponseListener = iApiServiceResponseListener
          this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
          rklRequestRepository.signOnRequest(paymentServiceTxnDetails){
@@ -228,40 +229,51 @@ class ApiServiceRepository @Inject constructor(
          }
      }
 
-    override fun onApiServiceResponse(response: Any) {
+     override fun onApiServiceResponse(response: Any) {
 
-        when (response) {
+         when (response) {
 
-            is ApiServiceTimeout -> {
-                iApiServiceResponseListener.onApiServiceTimeout(ApiServiceTimeout(response.toString()))
+             is ApiServiceError -> {
+                 Log.d("EMV", "API Error: ${response.errorMessage}")
+                 iApiServiceResponseListener.onApiServiceError(response)
+             }
 
-            }
-            is ApiServiceError -> {
-                iApiServiceResponseListener.onApiServiceError(ApiServiceError(response.toString()))
-            }
-            else -> {
-                try {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        PaymentServiceUtils.transformObject<TxnEntity>(response)?.let {
-                            dbRepository.updateTxn(
-                                it
-                            )
-                        }
-                    }
-                    iApiServiceResponseListener.onApiServiceSuccess(
-                        PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
-                            response
-                        ) ?: PaymentServiceTxnDetails()
-                    )
-                    iApiServiceResponseListener.onApiServiceDisplayProgress(false)
-                }catch (e : Exception)
-                {
-                    e.printStackTrace()
-                    iApiServiceResponseListener.onApiServiceError(ApiServiceError(e.message.toString()))
-                }
-            }
-        }
-    }
+             is ApiServiceTimeout -> {
+                 Log.d("EMV", "API Timeout: ${response.message}")
+                 iApiServiceResponseListener.onApiServiceTimeout(response)
+             }
+
+             else -> {
+                 try {
+
+                     val txnEntity =
+                         PaymentServiceUtils.transformObject<TxnEntity>(response)
+
+                     txnEntity?.let {
+                         CoroutineScope(Dispatchers.IO).launch {
+                             dbRepository.updateTxn(it)
+                         }
+                     }
+
+                     val txnDetails =
+                         PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(response)
+                             ?: PaymentServiceTxnDetails()
+
+                     iApiServiceResponseListener.onApiServiceSuccess(txnDetails)
+
+                     iApiServiceResponseListener.onApiServiceDisplayProgress(false)
+
+                 } catch (e: Exception) {
+
+                     Log.e("EMV", "Transformation Error: ${e.message}")
+
+                     iApiServiceResponseListener.onApiServiceError(
+                         ApiServiceError(e.message ?: "Unknown Error")
+                     )
+                 }
+             }
+         }
+     }
 
 
 }

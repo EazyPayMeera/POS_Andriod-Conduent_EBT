@@ -46,6 +46,7 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         when (apiResultProvider) {
             is ResultProvider.Success -> {
                 Log.d("NETWORK","RESPONSE_HEX:"+apiResultProvider.data.toHexString().uppercase())
+                Log.d("NETWORK", "REQUEST_ASCII: ${String(apiResultProvider.data, Charsets.US_ASCII)}")
                 iBuilderServiceResponseListener.onBuilderSuccess(apiResultProvider.data)
             }
 

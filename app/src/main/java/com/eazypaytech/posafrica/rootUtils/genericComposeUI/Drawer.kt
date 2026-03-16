@@ -131,6 +131,12 @@ fun CustomDrawerContent(
                 ) }
             ),
             DrawerItem(
+                imageRes = Icons.Default.Settings,
+                text = stringResource(id = R.string.Configuration),
+                isChecked = false,
+                onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION, true) }
+            ),
+            DrawerItem(
                 imageRes = Icons.Default.LockOpen,
                 text = stringResource(id = R.string.reactivate_device),
                 isChecked = false,

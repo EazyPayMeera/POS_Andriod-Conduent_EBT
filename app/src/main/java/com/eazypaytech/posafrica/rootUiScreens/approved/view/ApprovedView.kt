@@ -52,10 +52,6 @@ fun ApprovedView(navHostController: NavHostController) {
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
 
-    Log.d("APPROVED_VIEW_DEBUG", "txnRecord on load: $txnRecord")
-    Log.d("APPROVED_VIEW_DEBUG", "txnStatus: ${txnRecord.txnStatus}")
-    Log.d("APPROVED_VIEW_DEBUG", "hostRespCode: ${txnRecord.hostRespCode}")
-    Log.d("APPROVED_VIEW_DEBUG", "ttlAmount: ${txnRecord.ttlAmount}")
 
     Column {
         CommonTopAppBar(

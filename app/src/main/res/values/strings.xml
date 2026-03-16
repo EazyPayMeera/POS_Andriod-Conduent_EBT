@@ -30,6 +30,7 @@
     <string name="snap">SNAP</string>
     <string name="cash">CASH</string>
     <string name="key_man">Key Management</string>
+    <string name="time_out">Timeout</string>
 
     <string name="act_title">Activate Now</string>
     <string name="act_prompt_activate">Enter TID , MID AND PROCESSOR ID</string>
@@ -128,7 +129,7 @@
     <string name="add_service_charge">Service Charge:</string>
     <string name="txn_sum">Transaction Summary:</string>
     <string name="total_amt">Total Amount:</string>
-    <string name="refund_amt_data">Refund Amount:</string>
+    <string name="refund_amt_data">Return Amount:</string>
     <string name="custom">Custom</string>
     <string name="end_shift_title">Logout?</string>
     <string name="end_shift_message_1">Are you sure you want to</string>

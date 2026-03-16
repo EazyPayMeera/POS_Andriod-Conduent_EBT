@@ -35,10 +35,14 @@ class SharedViewModel:ViewModel() {
       /* Copy Config Data */
       objRootAppPaymentDetail.procId = objPosConfig?.procId
       objRootAppPaymentDetail.merchantId = objPosConfig?.merchantId
+      objRootAppPaymentDetail.terminalId = objPosConfig?.terminalId
       objRootAppPaymentDetail.batchId = objPosConfig?.batchId
       objRootAppPaymentDetail.cashierId = objPosConfig?.cashierId
       objRootAppPaymentDetail.loginId = objPosConfig?.loginId
       objRootAppPaymentDetail.isDemoMode = objPosConfig?.isDemoMode
+      objRootAppPaymentDetail.merchantNameLocation = objPosConfig?.merchantNameLocation
+      objRootAppPaymentDetail.merchantBankName = objPosConfig?.merchantBankName
+      objRootAppPaymentDetail.merchantType = objPosConfig?.merchantType
 
       /* Copy Receipt Data */
       objRootAppPaymentDetail.header1 = objPosConfig?.header1
