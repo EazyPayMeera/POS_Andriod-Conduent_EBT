@@ -543,7 +543,7 @@ class EmvWrapperRepository @Inject constructor(
         /*thread = Thread {*/
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener
-//            Companion.iEmvSdkResponseListener = iEmvSdkResponseListener
+            Companion.iEmvSdkResponseListener = iEmvSdkResponseListener
             val date: String = getCurrentTime("yyMMddHHmmss")
             val bundle = Bundle()
             bundle.putString(EmvTransDataConstrants.TRANSDATE, date.substring(0, 6))
@@ -1691,7 +1691,7 @@ class EmvWrapperRepository @Inject constructor(
             try {
                 val panCalcObj = DukptCalcObj(
                     EncryptionConstants.KEY_INDEX_DATA_KEY,
-                    DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_DATA1,
+                    DukptCalcObj.DukptTypeEnum.DUKPT_DES_KEY_PIN,
                     DukptCalcObj.DukptOperEnum.DUKPT_ENCRYPT,
                     DukptCalcObj.DukptAlgEnum.DUKPT_ALG_ECB,
                     panForEncryption.toByteArray().toHexString()
