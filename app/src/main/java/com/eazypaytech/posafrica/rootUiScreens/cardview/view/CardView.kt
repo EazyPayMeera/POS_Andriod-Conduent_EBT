@@ -51,6 +51,7 @@ import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.cardview.viewmodel.CardViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder.Companion.composeProgressDialog
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.GenericCard
@@ -186,88 +187,24 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                     }
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
+                    composeProgressDialog(
+                        show = viewModel.showProgressVar.value,
+                        title = null,
+                        subtitle = getEmvMsgIdString(displayMsgId = viewModel.displayInfoMsgId.value),
+                        message = null
+                    )
                 }
             }
-            CustomDialogBuilder.ShowComposed()
+
         }
     }
 
     FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
 
     LaunchedEffect(Unit) {
-        Log.d("Payment","Start Payment Call")
         viewModel.startPayment(context, sharedViewModel, navHostController)
-    }
-
-    // QR Code Dialog
-    if (showQRCodeDialog) {
-        QRCodeDialog(
-            qrCodeContent = "Your QR Code Content Here", // Replace with the content you want to encode
-            onDismiss = { setShowQRCodeDialog(false) }
-        )
     }
 
     CustomDialogBuilder.ShowComposed()
 }
 
-@Composable
-fun QRCodeDialog(
-    qrCodeContent: String,
-    onDismiss: () -> Unit
-) {
-    // Generate QR Code bitmap
-    val qrCodeBitmap = generateQRCode(qrCodeContent, 300, 300) // Adjust size as needed
-    val imageBitmap = qrCodeBitmap?.asImageBitmap() // Convert Bitmap to ImageBitmap
-
-    Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(MaterialTheme.dimens.DP_24_CompactMedium),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                // Display QR Code
-                imageBitmap?.let {
-                    Image(
-                        bitmap = it,
-                        contentDescription = "",
-                        modifier = Modifier.size(MaterialTheme.dimens.DP_300_CompactMedium)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium))
-
-                // Close button
-                Button(onClick = onDismiss) {
-                    Text(text = stringResource(id = R.string.close))
-                }
-            }
-        }
-    }
-}
-
-fun generateQRCode(content: String, width: Int, height: Int): Bitmap? {
-    try {
-        val hints = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
-        hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
-
-        // Generate the BitMatrix for the QR code
-        val bitMatrix: BitMatrix = MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, width, height, hints)
-
-        // Convert the BitMatrix to a Bitmap
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
-        for (x in 0 until width) {
-            for (y in 0 until height) {
-                bitmap.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
-            }
-        }
-        return bitmap
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return null
-    }
-}

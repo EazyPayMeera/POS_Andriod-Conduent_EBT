@@ -78,6 +78,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 //    }
 
     fun getIsoPosEntryMode(): String {
+        Log.d("CARD_ENTRY_MODE", "Raw Entry Mode: ${builderServiceTxnDetails.cardEntryMode}")
         return when (builderServiceTxnDetails.cardEntryMode) {
 
             CardEntryMode.MAGSTRIPE.toString() -> "021"     // Magstripe + PIN
@@ -515,6 +516,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val posEntryMode = getIsoPosEntryMode()
+        Log.d("POS_ENTRY_MODE", "POS Entry Mode: $posEntryMode")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         val stan = getSTAN()
         val iso = IsoMessage()
@@ -573,8 +575,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         return iso.writeData()
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createReversal0420(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
@@ -671,6 +671,14 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 if (isoMsg.hasField(96))  deviceSN    = isoMsg.getObjectValue<String>(96)
                 if (isoMsg.hasField(125)) workKey     = isoMsg.getObjectValue<String>(125) // 36-char key
             }
+
+//            // 🔹 Print all present fields for debugging
+//            for (i in 1..128) {
+//                if (isoMsg.hasField(i)) {
+//                    val value = isoMsg.getObjectValue<Any>(i)
+//                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
+//                }
+//            }
 
         } catch (e: Exception) {
             Log.e("ISO", "Failed to parse Echo response", e)

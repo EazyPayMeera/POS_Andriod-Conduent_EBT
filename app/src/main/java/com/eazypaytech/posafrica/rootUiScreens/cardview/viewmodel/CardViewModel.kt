@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composition
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,7 +36,7 @@ import javax.inject.Inject
 class CardViewModel @Inject constructor(private var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
 
     var emvInProgress = mutableStateOf(false)
-    var showProgressVar = mutableStateOf(true)
+    var showProgressVar = mutableStateOf(false)
     var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
     lateinit var context: Context
     lateinit var sharedViewModel: SharedViewModel
@@ -101,7 +102,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         this.context = context
         this.sharedViewModel = sharedViewModel
         this.navHostController = navHostController
-
         viewModelScope.launch {
             checkNetwork(context)
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
@@ -115,11 +115,11 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-                                /* Update Transaction Result & Store in DB */
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     if(isStatusTryAnotherCard(response.status)==true)
                                         displayEmvError(response.displayMsgId)
                                     else
+                                        showProgressVar.value = false
                                         navigateToApprovalScreen(navHostController)
                                 }
                             }
@@ -147,13 +147,17 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceDisplayMessage(
                         displayMsgId: EmvServiceResult.DisplayMsgId
                     ) {
+                        Log.d("EMV_PROGRESS", "onEmvServiceDisplayMessage called with displayMsgId: $displayMsgId on thread: ${Thread.currentThread().name}")
                         if(isDispIdNeedPopupMsg(displayMsgId)) {
+                            Log.d("EMV_PROGRESS", "DisplayMsgId needs popup, calling displayEmvError()")
                             displayEmvError(displayMsgId, restart = false)
                         }
-                        else{
+                        else {
+                            Log.d("EMV_PROGRESS", "DisplayMsgId does NOT need popup, setting progress states")
                             displayInfoMsgId.value = displayMsgId
-                            if(displayMsgId!=EmvServiceResult.DisplayMsgId.NONE) {
-                                emvInProgress.value = true
+                            if(displayMsgId != EmvServiceResult.DisplayMsgId.NONE) {
+                                Log.d("EMV_PROGRESS", "Setting emvInProgress=true, showProgressVar=true")
+                                emvInProgress.value = false
                                 showProgressVar.value = true
                             }
                         }
@@ -172,6 +176,8 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             )
         }
     }
+
+
 
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {

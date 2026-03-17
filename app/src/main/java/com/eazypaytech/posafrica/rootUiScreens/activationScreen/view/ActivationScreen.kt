@@ -130,14 +130,6 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
         viewModel.onLoad(sharedViewModel)
         viewModel.copyConfigToExternal(context)
         val master = viewModel.readMasterKEK(context,sharedViewModel)
-//        Log.d("ConfigUse", "readMasterKEK returned: $master")
-//
-//        master?.let {
-//            val kcv = it.takeLast(6)
-//            Log.d("ConfigUse", "Master KEK stored in local variable: $it")
-//            Log.d("ConfigUse", "KCV: $kcv")
-//            viewModel.injectTTMK(it, kcv, context)
-//        }
     }
 }
 

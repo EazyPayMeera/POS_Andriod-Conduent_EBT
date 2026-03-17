@@ -270,15 +270,8 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
         try {
-            Log.d("EMV_DEBUG", "========== EMV TAGS START ==========")
 
-            emvTags.forEach { (tag, value) ->
-                Log.d("EMV_DEBUG", "Tag: $tag  |  Value: $value")
-            }
-
-            Log.d("EMV_DEBUG", "========== EMV TAGS END ==========")
             CoroutineScope(Dispatchers.Default).launch {
-                Log.d("Online","GOING FOR EMV SDK ONLINE REQUEST")
                 onEmvServiceRequestOnline(emvTags, onResponse)
             }
         }catch (e: Exception)
@@ -364,7 +357,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     ) {
         this.paymentServiceTxnDetails = paymentServiceTxnDetails?: PaymentServiceTxnDetails()
         this.iEmvServiceResponseListener = iEmvServiceResponseListener
-        //this.context = context
+
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
         var transConfig = getTransConfig(paymentServiceTxnDetails)
 
@@ -407,7 +400,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         prepareHostTlvData(emvTags)
 
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.PROCESSING_ONLINE)
-        Log.d("EMV","Sending Request online")
 
         apiServiceRepository.apiServiceRequestOnlineAuth(
             paymentServiceTxnDetails, object : IApiServiceResponseListener {

@@ -441,6 +441,7 @@ class EmvWrapperRepository @Inject constructor(
         }
         loginDevice()
         try {
+
             deviceService?.pinPad?.apply {
                 setTimeOut(30)
                 setSupportPinLen(intArrayOf(4, 6))
