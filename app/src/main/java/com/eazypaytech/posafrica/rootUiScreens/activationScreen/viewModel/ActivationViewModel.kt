@@ -133,10 +133,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         setActivationButtonState(false)
         collectActivationData()
         currentStep = ActivationState.SIGN_ON
-        Log.d(
-            "SIGNON_DEBUG",
-            "Master KEK before transform: ${sharedViewModel?.objRootAppPaymentDetail?.procId}"
-        )
         apiServiceRepository.signOnRequest(
             PaymentServiceUtils.transformObject(
                 sharedViewModel?.objRootAppPaymentDetail

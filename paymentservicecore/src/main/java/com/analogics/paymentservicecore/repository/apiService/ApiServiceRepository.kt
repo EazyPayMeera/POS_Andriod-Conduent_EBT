@@ -71,7 +71,6 @@ class ApiServiceRepository @Inject constructor(
                  it
              )
          }
-
         when(paymentServiceTxnDetails?.txnType.toString())
         {
             TxnType.FOOD_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
@@ -133,6 +132,8 @@ class ApiServiceRepository @Inject constructor(
             onApiServiceResponse(it)
         }
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun apiServiceAuthCapture(

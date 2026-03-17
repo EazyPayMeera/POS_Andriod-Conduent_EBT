@@ -298,7 +298,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
                 })
             } catch (e: Exception) {
-                // Handle any exceptions that may occur
+
                 Log.e("ApiCallException", e.message ?: "Unknown error")
                 navHostController.navigate(AppNavigationItems.DeclineScreen.route)
             }

@@ -80,7 +80,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getIsoPosEntryMode(): String {
         return when (builderServiceTxnDetails.cardEntryMode) {
 
-            CardEntryMode.MANUAL.toString() -> "011"        // Manual, no PIN
             CardEntryMode.MAGSTRIPE.toString() -> "021"     // Magstripe + PIN
             CardEntryMode.CONTACT.toString() -> "051"       // Chip + PIN
             CardEntryMode.CONTACLESS.toString() -> "071"    // Contactless + PIN
@@ -551,11 +550,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, localDate, IsoType.NUMERIC, 4)                    // DE015 Settlement Date
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, localDate, IsoType.NUMERIC, 4)                    // DE017 Capture Date
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
-        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, "021", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
+        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         iso.setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLVAR, BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH) // DE035 Track 2
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
-        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, "86887658", IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
+        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)           // DE042 Merchant ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_NAME,
             builderServiceTxnDetails?.merchantNameLocation?.padEnd(BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH),
@@ -574,6 +573,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         return iso.writeData()
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createReversal0420(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
@@ -670,14 +671,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 if (isoMsg.hasField(96))  deviceSN    = isoMsg.getObjectValue<String>(96)
                 if (isoMsg.hasField(125)) workKey     = isoMsg.getObjectValue<String>(125) // 36-char key
             }
-
-//            // 🔹 Print all present fields for debugging
-//            for (i in 1..128) {
-//                if (isoMsg.hasField(i)) {
-//                    val value = isoMsg.getObjectValue<Any>(i)
-//                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
-//                }
-//            }
 
         } catch (e: Exception) {
             Log.e("ISO", "Failed to parse Echo response", e)

@@ -188,6 +188,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                 }
             }
+            CustomDialogBuilder.ShowComposed()
         }
     }
 

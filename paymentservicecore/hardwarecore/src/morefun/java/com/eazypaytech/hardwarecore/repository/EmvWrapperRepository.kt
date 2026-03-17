@@ -426,9 +426,9 @@ class EmvWrapperRepository @Inject constructor(
         amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit
     ) {
-        val panBlock = pan?.toByteArray() ?: ByteArray(16)
+        val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         val bundle = Bundle().apply {
-            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, true)
+            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
             if (getDeviceModel().contains("MF960") ||
                 getDeviceModel().contains("H9PRO")
             ) {
@@ -439,12 +439,12 @@ class EmvWrapperRepository @Inject constructor(
                 "Please input the online pin \nAmount: $amount"
             )
         }
-
+        loginDevice()
         try {
             deviceService?.pinPad?.apply {
                 setTimeOut(30)
-                setSupportPinLen(intArrayOf(0, 6))
-                inputOnlinePin(bundle, panBlock, EncryptionConstants.KEY_INDEX_PIN_KEY.ordinal, PinAlgorithmMode.ISO9564FMT1,
+                setSupportPinLen(intArrayOf(4, 6))
+                inputOnlinePin(bundle, panBlock,  EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal, PinAlgorithmMode.ISO9564FMT1,
                     object : OnPinPadInputListener.Stub() {
                         override fun onInputResult(
                             ret: Int,
@@ -522,6 +522,22 @@ class EmvWrapperRepository @Inject constructor(
         val df = SimpleDateFormat(format)
         val curDate = Date(System.currentTimeMillis())
         return df.format(curDate)
+    }
+
+    fun loginDevice() {
+        val bundle = Bundle() // reserved, keep empty
+
+        try {
+            val result = deviceService?.login(bundle, "00000000")
+
+            when (result) {
+                0 -> Log.d("LOGIN", "✅ Login success (EMV ready)")
+                1 -> Log.e("LOGIN", "❌ Login failed")
+                2 -> Log.d("LOGIN", "⚠️ Login success (NO EMV file)")
+            }
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+        }
     }
 
     fun getDeviceModel(): String {
@@ -1456,8 +1472,8 @@ class EmvWrapperRepository @Inject constructor(
 
                 Log.d("KEY_INJECT", "Device service connected successfully")
 
-                val result = deviceService.pinPad.loadPlainWKey(
-                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
+                val result = deviceService.pinPad.loadWKey(
+                    EncryptionConstants.MS_KEY_TYPE_PIN,
                     0, // PIN KEY TYPE
                     keyBytes,
                     keyBytes.size
@@ -1465,7 +1481,7 @@ class EmvWrapperRepository @Inject constructor(
                 if (result != 0) return false
                 val kcvObj = deviceService.pinPad.getKeyKcv(
                     CheckKeyEnum.DES_PIN_KEY,
-                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal
+                    EncryptionConstants.MS_KEY_TYPE_PIN
                 )
 
                 if (kcvObj?.kcv.isNullOrEmpty()) {
