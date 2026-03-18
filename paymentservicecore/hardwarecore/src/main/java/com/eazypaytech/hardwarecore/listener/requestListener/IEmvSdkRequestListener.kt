@@ -13,4 +13,5 @@ interface IEmvSdkRequestListener {
     fun startPayment(context: Context, transConfig: TransConfig?)
     fun abortPayment()
     fun getEmvTag(tag : String?) : String?
+    fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
 }

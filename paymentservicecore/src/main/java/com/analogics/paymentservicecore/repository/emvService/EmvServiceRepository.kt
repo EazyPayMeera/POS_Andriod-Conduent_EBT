@@ -369,6 +369,16 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         emvSdkRequestRepository.startPayment(context, sdkTransConfig)
     }
 
+    override fun pinGeneration(
+        pan: String?,
+        amount: String,
+        nResult: (pinBlock: ByteArray?) -> Unit
+    ) {
+
+
+        emvSdkRequestRepository.pinGeneration(pan, amount, nResult)
+    }
+
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
     }

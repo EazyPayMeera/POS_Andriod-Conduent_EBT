@@ -86,7 +86,7 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
                 )
 
                 OutlinedTextField(
-                    value = viewModel.cardnumber,
+                    value = viewModel.cardNumber,
                     onValueChange = {viewModel.onCardNoChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "Enter Card Number",
@@ -136,17 +136,6 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.onLoad(sharedViewModel)
-    }
-
-    LaunchedEffect(Unit) {
-        delay(30000)
-        CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.default_alert_title_error),
-            message = context.resources.getString(R.string.time_out)
-        )
-        navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
-    }
 
     CustomDialogBuilder.ShowComposed()
 

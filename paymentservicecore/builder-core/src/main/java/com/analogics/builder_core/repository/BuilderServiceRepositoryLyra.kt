@@ -44,7 +44,9 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
     @OptIn(ExperimentalStdlibApi::class)
     override fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ByteArray>) {
         when (apiResultProvider) {
+
             is ResultProvider.Success -> {
+                Log.d("NETWORK", String(apiResultProvider.data))
                 Log.d("NETWORK","RESPONSE_HEX:"+apiResultProvider.data.toHexString().uppercase())
                 Log.d("NETWORK", "REQUEST_ASCII: ${String(apiResultProvider.data, Charsets.US_ASCII)}")
                 iBuilderServiceResponseListener.onBuilderSuccess(apiResultProvider.data)

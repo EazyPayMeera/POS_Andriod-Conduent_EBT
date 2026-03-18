@@ -516,7 +516,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val posEntryMode = getIsoPosEntryMode()
-        Log.d("POS_ENTRY_MODE", "POS Entry Mode: $posEntryMode")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         val stan = getSTAN()
         val iso = IsoMessage()
@@ -530,6 +529,22 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val rrn = generateRRN(stan.toString())
         val originalData = dateTime.padEnd(20,'0')
         val posConditionCode = getNationalPosConditionCode()
+        Log.d("ISO_DEBUG", """
+            amount: $amount
+            posEntryMode: $posEntryMode
+            encryptedTrack2Data: $encryptedTrack2Data
+            stan: $stan
+            pinBlock: $pinBlock
+            dateTime: $dateTime
+            maskedPan: $maskedPan
+            localTime: $localTime
+            localDate: $localDate
+            currencyCode: $currencyCode
+            processingCode: $processingCode
+            rrn: $rrn
+            originalData: $originalData
+            posConditionCode: $posConditionCode
+            """.trimIndent())
         this.builderServiceTxnDetails.posEntryMode = posEntryMode
         this.builderServiceTxnDetails.rrn = rrn
         this.builderServiceTxnDetails.processingCode =processingCode
@@ -542,7 +557,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         this.builderServiceTxnDetails.stan = stan.toString()
         IsoMessageBuilder.saveTxn(builderServiceTxnDetails)
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)   // Financial transaction request
-        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, maskedPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)          // DE002 PAN
+        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "5081470085025845", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)          // DE002 PAN
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)          // DE003 Processing Code
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)            // DE004 Amount
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)              // DE007 Transmission DateTime
@@ -552,9 +567,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, localDate, IsoType.NUMERIC, 4)                    // DE015 Settlement Date
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, localDate, IsoType.NUMERIC, 4)                    // DE017 Capture Date
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
-        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
+        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, "021", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
-        iso.setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, encryptedTrack2Data, IsoType.LLVAR, BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH) // DE035 Track 2
+        iso.setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, "5081470085025845=3006220000", IsoType.LLVAR, BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH) // DE035 Track 2
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)           // DE042 Merchant ID
@@ -566,7 +581,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
         iso.setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.ALPHA, BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)               // DE058
+        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, "0008596", IsoType.LLLVAR, 7)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
         iso.setBinaryHeader(false)
         iso.setBinaryFields(false)

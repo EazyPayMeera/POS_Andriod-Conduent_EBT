@@ -36,6 +36,18 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    override fun pinGeneration(
+        pan: String?,
+        amount: String,
+        nResult: (pinBlock: ByteArray?) -> Unit
+    ) {
+        try {
+            emvWrapper.inputManualPin(pan, amount,nResult);
+        } catch (exception: Exception) {
+            iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
+        }
+    }
+
     override fun abortPayment() {
         try {
             EmvWrapperRepository.abortPayment()

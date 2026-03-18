@@ -18,5 +18,6 @@ interface IEmvServiceRequestListener {
         paymentServiceTxnDetails : PaymentServiceTxnDetails?=null,
         iEmvServiceResponseListener: IEmvServiceResponseListener
     )
+    fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
     fun abortPayment()
 }

@@ -116,11 +116,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
-                                    if(isStatusTryAnotherCard(response.status)==true)
+                                    if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
+                                    }
                                     else
+                                    {
                                         showProgressVar.value = false
                                         navigateToApprovalScreen(navHostController)
+                                        }
                                 }
                             }
 
@@ -182,6 +185,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
         emvInProgress.value = false
+        showProgressVar.value = false
         var message : String? = null
         emvMsgIdToStringId(displayMsgId)?.let {
             message = context.getString(it)

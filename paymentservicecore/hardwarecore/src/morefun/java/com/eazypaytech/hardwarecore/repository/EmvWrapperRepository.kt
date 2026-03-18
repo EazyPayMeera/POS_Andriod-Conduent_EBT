@@ -426,6 +426,68 @@ class EmvWrapperRepository @Inject constructor(
         amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit
     ) {
+        //val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
+        Log.d("PIN_DEBUG", "PAN (masked): $pan")
+        val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
+
+        val bundle = Bundle().apply {
+            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
+            if (getDeviceModel().contains("MF960") ||
+                getDeviceModel().contains("H9PRO")
+            ) {
+                putBoolean(PinPadConstrants.COMMON_IS_PHYSICAL_KEYBOARD, true)
+            }
+            putString(
+                PinPadConstrants.TITLE_HEAD_CONTENT,
+                "Please input the online pin \nAmount: $amount"
+            )
+        }
+        loginDevice()
+        try {
+
+            deviceService?.pinPad?.apply {
+                setTimeOut(30)
+                setSupportPinLen(intArrayOf(4, 6))
+                inputOnlinePin(bundle, panBlock,  EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal, PinAlgorithmMode.ISO9564FMT1,
+                    object : OnPinPadInputListener.Stub() {
+                        override fun onInputResult(
+                            ret: Int,
+                            pinBlock: ByteArray?,
+                            ksn: String?
+                        ) {
+                            Companion.pinBlock = pinBlock?.toHexString()
+                            Companion.ksn = ksn
+
+                            val builder = StringBuilder().apply {
+                                append("ON INPUT RESULT: $ret\n")
+                                append("PIN BLOCK: ${pinBlock?.toHexString()}\n")
+                                append("KSN: $ksn")
+                            }
+
+                            Log.d("InputOnlinePin", builder.toString())
+                            onResult(pinBlock)
+                        }
+
+                        override fun onSendKey(keyCode: Byte) {
+                            if (keyCode == ServiceResult.PinPad_Input_Cancel.toByte()) {
+                                onResult(null)
+                            }
+                        }
+                    }
+                )
+            }
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun inputManualPin(
+        pan: String?,
+        amount: String,
+        onResult: (pinBlock: ByteArray?) -> Unit
+    ) {
+        Log.d("PIN_DEBUG", "PAN (masked): $pan")
         val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         val bundle = Bundle().apply {
             putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
