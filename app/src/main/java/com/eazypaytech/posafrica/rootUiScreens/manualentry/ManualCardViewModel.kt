@@ -1,5 +1,6 @@
 package com.eazypaytech.posafrica.rootUiScreens.manualentry
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.eazypaytech.builder_core.model.CardEntryMode
+import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
@@ -40,6 +42,9 @@ class ManualCardViewModel @Inject constructor(
     var cardNumber by mutableStateOf("")
         private set
 
+    val isFormValid: Boolean
+        get() = cardNumber.isNotBlank() &&
+                cardNumber.length == AppConstants.MAX_LENGTH_CARD_NO
 
     fun onCardNoChange(newValue: String) {
         cardNumber = newValue
@@ -62,7 +67,7 @@ class ManualCardViewModel @Inject constructor(
             }
 
             sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER -> {
-                navHostController.navigate(AppNavigationItems.AuthCodeScreen.route)
+                navHostController.navigate(AppNavigationItems.VoucherScreen.route)
             }
 
             else -> {
@@ -105,6 +110,17 @@ class ManualCardViewModel @Inject constructor(
     ) {
         CustomDialogBuilder.composeAlertDialog(
             title = navHostController.context.getString(R.string.default_alert_title_error),
+            message = message
+        )
+    }
+
+    fun onInvalidFormData(context: Context) {
+        var message = if(cardNumber.length != AppConstants.MAX_LENGTH_CARD_NO)
+            context.resources.getString(R.string.max_card_length_err)
+        else
+            context.resources.getString(R.string.act_empty_card_cvv)
+
+        CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.default_alert_title_error),
             message = message
         )
     }

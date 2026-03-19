@@ -308,7 +308,7 @@ fun getTransTypeAmountTitle(): String {
         TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)
         TxnType.FOOD_PURCHASE -> stringResource(id = R.string.purchase_snap_amt)
         TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.return_amt)
-        TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
+        TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher_amount)
         null -> stringResource(id = R.string.ebt_bal_enquiry)
     }
 }

@@ -212,7 +212,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 }
                 TxnType.E_VOUCHER -> {
                     Log.d("Database", "Go to update when void")
-                    navHostController.navigate(AppNavigationItems.ManualCardScreen.route)
+                    authenticateTransaction(sharedViewModel,navHostController)
                 }
                 else -> {
                     navHostController.navigate(AppNavigationItems.CardScreen.route)

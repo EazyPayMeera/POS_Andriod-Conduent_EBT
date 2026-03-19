@@ -65,35 +65,67 @@ fun TxnSelectionView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.Start // Align content to the start
             ) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
+                if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER)
+                {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_160_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                            },
+                            title = stringResource(id = R.string.summary_purchase),
+                        )
+                    }
 
-                Box(
-                    modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_180_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OkButton(
-                        onClick = {
-                            setTransactionType(TxnType.FOOD_PURCHASE)
-                            navHostController.navigate(AppNavigationItems.AmountScreen.route)
-                        },
-                        title = stringResource(id = R.string.food),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_15_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                navHostController.navigate(AppNavigationItems.SuperVisorLoginScreen.route)
+                            },
+                            title = stringResource(id = R.string.sel_return),
+                        )
+                    }
+
                 }
+                else {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_180_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                setTransactionType(TxnType.FOOD_PURCHASE)
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                            },
+                            title = stringResource(id = R.string.food),
+                        )
+                    }
 
-                Box(
-                    modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OkButton(
-                        onClick = {
-                            setTransactionType(TxnType.CASH_PURCHASE)
-                            navHostController.navigate(AppNavigationItems.AmountScreen.route)
-                        },
-                        title = stringResource(id = R.string.cash),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                setTransactionType(TxnType.CASH_PURCHASE)
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                            },
+                            title = stringResource(id = R.string.cash),
+                        )
+                    }
                 }
 
                 CustomDialogBuilder.ShowComposed()

@@ -45,6 +45,7 @@ sealed class AppNavigationItems(val route: String) {
  object KeyEntryScreen:AppNavigationItems(NavScreensEnum.KeyEntryView.name)
  object VoucherScreen:AppNavigationItems(NavScreensEnum.VoucherCardView.name)
  object AuthCodeScreen:AppNavigationItems(NavScreensEnum.AuthCodeView.name)
+ object SuperVisorLoginScreen:AppNavigationItems(NavScreensEnum.SuperVisorLoginView.name)
 
  object PinScreen : AppNavigationItems(NavScreensEnum.PinView.name)
 

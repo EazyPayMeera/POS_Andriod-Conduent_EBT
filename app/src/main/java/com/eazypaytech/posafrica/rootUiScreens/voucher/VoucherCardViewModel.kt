@@ -43,7 +43,7 @@ class VoucherCardViewModel @Inject constructor(private  var apiServiceRepository
             )
         }
         else {
-            navHostController.navigate(AppNavigationItems.AmountScreen.route)
+            navHostController.navigate(AppNavigationItems.TxnSelScreen.route)
 
         }
     }

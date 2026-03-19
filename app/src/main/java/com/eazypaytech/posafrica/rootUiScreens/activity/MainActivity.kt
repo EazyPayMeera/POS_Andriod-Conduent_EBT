@@ -76,6 +76,7 @@ import com.eazypaytech.posafrica.rootUiScreens.settings.config.ConfigurationView
 import com.eazypaytech.posafrica.rootUiScreens.signature.SignatureView
 import com.eazypaytech.posafrica.rootUiScreens.splash.view.SplashScreenView
 import com.eazypaytech.posafrica.rootUiScreens.sucess.SucessView
+import com.eazypaytech.posafrica.rootUiScreens.supervisorLogin.SuperVisorLoginView
 import com.eazypaytech.posafrica.rootUiScreens.tax.view.TaxPercentageView
 import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipPercentageView
 import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipView
@@ -366,6 +367,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.AuthCodeScreen.route) {
             AuthCodeView(navHostController)
+        }
+        composable(AppNavigationItems.SuperVisorLoginScreen.route) {
+            SuperVisorLoginView(navHostController)
         }
         composable(
             route = AppNavigationItems.DeclineScreen.route,

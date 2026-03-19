@@ -104,7 +104,13 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
+            secondButtonOnClick = {
+                if (viewModel.isFormValid) {
+                    viewModel.onConfirm(navHostController,sharedViewModel)
+                } else {
+                    viewModel.onInvalidFormData(context)
+                }
+            },
             closeKeypadOnSecondButton = true
         )
 

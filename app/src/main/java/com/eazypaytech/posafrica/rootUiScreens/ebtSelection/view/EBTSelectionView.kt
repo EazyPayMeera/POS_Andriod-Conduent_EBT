@@ -50,8 +50,7 @@ fun EBTSelectionView(navHostController: NavHostController) {
 
     Column {
         CommonTopAppBar(
-            onBackButtonClick = { },
-            showBackIcon = false
+            onBackButtonClick = { navHostController.popBackStack()},
         )
 
         // Outer Surface with background color, padding, and rounded corners
@@ -65,35 +64,53 @@ fun EBTSelectionView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.Start // Align content to the start
             ) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
+                if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER)
+                {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_180_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                navHostController.navigate(AppNavigationItems.ManualCardScreen.route)
+                            },
+                            title = stringResource(id = R.string.food_stamp),
+                        )
+                    }
 
-                Box(
-                    modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_180_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OkButton(
-                        onClick = {
-                            navHostController.navigate(AppNavigationItems.CardScreen.route)
-                            setTransactionType(TxnType.BALANCE_ENQUIRY_SNAP)
-                        },
-                        title = stringResource(id = R.string.bal_snap),
-                    )
                 }
+                else {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_180_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                navHostController.navigate(AppNavigationItems.CardScreen.route)
+                                setTransactionType(TxnType.BALANCE_ENQUIRY_SNAP)
+                            },
+                            title = stringResource(id = R.string.bal_snap),
+                        )
+                    }
 
-                Box(
-                    modifier = Modifier
-                        .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OkButton(
-                        onClick = {
-                            setTransactionType(TxnType.BALANCE_ENQUIRY_CASH)
-                            navHostController.navigate(AppNavigationItems.CardScreen.route)
-                        },
-                        title = stringResource(id = R.string.bal_cash),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_21_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OkButton(
+                            onClick = {
+                                setTransactionType(TxnType.BALANCE_ENQUIRY_CASH)
+                                navHostController.navigate(AppNavigationItems.CardScreen.route)
+                            },
+                            title = stringResource(id = R.string.bal_cash),
+                        )
+                    }
                 }
 
                 CustomDialogBuilder.ShowComposed()

@@ -30,6 +30,7 @@
     <string name="return_amt">Enter SNAP Return Amount</string>
     <string name="food">EBT SNAP Benefit Purchase</string>
     <string name="bal_snap">SNAP</string>
+    <string name="food_stamp">FOOD STAMP</string>
     <string name="cash">EBT CASH Benefit Purchase</string>
     <string name="bal_cash">CASH</string>
     <string name="key_man">Key Management</string>
@@ -42,6 +43,7 @@
     <string name="act_label_enter_Mid">Please Enter MID</string>
 
     <string name="act_empty_tid_mid">Processor ID should not be empty</string>
+    <string name="act_empty_card_cvv">Empty Card No OR CVV</string>
     <string name="act_tid_length">Processor ID should be 11</string>
     <string name="act_mid_length">MID length should be 15</string>
     <string name="act_failed">Activation Failed</string>
@@ -127,6 +129,7 @@
     <string name="chip_detect">Chip Detected</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
+    <string name="max_card_length_err">Card No Should Be 16 Digit</string>
     <string name="cancel_dialogue">Cancel?</string>
     <string name="yes">YES</string>
     <string name="add_tip">Add Tip:</string>
@@ -254,10 +257,12 @@
     <string name="ebt_bal_enquiry">EBT Balance Enquiry</string>
     <string name="ebt_voucher_clear">Voucher Clear</string>
     <string name="ebt_voucher_return">Transactions</string>
+    <string name="sel_return">Return</string>
     <string name="ebt_void_last">EBT Void Last</string>
     <string name="ebt_food_purchase">EBT SNAP Benefit Purchase</string>
     <string name="ebt_foodstamp_return">EBT SNAP Benefit Return</string>
     <string name="ebt_e_voucher">EBT Voucher Settlement</string>
+    <string name="ebt_e_voucher_amount">Enter Settlement Amount</string>
 
     <!-- Transaction List Screen -->
     <string name="select_date">Select Date</string>Filter by Batch Number
