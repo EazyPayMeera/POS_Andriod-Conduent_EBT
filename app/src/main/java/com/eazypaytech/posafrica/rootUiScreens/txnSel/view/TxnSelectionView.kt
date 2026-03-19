@@ -49,7 +49,7 @@ fun TxnSelectionView(navHostController: NavHostController) {
     }
     Column {
         CommonTopAppBar(
-            title = "Purchase",
+            title = "EBT Purchase",
             onBackButtonClick = { navHostController.popBackStack()},
             showBackIcon = true
         )

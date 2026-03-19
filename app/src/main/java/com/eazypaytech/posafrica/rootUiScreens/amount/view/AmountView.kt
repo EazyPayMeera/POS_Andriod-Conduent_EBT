@@ -42,6 +42,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.ImageView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.OutlinedTextField
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.createAmountTransformation
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTransTypeAmountTitle
 import com.eazypaytech.posafrica.ui.theme.dimens
 
 
@@ -71,7 +72,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_PURCHASE) stringResource(R.string.ebt_cash_amount) else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN) stringResource(R.string.return_amt) else if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else stringResource(R.string.purchase_amt),
+                    text = if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else getTransTypeAmountTitle(),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,

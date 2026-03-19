@@ -22,13 +22,16 @@
     <string name="tid">TID:</string>
     <string name="act_label_enter_ProcId">Please Enter Processor ID</string>
     <string name="ebt_cash">Cash</string>
-    <string name="ebt_cash_amount">Enter Cash Amount</string>
-    <string name="ebt_cash_benefit">Cash Purchase</string>
+    <string name="ebt_cash_amount">Enter Cash Purchase Amount</string>
+    <string name="ebt_cash_withdrawal_amount">Enter Withdrawal Amount</string>
+    <string name="ebt_cash_benefit">EBT Cash Benefit Purchase</string>
+    <string name="ebt_cash_withdrawal">EBT Cash Withdrawal</string>
     <string name="cashback_amt">Enter Cashback Amount</string>
-    <string name="return_amt">Enter Return Amount</string>
-    <string name="food">FOOD</string>
-    <string name="snap">SNAP</string>
-    <string name="cash">CASH</string>
+    <string name="return_amt">Enter SNAP Return Amount</string>
+    <string name="food">EBT SNAP Benefit Purchase</string>
+    <string name="bal_snap">SNAP</string>
+    <string name="cash">EBT CASH Benefit Purchase</string>
+    <string name="bal_cash">CASH</string>
     <string name="key_man">Key Management</string>
     <string name="time_out">Timeout</string>
 
@@ -107,6 +110,7 @@
     <string name="authcap_amt">Enter the Auth Captured Amount</string>
     <string name="void_pur">Void Purchase</string>
     <string name="purchase_amt">Enter Transaction Amount</string>
+    <string name="purchase_snap_amt">Enter SNAP Purchase Amount</string>
     <string name="enter_Pin">Please Enter The Pin</string>
     <string name="pin">Pin</string>
     <string name="org_amt">Original Amount</string>
@@ -245,14 +249,15 @@
     <string name="default_alert_subtitle_wrong_password">Wrong Password</string>
 
     <!-- EBT DashBoard Screen -->
-    <string name="ebt_purchase_cashback">Purchase With Cashback</string>
-    <string name="ebt_bal_enquiry">Bal Enquiry</string>
+    <string name="ebt_purchase_cashback">EBT Cash Benefit Purchase with Cashback</string>
+    <string name="ebt_cash_withdraw">EBT Cash Withdrawal</string>
+    <string name="ebt_bal_enquiry">EBT Balance Enquiry</string>
     <string name="ebt_voucher_clear">Voucher Clear</string>
     <string name="ebt_voucher_return">Transactions</string>
-    <string name="ebt_void_last">Void Last</string>
-    <string name="ebt_food_purchase">Food Purchase</string>
-    <string name="ebt_foodstamp_return">Food Stamp Return</string>
-    <string name="ebt_e_voucher">E-Voucher</string>
+    <string name="ebt_void_last">EBT Void Last</string>
+    <string name="ebt_food_purchase">EBT SNAP Benefit Purchase</string>
+    <string name="ebt_foodstamp_return">EBT SNAP Benefit Return</string>
+    <string name="ebt_e_voucher">EBT Voucher Settlement</string>
 
     <!-- Transaction List Screen -->
     <string name="select_date">Select Date</string>Filter by Batch Number

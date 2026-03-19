@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
@@ -114,6 +115,12 @@ fun DashboardView(navHostController: NavHostController) {
             }
             AppConstants.BUTTON_CLICK_EVENT_PURCHASE_CASHBACK -> {
                 setTransactionType(TxnType.PURCHASE_CASHBACK)
+                navHostController.navigate(
+                    AppNavigationItems.AmountScreen.route
+                )
+            }
+            AppConstants.BUTTON_CLICK_EVENT_CASH_WITHDRAW -> {
+                setTransactionType(TxnType.CASH_WITHDRAWAL)
                 navHostController.navigate(
                     AppNavigationItems.AmountScreen.route
                 )
@@ -201,15 +208,15 @@ fun dashboardItemListData(
             false
         ),
         createDashboardItem(
-            titleId = R.string.ebt_e_voucher,
-            iconId = R.drawable.ebt_dashboard_e_voucher,
-            event = AppConstants.BUTTON_CLICK_EVENT_E_VOUCHER,
+            titleId = R.string.ebt_cash_withdraw,
+            iconId = R.drawable.ebt_dashboard_cash_purchase,
+            event = AppConstants.BUTTON_CLICK_EVENT_CASH_WITHDRAW,
             false
         ),
         createDashboardItem(
-            titleId = R.string.ebt_void_last,
-            iconId = R.drawable.ebt_dashboard_void_last,
-            event = AppConstants.BUTTON_CLICK_EVENT_VOID_LAST,
+            titleId = R.string.ebt_e_voucher,
+            iconId = R.drawable.ebt_dashboard_e_voucher,
+            event = AppConstants.BUTTON_CLICK_EVENT_E_VOUCHER,
             false
         ),
         createDashboardItem(
@@ -217,8 +224,13 @@ fun dashboardItemListData(
             iconId = R.drawable.ebt_dashboard_bal_inquiry,
             event = AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY,
             false
+        ),
+        createDashboardItem(
+            titleId = R.string.ebt_void_last,
+            iconId = R.drawable.ebt_dashboard_void_last,
+            event = AppConstants.BUTTON_CLICK_EVENT_VOID_LAST,
+            false
         )
-
     )
 }
 
@@ -315,7 +327,7 @@ fun DashboardContentSurface(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(MaterialTheme.dimens.DP_15_CompactMedium),
+                .padding(MaterialTheme.dimens.DP_21_CompactMedium),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -324,22 +336,22 @@ fun DashboardContentSurface(
             var visibility by remember { mutableStateOf(true) }
 
             // Use a Box to maintain space and center the text
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth() // Make the box fill the width
-                    .padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-                    .height(MaterialTheme.dimens.DP_33_CompactMedium) // Set a fixed height for the box
-                    .wrapContentHeight() // Ensure the height wraps content
-            ) {
-                TextView(
-                    text = if (visibility && isDemoMode == true) stringResource(id = R.string.training_mode) else "",
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.Center) // Center the text in the box
-                )
-            }
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth() // Make the box fill the width
+//                    //.padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
+//                    .height(MaterialTheme.dimens.DP_33_CompactMedium) // Set a fixed height for the box
+//                    .wrapContentHeight() // Ensure the height wraps content
+//            ) {
+////                TextView(
+////                    text = if (visibility && isDemoMode == true) stringResource(id = R.string.training_mode) else "",
+////                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+////                    color = MaterialTheme.colorScheme.primary,
+////                    fontWeight = FontWeight.Bold,
+////                    modifier = Modifier
+////                        .align(Alignment.Center) // Center the text in the box
+////                )
+//            }
 
             // LaunchedEffect that toggles visibility
             LaunchedEffect(isDemoMode) {
@@ -363,13 +375,42 @@ fun DashboardContentSurface(
                 ) {
                     rowConfigs.forEach { item ->
                         CardWithImageText(
-                            //text = item.text,
-                            imageResId = item.iconResId,
+                            text = item.text,
                             onClick = { onButtonClick(item.event, item.isPassword) },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(MaterialTheme.dimens.DP_4_CompactMedium)
                         )
+                    }
+
+                    // 👇 Replace Spacer with CircularMenu
+                    if (rowConfigs.size == 1) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(MaterialTheme.dimens.DP_4_CompactMedium),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularMenu(
+                                menuOptions = listOf(
+                                    context.resources.getString(R.string.cust_recp),
+                                    context.resources.getString(R.string.merchant_recp)
+                                ),
+                                onMenuOptionClick = { option ->
+                                    when (option) {
+                                        context.resources.getString(R.string.cust_recp) -> {
+                                            viewModel.reprintLast(context, true)
+                                            isDialogVisible = true
+                                        }
+                                        context.resources.getString(R.string.merchant_recp) -> {
+                                            viewModel.reprintLast(context)
+                                            isDialogVisible = true
+                                        }
+                                    }
+                                },
+                                onPrintClick = {}
+                            )
+                        }
                     }
                 }
             }
@@ -377,29 +418,29 @@ fun DashboardContentSurface(
 
             Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
             
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(/*horizontal = MaterialTheme.dimens.DP_24_CompactMedium,*/),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularMenu(
-                    menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
-                    onMenuOptionClick = { option ->
-                        when (option) {
-                            context.resources.getString((R.string.cust_recp)) -> {
-                                viewModel.reprintLast(context,true)
-                                isDialogVisible = true
-                            }
-                            context.resources.getString((R.string.merchant_recp)) -> {
-                                viewModel.reprintLast(context)
-                                isDialogVisible = true
-                            }
-                        }
-                    },
-                    onPrintClick = {}
-                )
-            }
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(end = 25.dp, bottom = 25.dp),
+//                contentAlignment = Alignment.CenterEnd
+//            ) {
+//                CircularMenu(
+//                    menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
+//                    onMenuOptionClick = { option ->
+//                        when (option) {
+//                            context.resources.getString((R.string.cust_recp)) -> {
+//                                viewModel.reprintLast(context,true)
+//                                isDialogVisible = true
+//                            }
+//                            context.resources.getString((R.string.merchant_recp)) -> {
+//                                viewModel.reprintLast(context)
+//                                isDialogVisible = true
+//                            }
+//                        }
+//                    },
+//                    onPrintClick = {}
+//                )
+//            }
             CustomDialogBuilder.ShowComposed()
         }
     }

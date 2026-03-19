@@ -280,6 +280,7 @@ fun getTransTypeString(): String {
     return when (sharedViewModel.objRootAppPaymentDetail.txnType) {
         TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_purchase_cashback)
         TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash_benefit)
+        TxnType.CASH_WITHDRAWAL -> stringResource(id = R.string.ebt_cash_withdrawal)
         TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_enquiry)
         TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_enquiry)
         TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
@@ -287,6 +288,26 @@ fun getTransTypeString(): String {
         TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)
         TxnType.FOOD_PURCHASE -> stringResource(id = R.string.ebt_food_purchase)
         TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.ebt_foodstamp_return)
+        TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
+        null -> stringResource(id = R.string.ebt_bal_enquiry)
+    }
+}
+
+
+@Composable
+fun getTransTypeAmountTitle(): String {
+    val sharedViewModel = localSharedViewModel.current
+    return when (sharedViewModel.objRootAppPaymentDetail.txnType) {
+        TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_cash_amount)
+        TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash_amount)
+        TxnType.CASH_WITHDRAWAL -> stringResource(id = R.string.ebt_cash_withdrawal_amount)
+        TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
+        TxnType.VOUCHER_RETURN -> stringResource(id = R.string.ebt_voucher_return)
+        TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)
+        TxnType.FOOD_PURCHASE -> stringResource(id = R.string.purchase_snap_amt)
+        TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.return_amt)
         TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
         null -> stringResource(id = R.string.ebt_bal_enquiry)
     }
@@ -312,8 +333,8 @@ fun CommonTopAppBar(
                 text = title ?: getTransTypeString(),
                 fontWeight = FontWeight.Bold,
                 style = TextStyle(
-                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-                    fontWeight = FontWeight.Bold
+                    fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
+                    fontWeight = FontWeight.Medium
                 )
             )
         },
@@ -638,8 +659,8 @@ fun getFormattedDateTime(): String {
 
 @Composable
 fun CardWithImageText(
-    //text: String,
-    imageResId: Int,
+    text: String,
+    //imageResId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -648,8 +669,8 @@ fun CardWithImageText(
     GenericCard(
         modifier = modifier
             .border(
-                width = MaterialTheme.dimens.DP_2_CompactMedium, // Adjust the border width as needed
-                color = if (isClicked.value) MaterialTheme.colorScheme.primary else Color.Transparent, // Orange color if selected, otherwise transparent
+                width = 0.6.dp, // Adjust the border width as needed
+                color = if (isClicked.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onTertiary, // Orange color if selected, otherwise transparent
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_20_CompactMedium)
             )
             .clickable(
@@ -665,7 +686,8 @@ fun CardWithImageText(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxWidth() // Fills the width available
+                .fillMaxWidth()   // 👈 important
+                .height(120.dp)
                 .padding(
                     start = MaterialTheme.dimens.DP_22_CompactMedium,
                     end = MaterialTheme.dimens.DP_22_CompactMedium,
@@ -673,15 +695,7 @@ fun CardWithImageText(
                     bottom = MaterialTheme.dimens.DP_23_CompactMedium
                 )
         ) {
-            ImageView(
-                imageId = imageResId,
-                modifier = Modifier
-                    .size(MaterialTheme.dimens.DP_100_CompactMedium) // Adjust the size as needed
-                    .align(Alignment.CenterHorizontally),
-                contentDescription = "" // Center the image
-            )
-            //Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium))
-            //TextView(text = text, fontSize = MaterialTheme.dimens.SP_8_CompactMedium)
+            TextView(text = text, fontSize = MaterialTheme.dimens.SP_13_CompactMedium,modifier = Modifier.fillMaxWidth(),textAlign = TextAlign.Center)
         }
     }
 
@@ -777,19 +791,20 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
                 shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
             )
             .background(
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium)
+                color = MaterialTheme.colorScheme.onTertiary,
+                shape = RoundedCornerShape(MaterialTheme.dimens.DP_17_CompactMedium)
             )
     ) {
         Card(
             elevation =  MaterialTheme.dimens.DP_5_CompactMedium,
             backgroundColor= MaterialTheme.colorScheme.onPrimary,
+            shape = RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
                     top = MaterialTheme.dimens.DP_25_CompactMedium,
-                    start = MaterialTheme.dimens.DP_25_CompactMedium,
-                    end = MaterialTheme.dimens.DP_25_CompactMedium,
+                    start = MaterialTheme.dimens.DP_11_CompactMedium,
+                    end = MaterialTheme.dimens.DP_11_CompactMedium,
                     bottom = MaterialTheme.dimens.DP_25_CompactMedium,
                 )
                 .align(Alignment.Center)

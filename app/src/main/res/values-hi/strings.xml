@@ -26,7 +26,7 @@
     <string name="cashback_amt">कैशबैक राशि दर्ज करें</string>
     <string name="return_amt">वापसी राशि दर्ज करें</string>
     <string name="food">भोजन</string>
-    <string name="snap">स्नैप</string>
+    <string name="bal_snap">स्नैप</string>
     <string name="cash">नकद</string>
 
     <!-- Activation Screen -->
@@ -238,6 +238,7 @@
 
     <!-- EBT DashBoard Screen -->
     <string name="ebt_purchase_cashback">खरीद और कैशबैक</string>
+    <string name="ebt_cash_withdraw">EBT Cash Withdrawal</string>
     <string name="ebt_bal_enquiry">बैलेंस पूछताछ</string>
     <string name="ebt_voucher_clear">वाउचर क्लियर</string>
     <string name="ebt_voucher_return">वाउचर रिटर्न</string>

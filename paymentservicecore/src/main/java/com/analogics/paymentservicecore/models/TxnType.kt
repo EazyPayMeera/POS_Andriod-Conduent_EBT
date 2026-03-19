@@ -3,6 +3,7 @@ package com.eazypaytech.paymentservicecore.models
 enum class TxnType {
     PURCHASE_CASHBACK,
     CASH_PURCHASE,
+    CASH_WITHDRAWAL,
     BALANCE_ENQUIRY_CASH,
     BALANCE_ENQUIRY_SNAP,
     VOUCHER_CLEAR,
@@ -18,6 +19,7 @@ enum class TxnType {
 fun TxnType.toEmvTransType(): String {  // Change as per Conduent
     return when (this) {
         TxnType.CASH_PURCHASE -> "00"          // EMV purchase
+        TxnType.CASH_WITHDRAWAL -> "00"
         TxnType.PURCHASE_CASHBACK -> "09"     // EMV purchase with cashback
         TxnType.FOOD_PURCHASE -> "00"         // EMV food stamp purchase
         TxnType.BALANCE_ENQUIRY_CASH -> "31"       // EMV balance inquiry

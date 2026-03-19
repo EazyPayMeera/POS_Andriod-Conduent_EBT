@@ -3,6 +3,7 @@ package com.eazypaytech.posafrica.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val OrangeThemeColor = Color(0xFFF7931E)
+val LightBoarder = Color(0xFFFFB74D)
 val BlueThemeColor = Color(0xFF2196F3)
 val White = Color(0xFFF0EEEE)
 val OnPrimary = Color(0xFFFFFFFF)

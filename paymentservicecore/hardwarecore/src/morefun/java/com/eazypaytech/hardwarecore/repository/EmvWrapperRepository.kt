@@ -428,8 +428,8 @@ class EmvWrapperRepository @Inject constructor(
     ) {
         //val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         Log.d("PIN_DEBUG", "PAN (masked): $pan")
-        val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
-
+        //val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
+        val panBlock ="6104340109641151".toByteArray()
         val bundle = Bundle().apply {
             putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
             if (getDeviceModel().contains("MF960") ||

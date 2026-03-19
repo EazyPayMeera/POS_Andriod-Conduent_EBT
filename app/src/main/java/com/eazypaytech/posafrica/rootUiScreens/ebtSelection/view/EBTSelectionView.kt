@@ -77,7 +77,7 @@ fun EBTSelectionView(navHostController: NavHostController) {
                             navHostController.navigate(AppNavigationItems.CardScreen.route)
                             setTransactionType(TxnType.BALANCE_ENQUIRY_SNAP)
                         },
-                        title = stringResource(id = R.string.snap),
+                        title = stringResource(id = R.string.bal_snap),
                     )
                 }
 
@@ -92,7 +92,7 @@ fun EBTSelectionView(navHostController: NavHostController) {
                             setTransactionType(TxnType.BALANCE_ENQUIRY_CASH)
                             navHostController.navigate(AppNavigationItems.CardScreen.route)
                         },
-                        title = stringResource(id = R.string.cash),
+                        title = stringResource(id = R.string.bal_cash),
                     )
                 }
 

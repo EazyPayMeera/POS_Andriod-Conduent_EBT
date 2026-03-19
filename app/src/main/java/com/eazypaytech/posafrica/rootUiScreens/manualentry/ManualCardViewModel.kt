@@ -87,7 +87,7 @@ class ManualCardViewModel @Inject constructor(
             ) { pinBlock ->
 
                 if (pinBlock != null) {
-                    val pinBlockHex = pinBlock.toHexString()
+                    val pinBlockHex = pinBlock.toHexString().lowercase()
                     sharedViewModel.objRootAppPaymentDetail.pinBlock = pinBlockHex
                     authenticateTransaction(sharedViewModel,navHostController)
 
