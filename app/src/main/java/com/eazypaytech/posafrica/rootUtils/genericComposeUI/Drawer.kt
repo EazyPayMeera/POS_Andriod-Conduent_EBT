@@ -109,17 +109,6 @@ fun CustomDrawerContent(
                 onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT, true) }
             ),
             DrawerItem(
-                imageRes = Icons.Default.Summarize,
-                text = stringResource(id = R.string.summary),
-                isChecked = false,
-                onCheckedChange = { if(isAdmin) onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_SUMMARY, true) else CustomDialogBuilder.composeAlertDialog(
-                    title = navHostController.context.resources.getString(
-                        R.string.restricted
-                    ),
-                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
-                ) }
-            ),
-            DrawerItem(
                 imageRes = Icons.Default.VpnKey,
                 text = stringResource(id = R.string.key_man),
                 isChecked = false,

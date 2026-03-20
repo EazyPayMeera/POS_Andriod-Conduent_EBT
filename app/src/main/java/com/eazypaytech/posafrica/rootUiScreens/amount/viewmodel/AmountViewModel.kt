@@ -93,37 +93,23 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         sharedViewModel: SharedViewModel
     ) {
 
-
-            Log.d("FETCH_TXN", "Starting fetchLastTransaction")
-
             val lastTxn = dbRepository.fetchLastTransactionByTxnType()
 
             Log.d("FETCH_TXN", "DB Result: $lastTxn")
 
             lastTxn?.let {
 
-                Log.d("FETCH_TXN", "TxnType: ${it.txnType}")
-                Log.d("FETCH_TXN", "IsVoided: ${it.isVoided}")
-                Log.d("FETCH_TXN", "TTL Amount: ${it.ttlAmount}")
-                Log.d("FETCH_TXN", "Txn Amount: ${it.txnAmount}")
-                Log.d("FETCH_TXN", "Cashback: ${it.cashback}")
-                Log.d("FETCH_TXN", "HostTxnRef: ${it.hostTxnRef}")
-
                 if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
-
-                    Log.d("FETCH_TXN", "Transaction already voided")
 
                     CustomDialogBuilder.composeAlertDialog(
                         title = context.getString(R.string.default_alert_title_error),
                         message = context.getString(R.string.err_txn_already_voided)
                     )
-
+                    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                 } else {
 
                     val transformedTxn =
                         PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
-
-                    Log.d("FETCH_TXN", "Transformed Object: $transformedTxn")
 
                     transformedTxn?.let {
 
@@ -144,33 +130,11 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         sharedViewModel.objRootAppPaymentDetail.originalTxnAmount =
                             it.txnAmount.toDecimalFormat()
                         sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
-
-                        Log.d(
-                            "FETCH_TXN",
-                            "OriginalTxnType: ${sharedViewModel.objRootAppPaymentDetail.originalTxnType}"
-                        )
-                        Log.d(
-                            "FETCH_TXN",
-                            "OriginalAmount: ${sharedViewModel.objRootAppPaymentDetail.originalTxnAmount}"
-                        )
-                        Log.d(
-                            "FETCH_TXN",
-                            "OriginalTotal: ${sharedViewModel.objRootAppPaymentDetail.originalTtlAmount}"
-                        )
-                        Log.d(
-                            "FETCH_TXN",
-                            "OriginalHostRef: ${sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef}"
-                        )
                     }
 
-                    Log.d("FETCH_TXN", "Navigating to Amount Screen")
-
-                    //navigateToAmountScreen(navHostController, sharedViewModel)
                 }
 
             } ?: run {
-
-                Log.d("FETCH_TXN", "No transaction found in DB")
 
                 CustomDialogBuilder.composeAlertDialog(
                     title = context.getString(R.string.default_alert_title_error),

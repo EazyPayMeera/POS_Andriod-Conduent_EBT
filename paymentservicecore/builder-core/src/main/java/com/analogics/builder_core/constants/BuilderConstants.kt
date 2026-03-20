@@ -305,7 +305,7 @@ object BuilderConstants {
     const val ISO_FIELD_SETTLEMENT_INST_ID = 99
 
     const val ISO_FIELD_ADDITIONAL_DATA = 111
-    const val ISO_FIELD_ADDITIONAL_DATA_LENGTH = 12
+    const val ISO_FIELD_ADDITIONAL_DATA_LENGTH = 7
 
     const val ISO_FIELD_KEY_DATA = 125
 

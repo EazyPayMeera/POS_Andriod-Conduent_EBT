@@ -11,5 +11,6 @@ enum class CardBrand {
     RUPAY,
     MIR,
     UPI,
-    UNKNOWN
+    UNKNOWN,
+    EBT
 }

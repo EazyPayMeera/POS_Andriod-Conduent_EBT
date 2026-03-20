@@ -549,7 +549,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 return when(it.substring(0,10))
                 {
                     "A000000003" -> CardBrand.VISA
-                    "A000000004" -> CardBrand.MASTERCARD
+                    "A000000004" -> CardBrand.EBT
                     "A000000524" -> CardBrand.RUPAY
                     "A000000025" -> CardBrand.AMEX
                     "A000000065" -> CardBrand.JCB
