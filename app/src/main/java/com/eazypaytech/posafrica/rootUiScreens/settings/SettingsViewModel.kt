@@ -14,6 +14,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     private var merchantName: String = ""
     private var merchantLocation: String = ""
     private var merchantBankName: String = ""
+    private var fnsNumber: String = ""
     private var merchantType: String = ""
 
 
@@ -40,21 +41,27 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         merchantType = value
     }
 
+    fun updateFNSNumber(value: String) {
+        fnsNumber = value
+    }
+
     fun onSaveMerchantConfig(
         navHostController: NavHostController,
         sharedViewModel: SharedViewModel,
         merchantNameLocation: String,
         merchantBankName: String,
-        merchantType: String
+        merchantType: String,
+        fnsNumber : String,
     ) {
         sharedViewModel.objRootAppPaymentDetail.merchantNameLocation = merchantNameLocation
         sharedViewModel.objRootAppPaymentDetail.merchantType = merchantType
         sharedViewModel.objRootAppPaymentDetail.merchantBankName = merchantBankName
+        sharedViewModel.objRootAppPaymentDetail.fnsNumber = fnsNumber
         sharedViewModel.objPosConfig?.apply {
             this.merchantNameLocation = merchantNameLocation
             this.merchantBankName = merchantBankName
             this.merchantType = merchantType
-
+            this.fnsNumber = fnsNumber
         }?.saveToPrefs()
         navHostController.popBackStack()
     }

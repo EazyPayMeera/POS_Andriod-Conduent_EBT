@@ -15,6 +15,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("merchantNameLocation") var merchantNameLocation: String? = null,
     @SerializedName("merchantBankName") var merchantBankName: String? = null,
     @SerializedName("merchantType") var merchantType: String? = null,
+    @SerializedName("fnsNumber") var fnsNumber: String? = null,
 
     /* Host Authorization */
 
@@ -22,6 +23,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,
+    @SerializedName("hostResMessage") var hostResMessage: String? = null,
 
     /* Batch Totals */
     @SerializedName("ttlPurchaseAmount") var ttlPurchaseAmount:String? = null,

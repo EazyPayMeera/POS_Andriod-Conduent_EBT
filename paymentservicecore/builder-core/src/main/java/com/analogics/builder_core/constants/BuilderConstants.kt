@@ -5,6 +5,9 @@ object BuilderConstants {
     const val SHARED_PREF_KEY_STAN = "stan"
 
     const val DEFAULT_ISO8583_CURRENCY_CODE = "840"
+    const val DEFAULT_ACCOUNT_TYPE = "96"
+    const val DEFAULT_AMOUNT_TYPE = "40"
+    const val DEFAULT_AMOUNT_SIGN = "C"
     const val DEFAULT_ISO8583_NII = "0110"
     const val DEFAULT_ISO8583_DATE_TIME_FORMAT = "MMDDhhmmss"
     const val DEFAULT_ISO8583_DATE_FORMAT = "MMdd"

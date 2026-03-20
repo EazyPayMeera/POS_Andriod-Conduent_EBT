@@ -172,6 +172,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         return iTxnDao.getLastTxnEntry()
     }
 
+    suspend fun fetchLastTransactionByTxnType(): TxnEntity? {
+        return iTxnDao.getLastTxnEntryByTxnType()
+    }
+
     suspend fun fetchTxnListByBatchId(batchId:String): List<TxnEntity>? {
         return iTxnDao.fetchTxnListByBatchId(batchId)
     }

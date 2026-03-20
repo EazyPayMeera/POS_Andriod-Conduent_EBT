@@ -31,6 +31,9 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable ORDER BY id DESC LIMIT 1")
     suspend fun getLastTxnEntry(): TxnEntity?
 
+    @Query("""SELECT * FROM TxnTable WHERE TxnType NOT IN ('BALANCE_ENQUIRY_CASH', 'BALANCE_ENQUIRY_SNAP') ORDER BY id DESC  LIMIT 1""")
+    suspend fun getLastTxnEntryByTxnType(): TxnEntity?
+
     @Query("SELECT * FROM TxnTable WHERE batchId = :batchId ORDER BY id DESC")
     suspend fun fetchTxnListByBatchId(batchId: String): List<TxnEntity>?
 

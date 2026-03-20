@@ -60,7 +60,7 @@
              iApiServiceResponseListener: IApiServiceResponseListener
          )
          {
-             Log.d("Request_date","apiServiceRequestOnlineAuth")
+
              /* Delay to show processing screen in demo mode */
              if(paymentServiceTxnDetails?.isDemoMode == true)
                  delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
@@ -75,6 +75,7 @@
             when(paymentServiceTxnDetails?.txnType.toString())
             {
                 TxnType.FOOD_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+                TxnType.CASH_WITHDRAWAL.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
                 TxnType.CASH_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
                 TxnType.FOODSTAMP_RETURN.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
                 TxnType.PURCHASE_CASHBACK.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)

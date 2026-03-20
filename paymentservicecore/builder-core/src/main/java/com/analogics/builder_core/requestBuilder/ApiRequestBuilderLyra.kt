@@ -12,7 +12,6 @@ import com.eazypaytech.builder_core.model.PosConditionCode
 import com.eazypaytech.builder_core.utils.BuilderUtils
 import com.eazypaytech.builder_core.utils.toCurrencyLong
 import com.eazypaytech.securityframework.model.TxnType
-import com.google.gson.Gson
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
@@ -88,6 +87,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             CardEntryMode.CONTACLESS_MAGSTRIPE.toString() -> "911"
             else -> "010"
         }
+    }
+
+    fun cashbackAmount(cashbackAmt: Long): String {
+        val accountType = BuilderConstants.DEFAULT_ACCOUNT_TYPE   // EBT account
+        val amountType = BuilderConstants.DEFAULT_AMOUNT_TYPE    // Cash Benefit
+        val currency = BuilderConstants.DEFAULT_ISO8583_CURRENCY_CODE
+        val sign = BuilderConstants.DEFAULT_AMOUNT_SIGN           // Credit
+        val amt = (cashbackAmt * 100).toLong()
+            .toString()
+            .padStart(12, '0')
+        return accountType + amountType + currency + sign + amt
     }
 
     fun getTermNameAndLocation(): String? {
@@ -200,16 +210,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getProcessingCode(txnType: String?): String {
         return when (txnType) {
 
-            TxnType.CASH_PURCHASE.toString() -> "0000"
-            TxnType.FOOD_PURCHASE.toString() -> "9800"
-            TxnType.PURCHASE_CASHBACK.toString() -> "9600"
-            TxnType.FOODSTAMP_RETURN.toString() -> "0098"
-            TxnType.BALANCE_ENQUIRY_CASH.toString() -> "0000"
-            TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "9800"
+            TxnType.CASH_PURCHASE.toString() -> "000000"
+            TxnType.FOOD_PURCHASE.toString() -> "009800"
+            TxnType.PURCHASE_CASHBACK.toString() -> "099600"
+            TxnType.FOODSTAMP_RETURN.toString() -> "200098"
+            TxnType.BALANCE_ENQUIRY_CASH.toString() -> "310000"
+            TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "310000"
             TxnType.VOUCHER_CLEAR.toString() -> "0000"
             TxnType.VOUCHER_RETURN.toString() -> "0000"
             TxnType.VOID_LAST.toString() -> "0000"
             TxnType.E_VOUCHER.toString() -> "0000"
+            TxnType.CASH_WITHDRAWAL.toString() -> "010000"
 
             else -> "0000"   // 🔥 Required for String?
         }
@@ -517,6 +528,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val posEntryMode = getIsoPosEntryMode()
         val encryptedTrack2Data = getEncryptedTrack2Data()
+        val cashbackAmt = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         val stan = getSTAN()
         val iso = IsoMessage()
         val pinBlock = getPinBlock()
@@ -532,6 +544,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("ISO_DEBUG", """
             amount: $amount
             posEntryMode: $posEntryMode
+            cashbackAmount : $cashbackAmt
             encryptedTrack2Data: $encryptedTrack2Data
             stan: $stan
             pinBlock: $pinBlock
@@ -581,8 +594,12 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
         iso.setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.ALPHA, BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
+        if(this.builderServiceTxnDetails.txnType ==  TxnType.PURCHASE_CASHBACK.toString())
+        {
+            iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, cashbackAmt, IsoType.LLLVAR, cashbackAmt.length)
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, "EB0070008596", IsoType.LLLVAR, 7)// DE058
+        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, 7)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
         iso.setBinaryHeader(false)
         iso.setBinaryFields(false)
@@ -748,7 +765,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 additionalAmt  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADD_AMOUNT)
                 posCondition   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE)
                 privateData    = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA)
-                acquirerTrace  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
+                hostResMessage  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
             }
 
         } catch (e: Exception) {

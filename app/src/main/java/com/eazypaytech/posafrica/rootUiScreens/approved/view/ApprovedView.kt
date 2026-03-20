@@ -166,9 +166,6 @@ fun ApprovedView(navHostController: NavHostController) {
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(context,sharedViewModel)
-        Log.d("APPROVED_VIEW_DEBUG", "After ViewModel onLoad -> txnRecord: ${sharedViewModel.objRootAppPaymentDetail}")
-        Log.d("APPROVED_VIEW_DEBUG", "txnStatus after ViewModel load: ${sharedViewModel.objRootAppPaymentDetail.txnStatus}")
-        Log.d("APPROVED_VIEW_DEBUG", "hostRespCode after ViewModel load: ${sharedViewModel.objRootAppPaymentDetail.hostRespCode}")
     }
 }
 

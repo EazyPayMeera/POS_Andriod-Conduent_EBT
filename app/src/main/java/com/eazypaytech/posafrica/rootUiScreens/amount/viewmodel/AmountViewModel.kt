@@ -96,7 +96,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
             Log.d("FETCH_TXN", "Starting fetchLastTransaction")
 
-            val lastTxn = dbRepository.fetchLastTransaction()
+            val lastTxn = dbRepository.fetchLastTransactionByTxnType()
 
             Log.d("FETCH_TXN", "DB Result: $lastTxn")
 

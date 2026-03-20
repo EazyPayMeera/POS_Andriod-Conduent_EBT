@@ -51,6 +51,10 @@ fun SettingsView(navHostController: NavHostController) {
         mutableStateOf(sharedViewModel.objPosConfig?.merchantType ?: "")
     }
 
+    val fnsNumber = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.fnsNumber ?: "")
+    }
+
     val configChanged = remember { mutableStateOf(false) }
 
     Column {
@@ -130,6 +134,19 @@ fun SettingsView(navHostController: NavHostController) {
 
                     item {
 
+                        ConfigRow(
+                            label = "FNS Number",
+                            value = fnsNumber.value,
+                            onValueChange = {
+                                fnsNumber.value = it
+                                configChanged.value = true
+                                viewModel.updateFNSNumber(it)
+                            }
+                        )
+                    }
+
+                    item {
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -145,7 +162,8 @@ fun SettingsView(navHostController: NavHostController) {
                                         sharedViewModel,
                                         merchantNameLocation.value,
                                         merchantBankName.value,
-                                        merchantType.value
+                                        merchantType.value,
+                                        fnsNumber.value
                                     )
 
                                     configChanged.value = false

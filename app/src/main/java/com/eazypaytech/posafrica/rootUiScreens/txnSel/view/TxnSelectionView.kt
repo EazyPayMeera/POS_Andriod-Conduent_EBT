@@ -89,7 +89,7 @@ fun TxnSelectionView(navHostController: NavHostController) {
                     ) {
                         OkButton(
                             onClick = {
-                                navHostController.navigate(AppNavigationItems.SuperVisorLoginScreen.route)
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
                             },
                             title = stringResource(id = R.string.sel_return),
                         )

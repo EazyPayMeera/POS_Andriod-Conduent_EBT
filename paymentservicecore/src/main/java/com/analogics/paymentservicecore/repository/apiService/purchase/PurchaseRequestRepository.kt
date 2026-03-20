@@ -3,6 +3,7 @@ package com.eazypaytech.paymentservicecore.repository.apiService.purchase
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
@@ -37,6 +38,7 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.hostRespCode = it.hostRespCode
                 paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
                 paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
+                paymentServiceTxnDetails.hostResMessage = it.hostResMessage
                 var tlv = TlvUtils(it.emvData)
                 /* Extract tag 8A from ISO field if required */
                 if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
@@ -54,6 +56,17 @@ class PurchaseRequestRepository @Inject constructor(
                     paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
                 }
             }
+
+                        Log.d("ISO_FINAL", """
+                    ---- FINAL OBJECT ----
+                    STAN: ${paymentServiceTxnDetails.stan}
+                    RespCode: ${paymentServiceTxnDetails.hostRespCode}
+                    AuthCode: ${paymentServiceTxnDetails.hostAuthCode}
+                    TxnRef: ${paymentServiceTxnDetails.hostTxnRef}
+                    TxnStatus: ${paymentServiceTxnDetails.txnStatus}
+                    AuthResult: ${paymentServiceTxnDetails.hostAuthResult}
+                    EMV TLV: ${paymentServiceTxnDetails.emvData}
+                """.trimIndent())
 
         return paymentServiceTxnDetails
     }

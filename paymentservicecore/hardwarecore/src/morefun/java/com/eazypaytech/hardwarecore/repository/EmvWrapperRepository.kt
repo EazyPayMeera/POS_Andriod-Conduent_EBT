@@ -439,7 +439,7 @@ class EmvWrapperRepository @Inject constructor(
             }
             putString(
                 PinPadConstrants.TITLE_HEAD_CONTENT,
-                "Please input the online pin \nAmount: $amount"
+                "Please input the online pin"
             )
         }
         loginDevice()

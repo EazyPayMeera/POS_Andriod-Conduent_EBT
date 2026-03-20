@@ -57,6 +57,7 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+        sharedViewModel.objRootAppPaymentDetail.cashback = transformToAmountDouble(cashBackAmount)
         if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE_CASHBACK) {
             sharedViewModel.objPosConfig?.apply { isCashback = false }
         }
