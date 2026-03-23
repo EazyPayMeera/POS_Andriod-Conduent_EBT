@@ -430,16 +430,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
 
     fun createSignOnRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        val stan = getSTAN().toString().padStart(6, '0')
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
-        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
-        val stan = getSTAN().toString().padStart(6, '0')
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID,builderServiceTxnDetails?.procId , IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_ON_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
-        val de096 = "04000007"
-        iso.setValue(96, de096, IsoType.ALPHA, 8) // LLLVAR length auto-handled
+        msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -448,16 +448,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun createSignOffRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        val stan = getSTAN().toString().padStart(6, '0')
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
-        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
-        val stan = getSTAN().toString().padStart(6, '0')
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_OFF_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
-        val de096 = "04000007"
-        iso.setValue(96, de096, IsoType.ALPHA, 8) // LLLVAR length auto-handled
+        msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -466,16 +466,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun createHandShakeRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val stan = getSTAN().toString().padStart(6, '0')
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
+        val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
-        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
-        val stan = getSTAN().toString().padStart(6, '0')
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.HANDSHAKE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
-        val de096 = "04000007"
-        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.ALPHA, de096.length) // LLLVAR length auto-handled
+        msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -485,18 +485,18 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @OptIn(ExperimentalStdlibApi::class)
     fun createKeyRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
+        val stan = getSTAN().toString().padStart(6, '0')
+        val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
+        val workKey = builderServiceTxnDetails?.workKey ?: ""
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
-        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
-        val stan = getSTAN().toString().padStart(6, '0')
-        iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
-        iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
-        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE, IsoType.NUMERIC, 3) // Fixed-length numeric
-        val de096 = "04000007"
-        iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, de096, IsoType.ALPHA, de096.length) // LLLVAR length auto-handled
-        val workingKeyAscii = "03625118864C4A99CBF0E2D95B635046621D7DF"
-        iso.setValue(125, workingKeyAscii, IsoType.LLLVAR, workingKeyAscii.length) // 39 characters
+        iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH) // Fixed-length numeric 6 digits
+        iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE_LENGTH) // Fixed-length numeric
+        msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
+        iso.setValue(BuilderConstants.ISO_FIELD_KEY_DATA, workKey, IsoType.LLLVAR,workKey.length)
         iso.setBinaryHeader(false)        // Use ASCII header
         iso.setBinaryFields(false)        // Use ASCII fields
         iso.setForceStringEncoding(true)  // Ensure ASCII encoding
@@ -505,11 +505,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun createKeyChangeRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        val stan = getSTAN().toString().padStart(6, '0')
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
-        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
-        val stan = getSTAN().toString().padStart(6, '0')
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
@@ -721,13 +721,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 if (isoMsg.hasField(125)) workKey     = isoMsg.getObjectValue<String>(125) // 36-char key
             }
 
-//            // 🔹 Print all present fields for debugging
-//            for (i in 1..128) {
-//                if (isoMsg.hasField(i)) {
-//                    val value = isoMsg.getObjectValue<Any>(i)
-//                    Log.d("ISO_ALL_FIELDS", "Field $i = $value")
-//                }
-//            }
 
         } catch (e: Exception) {
             Log.e("ISO", "Failed to parse Echo response", e)

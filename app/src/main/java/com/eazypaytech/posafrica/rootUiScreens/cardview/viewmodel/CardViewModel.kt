@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
@@ -27,6 +28,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.rootUtils.miscellaneous.NetworkUtils
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -113,9 +115,12 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     @RequiresApi(Build.VERSION_CODES.O)
                     @SuppressLint("DefaultLocale")
                     override fun onEmvServiceResponse(response: Any) {
+                        Log.d("EMV_RESPONSE", Gson().toJson(response))
                         when (response) {
                             is EmvServiceResult.TransResult -> {
+                                Log.d("TRANS_RESULT", Gson().toJson(response))
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
+                                    sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
                                     }

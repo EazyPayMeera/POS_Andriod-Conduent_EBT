@@ -1,5 +1,7 @@
 package com.eazypaytech.posafrica.rootUiScreens.confirmshift.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.ui.theme.dimens
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ConfirmShiftView(navHostController: NavHostController) {
     val viewModel: ConfirmShiftViewModel = hiltViewModel()

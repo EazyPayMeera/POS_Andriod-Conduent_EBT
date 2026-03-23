@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.logger.AppLogger
@@ -191,26 +192,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     fun loadDefaultValues(sharedViewModel: SharedViewModel?)
     {
-        /* Default Flags */
-        sharedViewModel?.objPosConfig?.isDemoMode = AppConstants.DEFAULT_DEMO_MODE
-        sharedViewModel?.objPosConfig?.isTipEnabled = AppConstants.DEFAULT_TIP_MODE
-        sharedViewModel?.objPosConfig?.isServiceChargeEnabled = AppConstants.DEFAULT_SERVICE_CHARGE_MODE
-        sharedViewModel?.objPosConfig?.isTaxEnabled = AppConstants.DEFAULT_TAX_MODE
-        sharedViewModel?.objPosConfig?.isPromptInvoiceNo = AppConstants.DEFAULT_INVOICE_MODE
-
-        /* Default TIP Percent values */
-        sharedViewModel?.objPosConfig?.tipPercent1 = AppConstants.DEFAULT_TIP_PERCENT_1.toDouble()
-        sharedViewModel?.objPosConfig?.tipPercent2 = AppConstants.DEFAULT_TIP_PERCENT_2.toDouble()
-        sharedViewModel?.objPosConfig?.tipPercent3 = AppConstants.DEFAULT_TIP_PERCENT_3.toDouble()
-
-        /* Default TAX Percent values */
-        sharedViewModel?.objPosConfig?.serviceChargePercent1 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_1
-        sharedViewModel?.objPosConfig?.serviceChargePercent2 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_2
-        sharedViewModel?.objPosConfig?.serviceChargePercent3 = AppConstants.DEFAULT_SERVICE_CHARGE_PERCENT_3
-
-        sharedViewModel?.objPosConfig?.vatPercent = AppConstants.DEFAULT_TAX_PERCENT_VAT
-
-        sharedViewModel?.objPosConfig?.batchId = AppConstants.BATCH_ID_START_VAL.toString()
 
         /* Default Headers & Footers */
         sharedViewModel?.objPosConfig?.header1 = AppConstants.DEFAULT_HEADER_1
@@ -231,61 +212,81 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-        Log.d("ActivationCheck", "txnStatus = ${paymentServiceTxnDetails.txnStatus}, hostRespCode = ${paymentServiceTxnDetails.hostRespCode}")
 
         viewModelScope.launch(Dispatchers.Main) {
 
             if (paymentServiceTxnDetails.txnStatus != TxnStatus.APPROVED.toString() ||
                 paymentServiceTxnDetails.hostRespCode != "00"
             ) {
-                setActivationButtonState(true) // UI update
+                setActivationButtonState(true)
                 return@launch
             }
 
             when (currentStep) {
+
                 ActivationState.SIGN_ON -> {
-                    currentStep = ActivationState.KEY_CHANGE
-                    // launch key exchange here if needed
+                    sharedViewModel?.objRootAppPaymentDetail?.workKey = paymentServiceTxnDetails.workKey
+                    currentStep = ActivationState.HAND_SHAKE
+
+//                    if (paymentServiceTxnDetails.workKey.isNullOrEmpty()) {
+//                        currentStep = ActivationState.KEY_EXCHANGE
+//                    } else {
+//                        currentStep = ActivationState.KEY_CHANGE
+//                    }
                 }
 
                 ActivationState.KEY_EXCHANGE -> {
-                    currentStep = ActivationState.HAND_SHAKE
-                    sharedViewModel?.objPosConfig?.apply {
-                        isActivationDone = true
-                    }?.saveToPrefs()
-
-                    txnDBRepository.getUserCount().let {
-                        if (it > 0)
-                            navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-                        else
-                            navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-                    }
+                    currentStep = ActivationState.KEY_CHANGE
+                    apiServiceRepository.keyChange(
+                        PaymentServiceUtils.transformObject(
+                            sharedViewModel?.objRootAppPaymentDetail
+                        ),
+                        this@ActivationViewModel
+                    )
                 }
 
                 ActivationState.KEY_CHANGE -> {
-                    sharedViewModel?.objPosConfig?.apply {
-                        isActivationDone = true
-                    }?.saveToPrefs()
+                    currentStep = ActivationState.HAND_SHAKE
+                    apiServiceRepository.keyChange(
+                        PaymentServiceUtils.transformObject(
+                            sharedViewModel?.objRootAppPaymentDetail
+                        ),
+                        this@ActivationViewModel
+                    )
 
-                    txnDBRepository.getUserCount().let {
-                        if (it > 0)
-                            navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
-                        else
-                            navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
-                    }
                 }
 
                 ActivationState.HAND_SHAKE -> {
                     startKeepAlive()
+                    sharedViewModel?.objPosConfig?.apply {
+                        isActivationDone = true
+                    }?.saveToPrefs()
+
+                    val userCount = txnDBRepository.getUserCount()
+                    if (userCount > 0) {
+                        navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
+                    } else {
+                        navHostController.navigateAndClean(AppNavigationItems.AddClerkScreen.route)
+                    }
                 }
             }
+
         }
     }
 
 
     override fun onApiServiceError(apiServiceError: ApiServiceError) {
+
+        Log.e("API_ERROR", "❌ onApiServiceError called")
+        Log.e("API_ERROR", "Error Message: ${apiServiceError.errorMessage}")
+        Log.e("API_ERROR", "Full Object: $apiServiceError")
+
         setActivationButtonState(true)
-        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceError.errorMessage)
+
+        CustomDialogBuilder.composeAlertDialog(
+            title = navHostController.context.resources?.getString(R.string.default_alert_title_error),
+            message = apiServiceError.errorMessage
+        )
     }
 
     override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {

@@ -38,7 +38,6 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.hostRespCode = it.hostRespCode
                 paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
                 paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
-                paymentServiceTxnDetails.hostResMessage = it.hostResMessage
                 var tlv = TlvUtils(it.emvData)
                 /* Extract tag 8A from ISO field if required */
                 if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
@@ -47,26 +46,36 @@ class PurchaseRequestRepository @Inject constructor(
                     }
                 }
                 paymentServiceTxnDetails.emvData = tlv.toTlvString()
-                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_FORMAT_ERROR) {
+                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
                     paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                     paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
+                    paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
+                        it.hostRespCode!!
+                    )
                 }
                 else {
                     paymentServiceTxnDetails.hostAuthResult = TxnStatus.DECLINED.toString()
                     paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
+                    paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
+                        it.hostRespCode!!
+                    )
+
                 }
             }
 
-                        Log.d("ISO_FINAL", """
-                    ---- FINAL OBJECT ----
-                    STAN: ${paymentServiceTxnDetails.stan}
-                    RespCode: ${paymentServiceTxnDetails.hostRespCode}
-                    AuthCode: ${paymentServiceTxnDetails.hostAuthCode}
-                    TxnRef: ${paymentServiceTxnDetails.hostTxnRef}
-                    TxnStatus: ${paymentServiceTxnDetails.txnStatus}
-                    AuthResult: ${paymentServiceTxnDetails.hostAuthResult}
-                    EMV TLV: ${paymentServiceTxnDetails.emvData}
-                """.trimIndent())
+                    Log.d(
+                        "ISO_FINAL",
+                        """
+                STAN: ${paymentServiceTxnDetails.stan}
+                RespCode: ${paymentServiceTxnDetails.hostRespCode}
+                AuthCode: ${paymentServiceTxnDetails.hostAuthCode}
+                TxnRef: ${paymentServiceTxnDetails.hostTxnRef}
+                Message: ${paymentServiceTxnDetails.hostResMessage}
+                EMV: ${paymentServiceTxnDetails.emvData}
+                TxnStatus: ${paymentServiceTxnDetails.txnStatus}
+                AuthResult: ${paymentServiceTxnDetails.hostAuthResult}
+                """.trimIndent()
+                    )
 
         return paymentServiceTxnDetails
     }
@@ -109,6 +118,8 @@ class PurchaseRequestRepository @Inject constructor(
             apiRequestBuilderLyra.createFinancial0200Request(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
+
+
 
 
 }

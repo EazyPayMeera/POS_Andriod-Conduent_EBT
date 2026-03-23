@@ -195,13 +195,24 @@
 
          }
 
+         override suspend fun signOnOff(
+             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+             iApiServiceResponseListener: IApiServiceResponseListener
+         ) {
+             this.iApiServiceResponseListener = iApiServiceResponseListener
+             this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
+             rklRequestRepository.signOff(paymentServiceTxnDetails){
+                 onApiServiceResponse(it)
+             }
+
+         }
+
          override suspend fun handShakeRequest(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
              iApiServiceResponseListener: IApiServiceResponseListener
          ) {
 
              this.iApiServiceResponseListener = iApiServiceResponseListener
-             this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
              rklRequestRepository.handShakeRequest(paymentServiceTxnDetails){
                  onApiServiceResponse(it)
              }

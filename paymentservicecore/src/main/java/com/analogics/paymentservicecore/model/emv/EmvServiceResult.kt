@@ -5,6 +5,7 @@ import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 sealed class EmvServiceResult(
     var status: Any? = null,
     var displayMsgId : DisplayMsgId? = null,
+    var hostRespCode: String?,
     var emvTags : HashMap<String,String>? = null,
     var paymentServiceTxnDetails: PaymentServiceTxnDetails? = null
 )
@@ -108,7 +109,7 @@ sealed class EmvServiceResult(
         ERROR
     }
 
-    class InitResult(status: InitStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId)
-    class CardCheckResult(status: CardCheckStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId)
-    class TransResult(status: TransStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId)
+    class InitResult(status: InitStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId, hostRespCode = null)
+    class CardCheckResult(status: CardCheckStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId,hostRespCode = null)
+    class TransResult(status: TransStatus? = null, displayMsgId: DisplayMsgId? = null,hostRespCode: String?) : EmvServiceResult(status, displayMsgId,hostRespCode)
 }

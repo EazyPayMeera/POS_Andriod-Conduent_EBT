@@ -4,6 +4,11 @@ package com.eazypaytech.posafrica.rootUiScreens.approved.view
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,14 +22,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
@@ -51,15 +59,15 @@ fun ApprovedView(navHostController: NavHostController) {
     val sharedViewModel = localSharedViewModel.current
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
+    val infiniteTransition = rememberInfiniteTransition()
 
-
+    Log.d("TxnRecord", txnRecord.toString())
     Column {
         CommonTopAppBar(
             onBackButtonClick = { },
             showBackIcon = false
         )
 
-        // Outer Surface with background color, padding, and rounded corners
         BackgroundScreen(
         ) {
             Column(
@@ -103,8 +111,28 @@ fun ApprovedView(navHostController: NavHostController) {
                         .align(Alignment.CenterHorizontally),
                     contentDescription = ""
                 )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_7_CompactMedium))
+                if(txnRecord.txnStatus != TxnStatus.APPROVED) {
+                    val alpha by infiniteTransition.animateFloat(
+                        initialValue = 1f,
+                        targetValue = 0f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(700),
+                            repeatMode = RepeatMode.Reverse
+                        ), label = ""
+                    )
 
+                    Text(
+                        text = txnRecord.hostResMessage.toString(),
+                        fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .height(MaterialTheme.dimens.DP_33_CompactMedium)
+                            .alpha(alpha) // 👈 blinking effect
+                    )
+                }
                 if(hasDbRecord==true) {
                     Box(
                         modifier = Modifier

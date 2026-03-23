@@ -30,6 +30,7 @@ import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.model.error.EmvServiceException
 import com.eazypaytech.paymentservicecore.models.toEmvTransType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
+import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.paymentservicecore.utils.maskPAN
 import com.eazypaytech.paymentservicecore.utils.maskPANReceiptStyle
 import com.eazypaytech.paymentservicecore.utils.toDecimalFormat
@@ -54,8 +55,8 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     IEmvSdkResponseListener {
     private val emvSdkRequestRepository = EmvSdkRequestRepository(context,this)
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
-    //lateinit var context: Context
     lateinit var paymentServiceTxnDetails : PaymentServiceTxnDetails
+
 
     fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) : InitStatus {
         return when (value) {
@@ -219,6 +220,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 )
             }
             is EmvSdkResult.CardCheckResult -> {
+                Log.d("EMV_CARD_CHECK", Gson().toJson(response))
                 var status = sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)
                 CardCheckResult(
                     status = status,
@@ -226,8 +228,10 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 )
             }
             is EmvSdkResult.TransResult -> {
+                Log.d("EMV_CARD_CHECK", Gson().toJson(response))
                 var status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
                 var displayMsgId : DisplayMsgId? = null
+                var hostMessage: String? = null
                     response.displayMsgId?.let {
                         displayMsgId = sdkToEmvDisplayMsgId(it)
                         status = adjustTransStatusFromDisplayMsgId(status,displayMsgId) /* For NFC needs adjustment */
@@ -237,7 +241,8 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
 
                 TransResult(
                     status = status,
-                    displayMsgId = displayMsgId
+                    displayMsgId = displayMsgId,
+                    hostRespCode = paymentServiceTxnDetails.hostRespCode
                 )
             }
             is EmvSdkException ->{
@@ -250,8 +255,12 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     }
 
     override fun onEmvSdkResponse(response: Any) {
+        Log.d("EMV_SDK", "Type: ${response::class.java.name}")
+        Log.d("EMV_SDK", "JSON: ${Gson().toJson(response)}")
         iEmvServiceResponseListener.onEmvServiceResponse(sdkToEmvService(response))
         if (response is EmvSdkResult.CardCheckResult) {
+            Log.d("EMV_CARD_CHECK", "Status: ${response.status}")
+
             paymentServiceTxnDetails.cardEntryMode = when(sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)){
                 CardCheckStatus.CARD_INSERTED -> CardEntryMode.CONTACT.toString()
                 CardCheckStatus.CARD_TAPPED -> CardEntryMode.CONTACLESS.toString()
@@ -417,6 +426,16 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 override fun onApiServiceSuccess(apiPaymentServiceTxnDetails: PaymentServiceTxnDetails) {
                     Log.d("EMV","Response Received")
                     paymentServiceTxnDetails = apiPaymentServiceTxnDetails.copy(emvData = paymentServiceTxnDetails.emvData)
+                    Log.d("EMV_AFTER_COPY", Gson().toJson(paymentServiceTxnDetails))
+
+                    // Print important fields individually
+                    Log.d("EMV_FIELDS", "STAN: ${paymentServiceTxnDetails.stan}")
+                    Log.d("EMV_FIELDS", "RespCode: ${paymentServiceTxnDetails.hostRespCode}")
+                    Log.d("EMV_FIELDS", "AuthCode: ${paymentServiceTxnDetails.hostAuthCode}")
+                    Log.d("EMV_FIELDS", "TxnRef: ${paymentServiceTxnDetails.hostTxnRef}")
+                    Log.d("EMV_FIELDS", "Message: ${paymentServiceTxnDetails.hostResMessage}")
+                    Log.d("EMV_FIELDS", "EMV Data: ${paymentServiceTxnDetails.emvData}")
+                    Log.d("EMV_FIELDS", "Txn Status: ${paymentServiceTxnDetails.txnStatus}")
                     responseEmvTags =
                         TlvUtils(apiPaymentServiceTxnDetails.emvData).tlvMap
                     onResponse(responseEmvTags)

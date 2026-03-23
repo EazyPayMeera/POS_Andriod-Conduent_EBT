@@ -183,4 +183,30 @@ class RklRequestRepository@Inject constructor(
             apiRequestBuilder.createHandShakeRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
+
+    suspend fun signOff(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+        builderServiceRepository.networkServiceRequest(
+            object : IBuilderServiceResponseListenerLyra{
+                override fun onBuilderSuccess(response: ByteArray) {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
+                        paymentServiceTxnDetails?.let {
+                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
+                            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
+                                it.txnStatus = TxnStatus.APPROVED.toString()
+                            else
+                                it.txnStatus = TxnStatus.DECLINED.toString()
+
+                            onAPIServiceResponse(it)
+                        }
+                    }
+                }
+
+                override fun onBuilderFailure(error: Any) {
+                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                }
+            },
+            apiRequestBuilder.createSignOffRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+        )
+    }
 }
