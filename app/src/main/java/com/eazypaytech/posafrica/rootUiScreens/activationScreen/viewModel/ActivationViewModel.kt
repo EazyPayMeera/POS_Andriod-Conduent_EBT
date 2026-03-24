@@ -257,6 +257,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 }
 
                 ActivationState.HAND_SHAKE -> {
+                    loadDefaultValues(sharedViewModel)
                     startKeepAlive()
                     sharedViewModel?.objPosConfig?.apply {
                         isActivationDone = true
@@ -276,13 +277,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
 
     override fun onApiServiceError(apiServiceError: ApiServiceError) {
-
-        Log.e("API_ERROR", "❌ onApiServiceError called")
-        Log.e("API_ERROR", "Error Message: ${apiServiceError.errorMessage}")
-        Log.e("API_ERROR", "Full Object: $apiServiceError")
-
         setActivationButtonState(true)
-
         CustomDialogBuilder.composeAlertDialog(
             title = navHostController.context.resources?.getString(R.string.default_alert_title_error),
             message = apiServiceError.errorMessage
@@ -304,7 +299,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     fun onLoad(sharedViewModel : SharedViewModel)
     {
-
         sharedViewModel.objPosConfig?.procId?.let { procIdInput.value = it }
         sharedViewModel.objPosConfig?.merchantId?.let { midInput.value = it }
     }

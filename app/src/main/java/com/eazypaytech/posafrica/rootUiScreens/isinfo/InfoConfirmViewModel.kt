@@ -68,7 +68,6 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
         sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
         sharedViewModel.objRootAppPaymentDetail.ttlAmount = transformToAmountDouble(Amount)
         navHostController.navigate(AppNavigationItems.PleaseWaitScreen.route)
-        //updateTransResult(sharedViewModel.objRootAppPaymentDetail)
         authenticateTransaction(sharedViewModel,navHostController)
     }
 
@@ -86,13 +85,6 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
-    {
-        viewModelScope.launch {
-            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
@@ -116,8 +108,6 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
                     }
                 })
             } catch (e: Exception) {
-                // Handle any exceptions that may occur
-                Log.e("ApiCallException", e.message ?: "Unknown error")
                 navHostController.navigate(AppNavigationItems.DeclineScreen.route)
             }
         }

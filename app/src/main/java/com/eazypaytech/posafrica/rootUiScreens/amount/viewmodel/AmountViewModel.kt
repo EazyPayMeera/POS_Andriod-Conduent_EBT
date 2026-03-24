@@ -46,14 +46,12 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
     var isReadOnly by mutableStateOf(true)
         private set
-
     private val _totalAmount = MutableStateFlow<String?>(null)
     val totalAmount: StateFlow<String?> = _totalAmount
     private val _origTotalAmount = MutableStateFlow<String?>(null)
     val origTotalAmount: StateFlow<String?> = _origTotalAmount
 
     private val _timeDate = MutableStateFlow<String?>(null)
-    val timeDate: StateFlow<String?> = _timeDate
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
 
@@ -63,10 +61,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         transAmount.ifEmpty {
             when (sharedViewModel.objRootAppPaymentDetail.txnType) {
                 TxnType.VOID_LAST -> {
-                    Log.d(
-                        "FETCH_TXN",
-                        "OriginalAmount123: ${sharedViewModel.objRootAppPaymentDetail.originalTxnAmount}"
-                    )
                     transAmount =
                         formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTxnAmount?.toDoubleOrNull() ?: 0.00)
                     _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
@@ -87,62 +81,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         return transformToAmountDouble(newValue).toString()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun fetchLastTransaction(
-        navHostController: NavHostController,
-        context: Context,
-        sharedViewModel: SharedViewModel
-    ) {
-
-            val lastTxn = dbRepository.fetchLastTransactionByTxnType()
-
-            Log.d("FETCH_TXN", "DB Result: $lastTxn")
-
-            lastTxn?.let {
-
-                if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
-
-                    CustomDialogBuilder.composeAlertDialog(
-                        title = context.getString(R.string.default_alert_title_error),
-                        message = context.getString(R.string.err_txn_already_voided)
-                    )
-                    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                } else {
-
-                    val transformedTxn =
-                        PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
-
-                    transformedTxn?.let {
-
-                        sharedViewModel.objRootAppPaymentDetail = it.copy(
-                            id = sharedViewModel.objRootAppPaymentDetail.id,
-                            txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
-                            txnStatus = sharedViewModel.objRootAppPaymentDetail.txnStatus,
-                            hostAuthResult = sharedViewModel.objRootAppPaymentDetail.hostAuthResult
-                        )
-
-                        Log.d("FETCH_TXN", "Copied Object: ${sharedViewModel.objRootAppPaymentDetail}")
-
-                        sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
-                        sharedViewModel.objRootAppPaymentDetail.originalCashback =
-                            it.cashback.toDecimalFormat()
-                        sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =
-                            it.ttlAmount.toDecimalFormat()
-                        sharedViewModel.objRootAppPaymentDetail.originalTxnAmount =
-                            it.txnAmount.toDecimalFormat()
-                        sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
-                    }
-
-                }
-
-            } ?: run {
-
-                CustomDialogBuilder.composeAlertDialog(
-                    title = context.getString(R.string.default_alert_title_error),
-                    message = context.getString(R.string.err_txn_not_found)
-                )
-            }
-    }
 
     fun navigateToAmountScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
@@ -245,11 +183,12 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
         viewModelScope.launch {
             try {
-                Log.d("AuthTransaction","Going For Authenticate the transaction")
+                CustomDialogBuilder.composeProgressDialog(true)
                 apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                        CustomDialogBuilder.composeProgressDialog(false)
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
@@ -270,4 +209,5 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
             }
         }
     }
+
 }
