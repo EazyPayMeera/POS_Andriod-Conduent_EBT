@@ -44,6 +44,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.ImageView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.OkButton
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getBalInquiryStringId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusIconId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusStringId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
@@ -62,6 +63,8 @@ fun ApprovedView(navHostController: NavHostController) {
     val infiniteTransition = rememberInfiniteTransition()
 
     Log.d("TxnRecord", txnRecord.toString())
+
+    val isBalanceInquiry = txnRecord.txnType == TxnType.BALANCE_ENQUIRY_SNAP || txnRecord.txnType == TxnType.BALANCE_ENQUIRY_CASH
     Column {
         CommonTopAppBar(
             onBackButtonClick = { },
@@ -78,99 +81,123 @@ fun ApprovedView(navHostController: NavHostController) {
                 horizontalAlignment = Alignment.Start // Align content to the start
             ) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
+                if(isBalanceInquiry && txnRecord.txnStatus == TxnStatus.APPROVED)
+                {
+                    TextView(
+                        text = stringResource(id = getBalInquiryStringId(txnRecord.txnType)),//stringResource(id = getTxnStatusStringId(txnRecord.txnStatus)),
+                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_190_CompactMedium, bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                            .align(Alignment.CenterHorizontally)
+                    )
 
-                TextView(
-                    text = stringResource(id = getTxnStatusStringId(txnRecord.txnStatus)),
-                    fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
-                        .align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                txnRecord.txnType.takeIf { it != TxnType.VOID_LAST }?.let {
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                     Text(
-                        text = txnRecord.ttlAmount.toAmountFormat(),
+                        text = txnRecord.additionalAmt.toAmountFormat(),
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .height(MaterialTheme.dimens.DP_33_CompactMedium) // Fixed height
                     )
-                } ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Spacer when Text is not shown
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
-                ImageView(
-                    imageId = getTxnStatusIconId(txnRecord),
-                    size = MaterialTheme.dimens.DP_120_CompactMedium,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
-                        .align(Alignment.CenterHorizontally),
-                    contentDescription = ""
-                )
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_7_CompactMedium))
-                if(txnRecord.txnStatus != TxnStatus.APPROVED) {
-                    val alpha by infiniteTransition.animateFloat(
-                        initialValue = 1f,
-                        targetValue = 0f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(700),
-                            repeatMode = RepeatMode.Reverse
-                        ), label = ""
-                    )
-
-                    Text(
-                        text = txnRecord.hostResMessage.toString(),
-                        fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
-                        color = MaterialTheme.colorScheme.error,
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_100_CompactMedium))
+                }
+                else {
+                    TextView(
+                        text = stringResource(id = getTxnStatusStringId(txnRecord.txnStatus)),
+                        fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
+                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                             .align(Alignment.CenterHorizontally)
-                            .height(MaterialTheme.dimens.DP_33_CompactMedium)
-                            .alpha(alpha) // 👈 blinking effect
                     )
-                }
-                if(hasDbRecord==true) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularMenu(
-                            menuOptions = listOf(
-                                context.resources.getString((R.string.cust_recp)),
-                                context.resources.getString((R.string.merchant_recp))
-                            ),
-                            onMenuOptionClick = { option ->
-                                when (option) {
-                                    context.resources.getString((R.string.cust_recp)) -> {
-                                        viewModel.printReceipt(
-                                            context,
-                                            sharedViewModel,
-                                            true
-                                        )
-                                    }
 
-                                    context.resources.getString((R.string.merchant_recp)) -> {
-                                        viewModel.printReceipt(
-                                            context,
-                                            sharedViewModel,
-                                            false
-                                        )
-                                    }
-                                }
-                            },
-                            onPrintClick = {}
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
+                    txnRecord.txnType.takeIf { it != TxnType.VOID_LAST }?.let {
+                        Text(
+                            text = if (isBalanceInquiry) { "" } else { txnRecord.ttlAmount.toAmountFormat() },
+                            fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .height(MaterialTheme.dimens.DP_33_CompactMedium)
                         )
                     }
-                }
-                else
-                {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_70_CompactMedium))
+                        ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Spacer when Text is not shown
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
+                    ImageView(
+                        imageId = getTxnStatusIconId(txnRecord),
+                        size = MaterialTheme.dimens.DP_120_CompactMedium,
+                        alignment = Alignment.Center,
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.dimens.DP_40_CompactMedium)
+                            .align(Alignment.CenterHorizontally),
+                        contentDescription = ""
+                    )
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_7_CompactMedium))
+                    if (txnRecord.txnStatus != TxnStatus.APPROVED) {
+                        val alpha by infiniteTransition.animateFloat(
+                            initialValue = 1f,
+                            targetValue = 0f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(700),
+                                repeatMode = RepeatMode.Reverse
+                            ), label = ""
+                        )
+
+                        Text(
+                            text = txnRecord.hostResMessage.toString(),
+                            fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .height(MaterialTheme.dimens.DP_33_CompactMedium)
+                                .alpha(alpha) // 👈 blinking effect
+                        )
+                    }
+                    if (hasDbRecord && !isBalanceInquiry) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularMenu(
+                                menuOptions = listOf(
+                                    context.resources.getString((R.string.cust_recp)),
+                                    context.resources.getString((R.string.merchant_recp))
+                                ),
+                                onMenuOptionClick = { option ->
+                                    when (option) {
+                                        context.resources.getString((R.string.cust_recp)) -> {
+                                            viewModel.printReceipt(
+                                                context,
+                                                sharedViewModel,
+                                                true
+                                            )
+                                        }
+
+                                        context.resources.getString((R.string.merchant_recp)) -> {
+                                            viewModel.printReceipt(
+                                                context,
+                                                sharedViewModel,
+                                                false
+                                            )
+                                        }
+                                    }
+                                },
+                                onPrintClick = {}
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_70_CompactMedium))
+                    }
                 }
 
                 Box(

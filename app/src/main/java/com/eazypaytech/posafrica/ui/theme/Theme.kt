@@ -30,7 +30,8 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = Grey,
     tertiary = Black,
     onTertiary = LightBoarder,
-    error = error
+    error = error,
+    outline = ApprovedGreenBright
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

@@ -477,6 +477,17 @@ fun getTxnStatusStringId(txnStatus: TxnStatus?) : Int
     }
 }
 
+
+fun getBalInquiryStringId(txnType: TxnType?): Int {
+    return when (txnType) {
+        TxnType.BALANCE_ENQUIRY_SNAP -> R.string.snap_bal_available
+        TxnType.BALANCE_ENQUIRY_CASH -> R.string.cash_bal_available
+        else -> R.string.empty
+    }
+}
+
+
+
 fun getCardBrandStringId(cardBrand: CardBrand?) : Int
 {
     return when(cardBrand) {

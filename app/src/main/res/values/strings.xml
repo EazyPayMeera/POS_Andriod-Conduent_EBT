@@ -257,6 +257,8 @@
     <string name="ebt_purchase_cashback">EBT Cash Benefit Purchase with Cashback</string>
     <string name="ebt_cash_withdraw">EBT Cash Withdrawal</string>
     <string name="ebt_bal_inquiry">EBT Balance Inquiry</string>
+    <string name="cash_bal_available">CASH Available Balance</string>
+    <string name="snap_bal_available">SNAP Available Balance</string>
     <string name="ebt_voucher_clear">Voucher Clear</string>
     <string name="ebt_voucher_return">Transactions</string>
     <string name="sel_return">Return</string>

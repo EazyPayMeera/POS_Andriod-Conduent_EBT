@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.model.CardEntryMode
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -134,10 +135,13 @@ class ManualCardViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 Log.d("AuthTransaction","Going For Authenticate the transaction")
+                CustomDialogBuilder.composeProgressDialog(true)
                 apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                        CustomDialogBuilder.composeProgressDialog(false)
+                        sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }

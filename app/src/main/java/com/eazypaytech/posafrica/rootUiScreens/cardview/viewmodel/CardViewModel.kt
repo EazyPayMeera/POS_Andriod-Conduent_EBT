@@ -121,9 +121,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 Log.d("TRANS_RESULT", Gson().toJson(response))
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                    sharedViewModel.objRootAppPaymentDetail.additionalAmt = getRemainingBalance(response.additionalAmt).toString()
                                     Log.d(
-                                        "HOST_RESPONSE",
-                                        sharedViewModel.objRootAppPaymentDetail?.hostResMessage ?: "NULL VALUE"
+                                        "BALANCE_DEBUG",
+                                        "additionalAmt = ${sharedViewModel.objRootAppPaymentDetail.additionalAmt}"
                                     )
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
@@ -175,6 +176,17 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         }
                     }
                 })
+        }
+    }
+
+    fun getRemainingBalance(additionalAmt: String?): Double {
+        if (additionalAmt.isNullOrEmpty()) return 0.0
+
+        return try {
+            val amount = additionalAmt.substring(8)   // skip 98 02 840 C
+            amount.toLong() / 100.0
+        } catch (e: Exception) {
+            0.0
         }
     }
 
