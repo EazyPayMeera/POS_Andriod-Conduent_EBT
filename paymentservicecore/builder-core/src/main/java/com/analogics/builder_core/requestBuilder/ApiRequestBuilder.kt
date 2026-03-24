@@ -10,7 +10,7 @@ import com.eazypaytech.builder_core.model.login.UserLoginRequest
 import com.eazypaytech.builder_core.model.purchase.PurchaseRequest
 import com.eazypaytech.builder_core.model.reund.RefundRequest
 import com.eazypaytech.builder_core.model.reversal.ReversalReqeust
-import com.eazypaytech.builder_core.model.void.VoidReqeust
+import com.eazypaytech.builder_core.model.void.VoidRequest
 import com.eazypaytech.builder_core.utils.BuilderUtils
 import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.solab.iso8583.IsoMessage
@@ -116,8 +116,8 @@ class ApiRequestBuilder @Inject constructor(@ApplicationContext val context: Con
             )
     }
 
-    fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): VoidReqeust {
-        return VoidReqeust(
+    fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): VoidRequest {
+        return VoidRequest(
             merchantId = builderServiceTxnDetails?.merchantId,
             //terminalId = builderServiceTxnDetails?.terminalId,
             cashierId = builderServiceTxnDetails?.loginId,

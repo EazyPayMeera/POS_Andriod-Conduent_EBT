@@ -36,6 +36,7 @@ class VoucherCardViewModel @Inject constructor(private  var apiServiceRepository
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+        sharedViewModel.objRootAppPaymentDetail.voucherNumber = VoucherNumber
         if(VoucherNumber.isEmpty()) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
@@ -43,7 +44,7 @@ class VoucherCardViewModel @Inject constructor(private  var apiServiceRepository
             )
         }
         else {
-            navHostController.navigate(AppNavigationItems.TxnSelScreen.route)
+            navHostController.navigate(AppNavigationItems.AuthCodeScreen.route)
 
         }
     }

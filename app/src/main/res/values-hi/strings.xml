@@ -239,7 +239,7 @@
     <!-- EBT DashBoard Screen -->
     <string name="ebt_purchase_cashback">खरीद और कैशबैक</string>
     <string name="ebt_cash_withdraw">EBT Cash Withdrawal</string>
-    <string name="ebt_bal_enquiry">बैलेंस पूछताछ</string>
+    <string name="ebt_bal_inquiry">बैलेंस पूछताछ</string>
     <string name="ebt_voucher_clear">वाउचर क्लियर</string>
     <string name="ebt_voucher_return">वाउचर रिटर्न</string>
     <string name="ebt_void_last">पिछला लेनदेन रद्द</string>

@@ -121,6 +121,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 Log.d("TRANS_RESULT", Gson().toJson(response))
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                    Log.d(
+                                        "HOST_RESPONSE",
+                                        sharedViewModel.objRootAppPaymentDetail?.hostResMessage ?: "NULL VALUE"
+                                    )
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
                                     }

@@ -449,7 +449,7 @@ fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : In
 fun getTxnTypeStringId(txnType: TxnType?): Int {
     return when (txnType) {
         TxnType.PURCHASE_CASHBACK -> R.string.ebt_purchase_cashback
-        TxnType.BALANCE_ENQUIRY_SNAP -> R.string.ebt_bal_enquiry
+        TxnType.BALANCE_ENQUIRY_SNAP -> R.string.ebt_bal_inquiry
         TxnType.VOUCHER_CLEAR -> R.string.ebt_voucher_clear
         TxnType.VOUCHER_RETURN -> R.string.ebt_voucher_return
         TxnType.VOID_LAST -> R.string.ebt_void_last

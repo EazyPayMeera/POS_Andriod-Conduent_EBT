@@ -23,7 +23,7 @@ import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
-class PurchaseRequestRepository @Inject constructor(
+class VoucherSettlementRequestRepository @Inject constructor(
     @ApplicationContext val context: Context,
     var apiRequestBuilder: ApiRequestBuilderLyra,
     private var builderServiceRepository: BuilderServiceRepository,
@@ -33,42 +33,56 @@ class PurchaseRequestRepository @Inject constructor(
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage123(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-            apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
-                paymentServiceTxnDetails.stan = it.stan
-                paymentServiceTxnDetails.hostRespCode = it.hostRespCode
-                paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
-                paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
-                var tlv = TlvUtils(it.emvData)
-                /* Extract tag 8A from ISO field if required */
-                if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
-                    it.hostRespCode?.encodeToByteArray()?.toHexString()?.let {
-                        tlv.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] = it
-                    }
-                }
-                paymentServiceTxnDetails.emvData = tlv.toTlvString()
-                if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
-                    paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
-                    paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
-                    paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
-                        it.hostRespCode!!
-                    )
-                }
-                else {
-                    paymentServiceTxnDetails.hostAuthResult = TxnStatus.DECLINED.toString()
-                    paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
-                    paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
-                        it.hostRespCode!!
-                    )
-
+        apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
+            paymentServiceTxnDetails.stan = it.stan
+            paymentServiceTxnDetails.hostRespCode = it.hostRespCode
+            paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
+            paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
+            var tlv = TlvUtils(it.emvData)
+            /* Extract tag 8A from ISO field if required */
+            if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
+                it.hostRespCode?.encodeToByteArray()?.toHexString()?.let {
+                    tlv.tlvMap[EmvConstants.EMV_TAG_RESP_CODE] = it
                 }
             }
+            paymentServiceTxnDetails.emvData = tlv.toTlvString()
+            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
+                paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
+                paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
+                paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
+                    it.hostRespCode!!
+                )
+            }
+            else {
+                paymentServiceTxnDetails.hostAuthResult = TxnStatus.DECLINED.toString()
+                paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
+                paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
+                    it.hostRespCode!!
+                )
+
+            }
+        }
+
+        Log.d(
+            "ISO_FINAL",
+            """
+                STAN: ${paymentServiceTxnDetails.stan}
+                RespCode: ${paymentServiceTxnDetails.hostRespCode}
+                AuthCode: ${paymentServiceTxnDetails.hostAuthCode}
+                TxnRef: ${paymentServiceTxnDetails.hostTxnRef}
+                Message: ${paymentServiceTxnDetails.hostResMessage}
+                EMV: ${paymentServiceTxnDetails.emvData}
+                TxnStatus: ${paymentServiceTxnDetails.txnStatus}
+                AuthResult: ${paymentServiceTxnDetails.hostAuthResult}
+                """.trimIndent()
+        )
 
         return paymentServiceTxnDetails
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun purchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
+    suspend fun voucherSettlementRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepositoryLyra.networkServiceFinancialRequest(
             object : IBuilderServiceResponseListenerLyra{
                 @SuppressLint("NewApi")
@@ -101,13 +115,9 @@ class PurchaseRequestRepository @Inject constructor(
                 }
 
             },
-            apiRequestBuilderLyra.createFinancial0200Request(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+            apiRequestBuilderLyra.voucherSettlement(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
-
-
-
-
 }
 
 

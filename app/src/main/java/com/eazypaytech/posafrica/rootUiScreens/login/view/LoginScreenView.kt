@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.BuildConfig
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
@@ -83,8 +84,8 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                         inputValue = viewModel.emailCredentials.value,
                         onChange = { viewModel.onEmailChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(id = R.string.username),
-                        placeHolder = stringResource(id = R.string.placehldr_username),
+                        label = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER) stringResource(id = R.string.supervisor_id) else stringResource(id = R.string.username),
+                        placeHolder = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER) stringResource(id = R.string.supervisor_username) else stringResource(id = R.string.placehldr_username),
                         icon = Icons.Outlined.Person,
                         keyboardType = KeyboardType.Uri
                     )

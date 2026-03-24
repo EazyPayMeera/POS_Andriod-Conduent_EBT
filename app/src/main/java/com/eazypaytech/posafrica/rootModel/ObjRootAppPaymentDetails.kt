@@ -25,6 +25,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("merchantBankName") var merchantBankName: String? = null,
     @SerializedName("merchantType") var merchantType: String? = null,
     @SerializedName("fnsNumber") var fnsNumber: String? = null,
+    @SerializedName("voucherNumber") var voucherNumber: String? = null,
 
     /* Host Authorization */
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,

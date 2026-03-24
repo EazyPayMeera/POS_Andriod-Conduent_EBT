@@ -220,7 +220,7 @@ fun dashboardItemListData(
             false
         ),
         createDashboardItem(
-            titleId = R.string.ebt_bal_enquiry,
+            titleId = R.string.ebt_bal_inquiry,
             iconId = R.drawable.ebt_dashboard_bal_inquiry,
             event = AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY,
             false

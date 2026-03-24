@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
@@ -33,7 +34,9 @@ class AuthCodeViewModel @Inject constructor(private  var apiServiceRepository: A
     var authCode by mutableStateOf("")
         private set
 
-
+    val isFormValid: Boolean
+        get() = authCode.isNotBlank() &&
+                authCode.length == AppConstants.MAX_LENGTH_AUTH_CODE
 
     fun onCardNoChange(newValue: String) {
         authCode = newValue
@@ -41,15 +44,15 @@ class AuthCodeViewModel @Inject constructor(private  var apiServiceRepository: A
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
-
-        if (authCode.isEmpty()) {
+        sharedViewModel.objRootAppPaymentDetail.hostAuthCode = authCode
+        if (!isFormValid) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
-                message = "Please Enter Card Details"
+                message = "Auth Code Should be 6 Digit"
             )
         } else {
 
-            authenticateTransaction(sharedViewModel,navHostController)
+            navHostController.navigate(AppNavigationItems.TxnSelScreen.route)
 
         }
     }

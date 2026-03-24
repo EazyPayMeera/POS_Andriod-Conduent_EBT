@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
@@ -166,7 +167,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 TxnType.FOODSTAMP_RETURN-> {
                     navHostController.navigate(AppNavigationItems.CardScreen.route)
                 }
-                TxnType.VOID_LAST -> {
+                TxnType.VOID_LAST,TxnType.E_VOUCHER -> {
                     Log.d("Database", "Go to update when void")
                     authenticateTransaction(sharedViewModel, navHostController)
                 }
@@ -249,6 +250,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                        sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }

@@ -260,6 +260,7 @@ object BuilderConstants {
     const val ISO_FIELD_RRN_LENGTH = 12
 
     const val ISO_FIELD_AUTH_ID = 38  // DE007
+    const val ISO_FIELD_AUTH_ID_LENGTH = 6  // DE007
     const val ISO_FIELD_RESPONSE_CODE = 39
     const val ISO_FIELD_RESPONSE_CODE_LENGTH = 2
 

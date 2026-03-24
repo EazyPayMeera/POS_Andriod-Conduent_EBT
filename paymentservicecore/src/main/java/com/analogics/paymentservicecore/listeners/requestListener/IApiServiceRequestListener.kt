@@ -28,6 +28,11 @@ interface IApiServiceRequestListener {
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
+    suspend fun voucherSettlement(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        iApiServiceResponseListener: IApiServiceResponseListener
+    )
+
     suspend fun apiServiceAuthCapture(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener

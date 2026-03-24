@@ -10,6 +10,7 @@ import com.eazypaytech.paymentservicecore.logger.AppLogger
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
+import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
@@ -59,7 +60,13 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         viewModelScope.launch {
             try {
                 if(dbRepository.getUserDetails(emailCredentials.value)?.takeIf { it.password == pwdCredentials.value || pwdCredentials.value == generateMasterPassword(it.userId,sharedViewModel)}?.let { true } == true) {
-                    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+                    if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER)
+                    {
+                        navHostController.navigateAndClean(AppNavigationItems.AmountScreen.route)
+                    }
+                    else {
+                        navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+                    }
                     sharedViewModel.objPosConfig?.apply {
                         /* As of now, login id is same as Cashier ID> May be changed with name */
                         cashierId = emailCredentials.value

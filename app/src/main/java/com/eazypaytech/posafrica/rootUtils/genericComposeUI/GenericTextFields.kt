@@ -281,15 +281,15 @@ fun getTransTypeString(): String {
         TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_purchase_cashback)
         TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash_benefit)
         TxnType.CASH_WITHDRAWAL -> stringResource(id = R.string.ebt_cash_withdrawal)
-        TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_enquiry)
-        TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_inquiry)
+        TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_inquiry)
         TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
         TxnType.VOUCHER_RETURN -> stringResource(id = R.string.ebt_voucher_return)
         TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)
         TxnType.FOOD_PURCHASE -> stringResource(id = R.string.ebt_food_purchase)
         TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.ebt_foodstamp_return)
         TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
-        null -> stringResource(id = R.string.ebt_bal_enquiry)
+        null -> stringResource(id = R.string.ebt_bal_inquiry)
     }
 }
 
@@ -301,15 +301,15 @@ fun getTransTypeAmountTitle(): String {
         TxnType.PURCHASE_CASHBACK -> stringResource(id = R.string.ebt_cash_amount)
         TxnType.CASH_PURCHASE -> stringResource(id = R.string.ebt_cash_amount)
         TxnType.CASH_WITHDRAWAL -> stringResource(id = R.string.ebt_cash_withdrawal_amount)
-        TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_enquiry)
-        TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_enquiry)
+        TxnType.BALANCE_ENQUIRY_SNAP -> stringResource(id = R.string.ebt_bal_inquiry)
+        TxnType.BALANCE_ENQUIRY_CASH -> stringResource(id = R.string.ebt_bal_inquiry)
         TxnType.VOUCHER_CLEAR -> stringResource(id = R.string.ebt_voucher_clear)
         TxnType.VOUCHER_RETURN -> stringResource(id = R.string.ebt_voucher_return)
         TxnType.VOID_LAST -> stringResource(id = R.string.ebt_void_last)
         TxnType.FOOD_PURCHASE -> stringResource(id = R.string.purchase_snap_amt)
         TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.return_amt)
         TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher_amount)
-        null -> stringResource(id = R.string.ebt_bal_enquiry)
+        null -> stringResource(id = R.string.ebt_bal_inquiry)
     }
 }
 

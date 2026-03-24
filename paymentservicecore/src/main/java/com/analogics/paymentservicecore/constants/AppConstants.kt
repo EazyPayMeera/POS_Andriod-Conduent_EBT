@@ -87,6 +87,7 @@ object AppConstants {
     const val MIN_LENGTH_PASSWORD = 6
     const val MAX_LENGTH_PROC_ID = 11
     const val MAX_LENGTH_CARD_NO = 16
+    const val MAX_LENGTH_AUTH_CODE = 6
     const val MAX_LENGTH_MID = 15
     const val MAX_LENGTH_TID = 8
 

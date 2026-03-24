@@ -20,6 +20,7 @@
     import com.eazypaytech.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.preauth.VoidRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.purchase.PurchaseRequestRepository
+    import com.eazypaytech.paymentservicecore.repository.apiService.purchase.VoucherSettlementRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.refund.RefundRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.rkl.RklRequestRepository
@@ -35,14 +36,11 @@
 
     class ApiServiceRepository @Inject constructor(
         private val accessTokenRequestRepository: AccessTokenRequestRepository,
-        private var refundRequestRepository: RefundRequestRepository,
-        private val authCaptureRequestRepository: AuthCaptureRequestRepository,
-        private var preAuthRequestRepository: PreAuthRequestRepository,
+        private val voucherSettlementRequestRepository: VoucherSettlementRequestRepository,
         private val loginRequestRepository: LoginRequestRepository,
         private val reversalRequestRepository: ReversalRequestRepository,
         private val voidRequestRepository: VoidRequestRepository,
         private val purchaseRequestRepository: PurchaseRequestRepository,
-        private val batchRequestRepository: BatchRequestRepository,
         private val rklRequestRepository: RklRequestRepository,
         private val dbRepository: TxnDBRepository,
         private val posConfig: PosConfig
@@ -79,7 +77,7 @@
                 TxnType.CASH_PURCHASE.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
                 TxnType.FOODSTAMP_RETURN.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
                 TxnType.PURCHASE_CASHBACK.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
-                TxnType.E_VOUCHER.toString() -> apiServicePurchase(paymentServiceTxnDetails,iApiServiceResponseListener)
+                TxnType.E_VOUCHER.toString() -> voucherSettlement(paymentServiceTxnDetails,iApiServiceResponseListener)
                 TxnType.BALANCE_ENQUIRY_CASH.toString(),
                 TxnType.BALANCE_ENQUIRY_SNAP.toString() ->
                     apiServicePurchase(paymentServiceTxnDetails, iApiServiceResponseListener)
@@ -131,6 +129,18 @@
              this.iApiServiceResponseListener = iApiServiceResponseListener
              this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
              purchaseRequestRepository.purchaseRequest(paymentServiceTxnDetails){
+                 onApiServiceResponse(it)
+             }
+         }
+
+         @RequiresApi(Build.VERSION_CODES.O)
+         override suspend fun voucherSettlement(
+             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+             iApiServiceResponseListener: IApiServiceResponseListener
+         ) {
+             this.iApiServiceResponseListener = iApiServiceResponseListener
+             this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
+             voucherSettlementRequestRepository.voucherSettlementRequest(paymentServiceTxnDetails){
                  onApiServiceResponse(it)
              }
          }
