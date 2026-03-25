@@ -1,6 +1,8 @@
 package com.eazypaytech.paymentservicecore.constants
 
 object AppConstants {
+    private var reversalRetryCount = 0
+    private val MAX_REVERSAL_RETRY = 3
     /* Acquirers Supported */
     const val ACQUIRER_LYRA = "LYRA"
 

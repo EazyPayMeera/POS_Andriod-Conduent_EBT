@@ -3,6 +3,7 @@ package com.eazypaytech.builder_core.constants
 import android.util.Log
 
 object BuilderConstants {
+
     const val SHARED_PREF_NAME = "BuilderSharedPref"
     const val SHARED_PREF_KEY_STAN = "stan"
 

@@ -2,6 +2,7 @@ package com.eazypaytech.paymentservicecore.constants
 
 object EmvConstants {
 
+
     const val EMV_TAG_AID_CARD =                    "4F"
 
     const val EMV_TAG_TRACK2 =                      "57"

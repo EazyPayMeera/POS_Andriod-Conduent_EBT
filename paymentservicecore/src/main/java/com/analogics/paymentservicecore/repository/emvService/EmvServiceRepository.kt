@@ -41,6 +41,7 @@ import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -448,31 +449,66 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 }
 
                 override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                    Log.d("EMV","Received Timeout ")
+                    Log.d("EMV","Received Timeout")
+
                     CoroutineScope(Dispatchers.IO).launch {
 
-                        apiServiceRepository.apiServiceReversal(
-                            paymentServiceTxnDetails,
-                            object : IApiServiceResponseListener {
+                        var attempt = 0
+                        var isSuccess = false
 
-                                override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                                    Log.d("EMV","Response Received")
-                                    paymentServiceTxnDetails = response.copy(emvData = paymentServiceTxnDetails.emvData)
-                                    responseEmvTags =
-                                        TlvUtils(response.emvData).tlvMap
-                                    onResponse(responseEmvTags)
+                        while (attempt < 3 && !isSuccess) {
+                            attempt++
+
+                            Log.d("EMV", "Reversal Attempt: $attempt")
+
+                            val result = CompletableDeferred<Boolean>()
+
+                            apiServiceRepository.apiServiceReversal(
+                                paymentServiceTxnDetails,
+                                object : IApiServiceResponseListener {
+
+                                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                                        Log.d("EMV","Reversal Success")
+
+                                        paymentServiceTxnDetails =
+                                            response.copy(emvData = paymentServiceTxnDetails.emvData)
+
+                                        val responseTags =
+                                            TlvUtils(response.emvData).tlvMap
+
+                                        isSuccess = true
+                                        result.complete(true)
+
+                                        onResponse(responseTags)
+                                    }
+
+                                    override fun onApiServiceError(error: ApiServiceError) {
+                                        Log.d("EMV","Reversal Error")
+                                        result.complete(false)
+                                    }
+
+                                    override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                                        Log.d("EMV","Reversal Timeout")
+                                        result.complete(false)
+                                    }
                                 }
+                            )
 
-                                override fun onApiServiceError(error: ApiServiceError) {
-                                    // handle error
-                                }
+                            val success = result.await()
 
-                                override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                            if (success) break
+                        }
 
-                                }
-                            }
-                        )
+                        if (!isSuccess) {
+                            Log.d("EMV", "Max reversal attempts reached → DECLINE")
 
+                            val declineTags = hashMapOf(
+                                EmvConstants.EMV_TAG_RESP_CODE to
+                                        EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE
+                            )
+
+                            onResponse(declineTags)
+                        }
                     }
                 }
             })
@@ -609,4 +645,5 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
         return cardBrand
     }
+
 }

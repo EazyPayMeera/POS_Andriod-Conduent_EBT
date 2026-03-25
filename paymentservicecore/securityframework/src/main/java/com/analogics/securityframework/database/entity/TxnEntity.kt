@@ -21,6 +21,7 @@ data class TxnEntity(
     @ColumnInfo(name = "BatchId") var batchId: String? = null,
     @ColumnInfo(name = "InvoiceNo") var invoiceNo: String? = null,
     @ColumnInfo(name = "Stan") var stan: String? = null,
+    @ColumnInfo(name = "rrn") var rrn: String? = null,
     @ColumnInfo(name = "PurchaseOrderNo") var purchaseOrderNo: String? = null,
     @ColumnInfo(name = "DateTime") var dateTime: String? = null,
     @ColumnInfo(name = "TimeZone") var timeZone: String? = null,

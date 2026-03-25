@@ -125,10 +125,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                                     sharedViewModel.objRootAppPaymentDetail.additionalAmt = getRemainingBalance(response.additionalAmt).toString()
-                                    Log.d(
-                                        "BALANCE_DEBUG",
-                                        "additionalAmt = ${sharedViewModel.objRootAppPaymentDetail.additionalAmt}"
-                                    )
+
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
                                     }

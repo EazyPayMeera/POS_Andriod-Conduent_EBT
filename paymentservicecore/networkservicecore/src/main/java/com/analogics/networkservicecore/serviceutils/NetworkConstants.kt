@@ -13,6 +13,6 @@ object NetworkConstants {
         const val DIGEST_ALGORITHM = "SHA-512"
 
         /* HOST Address */
-        const val HOST_ADDRESS = "posuat.services.condu.com"
+        const val HOST_ADDRESS = "posuat.services.conduent.com"
         const val HOST_PORT = 54811
 }

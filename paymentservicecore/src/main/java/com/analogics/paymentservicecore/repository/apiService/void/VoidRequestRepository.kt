@@ -34,7 +34,7 @@ class VoidRequestRepository @Inject constructor (
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage123(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-        apiRequestBuilderLyra.parseReversalResponse(context,response).let {
+        apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
@@ -48,7 +48,7 @@ class VoidRequestRepository @Inject constructor (
                 }
             }
             paymentServiceTxnDetails.emvData = tlv.toTlvString()
-            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_FORMAT_ERROR) {
+            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
                 paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                 paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
             }

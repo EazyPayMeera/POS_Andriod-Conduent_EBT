@@ -101,31 +101,37 @@
     </parse>
 
     <parse type="0430">
-        <field num="2"  type="LLVAR"  length="19"/>
-        <field num="3"  type="NUMERIC" length="6"/>
-        <field num="4"  type="NUMERIC" length="12"/>
-        <field num="7"  type="NUMERIC" length="10"/>
-        <field num="11" type="NUMERIC" length="6"/>
-        <field num="12" type="TIME"/>
-        <field num="13" type="DATE4"/>
-        <field num="15" type="DATE4"/>
-        <field num="17" type="DATE4"/>
-        <field num="18" type="NUMERIC" length="4"/>
-        <field num="22" type="NUMERIC" length="3"/>
-        <field num="32" type="LLVAR" length="11"/>
-        <field num="35" type="LLVAR" length="37"/>
-        <field num="37" type="ALPHA" length="12"/>
-        <field num="38" type="ALPHA" length="6"/>
-        <field num="39" type="ALPHA" length="2"/>
-        <field num="41" type="ALPHA" length="8"/>
-        <field num="42" type="ALPHA" length="15"/>
-        <field num="43" type="ALPHA" length="40"/>
-        <field num="48" type="LLLVAR" length="25"/>
-        <field num="49" type="NUMERIC" length="3"/>
-        <field num="54" type="LLLVAR" length="120"/>
-        <field num="58" type="LLLVAR" length="11"/>
-        <field num="111" type="LLLVAR" length="255"/>
-        <field num="127" type="LLLVAR" length="100"/>
+
+        <!-- Mandatory fields -->
+        <field num="2"  type="LLVAR" length="19"/>   <!-- PAN -->
+        <field num="3"  type="NUMERIC" length="6"/>  <!-- Processing Code -->
+        <field num="4"  type="NUMERIC" length="12"/> <!-- Amount -->
+        <field num="7"  type="NUMERIC" length="10"/> <!-- Transmission DateTime -->
+        <field num="11" type="NUMERIC" length="6"/>  <!-- STAN -->
+        <field num="12" type="TIME"/>                <!-- Local Time hhmmss -->
+        <field num="13" type="DATE4"/>               <!-- Local Date MMDD -->
+        <field num="14" type="DATE4"/>               <!-- Expiry Date YYMM -->
+        <field num="15" type="DATE4"/>               <!-- Settlement Date MMDD -->
+        <field num="18" type="NUMERIC" length="4"/>  <!-- Merchant Type -->
+        <field num="32" type="LLVAR"/>               <!-- Acquirer ID -->
+        <field num="37" type="ALPHA" length="12"/>   <!-- RRN -->
+        <field num="38" type="ALPHA" length="6"/>    <!-- Auth ID -->
+        <field num="39" type="ALPHA" length="2"/>    <!-- Response Code -->
+        <field num="41" type="ALPHA" length="8"/>    <!-- Terminal ID -->
+        <field num="42" type="ALPHA" length="15"/>   <!-- Merchant ID -->
+        <field num="43" type="ALPHA" length="40"/>   <!-- Merchant Name/Location -->
+
+        <!-- Optional / LLLVAR fields -->
+        <field num="48" type="LLLVAR" length="25"/>  <!-- Merchant/Bank Name -->
+        <field num="49" type="NUMERIC" length="3"/>  <!-- Currency Code -->
+        <field num="54" type="LLLVAR" length="120"/> <!-- Additional Amounts -->
+        <field num="58" type="LLLVAR" length="10"/>  <!-- National POS Condition Code -->
+        <field num="59" type="LLLVAR" length="17"/>  <!-- POS Geographic Data -->
+        <field num="60" type="LLLVAR" length="25"/>  <!-- Advice/Reversal Reason -->
+        <field num="90" type="NUMERIC" length="42"/> <!-- Original Data Elements -->
+        <field num="111" type="LLLVAR" length="255"/> <!-- Additional Private Data -->
+        <field num="127" type="LLLVAR" length="100"/> <!-- Acquirer Trace Data -->
+
     </parse>
 
 
