@@ -84,18 +84,19 @@ class PurchaseRequestRepository @Inject constructor(
                 }
 
                 override fun onBuilderFailure(error: Any) {
+
                     if (error is SocketTimeoutException ||
                         error.toString().contains("timed out", true)
                     ) {
 
-                        onAPIServiceResponse(
+                        Log.d("API_FLOW", "Timeout mapped correctly")
+                        onAPIServiceResponse(   // ✅ THIS WAS MISSING
                             ApiServiceTimeout("Transaction Timed Out")
                         )
 
                     } else {
 
-                        // Normal error
-                        onAPIServiceResponse(
+                        onAPIServiceResponse(   // ✅ THIS WAS MISSING
                             ApiServiceError(error.toString())
                         )
                     }

@@ -53,8 +53,23 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
             }
 
             is ResultProvider.Error -> {
-                Log.d("NETWORK","RESPONSE_HEX:"+apiResultProvider.exception.message)
-                iBuilderServiceResponseListener.onBuilderFailure(apiResultProvider.exception)
+                when (apiResultProvider.exception) {
+                    is java.net.SocketTimeoutException,
+                    is kotlinx.coroutines.TimeoutCancellationException -> {
+
+                        Log.e("NETWORK", "Timeout occurred: ${apiResultProvider.exception.message}")
+
+                        // You can send a custom error back
+                        iBuilderServiceResponseListener.onBuilderFailure(
+                            Exception("Request timed out. Please try again.")
+                        )
+                    }
+
+                    else -> {
+                        Log.e("NETWORK", "Error: ${apiResultProvider.exception.message}")
+                        iBuilderServiceResponseListener.onBuilderFailure(apiResultProvider.exception)
+                    }
+                }
             }
             else -> Unit
         }

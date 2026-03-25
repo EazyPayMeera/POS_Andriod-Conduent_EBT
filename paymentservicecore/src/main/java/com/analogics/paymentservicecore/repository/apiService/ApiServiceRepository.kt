@@ -253,30 +253,51 @@
          }
 
          override fun onApiServiceResponse(response: Any) {
+
              iApiServiceResponseListener.onApiServiceDisplayProgress(false)
+
              when (response) {
-                 is ApiServiceError -> {
-                     iApiServiceResponseListener.onApiServiceError(ApiServiceError(response.toString()))
+
+                 is ApiServiceTimeout -> {
+                     Log.d("API_FLOW", "Forwarding TIMEOUT to EMV")   // ✅ add log
+
+                     iApiServiceResponseListener.onApiServiceTimeout(response)
                  }
-                 else -> {
+
+                 is ApiServiceError -> {
+                     Log.d("API_FLOW", "Forwarding ERROR")
+
+                     iApiServiceResponseListener.onApiServiceError(
+                         ApiServiceError(response.errorMessage)   // ✅ fix this too
+                     )
+                 }
+
+                 is PaymentServiceTxnDetails -> {
                      try {
                          CoroutineScope(Dispatchers.IO).launch {
                              PaymentServiceUtils.transformObject<TxnEntity>(response)?.let {
-                                 dbRepository.updateTxn(
-                                     it
-                                 )
+                                 dbRepository.updateTxn(it)
                              }
                          }
-                         iApiServiceResponseListener.onApiServiceSuccess(
-                             PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
-                                 response
-                             ) ?: PaymentServiceTxnDetails()
-                         )
-                     }catch (e : Exception)
-                     {
+
+                         Log.d("API_FLOW", "Forwarding SUCCESS")
+
+                         iApiServiceResponseListener.onApiServiceSuccess(response)
+
+                     } catch (e: Exception) {
                          e.printStackTrace()
-                         iApiServiceResponseListener.onApiServiceError(ApiServiceError(e.message.toString()))
+                         iApiServiceResponseListener.onApiServiceError(
+                             ApiServiceError(e.message.toString())
+                         )
                      }
+                 }
+
+                 else -> {
+                     Log.d("API_FLOW", "Unknown response type")
+
+                     iApiServiceResponseListener.onApiServiceError(
+                         ApiServiceError("Unknown response type")
+                     )
                  }
              }
          }

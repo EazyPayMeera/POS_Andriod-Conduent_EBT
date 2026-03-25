@@ -1,16 +1,14 @@
 package com.analogics.builder_core.requestBuilder
 
-import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
 
 object IsoMessageBuilder {
+    var lastTxnData: SavedTxnData? = null
 
-    private var lastTxn: BuilderServiceTxnDetails? = null
-
-    fun saveTxn(txn: BuilderServiceTxnDetails?) {
-        lastTxn = txn?.copy()
+    fun saveTxn(txn: SavedTxnData) {
+        lastTxnData = txn
     }
 
-    fun getLastTxn(): BuilderServiceTxnDetails? {
-        return lastTxn
+    fun getLastTxn(): SavedTxnData? {
+        return lastTxnData
     }
 }

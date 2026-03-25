@@ -119,6 +119,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 Log.d("TRANS_RESULT", Gson().toJson(response))
+                                if(response.status == EmvServiceResult.CardCheckStatus.CARD_INSERTED) {
+
+                                }
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                                     sharedViewModel.objRootAppPaymentDetail.additionalAmt = getRemainingBalance(response.additionalAmt).toString()
@@ -160,16 +163,12 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceDisplayMessage(
                         displayMsgId: EmvServiceResult.DisplayMsgId
                     ) {
-                        Log.d("EMV_PROGRESS", "onEmvServiceDisplayMessage called with displayMsgId: $displayMsgId on thread: ${Thread.currentThread().name}")
                         if(isDispIdNeedPopupMsg(displayMsgId)) {
-                            Log.d("EMV_PROGRESS", "DisplayMsgId needs popup, calling displayEmvError()")
                             displayEmvError(displayMsgId, restart = false)
                         }
                         else {
-                            Log.d("EMV_PROGRESS", "DisplayMsgId does NOT need popup, setting progress states")
                             displayInfoMsgId.value = displayMsgId
                             if(displayMsgId != EmvServiceResult.DisplayMsgId.NONE) {
-                                Log.d("EMV_PROGRESS", "Setting emvInProgress=true, showProgressVar=true")
                                 emvInProgress.value = false
                                 showProgressVar.value = true
                             }

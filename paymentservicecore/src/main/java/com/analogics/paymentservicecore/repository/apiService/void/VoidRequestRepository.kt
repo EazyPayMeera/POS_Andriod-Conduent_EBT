@@ -34,7 +34,7 @@ class VoidRequestRepository @Inject constructor (
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage123(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-        apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
+        apiRequestBuilderLyra.parseReversalResponse(context,response).let {
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
@@ -64,7 +64,7 @@ class VoidRequestRepository @Inject constructor (
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun voidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-        builderServiceRepositoryLyra.networkServiceRequest(
+        builderServiceRepositoryLyra.networkServiceFinancialRequest(
             object : IBuilderServiceResponseListenerLyra{
                 @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
@@ -81,7 +81,7 @@ class VoidRequestRepository @Inject constructor (
                     onAPIServiceResponse(ApiServiceError(error.toString()))
                 }
             },
-            apiRequestBuilderLyra.createReversal0420(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+            apiRequestBuilderLyra.createVoidRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
 }

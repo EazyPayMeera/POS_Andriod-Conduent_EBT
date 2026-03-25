@@ -231,7 +231,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 Log.d("EMV_CARD_CHECK", Gson().toJson(response))
                 var status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
                 var displayMsgId : DisplayMsgId? = null
-                var hostMessage: String? = null
                     response.displayMsgId?.let {
                         displayMsgId = sdkToEmvDisplayMsgId(it)
                         status = adjustTransStatusFromDisplayMsgId(status,displayMsgId) /* For NFC needs adjustment */
@@ -469,7 +468,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                                 }
 
                                 override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                                    // handle timeout
+
                                 }
                             }
                         )
