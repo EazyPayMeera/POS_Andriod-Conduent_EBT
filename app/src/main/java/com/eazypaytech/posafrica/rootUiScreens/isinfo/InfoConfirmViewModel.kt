@@ -136,6 +136,4 @@ class InfoConfirmViewModel @Inject constructor(private  var apiServiceRepository
             }
         }
     }
-
-
 }

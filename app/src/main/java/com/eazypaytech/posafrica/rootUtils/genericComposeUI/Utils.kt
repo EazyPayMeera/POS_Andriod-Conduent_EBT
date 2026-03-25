@@ -430,7 +430,7 @@ fun LoadingBar() {
 fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : Int
 {
     return if(objRootAppPaymentDetails.isVoided==true)
-        R.drawable.voided
+        R.drawable.approved
     else if(objRootAppPaymentDetails.isRefunded==true)
             R.drawable.refunded
     else if(objRootAppPaymentDetails.isCaptured==true)

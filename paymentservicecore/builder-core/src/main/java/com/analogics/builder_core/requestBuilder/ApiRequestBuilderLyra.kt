@@ -743,7 +743,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                     lastTxn?.transmissionDateTime +
                     lastTxn?.procId?.padStart(11, '0') +
                     "00000000000"   // forwarding ID if not used
-        Log.d("DE90_DEBUG", "OriginalData: $originalData")
+        Log.d("DE90_DEBUG", "OriginalData (fnsNumber): ${this.builderServiceTxnDetails.fnsNumber ?: "NULL"}")
         iso.setValue(BuilderConstants.ISO_FIELD_ORIGINAL_DATA, originalData, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ORIGINAL_DATA_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setBinaryHeader(false)

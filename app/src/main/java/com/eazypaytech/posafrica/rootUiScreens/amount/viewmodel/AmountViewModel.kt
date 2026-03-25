@@ -170,12 +170,70 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(objRootAppPaymentDetails: ObjRootAppPaymentDetails)
-    {
-        Log.d("Database","Go to update ")
+    fun updateTransResult(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            dbRepository.insertOrUpdateTxn(PaymentServiceUtils.transformObject<TxnEntity>(objRootAppPaymentDetails))
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
+                Log.d("DB_DEBUG", "Before update: ${txn}")
+                txn.isVoided = true
+                dbRepository.updateTxn(txn)
+                Log.d("DB_DEBUG", "After update: ${txn}")
+            } ?: Log.d("DB_DEBUG", "Transaction not found")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun fetchLastTransaction(
+        navHostController: NavHostController,
+        context: Context,
+        sharedViewModel: SharedViewModel
+    ) {
+
+        val lastTxn = dbRepository.fetchLastTransactionByTxnType()
+
+        Log.d("FETCH_TXN", "DB Result: $lastTxn")
+
+        lastTxn?.let {
+
+            if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
+
+                CustomDialogBuilder.composeAlertDialog(
+                    title = context.getString(R.string.default_alert_title_error),
+                    message = context.getString(R.string.err_txn_already_voided)
+                )
+                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+            } else {
+
+                val transformedTxn =
+                    PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
+
+                transformedTxn?.let {
+
+                    sharedViewModel.objRootAppPaymentDetail = it.copy(
+                        id = sharedViewModel.objRootAppPaymentDetail.id,
+                        txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
+                        fnsNumber = sharedViewModel.objPosConfig?.fnsNumber
+                    )
+
+                    Log.d("FETCH_TXN", "Copied Object: ${sharedViewModel.objRootAppPaymentDetail}")
+
+                    sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
+                    sharedViewModel.objRootAppPaymentDetail.originalCashback =
+                        it.cashback.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =
+                        it.ttlAmount.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalTxnAmount =
+                        it.txnAmount.toDecimalFormat()
+                    sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
+                }
+
+            }
+
+        } ?: run {
+
+            CustomDialogBuilder.composeAlertDialog(
+                title = context.getString(R.string.default_alert_title_error),
+                message = context.getString(R.string.err_txn_not_found)
+            )
         }
     }
 
@@ -191,6 +249,8 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         CustomDialogBuilder.composeProgressDialog(false)
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
+                        sharedViewModel.objRootAppPaymentDetail.isVoided = true
+                        updateTransResult(sharedViewModel)
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
 

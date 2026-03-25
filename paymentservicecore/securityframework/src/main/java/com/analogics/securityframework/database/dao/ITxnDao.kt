@@ -31,7 +31,7 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable ORDER BY id DESC LIMIT 1")
     suspend fun getLastTxnEntry(): TxnEntity?
 
-    @Query("""SELECT * FROM TxnTable WHERE TxnType NOT IN ('BALANCE_ENQUIRY_CASH', 'BALANCE_ENQUIRY_SNAP','FOODSTAMP_RETURN','CASH_WITHDRAWAL','VOID_LAST')AND TxnStatus = 'APPROVED' ORDER BY id DESC LIMIT 1 """)
+    @Query("""SELECT * FROM TxnTable WHERE TxnType NOT IN ('BALANCE_ENQUIRY_CASH', 'BALANCE_ENQUIRY_SNAP','FOODSTAMP_RETURN','CASH_WITHDRAWAL')AND TxnStatus = 'APPROVED' ORDER BY id DESC LIMIT 1 """)
     suspend fun getLastTxnEntryByTxnType(): TxnEntity?
 
     @Query("SELECT * FROM TxnTable WHERE batchId = :batchId ORDER BY id DESC")
