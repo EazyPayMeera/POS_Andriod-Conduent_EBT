@@ -87,16 +87,18 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
                         if (response is EmvServiceResult.InitResult && response.status == EmvServiceResult.InitStatus.SUCCESS) {
                                     sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = true }
                                         ?.saveToPrefs()
-                                    CustomDialogBuilder.composeAlertDialog(
+                                    /*CustomDialogBuilder.composeAlertDialog(
                                         title = context.resources.getString(
                                             R.string.emv_sdk_init_title
                                         ),
                                         subtitle = context.resources.getString(R.string.emv_sdk_init_success)
-                                    )
+                                    )*/
+                            Log.d("Initialization", "Payment SDK Initialized")
                         }
                         else {
                             sharedViewModel.objPosConfig?.apply { isPaymentSDKInit = false }?.saveToPrefs()
-                            CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_failure))
+                            //CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.emv_sdk_init_title), subtitle = context.resources.getString(R.string.emv_sdk_init_failure))
+                            Log.d("Initialization", "Payment SDK Initialization Failed")
                        }
                     }
 
