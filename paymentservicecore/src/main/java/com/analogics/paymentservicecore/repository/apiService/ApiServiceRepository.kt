@@ -13,15 +13,15 @@
     import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
     import com.eazypaytech.paymentservicecore.models.PosConfig
     import com.eazypaytech.paymentservicecore.models.TxnType
-    import com.eazypaytech.paymentservicecore.repository.apiService.access_token.AccessTokenRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.auth_capture.AuthCaptureRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.batch.BatchRequestRepository
+    //import com.eazypaytech.paymentservicecore.repository.apiService.access_token.AccessTokenRequestRepository
+    //import com.eazypaytech.paymentservicecore.repository.apiService.auth_capture.AuthCaptureRequestRepository
+    //import com.eazypaytech.paymentservicecore.repository.apiService.batch.BatchRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.login.LoginRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
+    //import com.eazypaytech.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.preauth.VoidRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.purchase.PurchaseRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.purchase.VoucherSettlementRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.refund.RefundRequestRepository
+    //import com.eazypaytech.paymentservicecore.repository.apiService.refund.RefundRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
     import com.eazypaytech.paymentservicecore.repository.apiService.rkl.RklRequestRepository
     import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
@@ -35,7 +35,7 @@
     import javax.inject.Inject
 
     class ApiServiceRepository @Inject constructor(
-        private val accessTokenRequestRepository: AccessTokenRequestRepository,
+        //private val accessTokenRequestRepository: AccessTokenRequestRepository,
         private val voucherSettlementRequestRepository: VoucherSettlementRequestRepository,
         private val loginRequestRepository: LoginRequestRepository,
         private val reversalRequestRepository: ReversalRequestRepository,
@@ -187,9 +187,9 @@
         ) {
             this.iApiServiceResponseListener = iApiServiceResponseListener
             this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-            accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
+            /*accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
                 onApiServiceResponse(it)
-            }
+            }*/
         }
 
 

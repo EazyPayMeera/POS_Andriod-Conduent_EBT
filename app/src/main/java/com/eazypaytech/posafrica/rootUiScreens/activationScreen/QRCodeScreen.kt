@@ -16,9 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
-import com.eazypaytech.posafrica.rootUiScreens.invoice.openScanner
-import com.eazypaytech.posafrica.rootUiScreens.login.InvoiceViewModel
+//import com.eazypaytech.paymentservicecore.listeners.responseListener.IScannerResultProviderListener
+//import com.eazypaytech.posafrica.rootUiScreens.invoice.openScanner
+//import com.eazypaytech.posafrica.rootUiScreens.login.InvoiceViewModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
@@ -69,8 +69,8 @@ fun generateQRCodeBitmap(data: String, size: Int): Bitmap? {
         null
     }
 }
-@Composable
-fun QRCodeScreen(context: Context,viewModel: InvoiceViewModel) {
+//@Composable
+/*fun QRCodeScreen(context: Context,viewModel: InvoiceViewModel) {
     val apiKey = "your_api_key"
     val apiSecret = "your_api_secret"
 
@@ -82,13 +82,13 @@ fun QRCodeScreen(context: Context,viewModel: InvoiceViewModel) {
                     contentDescription = null, // Provide a content description if needed
                     modifier = Modifier
                         .clickable {
-                            openScanner(context, viewModel)
+                            //openScanner(context, viewModel)
                         },  // Toggle editable state on icon click
                     tint = MaterialTheme.colorScheme.primary
                 )
-}
+}*/
 
-fun openScanner(context: Context, viewModel: InvoiceViewModel) {
+/*fun openScanner(context: Context, viewModel: InvoiceViewModel) {
     val coroutineScope = CoroutineScope(Dispatchers.Main) // Use an appropriate coroutine context
 
     coroutineScope.launch {
@@ -97,7 +97,7 @@ fun openScanner(context: Context, viewModel: InvoiceViewModel) {
             Bundle().apply {
                 putString("camera_facing", "back") // Ensure back camera is used
             },
-            object : IScannerResultProviderListener {
+            object : /*IScannerResultProviderListener {
                 override fun onSuccess(result: Any?) {
                     if (result is String) {
                         Log.d(TAG, "Scanner result: $result")
@@ -113,4 +113,4 @@ fun openScanner(context: Context, viewModel: InvoiceViewModel) {
             }
         )
     }
-}
+}*/

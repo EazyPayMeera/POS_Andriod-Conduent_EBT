@@ -6,12 +6,12 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.builder_core.constants.BuilderConstants
-import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
+//import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
-import com.eazypaytech.builder_core.repository.BuilderServiceRepository
+//import com.eazypaytech.builder_core.repository.BuilderServiceRepository
 import com.eazypaytech.builder_core.repository.BuilderServiceRepositoryLyra
-import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
+//import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
 import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilderLyra
 import com.eazypaytech.builder_core.utils.BuilderUtils
 import com.eazypaytech.paymentservicecore.constants.AppConstants
@@ -26,8 +26,8 @@ import javax.inject.Inject
 
 class VoidRequestRepository @Inject constructor (
     @ApplicationContext val context: Context,
-    var apiRequestBuilder: ApiRequestBuilder,
-    private var builderServiceRepository: BuilderServiceRepository,
+    //var apiRequestBuilder: ApiRequestBuilder,
+    //private var builderServiceRepository: BuilderServiceRepository,
     var apiRequestBuilderLyra: ApiRequestBuilderLyra,
     private var builderServiceRepositoryLyra: BuilderServiceRepositoryLyra
 ) {

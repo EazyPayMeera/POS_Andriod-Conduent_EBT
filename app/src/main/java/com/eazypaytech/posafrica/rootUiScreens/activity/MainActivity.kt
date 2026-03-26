@@ -43,8 +43,8 @@ import com.eazypaytech.posafrica.rootUiScreens.amount.view.AmountView
 import com.eazypaytech.posafrica.rootUiScreens.amount.view.CashBackView
 import com.eazypaytech.posafrica.rootUiScreens.approved.view.ApprovedView
 import com.eazypaytech.posafrica.rootUiScreens.authCode.AuthCodeView
-import com.eazypaytech.posafrica.rootUiScreens.barcode.BarcodeView
-import com.eazypaytech.posafrica.rootUiScreens.batchId.view.BatchIdView
+//import com.eazypaytech.posafrica.rootUiScreens.barcode.BarcodeView
+//import com.eazypaytech.posafrica.rootUiScreens.batchId.view.BatchIdView
 import com.eazypaytech.posafrica.rootUiScreens.carddetect.view.CardDetectView
 import com.eazypaytech.posafrica.rootUiScreens.cardview.view.CardView
 import com.eazypaytech.posafrica.rootUiScreens.changepassword.view.ChangePasswordView
@@ -53,11 +53,11 @@ import com.eazypaytech.posafrica.rootUiScreens.confirmshift.view.ConfirmShiftVie
 import com.eazypaytech.posafrica.rootUiScreens.dashboard.view.DashboardView
 import com.eazypaytech.posafrica.rootUiScreens.decline.view.DeclineView
 import com.eazypaytech.posafrica.rootUiScreens.ebtSelection.view.EBTSelectionView
-import com.eazypaytech.posafrica.rootUiScreens.email.view.EmailView
-import com.eazypaytech.posafrica.rootUiScreens.enteremail.view.EnterEmailView
+//import com.eazypaytech.posafrica.rootUiScreens.email.view.EmailView
+//import com.eazypaytech.posafrica.rootUiScreens.enteremail.view.EnterEmailView
 import com.eazypaytech.posafrica.rootUiScreens.forgetpassword.view.ForgetPasswordView
 import com.eazypaytech.posafrica.rootUiScreens.inactivityTimeout.InactivityTimeoutView
-import com.eazypaytech.posafrica.rootUiScreens.invoice.InvoiceView
+//import com.eazypaytech.posafrica.rootUiScreens.invoice.InvoiceView
 import com.eazypaytech.posafrica.rootUiScreens.isinfo.InfoConfirmView
 import com.eazypaytech.posafrica.rootUiScreens.keyManagement.KeyEntryView
 import com.eazypaytech.posafrica.rootUiScreens.language.view.LanguageView
@@ -67,18 +67,18 @@ import com.eazypaytech.posafrica.rootUiScreens.onBoarding.view.OnBoardSlideView
 import com.eazypaytech.posafrica.rootUiScreens.password.view.PasswordView
 import com.eazypaytech.posafrica.rootUiScreens.pin.view.PinView
 import com.eazypaytech.posafrica.rootUiScreens.pleasewait.view.PleaseWaitView
-import com.eazypaytech.posafrica.rootUiScreens.preauth.view.PreauthView
+//import com.eazypaytech.posafrica.rootUiScreens.preauth.view.PreauthView
 import com.eazypaytech.posafrica.rootUiScreens.receiptdetails.view.ReceiptDetailsView
-import com.eazypaytech.posafrica.rootUiScreens.serviceCharge.view.ServiceChargePercentageView
-import com.eazypaytech.posafrica.rootUiScreens.serviceCharge.view.ServiceChargeView
+//import com.eazypaytech.posafrica.rootUiScreens.serviceCharge.view.ServiceChargePercentageView
+//import com.eazypaytech.posafrica.rootUiScreens.serviceCharge.view.ServiceChargeView
 import com.eazypaytech.posafrica.rootUiScreens.settings.SettingsView
 import com.eazypaytech.posafrica.rootUiScreens.settings.config.ConfigurationView
-import com.eazypaytech.posafrica.rootUiScreens.signature.SignatureView
+//import com.eazypaytech.posafrica.rootUiScreens.signature.SignatureView
 import com.eazypaytech.posafrica.rootUiScreens.splash.view.SplashScreenView
 import com.eazypaytech.posafrica.rootUiScreens.sucess.SucessView
-import com.eazypaytech.posafrica.rootUiScreens.tax.view.TaxPercentageView
-import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipPercentageView
-import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipView
+//import com.eazypaytech.posafrica.rootUiScreens.tax.view.TaxPercentageView
+//import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipPercentageView
+//import com.eazypaytech.posafrica.rootUiScreens.tip.view.TipView
 import com.eazypaytech.posafrica.rootUiScreens.transactiondetails.TransactionDetailsView
 import com.eazypaytech.posafrica.rootUiScreens.txnList.view.TransactionListScreen
 import com.eazypaytech.posafrica.rootUiScreens.txnSel.view.TxnSelectionView
@@ -236,13 +236,13 @@ fun AppNavigationGraph(
             ReceiptDetailsView(navHostController)
         }
         composable(AppNavigationItems.InvoiceScreen.route) {
-            InvoiceView(navHostController)
+            //InvoiceView(navHostController)
         }
         composable(AppNavigationItems.PasswordScreen.route) {
             PasswordView(navHostController)
         }
         composable(AppNavigationItems.BarcodeScreen.route) {
-            BarcodeView(navHostController)
+            //BarcodeView(navHostController)
         }
         composable(AppNavigationItems.ConfirmationScreen.route) { entry->
             val customTipAmount = entry.savedStateHandle.get<Double?>(AppConstants.NAV_KEY_CUSTOM_TIP_AMOUNT)
@@ -252,17 +252,17 @@ fun AppNavigationGraph(
             ConfirmationView(navHostController, customTipAmount, customServiceCharge)
         }
         composable(AppNavigationItems.TipScreen.route) {
-            TipView(navHostController)
+            //TipView(navHostController)
         }
         composable(AppNavigationItems.ServiceChargeScreen.route) {
-            ServiceChargeView(navHostController)
+            //ServiceChargeView(navHostController)
         }
         composable(
             route = AppNavigationItems.EmailScreen.route,
             arguments = listOf(navArgument("email") { type = NavType.StringType })
         ) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
-            EmailView(navHostController, email)
+            //EmailView(navHostController, email)
         }
         composable(
             route = AppNavigationItems.CardScreen.route
@@ -299,19 +299,19 @@ fun AppNavigationGraph(
             ConfirmShiftView(navHostController)
         }
         composable(AppNavigationItems.TaxPercentageScreen.route) {
-            TaxPercentageView(navHostController)
+            //TaxPercentageView(navHostController)
         }
         composable(AppNavigationItems.TipPercentageScreen.route) {
-            TipPercentageView(navHostController)
+            //TipPercentageView(navHostController)
         }
         composable(AppNavigationItems.ServiceChargePercentageScreen.route) {
-            ServiceChargePercentageView(navHostController)
+            //ServiceChargePercentageView(navHostController)
         }
         composable(AppNavigationItems.PreauthScreen.route) {
-            PreauthView(navHostController)
+            //PreauthView(navHostController)
         }
         composable(AppNavigationItems.EnterEmailScreen.route) {
-            EnterEmailView(navHostController)
+            //EnterEmailView(navHostController)
         }
         composable(AppNavigationItems.InfoConfirmScreen.route) {
             InfoConfirmView(navHostController)
@@ -338,13 +338,13 @@ fun AppNavigationGraph(
             UserManagementView(navHostController)
         }
         composable(AppNavigationItems.BatchIdScreen.route) {
-            BatchIdView(navHostController)
+            //BatchIdView(navHostController)
         }
         composable(AppNavigationItems.InactivityTimeoutScreen.route) {
             InactivityTimeoutView(navHostController)
         }
         composable(AppNavigationItems.SignatureScreen.route) {
-            SignatureView(navHostController)
+            //SignatureView(navHostController)
         }
         composable(AppNavigationItems.CashBackScreen.route) {
             CashBackView(navHostController)
