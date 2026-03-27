@@ -267,7 +267,8 @@
     <string name="ebt_foodstamp_return">EBT SNAP Benefit Return</string>
     <string name="ebt_e_voucher">EBT Voucher Settlement</string>
     <string name="ebt_e_voucher_amount">Enter Settlement Amount</string>
-
+    <string name="ebt_purchase_amount">Enter Purchase Amount</string>
+    <string name="ebt_return_amount">Enter Return Amount</string>
     <!-- Transaction List Screen -->
     <string name="select_date">Select Date</string>Filter by Batch Number
     <string name="filter_by_batch">Filter by Batch Number</string>

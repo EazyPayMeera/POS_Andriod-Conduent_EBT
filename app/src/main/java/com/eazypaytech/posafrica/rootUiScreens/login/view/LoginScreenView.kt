@@ -84,8 +84,8 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                         inputValue = viewModel.emailCredentials.value,
                         onChange = { viewModel.onEmailChange(it) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER) stringResource(id = R.string.supervisor_id) else stringResource(id = R.string.username),
-                        placeHolder = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER) stringResource(id = R.string.supervisor_username) else stringResource(id = R.string.placehldr_username),
+                        label = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_WITHDRAWAL) stringResource(id = R.string.supervisor_id) else stringResource(id = R.string.username),
+                        placeHolder = if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_WITHDRAWAL) stringResource(id = R.string.supervisor_username) else stringResource(id = R.string.placehldr_username),
                         icon = Icons.Outlined.Person,
                         keyboardType = KeyboardType.Uri
                     )

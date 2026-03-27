@@ -15,7 +15,9 @@ import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult
+import com.eazypaytech.paymentservicecore.models.EBTBalance
 import com.eazypaytech.paymentservicecore.models.TxnStatus
+import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.emvService.EmvServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
@@ -119,13 +121,21 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 Log.d("TRANS_RESULT", Gson().toJson(response))
-                                if(response.status == EmvServiceResult.CardCheckStatus.CARD_INSERTED) {
-
-                                }
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
-                                    sharedViewModel.objRootAppPaymentDetail.additionalAmt = getRemainingBalance(response.additionalAmt).toString()
 
+//                                    val balance = parseEBTBalances(response.additionalAmt.toString())
+//                                    Log.d("TAG", "txnType: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+//                                    if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
+//                                    {
+//                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
+//                                            balance.snap.toString()
+//                                    }
+//                                    else
+//                                    {
+//                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
+//                                            balance.cash.toString()
+//                                    }
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
                                     }
@@ -133,7 +143,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                     {
                                         showProgressVar.value = false
                                         navigateToApprovalScreen(navHostController)
-                                        }
+                                    }
                                 }
                             }
 
@@ -175,15 +185,24 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
-    fun getRemainingBalance(additionalAmt: String?): Double {
-        if (additionalAmt.isNullOrEmpty()) return 0.0
+    fun parseEBTBalances(hexString: String): EBTBalance {
+        val bytes = hexString.chunked(2).map { it.toInt(16) }
 
-        return try {
-            val amount = additionalAmt.substring(8)   // skip 98 02 840 C
-            amount.toLong() / 100.0
-        } catch (e: Exception) {
-            0.0
+        fun extractBalance(startIndex: Int): Double {
+            val bcdBytes = bytes.subList(startIndex + 4, startIndex + 10)
+            val digits = bcdBytes.joinToString("") { byte ->
+                val high = (byte shr 4) and 0x0F
+                val low  = byte and 0x0F
+                "$high$low"
+            }
+
+            return digits.toLong() / 100.0
         }
+
+        val cashBalance = extractBalance(0)
+        val snapBalance = extractBalance(10)
+
+        return EBTBalance(snap = snapBalance, cash = cashBalance)
     }
 
     fun checkNetwork(context: Context)

@@ -1,5 +1,6 @@
 package com.eazypaytech.posafrica.rootUiScreens.manualentry
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -14,7 +15,9 @@ import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.model.CardEntryMode
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
+import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
+import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.models.TxnStatus
@@ -26,9 +29,14 @@ import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.emvStatusToTransStatus
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
+import com.eazypaytech.posafrica.rootUtils.miscellaneous.NetworkUtils
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +46,9 @@ class ManualCardViewModel @Inject constructor(
     private val emvServiceRepository: EmvServiceRepository,
     private val dbRepository: TxnDBRepository
 ) : ViewModel() {
-
+    lateinit var context: Context
+    lateinit var sharedViewModel: SharedViewModel
+    lateinit var navHostController : NavHostController
 
     var cardNumber by mutableStateOf("")
         private set
@@ -95,12 +105,58 @@ class ManualCardViewModel @Inject constructor(
                 if (pinBlock != null) {
                     val pinBlockHex = pinBlock.toHexString().lowercase()
                     sharedViewModel.objRootAppPaymentDetail.pinBlock = pinBlockHex
-                    authenticateTransaction(sharedViewModel,navHostController)
+                    Log.d("TXN_TYPE", sharedViewModel.objRootAppPaymentDetail.txnType.toString())
+                    if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_WITHDRAWAL)
+                    {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            navHostController.navigate(AppNavigationItems.LoginScreen.route)
+                        }
+
+                    }
+                    else {
+                        authenticateTransaction(sharedViewModel, navHostController)
+                    }
 
                 } else {
                     Log.e("PIN_FLOW", "PIN entry cancelled or failed")
                 }
             }
+        }
+    }
+
+
+    fun isCardExists(context: Context) {
+        viewModelScope.launch {
+            checkNetwork(context)
+
+            emvServiceRepository.isCardExists(
+                context,
+                iEmvServiceResponseListener = object :
+                    IEmvServiceResponseListener {
+                    @RequiresApi(Build.VERSION_CODES.O)
+                    @SuppressLint("DefaultLocale")
+                    override fun onEmvServiceResponse(response: Any) {
+                        Log.d("EMV_RESPONSE", Gson().toJson(response))
+                    }
+
+                    override fun onEmvServiceDisplayMessage(
+                        displayMsgId: EmvServiceResult.DisplayMsgId
+                    ) {
+
+                    }
+                })
+        }
+    }
+
+
+    fun checkNetwork(context: Context)
+    {
+        if(NetworkUtils().checkForInternet(context)!=true)
+        {
+            CustomDialogBuilder.composeAlertDialog(
+                title = context.getString(R.string.default_alert_title_error),
+                message = context.getString(R.string.err_no_internet_connection),
+            )
         }
     }
 

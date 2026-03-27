@@ -72,7 +72,7 @@ fun AmountView(navHostController: NavHostController, viewModel: AmountViewModel 
             ) {
                 // Title Text
                 TextView(
-                    text = if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else getTransTypeAmountTitle(),
+                    text = if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else if(sharedViewModel.objRootAppPaymentDetail.isPurchase == true) stringResource(R.string.ebt_purchase_amount) else if(sharedViewModel.objRootAppPaymentDetail.isReturn == true) stringResource(R.string.ebt_return_amount) else getTransTypeAmountTitle(),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,

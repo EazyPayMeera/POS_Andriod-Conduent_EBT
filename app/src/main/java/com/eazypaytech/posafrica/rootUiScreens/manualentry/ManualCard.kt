@@ -141,7 +141,9 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
 
         }
     }
-
+    LaunchedEffect(Unit) {
+        //viewModel.isCardExists(context)
+    }
 
     CustomDialogBuilder.ShowComposed()
 

@@ -20,4 +20,5 @@ interface IEmvServiceRequestListener {
     )
     fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
     fun abortPayment()
+    fun isCardExists(context: Context,iEmvServiceResponseListener: IEmvServiceResponseListener)
 }

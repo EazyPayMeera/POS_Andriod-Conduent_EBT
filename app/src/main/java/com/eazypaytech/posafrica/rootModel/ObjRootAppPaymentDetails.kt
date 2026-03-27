@@ -144,6 +144,9 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
     @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false,
 
+    @SerializedName("isPurchase")       var isPurchase: Boolean? = false,
+    @SerializedName("isReturn")       var isReturn: Boolean? = false,
+
     /* Receipt Specific Config */
     @SerializedName("header1") var header1: String? = null,
     @SerializedName("header2") var header2: String? = null,

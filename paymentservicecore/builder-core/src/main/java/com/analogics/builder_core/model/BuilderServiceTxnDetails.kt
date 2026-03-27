@@ -140,6 +140,9 @@ data class BuilderServiceTxnDetails(
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
     @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false,
 
+    @SerializedName("isPurchase")       var isPurchase: Boolean? = false,
+    @SerializedName("isReturn")       var isReturn: Boolean? = false,
+
     /* Remote Key Injection. Only to be used in Payment Service */
     @SerializedName("devicePublicKey")  var devicePublicKey: String? = null,
     @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,

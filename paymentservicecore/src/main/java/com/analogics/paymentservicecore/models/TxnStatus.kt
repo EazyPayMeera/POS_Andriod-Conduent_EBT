@@ -12,3 +12,7 @@ enum class TxnStatus {
     REFUNDED,
     CAPTURED
 }
+data class EBTBalance(
+    val snap: Double,
+    val cash: Double
+)

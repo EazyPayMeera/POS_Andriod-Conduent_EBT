@@ -60,6 +60,8 @@ import kotlin.text.toInt
 import kotlin.text.uppercase
 import kotlin.toString
 
+
+
 class EmvWrapperRepository @Inject constructor(
     @ApplicationContext context: Context,
     override var iEmvSdkResponseListener: IEmvSdkResponseListener
@@ -421,7 +423,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun inputOnlinePin(
+    private fun                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          inputOnlinePin(
         pan: String?,
         amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit
@@ -578,6 +580,26 @@ class EmvWrapperRepository @Inject constructor(
             }
         } catch (e: RemoteException) {
             e.printStackTrace()
+        }
+    }
+
+    fun isCardExists(context: Context?): Boolean {
+        return try {
+            if (deviceService == null) {
+                Log.w(TAG, "deviceService is null in isCardExists()")
+                return false
+            }
+
+            val reader = deviceService?.getIccCardReader(1)
+            if (reader == null) {
+                Log.w(TAG, "getIccCardReader(0) returned null")
+                return false
+            }
+
+            reader.isCardExists()
+        } catch (e: RemoteException) {
+            Log.e(TAG, "RemoteException in isCardExists()", e)
+            false
         }
     }
 

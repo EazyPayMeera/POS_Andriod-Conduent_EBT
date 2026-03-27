@@ -75,6 +75,7 @@ fun TxnSelectionView(navHostController: NavHostController) {
                     ) {
                         OkButton(
                             onClick = {
+                                sharedViewModel.objRootAppPaymentDetail.isPurchase = true
                                 navHostController.navigate(AppNavigationItems.AmountScreen.route)
                             },
                             title = stringResource(id = R.string.summary_purchase),
@@ -89,6 +90,7 @@ fun TxnSelectionView(navHostController: NavHostController) {
                     ) {
                         OkButton(
                             onClick = {
+                                sharedViewModel.objRootAppPaymentDetail.isReturn = true
                                 navHostController.navigate(AppNavigationItems.LoginScreen.route)
                             },
                             title = stringResource(id = R.string.sel_return),

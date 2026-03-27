@@ -48,6 +48,19 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    override fun isCardExists(context: Context) {
+        try {
+            val result = emvWrapper.isCardExists(context)
+
+            iEmvSdkResponseListener.onEmvSdkResponse(result)
+
+        } catch (e: Exception) {
+            iEmvSdkResponseListener.onEmvSdkResponse(
+                EmvSdkException(e.message ?: "Error checking card")
+            )
+        }
+    }
+
     override fun abortPayment() {
         try {
             EmvWrapperRepository.abortPayment()

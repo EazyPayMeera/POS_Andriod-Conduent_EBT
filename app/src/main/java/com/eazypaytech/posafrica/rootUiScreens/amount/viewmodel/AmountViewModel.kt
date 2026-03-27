@@ -90,6 +90,8 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+        sharedViewModel.objRootAppPaymentDetail.isReturn = false
+        sharedViewModel.objRootAppPaymentDetail.isPurchase = false
         if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE_CASHBACK) {
             sharedViewModel.objPosConfig?.apply { isCashback = false }
         }
@@ -214,8 +216,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         fnsNumber = sharedViewModel.objPosConfig?.fnsNumber
                     )
 
-                    Log.d("FETCH_TXN", "Copied Object: ${sharedViewModel.objRootAppPaymentDetail}")
-
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
                     sharedViewModel.objRootAppPaymentDetail.originalCashback =
                         it.cashback.toDecimalFormat()
@@ -249,8 +249,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         CustomDialogBuilder.composeProgressDialog(false)
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
-                        sharedViewModel.objRootAppPaymentDetail.isVoided = true
-                        updateTransResult(sharedViewModel)
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
 

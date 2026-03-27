@@ -389,6 +389,14 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         emvSdkRequestRepository.pinGeneration(pan, amount, nResult)
     }
 
+
+
+    override fun isCardExists(context: Context,iEmvServiceResponseListener: IEmvServiceResponseListener) {
+        this.iEmvServiceResponseListener = iEmvServiceResponseListener
+        iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
+        emvSdkRequestRepository.isCardExists(context)
+
+    }
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
     }

@@ -62,6 +62,7 @@ fun ApprovedView(navHostController: NavHostController) {
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
     val infiniteTransition = rememberInfiniteTransition()
 
+
     Log.d("TxnRecord", txnRecord.toString())
 
     val isBalanceInquiry = txnRecord.txnType == TxnType.BALANCE_ENQUIRY_SNAP || txnRecord.txnType == TxnType.BALANCE_ENQUIRY_CASH

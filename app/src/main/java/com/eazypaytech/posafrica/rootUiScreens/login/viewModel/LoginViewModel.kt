@@ -1,15 +1,19 @@
 package com.eazypaytech.posafrica.rootUiScreens.login.viewModel
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
 import com.eazypaytech.paymentservicecore.logger.AppLogger
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
+import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
@@ -53,6 +57,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
 
     fun setLoginButtonState(enabled: Boolean)  { isLoginEnabled.value = enabled }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel
@@ -63,6 +68,10 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
                     if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.E_VOUCHER)
                     {
                         navHostController.navigateAndClean(AppNavigationItems.AmountScreen.route)
+                    }
+                    else if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.CASH_WITHDRAWAL)
+                    {
+                        authenticateTransaction(sharedViewModel,navHost)
                     }
                     else {
                         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
@@ -135,5 +144,37 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         message: String?
     ) {
         CustomDialogBuilder.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
+        viewModelScope.launch {
+            try {
+                Log.d("AuthTransaction","Going For Authenticate the transaction")
+                CustomDialogBuilder.composeProgressDialog(true)
+                apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
+                    IApiServiceResponseListener {
+
+                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                        CustomDialogBuilder.composeProgressDialog(false)
+                        sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
+                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                    }
+
+                    override fun onApiServiceError(error: ApiServiceError) {
+                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                    }
+                    override  fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceTimeout.message)
+                    }
+
+                })
+            } catch (e: Exception) {
+
+                Log.e("ApiCallException", e.message ?: "Unknown error")
+                navHostController.navigate(AppNavigationItems.DeclineScreen.route)
+            }
+        }
     }
 }
