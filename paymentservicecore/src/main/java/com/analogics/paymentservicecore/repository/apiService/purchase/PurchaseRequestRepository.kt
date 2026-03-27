@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
-import com.eazypaytech.builder_core.repository.BuilderServiceRepository
+//import com.eazypaytech.builder_core.repository.BuilderServiceRepository
 import com.eazypaytech.builder_core.repository.BuilderServiceRepositoryLyra
 import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilderLyra
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class PurchaseRequestRepository @Inject constructor(
     @ApplicationContext val context: Context,
     var apiRequestBuilder: ApiRequestBuilderLyra,
-    private var builderServiceRepository: BuilderServiceRepository,
+    //private var builderServiceRepository: BuilderServiceRepository,
     var apiRequestBuilderLyra: ApiRequestBuilderLyra,
     private var builderServiceRepositoryLyra: BuilderServiceRepositoryLyra
 ) {

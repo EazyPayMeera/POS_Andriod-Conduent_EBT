@@ -25,7 +25,7 @@ import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.generateMasterPassword
-import com.example.example.ObjEmployeeResponse
+//import com.example.example.ObjEmployeeResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
     var emailCredentials = mutableStateOf("")
     var pwdCredentials = mutableStateOf("")
     val isLoginEnabled = mutableStateOf(true)
-    var userApiSuccessHolder = MutableStateFlow(ObjEmployeeResponse())
+    //var userApiSuccessHolder = MutableStateFlow(ObjEmployeeResponse())
     var useRootAppPaymentDetails = MutableStateFlow(ObjRootAppPaymentDetails())
     var userApiServiceErrorHolder = MutableStateFlow(ApiServiceError())
     lateinit var navHostController: NavHostController

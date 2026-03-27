@@ -1,9 +1,9 @@
 package com.eazypaytech.paymentservicecore.repository.apiService.login
 
-import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
+//import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
-import com.eazypaytech.builder_core.repository.BuilderServiceRepository
-import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
+//import com.eazypaytech.builder_core.repository.BuilderServiceRepository
+//import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
 import com.eazypaytech.builder_core.utils.BuilderUtils
 import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
@@ -11,12 +11,12 @@ import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import javax.inject.Inject
 
 class LoginRequestRepository @Inject constructor(
-    var apiRequestBuilder: ApiRequestBuilder,
-    private var builderServiceRepository: BuilderServiceRepository
+    //var apiRequestBuilder: ApiRequestBuilder,
+    //private var builderServiceRepository: BuilderServiceRepository
 ) {
     suspend fun apiDeviceLogin(paymentServiceTxnDetails: PaymentServiceTxnDetails?,onAPIServiceResponse:(Any)->Unit) {
 
-        builderServiceRepository.apiDeviceLogin(
+        /*builderServiceRepository.apiDeviceLogin(
             object :IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: String) {
                     onAPIServiceResponse(response)
@@ -30,7 +30,7 @@ class LoginRequestRepository @Inject constructor(
             BuilderUtils.prepareApiRequestBody(
                 apiRequestBuilder.createLoginRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
             )
-        )
+        )*/
     }
 
 }
