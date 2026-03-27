@@ -423,7 +423,7 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          inputOnlinePin(
+    private fun inputOnlinePin(
         pan: String?,
         amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit

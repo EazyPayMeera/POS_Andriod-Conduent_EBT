@@ -124,18 +124,18 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
 
-//                                    val balance = parseEBTBalances(response.additionalAmt.toString())
-//                                    Log.d("TAG", "txnType: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
-//                                    if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
-//                                    {
-//                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
-//                                            balance.snap.toString()
-//                                    }
-//                                    else
-//                                    {
-//                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
-//                                            balance.cash.toString()
-//                                    }
+                                    val balance = parseEBTBalances(response.additionalAmt.toString())
+                                    Log.d("TAG", "txnType: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+                                    if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
+                                    {
+                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
+                                            balance.snap.toString()
+                                    }
+                                    else
+                                    {
+                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
+                                            balance.cash.toString()
+                                    }
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
                                     }

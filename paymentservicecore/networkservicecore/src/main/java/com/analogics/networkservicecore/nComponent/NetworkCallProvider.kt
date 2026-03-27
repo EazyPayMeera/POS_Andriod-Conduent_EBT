@@ -131,35 +131,23 @@ object NetworkCallProvider {
 
 
     fun safeApiNetworkCall(requestBytes: ByteArray): Flow<ByteArray> = callbackFlow {
+        var intentionallyClosed = false  // 👈 add this flag
+
         try {
             val sslContext = SSLContext.getInstance("TLSv1.2")
             sslContext.init(
                 null,
                 arrayOf(object : X509TrustManager {
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
+                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
                 }),
                 SecureRandom()
             )
 
             val plainSocket = Socket()
-
             plainSocket.connect(
-                java.net.InetSocketAddress(
-                    NetworkConstants.HOST_ADDRESS,
-                    NetworkConstants.HOST_PORT
-                ),
+                java.net.InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
                 30_000
             )
 
@@ -170,13 +158,12 @@ object NetworkCallProvider {
                 true
             ) as SSLSocket
 
-            sslSocket.soTimeout = 30_000 // infinite read
+            sslSocket.soTimeout = 30_000
             sslSocket.startHandshake()
 
             val output = sslSocket.outputStream
             val input = sslSocket.inputStream
 
-            // Send the request
             val lenPrefix = byteArrayOf(
                 (requestBytes.size shr 8).toByte(),
                 (requestBytes.size and 0xFF).toByte()
@@ -188,7 +175,6 @@ object NetworkCallProvider {
             val receivedMTIs = mutableSetOf<String>()
 
             while (true) {
-                // Read length prefix
                 val lenBytes = ByteArray(2)
                 val read = input.read(lenBytes)
                 if (read < 2) {
@@ -211,28 +197,29 @@ object NetworkCallProvider {
                 val mti = isoMessage.take(4)
                 Log.d("Conduent", "Received MTI: $mti, full message: $isoMessage")
 
-                // Emit each MTI only once (0810 and 0800)
                 if (!receivedMTIs.contains(mti) && (mti == "0810" || mti == "0800")) {
                     trySend(msgBuffer).isSuccess
                     receivedMTIs.add(mti)
                 }
 
-                if (receivedMTIs.containsAll(listOf("0810", "0800")))
-                {
+                if (receivedMTIs.containsAll(listOf("0810", "0800"))) {
                     Log.d("Conduent", "Both Received Break the Loop")
-                    close()
+                    intentionallyClosed = true  // 👈 set flag before closing
+                    sslSocket.close()           // 👈 close socket here
+                    plainSocket.close()
+                    close()                     // 👈 then close flow
                     break
                 }
-
-
             }
 
-            sslSocket.close()
         } catch (e: Exception) {
-            close(e) // close flow on error
+            if (!intentionallyClosed) {  // 👈 only forward real errors
+                Log.e("Conduent", "Error: ${e.message}")
+                close(e)
+            }
         }
 
-        awaitClose { /* Cleanup socket if needed */ }
+        awaitClose { }
     }.flowOn(Dispatchers.IO)
 
 

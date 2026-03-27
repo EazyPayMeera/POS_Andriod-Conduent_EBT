@@ -220,10 +220,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             TxnType.FOODSTAMP_RETURN.toString() -> "200098"
             TxnType.BALANCE_ENQUIRY_CASH.toString() -> "310000"
             TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "310000"
-            TxnType.VOUCHER_CLEAR.toString() -> "0000"
-            TxnType.VOUCHER_RETURN.toString() -> "0000"
             TxnType.VOID_LAST.toString() -> "0000"
-            TxnType.E_VOUCHER.toString() -> "0000"
+            TxnType.E_VOUCHER.toString() -> "009800"
             TxnType.CASH_WITHDRAWAL.toString() -> "010000"
 
             else -> "0000"   // 🔥 Required for String?
