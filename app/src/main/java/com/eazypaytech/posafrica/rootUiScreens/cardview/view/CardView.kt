@@ -187,46 +187,44 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                     }
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                    CustomDialogBuilder.ShowComposed()
-                    composeProgressDialog(show = viewModel.showProgressVar.value)
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(MaterialTheme.dimens.DP_160_CompactMedium)
-//                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
-//                        horizontalArrangement = Arrangement.SpaceEvenly
-//                    ) {
-//                        Column(
-//                            verticalArrangement = Arrangement.Center,
-//                            horizontalAlignment = Alignment.CenterHorizontally,
-//                        ) {
-//
-//                            Log.d("Batch Id", "EMV Progress Value is True")
-//                            TextView(
-//                                text = getEmvMsgIdString(displayMsgId = viewModel.displayInfoMsgId.value),
-//                                fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-//                                color = MaterialTheme.colorScheme.primary,
-//                                fontWeight = FontWeight.Bold,
-//                                textAlign = TextAlign.Center,
-//                                modifier = Modifier
-//                                    .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
-//                                    .align(Alignment.CenterHorizontally)
-//                            )
-//
-//                            viewModel.showProgressVar.value.takeIf { it == true }?.let {
-//                                Log.d("Batch Id", "Fetched batches: Card Inserted")
-//                                CircularProgressIndicator(
-//                                    modifier = Modifier
-//                                        .padding(MaterialTheme.dimens.DP_10_CompactMedium)
-//                                        .size(MaterialTheme.dimens.DP_70_CompactMedium),
-//                                    color = MaterialTheme.colorScheme.primary,
-//                                    strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
-//                                )
-//                            }
-//
-//                        }
-//
-//                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(MaterialTheme.dimens.DP_160_CompactMedium)
+                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+
+                            Log.d("Batch Id", "EMV Progress Value is True")
+                            TextView(
+                                text = getEmvMsgIdString(displayMsgId = viewModel.displayInfoMsgId.value),
+                                fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+
+                            viewModel.showProgressVar.value.takeIf { it == true }?.let {
+                                Log.d("Batch Id", "Fetched batches: Card Inserted")
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .padding(MaterialTheme.dimens.DP_10_CompactMedium)
+                                        .size(MaterialTheme.dimens.DP_70_CompactMedium),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    strokeWidth = MaterialTheme.dimens.DP_4_CompactMedium,
+                                )
+                            }
+
+                        }
+
+                    }
                 }
             }
 
@@ -239,6 +237,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
         viewModel.startPayment(context, sharedViewModel, navHostController)
     }
 
-
+    CustomDialogBuilder.ShowComposed()
 }
 

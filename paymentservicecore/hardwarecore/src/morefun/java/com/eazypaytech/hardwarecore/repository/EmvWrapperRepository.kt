@@ -1558,7 +1558,7 @@ class EmvWrapperRepository @Inject constructor(
                 Log.d("KEY_INJECT", "Device service connected successfully")
 
                 val result = deviceService.pinPad.loadWKey(
-                    EncryptionConstants.MS_KEY_TYPE_PIN,
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
                     0, // PIN KEY TYPE
                     keyBytes,
                     keyBytes.size

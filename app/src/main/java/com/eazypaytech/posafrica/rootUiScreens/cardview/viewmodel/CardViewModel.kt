@@ -190,19 +190,37 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
 
         fun extractBalance(startIndex: Int): Double {
             val bcdBytes = bytes.subList(startIndex + 4, startIndex + 10)
-            val digits = bcdBytes.joinToString("") { byte ->
+
+            var value = 0L
+            for (byte in bcdBytes) {
                 val high = (byte shr 4) and 0x0F
                 val low  = byte and 0x0F
-                "$high$low"
+
+                value = value * 10 + high
+                value = value * 10 + low
             }
 
-            return digits.toLong() / 100.0
+            return value / 100.0
         }
 
-        val cashBalance = extractBalance(0)
-        val snapBalance = extractBalance(10)
+        var snap = 0.0
+        var cash = 0.0
 
-        return EBTBalance(snap = snapBalance, cash = cashBalance)
+        var index = 0
+        while (index + 10 <= bytes.size) {
+            val tag = bytes[index]   // 0x96 or 0x98
+
+            val amount = extractBalance(index)
+
+            when (tag) {
+                0x96 -> cash = amount   // SNAP
+                0x98 -> snap = amount   // CASH
+            }
+
+            index += 10
+        }
+
+        return EBTBalance(snap = snap, cash = cash)
     }
 
     fun checkNetwork(context: Context)
