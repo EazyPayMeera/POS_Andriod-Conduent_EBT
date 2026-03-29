@@ -76,16 +76,16 @@ fun ApprovedView(navHostController: NavHostController) {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.DP_24_CompactMedium) // Padding for the content inside the inner Surface
-                    .fillMaxSize(), // Fill the entire available space
+                    .padding(MaterialTheme.dimens.DP_24_CompactMedium)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // Align content to the start
+                horizontalAlignment = Alignment.Start
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium)) // Blank space
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium))
                 if(isBalanceInquiry && txnRecord.txnStatus == TxnStatus.APPROVED)
                 {
                     TextView(
-                        text = stringResource(id = getBalInquiryStringId(txnRecord.txnType)),//stringResource(id = getTxnStatusStringId(txnRecord.txnStatus)),
+                        text = stringResource(id = getBalInquiryStringId(txnRecord.txnType)),
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
@@ -96,13 +96,13 @@ fun ApprovedView(navHostController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                     Text(
-                        text = txnRecord.additionalAmt.toAmountFormat(),
+                        text = txnRecord.additionalAmt.toString().padEnd(6,'0'),
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .height(MaterialTheme.dimens.DP_33_CompactMedium) // Fixed height
+                            .height(MaterialTheme.dimens.DP_33_CompactMedium)
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_100_CompactMedium))
                 }
@@ -129,7 +129,7 @@ fun ApprovedView(navHostController: NavHostController) {
                                 .height(MaterialTheme.dimens.DP_33_CompactMedium)
                         )
                     }
-                        ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium)) // Spacer when Text is not shown
+                        ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
                     ImageView(
                         imageId = getTxnStatusIconId(txnRecord),
@@ -159,7 +159,7 @@ fun ApprovedView(navHostController: NavHostController) {
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .height(MaterialTheme.dimens.DP_33_CompactMedium)
-                                .alpha(alpha) // 👈 blinking effect
+                                .alpha(alpha)
                         )
                     }
                     if (hasDbRecord && !isBalanceInquiry) {
