@@ -65,7 +65,6 @@ class AuthCodeViewModel @Inject constructor(private  var apiServiceRepository: A
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
         viewModelScope.launch {
             try {
-                Log.d("AuthTransaction","Going For Authenticate the transaction")
                 apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
                     IApiServiceResponseListener {
 
@@ -83,8 +82,6 @@ class AuthCodeViewModel @Inject constructor(private  var apiServiceRepository: A
 
                 })
             } catch (e: Exception) {
-                // Handle any exceptions that may occur
-                Log.e("ApiCallException", e.message ?: "Unknown error")
                 navHostController.navigate(AppNavigationItems.DeclineScreen.route)
             }
         }

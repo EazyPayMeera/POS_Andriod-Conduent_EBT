@@ -171,7 +171,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         return try {
             val json = configFile.readText()
             val jsonObject = Gson().fromJson(json, JsonObject::class.java)
-            
+
             val masterKey = jsonObject.get("master_kek")?.asString
 
             if (masterKey.isNullOrEmpty()) {

@@ -151,7 +151,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             is EmvServiceResult.CardCheckResult -> {
                                 emvInProgress.value = false
                                 showProgressVar.value = false
-                                Log.d("TAG", "Response Status: ${response.status}")
                                 if(isCardCheckStatusInProgress(response.status)) {
                                     emvInProgress.value = true
                                     showProgressVar.value = true

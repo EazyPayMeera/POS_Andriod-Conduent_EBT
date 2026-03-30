@@ -53,12 +53,10 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
 
     Column {
 
-        // Top App Bar
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }
         )
 
-        // Main Content
         GenericCard(
             modifier = Modifier.padding(MaterialTheme.dimens.DP_19_CompactMedium)
         ) {
@@ -67,7 +65,7 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(MaterialTheme.dimens.DP_30_CompactMedium)
             ) {
-                // Title Text
+
                 TextView(
                     text = stringResource(R.string.cashback_amt),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
@@ -78,7 +76,6 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
                     textAlign = TextAlign.Center
                 )
 
-                // Image View
                 ImageView(
                     imageId = if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID_LAST || sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.FOODSTAMP_RETURN) R.drawable.void_amt else R.drawable.card,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
@@ -154,7 +151,7 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
             }
         }
 
-        // Footer Buttons
+
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },

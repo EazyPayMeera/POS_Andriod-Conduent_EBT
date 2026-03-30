@@ -63,8 +63,6 @@ fun ApprovedView(navHostController: NavHostController) {
     val infiniteTransition = rememberInfiniteTransition()
 
 
-    Log.d("TxnRecord", txnRecord.toString())
-
     val isBalanceInquiry = txnRecord.txnType == TxnType.BALANCE_ENQUIRY_SNAP || txnRecord.txnType == TxnType.BALANCE_ENQUIRY_CASH
     Column {
         CommonTopAppBar(
