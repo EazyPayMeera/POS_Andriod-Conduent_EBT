@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Eazy Payments</string>
     <string name="top_back">Back</string>
 
@@ -351,6 +351,10 @@
     <string name="receipt_printing_customer">Customer Copy</string>
     <string name="receipt_printing_summary">Summary Report</string>
     <string name="receipt_printing_detail">Detail Report</string>
+    <string name="receipt_balance_summary" tools:ignore="MissingTranslation">Balance Summary</string>
+    <string name="receipt_result" tools:ignore="MissingTranslation">Result:</string>
+    <string name="receipt_auth" tools:ignore="MissingTranslation">Auth:</string>
+    <string name="receipt_dispense_goods" tools:ignore="MissingTranslation">DISPENSE GOODS</string>
 
     <!-- Summary Report -->
     <string name="summary_report">SUMMARY REPORT</string>
