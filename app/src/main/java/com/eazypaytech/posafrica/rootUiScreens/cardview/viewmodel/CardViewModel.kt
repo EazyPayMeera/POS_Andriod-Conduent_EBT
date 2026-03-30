@@ -126,11 +126,8 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                     if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
                                         try {
                                             val balance = parseEBTBalances(rawAdditionalAmt)
-                                            if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP) {
-                                                sharedViewModel.objRootAppPaymentDetail.additionalAmt = balance.snap.toString()
-                                            } else {
-                                                sharedViewModel.objRootAppPaymentDetail.additionalAmt = balance.cash.toString()
-                                            }
+                                            sharedViewModel.objRootAppPaymentDetail.snapBalance = balance.snap.toString()
+                                            sharedViewModel.objRootAppPaymentDetail.cashBalance = balance.cash.toString()
                                         } catch (e: Exception) {
                                             sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
                                         }

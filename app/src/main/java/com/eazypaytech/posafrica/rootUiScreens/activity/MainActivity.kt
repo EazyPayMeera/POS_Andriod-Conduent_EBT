@@ -35,7 +35,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activationScreen.view.ActivationScreen
 import com.eazypaytech.posafrica.rootUiScreens.addClerk.view.AddClerkScreen
@@ -48,8 +47,6 @@ import com.eazypaytech.posafrica.rootUiScreens.changepassword.view.ChangePasswor
 import com.eazypaytech.posafrica.rootUiScreens.confirmshift.view.ConfirmShiftView
 import com.eazypaytech.posafrica.rootUiScreens.dashboard.view.DashboardView
 import com.eazypaytech.posafrica.rootUiScreens.ebtSelection.view.EBTSelectionView
-
-import com.eazypaytech.posafrica.rootUiScreens.isinfo.InfoConfirmView
 import com.eazypaytech.posafrica.rootUiScreens.keyManagement.KeyEntryView
 import com.eazypaytech.posafrica.rootUiScreens.language.view.LanguageView
 import com.eazypaytech.posafrica.rootUiScreens.login.view.LoginScreenView
@@ -146,7 +143,6 @@ fun requestStoragePermissions(activity: Activity) {
                 intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
             }
         } else {
-            //Below android 11
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf<String>(
@@ -272,9 +268,6 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.EnterEmailScreen.route) {
             //EnterEmailView(navHostController)
-        }
-        composable(AppNavigationItems.InfoConfirmScreen.route) {
-            InfoConfirmView(navHostController)
         }
         composable(AppNavigationItems.TxnListScreen.route) {
            TransactionListScreen(navHostController)

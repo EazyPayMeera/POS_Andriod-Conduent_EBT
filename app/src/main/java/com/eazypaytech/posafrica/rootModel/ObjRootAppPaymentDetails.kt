@@ -68,6 +68,8 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("merchantBank") var merchantBank: String? = null,
     @SerializedName("currencyCode") var currencyCode: String? = null,
     @SerializedName("additionalAmt") var additionalAmt: String? = null,
+    @SerializedName("snapBalance") var snapBalance: String? = null,
+    @SerializedName("cashBalance") var cashBalance: String? = null,
     @SerializedName("posCondition") var posCondition: String? = null,
     @SerializedName("privateData") var privateData: String? = null,
     @SerializedName("acquirerTrace") var acquirerTrace: String? = null,

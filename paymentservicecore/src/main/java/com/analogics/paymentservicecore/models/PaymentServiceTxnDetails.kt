@@ -47,6 +47,8 @@ data class PaymentServiceTxnDetails(
     @SerializedName("ttlTxnCount") var ttlTxnCount:Int? = null,
     @SerializedName("ttlTipCount") var ttlTipCount:Int? = null,
     @SerializedName("additionalAmt") var additionalAmt: String? = null,
+    @SerializedName("snapBalance") var snapBalance: String? = null,
+    @SerializedName("cashBalance") var cashBalance: String? = null,
     @SerializedName("workKey") var workKey: String? = null,
 
     /* Card Details */
