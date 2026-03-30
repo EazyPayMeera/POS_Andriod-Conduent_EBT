@@ -151,6 +151,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             is EmvServiceResult.CardCheckResult -> {
                                 emvInProgress.value = false
                                 showProgressVar.value = false
+                                Log.d("TAG", "Response Status: ${response.status}")
                                 if(isCardCheckStatusInProgress(response.status)) {
                                     emvInProgress.value = true
                                     showProgressVar.value = true
@@ -158,9 +159,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                         displayInfoMsgId.value = it
                                     }
                                 }
-                                else if(isCardCheckStatusAbort(response.status)) {
-                                    displayEmvError(response.displayMsgId, abort = true)
+                                else if(isCardNotPresent(response.status))
+                                {
+                                    navigateToManualScreen(navHostController)
                                 }
+//                                else if(isCardCheckStatusAbort(response.status)) {
+//                                    Log.d("Card","Card Timeout")
+//                                    displayEmvError(response.displayMsgId, abort = true)
+//                                }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
                                 }
@@ -216,8 +222,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             )
         }
     }
-
-
+    
 
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
@@ -264,11 +269,13 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
-    fun isCardCheckStatusAbort(status: Any?) : Boolean
+
+    fun isCardNotPresent(status: Any?) : Boolean
     {
         return when(status)
         {
-            EmvServiceResult.CardCheckStatus.TIMEOUT
+            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
+            EmvServiceResult.CardCheckStatus.TIMEOUT,
             -> true
             else -> false
         }
@@ -278,7 +285,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     {
         return when(status)
         {
-            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
             EmvServiceResult.CardCheckStatus.NOT_ICC_CARD,
             EmvServiceResult.CardCheckStatus.USE_ICC_CARD,
             EmvServiceResult.CardCheckStatus.BAD_SWIPE,

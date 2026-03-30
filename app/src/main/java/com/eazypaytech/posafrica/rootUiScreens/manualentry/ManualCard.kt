@@ -48,6 +48,7 @@ import kotlinx.coroutines.delay
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardViewModel = hiltViewModel()){
+    var resetTimer by remember { mutableStateOf(false) }
 
     var sharedViewModel= localSharedViewModel.current
     val cardExists by viewModel.cardExists.collectAsState()
@@ -91,7 +92,8 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
 
                 OutlinedTextField(
                     value = viewModel.cardNumber,
-                    onValueChange = {viewModel.onCardNoChange(it)},
+                    onValueChange = {viewModel.onCardNoChange(it)
+                        resetTimer = !resetTimer},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = "Enter Card Number",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
@@ -157,6 +159,13 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
                 break
             }
             delay(500)
+        }
+    }
+
+    LaunchedEffect(resetTimer) {
+        delay(30_000L)
+        navHostController.navigate(AppNavigationItems.DashBoardScreen.route) {
+            popUpTo(0) { inclusive = true }
         }
     }
 

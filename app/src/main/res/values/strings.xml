@@ -447,7 +447,7 @@
     <string name="emv_msg_id_declined_offline">Declined Offline</string>
     <string name="emv_msg_id_no_emv_apps">Card Not Supported</string>
     <string name="emv_msg_id_app_selection_failed">Application Selection Failed</string>
-    <string name="emv_msg_id_try_another_interface">Try Again</string>
+    <string name="emv_msg_id_try_another_interface">Please Try Again</string>
     <string name="emv_msg_id_invalid_icc_card">Invalid ICC Card</string>
     <string name="emv_msg_id_retry">Please Retry</string>
     <string name="emv_msg_id_card_removed">Card Removed</string>

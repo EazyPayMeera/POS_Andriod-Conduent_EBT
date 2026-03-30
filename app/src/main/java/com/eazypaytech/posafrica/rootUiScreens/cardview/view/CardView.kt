@@ -86,7 +86,7 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
 
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() },
-            showBackIcon = false
+            showBackIcon = true
         )
 
         Box(
