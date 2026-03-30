@@ -163,10 +163,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 {
                                     navigateToManualScreen(navHostController)
                                 }
-//                                else if(isCardCheckStatusAbort(response.status)) {
-//                                    Log.d("Card","Card Timeout")
-//                                    displayEmvError(response.displayMsgId, abort = true)
-//                                }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
                                 }
@@ -222,7 +218,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             )
         }
     }
-    
+
 
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
