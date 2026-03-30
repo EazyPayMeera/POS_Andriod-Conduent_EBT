@@ -55,7 +55,7 @@ class ReversalRequestRepository @Inject constructor(
                     onAPIServiceResponse(ApiServiceError(error.toString()))
                 }
             },
-            apiRequestBuilder.createReversal0420(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+            apiRequestBuilder.createVoidRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
 

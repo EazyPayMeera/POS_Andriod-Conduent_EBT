@@ -2,6 +2,7 @@ package com.eazypaytech.posafrica.rootUiScreens.manualentry
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +33,7 @@ import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
 import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.AlertDialogBuilder
 import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CommonTopAppBar
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
@@ -47,6 +50,7 @@ import kotlinx.coroutines.delay
 fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardViewModel = hiltViewModel()){
 
     var sharedViewModel= localSharedViewModel.current
+    val cardExists by viewModel.cardExists.collectAsState()
     var isDialogVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Column {
@@ -142,7 +146,28 @@ fun ManualCardView(navHostController: NavHostController, viewModel: ManualCardVi
         }
     }
     LaunchedEffect(Unit) {
-        //viewModel.isCardExists(context)
+        while (true) {
+            val exists = viewModel.isCardExists(context)
+            if (exists) {
+                CustomDialogBuilder.composeAlertDialog(
+                    title = context.resources.getString(R.string.default_alert_title_error),
+                    subtitle = context.resources.getString(R.string.emv_msg_id_remove_card)
+                )
+            } else {
+                break
+            }
+            delay(500)
+        }
+    }
+
+    LaunchedEffect(cardExists) {
+        cardExists?.let { exists ->
+            if (exists) {
+                CustomDialogBuilder.composeAlertDialog(title = context.resources.getString(R.string.default_alert_title_error), subtitle = context.resources.getString(R.string.emv_msg_id_remove_card))
+            } else {
+                Log.d("CARD_CHECK", "❌ No card found")
+            }
+        }
     }
 
     CustomDialogBuilder.ShowComposed()

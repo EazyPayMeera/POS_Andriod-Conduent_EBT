@@ -37,6 +37,8 @@ import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,6 +54,8 @@ class ManualCardViewModel @Inject constructor(
 
     var cardNumber by mutableStateOf("")
         private set
+    private val _cardExists = MutableStateFlow<Boolean?>(null)
+    val cardExists: StateFlow<Boolean?> = _cardExists
 
     val isFormValid: Boolean
         get() = cardNumber.isNotBlank() &&
@@ -125,27 +129,8 @@ class ManualCardViewModel @Inject constructor(
     }
 
 
-    fun isCardExists(context: Context) {
-        viewModelScope.launch {
-            checkNetwork(context)
-
-            emvServiceRepository.isCardExists(
-                context,
-                iEmvServiceResponseListener = object :
-                    IEmvServiceResponseListener {
-                    @RequiresApi(Build.VERSION_CODES.O)
-                    @SuppressLint("DefaultLocale")
-                    override fun onEmvServiceResponse(response: Any) {
-                        Log.d("EMV_RESPONSE", Gson().toJson(response))
-                    }
-
-                    override fun onEmvServiceDisplayMessage(
-                        displayMsgId: EmvServiceResult.DisplayMsgId
-                    ) {
-
-                    }
-                })
-        }
+    fun isCardExists(context: Context): Boolean {
+        return emvServiceRepository.isCardExists(context)
     }
 
 

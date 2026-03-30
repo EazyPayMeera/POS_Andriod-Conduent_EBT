@@ -84,11 +84,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("CARD_ENTRY_MODE", "Raw Entry Mode: ${builderServiceTxnDetails.cardEntryMode}")
         return when (builderServiceTxnDetails.cardEntryMode) {
 
-            CardEntryMode.MAGSTRIPE.toString() -> "021"     // Magstripe + PIN
+            CardEntryMode.MAGSTRIPE.toString() -> "022"     // Magstripe + PIN
             CardEntryMode.CONTACT.toString() -> "051"       // Chip + PIN
             CardEntryMode.CONTACLESS.toString() -> "071"    // Contactless + PIN
             CardEntryMode.FALLBACK_MAGSTRIPE.toString() -> "801"
-            CardEntryMode.CONTACLESS_MAGSTRIPE.toString() -> "911"
+            CardEntryMode.MANUAL.toString() -> "011"
             else -> "010"
         }
     }
@@ -214,15 +214,15 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getProcessingCode(txnType: String?): String {
         return when (txnType) {
 
-            TxnType.CASH_PURCHASE.toString() -> "000000"
+            TxnType.CASH_PURCHASE.toString() -> "009600"
             TxnType.FOOD_PURCHASE.toString() -> "009800"
             TxnType.PURCHASE_CASHBACK.toString() -> "099600"
             TxnType.FOODSTAMP_RETURN.toString() -> "200098"
-            TxnType.BALANCE_ENQUIRY_CASH.toString() -> "310000"
-            TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "310000"
+            TxnType.BALANCE_ENQUIRY_CASH.toString() -> "319600"
+            TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "319800"
             TxnType.VOID_LAST.toString() -> "0000"
             TxnType.E_VOUCHER.toString() -> "009800"
-            TxnType.CASH_WITHDRAWAL.toString() -> "010000"
+            TxnType.CASH_WITHDRAWAL.toString() -> "019600"
 
             else -> "0000"   // 🔥 Required for String?
         }
@@ -529,6 +529,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val posEntryMode = getIsoPosEntryMode()
+        Log.d("ISO_DEBUG", "POS Entry Mode: $posEntryMode")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         val cashbackAmt = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         val stan = getSTAN()
@@ -556,7 +557,14 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, "021", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
-        iso.setValue(BuilderConstants.ISO_FIELD_TRACK2_DATA, "6104340109641151=3102220908", IsoType.LLVAR, BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH) // DE035 Track 2
+        if(builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString() ) {
+            iso.setValue(
+                BuilderConstants.ISO_FIELD_TRACK2_DATA,
+                "6104340109641151=3102220908",
+                IsoType.LLVAR,
+                BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH
+            ) // DE035 Track 2
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)           // DE042 Merchant ID

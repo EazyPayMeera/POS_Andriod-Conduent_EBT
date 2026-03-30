@@ -221,8 +221,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
 
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
-        emvInProgress.value = false
-        showProgressVar.value = false
         var message : String? = null
         emvMsgIdToStringId(displayMsgId)?.let {
             message = context.getString(it)
@@ -242,6 +240,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             }
                         }else {
                             cardRetryCount = 0
+                            showProgressVar.value = false
                             navigateToManualScreen(navHostController)
                         }
                     }

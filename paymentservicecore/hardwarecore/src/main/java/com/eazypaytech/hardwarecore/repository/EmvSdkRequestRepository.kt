@@ -1,6 +1,7 @@
 package com.eazypaytech.tpaymentcore.repository
 
 import android.content.Context
+import android.util.Log
 import com.eazypaytech.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.eazypaytech.tpaymentcore.model.emv.AidConfig
@@ -8,6 +9,10 @@ import com.eazypaytech.tpaymentcore.model.emv.CAPKey
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
 import com.eazypaytech.tpaymentcore.model.emv.TransConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.toString
 
@@ -48,16 +53,14 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
-    override fun isCardExists(context: Context) {
-        try {
-            val result = emvWrapper.isCardExists(context)
-
-            iEmvSdkResponseListener.onEmvSdkResponse(result)
-
-        } catch (e: Exception) {
-            iEmvSdkResponseListener.onEmvSdkResponse(
-                EmvSdkException(e.message ?: "Error checking card")
-            )
+    override fun isCardExists(context: Context): Boolean {
+        return runBlocking {
+            try {
+                emvWrapper.isCardExists(context)
+            } catch (e: Exception) {
+                Log.e("MOREFUN", "Error checking card: ${e.message}")
+                false
+            }
         }
     }
 
