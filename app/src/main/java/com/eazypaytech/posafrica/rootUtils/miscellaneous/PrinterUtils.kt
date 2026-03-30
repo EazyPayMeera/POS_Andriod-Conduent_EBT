@@ -69,11 +69,76 @@ object PrinterUtils {
             .feedLine(1)
 
             /* Date Time */
-            .addText(context.getString(R.string.receipt_date)+convertDateTime(objRootAppPaymentDetails.dateTime, outputFormat = AppConstants.DEFAULT_RECEIPT_DATE_FORMAT),
+            /*.addText(context.getString(R.string.receipt_date)+convertDateTime(objRootAppPaymentDetails.dateTime, outputFormat = AppConstants.DEFAULT_RECEIPT_DATE_FORMAT),
                 context.getString(R.string.receipt_time) + convertDateTime(objRootAppPaymentDetails.dateTime, outputFormat = AppConstants.DEFAULT_RECEIPT_TIME_FORMAT),
+                format = PrintFormat().fontSize(FontSize.SMALL)
+            )*/
+
+            /* TID & DateTime */
+            .addText(context.getString(R.string.receipt_terminal_id)+objRootAppPaymentDetails.terminalId,
+                convertDateTime(objRootAppPaymentDetails.dateTime,
+                outputFormat = AppConstants.DEFAULT_RECEIPT_DATE_FORMAT),
                 format = PrintFormat().fontSize(FontSize.SMALL)
             )
 
+            /* Clerk & Time */
+
+            .addText(context.getString(R.string.clerk_type_clerk)+objRootAppPaymentDetails.loginId,
+                convertDateTime(objRootAppPaymentDetails.dateTime,
+                    outputFormat = AppConstants.DEFAULT_RECEIPT_TIME_FORMAT),
+                format = PrintFormat().fontSize(FontSize.SMALL)
+            )
+            /* Add Line */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
+            )
+            /* Transaction Type */
+            .addText(context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
+            )
+
+            /* Card Number */
+            .addText(context.getString(R.string.receipt_card_no),objRootAppPaymentDetails.cardMaskedPan,
+                format = PrintFormat().fontSize(FontSize.SMALL)
+            )
+
+            /* Balance Summary */
+            .addText(context.getString(R.string.receipt_balance_summary),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
+            )
+            /* Add Line */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
+            )
+            /* Print The Amounts */
+
+            /* Add Line */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
+            )
+            /* Result */
+            .addText(context.getString(R.string.receipt_result)+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
+            )
+            /* Auth */
+            .addText(context.getString(R.string.receipt_auth)+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
+            )
+            /* Trace Number */
+            .addText(context.getString(R.string.receipt_trace_no)+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
+            )
+
+            /* DISPENSE GOODS */
+            .addText(context.getString(R.string.receipt_dispense_goods),
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.BOLD)
+            )
+
+            /* Add Line */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
+            )
+            /*
             /* MID & TID */
             .addText(context.getString(R.string.receipt_merchant_id)+objRootAppPaymentDetails.merchantId,
                 context.getString(R.string.receipt_terminal_id)+objRootAppPaymentDetails.procId,
@@ -84,7 +149,7 @@ object PrinterUtils {
             .addText(context.getString(R.string.receipt_batch_no)+objRootAppPaymentDetails.batchId,
                 context.getString(R.string.receipt_invoice_no)+objRootAppPaymentDetails.invoiceNo,
                 format = PrintFormat().fontSize(FontSize.SMALL)
-            )
+            )*/
 
             /* Demo Mode Text */
             .addText(context.getString(R.string.receipt_gray_line),
@@ -96,7 +161,7 @@ object PrinterUtils {
             .addText(context.getString(R.string.receipt_gray_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
                 condition = objRootAppPaymentDetails.isDemoMode == true)
-
+            /*
             /* Transaction Type & Transaction Status */
             .addText(context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)),
                 context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
@@ -152,11 +217,12 @@ object PrinterUtils {
             .addText(context.getString(R.string.receipt_gray_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
-
+            */
+            /*
             /* Customer Note */
             .addText(context.getString(R.string.receipt_note),
                 format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER)
-            )
+            )*/
 
             .feedLine()
 

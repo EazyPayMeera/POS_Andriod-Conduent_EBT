@@ -109,7 +109,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         }
     }
 
-    fun getAccessToken() {
+    /*fun getAccessToken() {
         viewModelScope.launch {
             try {
                 val requestDetails =
@@ -120,7 +120,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
                 AppLogger.d(AppLogger.MODULE.APP_UI, e.message ?: "")
             }
         }
-    }
+    }*/
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
         sharedViewModel?.objPosConfig?.apply { isLoggedIn = true }?.saveToPrefs()

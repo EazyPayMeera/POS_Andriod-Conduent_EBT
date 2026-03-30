@@ -169,7 +169,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return ksn
     }
 
-    fun getBatchNumber() : String? {
+    /*fun getBatchNumber() : String? {
         var batchNumber: String? =
             builderServiceTxnDetails.batchId?.toInt()?.toString()?:"1"
         batchNumber?.padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH, '0')?.let {
@@ -177,9 +177,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 .padStart(BuilderConstants.ISO_FIELD_PVT_USE_BATCH_LENGTH_LENGTH, '0') + it
         }
         return batchNumber
-    }
+    }*/
 
-    fun getOrigAmount() : String?
+    /*fun getOrigAmount() : String?
     {
         Log.d("OriginalAmountLog", "originalTtlAmount: ${builderServiceTxnDetails.originalTtlAmount}")
         var amount: String? =
@@ -188,10 +188,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             amount = it
         }
         return amount
-    }
+    }*/
 
 
-    fun getInvoiceNumber() : String?
+    /*fun getInvoiceNumber() : String?
     {
         var invoiceNumber: String? =
             builderServiceTxnDetails.invoiceNo?.toInt()?.toString()
@@ -199,7 +199,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             invoiceNumber = it
         }
         return invoiceNumber
-    }
+    }*/
 
     fun getCurrencyCode() : String?
     {
@@ -310,7 +310,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     /* Dummy Response Functions */
-    fun generateDummyRRN() : String
+    /*fun generateDummyRRN() : String
     {
         val charset = BuilderConstants.DUMMY_RANDOM_CHARSET
         val currentDate = BuilderUtils.getCurrentDateTime(BuilderConstants.DUMMY_DATE_TIME_FORMAT_RRN)
@@ -322,7 +322,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         // Shuffle the date encoding and the random part
         val combined = (encodedDate + randomPart).toList().shuffled().joinToString("")
         return combined.take(BuilderConstants.ISO_FIELD_RRN_LENGTH)
-    }
+    }*/
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateRRN(stan: String): String {
@@ -949,7 +949,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
 
 
-    fun buildDummyPurchaseResponse(): ByteArray {
+   /*fun buildDummyPurchaseResponse(): ByteArray {
         val iccData = generateDummyIccData()
         val rrn = generateDummyRRN()
         val authCode = generateDummyAuthCode()
@@ -980,9 +980,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccData, IsoType.LLLBIN, iccData.length)
 
         return appendIsoLength(message.writeData())
-    }
+    }*/
 
-    fun buildDummyVoidResponse(): ByteArray {
+    /*fun buildDummyVoidResponse(): ByteArray {
         val respCode = generateDummyRespCode()
 
         /* Don't change the request message. Instead only fill up the response parameters */
@@ -1001,7 +1001,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         message.setValue(BuilderConstants.ISO_FIELD_RESP_CODE, respCode , IsoType.ALPHA,BuilderConstants.ISO_FIELD_RESP_CODE_LENGTH)
 
         return appendIsoLength(message.writeData())
-    }
+    }*/
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalStdlibApi::class)
     fun parsePurchaseResponse(response: ByteArray): BuilderServiceTxnDetails {
