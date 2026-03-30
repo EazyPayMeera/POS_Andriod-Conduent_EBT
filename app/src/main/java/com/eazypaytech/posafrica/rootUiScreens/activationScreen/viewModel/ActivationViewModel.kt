@@ -172,13 +172,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             val json = configFile.readText()
             val jsonObject = Gson().fromJson(json, JsonObject::class.java)
 
-            // Safely get the master_kek value
             val masterKey = jsonObject.get("master_kek")?.asString
 
             if (masterKey.isNullOrEmpty()) {
                 null
             } else {
-                // Assign to sharedViewModel safely
                 sharedViewModel.objRootAppPaymentDetail.masterKey = masterKey
                 masterKey
             }

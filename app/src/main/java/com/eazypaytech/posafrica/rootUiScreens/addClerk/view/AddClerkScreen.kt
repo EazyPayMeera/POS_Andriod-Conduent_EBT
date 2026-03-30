@@ -45,7 +45,6 @@ import com.eazypaytech.posafrica.ui.theme.dimens
 
 @Composable
 fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkViewModel = hiltViewModel()) {
-    val context = LocalContext.current
     val sharedViewModel = localSharedViewModel.current
     val focusRequester = remember { FocusRequester() }
 

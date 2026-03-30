@@ -172,16 +172,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
         }
     }
 
-    fun updateTransResult(sharedViewModel: SharedViewModel) {
-        viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
-                Log.d("DB_DEBUG", "Before update: ${txn}")
-                txn.isVoided = true
-                dbRepository.updateTxn(txn)
-                Log.d("DB_DEBUG", "After update: ${txn}")
-            } ?: Log.d("DB_DEBUG", "Transaction not found")
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun fetchLastTransaction(
@@ -191,9 +181,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     ) {
 
         val lastTxn = dbRepository.fetchLastTransactionByTxnType()
-
-        Log.d("FETCH_TXN", "DB Result: $lastTxn")
-
         lastTxn?.let {
 
             if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {

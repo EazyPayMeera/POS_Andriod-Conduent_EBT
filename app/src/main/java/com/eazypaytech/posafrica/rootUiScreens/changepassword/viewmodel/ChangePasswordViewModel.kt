@@ -44,12 +44,6 @@ class ChangePasswordViewModel @Inject constructor(
         confirmPassword.value = password
     }
 
-    fun clearFields() {
-        currentPassword.value = ""
-        newPassword.value = ""
-        confirmPassword.value = ""
-    }
-
     fun onChangePasswordClick(navHost: NavHostController?, sharedViewModel: SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel

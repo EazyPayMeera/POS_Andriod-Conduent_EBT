@@ -35,7 +35,6 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
     private val _origTotalAmount = MutableStateFlow<String?>(null)
     val origTotalAmount: StateFlow<String?> = _origTotalAmount
 
-    private val _timeDate = MutableStateFlow<String?>(null)
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
 

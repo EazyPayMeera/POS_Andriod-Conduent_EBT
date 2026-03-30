@@ -1,6 +1,8 @@
 package com.eazypaytech.posafrica.rootUiScreens.login.view
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +41,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.LoginButton
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
 import com.eazypaytech.posafrica.ui.theme.dimens
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewModel = hiltViewModel()) {
     val context = LocalContext.current
@@ -115,7 +118,7 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                         modifier = Modifier
                             .padding(top = MaterialTheme.dimens.DP_11_CompactMedium)
                             .clickable {
-                                navHostController?.navigate(AppNavigationItems.ForgetPasswordScreen.route)
+                                navHostController?.navigate(AppNavigationItems.ChangePasswordScreen.route)
                             }
                     )
 
