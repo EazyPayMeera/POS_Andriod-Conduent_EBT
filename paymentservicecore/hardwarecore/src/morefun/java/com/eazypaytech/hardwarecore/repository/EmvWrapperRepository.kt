@@ -196,7 +196,8 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-    val magCardListener = object :  OnSearchMagCardListener.Stub() {
+    val magCardListener = object : OnSearchMagCardListener.Stub() {
+
         override fun onSearchResult(
             p0: Int,
             p1: MagCardInfoEntity?
@@ -206,37 +207,46 @@ class EmvWrapperRepository @Inject constructor(
             Log.d(TAG, "Card Holder Name.: ${p1?.cardholderName}")
             Log.d(TAG, "Expiry Date......: ${p1?.expDate}")
             Log.d(TAG, "Service Code.....: ${p1?.serviceCode}")
-
-
+            Log.d(TAG, "Track2 Raw.......: ${p1?.tk2}")
 
             p0.takeIf {
                 it == ServiceResult.Success &&
                         p1?.tk2ValidResult == ServiceResult.Success
             }?.let {
                 checkCardResult = CheckCardResult.CARD_SWIPED
+
                 iEmvSdkResponseListener?.onEmvSdkResponse(
                     EmvSdkResult.CardCheckResult(
                         status = EmvSdkResult.CardCheckStatus.CARD_SWIPED
                     )
                 )
 
-                var msrTlv = TlvUtils()
-                var trackData = p1?.tk2?.uppercase()?.replace('=', 'D')?.trim('F')
-                msrTlv.addTagValHex(
-                    EmvConstants.EMV_TAG_TRACK2,
-                    trackData,
-                    0,
-                    trackData?.length ?: 0
-                )
-                encryptThenRequestOnline(msrTlv.toTlvString())
-            } ?:let {
+                val trackData = p1?.tk2
+                    ?.uppercase()
+                    ?.replace('=', 'D')
+                    ?.trimEnd('F') ?: ""
+
+                val pan = p1?.cardNo ?: ""
+                inputOnlinePin(pan) { pinBlock ->
+                    val msrTlv = TlvUtils()
+                    msrTlv.addTagValHex(
+                        EmvConstants.EMV_TAG_TRACK2,
+                        trackData,
+                        0,
+                        trackData.length
+                    )
+
+                    val finalTlv = msrTlv.toTlvString()
+                    encryptThenRequestOnline(finalTlv)
+                }
+
+            } ?: let {
                 iEmvSdkResponseListener?.onEmvSdkResponse(
                     EmvSdkResult.CardCheckResult(
                         status = EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
                     )
                 )
-
-                deviceService?.magCardReader?.searchCard(this,30, Bundle())
+                deviceService?.magCardReader?.searchCard(this, 30, Bundle())
                 deviceService?.magCardReader?.setIsCheckLrc(true)
             }
         }
@@ -264,7 +274,7 @@ class EmvWrapperRepository @Inject constructor(
              if (p0) {
              inputOnlinePin(
                  pan,
-                 amount = _sAmount) { pinBlock ->
+                 ) { pinBlock ->
                  try {
                      deviceService?.emvHandler?.onSetCardHolderInputPin(pinBlock)
                  } catch (e: RemoteException) {
@@ -423,9 +433,9 @@ class EmvWrapperRepository @Inject constructor(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          inputOnlinePin(
+    private fun inputOnlinePin(
         pan: String?,
-        amount: String,
+//        amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit
     ) {
         //val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
@@ -583,20 +593,28 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-    fun isCardExists(context: Context?): Boolean {
+    suspend fun isCardExists(context: Context?): Boolean {
         return try {
-            if (deviceService == null) {
-                Log.w(TAG, "deviceService is null in isCardExists()")
+            // ✅ Ensure service is connected first
+            val service = getDeviceService(context)
+
+            if (service == null) {
+                Log.w(TAG, "deviceService is null — service not connected")
                 return false
             }
 
-            val reader = deviceService?.getIccCardReader(1)
+            // ✅ Slot 1 = ICSlOT1 (correct per YSDK docs)
+            val reader = service.getIccCardReader(1)
+
             if (reader == null) {
-                Log.w(TAG, "getIccCardReader(0) returned null")
+                Log.w(TAG, "getIccCardReader(1) returned null")
                 return false
             }
 
-            reader.isCardExists()
+            val exists = reader.isCardExists()
+            Log.d(TAG, "isCardExists: $exists")
+            exists
+
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException in isCardExists()", e)
             false
@@ -1558,7 +1576,7 @@ class EmvWrapperRepository @Inject constructor(
                 Log.d("KEY_INJECT", "Device service connected successfully")
 
                 val result = deviceService.pinPad.loadWKey(
-                    EncryptionConstants.MS_KEY_TYPE_PIN,
+                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
                     0, // PIN KEY TYPE
                     keyBytes,
                     keyBytes.size

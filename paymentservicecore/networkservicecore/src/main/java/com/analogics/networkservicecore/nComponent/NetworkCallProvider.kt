@@ -22,28 +22,6 @@ import javax.net.ssl.X509TrustManager
 
 
 object NetworkCallProvider {
-    suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): ResultProvider<T> {
-        return try {
-            val response = apiCall.invoke()
-            if (response.isSuccessful) {
-                ResultProvider.Success(response.body()!!)
-            } else {
-                ResultProvider.Error(
-                    Exception(
-                        response.errorBody()?.source()?.buffer?.readUtf8() ?: "Something went wrong"
-                    )
-
-                )
-
-            }
-        } catch (e: Exception) {
-            Log.d("exception",e.toString())
-            ResultProvider.Error(
-               e
-            )
-        }
-    }
-
 
     suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
         return try {
@@ -73,7 +51,7 @@ object NetworkCallProvider {
                         NetworkConstants.HOST_ADDRESS,
                         NetworkConstants.HOST_PORT
                     ),
-                    30_000
+                    15_000
                 )
 
                 val sslSocket = sslContext.socketFactory
@@ -84,7 +62,7 @@ object NetworkCallProvider {
                         true
                     ) as SSLSocket
 
-                sslSocket.soTimeout = 30_000
+                sslSocket.soTimeout = 15_000
                 sslSocket.startHandshake()
                 val output = sslSocket.outputStream
                 val input = sslSocket.inputStream
@@ -119,11 +97,9 @@ object NetworkCallProvider {
             }
 
         } catch (e: SocketTimeoutException) {
-            Log.e("Conduent", "Timeout after 30 seconds")
             ResultProvider.Error(e)
 
         } catch (e: Exception) {
-            Log.e("Conduent", "Exception: ${e.message}")
             ResultProvider.Error(e)
         }
     }
@@ -131,36 +107,24 @@ object NetworkCallProvider {
 
 
     fun safeApiNetworkCall(requestBytes: ByteArray): Flow<ByteArray> = callbackFlow {
+        var intentionallyClosed = false  // 👈 add this flag
+
         try {
             val sslContext = SSLContext.getInstance("TLSv1.2")
             sslContext.init(
                 null,
                 arrayOf(object : X509TrustManager {
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
+                    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
                 }),
                 SecureRandom()
             )
 
             val plainSocket = Socket()
-
             plainSocket.connect(
-                java.net.InetSocketAddress(
-                    NetworkConstants.HOST_ADDRESS,
-                    NetworkConstants.HOST_PORT
-                ),
-                30_000
+                java.net.InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
+                15_000
             )
 
             val sslSocket = sslContext.socketFactory.createSocket(
@@ -170,29 +134,24 @@ object NetworkCallProvider {
                 true
             ) as SSLSocket
 
-            sslSocket.soTimeout = 30_000 // infinite read
+            sslSocket.soTimeout = 15_000
             sslSocket.startHandshake()
 
             val output = sslSocket.outputStream
             val input = sslSocket.inputStream
 
-            // Send the request
             val lenPrefix = byteArrayOf(
                 (requestBytes.size shr 8).toByte(),
                 (requestBytes.size and 0xFF).toByte()
             )
             output.write(lenPrefix + requestBytes)
             output.flush()
-            Log.d("Conduent", "Request sent: ${String(requestBytes, Charsets.US_ASCII)}")
-
             val receivedMTIs = mutableSetOf<String>()
 
             while (true) {
-                // Read length prefix
                 val lenBytes = ByteArray(2)
                 val read = input.read(lenBytes)
                 if (read < 2) {
-                    Log.w("Conduent", "Host closed connection")
                     break
                 }
 
@@ -209,84 +168,28 @@ object NetworkCallProvider {
 
                 val isoMessage = String(msgBuffer, Charsets.US_ASCII)
                 val mti = isoMessage.take(4)
-                Log.d("Conduent", "Received MTI: $mti, full message: $isoMessage")
 
-                // Emit each MTI only once (0810 and 0800)
                 if (!receivedMTIs.contains(mti) && (mti == "0810" || mti == "0800")) {
                     trySend(msgBuffer).isSuccess
                     receivedMTIs.add(mti)
                 }
 
-                if (receivedMTIs.containsAll(listOf("0810", "0800")))
-                {
-                    Log.d("Conduent", "Both Received Break the Loop")
-                    close()
+                if (receivedMTIs.containsAll(listOf("0800"))) {
+                    intentionallyClosed = true  // 👈 set flag before closing
+                    sslSocket.close()           // 👈 close socket here
+                    plainSocket.close()
+                    close()                     // 👈 then close flow
                     break
                 }
-
-
             }
 
-            sslSocket.close()
         } catch (e: Exception) {
-            close(e) // close flow on error
+            if (!intentionallyClosed) {  // 👈 only forward real errors
+                close(e)
+            }
         }
 
-        awaitClose { /* Cleanup socket if needed */ }
+        awaitClose { }
     }.flowOn(Dispatchers.IO)
 
-
-    suspend fun <T> apiCallCommon(apiCall: suspend () -> Response<T>): ResultProvider<T> {
-        return try {
-            val response = apiCall.invoke()
-            if (response.isSuccessful) {
-               // getDeserializeResponse(response.body()!!.toString(),T)
-                ResultProvider.Success(response.body()!!)
-               /* var userType = object: TypeToken<T>(){}.type
-                var response=Gson().fromJson<T>(response.body().toString(), userType)
-                ResultProvider.Success(response)*/
-            } else {
-                ResultProvider.Error(Exception("API call failed"))
-            }
-        } catch (e: Exception) {
-            ResultProvider.Error(e)
-        }
-    }
-
-
-
-    suspend fun <T> apiCallCommonStrng(apiCall: suspend () -> Response<T>): ResultProvider<T> {
-        return try {
-            val response = apiCall.invoke()
-            if (response.isSuccessful) {
-                // getDeserializeResponse(response.body()!!.toString(),T)
-                ResultProviderString.Success(response.body().toString())
-                /* var userType = object: TypeToken<T>(){}.type
-                 var response=Gson().fromJson<T>(response.body().toString(), userType)
-                 ResultProvider.Success(response)*/
-            } else {
-                ResultProviderString.Error(Exception("API call failed"))
-            }
-        } catch (e: Exception) {
-            ResultProviderString.Error(e)
-        }
-    }
-
-    fun <T : Any> getDeserializeResponse(response: String, className: T): T {
-        return Gson().fromJson(
-            response,
-            className::class.java
-        )
-    }
-
-    fun <T> stringToArray(s: String?, clazz: Class<T>?): T {
-        return  Gson().fromJson(s, clazz)
-        //or return Arrays.asList(new Gson().fromJson(s, clazz)); for a one-liner
-    }
-
-    fun <T> Gson.fromJson(json: String): T {
-        val tt = object : TypeToken<T>() {}.type;
-        println(tt);
-        return fromJson(json, tt);
-    }
 }

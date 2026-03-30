@@ -117,25 +117,26 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     @RequiresApi(Build.VERSION_CODES.O)
                     @SuppressLint("DefaultLocale")
                     override fun onEmvServiceResponse(response: Any) {
-                        Log.d("EMV_RESPONSE", Gson().toJson(response))
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-                                Log.d("TRANS_RESULT", Gson().toJson(response))
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
 
-//                                    val balance = parseEBTBalances(response.additionalAmt.toString())
-//                                    Log.d("TAG", "txnType: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
-//                                    if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
-//                                    {
-//                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
-//                                            balance.snap.toString()
-//                                    }
-//                                    else
-//                                    {
-//                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt =
-//                                            balance.cash.toString()
-//                                    }
+                                    val rawAdditionalAmt = response.additionalAmt?.toString()
+                                    if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
+                                        try {
+                                            val balance = parseEBTBalances(rawAdditionalAmt)
+                                            if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP) {
+                                                sharedViewModel.objRootAppPaymentDetail.additionalAmt = balance.snap.toString()
+                                            } else {
+                                                sharedViewModel.objRootAppPaymentDetail.additionalAmt = balance.cash.toString()
+                                            }
+                                        } catch (e: Exception) {
+                                            sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                        }
+                                    } else {
+                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                    }
                                     if(isStatusTryAnotherCard(response.status)==true) {
                                         displayEmvError(response.displayMsgId)
                                     }
@@ -150,6 +151,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             is EmvServiceResult.CardCheckResult -> {
                                 emvInProgress.value = false
                                 showProgressVar.value = false
+                                Log.d("TAG", "Response Status: ${response.status}")
                                 if(isCardCheckStatusInProgress(response.status)) {
                                     emvInProgress.value = true
                                     showProgressVar.value = true
@@ -157,9 +159,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                         displayInfoMsgId.value = it
                                     }
                                 }
-                                else if(isCardCheckStatusAbort(response.status)) {
-                                    displayEmvError(response.displayMsgId, abort = true)
+                                else if(isCardNotPresent(response.status))
+                                {
+                                    navigateToManualScreen(navHostController)
                                 }
+//                                else if(isCardCheckStatusAbort(response.status)) {
+//                                    Log.d("Card","Card Timeout")
+//                                    displayEmvError(response.displayMsgId, abort = true)
+//                                }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
                                 }
@@ -215,13 +222,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             )
         }
     }
-
-
+    
 
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
-        emvInProgress.value = false
-        showProgressVar.value = false
         var message : String? = null
         emvMsgIdToStringId(displayMsgId)?.let {
             message = context.getString(it)
@@ -241,6 +245,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             }
                         }else {
                             cardRetryCount = 0
+                            showProgressVar.value = false
                             navigateToManualScreen(navHostController)
                         }
                     }
@@ -264,11 +269,13 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
-    fun isCardCheckStatusAbort(status: Any?) : Boolean
+
+    fun isCardNotPresent(status: Any?) : Boolean
     {
         return when(status)
         {
-            EmvServiceResult.CardCheckStatus.TIMEOUT
+            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
+            EmvServiceResult.CardCheckStatus.TIMEOUT,
             -> true
             else -> false
         }
@@ -278,7 +285,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     {
         return when(status)
         {
-            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
             EmvServiceResult.CardCheckStatus.NOT_ICC_CARD,
             EmvServiceResult.CardCheckStatus.USE_ICC_CARD,
             EmvServiceResult.CardCheckStatus.BAD_SWIPE,

@@ -2,6 +2,7 @@ package com.eazypaytech.paymentservicecore.repository.emvService
 
 import android.content.Context
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.paymentservicecore.constants.AppConstants
@@ -391,12 +392,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
 
 
 
-    override fun isCardExists(context: Context,iEmvServiceResponseListener: IEmvServiceResponseListener) {
-        this.iEmvServiceResponseListener = iEmvServiceResponseListener
-        iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
-        emvSdkRequestRepository.isCardExists(context)
-
+    override fun isCardExists(context: Context): Boolean {
+        return emvSdkRequestRepository.isCardExists(context)
     }
+
+
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
     }

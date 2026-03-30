@@ -263,7 +263,7 @@
     <string name="ebt_voucher_return">Transactions</string>
     <string name="sel_return">Return</string>
     <string name="ebt_void_last">EBT Void Last</string>
-    <string name="ebt_food_purchase">EBT SNAP Benefit Purchase</string>
+    <string name="ebt_food_purchase">EBT Benefit Purchase</string>
     <string name="ebt_foodstamp_return">EBT SNAP Benefit Return</string>
     <string name="ebt_e_voucher">EBT Voucher Settlement</string>
     <string name="ebt_e_voucher_amount">Enter Settlement Amount</string>
@@ -451,7 +451,7 @@
     <string name="emv_msg_id_declined_offline">Declined Offline</string>
     <string name="emv_msg_id_no_emv_apps">Card Not Supported</string>
     <string name="emv_msg_id_app_selection_failed">Application Selection Failed</string>
-    <string name="emv_msg_id_try_another_interface">Try Again</string>
+    <string name="emv_msg_id_try_another_interface">Please Try Again</string>
     <string name="emv_msg_id_invalid_icc_card">Invalid ICC Card</string>
     <string name="emv_msg_id_retry">Please Retry</string>
     <string name="emv_msg_id_card_removed">Card Removed</string>

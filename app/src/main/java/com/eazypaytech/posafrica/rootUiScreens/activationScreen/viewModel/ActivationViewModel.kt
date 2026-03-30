@@ -165,7 +165,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
 
         if (!configFile.exists()) {
-            Log.d("ConfigRead", "Config file does not exist!")
             return null
         }
 
@@ -177,7 +176,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             val masterKey = jsonObject.get("master_kek")?.asString
 
             if (masterKey.isNullOrEmpty()) {
-                Log.d("ConfigRead", "Master KEK is missing or empty in config!")
                 null
             } else {
                 // Assign to sharedViewModel safely
@@ -228,11 +226,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                     sharedViewModel?.objRootAppPaymentDetail?.workKey = paymentServiceTxnDetails.workKey
                     currentStep = ActivationState.HAND_SHAKE
 
-//                    if (paymentServiceTxnDetails.workKey.isNullOrEmpty()) {
-//                        currentStep = ActivationState.KEY_EXCHANGE
-//                    } else {
-//                        currentStep = ActivationState.KEY_CHANGE
-//                    }
                 }
 
                 ActivationState.KEY_EXCHANGE -> {
@@ -264,6 +257,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                     }?.saveToPrefs()
 
                     val userCount = txnDBRepository.getUserCount()
+
                     if (userCount > 0) {
                         navHostController.navigateAndClean(AppNavigationItems.LoginScreen.route)
                     } else {
@@ -278,10 +272,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
     override fun onApiServiceError(apiServiceError: ApiServiceError) {
         setActivationButtonState(true)
-        CustomDialogBuilder.composeAlertDialog(
-            title = navHostController.context.resources?.getString(R.string.default_alert_title_error),
-            message = apiServiceError.errorMessage
-        )
     }
 
     override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
