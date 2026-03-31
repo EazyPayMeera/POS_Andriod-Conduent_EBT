@@ -18,6 +18,7 @@ object EmvConstants {
 
     const val EMV_TAG_LANG_PREF =                   "5F2D"
     const val EMV_TAG_CARD_COUNTRY_CODE =           "5F28"
+    const val EMV_TAG_CARD_EXPIRY_DATE =            "5F24"
     const val EMV_TAG_TRANS_CURRENCY_EXPONENT =     "5F36"
 
     const val EMV_TAG_MERCH_CATEGORY_CODE =         "9F15"

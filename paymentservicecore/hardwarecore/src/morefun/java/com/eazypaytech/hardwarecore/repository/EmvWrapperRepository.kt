@@ -91,7 +91,8 @@ class EmvWrapperRepository @Inject constructor(
         "9F63",
         "50",
         "9F12",
-        "5F34"
+        "5F34",
+        "5F24"
     )
 
     enum class CheckCardResult(value : Int) {
@@ -1777,7 +1778,9 @@ class EmvWrapperRepository @Inject constructor(
             if (trackData.isEmpty() && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
                 trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
             }
+            val expiryDate = getEmvTag(EmvConstants.EMV_TAG_CARD_EXPIRY_DATE)
 
+            Log.d("ENCRYPTION", "📅 EMV Expiry Date (raw): $expiryDate")
             if (trackData.isEmpty()) {
                 Log.w("ENCRYPTION", "⚠️ Track2 not available")
                 return hashMap

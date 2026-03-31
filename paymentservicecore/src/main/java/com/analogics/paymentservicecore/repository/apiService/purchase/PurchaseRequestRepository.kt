@@ -48,8 +48,6 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.posEntryMode = it.posEntryMode
                 paymentServiceTxnDetails.posCondition = it.posCondition
 
-
-
                 var tlv = TlvUtils(it.emvData)
                 /* Extract tag 8A from ISO field if required */
                 if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {

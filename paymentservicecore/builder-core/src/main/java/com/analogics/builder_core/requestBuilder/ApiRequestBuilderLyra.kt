@@ -18,14 +18,11 @@ import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
 import com.solab.iso8583.parse.ConfigParser
 import dagger.hilt.android.qualifiers.ApplicationContext
-//import kotlinx.coroutines.launch
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.random.Random
 
 class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context,var dbRepository: TxnDBRepository) {
     val messageFactory = MessageFactory<IsoMessage>()
@@ -61,7 +58,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         Log.d("CARD_ENTRY_MODE", "Raw Entry Mode: ${builderServiceTxnDetails.cardEntryMode}")
         return when (builderServiceTxnDetails.cardEntryMode) {
 
-            CardEntryMode.MAGSTRIPE.toString() -> "022"     // Magstripe + PIN
+            CardEntryMode.MAGSTRIPE.toString() -> "021"     // Magstripe + PIN
             CardEntryMode.CONTACT.toString() -> "051"       // Chip + PIN
             CardEntryMode.CONTACLESS.toString() -> "071"    // Contactless + PIN
             CardEntryMode.FALLBACK_MAGSTRIPE.toString() -> "801"
@@ -328,37 +325,36 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+    suspend fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
-        val posEntryMode = getIsoPosEntryMode()
-        Log.d("ISO_DEBUG", "POS Entry Mode: $posEntryMode")
-        val encryptedTrack2Data = getEncryptedTrack2Data()
-        val cashbackAmt = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
-        val stan = getSTAN()
-        val iso = IsoMessage()
         val pinBlock = getPinBlock()
-        val dateTime = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
         val maskedPan = getMaskedPAN()
-        var localTime = BuilderUtils.getLocalTime()
-        val localDate = BuilderUtils.getLocalDate()
-        val currencyCode = getCurrencyCode()
-        val processingCode = getProcessingCode(this.builderServiceTxnDetails.txnType)
-        val rrn = generateRRN(stan.toString())
-        val originalData = dateTime.padEnd(20,'0')
-        val posConditionCode = getNationalPosConditionCode()
+        val encryptedTrack2Data = getEncryptedTrack2Data()
+        builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
+        builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
+        builderServiceTxnDetails?.stan = getSTAN().toString()
+        builderServiceTxnDetails?.dateTime = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
+        builderServiceTxnDetails?.localTime = BuilderUtils.getLocalTime()
+        builderServiceTxnDetails?.localDate = BuilderUtils.getLocalDate()
+        builderServiceTxnDetails?.currencyCode = getCurrencyCode()
+        builderServiceTxnDetails?.processingCode = getProcessingCode(this.builderServiceTxnDetails.txnType)
+        builderServiceTxnDetails?.rrn = generateRRN(this.builderServiceTxnDetails.stan!!)
+        val originalData = builderServiceTxnDetails?.dateTime?.padEnd(20,'0')
+        builderServiceTxnDetails?.posConditionCode = getNationalPosConditionCode()
+        val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, localDate, IsoType.NUMERIC, 4)
-        iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, localDate, IsoType.NUMERIC, 4)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, builderServiceTxnDetails?.dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_STAN, builderServiceTxnDetails?.stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, builderServiceTxnDetails?.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
+        iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
-        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
+        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         if(builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString() ) {
             iso.setValue(
@@ -368,7 +364,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH
             ) // DE035 Track 2
         }
-        iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
+        iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)           // DE042 Merchant ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_NAME,
@@ -377,44 +373,21 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH
         )
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
-        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
+        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
         iso.setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.ALPHA, BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
         if(this.builderServiceTxnDetails.txnType ==  TxnType.PURCHASE_CASHBACK.toString())
         {
-            iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, cashbackAmt, IsoType.LLLVAR, cashbackAmt.length)
+            iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, builderServiceTxnDetails?.cashback, IsoType.LLLVAR, builderServiceTxnDetails?.cashback!!.length)
         }
-        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode , IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
         iso.setBinaryHeader(false)
         iso.setBinaryFields(false)
         iso.setForceStringEncoding(true)
         iso.setIsoHeader("")
-        val savedTxn = SavedTxnData(
-            stan = stan.toString(),
-            rrn = rrn,
-            amount = amount.toString(),
-            ttlAmount = this.builderServiceTxnDetails.ttlAmount,
-            procId = this.builderServiceTxnDetails.procId,
-            processingCode = processingCode,
-            transmissionDateTime = dateTime,
-            localTime = localTime,
-            localDate = localDate,
-            terminalId = builderServiceTxnDetails?.terminalId,
-            merchantId = builderServiceTxnDetails?.merchantId,
-            merchantName = builderServiceTxnDetails?.merchantNameLocation,
-            merchantBank = builderServiceTxnDetails?.merchantBankName,
-            merchantType = builderServiceTxnDetails?.merchantType,
-            currencyCode = currencyCode,
-            pan = maskedPan,
-            track2Data = encryptedTrack2Data,
-            entryMode = posEntryMode,
-            posConditionCode = posConditionCode,
-            acquirerId = builderServiceTxnDetails?.procId,
-            additionalData = builderServiceTxnDetails?.fnsNumber,
-            originalData = originalData
-        )
-        IsoMessageBuilder.saveTxn(savedTxn)
+
+        updateTransResult(this.builderServiceTxnDetails)
         return iso.writeData()
     }
 
@@ -462,7 +435,24 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
-        val additional_Data = builderServiceTxnDetails?.fnsNumber + "VN" + builderServiceTxnDetails?.voucherNumber?.padStart(10,'0')
+        val additional_Data = buildString {
+            val fns = builderServiceTxnDetails?.fnsNumber.orEmpty()
+            val voucherNo = builderServiceTxnDetails?.voucherNumber.orEmpty()
+
+            Log.d("LLLVAR_DEBUG", "FNS: $fns")
+            Log.d("LLLVAR_DEBUG", "Voucher Number: $voucherNo")
+            Log.d("LLLVAR_DEBUG", "Voucher Length: ${voucherNo.length}")
+
+            val lengthFormatted = voucherNo.length.toString().padStart(3, '0')
+            Log.d("LLLVAR_DEBUG", "Formatted Length (LLL): $lengthFormatted")
+
+            append(fns)
+            append("VN")
+            append(lengthFormatted)
+            append(voucherNo)
+
+            Log.d("LLLVAR_DEBUG", "Final additional_Data: $this")
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA,additional_Data, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
         iso.setBinaryHeader(false)
@@ -484,29 +474,29 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_REVERSAL_REQ)
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, lastTxn?.processingCode?.padStart(6,'0'), IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode?.padStart(6,'0'), IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, lastTxn?.amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, lastTxn?.transmissionDateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_STAN,lastTxn?.stan , IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, lastTxn?.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, lastTxn?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, builderServiceTxnDetails?.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(14, "4912", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(15, "0325", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, lastTxn?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, "21", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, lastTxn?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_RRN, lastTxn?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)      // Original RRN
+        iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)      // Original RRN
         iso.setValue(BuilderConstants.ISO_FIELD_RESPONSE_CODE, "00", IsoType.ALPHA, BuilderConstants.ISO_FIELD_RESPONSE_CODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, lastTxn?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, lastTxn?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_NAME,
             builderServiceTxnDetails?.merchantNameLocation?.padEnd(BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH),
             IsoType.ALPHA,
             BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH
         )
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
-        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, lastTxn?.currencyCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, lastTxn?.posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         iso.setValue(59, "39000000000000840", IsoType.LLLVAR, 17)
         iso.setValue(BuilderConstants.ISO_FIELD_RESERVED_PRIVATE, "8018", IsoType.LLLVAR, 6)
         val originalData =
@@ -583,7 +573,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return details
     }
 
-    // Financial Transaction Response Parsing 0210  // Added By Rushikesh Testing Pending
+
     fun parsePurchaseResponse123(context: Context, response: ByteArray): BuilderServiceTxnDetails {
         val details = BuilderServiceTxnDetails()
 
@@ -631,35 +621,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 hostResMessage  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
             }
 
-            Log.d("ISO_DEBUG", """
-    cardPan: ${details.cardPan}
-    processingCode: ${details.processingCode}
-    authAmount: ${details.authAmount}
-    dateTime: ${details.dateTime}
-    stan: ${details.stan}
-    localTime: ${details.localTime}
-    localDate: ${details.localDate}
-    expiryDate: ${details.expiryDate}
-    settlementDate: ${details.settlementDate}
-    captureDate: ${details.captureDate}
-    merchantType: ${details.merchantType}
-    posEntryMode: ${details.posEntryMode}
-    acquirerId: ${details.acquirerId}
-    track2Data: ${details.track2Data}
-    rrn: ${details.rrn}
-    hostAuthCode: ${details.hostAuthCode}
-    hostRespCode: ${details.hostRespCode}
-    terminalId: ${details.terminalId}
-    merchantId: ${details.merchantId}
-    merchantName: ${details.merchantName}
-    merchantBank: ${details.merchantBank}
-    currencyCode: ${details.currencyCode}
-    additionalAmt: ${details.additionalAmt}
-    posCondition: ${details.posCondition}
-    privateData: ${details.privateData}
-    hostResMessage: ${details.hostResMessage}
-""".trimIndent())
-
         } catch (e: Exception) {
             Log.e("ISO", "Parse error", e)
         }
@@ -667,49 +628,60 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return details
     }
 
-//    fun parseReversalResponse(context: Context, response: ByteArray): BuilderServiceTxnDetails {
-//        val details = BuilderServiceTxnDetails()
-//
-//        try {
-//            val mf = createMessageFactory(context)
-//            val isoMsg = mf.parseMessage(response, 0)
-//
-//            Log.d("ISO", "MTI = %04d".format(isoMsg.type)) // Should be 0430
-//
-//            details.apply {
-//                cardPan        = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_PAN_NO)
-//                processingCode = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_PROCESSING_CODE)
-//                authAmount     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_AMOUNT)
-//                dateTime       = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE)
-//                stan           = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_STAN)
-//                localTime      = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_LOC_TIME)
-//                localDate      = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_LOC_DATE)
-//                settlementDate = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_SET_DATE)
-//                merchantType   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_TYPE)
-//                acquirerId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ACQUIRER_ID)
-//                track2Data     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TRACK2_DATA)
-//                rrn            = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RRN)
-//                authId         = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_AUTH_ID)
-//                responseCode   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_CODE)
-//                terminalId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TERMINAL_ID)
-//                merchantId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_ID)
-//                merchantName   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_NAME)
-//                merchantBank   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_BANK)
-//                currencyCode   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_CURRENCY_CODE)
-//                additionalAmt  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADD_AMOUNT)
-//                reservedPrivate= isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESERVED_PRIVATE)
-//                posCondition   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE)
-//                privateData    = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA)
-//                acquirerTrace  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
-//                originalData   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ORIGINAL_DATA)
-//
-//            }
-//
-//        } catch (e: Exception) {
-//            Log.e("ISO", "Reversal Parse error", e)
-//        }
-//
-//        return details
-//    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?) {
+
+        Log.d("TXN_DEBUG", "===== updateTransResult START =====")
+
+        if (builderServiceTxnDetails == null) {
+            Log.e("TXN_DEBUG", "builderServiceTxnDetails is NULL")
+            return
+        }
+
+        Log.d("TXN_DEBUG", "Incoming Data: $builderServiceTxnDetails")
+
+        val id = builderServiceTxnDetails.id
+        Log.d("TXN_DEBUG", "Txn ID: $id")
+
+        if (id == null) {
+            Log.e("TXN_DEBUG", "Txn ID is NULL")
+            return
+        }
+
+        val txn = dbRepository.fetchTxnById(id)
+
+        if (txn == null) {
+            Log.e("TXN_DEBUG", "No txn found for ID: $id")
+            return
+        }
+
+        Log.d("TXN_DEBUG", "Fetched Txn BEFORE update: $txn")
+
+        // 🔍 Log incoming values
+        Log.d("TXN_DEBUG", "Incoming currencyCode: ${builderServiceTxnDetails.currencyCode}")
+        Log.d("TXN_DEBUG", "Existing currencyCode in DB: ${txn.currencyCode}")
+
+        // ✅ Set values
+        txn.posEntryMode = builderServiceTxnDetails.posEntryMode
+        txn.stan = builderServiceTxnDetails.stan
+        txn.dateTime = builderServiceTxnDetails.dateTime
+        txn.rrn = builderServiceTxnDetails.rrn
+        txn.processingCode = builderServiceTxnDetails.processingCode
+        txn.localTime = builderServiceTxnDetails.localTime
+        txn.localDate = builderServiceTxnDetails.localDate
+        txn.currencyCode = builderServiceTxnDetails.currencyCode
+
+        Log.d("TXN_DEBUG", "Txn AFTER setting values (before DB update): $txn")
+
+        // ✅ Update DB
+        dbRepository.updateTxn(txn)
+
+        // 🔍 Fetch again to verify persistence
+        val updatedTxn = dbRepository.fetchTxnById(id)
+        Log.d("TXN_DEBUG", "Txn AFTER DB update (re-fetched): $updatedTxn")
+
+        Log.d("TXN_DEBUG", "===== updateTransResult END =====")
+    }
 
 }

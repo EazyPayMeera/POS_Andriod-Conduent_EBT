@@ -16,6 +16,7 @@ interface ITxnDao {
     @Update
     suspend fun update(vararg txnEntity: TxnEntity)
 
+
     @Query("SELECT * FROM TxnTable WHERE Id = :id")
     suspend fun fetchTxnDetails(id: Long?): TxnEntity?
 

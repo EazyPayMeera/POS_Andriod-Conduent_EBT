@@ -38,16 +38,6 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun onLoad(sharedViewModel: SharedViewModel)
-    {
-        cashBackAmount.ifEmpty {
-            cashBackAmount = formatAmount(sharedViewModel.objRootAppPaymentDetail.cashback ?: 0.00)
-            _origTotalAmount.value = formatAmount(sharedViewModel.objRootAppPaymentDetail.originalTtlAmount?.toDoubleOrNull() ?: 0.00)
-            _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
-            isReadOnly = false
-        }
-    }
 
     fun onCashBackAmountChange(newValue: String) :String{
         cashBackAmount = formatAmount(newValue)

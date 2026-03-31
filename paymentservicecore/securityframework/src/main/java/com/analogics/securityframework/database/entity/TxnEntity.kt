@@ -29,6 +29,8 @@ data class TxnEntity(
     @ColumnInfo(name = "localDate") var localDate: String? = null,
     @ColumnInfo(name = "currencyCode") var currencyCode: String? = null,
     @ColumnInfo(name = "processingCode") var processingCode: String? = null,
+    @ColumnInfo(name = "expiryDate") var expiryDate: String? = null,
+    @ColumnInfo(name = "settlementDate") var settlementDate: String? = null,
     @ColumnInfo(name = "TimeZone") var timeZone: String? = null,
     @ColumnInfo(name = "TxnType") var txnType: String? = null,
     @ColumnInfo(name = "AccountType") var accountType: String? = null,

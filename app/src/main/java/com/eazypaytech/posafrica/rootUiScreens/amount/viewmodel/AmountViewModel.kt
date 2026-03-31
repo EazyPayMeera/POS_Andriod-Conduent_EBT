@@ -181,6 +181,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     ) {
 
         val lastTxn = dbRepository.fetchLastTransactionByTxnType()
+        Log.d("TXN_DEBUG", "Last Transaction: $lastTxn")
         lastTxn?.let {
 
             if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
@@ -200,10 +201,24 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     sharedViewModel.objRootAppPaymentDetail = it.copy(
                         id = sharedViewModel.objRootAppPaymentDetail.id,
                         txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
-                        fnsNumber = sharedViewModel.objPosConfig?.fnsNumber
-                    )
+                        fnsNumber = sharedViewModel.objPosConfig?.fnsNumber,
+                        merchantNameLocation = sharedViewModel.objPosConfig?.merchantNameLocation,
+                        merchantBankName = sharedViewModel.objPosConfig?.merchantBankName,
+                        merchantType = sharedViewModel.objPosConfig?.merchantType,
+                        procId = sharedViewModel.objPosConfig?.procId
 
+                    )
+                    sharedViewModel.objRootAppPaymentDetail.processingCode = it.processingCode
+                    sharedViewModel.objRootAppPaymentDetail.rrn = it.rrn
+                    sharedViewModel.objRootAppPaymentDetail.localTime = it.localTime
+                    sharedViewModel.objRootAppPaymentDetail.localDate = it.localDate
+                    sharedViewModel.objRootAppPaymentDetail.dateTime = it.dateTime
+                    sharedViewModel.objRootAppPaymentDetail.settlementDate = it.settlementDate
+                    sharedViewModel.objRootAppPaymentDetail.posConditionCode = it.posConditionCode
+                    sharedViewModel.objRootAppPaymentDetail.stan = it.stan
+                    sharedViewModel.objRootAppPaymentDetail.posEntryMode = it.posEntryMode
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
+                    sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
                     sharedViewModel.objRootAppPaymentDetail.originalCashback =
                         it.cashback.toDecimalFormat()
                     sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =

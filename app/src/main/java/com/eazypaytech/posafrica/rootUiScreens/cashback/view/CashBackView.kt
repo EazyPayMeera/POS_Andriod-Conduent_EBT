@@ -93,61 +93,10 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
                     visualTransformation = createAmountTransformation(),
-                    amount = false,
-                    readOnly = viewModel.isReadOnly
+                    amount = false
                 )
 
-                if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID_LAST) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-                    TextView(
-                        text = "",
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                            .align(Alignment.Start)
-                    )
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-
-                    listOf(
-                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:"") + (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
-                        stringResource(id = R.string.auth_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?:"-"),
-                        stringResource(id = R.string.ref_id) + " " + (sharedViewModel.objRootAppPaymentDetail.hostTxnRef?:"-"),
-                        stringResource(id = R.string.inc_no) + (sharedViewModel.objRootAppPaymentDetail.invoiceNo?:"-"),
-                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-")
-                    ).forEach {
-                        TextView(
-                            text = it,
-                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(bottom = MaterialTheme.dimens.DP_11_CompactMedium)
-                                .align(Alignment.Start)
-                        )
-                    }
-                }
-
-                if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST ||sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
-
-                    listOf(
-                        stringResource(id = R.string.original_amount) + " " + viewModel.origTotalAmount.value,
-                        stringResource(id = R.string.date) + " " + viewModel.origDateTime.value
-                    ).forEach {
-                        TextView(
-                            text = it,
-                            fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(bottom = MaterialTheme.dimens.DP_15_CompactMedium)
-                                .align(Alignment.Start)
-                        )
-                    }
-                }
             }
         }
 
@@ -160,37 +109,9 @@ fun CashBackView(navHostController: NavHostController, viewModel: CashBackViewMo
             closeKeypadOnSecondButton = true
         )
 
-        if (isDialogVisible) {
-            CustomDialogBuilder.create()
-                .setTitle(stringResource(id = R.string.cancel_dialogue))
-                .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
-                .setSmallText("")
-                .setShowCloseButton(false) // Can set to false if you don't want the close button
-                .setCancelButtonText(stringResource(id = R.string.cancel_no))
-                .setConfirmButtonText(stringResource(id = R.string.yes))
-                .setCancelable(true)
-                .setAutoOff(false)
-                .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
-                .setShowProgressIndicator(false)
-                .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.AmountScreen.route)
-                }
-                .setOnConfirmAction {
-                    navHostController.navigate(AppNavigationItems.DashBoardScreen.route)
-                }
-                .setShowButtons(true)
-                .setNavAction {
-                    navHostController.popBackStack()
-                }
-                .buildDialog(onClose = { isDialogVisible = false })
 
-        }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.onLoad(sharedViewModel)
-    }
 
     CustomDialogBuilder.ShowComposed()
 
