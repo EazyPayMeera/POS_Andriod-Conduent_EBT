@@ -121,8 +121,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             is EmvServiceResult.TransResult -> {
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                    sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
 
-                                    val rawAdditionalAmt = response.additionalAmt?.toString()
+                                    val rawAdditionalAmt = response.additionalAmt
                                     if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
                                         try {
                                             val balance = parseEBTBalances(rawAdditionalAmt)

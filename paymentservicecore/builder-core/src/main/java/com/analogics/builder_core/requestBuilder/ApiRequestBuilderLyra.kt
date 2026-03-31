@@ -853,7 +853,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 acquirerId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ACQUIRER_ID)
                 track2Data     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TRACK2_DATA)
                 rrn            = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RRN)
-                authId         = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_AUTH_ID)
+                hostAuthCode         = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_AUTH_ID)
                 hostRespCode   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_CODE)
                 terminalId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TERMINAL_ID)
                 merchantId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_ID)
