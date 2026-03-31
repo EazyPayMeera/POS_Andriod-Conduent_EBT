@@ -890,7 +890,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 stan           = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_STAN)
                 localTime      = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_LOC_TIME)
                 localDate      = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_LOC_DATE)
-                SettlementDate = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_SET_DATE)
+                settlementDate = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_SET_DATE)
                 merchantType   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_TYPE)
                 acquirerId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ACQUIRER_ID)
                 track2Data     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TRACK2_DATA)
@@ -930,7 +930,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             details.apply {
                 dateTime              = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE)
                 stan                  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_STAN)
-                SettlementDate        = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_SET_DATE)
+                settlementDate        = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_SET_DATE)
                 acquirerId            = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ACQUIRER_ID)
                 settlementCode        = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_SETTLEMENT_CODE)
                 creditsNumber         = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_CREDITS_NUMBER)
