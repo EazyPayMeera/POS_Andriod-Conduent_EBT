@@ -95,9 +95,9 @@ fun ApprovedView(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                     Text(
                         text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
-                            txnRecord.snapBalance?.padStart(6, '0') ?: "0.00"
+                            txnRecord.snapEndBalance.toAmountFormat()
                         else
-                            txnRecord.cashBalance?.padStart(6, '0') ?: "0.00",
+                            txnRecord.cashEndBalance.toAmountFormat(),
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Bold,
