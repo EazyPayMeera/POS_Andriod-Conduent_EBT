@@ -9,6 +9,7 @@ sealed class EmvServiceResult(
     var hostRespCode: String?,
     var additionalAmt: String?,
     var hostAuthCode: String ?,
+    var settlementDate: String?,
     var emvTags : HashMap<String,String>? = null,
     var paymentServiceTxnDetails: PaymentServiceTxnDetails? = null
 )
@@ -112,7 +113,7 @@ sealed class EmvServiceResult(
         ERROR
     }
 
-    class InitResult(status: InitStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId, hostRespCode = null,additionalAmt = null, hostAuthCode = null)
-    class CardCheckResult(status: CardCheckStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId,hostRespCode = null,additionalAmt = null,hostAuthCode = null)
-    class TransResult(status: TransStatus? = null, displayMsgId: DisplayMsgId? = null,hostRespCode: String? , additionalAmt: String , hostAuthCode: String) : EmvServiceResult(status, displayMsgId,hostRespCode, additionalAmt, hostAuthCode)
+    class InitResult(status: InitStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId, hostRespCode = null,additionalAmt = null, hostAuthCode = null , settlementDate = null)
+    class CardCheckResult(status: CardCheckStatus? = null, displayMsgId: DisplayMsgId? = null) : EmvServiceResult(status, displayMsgId,hostRespCode = null,additionalAmt = null,hostAuthCode = null , settlementDate = null)
+    class TransResult(status: TransStatus? = null, displayMsgId: DisplayMsgId? = null,hostRespCode: String? , additionalAmt: String , hostAuthCode: String , settlementDate: String) : EmvServiceResult(status, displayMsgId,hostRespCode, additionalAmt, hostAuthCode, settlementDate)
 }

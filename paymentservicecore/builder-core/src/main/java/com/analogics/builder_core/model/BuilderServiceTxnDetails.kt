@@ -52,7 +52,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("processingCode") var processingCode: String? = null,
     @SerializedName("localTime") var localTime: String? = null,
     @SerializedName("localDate") var localDate: String? = null,
-    @SerializedName("SettlementDate") var SettlementDate: String? = null,
+    @SerializedName("settlementDate") var settlementDate: String? = null,
     @SerializedName("captureDate") var captureDate: String? = null,
     @SerializedName("posEntryMode") var posEntryMode: String? = null,
     @SerializedName("acquirerId") var acquirerId: String? = null,

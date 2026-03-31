@@ -59,6 +59,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("posConditionCode") var posConditionCode: PosConditionCode? = null,
     @SerializedName("cardEntryMode") var cardEntryMode: String? = null,
     @SerializedName("cardPan") var cardPan: String? = null,
+    @SerializedName("settlementDate") var settlementDate: String? = null,
     @SerializedName("masterKey") var masterKey: String? = null,
     @SerializedName("cardMaskedPan") var cardMaskedPan: String? = null,
     @SerializedName("cardBrand") var cardBrand: CardBrand? = null,
