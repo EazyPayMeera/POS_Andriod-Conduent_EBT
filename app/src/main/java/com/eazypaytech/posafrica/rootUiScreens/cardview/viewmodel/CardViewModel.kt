@@ -122,8 +122,12 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                                     sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
+                                    Log.d("SETTLEMENT_DEBUG", "Response settlementDate: ${response.settlementDate}")
                                     sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate
-
+                                    Log.d(
+                                        "SETTLEMENT_DEBUG",
+                                        "ViewModel settlementDate: ${sharedViewModel.objRootAppPaymentDetail.settlementDate}"
+                                    )
                                     val rawAdditionalAmt = response.additionalAmt
                                     if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
                                         try {

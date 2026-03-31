@@ -39,6 +39,7 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
                 paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
                 paymentServiceTxnDetails.additionalAmt = it.additionalAmt
+                paymentServiceTxnDetails.settlementDate = it.settlementDate
                 var tlv = TlvUtils(it.emvData)
                 /* Extract tag 8A from ISO field if required */
                 if(tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE)==false) {
