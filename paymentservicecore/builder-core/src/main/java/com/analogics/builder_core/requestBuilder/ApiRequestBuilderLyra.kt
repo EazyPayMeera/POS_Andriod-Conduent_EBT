@@ -18,6 +18,7 @@ import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
 import com.solab.iso8583.parse.ConfigParser
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -707,5 +708,17 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 //
 //        return details
 //    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?)
+    {
+            this.builderServiceTxnDetails = BuilderServiceTxnDetails
+
+            dbRepository.fetchTxnById(BuilderServiceTxnDetails.id)?.let {
+                it.txnStatus = txnStatus?.toString()?:""
+                dbRepository.updateTxn(it)
+            }
+
+    }
 
 }

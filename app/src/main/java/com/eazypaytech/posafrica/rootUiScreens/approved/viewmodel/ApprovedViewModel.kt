@@ -81,5 +81,9 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         }
     }
 
+    fun isCardExists(context: Context): Boolean {
+        return emvServiceRepository.isCardExists(context)
+    }
+
 }
 

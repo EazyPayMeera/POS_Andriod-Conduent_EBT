@@ -57,6 +57,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.FooterButtons
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.GenericCard
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.ImageView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.emvMsgIdToStringId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getEmvMsgIdString
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
 import com.eazypaytech.posafrica.ui.theme.dimens

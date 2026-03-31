@@ -49,6 +49,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusIconId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusStringId
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
 import com.eazypaytech.posafrica.ui.theme.dimens
+import kotlinx.coroutines.delay
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -221,6 +222,18 @@ fun ApprovedView(navHostController: NavHostController) {
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(context,sharedViewModel)
+        while (true) {
+            val exists = viewModel.isCardExists(context)
+            if (exists) {
+                CustomDialogBuilder.composeAlertDialog(
+                    title = context.resources.getString(R.string.default_alert_title_error),
+                    subtitle = context.resources.getString(R.string.emv_msg_id_remove_card)
+                )
+            } else {
+                break
+            }
+            delay(500)
+        }
     }
 }
 
