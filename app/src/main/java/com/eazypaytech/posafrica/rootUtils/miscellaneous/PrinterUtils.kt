@@ -94,12 +94,12 @@ object PrinterUtils {
             )
             /* Transaction Type */
             .addText(context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)//.style(Style.BOLD)
+                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
             )
 
             /* Card Number */
             .addText(context.getString(R.string.receipt_card_no),
-                (objRootAppPaymentDetails.cardMaskedPan)!!.replace(Regex("\\d(?=\\d{4})"), "*"),
+                (objRootAppPaymentDetails.cardMaskedPan)!!.replace(Regex("\\d(?=\\d{4})"), "x"),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
             /* Settlement Date */
@@ -119,7 +119,11 @@ object PrinterUtils {
 
             /* Begin balance */
             //.addText(context.getString(R.string.receipt_snap_begin_balance),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
-            .addText(context.getString(R.string.receipt_snap_begin_balance),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)) + objRootAppPaymentDetails.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+            //.addText(context.getString(R.string.receipt_snap_begin_balance),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)) + objRootAppPaymentDetails.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+            .addText(context.getString(R.string.receipt_snap_begin_balance),(
+                            (objRootAppPaymentDetails.txnAmount ?: 0.0) +
+                            (objRootAppPaymentDetails.snapEndBalance ?: 0.0)
+                    ).toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
             /* Purchase/Transaction Amount */
@@ -147,7 +151,7 @@ object PrinterUtils {
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
             )
             /* Result */
-            .addText(context.getString(R.string.receipt_result)+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
+            .addText(context.getString(R.string.receipt_result)+" "+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)//.style(Style.BOLD)
             )
             /* Auth */
@@ -158,7 +162,7 @@ object PrinterUtils {
             .addText(context.getString(R.string.receipt_trace_no),objRootAppPaymentDetails.stan+"-"+objRootAppPaymentDetails.rrn,
                 format = PrintFormat().fontSize(FontSize.MEDIUM)//.style(Style.BOLD)
             )
-
+            .feedLine()
             /* DISPENSE GOODS */
             .addText(context.getString(R.string.receipt_dispense_goods),
                 format = PrintFormat().fontSize(FontSize.LARGE).style(Style.REVERSE)
@@ -258,17 +262,17 @@ object PrinterUtils {
 
             /*  Footers */
             .addText(objRootAppPaymentDetails.footer1,
-                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
                 condition = isCustomer
             )
             .addText(objRootAppPaymentDetails.footer2,
-                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
                 condition = isCustomer)
             .addText(objRootAppPaymentDetails.footer3,
-                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
                 condition = isCustomer)
             .addText(objRootAppPaymentDetails.footer4,
-                format = PrintFormat().fontSize(FontSize.SMALL).align(Align.CENTER),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),
                 condition = isCustomer)
             .feedLine(condition = isCustomer)
 

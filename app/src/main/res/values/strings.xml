@@ -316,7 +316,7 @@
     <string name="receipt_terminal_id">TID:</string>
     <string name="receipt_gray_line">---------------------------------</string>
     <string name="receipt_card_type">CARD TYPE:</string>
-    <string name="receipt_card_no">CARD NO:</string>
+    <string name="receipt_card_no">Card Num:</string>
     <string name="receipt_trans_type">TRANS TYPE:</string>
     <string name="receipt_batch_no">BATCH NO:</string>
     <string name="receipt_trace_no">Trace#:</string>
