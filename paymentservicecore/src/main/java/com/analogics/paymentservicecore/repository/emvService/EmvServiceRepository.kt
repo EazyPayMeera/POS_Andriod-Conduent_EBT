@@ -245,7 +245,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                     displayMsgId = displayMsgId,
                     hostRespCode = paymentServiceTxnDetails.hostRespCode,
                     additionalAmt = paymentServiceTxnDetails.additionalAmt.toString(),
-                    hostAuthCode = paymentServiceTxnDetails.hostAuthCode
+                    hostAuthCode = paymentServiceTxnDetails.hostAuthCode.toString()
                 )
             }
             is EmvSdkException ->{
