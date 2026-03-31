@@ -119,7 +119,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.status)).let {
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode)).let {
                                     sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                                     sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                                     sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate

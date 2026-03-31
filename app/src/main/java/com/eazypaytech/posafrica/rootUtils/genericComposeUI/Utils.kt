@@ -199,14 +199,11 @@ fun getLogoBitmap(context: Context, id: Int): Bitmap {
     return bitmap
 }
 
-fun emvStatusToTransStatus(emvTransStatus: Any?) : TxnStatus
+fun emvStatusToTransStatus(responseCode: String?) : TxnStatus
 {
-    return when(emvTransStatus) {
-        EmvServiceResult.TransStatus.APPROVED_ONLINE, EmvServiceResult.TransStatus.APPROVED_OFFLINE -> TxnStatus.APPROVED
-        EmvServiceResult.TransStatus.DECLINED_ONLINE,EmvServiceResult.TransStatus.DECLINED_OFFLINE -> TxnStatus.DECLINED
-        EmvServiceResult.TransStatus.INITIATED -> TxnStatus.INITIATED
-        EmvServiceResult.TransStatus.TERMINATED -> TxnStatus.TERMINATED
-        else -> TxnStatus.ERROR
+    return when(responseCode) {
+        "00" -> TxnStatus.APPROVED
+        else -> TxnStatus.DECLINED
     }
 }
 
@@ -437,7 +434,7 @@ fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : In
         R.drawable.captured
     else if(objRootAppPaymentDetails.txnStatus == TxnStatus.APPROVED)
         when(objRootAppPaymentDetails.txnType) {
-            TxnType.PURCHASE_CASHBACK -> R.drawable.authorized
+            TxnType.PURCHASE_CASHBACK -> R.drawable.approved
             else -> R.drawable.approved
         }
     else if(objRootAppPaymentDetails.txnStatus == TxnStatus.DECLINED)

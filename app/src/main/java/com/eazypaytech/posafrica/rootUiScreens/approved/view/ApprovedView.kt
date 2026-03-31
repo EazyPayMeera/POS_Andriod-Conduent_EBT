@@ -128,7 +128,7 @@ fun ApprovedView(navHostController: NavHostController) {
                             .align(Alignment.CenterHorizontally)
                             .height(MaterialTheme.dimens.DP_33_CompactMedium)
                     )
-                    
+
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
                     ImageView(
                         imageId = getTxnStatusIconId(txnRecord),
