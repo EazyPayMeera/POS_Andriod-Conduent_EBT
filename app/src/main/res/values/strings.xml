@@ -352,7 +352,7 @@
     <string name="receipt_printing_summary">Summary Report</string>
     <string name="receipt_printing_detail">Detail Report</string>
     <string name="receipt_balance_summary" tools:ignore="MissingTranslation">Balance Summary</string>
-    <string name="receipt_result" tools:ignore="MissingTranslation">Result:</string>
+    <string name="receipt_result" tools:ignore="MissingTranslation">Result: </string>
     <string name="receipt_auth" tools:ignore="MissingTranslation">Auth:</string>
     <string name="receipt_dispense_goods" tools:ignore="MissingTranslation">DISPENSE GOODS</string>
     <string name="receipt_snap_begin_balance" tools:ignore="MissingTranslation">SNAP Begin Bal:</string>

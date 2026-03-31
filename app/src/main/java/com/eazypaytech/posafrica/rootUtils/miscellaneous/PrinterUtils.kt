@@ -151,7 +151,7 @@ object PrinterUtils {
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
             )
             /* Result */
-            .addText(context.getString(R.string.receipt_result)+" "+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
+            .addText(context.getString(R.string.receipt_result)+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)//.style(Style.BOLD)
             )
             /* Auth */
