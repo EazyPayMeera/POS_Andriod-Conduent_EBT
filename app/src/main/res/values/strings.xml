@@ -53,7 +53,7 @@
     <string name="clerk_register_clerk_prompt">Please enter username and password</string>
     <string name="clerk_type">User Type:</string>
     <string name="clerk_type_admin">Admin</string>
-    <string name="clerk_type_clerk">Clerk</string>
+    <string name="clerk_type_clerk">Clerk: </string>
     <string name="clerk_register_btn">Add User</string>
     <string name="clerk_register_done_btn">Done</string>
     <string name="clerk_registration_success">User Added</string>
@@ -319,7 +319,7 @@
     <string name="receipt_card_no">CARD NO:</string>
     <string name="receipt_trans_type">TRANS TYPE:</string>
     <string name="receipt_batch_no">BATCH NO:</string>
-    <string name="receipt_trace_no">TRACE NO:</string>
+    <string name="receipt_trace_no">Trace#:</string>
     <string name="receipt_date">DATE:</string>
     <string name="receipt_time">TIME:</string>
     <string name="receipt_ref_no">REF NO:</string>
