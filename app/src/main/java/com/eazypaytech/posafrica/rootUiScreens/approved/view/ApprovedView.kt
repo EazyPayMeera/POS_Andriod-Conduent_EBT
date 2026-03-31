@@ -61,7 +61,7 @@ fun ApprovedView(navHostController: NavHostController) {
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
     val infiniteTransition = rememberInfiniteTransition()
-
+    Log.d("TXN_DEBUG", "Txn Record: $txnRecord")
 
     val isBalanceInquiry = txnRecord.txnType == TxnType.BALANCE_ENQUIRY_SNAP || txnRecord.txnType == TxnType.BALANCE_ENQUIRY_CASH
     Column {
@@ -119,18 +119,16 @@ fun ApprovedView(navHostController: NavHostController) {
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                    txnRecord.txnType.takeIf { it != TxnType.VOID_LAST }?.let {
-                        Text(
-                            text = if (isBalanceInquiry) { "" } else { txnRecord.ttlAmount.toAmountFormat() },
-                            fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .height(MaterialTheme.dimens.DP_33_CompactMedium)
-                        )
-                    }
-                        ?: Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_33_CompactMedium))
+                    Text(
+                        text = if (isBalanceInquiry) { "" } else { txnRecord.ttlAmount.toAmountFormat() },
+                        fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .height(MaterialTheme.dimens.DP_33_CompactMedium)
+                    )
+                    
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_30_CompactMedium))
                     ImageView(
                         imageId = getTxnStatusIconId(txnRecord),
