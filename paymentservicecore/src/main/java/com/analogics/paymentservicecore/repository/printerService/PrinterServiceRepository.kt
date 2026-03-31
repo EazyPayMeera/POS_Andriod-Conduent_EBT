@@ -79,7 +79,8 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
 
     enum class Style(val value: Int) {
         BOLD(0x00100000),
-        NO_LINE_BREAK(0x00200000);
+        NO_LINE_BREAK(0x00200000),
+        REVERSE(0x00400000);
     }
 
     enum class FontName(val value: Int) {

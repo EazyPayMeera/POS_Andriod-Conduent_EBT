@@ -101,6 +101,10 @@ object PrinterUtils {
             .addText(context.getString(R.string.receipt_card_no),objRootAppPaymentDetails.cardMaskedPan,
                 format = PrintFormat().fontSize(FontSize.LARGE)
             )
+            /* Settlement Date */
+            .addText(context.getString(R.string.receipt_settlement_date),objRootAppPaymentDetails.settlementDate,
+                format = PrintFormat().fontSize(FontSize.LARGE)
+            )
 
             /* Balance Summary */
             .addText(context.getString(R.string.receipt_balance_summary),
@@ -112,6 +116,30 @@ object PrinterUtils {
             )
             /* Print The Amounts */
 
+            /* Begin balance */
+            .addText(context.getString(R.string.receipt_snap_begin_balance),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+            /* Purchase/Transaction Amount */
+            .addText(context.getString(R.string.receipt_snap_purchase),"-"+objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            /* Add Line */
+            .addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
+            )
+
+            /* End Balance */
+            .addText(context.getString(R.string.receipt_snap_end_balance),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
+            /* Cash Balance */
+            .addText(context.getString(R.string.receipt_cash_balance),objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM)
+            )
+
             /* Add Line */
             .addText(context.getString(R.string.receipt_gray_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
@@ -121,7 +149,7 @@ object PrinterUtils {
                 format = PrintFormat().fontSize(FontSize.LARGE)//.style(Style.BOLD)
             )
             /* Auth */
-            .addText(context.getString(R.string.receipt_auth)+context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)),
+            .addText(context.getString(R.string.receipt_auth),objRootAppPaymentDetails.hostAuthCode,
                 format = PrintFormat().fontSize(FontSize.LARGE)//.style(Style.BOLD)
             )
             /* Trace Number */
@@ -131,7 +159,7 @@ object PrinterUtils {
 
             /* DISPENSE GOODS */
             .addText(context.getString(R.string.receipt_dispense_goods),
-                format = PrintFormat().fontSize(FontSize.LARGE)//.style(Style.BOLD)
+                format = PrintFormat().fontSize(FontSize.LARGE).style(Style.REVERSE)
             )
 
             /* Add Line */
