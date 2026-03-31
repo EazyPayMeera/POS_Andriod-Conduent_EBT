@@ -119,16 +119,12 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode)).let {
-                                    sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
-                                    sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
-                                    Log.d("SETTLEMENT_DEBUG", "Response settlementDate: ${response.settlementDate}")
-                                    sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate
-                                    Log.d(
-                                        "SETTLEMENT_DEBUG",
-                                        "ViewModel settlementDate: ${sharedViewModel.objRootAppPaymentDetail.settlementDate}"
-                                    )
-                                    val rawAdditionalAmt = response.additionalAmt
+                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
+                                sharedViewModel.objRootAppPaymentDetail.settlementDate = response.paymentServiceTxnDetails?.settlementDate
+                                sharedViewModel.objRootAppPaymentDetail.rrn = response.paymentServiceTxnDetails?.rrn
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode)).let {
+                                    val rawAdditionalAmt = response.paymentServiceTxnDetails?.additionalAmt
                                     if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
                                         try {
                                             val balance = parseEBTBalances(rawAdditionalAmt)

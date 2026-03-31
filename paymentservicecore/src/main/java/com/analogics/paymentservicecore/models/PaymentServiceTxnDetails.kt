@@ -87,7 +87,13 @@ data class PaymentServiceTxnDetails(
     @SerializedName("ttlAmount") var ttlAmount: String? = null,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: String? = null,
-
+    @SerializedName("rrn") var rrn: String? = null,
+    @SerializedName("processingCode") var processingCode: String? = null,
+    @SerializedName("localTime") var localTime: String? = null,
+    @SerializedName("localDate") var localDate: String? = null,
+    @SerializedName("expiryDate") var expiryDate: String? = null,
+    @SerializedName("posEntryMode") var posEntryMode: String? = null,
+    @SerializedName("posCondition") var posCondition: String? = null,
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,

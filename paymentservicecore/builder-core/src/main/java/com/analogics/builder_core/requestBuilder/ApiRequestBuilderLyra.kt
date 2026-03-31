@@ -476,6 +476,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+        Log.d("VOID_REQUEST", "builderServiceTxnDetails: ${this.builderServiceTxnDetails}")
+        val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val lastTxn = IsoMessageBuilder.getLastTxn()
         Log.d("LAST_TXN", lastTxn.toString())
         val iso = IsoMessage()
@@ -709,16 +712,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 //        return details
 //    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?)
-    {
-            this.builderServiceTxnDetails = BuilderServiceTxnDetails
 
-            dbRepository.fetchTxnById(BuilderServiceTxnDetails.id)?.let {
-                it.txnStatus = txnStatus?.toString()?:""
-                dbRepository.updateTxn(it)
-            }
-
-    }
 
 }
