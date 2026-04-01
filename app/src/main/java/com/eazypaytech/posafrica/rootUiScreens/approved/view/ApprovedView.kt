@@ -65,6 +65,15 @@ fun ApprovedView(navHostController: NavHostController) {
     Log.d("TXN_DEBUG", "Txn Record: $txnRecord")
 
     val isBalanceInquiry = txnRecord.txnType == TxnType.BALANCE_ENQUIRY_SNAP || txnRecord.txnType == TxnType.BALANCE_ENQUIRY_CASH
+
+    val snapBegin = txnRecord.snapEndBalance?.plus(txnRecord.ttlAmount!!)
+    val cashBegin = txnRecord.cashEndBalance?.plus(txnRecord.ttlAmount!!)
+
+    sharedViewModel.objRootAppPaymentDetail.snapBeginBal = snapBegin
+    sharedViewModel.objRootAppPaymentDetail.cashBeginBal = cashBegin
+
+    Log.d("BALANCE_DEBUG", "snapBeginBal: $snapBegin")
+    Log.d("BALANCE_DEBUG", "cashBeginBal: $cashBegin")
     Column {
         CommonTopAppBar(
             onBackButtonClick = { },

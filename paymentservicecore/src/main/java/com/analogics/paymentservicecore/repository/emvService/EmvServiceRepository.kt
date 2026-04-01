@@ -405,7 +405,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         return TransConfig(
             amount = (paymentServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             cashbackAmount = (paymentServiceTxnDetails?.cashback?.toDoubleOrNull()?:0.00).toDecimalFormat(),
-            currencyCode = paymentServiceTxnDetails?.txnCurrencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
+            currencyCode = paymentServiceTxnDetails?.currencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
             cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
             cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),

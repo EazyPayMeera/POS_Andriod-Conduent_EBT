@@ -22,6 +22,7 @@ data class TxnEntity(
     @ColumnInfo(name = "InvoiceNo") var invoiceNo: String? = null,
     @ColumnInfo(name = "Stan") var stan: String? = null,
     @ColumnInfo(name = "originalData") var originalData: String? = null,
+    @ColumnInfo(name = "originalDateTime") var originalDateTime: String? = null,
     @ColumnInfo(name = "rrn") var rrn: String? = null,
     @ColumnInfo(name = "PurchaseOrderNo") var purchaseOrderNo: String? = null,
     @ColumnInfo(name = "DateTime") var dateTime: String? = null,
@@ -66,8 +67,8 @@ data class TxnEntity(
     @ColumnInfo(name = "HostTxnRef") var hostTxnRef: String? = null,
 
     /* Original Txn data for Void, Refund, Capture */
-    @ColumnInfo(name = "OriginalTxnType") var originalTxnType: String? = null,
     @ColumnInfo(name = "OriginalTxnAmount") var originalTxnAmount: String? = null,
+    @ColumnInfo(name = "OriginalTxnType") var originalTxnType: String? = null,
     @ColumnInfo(name = "OriginalTip") var originalTip: String? = null,
     @ColumnInfo(name = "OriginalCashback") var originalCashback: String? = null,
     @ColumnInfo(name = "OriginalVat") var originalVat: String? = null,

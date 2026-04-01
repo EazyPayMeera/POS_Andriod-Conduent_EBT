@@ -47,6 +47,8 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.expiryDate = it.expiryDate
                 paymentServiceTxnDetails.posEntryMode = it.posEntryMode
                 paymentServiceTxnDetails.posCondition = it.posCondition
+                paymentServiceTxnDetails.currencyCode = it.currencyCode
+                paymentServiceTxnDetails.dateTime = it.dateTime
 
                 var tlv = TlvUtils(it.emvData)
                 /* Extract tag 8A from ISO field if required */
@@ -116,9 +118,6 @@ class PurchaseRequestRepository @Inject constructor(
             apiRequestBuilderLyra.createFinancial0200Request(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
-
-
-
 
 }
 

@@ -73,6 +73,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("acquirerTrace") var acquirerTrace: String? = null,
     @SerializedName("reservedPrivate") var reservedPrivate: String? = null,
     @SerializedName("originalData") var originalData: String? = null,
+    @SerializedName("originalDateTime") var originalDateTime: String? = null,
     @SerializedName("settlementCode") var settlementCode: String? = null,
     @SerializedName("creditsNumber") var creditsNumber: String? = null,
     @SerializedName("creditsReversalNumber") var creditsReversalNumber: String? = null,

@@ -219,6 +219,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     sharedViewModel.objRootAppPaymentDetail.posEntryMode = it.posEntryMode
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
                     sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
+                    sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.originalDateTime
                     sharedViewModel.objRootAppPaymentDetail.originalCashback =
                         it.cashback.toDecimalFormat()
                     sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =
