@@ -29,6 +29,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.emvStatusToTransStat
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
 import com.eazypaytech.posafrica.rootUtils.miscellaneous.NetworkUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -87,12 +88,13 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?)
+    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?,originalDateTime:String)
     {
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
         viewModelScope.launch {
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 it.txnStatus = txnStatus?.toString()?:""
+                it.originalDateTime = originalDateTime
                 dbRepository.updateTxn(it)
             }
         }
@@ -124,11 +126,17 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 sharedViewModel.objRootAppPaymentDetail.settlementDate = response.paymentServiceTxnDetails?.settlementDate
                                 sharedViewModel.objRootAppPaymentDetail.expiryDate = response.paymentServiceTxnDetails?.expiryDate
                                 sharedViewModel.objRootAppPaymentDetail.rrn = response.paymentServiceTxnDetails?.rrn
-                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode)).let {
+                                sharedViewModel.objRootAppPaymentDetail.currencyCode = response.paymentServiceTxnDetails?.currencyCode
+                                sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.paymentServiceTxnDetails?.dateTime
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
+                                    response.paymentServiceTxnDetails?.dateTime.toString()
+                                ).let {
                                     val rawAdditionalAmt = response.paymentServiceTxnDetails?.additionalAmt
+
                                     if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
                                         try {
                                             val balance = parseEBTBalances(rawAdditionalAmt)
+
                                             sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
                                         } catch (e: Exception) {

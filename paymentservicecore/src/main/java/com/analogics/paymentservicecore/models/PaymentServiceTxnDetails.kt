@@ -78,7 +78,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("timeZone") var timeZone: String? = null,
     @SerializedName("txnType") var txnType: TxnType? = null,
     @SerializedName("accountType") var accountType: String? = null,
-    @SerializedName("txnCurrencyCode") var txnCurrencyCode: String? = null,
+    @SerializedName("currencyCode") var currencyCode: String? = null,
     @SerializedName("txnAmount") var txnAmount: String? = null,
     @SerializedName("tip") var tip: String? = null,
     @SerializedName("cashback") var cashback: String? = null,
@@ -97,6 +97,7 @@ data class PaymentServiceTxnDetails(
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
+    @SerializedName("originalDateTime") var originalDateTime: String? = null,
     @SerializedName("originalTxnRef") var originalTxnRef: String? = null,
     @SerializedName("originalTxnType") var originalTxnType: String? = null,
     @SerializedName("originalTxnAmount") var originalTxnAmount: String? = null,
@@ -113,7 +114,6 @@ data class PaymentServiceTxnDetails(
     @SerializedName("isVoided")         var isVoided: Boolean? = false,
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,
     @SerializedName("isDemoMode")       var isDemoMode: Boolean? = false,
-
     @SerializedName("isPurchase")       var isPurchase: Boolean? = false,
     @SerializedName("isReturn")       var isReturn: Boolean? = false,
 

@@ -93,6 +93,14 @@ object BuilderUtils {
         return currentTime.format(formatter)
     }
 
+    fun formatDateTimeToISO8583(dateTime: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = inputFormat.parse(dateTime) ?: return ""
+
+        val outputFormat = SimpleDateFormat("MMddHHmmss", Locale.getDefault())
+        return outputFormat.format(date)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun getLocalDate(): String {
         val currentDate = LocalDate.now()  // device local date
