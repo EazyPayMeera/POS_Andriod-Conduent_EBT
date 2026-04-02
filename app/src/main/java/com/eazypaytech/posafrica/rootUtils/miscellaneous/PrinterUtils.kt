@@ -126,9 +126,40 @@ object PrinterUtils {
                     ).toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
-            /* Purchase/Transaction Amount */
-            .addText(context.getString(R.string.receipt_snap_purchase),"-"+objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
+
+            .addText(context.getString(R.string.receipt_snap_begin_balance),
+                    (
+                        (objRootAppPaymentDetails.txnAmount ?: 0.0) + (objRootAppPaymentDetails.snapEndBalance ?: 0.0)
+                    ).toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),//.style(Style.REVERSE),
+                condition = context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)) == context.getString(R.string.receipt_txntype_food_purchase)
+            )
+
+            .addText(context.getString(R.string.receipt_cash_begin_balance),
+                ((objRootAppPaymentDetails.txnAmount ?: 0.0) + (objRootAppPaymentDetails.snapEndBalance ?: 0.0)).toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),//.style(Style.REVERSE),
+                condition = context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)) == context.getString(R.string.receipt_txntype_cash_purchase)
+            )
+
+            /* SNAP Purchase/Transaction Amount */
+            .addText(
+                context.getString(R.string.receipt_snap_purchase),"-"+objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)) == context.getString(R.string.receipt_txntype_food_purchase)
+            )
+
+            /* Cash Purchase/Transaction Amount */
+            .addText(
+                context.getString(R.string.receipt_cash_purchase),"-"+objRootAppPaymentDetails.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)) == context.getString(R.string.receipt_txntype_cash_purchase)
+            )
+
+            /*Cash Back Amount */
+            .addText(
+                context.getString(R.string.receipt_cash_back),"-"+objRootAppPaymentDetails.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM),
+                condition = context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)) == context.getString(R.string.receipt_txntype_purchase_with_cashback)
             )
 
             /* Add Line */
@@ -164,10 +195,20 @@ object PrinterUtils {
             )
             .feedLine()
             /* DISPENSE GOODS */
-            .addText(context.getString(R.string.receipt_dispense_goods),
+            //.addText(context.getString(R.string.receipt_dispense_goods),
+            .addText(context.getString(
+                if (context.getString(getTxnStatusStringId(objRootAppPaymentDetails.txnStatus)) == context.getString(R.string.approved))
+                    R.string.receipt_dispense_goods
+                else
+                    R.string.receipt_do_not_dispense_goods
+            ),
                 format = PrintFormat().fontSize(FontSize.LARGE).style(Style.REVERSE)
             )
 
+            .addText(context.getString(R.string.receipt_dispense)+" "+objRootAppPaymentDetails.cashback,
+                format = PrintFormat().fontSize(FontSize.MEDIUM),//.style(Style.BOLD)
+                condition = context.getString(getTxnTypeStringId(objRootAppPaymentDetails.txnType)) == context.getString(R.string.receipt_txntype_purchase_with_cashback)
+            )
             /* Add Line */
             .addText(context.getString(R.string.receipt_gray_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)

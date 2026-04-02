@@ -138,6 +138,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                             val balance = parseEBTBalances(rawAdditionalAmt)
                                             sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
+                                            sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
                                         } catch (e: Exception) {
                                             sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
                                         }
