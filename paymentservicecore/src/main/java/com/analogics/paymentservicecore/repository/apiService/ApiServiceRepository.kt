@@ -247,7 +247,7 @@
          ) {
              this.iApiServiceResponseListener = iApiServiceResponseListener
              this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-             rklRequestRepository.keyChangeRequest(paymentServiceTxnDetails){
+             rklRequestRepository.keyChangeRequest(paymentServiceTxnDetails) {
                  onApiServiceResponse(it)
              }
          }

@@ -88,13 +88,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?,originalDateTime:String)
+    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?,originalDateTime:String,AuthCode:String,posCondition:String)
     {
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
         viewModelScope.launch {
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 it.txnStatus = txnStatus?.toString()?:""
                 it.originalDateTime = originalDateTime
+                it.hostAuthCode = AuthCode
+                it.posConditionCode = posCondition
                 dbRepository.updateTxn(it)
             }
         }
@@ -128,8 +130,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 sharedViewModel.objRootAppPaymentDetail.rrn = response.paymentServiceTxnDetails?.rrn
                                 sharedViewModel.objRootAppPaymentDetail.currencyCode = response.paymentServiceTxnDetails?.currencyCode
                                 sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.paymentServiceTxnDetails?.dateTime
+                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
+                                sharedViewModel.objRootAppPaymentDetail.posCondition = response.paymentServiceTxnDetails?.posCondition
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
-                                    response.paymentServiceTxnDetails?.dateTime.toString()
+                                    response.paymentServiceTxnDetails?.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
                                 ).let {
                                     val rawAdditionalAmt = response.paymentServiceTxnDetails?.additionalAmt
 

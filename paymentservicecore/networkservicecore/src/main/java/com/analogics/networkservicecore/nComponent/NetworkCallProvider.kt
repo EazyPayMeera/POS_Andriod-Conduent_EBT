@@ -4,14 +4,17 @@ import android.util.Log
 import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
 import java.security.SecureRandom
@@ -101,6 +104,43 @@ object NetworkCallProvider {
 
         } catch (e: Exception) {
             ResultProvider.Error(e)
+        }
+    }
+
+    fun safeApiResponse(requestBytes: ByteArray) {
+        CoroutineScope(Dispatchers.IO).launch {
+            var sslSocket: SSLSocket? = null
+            try {
+                val sslContext = SSLContext.getInstance("TLSv1.2")
+                sslContext.init(
+                    null,
+                    arrayOf(object : X509TrustManager {
+                        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                    }),
+                    SecureRandom()
+                )
+
+                val plainSocket = Socket()
+                plainSocket.connect(InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT), 15_000)
+
+                sslSocket = sslContext.socketFactory.createSocket(plainSocket, NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT, true) as SSLSocket
+                sslSocket.startHandshake()
+
+                val lenPrefix = byteArrayOf(
+                    (requestBytes.size shr 8).toByte(),
+                    (requestBytes.size and 0xFF).toByte()
+                )
+
+                sslSocket.outputStream.write(lenPrefix + requestBytes)
+                sslSocket.outputStream.flush()
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                sslSocket?.close()
+            }
         }
     }
 

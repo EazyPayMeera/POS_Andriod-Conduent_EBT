@@ -50,19 +50,25 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     var sharedViewModel : SharedViewModel? = null
     val isFormValid: Boolean
         get() = procIdInput.value.isNotBlank() && procIdInput.value.length == AppConstants.MAX_LENGTH_PROC_ID
+    private var isKeepAlive = false
 
     fun startKeepAlive() {
-        viewModelScope.launch {
+        val job = viewModelScope.launch(Dispatchers.IO) {
+            Log.d("KEEP_ALIVE", "⏳ Coroutine started — isActive: $isActive")
+
             while (isActive) {
+                Log.d("KEEP_ALIVE", "🔄 Inside while loop — isActive: $isActive")
+                delay(1 * 60 * 1000L)
+                Log.d("KEEP_ALIVE", "⏰ After delay — isActive: $isActive")
                 try {
-                    keepAliveProcess()  // 'this' inside keepAliveProcess will be ViewModel
-                    delay(5 * 60 * 1000L)
+                    keepAliveProcess()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Log.e("KEEP_ALIVE", "❌ Exception: ${e.message}")
                 }
-                delay(5 * 60 * 1000L)  // 5 minutes
             }
+            Log.e("KEEP_ALIVE", "🛑 while loop exited — isActive: $isActive")
         }
+        Log.d("KEEP_ALIVE", "Job state — isActive: ${job.isActive} isCancelled: ${job.isCancelled}")
     }
 
     fun onProcIdChange(tid: String) {
@@ -121,12 +127,36 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
 
     suspend fun keepAliveProcess() {
-        currentStep = ActivationState.HAND_SHAKE
+        // ✅ Separate listener — completely independent from activation flow
         apiServiceRepository.handShakeRequest(
             PaymentServiceUtils.transformObject(
                 sharedViewModel?.objRootAppPaymentDetail
             ),
-            this   // 👈 use ViewModel as listener
+            object : IApiServiceResponseListener {
+                override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+                    Log.d("KEEP_ALIVE", "Handshake success ✅")
+                    // ✅ Do nothing — just keep connection alive
+                }
+
+                override fun onApiServiceError(apiServiceError: ApiServiceError) {
+                    Log.e("KEEP_ALIVE", "Handshake error ❌: ${apiServiceError}")
+                    // ✅ Silent fail — do not affect UI
+                }
+
+                override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                    Log.e("KEEP_ALIVE", "Handshake timeout ❌: ${apiServiceTimeout.message}")
+                    // ✅ Silent fail — do not affect UI
+                }
+
+                override fun onApiServiceDisplayProgress(
+                    show: Boolean,
+                    title: String?,
+                    subTitle: String?,
+                    message: String?
+                ) {
+                    // ✅ Do not show any progress for keep-alive
+                }
+            }
         )
     }
 
@@ -210,10 +240,13 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
 
         viewModelScope.launch(Dispatchers.Main) {
-
+            Log.d("ACTIVATION", "onApiServiceSuccess called — currentStep: $currentStep")
+            Log.d("ACTIVATION", "txnStatus: ${paymentServiceTxnDetails.txnStatus}")
+            Log.d("ACTIVATION", "hostRespCode: ${paymentServiceTxnDetails.hostRespCode}")
             if (paymentServiceTxnDetails.txnStatus != TxnStatus.APPROVED.toString() ||
                 paymentServiceTxnDetails.hostRespCode != "00"
             ) {
+                Log.e("ACTIVATION", "❌ Failed at step: $currentStep — enabling button")
                 setActivationButtonState(true)
                 return@launch
             }
@@ -221,12 +254,14 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             when (currentStep) {
 
                 ActivationState.SIGN_ON -> {
+                    Log.d("ACTIVATION", "✅ SIGN_ON success — but no next call made ❌ FLOW STOPS HERE")
                     sharedViewModel?.objRootAppPaymentDetail?.workKey = paymentServiceTxnDetails.workKey
                     currentStep = ActivationState.KEY_CHANGE
 
                 }
 
                 ActivationState.KEY_EXCHANGE -> {
+                    Log.d("ACTIVATION", "✅ KEY_EXCHANGE success — calling keyChange")
                     currentStep = ActivationState.KEY_CHANGE
                     apiServiceRepository.keyChange(
                         PaymentServiceUtils.transformObject(
@@ -237,6 +272,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 }
 
                 ActivationState.KEY_CHANGE -> {
+                    Log.d("ACTIVATION", "✅ KEY_CHANGE success — calling keyChange again ❌ should be handShake")
                     currentStep = ActivationState.HAND_SHAKE
                     apiServiceRepository.keyChange(
                         PaymentServiceUtils.transformObject(
@@ -248,6 +284,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 }
 
                 ActivationState.HAND_SHAKE -> {
+                    Log.d("ACTIVATION", "✅ HAND_SHAKE success — navigating")
                     loadDefaultValues(sharedViewModel)
                     startKeepAlive()
                     sharedViewModel?.objPosConfig?.apply {

@@ -1854,20 +1854,6 @@ class EmvWrapperRepository @Inject constructor(
                 EmvConstants.MF_EMV_RET_APP_BLOCKED -> TransStatus.APP_BLOCKED
                 EmvConstants.MF_EMV_RET_FALLBACK -> TransStatus.TRY_ANOTHER_INTERFACE
                 EmvConstants.MF_EMV_RET_OTHER_ERROR -> TransStatus.ERROR
-
-//                ContantPara.TransactionResult.OFFLINE_APPROVAL -> TransStatus.APPROVED_OFFLINE
-//                ContantPara.TransactionResult.ONLINE_DECLINED -> TransStatus.DECLINED_ONLINE
-//                ContantPara.TransactionResult.OFFLINE_DECLINED -> TransStatus.DECLINED_OFFLINE
-//                ContantPara.TransactionResult.CANCELED -> TransStatus.CANCELED
-//                ContantPara.TransactionResult.CANCELED_OR_TIMEOUT -> TransStatus.CANCELED
-//                ContantPara.TransactionResult.TERMINATED -> TransStatus.TERMINATED
-//                ContantPara.TransactionResult.CARD_BLOCKED_APP_FAIL -> TransStatus.CARD_BLOCKED
-//                ContantPara.TransactionResult.APPLICATION_BLOCKED_APP_FAIL -> TransStatus.APP_BLOCKED
-//                ContantPara.TransactionResult.NO_EMV_APPS -> TransStatus.NO_EMV_APPS
-//                ContantPara.TransactionResult.SELECT_APP_FAIL -> TransStatus.APP_SELECTION_FAILED
-//                ContantPara.TransactionResult.INVALID_ICC_DATA -> TransStatus.INVALID_ICC_CARD
-//                ContantPara.TransactionResult.ICC_CARD_REMOVED -> TransStatus.CARD_REMOVED
-
                 else -> TransStatus.ERROR
             }
         }

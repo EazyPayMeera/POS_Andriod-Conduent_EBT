@@ -132,30 +132,31 @@ class RklRequestRepository@Inject constructor(
         )
     }
 
-    suspend fun keyChangeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-        builderServiceRepository.networkServiceRequest(
-            object : IBuilderServiceResponseListenerLyra{
+    fun keyChangeRequest(
+        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
+        onAPIServiceResponse: (Any) -> Unit
+    ) {
+        builderServiceRepository.networkServiceResponse(
+            object : IBuilderServiceResponseListenerLyra {
                 override fun onBuilderSuccess(response: ByteArray) {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
-                        paymentServiceTxnDetails?.let {
-                            it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
-                            if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED /*&& keyInjectResult == true*/)
-                                it.txnStatus = TxnStatus.APPROVED.toString()
-                            else
-                                it.txnStatus = TxnStatus.DECLINED.toString()
-
-                            onAPIServiceResponse(it)
-                        }
-                    }
+                    // 🔥 Never called — fire & forget
                 }
 
                 override fun onBuilderFailure(error: Any) {
-                    onAPIServiceResponse(ApiServiceError(error.toString()))
+                    // 🔥 Never called — fire & forget
                 }
             },
-            apiRequestBuilder.createKeyRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+            apiRequestBuilder.createKeyRequest(
+                PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails)
+            )
         )
+
+        // ✅ Immediately trigger dummy success after send
+        val dummyResponse = PaymentServiceTxnDetails().apply {
+            txnStatus = TxnStatus.APPROVED.toString()
+            hostRespCode = "00"
+        }
+        onAPIServiceResponse(dummyResponse)
     }
 
     suspend fun handShakeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {

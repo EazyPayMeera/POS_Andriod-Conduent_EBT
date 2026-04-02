@@ -5,6 +5,9 @@ import com.eazypaytech.builder_core.listener.requestListener.IBuilderServiceRequ
 import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
 import com.eazypaytech.networkservicecore.nComponent.NetworkCallProvider
 import com.eazypaytech.networkservicecore.nComponent.ResultProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestListenerLyra{
@@ -27,6 +30,19 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         } catch (e: Exception) {
             onNetworkServiceResponse(ResultProvider.Error(e))
         }
+    }
+
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun networkServiceResponse(
+        iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra,
+        requestBody: ByteArray
+    ) {
+        this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
+        Log.d("NETWORK", "REQUEST_HEX: " + requestBody.toHexString().uppercase())
+        Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
+        NetworkCallProvider.safeApiResponse(requestBody)
+
     }
 
     @OptIn(ExperimentalStdlibApi::class)
