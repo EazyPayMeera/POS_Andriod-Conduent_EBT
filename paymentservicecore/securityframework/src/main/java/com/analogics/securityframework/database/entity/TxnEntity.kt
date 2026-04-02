@@ -83,6 +83,12 @@ data class TxnEntity(
     @ColumnInfo(name = "IsRefunded") var isRefunded: Boolean? = false,
     @ColumnInfo(name = "IsDemoMode") var isDemoMode: Boolean? = false,
 
+
+    @ColumnInfo(name = "snapEndBalance") var snapEndBalance: String? = null,
+    @ColumnInfo(name = "cashEndBalance") var cashEndBalance: String? = null,
+    @ColumnInfo(name = "snapBeginBal") var snapBeginBal: String? = null,
+    @ColumnInfo(name = "cashBeginBal") var cashBeginBal: String? = null,
+
     /* Receipt Specific Config */
     @ColumnInfo(name = "Header1") var header1: String? = null,
     @ColumnInfo(name = "Header2") var header2: String? = null,

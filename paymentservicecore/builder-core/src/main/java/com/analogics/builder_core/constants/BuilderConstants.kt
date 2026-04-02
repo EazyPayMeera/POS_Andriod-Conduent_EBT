@@ -322,7 +322,7 @@ object BuilderConstants {
 
     const val ISO_DATE_FORMAT = "MMddHHmmss"
     const val ISO_TYPE_SIGN_ON: Int = 0x0800
-
+    const val ISO_TYPE_NTW_RES: Int = 0x0810
 
 
     const val MTI_FINANCIAL_REQ = 0x0200

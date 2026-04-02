@@ -68,6 +68,8 @@ data class BuilderServiceTxnDetails(
     @SerializedName("additionalAmt") var additionalAmt: String? = null,
     @SerializedName("snapEndBalance") var snapEndBalance: Double? = 0.00,
     @SerializedName("cashEndBalance") var cashEndBalance: Double? = 0.00,
+    @SerializedName("snapBeginBal") var snapBeginBal: Double? = 0.00,
+    @SerializedName("cashBeginBal") var cashBeginBal: Double? = 0.00,
     @SerializedName("posCondition") var posCondition: String? = null,
     @SerializedName("privateData") var privateData: String? = null,
     @SerializedName("acquirerTrace") var acquirerTrace: String? = null,

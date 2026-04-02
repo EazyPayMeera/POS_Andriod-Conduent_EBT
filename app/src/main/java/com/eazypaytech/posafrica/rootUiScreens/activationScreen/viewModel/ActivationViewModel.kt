@@ -222,7 +222,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
                 ActivationState.SIGN_ON -> {
                     sharedViewModel?.objRootAppPaymentDetail?.workKey = paymentServiceTxnDetails.workKey
-                    currentStep = ActivationState.HAND_SHAKE
+                    currentStep = ActivationState.KEY_CHANGE
 
                 }
 
