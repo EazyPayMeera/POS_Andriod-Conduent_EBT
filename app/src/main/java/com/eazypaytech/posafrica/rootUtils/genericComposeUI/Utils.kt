@@ -453,6 +453,7 @@ fun getTxnTypeStringId(txnType: TxnType?): Int {
         TxnType.FOOD_PURCHASE -> R.string.ebt_food_purchase
         TxnType.FOODSTAMP_RETURN -> R.string.ebt_foodstamp_return
         TxnType.E_VOUCHER -> R.string.ebt_e_voucher
+        TxnType.CASH_PURCHASE -> R.string.ebt_cash_purchase
         else -> R.string.empty
     }
 }
