@@ -5,6 +5,7 @@ import com.eazypaytech.paymentservicecore.models.PosConfig
 import com.eazypaytech.securityframework.database.entity.BatchEntity
 import com.eazypaytech.posafrica.rootModel.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUiScreens.settings.config.PercentButton
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 class SharedViewModel:ViewModel() {

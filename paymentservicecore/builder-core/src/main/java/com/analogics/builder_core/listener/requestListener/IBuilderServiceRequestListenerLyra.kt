@@ -7,5 +7,6 @@ import okhttp3.ResponseBody
 interface IBuilderServiceRequestListenerLyra {
     suspend fun networkServiceRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
     suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
+    suspend fun handShakeRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
     fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ByteArray>)
 }

@@ -221,12 +221,14 @@
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
              iApiServiceResponseListener: IApiServiceResponseListener
          ) {
-
              this.iApiServiceResponseListener = iApiServiceResponseListener
-             rklRequestRepository.handShakeRequest(paymentServiceTxnDetails){
-                 onApiServiceResponse(it)
-             }
 
+             rklRequestRepository.handShakeRequest(paymentServiceTxnDetails) { result ->
+
+                 CoroutineScope(Dispatchers.IO).launch {
+                     onApiServiceResponse(result)  // ✅ now safe
+                 }
+             }
          }
 
 

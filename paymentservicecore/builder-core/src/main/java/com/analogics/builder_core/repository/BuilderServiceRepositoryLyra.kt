@@ -32,6 +32,17 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
+    override suspend fun handShakeRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
+    {
+        this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
+        Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
+        Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
+        NetworkCallProvider.safeApiCall(requestBody).let {
+            onNetworkServiceResponse(it)
+        }
+    }
+
 
     @OptIn(ExperimentalStdlibApi::class)
     fun networkServiceResponse(
@@ -55,6 +66,8 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
             onNetworkServiceResponse(it)
         }
     }
+
+
 
 
     @OptIn(ExperimentalStdlibApi::class)

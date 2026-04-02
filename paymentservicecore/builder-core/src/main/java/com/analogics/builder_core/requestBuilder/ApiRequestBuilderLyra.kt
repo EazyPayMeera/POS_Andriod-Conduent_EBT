@@ -253,10 +253,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID,builderServiceTxnDetails?.procId , IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_ON_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
-        iso.setBinaryHeader(false)        // Use ASCII header
-        iso.setBinaryFields(false)        // Use ASCII fields
-        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
-        iso.setIsoHeader("") // no custom header
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
         return iso.writeData()
     }
 
@@ -271,10 +271,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.SIGN_OFF_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
-        iso.setBinaryHeader(false)        // Use ASCII header
-        iso.setBinaryFields(false)        // Use ASCII fields
-        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
-        iso.setIsoHeader("") // no custom header
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
         return iso.writeData()
     }
 
@@ -283,37 +283,35 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
         val iso = IsoMessage()
-        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)  // MTI 0800
+        iso.setType(BuilderConstants.ISO_TYPE_SIGN_ON)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, 6) // Fixed-length numeric 6 digits
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.HANDSHAKE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
-        iso.setBinaryHeader(false)        // Use ASCII header
-        iso.setBinaryFields(false)        // Use ASCII fields
-        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
-        iso.setIsoHeader("") // no custom header
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
         return iso.writeData()
     }
 
     fun createKeyRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
+        val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         val stan = getSTAN().toString().padStart(6, '0')
         val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
-        val workKey = builderServiceTxnDetails?.workKey ?: ""
         val iso = IsoMessage()
         iso.setType(BuilderConstants.ISO_TYPE_NTW_RES)  // MTI 0800
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, time, IsoType.NUMERIC, 10) // Fixed-length numeric 10 digits
         iso.setValue(BuilderConstants.ISO_FIELD_STAN, stan, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH) // Fixed-length numeric 6 digits
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_RESPONSE_CODE, "00", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)// DE032 Acquirer ID // LLVAR length auto-handled
+        iso.setValue(BuilderConstants.ISO_FIELD_RESPONSE_CODE, "00", IsoType.NUMERIC, 2)// DE032 Acquirer ID // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE_LENGTH) // Fixed-length numeric
         msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
-        //iso.setValue(BuilderConstants.ISO_FIELD_KEY_DATA, workKey, IsoType.LLLVAR,workKey.length)
-        iso.setBinaryHeader(false)        // Use ASCII header
-        iso.setBinaryFields(false)        // Use ASCII fields
-        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
-        iso.setIsoHeader("") // no custom header
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
         return iso.writeData()
     }
 
@@ -328,10 +326,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PROC_ID_LENGTH) // LLVAR length auto-handled
         iso.setValue(BuilderConstants.ISO_FIELD_NET_MGMT_INFO_CODE, BuilderConstants.KEY_CHANGE_REQUEST, IsoType.NUMERIC, 3) // Fixed-length numeric
         msg_sec_code?.length?.let { iso.setValue(BuilderConstants.ISO_FIELD_KEY_MGMT_DATA, msg_sec_code, IsoType.ALPHA, it ) }
-        iso.setBinaryHeader(false)        // Use ASCII header
-        iso.setBinaryFields(false)        // Use ASCII fields
-        iso.setForceStringEncoding(true)  // Ensure ASCII encoding
-        iso.setIsoHeader("") // no custom header
+        iso.setBinaryHeader(false)
+        iso.setBinaryFields(false)
+        iso.setForceStringEncoding(true)
+        iso.setIsoHeader("")
         return iso.writeData()
     }
 

@@ -54,10 +54,10 @@ class RklRequestRepository@Inject constructor(
                             // Update host response and txn status only for Sign-On (0810)
                             if (mti == "0810") {
                                 it.hostRespCode = resPaymentServiceTxnDetails.hostRespCode
-                                it.txnStatus = if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED)
-                                    TxnStatus.APPROVED.toString()
-                                else
-                                    TxnStatus.DECLINED.toString()
+//                                it.txnStatus = if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED)
+//                                    TxnStatus.APPROVED.toString()
+//                                else
+//                                    TxnStatus.DECLINED.toString()
                             }
 
                             if (mti == "0800") {
@@ -77,6 +77,11 @@ class RklRequestRepository@Inject constructor(
                                     }
                                 }
                             }
+
+                            it.txnStatus = if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED)
+                                TxnStatus.APPROVED.toString()
+                            else
+                                TxnStatus.DECLINED.toString()
                             onAPIServiceResponse(it)
                         }
                     }
@@ -160,7 +165,7 @@ class RklRequestRepository@Inject constructor(
     }
 
     suspend fun handShakeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-        builderServiceRepository.networkServiceRequest(
+        builderServiceRepository.handShakeRequest(
             object : IBuilderServiceResponseListenerLyra{
                 override fun onBuilderSuccess(response: ByteArray) {
                     CoroutineScope(Dispatchers.Default).launch {

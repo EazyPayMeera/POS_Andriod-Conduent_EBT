@@ -2,6 +2,7 @@ package com.eazypaytech.posafrica.rootUiScreens.activationScreen.viewModel
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -50,26 +51,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     var sharedViewModel : SharedViewModel? = null
     val isFormValid: Boolean
         get() = procIdInput.value.isNotBlank() && procIdInput.value.length == AppConstants.MAX_LENGTH_PROC_ID
-    private var isKeepAlive = false
 
-    fun startKeepAlive() {
-        val job = viewModelScope.launch(Dispatchers.IO) {
-            Log.d("KEEP_ALIVE", "⏳ Coroutine started — isActive: $isActive")
 
-            while (isActive) {
-                Log.d("KEEP_ALIVE", "🔄 Inside while loop — isActive: $isActive")
-                delay(1 * 60 * 1000L)
-                Log.d("KEEP_ALIVE", "⏰ After delay — isActive: $isActive")
-                try {
-                    keepAliveProcess()
-                } catch (e: Exception) {
-                    Log.e("KEEP_ALIVE", "❌ Exception: ${e.message}")
-                }
-            }
-            Log.e("KEEP_ALIVE", "🛑 while loop exited — isActive: $isActive")
-        }
-        Log.d("KEEP_ALIVE", "Job state — isActive: ${job.isActive} isCancelled: ${job.isCancelled}")
-    }
+
 
     fun onProcIdChange(tid: String) {
         procIdInput.value = tid
@@ -125,40 +109,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }?.saveToPrefs()
     }
 
-
-    suspend fun keepAliveProcess() {
-        // ✅ Separate listener — completely independent from activation flow
-        apiServiceRepository.handShakeRequest(
-            PaymentServiceUtils.transformObject(
-                sharedViewModel?.objRootAppPaymentDetail
-            ),
-            object : IApiServiceResponseListener {
-                override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-                    Log.d("KEEP_ALIVE", "Handshake success ✅")
-                    // ✅ Do nothing — just keep connection alive
-                }
-
-                override fun onApiServiceError(apiServiceError: ApiServiceError) {
-                    Log.e("KEEP_ALIVE", "Handshake error ❌: ${apiServiceError}")
-                    // ✅ Silent fail — do not affect UI
-                }
-
-                override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                    Log.e("KEEP_ALIVE", "Handshake timeout ❌: ${apiServiceTimeout.message}")
-                    // ✅ Silent fail — do not affect UI
-                }
-
-                override fun onApiServiceDisplayProgress(
-                    show: Boolean,
-                    title: String?,
-                    subTitle: String?,
-                    message: String?
-                ) {
-                    // ✅ Do not show any progress for keep-alive
-                }
-            }
-        )
-    }
 
     suspend fun startActivateProcess() {
         setActivationButtonState(false)
@@ -219,7 +169,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     fun loadDefaultValues(sharedViewModel: SharedViewModel?)
     {
 
-        /* Default Headers & Footers */
         sharedViewModel?.objPosConfig?.header1 = AppConstants.DEFAULT_HEADER_1
         sharedViewModel?.objPosConfig?.header2 = AppConstants.DEFAULT_HEADER_2
         sharedViewModel?.objPosConfig?.header3 = AppConstants.DEFAULT_HEADER_3
@@ -230,7 +179,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.footer3 = AppConstants.DEFAULT_FOOTER_3
         sharedViewModel?.objPosConfig?.footer4 = AppConstants.DEFAULT_FOOTER_4
 
-        /* Customer Care Info */
         sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
         if(getAcquirer(sharedViewModel?.objRootAppPaymentDetail)== Acquirer.LYRA) {
             sharedViewModel?.objPosConfig?.customerCareNumber = AppConstants.LYRA_CUSTOMER_CARE
@@ -261,14 +209,14 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 }
 
                 ActivationState.KEY_EXCHANGE -> {
-                    Log.d("ACTIVATION", "✅ KEY_EXCHANGE success — calling keyChange")
-                    currentStep = ActivationState.KEY_CHANGE
-                    apiServiceRepository.keyChange(
-                        PaymentServiceUtils.transformObject(
-                            sharedViewModel?.objRootAppPaymentDetail
-                        ),
-                        this@ActivationViewModel
-                    )
+//                    Log.d("ACTIVATION", "✅ KEY_EXCHANGE success — calling keyChange")
+//                    currentStep = ActivationState.KEY_CHANGE
+//                    apiServiceRepository.keyChange(
+//                        PaymentServiceUtils.transformObject(
+//                            sharedViewModel?.objRootAppPaymentDetail
+//                        ),
+//                        this@ActivationViewModel
+//                    )
                 }
 
                 ActivationState.KEY_CHANGE -> {
@@ -286,11 +234,17 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 ActivationState.HAND_SHAKE -> {
                     Log.d("ACTIVATION", "✅ HAND_SHAKE success — navigating")
                     loadDefaultValues(sharedViewModel)
-                    startKeepAlive()
                     sharedViewModel?.objPosConfig?.apply {
                         isActivationDone = true
                     }?.saveToPrefs()
-
+                    sharedViewModel?.objRootAppPaymentDetail?.let { detail ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            com.eazypaytech.posafrica.service.KeepAliveService.start(
+                                navHostController.context,
+                                detail
+                            )
+                        }
+                    }
                     val userCount = txnDBRepository.getUserCount()
 
                     if (userCount > 0) {
