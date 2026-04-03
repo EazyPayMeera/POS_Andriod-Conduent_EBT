@@ -333,6 +333,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return iso.writeData()
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
@@ -341,6 +342,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
         Log.d("ICC_DATA", "Raw ICC Data: $iccData")
+        Log.d("ICC_DATA", "ICC Data type: ${iccData?.javaClass?.name}")
+        Log.d("ICC_DATA", "ICC bytes: ${iccData?.toByteArray()?.joinToString("") { "%02X".format(it) }}")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
@@ -390,8 +393,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         {
             iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, builderServiceTxnDetails?.cashback, IsoType.LLLVAR, builderServiceTxnDetails?.cashback!!.length)
         }
-        val iccBytes = iccData?.toByteArray()
-        iso.setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccBytes, IsoType.LLLVAR, iccBytes?.size!!)
+        val iccBytes = iccData?.chunked(2)
+            ?.map { it.toInt(16).toByte() }
+            ?.toByteArray()
+        iso.setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccBytes, IsoType.LLLVAR, iccBytes?.size ?: 0)
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode , IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
@@ -425,7 +430,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             originalData = originalData
         )
         IsoMessageBuilder.saveTxn(savedTxn)
+        Log.d("ISO_CHECK", "ICC bytes size: ${iccBytes?.size}")
+        Log.d("ISO_CHECK", "ICC bytes hex: ${iccBytes?.joinToString("") { "%02X".format(it) }}")
+
         return iso.writeData()
+
     }
 
 

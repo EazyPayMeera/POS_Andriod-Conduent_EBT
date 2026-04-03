@@ -34,75 +34,84 @@ object NetworkCallProvider {
                 sslContext.init(
                     null,
                     arrayOf(object : X509TrustManager {
-                        override fun checkClientTrusted(
-                            chain: Array<out X509Certificate>?,
-                            authType: String?
-                        ) {}
-
-                        override fun checkServerTrusted(
-                            chain: Array<out X509Certificate>?,
-                            authType: String?
-                        ) {}
-
+                        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+                        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
                         override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
                     }),
                     SecureRandom()
                 )
+
                 val plainSocket = Socket()
                 plainSocket.connect(
-                    java.net.InetSocketAddress(
-                        NetworkConstants.HOST_ADDRESS,
-                        NetworkConstants.HOST_PORT
-                    ),
+                    java.net.InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
                     15_000
                 )
+                Log.d("SOCKET", "✅ Connected to ${NetworkConstants.HOST_ADDRESS}:${NetworkConstants.HOST_PORT}")
 
                 val sslSocket = sslContext.socketFactory
-                    .createSocket(
-                        plainSocket,
-                        NetworkConstants.HOST_ADDRESS,
-                        NetworkConstants.HOST_PORT,
-                        true
-                    ) as SSLSocket
+                    .createSocket(plainSocket, NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT, true) as SSLSocket
 
                 sslSocket.soTimeout = 15_000
                 sslSocket.startHandshake()
+                Log.d("SOCKET", "✅ TLS Handshake done. Protocol: ${sslSocket.session.protocol}, Cipher: ${sslSocket.session.cipherSuite}")
+
                 val output = sslSocket.outputStream
                 val input = sslSocket.inputStream
+
                 val lenPrefix = byteArrayOf(
                     (requestBytes.size shr 8).toByte(),
                     (requestBytes.size and 0xFF).toByte()
                 )
-                output.write(lenPrefix + requestBytes)
+
+                val fullRequest = lenPrefix + requestBytes
+
+                // ✅ LOG OUTGOING DATA
+                Log.d("SOCKET", "📤 Sending total bytes: ${fullRequest.size}")
+                Log.d("SOCKET", "📤 Length prefix: ${lenPrefix[0].toInt() and 0xFF} ${lenPrefix[1].toInt() and 0xFF} (declares ${requestBytes.size} bytes)")
+                Log.d("SOCKET", "📤 Request HEX: ${requestBytes.joinToString("") { "%02X".format(it) }}")
+
+                output.write(fullRequest)
                 output.flush()
+                Log.d("SOCKET", "📤 Data flushed to server")
+
+                // ✅ LOG INCOMING LENGTH HEADER
                 val lenBytes = ByteArray(2)
                 input.read(lenBytes)
-                val expectedLength =
-                    ((lenBytes[0].toInt() and 0xFF) shl 8) +
-                            (lenBytes[1].toInt() and 0xFF)
+                val expectedLength = ((lenBytes[0].toInt() and 0xFF) shl 8) + (lenBytes[1].toInt() and 0xFF)
+                Log.d("SOCKET", "📥 Response length header bytes: ${lenBytes[0].toInt() and 0xFF} ${lenBytes[1].toInt() and 0xFF}")
+                Log.d("SOCKET", "📥 Expected response length: $expectedLength bytes")
 
                 val responseBuffer = ByteArrayOutputStream()
                 val tempBuffer = ByteArray(4096)
                 var totalRead = 0
 
                 while (totalRead < expectedLength) {
-                    val n = input.read(
-                        tempBuffer,
-                        0,
-                        minOf(tempBuffer.size, expectedLength - totalRead)
-                    )
+                    val n = input.read(tempBuffer, 0, minOf(tempBuffer.size, expectedLength - totalRead))
                     if (n == -1) throw Exception("Stream closed early")
                     responseBuffer.write(tempBuffer, 0, n)
                     totalRead += n
+                    Log.d("SOCKET", "📥 Read chunk: $n bytes, total so far: $totalRead / $expectedLength")
                 }
+
+                val responseBytes = responseBuffer.toByteArray()
+
+                // ✅ LOG FULL RESPONSE
+                Log.d("SOCKET", "📥 Response complete. Total bytes: ${responseBytes.size}")
+                Log.d("SOCKET", "📥 Response HEX: ${responseBytes.joinToString("") { "%02X".format(it) }}")
+                Log.d("SOCKET", "📥 Response ASCII: ${String(responseBytes, Charsets.ISO_8859_1)}")
+
                 sslSocket.close()
-                ResultProvider.Success(responseBuffer.toByteArray())
+                Log.d("SOCKET", "🔒 Socket closed")
+
+                ResultProvider.Success(responseBytes)
             }
 
         } catch (e: SocketTimeoutException) {
+            Log.e("SOCKET", "⏱ Timeout: ${e.message}")
             ResultProvider.Error(e)
 
         } catch (e: Exception) {
+            Log.e("SOCKET", "❌ Error: ${e.message}")
             ResultProvider.Error(e)
         }
     }

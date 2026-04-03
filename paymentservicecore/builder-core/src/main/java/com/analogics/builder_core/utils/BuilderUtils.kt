@@ -38,6 +38,8 @@ object BuilderUtils {
         }
     }
 
+
+
     fun generateSecret(nonce: String, appKey: String): String {
         var secret = ""
         try {
