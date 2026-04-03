@@ -5,8 +5,6 @@ import android.content.Context
 //import android.device.SEManager
 import android.util.Log
 import com.eazypaytech.hardwarecore.BuildConfig
-import com.eazypaytech.tpaymentcore.constants.EncryptionConstants
-import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
 import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
 //import com.urovo.sdk.pinpad.PinPadProviderImpl
 

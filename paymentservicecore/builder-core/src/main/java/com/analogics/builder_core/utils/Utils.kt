@@ -5,7 +5,6 @@ package com.eazypaytech.builder_core.utils
 import android.util.Log
 import com.eazypaytech.builder_core.model.Symbol
 import java.util.Locale
-import kotlin.experimental.or
 import kotlin.math.pow
 
 fun transformToAmountDouble(amount: String, decimalPlaces: Int = 2): Double {

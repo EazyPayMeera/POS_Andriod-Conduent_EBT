@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
 import com.eazypaytech.securityframework.database.entity.UserManagementEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

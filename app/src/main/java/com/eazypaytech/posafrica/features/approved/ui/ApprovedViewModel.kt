@@ -13,7 +13,7 @@ import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
 import com.eazypaytech.posafrica.core.utils.miscellaneous.PrinterUtils
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

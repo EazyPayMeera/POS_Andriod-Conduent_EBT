@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder

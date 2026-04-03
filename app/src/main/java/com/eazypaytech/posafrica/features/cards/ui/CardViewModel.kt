@@ -26,7 +26,7 @@ import com.eazypaytech.posafrica.core.utils.emvStatusToTransStatus
 import com.eazypaytech.posafrica.core.utils.getCurrentDateTime
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
 import com.eazypaytech.posafrica.core.utils.miscellaneous.NetworkUtils
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

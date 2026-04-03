@@ -24,7 +24,7 @@ import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.core.utils.generateMasterPassword
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

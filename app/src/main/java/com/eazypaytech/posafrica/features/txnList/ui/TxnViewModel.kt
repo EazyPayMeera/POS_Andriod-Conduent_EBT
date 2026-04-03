@@ -22,7 +22,7 @@ import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.core.utils.miscellaneous.PrinterUtils
 import com.eazypaytech.posafrica.core.utils.miscellaneous.ReportBuilder
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
 import com.eazypaytech.securityframework.database.entity.BatchEntity
 import com.eazypaytech.securityframework.database.entity.TxnEntity
 import com.google.gson.Gson

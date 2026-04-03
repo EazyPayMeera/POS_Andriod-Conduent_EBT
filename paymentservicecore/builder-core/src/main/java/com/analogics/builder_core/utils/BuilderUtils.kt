@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
-import com.eazypaytech.securityframework.preferences.SecuredSharedPrefManager
+import com.analogics.securityframework.data.local.SecuredSharedPrefManager
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody

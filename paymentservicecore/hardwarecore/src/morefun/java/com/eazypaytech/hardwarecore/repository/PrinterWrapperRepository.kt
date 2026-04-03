@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.Gravity
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterSdkResponseListener
-import com.eazypaytech.tpaymentcore.model.emv.PrinterSdkResult
+import com.eazypaytech.hardwarecore.data.model.PrinterSdkResult
 import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository.Align
 import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository.FontSize
 import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository.Style

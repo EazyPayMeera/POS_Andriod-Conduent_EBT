@@ -8,8 +8,6 @@ import com.eazypaytech.securityframework.handler.SecureKeyHandler
 import com.eazypaytech.tpaymentcore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.security.KeyPair
 
 object PaymentServiceUtils {
