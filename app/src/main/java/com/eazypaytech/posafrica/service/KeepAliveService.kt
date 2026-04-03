@@ -97,6 +97,7 @@ class KeepAliveService : Service() {
                     workKey = intent.getStringExtra(EXTRA_WORK_KEY)
                 }
                 startKeepAlive()
+                startTwelveHourTask()
             }
 
             ACTION_STOP -> {
@@ -142,16 +143,12 @@ class KeepAliveService : Service() {
         twelveHourJob = serviceScope.launch {
 
             while (isActive) {
+                delay(12 * 60 * 60 * 1000L) // ✅ wait 12 hours first
+
                 if (!isMidNightRunning) {
-                    Log.d("KEEP_ALIVE", "Trigger handshake: ${System.currentTimeMillis()}")
-                    keepAliveProcess()
-                } else {
-                    Log.d("KEEP_ALIVE", "Skipping — request still running")
+                    Log.d("KEEP_ALIVE", "12hr sign-on trigger: ${System.currentTimeMillis()}")
+                    signOnRequest()
                 }
-
-                delay(12 * 60 * 60 * 1000L) // ⏱ 12 hours
-
-                signOnRequest()
             }
         }
     }
@@ -207,19 +204,26 @@ class KeepAliveService : Service() {
 
     private suspend fun signOnRequest() {
         isRequestRunning = true
+        isMidNightRunning = true  // ✅ add this
         apiServiceRepository.signOnRequest(
             PaymentServiceUtils.transformObject(paymentDetail),
             object : IApiServiceResponseListener {
                 override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
-
+                    isMidNightRunning = false  // ✅ reset
+                    isRequestRunning = false
+                    serviceScope.launch {
+                        keyChange()
+                    }
                 }
 
                 override fun onApiServiceError(apiServiceError: ApiServiceError) {
-
+                    isMidNightRunning = false  // ✅ reset
+                    isRequestRunning = false
                 }
 
                 override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-
+                    isMidNightRunning = false  // ✅ reset
+                    isRequestRunning = false
                 }
 
                 override fun onApiServiceDisplayProgress(
@@ -234,6 +238,35 @@ class KeepAliveService : Service() {
 
     private suspend fun signOff() {
         apiServiceRepository.signOnOff(
+            PaymentServiceUtils.transformObject(paymentDetail),
+            object : IApiServiceResponseListener {
+
+                override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
+                    Log.d("KEEP_ALIVE", "Handshake success ✅")
+
+                }
+
+                override fun onApiServiceError(apiServiceError: ApiServiceError) {
+                    Log.e("KEEP_ALIVE", "Handshake error ❌: $apiServiceError")
+
+                }
+
+                override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                    Log.e("KEEP_ALIVE", "Handshake timeout ❌")
+                }
+
+                override fun onApiServiceDisplayProgress(
+                    show: Boolean,
+                    title: String?,
+                    subTitle: String?,
+                    message: String?
+                ) {}
+            }
+        )
+    }
+
+    private suspend fun keyChange() {
+        apiServiceRepository.keyExchange(
             PaymentServiceUtils.transformObject(paymentDetail),
             object : IApiServiceResponseListener {
 
