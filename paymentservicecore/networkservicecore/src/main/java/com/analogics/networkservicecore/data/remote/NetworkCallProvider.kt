@@ -1,6 +1,6 @@
-package com.eazypaytech.networkservicecore.nComponent
+package com.analogics.networkservicecore.data.remote
 
-import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
+import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -46,7 +46,7 @@ object NetworkCallProvider {
                 )
                 val plainSocket = Socket()
                 plainSocket.connect(
-                    java.net.InetSocketAddress(
+                    InetSocketAddress(
                         NetworkConstants.HOST_ADDRESS,
                         NetworkConstants.HOST_PORT
                     ),
@@ -159,7 +159,7 @@ object NetworkCallProvider {
 
             val plainSocket = Socket()
             plainSocket.connect(
-                java.net.InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
+                InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
                 15_000
             )
 

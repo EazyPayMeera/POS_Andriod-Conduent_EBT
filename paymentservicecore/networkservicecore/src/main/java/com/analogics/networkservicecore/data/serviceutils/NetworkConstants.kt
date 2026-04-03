@@ -1,4 +1,4 @@
-package com.eazypaytech.networkservicecore.serviceutils
+package com.analogics.networkservicecore.data.serviceutils
 
 object NetworkConstants {
         const val BASEURL = "https://posuat.services.conduent.com/"

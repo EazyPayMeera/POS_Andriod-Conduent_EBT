@@ -13,7 +13,7 @@ import com.eazypaytech.posafrica.core.utils.user.UserType
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
 import com.analogics.securityframework.data.repository.TxnDBRepository
-import com.eazypaytech.securityframework.database.entity.UserManagementEntity
+import com.analogics.securityframework.database.entity.UserManagementEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

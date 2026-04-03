@@ -1,15 +1,15 @@
-package com.eazypaytech.securityframework.database.databaseClient
+package com.analogics.securityframework.database.clients
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.eazypaytech.securityframework.database.dao.IBatchDao
-import com.eazypaytech.securityframework.database.dao.ITxnDao
-import com.eazypaytech.securityframework.database.dao.IUserManagementDao
-import com.eazypaytech.securityframework.database.entity.BatchEntity
-import com.eazypaytech.securityframework.database.entity.TxnEntity
-import com.eazypaytech.securityframework.database.entity.UserManagementEntity
+import com.analogics.securityframework.database.dao.IBatchDao
+import com.analogics.securityframework.database.dao.ITxnDao
+import com.analogics.securityframework.database.dao.IUserManagementDao
+import com.analogics.securityframework.database.entity.BatchEntity
+import com.analogics.securityframework.database.entity.TxnEntity
+import com.analogics.securityframework.database.entity.UserManagementEntity
 
 @Database(entities = [BatchEntity::class,TxnEntity::class, UserManagementEntity::class], version = 2.toInt())
 abstract class AppDatabaseClient : RoomDatabase() {

@@ -1,7 +1,8 @@
-package com.eazypaytech.tpaymentcore.utils
+package com.eazypaytech.hardwarecore.utils
 
 import android.util.Log
 import java.util.Hashtable
+import kotlin.collections.iterator
 import kotlin.experimental.and
 
 class TlvUtils {

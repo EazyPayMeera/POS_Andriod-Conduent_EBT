@@ -1,4 +1,4 @@
-package com.eazypaytech.builder_core.model.login
+package com.analogics.builder_core.data.model.login
 
 import com.google.gson.annotations.SerializedName
 

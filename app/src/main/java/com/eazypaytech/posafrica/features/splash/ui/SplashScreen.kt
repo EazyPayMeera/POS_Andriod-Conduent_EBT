@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.eazypaytech.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.utils.logger.AppLogger
 import com.eazypaytech.posafrica.BuildConfig
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.features.activity.ui.localSharedViewModel

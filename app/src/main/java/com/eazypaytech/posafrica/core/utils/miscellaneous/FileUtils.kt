@@ -1,7 +1,7 @@
 package com.eazypaytech.posafrica.core.utils.miscellaneous
 
 import android.content.Context
-import com.eazypaytech.paymentservicecore.logger.AppLogger
+import com.analogics.paymentservicecore.utils.logger.AppLogger
 import java.io.BufferedReader
 
 fun readAsset(context: Context, fileName: String): String? {

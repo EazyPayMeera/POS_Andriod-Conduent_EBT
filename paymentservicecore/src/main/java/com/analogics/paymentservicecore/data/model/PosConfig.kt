@@ -1,9 +1,9 @@
-package com.eazypaytech.paymentservicecore.models
+package com.analogics.paymentservicecore.data.model
 
 import android.content.Context
 import android.os.Build
-import com.eazypaytech.paymentservicecore.logger.AppLogger
-import com.eazypaytech.securityframework.handler.SharedPrefHandler
+import com.analogics.paymentservicecore.utils.logger.AppLogger
+import com.analogics.securityframework.data.local.SharedPrefHandler
 import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

@@ -1,7 +1,6 @@
-package com.eazypaytech.paymentservicecore.model.emv
+package com.analogics.paymentservicecore.data.model.emv
 
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.google.gson.annotations.SerializedName
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 
 sealed class EmvServiceResult(
     var status: Any? = null,

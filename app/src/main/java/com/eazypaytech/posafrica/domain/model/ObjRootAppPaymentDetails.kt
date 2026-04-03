@@ -1,10 +1,10 @@
 package com.eazypaytech.posafrica.domain.model
 
 import com.eazypaytech.posafrica.BuildConfig
-import com.eazypaytech.paymentservicecore.model.emv.CardEntryMode
-import com.eazypaytech.paymentservicecore.model.emv.PosConditionCode
-import com.eazypaytech.paymentservicecore.models.TxnStatus
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
+import com.analogics.paymentservicecore.data.model.emv.PosConditionCode
+import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import javax.inject.Singleton

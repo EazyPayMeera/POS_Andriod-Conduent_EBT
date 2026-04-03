@@ -1,8 +1,8 @@
-package com.eazypaytech.paymentservicecore.listeners.requestListener
+package com.analogics.paymentservicecore.data.listeners.requestListener
 
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.eazypaytech.paymentservicecore.models.PosConfig
+import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.data.model.PosConfig
 
 interface IApiServiceRequestListener {
 

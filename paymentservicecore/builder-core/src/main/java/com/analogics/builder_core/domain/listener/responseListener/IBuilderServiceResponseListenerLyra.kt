@@ -1,4 +1,4 @@
-package com.eazypaytech.builder_core.listener.responseListener
+package com.analogics.builder_core.domain.listener.responseListener
 
 
 

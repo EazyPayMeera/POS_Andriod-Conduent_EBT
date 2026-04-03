@@ -5,11 +5,11 @@ import android.graphics.Paint
 import android.util.Log
 import android.view.Gravity
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
-import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterSdkResponseListener
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IPrinterSdkResponseListener
 import com.eazypaytech.hardwarecore.data.model.PrinterSdkResult
-import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository.Align
-import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository.FontSize
-import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository.Style
+import com.eazypaytech.hardwarecore.domain.repository.PrinterSdkRequestRepository.Align
+import com.eazypaytech.hardwarecore.domain.repository.PrinterSdkRequestRepository.FontSize
+import com.eazypaytech.hardwarecore.domain.repository.PrinterSdkRequestRepository.Style
 import com.morefun.yapi.device.printer.FeedUnit
 import com.morefun.yapi.device.printer.FontFamily
 import com.morefun.yapi.device.printer.OnPrintListener

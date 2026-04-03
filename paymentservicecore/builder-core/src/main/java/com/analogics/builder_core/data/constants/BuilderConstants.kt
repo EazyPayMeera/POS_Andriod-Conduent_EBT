@@ -1,6 +1,4 @@
-package com.eazypaytech.builder_core.constants
-
-import android.util.Log
+package com.analogics.builder_core.data.constants
 
 object BuilderConstants {
 

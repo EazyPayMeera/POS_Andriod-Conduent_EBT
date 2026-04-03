@@ -1,8 +1,7 @@
-package com.eazypaytech.paymentservicecore.model
+package com.analogics.paymentservicecore.data.model
 
-import com.eazypaytech.paymentservicecore.model.emv.CardBrand
-import com.eazypaytech.paymentservicecore.model.emv.PosConditionCode
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.emv.CardBrand
+import com.analogics.paymentservicecore.data.model.emv.PosConditionCode
 import com.google.gson.annotations.SerializedName
 
 data class PaymentServiceTxnDetails(

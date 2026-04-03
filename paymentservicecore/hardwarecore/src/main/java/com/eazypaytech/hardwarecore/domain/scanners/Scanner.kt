@@ -1,9 +1,9 @@
-package com.eazypaytech.tpaymentcore.Scanner
+package com.eazypaytech.hardwarecore.domain.scanners
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import com.eazypaytech.tpaymentcore.listener.responseListener.IScannerHandlerListener
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IScannerHandlerListener
 
 class Scanner private constructor() {
 

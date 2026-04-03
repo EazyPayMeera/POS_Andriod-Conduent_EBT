@@ -1,7 +1,7 @@
-package com.eazypaytech.tpaymentcore.listener.requestListener
+package com.eazypaytech.hardwarecore.domain.listener.requestListener
 
 import android.content.Context
-import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterSdkResponseListener
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IPrinterSdkResponseListener
 
 interface IPrinterSdkRequestListener {
     var iPrinterSdkResponseListener : IPrinterSdkResponseListener

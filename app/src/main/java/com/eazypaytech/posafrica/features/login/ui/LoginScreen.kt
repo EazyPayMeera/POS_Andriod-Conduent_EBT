@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.eazypaytech.posafrica.BuildConfig
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems

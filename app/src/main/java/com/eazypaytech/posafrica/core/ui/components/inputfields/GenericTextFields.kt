@@ -87,7 +87,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.core.ui.components.textview.GenericCard
 import com.eazypaytech.posafrica.core.ui.components.textview.TextView

@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Dialog
-import com.eazypaytech.securityframework.database.entity.BatchEntity
+import com.analogics.securityframework.database.entity.BatchEntity
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.core.ui.components.textview.GenericCard
 import com.eazypaytech.posafrica.core.ui.components.textview.TextView

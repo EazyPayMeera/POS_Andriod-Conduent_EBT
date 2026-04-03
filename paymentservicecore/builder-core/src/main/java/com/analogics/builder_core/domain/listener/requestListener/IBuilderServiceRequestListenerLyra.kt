@@ -1,7 +1,7 @@
-package com.eazypaytech.builder_core.listener.requestListener
+package com.analogics.builder_core.domain.listener.requestListener
 
-import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
-import com.eazypaytech.networkservicecore.nComponent.ResultProvider
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.networkservicecore.data.remote.ResultProvider
 
 interface IBuilderServiceRequestListenerLyra {
     suspend fun networkServiceRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)

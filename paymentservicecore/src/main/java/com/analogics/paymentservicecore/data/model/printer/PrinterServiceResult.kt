@@ -1,4 +1,4 @@
-package com.eazypaytech.paymentservicecore.model.emv
+package com.analogics.paymentservicecore.data.model.printer
 
 sealed class PrinterServiceResult(
     var status: Any? = null

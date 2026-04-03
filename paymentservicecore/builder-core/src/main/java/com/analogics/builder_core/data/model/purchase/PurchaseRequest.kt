@@ -1,4 +1,4 @@
-package com.eazypaytech.builder_core.model.purchase
+package com.analogics.builder_core.data.model.purchase
 
 import com.google.gson.annotations.SerializedName
 

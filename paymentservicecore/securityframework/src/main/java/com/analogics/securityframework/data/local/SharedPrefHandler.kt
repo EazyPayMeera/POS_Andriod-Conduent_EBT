@@ -1,9 +1,9 @@
-package com.eazypaytech.securityframework.handler
+package com.analogics.securityframework.data.local
 
 import android.content.Context
-import com.eazypaytech.securityframework.listener.ISharedPrefReqListener
-import com.analogics.securityframework.data.local.SecuredSharedPrefManager
+import com.analogics.securityframework.listener.ISharedPrefReqListener
 import javax.inject.Singleton
+import kotlin.collections.iterator
 
 @Singleton
 object SharedPrefHandler : ISharedPrefReqListener {

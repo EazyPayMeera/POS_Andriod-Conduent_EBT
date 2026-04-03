@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder

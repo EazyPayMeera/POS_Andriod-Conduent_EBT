@@ -1,15 +1,15 @@
-package com.eazypaytech.posafrica.rootUtilities.genericComposeUI
+package com.analogics.paymentservicecore.domain.repository.printerService
 
 import android.content.Context
-import com.eazypaytech.paymentservicecore.listeners.requestListener.IPrinterServiceRequestListener
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult.Result
-import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult.Status
-import com.eazypaytech.paymentservicecore.model.error.PrinterServiceException
-import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterSdkResponseListener
-import com.eazypaytech.tpaymentcore.model.emv.PrinterSdkException
+import com.analogics.paymentservicecore.data.listeners.requestListener.IPrinterServiceRequestListener
+import com.analogics.paymentservicecore.data.listeners.responseListener.IPrinterServiceResponseListener
+import com.analogics.paymentservicecore.data.model.printer.PrinterServiceResult.Result
+import com.analogics.paymentservicecore.data.model.printer.PrinterServiceResult.Status
+import com.analogics.paymentservicecore.data.model.error.PrinterServiceException
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IPrinterSdkResponseListener
+import com.eazypaytech.hardwarecore.data.printer.PrinterSdkException
 import com.eazypaytech.hardwarecore.data.model.PrinterSdkResult
-import com.eazypaytech.tpaymentcore.repository.PrinterSdkRequestRepository
+import com.eazypaytech.hardwarecore.domain.repository.PrinterSdkRequestRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

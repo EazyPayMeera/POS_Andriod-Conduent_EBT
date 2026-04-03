@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.core.utils.navigateAndClean

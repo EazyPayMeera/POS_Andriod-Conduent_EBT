@@ -1,4 +1,4 @@
-package com.eazypaytech.tpaymentcore.model.emv
+package com.eazypaytech.hardwarecore.data.model
 
 import com.google.gson.annotations.SerializedName
 

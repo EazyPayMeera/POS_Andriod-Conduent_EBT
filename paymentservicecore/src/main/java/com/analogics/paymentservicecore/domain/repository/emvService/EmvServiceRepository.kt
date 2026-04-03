@@ -1,4 +1,4 @@
-package com.eazypaytech.paymentservicecore.repository.emvService
+package com.analogics.paymentservicecore.domain.repository.emvService
 
 import android.content.Context
 import android.os.Build
@@ -6,35 +6,35 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
-import com.eazypaytech.paymentservicecore.listeners.requestListener.IEmvServiceRequestListener
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.eazypaytech.paymentservicecore.model.emv.AidConfig
-import com.eazypaytech.paymentservicecore.model.emv.CAPKey
-import com.eazypaytech.paymentservicecore.model.emv.CardBrand
-import com.eazypaytech.paymentservicecore.model.emv.CardCheckMode
-import com.eazypaytech.paymentservicecore.model.emv.CardEntryMode
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.CardCheckResult
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.CardCheckStatus
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.DisplayMsgId
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.InitResult
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.InitStatus
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.TransResult
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.TransStatus
-import com.eazypaytech.paymentservicecore.model.emv.TermConfig
-import com.eazypaytech.paymentservicecore.model.emv.TransConfig
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
-import com.eazypaytech.paymentservicecore.model.error.EmvServiceException
-import com.eazypaytech.paymentservicecore.models.toEmvTransType
-import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
-import com.eazypaytech.paymentservicecore.utils.toDecimalFormat
-import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
-import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
-import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult
-import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
-import com.eazypaytech.tpaymentcore.utils.TlvUtils
+import com.analogics.paymentservicecore.data.listeners.requestListener.IEmvServiceRequestListener
+import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.data.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.data.model.emv.AidConfig
+import com.analogics.paymentservicecore.data.model.emv.CAPKey
+import com.analogics.paymentservicecore.data.model.emv.CardBrand
+import com.analogics.paymentservicecore.data.model.emv.CardCheckMode
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.CardCheckResult
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.CardCheckStatus
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.DisplayMsgId
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.InitResult
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.InitStatus
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.TransResult
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.TransStatus
+import com.analogics.paymentservicecore.data.model.emv.TermConfig
+import com.analogics.paymentservicecore.data.model.emv.TransConfig
+import com.analogics.paymentservicecore.data.model.error.ApiServiceError
+import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
+import com.analogics.paymentservicecore.data.model.error.EmvServiceException
+import com.analogics.paymentservicecore.data.model.toEmvTransType
+import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.utils.toDecimalFormat
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IEmvSdkResponseListener
+import com.eazypaytech.hardwarecore.data.model.EmvSdkException
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
+import com.eazypaytech.hardwarecore.domain.repository.EmvSdkRequestRepository
+import com.eazypaytech.hardwarecore.utils.TlvUtils
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
@@ -292,12 +292,12 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
             val jsonCapKeys = JSONObject(capKeys?:"").getJSONArray(AppConstants.EMV_CAP_KEY_ARRAY_FIELD_NAME).toString()
 
-            var sdkAidConfig : com.eazypaytech.tpaymentcore.model.emv.AidConfig? = Gson().fromJson(aidConfig?:"",
-                    com.eazypaytech.tpaymentcore.model.emv.AidConfig::class.java
+            var sdkAidConfig : com.eazypaytech.hardwarecore.data.model.AidConfig? = Gson().fromJson(aidConfig?:"",
+                    com.eazypaytech.hardwarecore.data.model.AidConfig::class.java
                 )
 
-            var sdkCapKeys : List<com.eazypaytech.tpaymentcore.model.emv.CAPKey>? = Gson().fromJson(jsonCapKeys,
-                    Array<com.eazypaytech.tpaymentcore.model.emv.CAPKey>::class.java
+            var sdkCapKeys : List<com.eazypaytech.hardwarecore.data.model.CAPKey>? = Gson().fromJson(jsonCapKeys,
+                    Array<com.eazypaytech.hardwarecore.data.model.CAPKey>::class.java
                 ).toList()
 
             /* Override Terminal Specific Parameters */
@@ -326,12 +326,12 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     ) {
         try {
             this.iEmvServiceResponseListener = iEmvServiceResponseListener
-            var sdkAidConfig : com.eazypaytech.tpaymentcore.model.emv.AidConfig? = Gson().fromJson(Gson().toJson(aidConfig),
-                    com.eazypaytech.tpaymentcore.model.emv.AidConfig::class.java
+            var sdkAidConfig : com.eazypaytech.hardwarecore.data.model.AidConfig? = Gson().fromJson(Gson().toJson(aidConfig),
+                    com.eazypaytech.hardwarecore.data.model.AidConfig::class.java
                 )
-            var sdkCapKeys : List<com.eazypaytech.tpaymentcore.model.emv.CAPKey>? = Gson().fromJson(
+            var sdkCapKeys : List<com.eazypaytech.hardwarecore.data.model.CAPKey>? = Gson().fromJson(
                     Gson().toJson(capKeys),
-                    Array<com.eazypaytech.tpaymentcore.model.emv.CAPKey>::class.java
+                    Array<com.eazypaytech.hardwarecore.data.model.CAPKey>::class.java
                 ).toList()
 
             /* Override Terminal Specific Parameters */
@@ -363,9 +363,9 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(DisplayMsgId.NONE)
         var transConfig = getTransConfig(paymentServiceTxnDetails)
 
-        var sdkTransConfig : com.eazypaytech.tpaymentcore.model.emv.TransConfig? = Gson().fromJson(
+        var sdkTransConfig : com.eazypaytech.hardwarecore.data.model.TransConfig? = Gson().fromJson(
                 Gson().toJson(transConfig),
-                com.eazypaytech.tpaymentcore.model.emv.TransConfig::class.java
+                com.eazypaytech.hardwarecore.data.model.TransConfig::class.java
             )
 
         emvSdkRequestRepository.startPayment(context, sdkTransConfig)

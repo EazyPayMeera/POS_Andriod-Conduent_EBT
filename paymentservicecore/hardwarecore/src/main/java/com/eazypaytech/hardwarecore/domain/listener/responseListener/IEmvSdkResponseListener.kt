@@ -1,6 +1,6 @@
-package com.eazypaytech.tpaymentcore.listener.responseListener
+package com.eazypaytech.hardwarecore.domain.listener.responseListener
 
-import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 
 interface IEmvSdkResponseListener {
       fun onEmvSdkResponse(response: Any)

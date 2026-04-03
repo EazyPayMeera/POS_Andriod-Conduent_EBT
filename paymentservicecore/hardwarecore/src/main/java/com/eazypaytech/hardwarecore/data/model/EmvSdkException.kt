@@ -1,4 +1,4 @@
-package com.eazypaytech.tpaymentcore.model.emv
+package com.eazypaytech.hardwarecore.data.model
 
 data class EmvSdkException(var errorMessage:String=""){
     companion object{}

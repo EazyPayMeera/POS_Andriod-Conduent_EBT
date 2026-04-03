@@ -2,19 +2,19 @@ package com.eazypaytech.posafrica.core.utils.miscellaneous
 
 import android.content.Context
 import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
+import com.analogics.paymentservicecore.data.listeners.responseListener.IPrinterServiceResponseListener
+import com.analogics.paymentservicecore.data.model.printer.PrinterServiceResult
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder
-import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository
-import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository.PrintFormat
+import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository
+import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.PrintFormat
 import com.eazypaytech.posafrica.core.utils.convertDateTime
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.domain.model.Symbol
 import com.eazypaytech.posafrica.domain.model.Symbol.Type
-import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository.Align
-import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository.FontSize
-import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository.Style
+import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.Align
+import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.FontSize
+import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.Style
 import com.eazypaytech.posafrica.core.utils.getCurrentDateTime
 import com.eazypaytech.posafrica.core.utils.getTxnStatusStringId
 import com.eazypaytech.posafrica.core.utils.getTxnTypeStringId

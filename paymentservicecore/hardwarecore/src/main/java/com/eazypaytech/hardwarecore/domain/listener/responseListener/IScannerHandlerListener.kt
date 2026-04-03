@@ -1,4 +1,4 @@
-package com.eazypaytech.tpaymentcore.listener.responseListener
+package com.eazypaytech.hardwarecore.domain.listener.responseListener
 
 interface IScannerHandlerListener {
     fun onScannerRespHandler(uiData:String)

@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.paymentservicecore.repository.emvService.EmvServiceRepository
-import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
+import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
-import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository
+import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
 import com.eazypaytech.posafrica.core.utils.miscellaneous.PrinterUtils
 import com.analogics.securityframework.data.repository.TxnDBRepository

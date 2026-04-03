@@ -47,8 +47,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.models.TxnStatus
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails

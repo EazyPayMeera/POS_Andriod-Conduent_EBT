@@ -1,9 +1,6 @@
-package com.eazypaytech.paymentservicecore.repository.apiService.login
+package com.analogics.paymentservicecore.domain.repository.apiService.login
 
-//import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
-//import com.eazypaytech.builder_core.repository.BuilderServiceRepository
-//import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import javax.inject.Inject
 
 class LoginRequestRepository @Inject constructor(

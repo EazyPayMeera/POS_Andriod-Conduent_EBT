@@ -1,10 +1,10 @@
 package com.eazypaytech.posafrica.features.activity.ui
 
 import androidx.lifecycle.ViewModel
-import com.eazypaytech.paymentservicecore.models.PosConfig
+import com.analogics.paymentservicecore.data.model.PosConfig
 import com.eazypaytech.posafrica.features.settings.ui.PercentButton
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
-import com.eazypaytech.securityframework.database.entity.BatchEntity
+import com.analogics.securityframework.database.entity.BatchEntity
 
 class SharedViewModel: ViewModel() {
    /* Transaction Data */

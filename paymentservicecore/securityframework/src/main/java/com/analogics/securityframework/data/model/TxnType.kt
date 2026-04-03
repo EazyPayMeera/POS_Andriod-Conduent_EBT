@@ -1,4 +1,4 @@
-package com.eazypaytech.securityframework.model
+package com.analogics.securityframework.data.model
 
 enum class TxnType {
     PURCHASE,

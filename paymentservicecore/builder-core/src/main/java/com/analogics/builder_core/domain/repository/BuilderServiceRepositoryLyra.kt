@@ -1,10 +1,10 @@
 package com.analogics.builder_core.domain.repository
 
 import android.util.Log
-import com.eazypaytech.builder_core.listener.requestListener.IBuilderServiceRequestListenerLyra
-import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListenerLyra
-import com.eazypaytech.networkservicecore.nComponent.NetworkCallProvider
-import com.eazypaytech.networkservicecore.nComponent.ResultProvider
+import com.analogics.builder_core.domain.listener.requestListener.IBuilderServiceRequestListenerLyra
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.networkservicecore.data.remote.NetworkCallProvider
+import com.analogics.networkservicecore.data.remote.ResultProvider
 import kotlinx.coroutines.TimeoutCancellationException
 import java.net.SocketTimeoutException
 import javax.inject.Inject

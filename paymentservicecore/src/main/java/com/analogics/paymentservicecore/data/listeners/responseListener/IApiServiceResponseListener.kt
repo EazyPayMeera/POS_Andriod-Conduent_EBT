@@ -1,8 +1,8 @@
-package com.eazypaytech.paymentservicecore.listeners.responseListener
+package com.analogics.paymentservicecore.data.listeners.responseListener
 
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.data.model.error.ApiServiceError
+import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
 
 interface IApiServiceResponseListener {
 

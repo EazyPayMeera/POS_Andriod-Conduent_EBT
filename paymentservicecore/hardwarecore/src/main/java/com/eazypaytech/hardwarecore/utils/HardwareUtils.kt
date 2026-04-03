@@ -1,4 +1,4 @@
-package com.eazypaytech.tpaymentcore.utils
+package com.eazypaytech.hardwarecore.utils
 
 import android.content.Context
 //import android.device.DeviceManager

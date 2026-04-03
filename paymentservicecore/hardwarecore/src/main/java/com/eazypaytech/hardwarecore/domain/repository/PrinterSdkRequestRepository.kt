@@ -1,9 +1,10 @@
-package com.eazypaytech.tpaymentcore.repository
+package com.eazypaytech.hardwarecore.domain.repository
 
 import android.content.Context
-import com.eazypaytech.tpaymentcore.listener.requestListener.IPrinterSdkRequestListener
-import com.eazypaytech.tpaymentcore.listener.responseListener.IPrinterSdkResponseListener
-import com.eazypaytech.tpaymentcore.model.emv.PrinterSdkException
+import com.eazypaytech.hardwarecore.domain.listener.requestListener.IPrinterSdkRequestListener
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IPrinterSdkResponseListener
+import com.eazypaytech.hardwarecore.data.printer.PrinterSdkException
+import com.eazypaytech.tpaymentcore.repository.PrinterWrapperRepository
 import javax.inject.Inject
 import kotlin.toString
 

@@ -1,4 +1,4 @@
-package com.eazypaytech.builder_core.model.reversal
+package com.analogics.builder_core.data.model.reversal
 
 import com.google.gson.annotations.SerializedName
 

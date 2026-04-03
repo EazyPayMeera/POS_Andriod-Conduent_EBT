@@ -1,11 +1,11 @@
-package com.eazypaytech.tpaymentcore.repository
+package com.eazypaytech.hardwarecore.domain
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import com.eazypaytech.tpaymentcore.Scanner.Scanner
-import com.eazypaytech.tpaymentcore.listener.responseListener.IScannerHandlerListener
-import com.eazypaytech.tpaymentcore.listener.requestListener.ScannerListener
+import com.eazypaytech.hardwarecore.domain.scanners.Scanner
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IScannerHandlerListener
+import com.eazypaytech.hardwarecore.domain.listener.requestListener.ScannerListener
 
 object ScannerHandler : ScannerListener {
 

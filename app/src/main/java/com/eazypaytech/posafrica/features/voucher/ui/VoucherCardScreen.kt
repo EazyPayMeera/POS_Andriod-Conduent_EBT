@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.features.activity.ui.localSharedViewModel

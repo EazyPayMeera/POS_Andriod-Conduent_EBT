@@ -1,4 +1,4 @@
-package com.eazypaytech.builder_core.model.printer
+package com.analogics.builder_core.data.model.printer
 
 import com.google.gson.annotations.SerializedName
 

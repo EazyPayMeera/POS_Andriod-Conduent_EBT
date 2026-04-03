@@ -1,4 +1,4 @@
-package com.eazypaytech.paymentservicecore.models
+package com.analogics.paymentservicecore.data.model
 
 
 enum class TxnStatus {

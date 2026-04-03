@@ -1,11 +1,11 @@
-package com.eazypaytech.paymentservicecore.listeners.requestListener
+package com.analogics.paymentservicecore.data.listeners.requestListener
 
 import android.content.Context
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.eazypaytech.paymentservicecore.model.emv.AidConfig
-import com.eazypaytech.paymentservicecore.model.emv.CAPKey
-import com.eazypaytech.paymentservicecore.model.emv.TermConfig
+import com.analogics.paymentservicecore.data.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.data.model.emv.AidConfig
+import com.analogics.paymentservicecore.data.model.emv.CAPKey
+import com.analogics.paymentservicecore.data.model.emv.TermConfig
 
 interface IEmvServiceRequestListener {
     fun initPaymentSDK(termConfig: TermConfig?=null, aidConfig: String?=null, capKeys: String?=null, iEmvServiceResponseListener: IEmvServiceResponseListener)

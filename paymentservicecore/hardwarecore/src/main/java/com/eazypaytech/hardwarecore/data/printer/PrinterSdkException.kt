@@ -1,4 +1,4 @@
-package com.eazypaytech.tpaymentcore.model.emv
+package com.eazypaytech.hardwarecore.data.printer
 
 data class PrinterSdkException(var errorMessage:String=""){
     companion object{}

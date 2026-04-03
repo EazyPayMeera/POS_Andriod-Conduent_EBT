@@ -1,13 +1,14 @@
-package com.eazypaytech.tpaymentcore.repository
+package com.eazypaytech.hardwarecore.domain.repository
 
 import android.content.Context
 import android.util.Log
-import com.eazypaytech.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
-import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
-import com.eazypaytech.tpaymentcore.model.emv.AidConfig
-import com.eazypaytech.tpaymentcore.model.emv.CAPKey
-import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
-import com.eazypaytech.tpaymentcore.model.emv.TransConfig
+import com.eazypaytech.hardwarecore.domain.listener.requestListener.IEmvSdkRequestListener
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IEmvSdkResponseListener
+import com.eazypaytech.hardwarecore.data.model.AidConfig
+import com.eazypaytech.hardwarecore.data.model.CAPKey
+import com.eazypaytech.hardwarecore.data.model.EmvSdkException
+import com.eazypaytech.hardwarecore.data.model.TransConfig
+import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -63,7 +64,7 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
 
     override fun abortPayment() {
         try {
-            EmvWrapperRepository.abortPayment()
+            EmvWrapperRepository.Companion.abortPayment()
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }
@@ -71,7 +72,7 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
 
     override fun getEmvTag(tag: String?): String? {
         return try {
-            EmvWrapperRepository.getEmvTag(tag)
+            EmvWrapperRepository.Companion.getEmvTag(tag)
         }catch (exception: Exception)
         {
             exception.printStackTrace()

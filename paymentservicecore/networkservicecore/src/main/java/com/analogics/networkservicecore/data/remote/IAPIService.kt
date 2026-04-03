@@ -1,9 +1,9 @@
-package com.eazypaytech.networkservicecore.nComponent
+package com.analogics.networkservicecore.data.remote
 
 
 
 
-import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
+import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response

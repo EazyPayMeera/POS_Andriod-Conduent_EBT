@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.models.TxnStatus
+import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.features.activity.ui.localSharedViewModel
 import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder

@@ -1,32 +1,32 @@
-    package com.eazypaytech.paymentservicecore.repository.apiService
+package com.analogics.paymentservicecore.domain.repository.apiService
 
 
     import android.os.Build
     import android.util.Log
     import androidx.annotation.RequiresApi
     import com.eazypaytech.paymentservicecore.constants.AppConstants
-    import com.eazypaytech.paymentservicecore.listeners.requestListener.IApiServiceRequestListener
-    import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
-    import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-    import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult.TransStatus
-    import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
-    import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
-    import com.eazypaytech.paymentservicecore.models.PosConfig
-    import com.eazypaytech.paymentservicecore.models.TxnType
+    import com.analogics.paymentservicecore.data.listeners.requestListener.IApiServiceRequestListener
+    import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
+    import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
+    import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult.TransStatus
+    import com.analogics.paymentservicecore.data.model.error.ApiServiceError
+    import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
+    import com.analogics.paymentservicecore.data.model.PosConfig
+    import com.analogics.paymentservicecore.data.model.TxnType
     //import com.eazypaytech.paymentservicecore.repository.apiService.access_token.AccessTokenRequestRepository
     //import com.eazypaytech.paymentservicecore.repository.apiService.auth_capture.AuthCaptureRequestRepository
     //import com.eazypaytech.paymentservicecore.repository.apiService.batch.BatchRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.login.LoginRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.login.LoginRequestRepository
     //import com.eazypaytech.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.preauth.VoidRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.purchase.PurchaseRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.purchase.VoucherSettlementRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.void.VoidRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.purchase.PurchaseRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.voucherSettlement.VoucherSettlementRequestRepository
     //import com.eazypaytech.paymentservicecore.repository.apiService.refund.RefundRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.reversal.ReversalRequestRepository
-    import com.eazypaytech.paymentservicecore.repository.apiService.rkl.RklRequestRepository
-    import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
+    import com.analogics.paymentservicecore.domain.repository.apiService.reversal.ReversalRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.rkl.RklRequestRepository
+    import com.analogics.paymentservicecore.utils.PaymentServiceUtils
     import com.analogics.securityframework.data.repository.TxnDBRepository
-    import com.eazypaytech.securityframework.database.entity.TxnEntity
+    import com.analogics.securityframework.database.entity.TxnEntity
     import kotlinx.coroutines.CoroutineScope
     import kotlinx.coroutines.Dispatchers
     import kotlinx.coroutines.delay

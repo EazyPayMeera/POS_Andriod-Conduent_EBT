@@ -1,18 +1,17 @@
-package com.eazypaytech.builder_core.requestBuilder
+package com.analogics.builder_core.builder
 
 import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.analogics.builder_core.builder.IsoMessageBuilder
+import com.analogics.builder_core.data.constants.BuilderConstants
 import com.analogics.builder_core.data.model.SavedTxnData
-import com.eazypaytech.builder_core.constants.BuilderConstants
-import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
-import com.eazypaytech.builder_core.model.CardEntryMode
-import com.eazypaytech.builder_core.utils.BuilderUtils
-import com.eazypaytech.builder_core.utils.toCurrencyLong
+import com.analogics.builder_core.data.model.BuilderServiceTxnDetails
+import com.analogics.builder_core.data.model.CardEntryMode
+import com.analogics.builder_core.utils.BuilderUtils
+import com.analogics.builder_core.utils.toCurrencyLong
 import com.analogics.securityframework.data.repository.TxnDBRepository
-import com.eazypaytech.securityframework.model.TxnType
+import com.analogics.securityframework.data.model.TxnType
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
@@ -20,6 +19,7 @@ import com.solab.iso8583.parse.ConfigParser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -205,7 +205,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateRRN(stan: String): String {
-        val now = java.time.LocalDateTime.now()
+        val now = LocalDateTime.now()
         val yearLastDigit = now.year.toString().last()           // 1 digit
         val dayOfYear = "%03d".format(now.dayOfYear)           // 3 digits
         val hour = "%02d".format(now.hour)                     // 2 digits

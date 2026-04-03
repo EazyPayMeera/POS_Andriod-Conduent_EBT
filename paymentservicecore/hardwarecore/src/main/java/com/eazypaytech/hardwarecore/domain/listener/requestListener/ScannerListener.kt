@@ -1,8 +1,8 @@
-package com.eazypaytech.tpaymentcore.listener.requestListener
+package com.eazypaytech.hardwarecore.domain.listener.requestListener
 
 import android.content.Context
 import android.os.Bundle
-import com.eazypaytech.tpaymentcore.listener.responseListener.IScannerHandlerListener
+import com.eazypaytech.hardwarecore.domain.listener.responseListener.IScannerHandlerListener
 
 interface ScannerListener {
     fun initScanner(context: Context, scannerHandlerListener: IScannerHandlerListener)

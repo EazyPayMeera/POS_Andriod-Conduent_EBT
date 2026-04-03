@@ -11,7 +11,7 @@ import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder
 import com.analogics.securityframework.data.repository.TxnDBRepository
-import com.eazypaytech.securityframework.database.entity.UserManagementEntity
+import com.analogics.securityframework.database.entity.UserManagementEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

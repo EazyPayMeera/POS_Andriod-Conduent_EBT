@@ -1,4 +1,4 @@
-package com.eazypaytech.securityframework.database.dbConstant
+package com.analogics.securityframework.database.constants
 
 object DBConstant {
     const val  TXN_DB_NAME= "TxnDB"

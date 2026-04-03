@@ -1,7 +1,7 @@
 package com.eazypaytech.posafrica.core.utils.miscellaneous
 
-import com.eazypaytech.paymentservicecore.models.TxnStatus
-import com.eazypaytech.paymentservicecore.models.TxnType
+import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.data.model.TxnType
 import com.eazypaytech.posafrica.domain.model.ObjRootAppPaymentDetails
 
 class ReportBuilder(val list: List<ObjRootAppPaymentDetails>?) {
