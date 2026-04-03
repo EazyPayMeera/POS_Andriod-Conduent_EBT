@@ -1,6 +1,6 @@
 package com.eazypaytech.posafrica.domain.model
 
-
+import com.eazypaytech.posafrica.BuildConfig
 import com.eazypaytech.paymentservicecore.model.emv.CardEntryMode
 import com.eazypaytech.paymentservicecore.model.emv.PosConditionCode
 import com.eazypaytech.paymentservicecore.models.TxnStatus
@@ -127,7 +127,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("acquirerName") var acquirerName:String?=BuildConfig.ACQUIRER_NAME,
+    @SerializedName("acquirerName") var acquirerName:String?= BuildConfig.ACQUIRER_NAME,
     @SerializedName("signatureData")    var signatureData: String? = null,
 
     /* Original Txn data for Void Refund Capture */

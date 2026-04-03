@@ -281,7 +281,7 @@ class KeepAliveService : Service() {
             "Keep Alive Service",
             NotificationManager.IMPORTANCE_LOW
         )
-        val manager = Context.getSystemService(NotificationManager::class.java)
+        val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
     }
 
