@@ -37,31 +37,31 @@ import androidx.navigation.navArgument
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.features.activation.ui.ActivationScreen
 import com.eazypaytech.posafrica.features.addClerk.ui.AddClerkScreen
-import com.eazypaytech.posafrica.features.amount.ui.AmountView
-import com.eazypaytech.posafrica.features.amount.ui.CashBackView
-import com.eazypaytech.posafrica.features.approved.ui.ApprovedView
-import com.eazypaytech.posafrica.features.authCode.ui.AuthCodeView
-import com.eazypaytech.posafrica.features.cards.ui.CardView
-import com.eazypaytech.posafrica.features.changepassword.ui.ChangePasswordView
 import com.eazypaytech.posafrica.features.confirmshift.ui.ConfirmShiftView
-import com.eazypaytech.posafrica.features.dashboard.ui.DashboardView
 import com.eazypaytech.posafrica.features.ebtSelection.ui.EBTSelectionView
-import com.eazypaytech.posafrica.features.keyManagement.KeyEntryView
-import com.eazypaytech.posafrica.features.language.ui.LanguageView
 import com.eazypaytech.posafrica.features.login.ui.LoginScreenView
-import com.eazypaytech.posafrica.features.manualentry.ManualCardView
 import com.eazypaytech.posafrica.features.onBoarding.ui.OnBoardSlideView
-import com.eazypaytech.posafrica.features.password.ui.PasswordView
-import com.eazypaytech.posafrica.features.receiptdetails.ui.ReceiptDetailsView
-import com.eazypaytech.posafrica.features.settings.ui.SettingsView
-import com.eazypaytech.posafrica.features.settings.ui.ConfigurationView
-import com.eazypaytech.posafrica.features.splash.ui.SplashScreenView
-import com.eazypaytech.posafrica.features.transactiondetails.ui.TransactionDetailsView
 import com.eazypaytech.posafrica.features.txnList.ui.TransactionListScreen
-import com.eazypaytech.posafrica.features.txnSel.ui.TxnSelectionView
-import com.eazypaytech.posafrica.features.usermanagement.ui.UserManagementView
-import com.eazypaytech.posafrica.features.voucher.VoucherCardView
 import com.eazypaytech.posafrica.core.themes.TPaymentsAPOSTheme
+import com.eazypaytech.posafrica.features.amount.ui.AmountScreen
+import com.eazypaytech.posafrica.features.amount.ui.CashBackScreen
+import com.eazypaytech.posafrica.features.approved.ui.ApprovedScreen
+import com.eazypaytech.posafrica.features.authCode.ui.AuthScreen
+import com.eazypaytech.posafrica.features.cards.ui.CardScreen
+import com.eazypaytech.posafrica.features.changepassword.ui.ChangePasswordScreen
+import com.eazypaytech.posafrica.features.dashboard.ui.DashboardScreen
+import com.eazypaytech.posafrica.features.keyManagement.ui.KeyEntryScreen
+import com.eazypaytech.posafrica.features.language.ui.LanguageScreen
+import com.eazypaytech.posafrica.features.manualentry.ui.ManualCardScreen
+import com.eazypaytech.posafrica.features.password.ui.PasswordScreen
+import com.eazypaytech.posafrica.features.receiptdetails.ui.ReceiptDetailsScreen
+import com.eazypaytech.posafrica.features.settings.ui.ConfigurationScreen
+import com.eazypaytech.posafrica.features.settings.ui.SettingsScreen
+import com.eazypaytech.posafrica.features.splash.ui.SplashScreen
+import com.eazypaytech.posafrica.features.transactiondetails.ui.TransactionDetailsScreen
+import com.eazypaytech.posafrica.features.txnSel.ui.TxnSelectionScreen
+import com.eazypaytech.posafrica.features.usermanagement.ui.UserManagementScreen
+import com.eazypaytech.posafrica.features.voucher.ui.VoucherCardScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 var localSharedViewModel= compositionLocalOf{ SharedViewModel() }
@@ -186,10 +186,10 @@ fun AppNavigationGraph(
         startDestination = startDestination
     ) {
         composable(AppNavigationItems.SplashScreen.route) {
-            SplashScreenView(navHostController)
+            SplashScreen(navHostController)
         }
         composable(AppNavigationItems.DashBoardScreen.route) {
-            DashboardView(navHostController)
+            DashboardScreen(navHostController)
         }
         composable(AppNavigationItems.OnBoardingScreen.route) {
             OnBoardSlideView(navHostController)
@@ -198,16 +198,16 @@ fun AppNavigationGraph(
             LoginScreenView(navHostController)
         }
         composable(AppNavigationItems.AmountScreen.route) {
-            AmountView(navHostController)
+            AmountScreen(navHostController)
         }
         composable(AppNavigationItems.ReceiptDetailsScreen.route) {
-            ReceiptDetailsView(navHostController)
+            ReceiptDetailsScreen(navHostController)
         }
         composable(AppNavigationItems.InvoiceScreen.route) {
             //InvoiceView(navHostController)
         }
         composable(AppNavigationItems.PasswordScreen.route) {
-            PasswordView(navHostController)
+            PasswordScreen(navHostController)
         }
         composable(AppNavigationItems.BarcodeScreen.route) {
             //BarcodeView(navHostController)
@@ -228,7 +228,7 @@ fun AppNavigationGraph(
         composable(
             route = AppNavigationItems.CardScreen.route
         ) { backStackEntry ->
-            CardView(navHostController)
+            CardScreen(navHostController)
         }
 
         composable(
@@ -237,18 +237,18 @@ fun AppNavigationGraph(
         ) { backStackEntry ->
             val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: "0.00"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                ApprovedView(navHostController)
+                ApprovedScreen(navHostController)
             }
         }
         composable(AppNavigationItems.SettingsScreen.route) {
-            SettingsView(navHostController)
+            SettingsScreen(navHostController)
 
         }
         composable(AppNavigationItems.LanguageScreen.route) {
-            LanguageView(navHostController)
+            LanguageScreen(navHostController)
         }
         composable(AppNavigationItems.ConfigurationScreen.route) {
-            ConfigurationView(navHostController)
+            ConfigurationScreen(navHostController)
         }
         composable(AppNavigationItems.ConfirmShiftScreen.route) {
             ConfirmShiftView(navHostController)
@@ -272,10 +272,10 @@ fun AppNavigationGraph(
            TransactionListScreen(navHostController)
         }
         composable(AppNavigationItems.ChangePasswordScreen.route) {
-            ChangePasswordView(navHostController)
+            ChangePasswordScreen(navHostController)
         }
         composable(AppNavigationItems.TransactionDetailsScreen.route) {
-            TransactionDetailsView(navHostController)
+            TransactionDetailsScreen(navHostController)
         }
         composable(AppNavigationItems.AddClerkScreen.route) {
             AddClerkScreen(navHostController)
@@ -284,7 +284,7 @@ fun AppNavigationGraph(
             ActivationScreen(navHostController)
         }
         composable(AppNavigationItems.UserManagementScreen.route) {
-            UserManagementView(navHostController)
+            UserManagementScreen(navHostController)
         }
         composable(AppNavigationItems.BatchIdScreen.route) {
             //BatchIdView(navHostController)
@@ -293,25 +293,25 @@ fun AppNavigationGraph(
             //SignatureView(navHostController)
         }
         composable(AppNavigationItems.CashBackScreen.route) {
-            CashBackView(navHostController)
+            CashBackScreen(navHostController)
         }
         composable(AppNavigationItems.ManualCardScreen.route) {
-            ManualCardView(navHostController)
+            ManualCardScreen(navHostController)
         }
         composable(AppNavigationItems.EBTSelScreen.route) {
             EBTSelectionView(navHostController)
         }
         composable(AppNavigationItems.TxnSelScreen.route) {
-            TxnSelectionView(navHostController)
+            TxnSelectionScreen(navHostController)
         }
         composable(AppNavigationItems.KeyEntryScreen.route) {
-            KeyEntryView(navHostController)
+            KeyEntryScreen(navHostController)
         }
         composable(AppNavigationItems.VoucherScreen.route) {
-            VoucherCardView(navHostController)
+            VoucherCardScreen(navHostController)
         }
         composable(AppNavigationItems.AuthCodeScreen.route) {
-            AuthCodeView(navHostController)
+            AuthScreen(navHostController)
         }
     }
 }
