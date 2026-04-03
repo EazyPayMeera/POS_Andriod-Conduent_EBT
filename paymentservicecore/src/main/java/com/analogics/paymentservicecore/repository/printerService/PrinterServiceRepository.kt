@@ -1,4 +1,4 @@
-package com.eazypaytech.posafrica.rootUtils.genericComposeUI
+package com.eazypaytech.posafrica.rootUtilities.genericComposeUI
 
 import android.content.Context
 import com.eazypaytech.paymentservicecore.listeners.requestListener.IPrinterServiceRequestListener

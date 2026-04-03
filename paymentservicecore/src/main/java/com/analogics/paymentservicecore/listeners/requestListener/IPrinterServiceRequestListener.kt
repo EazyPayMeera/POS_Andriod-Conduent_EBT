@@ -1,10 +1,9 @@
 package com.eazypaytech.paymentservicecore.listeners.requestListener
 
 import android.content.Context
-import android.service.notification.Condition
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.PrintFormat
+import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository
+import com.eazypaytech.posafrica.rootUtilities.genericComposeUI.PrinterServiceRepository.PrintFormat
 
 interface IPrinterServiceRequestListener {
     fun init(context: Context, iPrinterServiceResponseListener: IPrinterServiceResponseListener) : PrinterServiceRepository
