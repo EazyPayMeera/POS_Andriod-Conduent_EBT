@@ -110,6 +110,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         this.context = context
         this.sharedViewModel = sharedViewModel
         this.navHostController = navHostController
+        Log.d("SHARED_VIEW_MODEL", "objRootAppPaymentDetail: ${sharedViewModel.objRootAppPaymentDetail}")
         viewModelScope.launch {
             checkNetwork(context)
             sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()

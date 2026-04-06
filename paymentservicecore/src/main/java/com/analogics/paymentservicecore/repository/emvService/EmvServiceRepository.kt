@@ -434,30 +434,59 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 override fun onApiServiceSuccess(apiPaymentServiceTxnDetails: PaymentServiceTxnDetails) {
                     Log.d("EMV","Response Received")
                     paymentServiceTxnDetails = apiPaymentServiceTxnDetails.copy(emvData = paymentServiceTxnDetails.emvData)
-                    Log.d("EMV_AFTER_COPY", Gson().toJson(paymentServiceTxnDetails))
-
-                    // Print important fields individually
-                    Log.d("EMV_FIELDS", "STAN: ${paymentServiceTxnDetails.stan}")
-                    Log.d("EMV_FIELDS", "RespCode: ${paymentServiceTxnDetails.hostRespCode}")
-                    Log.d("EMV_FIELDS", "AuthCode: ${paymentServiceTxnDetails.hostAuthCode}")
-                    Log.d("EMV_FIELDS", "TxnRef: ${paymentServiceTxnDetails.hostTxnRef}")
-                    Log.d("EMV_FIELDS", "Message: ${paymentServiceTxnDetails.hostResMessage}")
-                    Log.d("EMV_FIELDS", "EMV Data: ${paymentServiceTxnDetails.emvData}")
-                    Log.d("EMV_FIELDS", "Txn Status: ${paymentServiceTxnDetails.txnStatus}")
                     responseEmvTags =
                         TlvUtils(apiPaymentServiceTxnDetails.emvData).tlvMap
                     onResponse(responseEmvTags)
                 }
 
                 override fun onApiServiceError(apiServiceError: ApiServiceError) {
-                    Log.d("EMV", "Received Error: ${apiServiceError.errorMessage}")
-                    Log.d("EMV","Received Error ")
-                    onResponse(responseEmvTags)
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        var attempt = 0
+                        var isSuccess = false
+
+                        while (attempt < 3 && !isSuccess) {
+                            attempt++
+                            val result = CompletableDeferred<Boolean>()
+                            apiServiceRepository.apiServiceReversal(
+                                paymentServiceTxnDetails,
+                                object : IApiServiceResponseListener {
+                                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                                        paymentServiceTxnDetails =
+                                            response.copy(emvData = paymentServiceTxnDetails.emvData)
+                                        val responseTags =
+                                            TlvUtils(response.emvData).tlvMap
+                                        isSuccess = true
+                                        result.complete(true)
+                                        onResponse(responseTags)
+                                    }
+                                    override fun onApiServiceError(error: ApiServiceError) {
+                                        result.complete(false)
+                                    }
+
+                                    override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                                        result.complete(false)
+                                    }
+                                }
+                            )
+
+                            val success = result.await()
+
+                            if (success) break
+                        }
+
+                        if (!isSuccess) {
+                            val declineTags = hashMapOf(
+                                EmvConstants.EMV_TAG_RESP_CODE to
+                                        EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE
+                            )
+
+                            onResponse(declineTags)
+                        }
+                    }
                 }
 
                 override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                    Log.d("EMV","Received Timeout")
-
                     CoroutineScope(Dispatchers.IO).launch {
 
                         var attempt = 0
@@ -490,12 +519,10 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                                     }
 
                                     override fun onApiServiceError(error: ApiServiceError) {
-                                        Log.d("EMV","Reversal Error")
                                         result.complete(false)
                                     }
 
                                     override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                                        Log.d("EMV","Reversal Timeout")
                                         result.complete(false)
                                     }
                                 }
@@ -507,8 +534,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                         }
 
                         if (!isSuccess) {
-                            Log.d("EMV", "Max reversal attempts reached → DECLINE")
-
                             val declineTags = hashMapOf(
                                 EmvConstants.EMV_TAG_RESP_CODE to
                                         EmvConstants.EMV_TAG_VAL_UNABLE_TO_GO_ONLINE_DECLINE
@@ -589,11 +614,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 emvTags.remove(EmvConstants.EMV_TAG_ENC_PIN_BLOCK)
             }
 
-//            if (emvTags.containsKey(EmvConstants.EMV_TAG_MERCH_NAME_LOC)) {
-//                paymentServiceTxnDetails.ternNameLoc = emvTags[EmvConstants.EMV_TAG_MERCH_NAME_LOC]
-//                emvTags.remove(EmvConstants.EMV_TAG_MERCH_NAME_LOC)
-//            }
-//            Log.d("DEBUG_NAME_LOC", "NAME AND LOC : ${paymentServiceTxnDetails.ternNameLoc}")
             /* TLV string for Host Communication */
             paymentServiceTxnDetails.emvData = TlvUtils(emvTags).toTlvString()
 

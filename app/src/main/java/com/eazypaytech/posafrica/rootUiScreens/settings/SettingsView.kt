@@ -55,6 +55,18 @@ fun SettingsView(navHostController: NavHostController) {
         mutableStateOf(sharedViewModel.objPosConfig?.fnsNumber ?: "")
     }
 
+    val stateCode = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.stateCode ?: "")
+    }
+
+    val countyCode = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.countyCode ?: "")
+    }
+
+    val postalServiceCode = remember {
+        mutableStateOf(sharedViewModel.objPosConfig?.postalServiceCode ?: "")
+    }
+
     val configChanged = remember { mutableStateOf(false) }
 
     Column {
@@ -146,6 +158,42 @@ fun SettingsView(navHostController: NavHostController) {
                     }
 
                     item {
+                        ConfigRow(
+                            label = "State Code",
+                            value = stateCode.value,
+                            onValueChange = {
+                                stateCode.value = it
+                                configChanged.value = true
+                                viewModel.updateStateCode(it)
+                            }
+                        )
+                    }
+
+                    item {
+                        ConfigRow(
+                            label = "County Code",
+                            value = countyCode.value,
+                            onValueChange = {
+                                countyCode.value = it
+                                configChanged.value = true
+                                viewModel.updateCountyCode(it)
+                            }
+                        )
+                    }
+
+                    item {
+                        ConfigRow(
+                            label = "Postal Service Code",
+                            value = postalServiceCode.value,
+                            onValueChange = {
+                                postalServiceCode.value = it
+                                configChanged.value = true
+                                viewModel.updatePostalServiceCode(it)
+                            }
+                        )
+                    }
+
+                    item {
 
                         Row(
                             modifier = Modifier
@@ -163,7 +211,10 @@ fun SettingsView(navHostController: NavHostController) {
                                         merchantNameLocation.value,
                                         merchantBankName.value,
                                         merchantType.value,
-                                        fnsNumber.value
+                                        fnsNumber.value,
+                                        stateCode.value,
+                                        countyCode.value,
+                                        postalServiceCode.value
                                     )
 
                                     configChanged.value = false

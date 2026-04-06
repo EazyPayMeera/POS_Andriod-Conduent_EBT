@@ -205,7 +205,10 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         merchantNameLocation = sharedViewModel.objPosConfig?.merchantNameLocation,
                         merchantBankName = sharedViewModel.objPosConfig?.merchantBankName,
                         merchantType = sharedViewModel.objPosConfig?.merchantType,
-                        procId = sharedViewModel.objPosConfig?.procId
+                        procId = sharedViewModel.objPosConfig?.procId,
+                        stateCode = sharedViewModel.objPosConfig?.stateCode,
+                        countyCode = sharedViewModel.objPosConfig?.countyCode,
+                        postalServiceCode = sharedViewModel.objPosConfig?.postalServiceCode
 
                     )
                     sharedViewModel.objRootAppPaymentDetail.processingCode = it.processingCode

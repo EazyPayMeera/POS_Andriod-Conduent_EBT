@@ -15,3 +15,6 @@ data class UserLoginRequest (
 @SerializedName("merchantBankName") var merchantBankName: String? = null
 @SerializedName("merchantType") var merchantType: String? = null
 @SerializedName("fnsNumber") var fnsNumber: String? = null
+@SerializedName("stateCode") var stateCode: String? = null
+@SerializedName("countyCode") var countyCode: String? = null
+@SerializedName("postalServiceCode") var postalServiceCode: String? = null

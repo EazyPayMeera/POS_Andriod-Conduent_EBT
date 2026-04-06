@@ -45,6 +45,9 @@ class SharedViewModel:ViewModel() {
       objRootAppPaymentDetail.merchantBankName = objPosConfig?.merchantBankName
       objRootAppPaymentDetail.merchantType = objPosConfig?.merchantType
       objRootAppPaymentDetail.fnsNumber = objPosConfig?.fnsNumber
+      objRootAppPaymentDetail.stateCode = objPosConfig?.stateCode
+      objRootAppPaymentDetail.countyCode = objPosConfig?.countyCode
+      objRootAppPaymentDetail.postalServiceCode = objPosConfig?.postalServiceCode
 
       /* Copy Receipt Data */
       objRootAppPaymentDetail.header1 = objPosConfig?.header1

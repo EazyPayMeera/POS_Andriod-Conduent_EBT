@@ -50,6 +50,7 @@
         <field num="54" type="LLLVAR" length="120"/>
         <field num="58" type="LLLVAR" length="11"/>
         <field num="111" type="LLLVAR" length="255"/>
+        <field num="125" type="LLLVAR"/>
         <field num="127" type="LLLVAR" length="100"/>
     </parse>
 
@@ -130,6 +131,7 @@
         <field num="60" type="LLLVAR" length="25"/>  <!-- Advice/Reversal Reason -->
         <field num="90" type="NUMERIC" length="42"/> <!-- Original Data Elements -->
         <field num="111" type="LLLVAR" length="255"/> <!-- Additional Private Data -->
+        <field num="125" type="LLLVAR"/>
         <field num="127" type="LLLVAR" length="100"/> <!-- Acquirer Trace Data -->
 
     </parse>

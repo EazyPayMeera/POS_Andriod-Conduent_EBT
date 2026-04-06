@@ -15,6 +15,9 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     private var merchantLocation: String = ""
     private var merchantBankName: String = ""
     private var fnsNumber: String = ""
+    private var postalServiceCode = ""
+    private var stateCode: String = ""
+    private var countyCode: String = ""
     private var merchantType: String = ""
 
 
@@ -45,23 +48,53 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         fnsNumber = value
     }
 
+    fun updatePostalServiceCode(value: String) {
+        postalServiceCode = value
+    }
+
+    fun updateStateCode(value: String) {
+        stateCode = value
+    }
+
+    fun updateCountyCode(value: String) {
+        countyCode = value
+    }
+
+
+
     fun onSaveMerchantConfig(
         navHostController: NavHostController,
         sharedViewModel: SharedViewModel,
         merchantNameLocation: String,
         merchantBankName: String,
         merchantType: String,
-        fnsNumber : String,
+        fnsNumber: String,
+        stateCode: String,
+        countyCode: String,
+        postalServiceCode: String
     ) {
         sharedViewModel.objRootAppPaymentDetail.merchantNameLocation = merchantNameLocation
         sharedViewModel.objRootAppPaymentDetail.merchantType = merchantType
         sharedViewModel.objRootAppPaymentDetail.merchantBankName = merchantBankName
         sharedViewModel.objRootAppPaymentDetail.fnsNumber = fnsNumber
+        sharedViewModel.objRootAppPaymentDetail.stateCode = stateCode
+        sharedViewModel.objRootAppPaymentDetail.countyCode = countyCode
+        sharedViewModel.objRootAppPaymentDetail.postalServiceCode = postalServiceCode
+        Log.d("PAYMENT_DETAIL", "merchantNameLocation: $merchantNameLocation")
+        Log.d("PAYMENT_DETAIL", "merchantType: $merchantType")
+        Log.d("PAYMENT_DETAIL", "merchantBankName: $merchantBankName")
+        Log.d("PAYMENT_DETAIL", "fnsNumber: $fnsNumber")
+        Log.d("PAYMENT_DETAIL", "stateCode: $stateCode")
+        Log.d("PAYMENT_DETAIL", "countyCode: $countyCode")
+        Log.d("PAYMENT_DETAIL", "postalServiceCode: $postalServiceCode")
         sharedViewModel.objPosConfig?.apply {
             this.merchantNameLocation = merchantNameLocation
             this.merchantBankName = merchantBankName
             this.merchantType = merchantType
             this.fnsNumber = fnsNumber
+            this.stateCode = stateCode
+            this.countyCode = countyCode
+            this.postalServiceCode = postalServiceCode
         }?.saveToPrefs()
         navHostController.popBackStack()
     }

@@ -10,7 +10,6 @@ import com.eazypaytech.builder_core.constants.BuilderConstants
 import com.eazypaytech.builder_core.model.BuilderServiceTxnDetails
 import com.eazypaytech.builder_core.model.CardEntryMode
 import com.eazypaytech.builder_core.utils.BuilderUtils
-import com.eazypaytech.builder_core.utils.BuilderUtils.formatDateTimeToISO8583
 import com.eazypaytech.builder_core.utils.toCurrencyLong
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
 import com.eazypaytech.securityframework.model.TxnType
@@ -55,16 +54,19 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
 
-    fun getIsoPosEntryMode(): String {
-        Log.d("CARD_ENTRY_MODE", "Raw Entry Mode: ${builderServiceTxnDetails.cardEntryMode}")
-        return when (builderServiceTxnDetails.cardEntryMode) {
+    private fun getIsoPosEntryMode(): String {
+        return when {
+            builderServiceTxnDetails.txnType == TxnType.E_VOUCHER.toString() &&
+                    builderServiceTxnDetails.cardEntryMode == CardEntryMode.MANUAL.toString() -> "12"
 
-            CardEntryMode.MAGSTRIPE.toString() -> "021"     // Magstripe + PIN
-            CardEntryMode.CONTACT.toString() -> "051"       // Chip + PIN
-            CardEntryMode.CONTACLESS.toString() -> "071"    // Contactless + PIN
-            CardEntryMode.FALLBACK_MAGSTRIPE.toString() -> "801"
-            CardEntryMode.MANUAL.toString() -> "011"
-            else -> "010"
+            else -> when (builderServiceTxnDetails.cardEntryMode) {
+                CardEntryMode.MAGSTRIPE.toString() -> "021"
+                CardEntryMode.CONTACT.toString() -> "051"
+                CardEntryMode.CONTACLESS.toString() -> "071"
+                CardEntryMode.FALLBACK_MAGSTRIPE.toString() -> "801"
+                CardEntryMode.MANUAL.toString() -> "011"
+                else -> "010"
+            }
         }
     }
 
@@ -123,28 +125,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             TxnType.VOID_LAST.toString() -> "0000"
             TxnType.E_VOUCHER.toString() -> "009800"
             TxnType.CASH_WITHDRAWAL.toString() -> "019600"
-
-            else -> "0000"   // 🔥 Required for String?
-        }
-    }
-
-    fun getProcessingCodeForVoid(): String? {
-        val originalTxnType = builderServiceTxnDetails.originalTxnType
-            ?.replace("[", "")
-            ?.replace("]", "")
-            ?.trim()
-        Log.d("TransactionTypeDebug", "Original Transaction Type: $originalTxnType")
-
-        return when (originalTxnType) {
-            "PURCHASE" -> {
-                BuilderConstants.PROC_CODE_VOID_SALE.toString().padStart(6, '0') // Ensures the value is 6 digits with leading zeros
-            }
-            "REFUND" -> {
-                BuilderConstants.PROC_CODE_REFUND.toString()
-            }
-            else -> {
-                BuilderConstants.PROC_CODE_VOID_PRE_AUTH.toString()
-            }
+            else -> "0000"
         }
     }
 
@@ -159,8 +140,26 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return pinBlock
     }
 
+    fun getCardSeqNum() : String?
+    {
+        var cardSeqNumber: String? =
+            builderServiceTxnDetails.cardSeqNum?.toInt()?.toString()
+        cardSeqNumber?.padStart(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, '0')?.let {
+            cardSeqNumber = it
+        }
+        return cardSeqNumber
+    }
+
+    fun hexToByteArray(hex: String): ByteArray {
+        val cleanHex = hex.replace(" ", "")
+        return ByteArray(cleanHex.length / 2) {
+            cleanHex.substring(it * 2, it * 2 + 2).toInt(16).toByte()
+        }
+    }
+
     fun getIccData() : String?
     {
+        Log.d("ICC_DATA", "emvData raw: ${builderServiceTxnDetails.emvData}")
         var iccData : String? =null
         builderServiceTxnDetails.emvData?.let {
             iccData = it
@@ -182,12 +181,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
 
     fun getNationalPosConditionCode(): String {
-
         val terminalClass = "000"      // Attended, customer-operated, on-premise
         val presentationType = "0000"  // Customer present + card present
         val securityCondition = "0"    // No security concern
         val terminalType = "01"        // POS terminal
-
         val terminalCapability = when (builderServiceTxnDetails.cardEntryMode) {
             CardEntryMode.CONTACT.toString() -> "5"        // Chip
             CardEntryMode.MAGSTRIPE.toString() -> "2"      // Magstripe
@@ -195,12 +192,21 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             CardEntryMode.CONTACLESS.toString() -> "7"     // Contactless
             else -> "0"
         }
-
         return terminalClass +
                 presentationType +
                 securityCondition +
                 terminalType +
                 terminalCapability
+    }
+
+
+    fun getNPSGeographicData(): String {
+        val stateCode = builderServiceTxnDetails.stateCode?.padStart(2, '0') ?: "00"
+        val countyCode = builderServiceTxnDetails.countyCode?.padStart(3, '0') ?: "000"
+        val postalServiceCode = builderServiceTxnDetails.postalServiceCode?.padStart(5, '0') ?: "00000"
+        val countryCode = builderServiceTxnDetails.currencyCode?.padStart(3, '0') ?: "000"
+        val npsGeoData = stateCode + countyCode + postalServiceCode + countryCode
+        return npsGeoData
     }
 
 
@@ -217,11 +223,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
 
-    fun isDummyResponseApproval() : Boolean
-    {
-        /* Approve EVEN amount & decline ODD amount */
-        return (builderServiceTxnDetails.ttlAmount.toCurrencyLong()%2)==0L
-    }
 
 
     fun createMessageFactory(context: Context): MessageFactory<IsoMessage> {
@@ -333,6 +334,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return iso.writeData()
     }
 
+
     @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
@@ -341,9 +343,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val pinBlock = getPinBlock()
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
-        Log.d("ICC_DATA", "Raw ICC Data: $iccData")
-        Log.d("ICC_DATA", "ICC Data type: ${iccData?.javaClass?.name}")
-        Log.d("ICC_DATA", "ICC bytes: ${iccData?.toByteArray()?.joinToString("") { "%02X".format(it) }}")
+        val cardSeqNumber = getCardSeqNum()
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
@@ -369,6 +369,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
+//        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString())
+//        {
+//            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+//        }
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         if(builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString() ) {
             iso.setValue(
@@ -393,10 +397,22 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         {
             iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, builderServiceTxnDetails?.cashback, IsoType.LLLVAR, builderServiceTxnDetails?.cashback!!.length)
         }
-        val iccBytes = iccData?.chunked(2)
-            ?.map { it.toInt(16).toByte() }
-            ?.toByteArray()
-        iso.setValue(BuilderConstants.ISO_FIELD_ICC_DATA, iccBytes, IsoType.LLLVAR, iccBytes?.size ?: 0)
+         // ByteArray.toString() = [B@77bc166
+//        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
+//            builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
+//            val iccData = getIccData()
+//            Log.d("ICC_DATA", "Raw ICC Hex: $iccData")
+//            if (!iccData.isNullOrEmpty()) {
+//                val iccBytes = iccData.hexToByteArray()
+//                Log.d("ICC_DATA", "ICC Bytes size: ${iccBytes.size}")
+//                iso.setValue(
+//                    BuilderConstants.ISO_FIELD_ICC_DATA,  // DE055
+//                    iccBytes,
+//                    IsoType.LLLBIN,
+//                    iccBytes.size
+//                )
+//            }
+//        }
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode , IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
@@ -430,8 +446,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             originalData = originalData
         )
         IsoMessageBuilder.saveTxn(savedTxn)
-        Log.d("ISO_CHECK", "ICC bytes size: ${iccBytes?.size}")
-        Log.d("ISO_CHECK", "ICC bytes hex: ${iccBytes?.joinToString("") { "%02X".format(it) }}")
 
         return iso.writeData()
 
@@ -454,7 +468,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val processingCode = getProcessingCode(this.builderServiceTxnDetails.txnType)
         val rrn = generateRRN(stan.toString())
         val originalData = dateTime.padEnd(20,'0')
-        val posConditionCode = getNationalPosConditionCode()
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)   // Financial transaction request
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)          // DE002 PAN
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)          // DE003 Processing Code
@@ -466,7 +479,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, localDate, IsoType.NUMERIC, 4)                    // DE015 Settlement Date
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, localDate, IsoType.NUMERIC, 4)                    // DE017 Capture Date
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
-        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, "012", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
+        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.hostAuthCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
@@ -483,20 +496,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val additional_Data = buildString {
             val fns = builderServiceTxnDetails?.fnsNumber.orEmpty()
             val voucherNo = builderServiceTxnDetails?.voucherNumber.orEmpty()
-
-            Log.d("LLLVAR_DEBUG", "FNS: $fns")
-            Log.d("LLLVAR_DEBUG", "Voucher Number: $voucherNo")
-            Log.d("LLLVAR_DEBUG", "Voucher Length: ${voucherNo.length}")
-
             val lengthFormatted = voucherNo.length.toString().padStart(3, '0')
-            Log.d("LLLVAR_DEBUG", "Formatted Length (LLL): $lengthFormatted")
-
             append(fns)
             append("VN")
             append(lengthFormatted)
             append(voucherNo)
-
-            Log.d("LLLVAR_DEBUG", "Final additional_Data: $this")
         }
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA,additional_Data, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
@@ -511,12 +515,13 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
+        Log.d("VOID_REQUEST", "builderServiceTxnDetails: ${this.builderServiceTxnDetails}")
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val dateTime = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
         val lastTxn = IsoMessageBuilder.getLastTxn()
         val posConditionCode = getNationalPosConditionCode()
-        Log.d("LAST_TXN", lastTxn.toString())
+        val npsGeoData = getNPSGeographicData()
         val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_REVERSAL_REQ)
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
@@ -543,7 +548,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
-        iso.setValue(59, "39000000000000840", IsoType.LLLVAR, 17)
+        iso.setValue(59, npsGeoData, IsoType.LLLVAR, 17)
         iso.setValue(BuilderConstants.ISO_FIELD_RESERVED_PRIVATE, "8018", IsoType.LLLVAR, 6)
         val originalData =
             "0200" +
@@ -639,7 +644,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 cardPan        = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_PAN_NO)
                 processingCode = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_PROCESSING_CODE)
                 authAmount     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_AMOUNT)
-                // Format date/time fields safely
                 dateTime       = formatIsoField(isoMsg.getObjectValue<Any>(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE), "MMddHHmmss")
                 stan           = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_STAN)
                 localTime      = formatIsoField(isoMsg.getObjectValue<Any>(BuilderConstants.ISO_FIELD_LOC_TIME), "HHmmss")
@@ -647,7 +651,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 expiryDate     = formatIsoField(isoMsg.getObjectValue<Any>(BuilderConstants.ISO_FIELD_EXPIRY_DATE), "yyMM")
                 settlementDate = formatIsoField(isoMsg.getObjectValue<Any>(BuilderConstants.ISO_FIELD_SET_DATE), "MMdd")
                 captureDate    = formatIsoField(isoMsg.getObjectValue<Any>(BuilderConstants.ISO_FIELD_CAP_DATE), "MMdd")
-
                 merchantType   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_MERCHANT_TYPE)
                 posEntryMode   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ENTRY_MODE)
                 acquirerId     = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ACQUIRER_ID)

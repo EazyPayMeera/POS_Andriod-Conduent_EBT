@@ -1779,7 +1779,9 @@ class EmvWrapperRepository @Inject constructor(
                 trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
             }
             val expiryDate = getEmvTag(EmvConstants.EMV_TAG_CARD_EXPIRY_DATE)
-
+            val terminalType = getEmvTag(EmvConstants.EMV_TAG_TERM_TYPE)
+            val terminalCap = getEmvTag(EmvConstants.EMV_TAG_TERM_CAP)
+            Log.d("EMV_TAGS", "Terminal Type: $terminalType | Terminal Cap: $terminalCap")
             Log.d("ENCRYPTION", "📅 EMV Expiry Date (raw): $expiryDate")
             if (trackData.isEmpty()) {
                 Log.w("ENCRYPTION", "⚠️ Track2 not available")

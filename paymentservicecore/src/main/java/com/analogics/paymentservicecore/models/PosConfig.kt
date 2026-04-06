@@ -17,6 +17,9 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("merchantBankName") var merchantBankName: String? = null
     @SerializedName("merchantType") var merchantType: String? = null
     @SerializedName("fnsNumber") var fnsNumber: String? = null
+    @SerializedName("stateCode") var stateCode: String? = null
+    @SerializedName("countyCode") var countyCode: String? = null
+    @SerializedName("postalServiceCode") var postalServiceCode: String? = null
     @SerializedName("batchId") var batchId: String? = null
     @SerializedName("terminalId") var terminalId: String? = null
     @SerializedName("procId") var procId: String? = null
