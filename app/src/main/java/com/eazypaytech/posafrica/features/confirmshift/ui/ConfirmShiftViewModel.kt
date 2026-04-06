@@ -6,7 +6,8 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.eazypaytech.builder_core.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants
+
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.utils.logger.AppLogger
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails

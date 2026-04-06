@@ -18,7 +18,7 @@ package com.analogics.paymentservicecore.domain.repository.apiService
     //import com.eazypaytech.paymentservicecore.repository.apiService.batch.BatchRequestRepository
     import com.analogics.paymentservicecore.domain.repository.apiService.login.LoginRequestRepository
     //import com.eazypaytech.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.void.VoidRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.voidreq.VoidRequestRepository
     import com.analogics.paymentservicecore.domain.repository.apiService.purchase.PurchaseRequestRepository
     import com.analogics.paymentservicecore.domain.repository.apiService.voucherSettlement.VoucherSettlementRequestRepository
     //import com.eazypaytech.paymentservicecore.repository.apiService.refund.RefundRequestRepository

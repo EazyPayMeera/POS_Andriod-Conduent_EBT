@@ -10,7 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.eazypaytech.builder_core.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants
+
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails

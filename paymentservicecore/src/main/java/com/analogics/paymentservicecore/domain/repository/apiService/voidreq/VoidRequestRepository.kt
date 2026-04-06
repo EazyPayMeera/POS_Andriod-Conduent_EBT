@@ -1,4 +1,4 @@
-package com.analogics.paymentservicecore.domain.repository.apiService.void
+package com.analogics.paymentservicecore.domain.repository.apiService.voidreq
 
 import android.annotation.SuppressLint
 import android.content.Context

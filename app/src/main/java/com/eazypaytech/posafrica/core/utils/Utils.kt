@@ -15,7 +15,8 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.eazypaytech.builder_core.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants
+
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.utils.logger.AppLogger
 import com.analogics.paymentservicecore.data.model.emv.CardBrand
