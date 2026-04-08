@@ -51,6 +51,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Hashtable
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.collections.set
@@ -162,6 +163,9 @@ class EmvWrapperRepository @Inject constructor(
             aidConfig?.terminalCountryCode?.let {
                 bundle.putByteArray(EmvTermCfgConstrants.COUNTRYCODE,it.padStart(4,'0').hexToByteArray())
             }
+            aidConfig?.terminalCountryCode?.let {
+                bundle.putByteArray(EmvTermCfgConstrants.CURRENCYCODE,it.padStart(4,'0').hexToByteArray())
+            }
             aidConfig?.terminalType?.let {
                 bundle.putByte(EmvTermCfgConstrants.TERMTYPE,it.hexToByte())
             }
@@ -203,12 +207,12 @@ class EmvWrapperRepository @Inject constructor(
             p0: Int,
             p1: MagCardInfoEntity?
         ) {
-            Log.d(TAG, "Card Swiped......: $p0")
-            Log.d(TAG, "Card No..........: ${p1?.cardNo}")
-            Log.d(TAG, "Card Holder Name.: ${p1?.cardholderName}")
-            Log.d(TAG, "Expiry Date......: ${p1?.expDate}")
-            Log.d(TAG, "Service Code.....: ${p1?.serviceCode}")
-            Log.d(TAG, "Track2 Raw.......: ${p1?.tk2}")
+//            Log.d(TAG, "Card Swiped......: $p0")
+//            Log.d(TAG, "Card No..........: ${p1?.cardNo}")
+//            Log.d(TAG, "Card Holder Name.: ${p1?.cardholderName}")
+//            Log.d(TAG, "Expiry Date......: ${p1?.expDate}")
+//            Log.d(TAG, "Service Code.....: ${p1?.serviceCode}")
+//            Log.d(TAG, "Track2 Raw.......: ${p1?.tk2}")
 
             p0.takeIf {
                 it == ServiceResult.Success &&
@@ -440,9 +444,9 @@ class EmvWrapperRepository @Inject constructor(
         onResult: (pinBlock: ByteArray?) -> Unit
     ) {
         //val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
-        Log.d("PIN_DEBUG", "PAN (masked): $pan")
-        //val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
-        val panBlock ="6104340109641151".toByteArray()
+        //Log.d("PIN_DEBUG", "PAN (masked): $pan")
+        val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
+        //val panBlock ="6104340109641151".toByteArray()
         val bundle = Bundle().apply {
             putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
             if (getDeviceModel().contains("MF960") ||
@@ -471,13 +475,13 @@ class EmvWrapperRepository @Inject constructor(
                             Companion.pinBlock = pinBlock?.toHexString()
                             Companion.ksn = ksn
 
-                            val builder = StringBuilder().apply {
-                                append("ON INPUT RESULT: $ret\n")
-                                append("PIN BLOCK: ${pinBlock?.toHexString()}\n")
-                                append("KSN: $ksn")
-                            }
-
-                            Log.d("InputOnlinePin", builder.toString())
+//                            val builder = StringBuilder().apply {
+//                                append("ON INPUT RESULT: $ret\n")
+//                                append("PIN BLOCK: ${pinBlock?.toHexString()}\n")
+//                                append("KSN: $ksn")
+//                            }
+//
+//                            Log.d("InputOnlinePin", builder.toString())
                             onResult(pinBlock)
                         }
 
@@ -500,7 +504,7 @@ class EmvWrapperRepository @Inject constructor(
         amount: String,
         onResult: (pinBlock: ByteArray?) -> Unit
     ) {
-        Log.d("PIN_DEBUG", "PAN (masked): $pan")
+        //Log.d("PIN_DEBUG", "PAN (masked): $pan")
         val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         val bundle = Bundle().apply {
             putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
@@ -664,6 +668,7 @@ class EmvWrapperRepository @Inject constructor(
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener
             Companion.iEmvSdkResponseListener = iEmvSdkResponseListener
+            val data = Hashtable<String, Any>()
             val date: String = getCurrentTime("yyMMddHHmmss")
             val bundle = Bundle()
             bundle.putString(EmvTransDataConstrants.TRANSDATE, date.substring(0, 6))
@@ -674,7 +679,7 @@ class EmvWrapperRepository @Inject constructor(
                 it.cashbackAmount?.let {
                     bundle.putString(EmvTransDataConstrants.CASHBACKAMT, it); _cashbackAmount = it.toLongOrNull() ?: 0L
                 }
-                //it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
+                it.currencyCode?.let { data["currencyCode"] = it.takeLast(3) }
                 it.transactionType?.let {
                     bundle.putByte(EmvTransDataConstrants.B9C, it.take(2).toByte())
                 }    //00-goods 01-cash 09-cashback 20-refund
@@ -970,6 +975,7 @@ class EmvWrapperRepository @Inject constructor(
                         minOf(hex.size, aidPara.termCountryCode.size)
                     )
                 }
+
                 (aid.rdrCVMRequiredLimit ?: config.contact?.rdrCVMRequiredLimit
                 ?: config.rdrCVMRequiredLimit)?.let {
                     var hex = it.padStart(aidPara.rfcvmLimit.size * 2, '0').hexToByteArray()
@@ -1781,8 +1787,8 @@ class EmvWrapperRepository @Inject constructor(
             val expiryDate = getEmvTag(EmvConstants.EMV_TAG_CARD_EXPIRY_DATE)
             val terminalType = getEmvTag(EmvConstants.EMV_TAG_TERM_TYPE)
             val terminalCap = getEmvTag(EmvConstants.EMV_TAG_TERM_CAP)
-            Log.d("EMV_TAGS", "Terminal Type: $terminalType | Terminal Cap: $terminalCap")
-            Log.d("ENCRYPTION", "📅 EMV Expiry Date (raw): $expiryDate")
+//            Log.d("EMV_TAGS", "Terminal Type: $terminalType | Terminal Cap: $terminalCap")
+//            Log.d("ENCRYPTION", "📅 EMV Expiry Date (raw): $expiryDate")
             if (trackData.isEmpty()) {
                 Log.w("ENCRYPTION", "⚠️ Track2 not available")
                 return hashMap
@@ -1799,8 +1805,8 @@ class EmvWrapperRepository @Inject constructor(
             // Store plain values
             hashMap[EmvConstants.EMV_TAG_TRACK2] = track2ForHost
             hashMap[EmvConstants.EMV_TAG_PAN] = plainPan
-            Log.d("ENCRYPTION", "✅ Plain Track2 (Conduent): $track2ForHost")
-            Log.d("ENCRYPTION", "✅ Plain PAN: $plainPan")
+//            Log.d("ENCRYPTION", "✅ Plain Track2 (Conduent): $track2ForHost")
+//            Log.d("ENCRYPTION", "✅ Plain PAN: $plainPan")
 
             // 3️⃣ Prepare PAN for encryption (pad to multiple of 8 for DES)
             var panForEncryption = plainPan
@@ -1827,12 +1833,12 @@ class EmvWrapperRepository @Inject constructor(
 
                     if (!encryptedPan.isNullOrEmpty()) {
                         hashMap[EmvConstants.EMV_TAG_ENC_PAN] = encryptedPan
-                        Log.d("ENCRYPTION", "✅ Encrypted PAN: $encryptedPan")
+                        //Log.d("ENCRYPTION", "✅ Encrypted PAN: $encryptedPan")
                     }
 
                     if (!ksn.isNullOrEmpty()) {
                         hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksn
-                        Log.d("ENCRYPTION", "🔑 KSN: $ksn")
+                        //Log.d("ENCRYPTION", "🔑 KSN: $ksn")
                     }
                 }
             } catch (e: RemoteException) {

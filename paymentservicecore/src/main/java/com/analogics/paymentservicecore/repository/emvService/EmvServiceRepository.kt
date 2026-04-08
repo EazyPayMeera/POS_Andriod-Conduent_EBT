@@ -222,7 +222,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 )
             }
             is EmvSdkResult.CardCheckResult -> {
-                Log.d("EMV_CARD_CHECK", Gson().toJson(response))
+                //Log.d("EMV_CARD_CHECK", Gson().toJson(response))
                 var status = sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)
                 CardCheckResult(
                     status = status,
@@ -230,7 +230,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 )
             }
             is EmvSdkResult.TransResult -> {
-                Log.d("EMV_CARD_CHECK", Gson().toJson(response))
+                //Log.d("EMV_CARD_CHECK", Gson().toJson(response))
                 var status = sdkToEmvTransStatus(response.status as EmvSdkResult.TransStatus)
                 var displayMsgId : DisplayMsgId? = null
                     response.displayMsgId?.let {
@@ -256,12 +256,8 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     }
 
     override fun onEmvSdkResponse(response: Any) {
-        Log.d("EMV_SDK", "Type: ${response::class.java.name}")
-        Log.d("EMV_SDK", "JSON: ${Gson().toJson(response)}")
         iEmvServiceResponseListener.onEmvServiceResponse(sdkToEmvService(response))
         if (response is EmvSdkResult.CardCheckResult) {
-            Log.d("EMV_CARD_CHECK", "Status: ${response.status}")
-
             paymentServiceTxnDetails.cardEntryMode = when(sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)){
                 CardCheckStatus.CARD_INSERTED -> CardEntryMode.CONTACT.toString()
                 CardCheckStatus.CARD_TAPPED -> CardEntryMode.CONTACLESS.toString()
@@ -432,7 +428,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             paymentServiceTxnDetails, object : IApiServiceResponseListener {
 
                 override fun onApiServiceSuccess(apiPaymentServiceTxnDetails: PaymentServiceTxnDetails) {
-                    Log.d("EMV","Response Received")
                     paymentServiceTxnDetails = apiPaymentServiceTxnDetails.copy(emvData = paymentServiceTxnDetails.emvData)
                     responseEmvTags =
                         TlvUtils(apiPaymentServiceTxnDetails.emvData).tlvMap
@@ -577,7 +572,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     private fun prepareHostTlvData(emvTags: HashMap<String, String>)
     {
         try {
-            Log.d("DEBUG_EMV_TAGS", "Input EMV Tags: $emvTags")
+            //Log.d("DEBUG_EMV_TAGS", "Input EMV Tags: $emvTags")
             /* Masked PAN */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_PAN)) {
                 paymentServiceTxnDetails.cardMaskedPan = emvTags[EmvConstants.EMV_TAG_PAN].toString()
@@ -596,7 +591,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 paymentServiceTxnDetails.trackData = emvTags[EmvConstants.EMV_TAG_TRACK2]
                 emvTags.remove(EmvConstants.EMV_TAG_TRACK2)
             }
-            Log.d("DEBUG_TRACK2", "Plain Track2 : ${paymentServiceTxnDetails.trackData}")
+            //Log.d("DEBUG_TRACK2", "Plain Track2 : ${paymentServiceTxnDetails.trackData}")
             /* Remove Track2 */
             if (emvTags.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
                 emvTags.remove(EmvConstants.EMV_TAG_TRACK2)

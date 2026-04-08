@@ -67,16 +67,6 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
     val settingsItems = listOf(
 
         SettingsItem(
-            imageRes = R.drawable.config_invoice_prompt,
-            text = stringResource(id = R.string.prompt_invoice_no),
-            isChecked = viewModel.isPromptInvoiceNumber.value,
-            onCheckedChange = { if(isAdmin) viewModel.onPromptInvoiceNumberChange(it, sharedViewModel) else viewModel.onShowAdminOnly(context)},
-            isArrow = false,
-            onArrowChange = {},
-            isEnabled = isAdmin
-        ),
-
-        SettingsItem(
             imageRes = R.drawable.config_auto_print_report,
             text = stringResource(id = R.string.receipt_details),
             isChecked = viewModel.isAutoPrintReport.value,
@@ -92,6 +82,15 @@ fun ConfigurationView(navHostController: NavHostController, viewModel: ConfigVie
             onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. SettingsScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
             onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. SettingsScreen.route) else viewModel.onShowAdminOnly(context)},
+            isEnabled = isAdmin
+        ),
+        SettingsItem(
+            imageRes = R.drawable.settings,
+            text = stringResource(id = R.string.reader_setting),
+            isChecked = viewModel.isTap.value,
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
+            isArrow = true,
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
             isEnabled = isAdmin
         )
 
@@ -229,7 +228,8 @@ fun TippingView(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(bottom = MaterialTheme.dimens.DP_10_CompactMedium)
                 )
                 if (type == ConfigurableViewType.Inactivity_Timeout) {
@@ -307,7 +307,8 @@ fun TippingView(
                     }
 
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(MaterialTheme.dimens.DP_20_CompactMedium),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {

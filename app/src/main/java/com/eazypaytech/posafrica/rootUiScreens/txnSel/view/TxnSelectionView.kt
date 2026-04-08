@@ -45,7 +45,7 @@ fun TxnSelectionView(navHostController: NavHostController) {
     fun setTransactionType(txnType: TxnType) {
         sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
-        Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+        //Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
     Column {
         CommonTopAppBar(

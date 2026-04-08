@@ -1,10 +1,14 @@
 package com.eazypaytech.posafrica.rootUiScreens.settings
 
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.eazypaytech.paymentservicecore.constants.AppConstants
+import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
+import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -73,6 +77,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         countyCode: String,
         postalServiceCode: String
     ) {
+
         sharedViewModel.objRootAppPaymentDetail.merchantNameLocation = merchantNameLocation
         sharedViewModel.objRootAppPaymentDetail.merchantType = merchantType
         sharedViewModel.objRootAppPaymentDetail.merchantBankName = merchantBankName
@@ -80,13 +85,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         sharedViewModel.objRootAppPaymentDetail.stateCode = stateCode
         sharedViewModel.objRootAppPaymentDetail.countyCode = countyCode
         sharedViewModel.objRootAppPaymentDetail.postalServiceCode = postalServiceCode
-        Log.d("PAYMENT_DETAIL", "merchantNameLocation: $merchantNameLocation")
-        Log.d("PAYMENT_DETAIL", "merchantType: $merchantType")
-        Log.d("PAYMENT_DETAIL", "merchantBankName: $merchantBankName")
-        Log.d("PAYMENT_DETAIL", "fnsNumber: $fnsNumber")
-        Log.d("PAYMENT_DETAIL", "stateCode: $stateCode")
-        Log.d("PAYMENT_DETAIL", "countyCode: $countyCode")
-        Log.d("PAYMENT_DETAIL", "postalServiceCode: $postalServiceCode")
         sharedViewModel.objPosConfig?.apply {
             this.merchantNameLocation = merchantNameLocation
             this.merchantBankName = merchantBankName
@@ -98,4 +96,5 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         }?.saveToPrefs()
         navHostController.popBackStack()
     }
+
 }

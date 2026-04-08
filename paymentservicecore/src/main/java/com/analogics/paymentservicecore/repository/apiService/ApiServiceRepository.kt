@@ -261,14 +261,10 @@
              when (response) {
 
                  is ApiServiceTimeout -> {
-                     Log.d("API_FLOW", "Forwarding TIMEOUT to EMV")   // ✅ add log
-
                      iApiServiceResponseListener.onApiServiceTimeout(response)
                  }
 
                  is ApiServiceError -> {
-                     Log.d("API_FLOW", "Forwarding ERROR")
-
                      iApiServiceResponseListener.onApiServiceError(
                          ApiServiceError(response.errorMessage)   // ✅ fix this too
                      )
@@ -282,8 +278,6 @@
                              }
                          }
 
-                         Log.d("API_FLOW", "Forwarding SUCCESS")
-
                          iApiServiceResponseListener.onApiServiceSuccess(response)
 
                      } catch (e: Exception) {
@@ -295,14 +289,10 @@
                  }
 
                  else -> {
-                     Log.d("API_FLOW", "Unknown response type")
-
                      iApiServiceResponseListener.onApiServiceError(
                          ApiServiceError("Unknown response type")
                      )
                  }
              }
          }
-
-
     }

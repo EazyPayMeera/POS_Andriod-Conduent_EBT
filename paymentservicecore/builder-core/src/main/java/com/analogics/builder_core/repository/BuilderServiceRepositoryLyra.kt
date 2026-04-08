@@ -19,7 +19,6 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         requestBody: ByteArray
     ) {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
-        Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
 
         try {
@@ -36,7 +35,6 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
     override suspend fun handShakeRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
-        Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
         NetworkCallProvider.safeApiCall(requestBody).let {
             onNetworkServiceResponse(it)
@@ -50,7 +48,6 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         requestBody: ByteArray
     ) {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
-        Log.d("NETWORK", "REQUEST_HEX: " + requestBody.toHexString().uppercase())
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
         NetworkCallProvider.safeApiResponse(requestBody)
 
@@ -60,7 +57,6 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
     override suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
-        Log.d("NETWORK","REQUEST_HEX:"+requestBody.toHexString().uppercase())
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
         NetworkCallProvider.safeApiCall(requestBody).let {
             onNetworkServiceResponse(it)
@@ -75,9 +71,7 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
         when (apiResultProvider) {
 
             is ResultProvider.Success -> {
-                Log.d("NETWORK", String(apiResultProvider.data))
-                Log.d("NETWORK","RESPONSE_HEX:"+apiResultProvider.data.toHexString().uppercase())
-                Log.d("NETWORK", "REQUEST_ASCII: ${String(apiResultProvider.data, Charsets.US_ASCII)}")
+                Log.d("NETWORK", "RESPONSE_ASCII: ${String(apiResultProvider.data, Charsets.US_ASCII)}")
                 iBuilderServiceResponseListener.onBuilderSuccess(apiResultProvider.data)
             }
 
@@ -85,9 +79,6 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
                 when (apiResultProvider.exception) {
                     is java.net.SocketTimeoutException,
                     is kotlinx.coroutines.TimeoutCancellationException -> {
-
-                        Log.e("NETWORK", "Timeout occurred: ${apiResultProvider.exception.message}")
-
                         // You can send a custom error back
                         iBuilderServiceResponseListener.onBuilderFailure(
                             Exception("Request timed out. Please try again.")

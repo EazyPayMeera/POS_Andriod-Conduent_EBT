@@ -34,7 +34,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         setIsoConfig()
     }
 
-
     private fun extractIsoPayload(response : ByteArray?) : ByteArray
     {
         var isoPacketLength : Int = if((response?.size ?: 0) > 2) response?.size?.minus(2)?:0 else 0
@@ -57,8 +56,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     private fun getIsoPosEntryMode(): String {
         return when {
             builderServiceTxnDetails.txnType == TxnType.E_VOUCHER.toString() &&
-                    builderServiceTxnDetails.cardEntryMode == CardEntryMode.MANUAL.toString() -> "12"
-
+                    builderServiceTxnDetails.cardEntryMode == CardEntryMode.MANUAL.toString() -> "012"
             else -> when (builderServiceTxnDetails.cardEntryMode) {
                 CardEntryMode.MAGSTRIPE.toString() -> "021"
                 CardEntryMode.CONTACT.toString() -> "051"
@@ -80,7 +78,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             .padStart(12, '0')
         return accountType + amountType + currency + sign + amt
     }
-
 
 
     fun getMaskedPAN() : String?
@@ -114,17 +111,18 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun getProcessingCode(txnType: String?): String {
-        return when (txnType) {
-
-            TxnType.CASH_PURCHASE.toString() -> "009600"
-            TxnType.FOOD_PURCHASE.toString() -> "009800"
-            TxnType.PURCHASE_CASHBACK.toString() -> "099600"
-            TxnType.FOODSTAMP_RETURN.toString() -> "200098"
-            TxnType.BALANCE_ENQUIRY_CASH.toString() -> "319600"
-            TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "319800"
-            TxnType.VOID_LAST.toString() -> "0000"
-            TxnType.E_VOUCHER.toString() -> "009800"
-            TxnType.CASH_WITHDRAWAL.toString() -> "019600"
+        return when {
+            builderServiceTxnDetails.txnType == TxnType.E_VOUCHER.toString()
+                    && builderServiceTxnDetails.isReturn == true -> "200098"
+            txnType == TxnType.CASH_PURCHASE.toString() -> "009600"
+            txnType == TxnType.FOOD_PURCHASE.toString() -> "009800"
+            txnType == TxnType.PURCHASE_CASHBACK.toString() -> "099600"
+            txnType == TxnType.FOODSTAMP_RETURN.toString() -> "200098"
+            txnType == TxnType.BALANCE_ENQUIRY_CASH.toString() -> "319600"
+            txnType == TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "319800"
+            txnType == TxnType.VOID_LAST.toString() -> "0000"
+            txnType == TxnType.E_VOUCHER.toString() -> "009800"
+            txnType == TxnType.CASH_WITHDRAWAL.toString() -> "019600"
             else -> "0000"
         }
     }
@@ -150,16 +148,21 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return cardSeqNumber
     }
 
-    fun hexToByteArray(hex: String): ByteArray {
-        val cleanHex = hex.replace(" ", "")
-        return ByteArray(cleanHex.length / 2) {
-            cleanHex.substring(it * 2, it * 2 + 2).toInt(16).toByte()
+    fun hexStringToByteArray(hex: String): ByteArray {
+        val cleanHex = hex.replace("\\s".toRegex(), "") // remove spaces/newlines if any
+        val len = cleanHex.length
+        val data = ByteArray(len / 2)
+
+        for (i in 0 until len step 2) {
+            data[i / 2] = ((Character.digit(cleanHex[i], 16) shl 4)
+                    + Character.digit(cleanHex[i + 1], 16)).toByte()
         }
+        return data
     }
 
     fun getIccData() : String?
     {
-        Log.d("ICC_DATA", "emvData raw: ${builderServiceTxnDetails.emvData}")
+        //Log.d("ICC_DATA", "emvData raw: ${builderServiceTxnDetails.emvData}")
         var iccData : String? =null
         builderServiceTxnDetails.emvData?.let {
             iccData = it
@@ -335,14 +338,14 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
 
-    @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val pinBlock = getPinBlock()
         val maskedPan = getMaskedPAN()
-        val iccData = getIccData()
+        val iccData = "9F2608349D534BEB904CF19F2701809F10120110A00001220000000000000000000000FF9F34033F00019F3303E0F8C89F37049197736A9F3602000D950580009080009A032604079C01009F02060000000000035F2A020840820218008407A00000000445429F1A0208409F03060000000000005F340100"
+        //val iccData = getIccData()
         val cardSeqNumber = getCardSeqNum()
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
@@ -358,7 +361,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         builderServiceTxnDetails?.posConditionCode = getNationalPosConditionCode()
         val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)
-        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, maskedPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, builderServiceTxnDetails?.dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
@@ -369,18 +372,18 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
-//        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString())
-//        {
-//            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
-//        }
+        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString())
+        {
+            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "001", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         if(builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString() ) {
             iso.setValue(
                 BuilderConstants.ISO_FIELD_TRACK2_DATA,
-                "6104340109641151=3102220908",
+                encryptedTrack2Data,
                 IsoType.LLVAR,
                 BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH
-            ) // DE035 Track 2
+            )
         }
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
@@ -397,22 +400,19 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         {
             iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, builderServiceTxnDetails?.cashback, IsoType.LLLVAR, builderServiceTxnDetails?.cashback!!.length)
         }
-         // ByteArray.toString() = [B@77bc166
-//        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
-//            builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
-//            val iccData = getIccData()
-//            Log.d("ICC_DATA", "Raw ICC Hex: $iccData")
-//            if (!iccData.isNullOrEmpty()) {
-//                val iccBytes = iccData.hexToByteArray()
-//                Log.d("ICC_DATA", "ICC Bytes size: ${iccBytes.size}")
-//                iso.setValue(
-//                    BuilderConstants.ISO_FIELD_ICC_DATA,  // DE055
-//                    iccBytes,
-//                    IsoType.LLLBIN,
-//                    iccBytes.size
-//                )
-//            }
-//        }
+
+        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
+            builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
+            if (!iccData.isNullOrEmpty()) {
+                val iccBytes = hexStringToByteArray(iccData)
+                iso.setValue(
+                    BuilderConstants.ISO_FIELD_ICC_DATA,
+                    iccData,
+                    IsoType.LLLVAR,
+                    iccBytes.size
+                )
+            }
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode , IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
@@ -468,8 +468,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val processingCode = getProcessingCode(this.builderServiceTxnDetails.txnType)
         val rrn = generateRRN(stan.toString())
         val originalData = dateTime.padEnd(20,'0')
+        val posConditionCode = getNationalPosConditionCode()
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)   // Financial transaction request
-        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)          // DE002 PAN
+        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, maskedPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)          // DE002 PAN
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)          // DE003 Processing Code
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)            // DE004 Amount
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)              // DE007 Transmission DateTime
@@ -492,7 +493,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         )
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
-        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         val additional_Data = buildString {
             val fns = builderServiceTxnDetails?.fnsNumber.orEmpty()
             val voucherNo = builderServiceTxnDetails?.voucherNumber.orEmpty()
@@ -524,7 +525,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val npsGeoData = getNPSGeographicData()
         val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_REVERSAL_REQ)
-        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, "6104340109641151", IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, builderServiceTxnDetails?.cardPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode?.padStart(6,'0'), IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, builderServiceTxnDetails?.originalDateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
@@ -680,17 +681,12 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?) {
 
-        Log.d("TXN_DEBUG", "===== updateTransResult START =====")
-
         if (builderServiceTxnDetails == null) {
             Log.e("TXN_DEBUG", "builderServiceTxnDetails is NULL")
             return
         }
 
-        Log.d("TXN_DEBUG", "Incoming Data: $builderServiceTxnDetails")
-
         val id = builderServiceTxnDetails.id
-        Log.d("TXN_DEBUG", "Txn ID: $id")
 
         if (id == null) {
             Log.e("TXN_DEBUG", "Txn ID is NULL")
@@ -703,13 +699,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             Log.e("TXN_DEBUG", "No txn found for ID: $id")
             return
         }
-
-        Log.d("TXN_DEBUG", "Fetched Txn BEFORE update: $txn")
-
-        // 🔍 Log incoming values
-        Log.d("TXN_DEBUG", "Incoming currencyCode: ${builderServiceTxnDetails.currencyCode}")
-        Log.d("TXN_DEBUG", "Existing currencyCode in DB: ${txn.currencyCode}")
-        Log.d("TXN_DEBUG", "builderServiceTxnDetails.dateTime: ${builderServiceTxnDetails.dateTime}")
         // ✅ Set values
         txn.posEntryMode = builderServiceTxnDetails.posEntryMode
         txn.stan = builderServiceTxnDetails.stan
@@ -720,16 +709,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         txn.localDate = builderServiceTxnDetails.localDate
         txn.currencyCode = builderServiceTxnDetails.currencyCode
 
-        Log.d("TXN_DEBUG", "Txn AFTER setting values (before DB update): $txn")
-
-        // ✅ Update DB
         dbRepository.updateTxn(txn)
-
         // 🔍 Fetch again to verify persistence
         val updatedTxn = dbRepository.fetchTxnById(id)
-        Log.d("TXN_DEBUG", "Txn AFTER DB update (re-fetched): $updatedTxn")
-
-        Log.d("TXN_DEBUG", "===== updateTransResult END =====")
     }
 
 }

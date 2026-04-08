@@ -6,6 +6,7 @@
   "terminalCapabilities" : "E0F8C8",
   "terminalFloorLimit" : "00000000",
   "terminalAppPriority" : "00",
+  "currencyCode" : "356",
   "tacDefault" : "0000000000",
   "tacDenial" : "0000000000",
   "tacOnline" : "DC4004F800",

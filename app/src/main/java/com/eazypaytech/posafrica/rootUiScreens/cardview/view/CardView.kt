@@ -183,7 +183,6 @@ fun CardView(navHostController: NavHostController, viewModel: CardViewModel = hi
                     }
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                    Log.d("TAG", "showProgressVar value: ${viewModel.showProgressVar.value}")
                     composeProgressDialog(viewModel.showProgressVar.value)
                 }
             }

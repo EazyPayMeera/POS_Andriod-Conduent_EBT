@@ -38,6 +38,8 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     var isInactivity = mutableStateOf(false)
     var isBatchId = mutableStateOf(false)
     var isSettings = mutableStateOf(false)
+    var isTap = mutableStateOf(false)
+    var isInsert = mutableStateOf(false)
 
     private fun loadPreferences(sharedViewModel: SharedViewModel)
     {

@@ -62,7 +62,6 @@ fun ApprovedView(navHostController: NavHostController) {
     var txnRecord = remember { sharedViewModel.objRootAppPaymentDetail }
     val hasDbRecord = viewModel.hasDbRecord.collectAsState().value
     val infiniteTransition = rememberInfiniteTransition()
-    Log.d("TXN_DEBUG", "Txn Record: $txnRecord")
 
     val isBalanceInquiry = txnRecord.txnType == TxnType.BALANCE_ENQUIRY_SNAP || txnRecord.txnType == TxnType.BALANCE_ENQUIRY_CASH
 
@@ -72,8 +71,6 @@ fun ApprovedView(navHostController: NavHostController) {
     sharedViewModel.objRootAppPaymentDetail.snapBeginBal = snapBegin
     sharedViewModel.objRootAppPaymentDetail.cashBeginBal = cashBegin
 
-    Log.d("BALANCE_DEBUG", "snapBeginBal: $snapBegin")
-    Log.d("BALANCE_DEBUG", "cashBeginBal: $cashBegin")
     Column {
         CommonTopAppBar(
             onBackButtonClick = { },

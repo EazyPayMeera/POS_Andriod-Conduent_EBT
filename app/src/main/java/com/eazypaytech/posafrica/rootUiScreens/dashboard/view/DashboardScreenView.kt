@@ -71,7 +71,7 @@ fun DashboardView(navHostController: NavHostController) {
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
         if(sharedViewModel.objPosConfig?.isPromptInvoiceNo!=true)
             dashboardViewModel.setInvoiceNumber(sharedViewModel)
-        Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
+        //Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
 
     fun handleDashboardTrigger(event: String) {

@@ -90,8 +90,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
-        sharedViewModel.objRootAppPaymentDetail.isReturn = false
-        sharedViewModel.objRootAppPaymentDetail.isPurchase = false
         if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.PURCHASE_CASHBACK) {
             sharedViewModel.objPosConfig?.apply { isCashback = false }
         }
@@ -181,7 +179,6 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     ) {
 
         val lastTxn = dbRepository.fetchLastTransactionByTxnType()
-        Log.d("TXN_DEBUG", "Last Transaction: $lastTxn")
         lastTxn?.let {
 
             if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {

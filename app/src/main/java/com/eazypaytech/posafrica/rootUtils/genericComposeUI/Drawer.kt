@@ -125,18 +125,18 @@ fun CustomDrawerContent(
                 isChecked = false,
                 onCheckedChange = { onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION, true) }
             ),
-            DrawerItem(
-                imageRes = Icons.Default.LockOpen,
-                text = stringResource(id = R.string.reactivate_device),
-                isChecked = false,
-                isEnabled = isAdmin,
-                onCheckedChange = { if(isAdmin) onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE, true) else CustomDialogBuilder.composeAlertDialog(
-                    title = navHostController.context.resources.getString(
-                        R.string.restricted
-                    ),
-                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
-                ) }
-            ),
+//            DrawerItem(
+//                imageRes = Icons.Default.LockOpen,
+//                text = stringResource(id = R.string.reactivate_device),
+//                isChecked = false,
+//                isEnabled = isAdmin,
+//                onCheckedChange = { if(isAdmin) onMenuItemClick(AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE, true) else CustomDialogBuilder.composeAlertDialog(
+//                    title = navHostController.context.resources.getString(
+//                        R.string.restricted
+//                    ),
+//                    subtitle = navHostController.context.resources.getString(R.string.for_admin)
+//                ) }
+//            ),
             DrawerItem(
                 imageRes = Icons.Default.Logout,
                 text = stringResource(id = R.string.log_out),

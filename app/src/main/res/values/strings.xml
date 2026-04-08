@@ -220,6 +220,7 @@
 
 
     <string name="settings">Settings</string>
+    <string name="reader_setting">Reader Settings</string>
 
     <string name="Configuration">Configuration</string>
     <string name="reactivate_device">Reactivate Device</string>

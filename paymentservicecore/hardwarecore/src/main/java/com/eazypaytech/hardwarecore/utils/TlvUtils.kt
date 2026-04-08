@@ -75,7 +75,7 @@ class TlvUtils {
                 var tagLen : Int
                 var lenLen : Int
                 var valLen : Int
-                Log.d(TAG_TLV_UTILS, "------------- Parsed Tag List -------------")
+                //Log.d(TAG_TLV_UTILS, "------------- Parsed Tag List -------------")
                 while(hexBytes.isNotEmpty())
                 {
                     tagLen = getTagLen(hexBytes);
@@ -86,7 +86,7 @@ class TlvUtils {
                     tlvMap[tag] = value
 
                     hexBytes = hexBytes.sliceArray(tagLen+lenLen+valLen..hexBytes.size-1)
-                    Log.d(TAG_TLV_UTILS, "Tag : $tag, Value : $value")
+                    //Log.d(TAG_TLV_UTILS, "Tag : $tag, Value : $value")
                 }
             }
         }catch ( exception : Exception)

@@ -15,7 +15,7 @@ object AppConstants {
 
     /* Value constants */
     const val DEFAULT_UI_LANGUAGE_CODE = "en"
-    const val DEFAULT_CURRENCY_CODE = "0356"    /* INR */
+    const val DEFAULT_CURRENCY_CODE = "0840"    /* INR */
     const val DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
     const val UNIQUE_ID_DATE_TIME_FORMAT = "yyMMddHHmmss"
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L

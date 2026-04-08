@@ -53,6 +53,7 @@ import com.eazypaytech.posafrica.rootUiScreens.login.view.LoginScreenView
 import com.eazypaytech.posafrica.rootUiScreens.manualentry.ManualCardView
 import com.eazypaytech.posafrica.rootUiScreens.onBoarding.view.OnBoardSlideView
 import com.eazypaytech.posafrica.rootUiScreens.password.view.PasswordView
+import com.eazypaytech.posafrica.rootUiScreens.readerSetting.ReaderSettingScreen
 import com.eazypaytech.posafrica.rootUiScreens.receiptdetails.view.ReceiptDetailsView
 import com.eazypaytech.posafrica.rootUiScreens.settings.SettingsView
 import com.eazypaytech.posafrica.rootUiScreens.settings.config.ConfigurationView
@@ -313,6 +314,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.AuthCodeScreen.route) {
             AuthCodeView(navHostController)
+        }
+        composable(AppNavigationItems.ReaderSettingScreen.route) {
+            ReaderSettingScreen(navHostController)
         }
     }
 }
