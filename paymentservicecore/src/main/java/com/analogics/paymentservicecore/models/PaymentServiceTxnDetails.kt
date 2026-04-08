@@ -122,6 +122,9 @@ data class PaymentServiceTxnDetails(
     @SerializedName("isPurchase")       var isPurchase: Boolean? = false,
     @SerializedName("isReturn")       var isReturn: Boolean? = false,
 
+    @SerializedName("isTapEnable") var isTapEnable: Boolean? = false,
+    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = false,
+
     /* Remote Key Injection. Only to be used in Payment Service */
     @SerializedName("devicePublicKey")  var devicePublicKey: String? = null,
     @SerializedName("devicePrivateKey") var devicePrivateKey: String? = null,

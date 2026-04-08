@@ -77,6 +77,12 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("isOnboardingComplete") var isOnboardingComplete: Boolean? = false
     @SerializedName("isActivationDone") var isActivationDone: Boolean? = false
 
+    /* Reader Setting */
+
+    @SerializedName("isTapEnable") var isTapEnable: Boolean? = false
+    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = false
+
+
     fun loadFromPrefs() : PosConfig
     {
         try {

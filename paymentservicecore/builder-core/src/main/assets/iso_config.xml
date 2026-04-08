@@ -37,6 +37,7 @@
         <field num="17" type="DATE4"/>
         <field num="18" type="NUMERIC" length="4"/>
         <field num="22" type="NUMERIC" length="3"/>
+        <field num="23" type="NUMERIC" length="3"/>
         <field num="32" type="LLVAR" length="11"/>
         <field num="35" type="LLVAR" length="37"/>
         <field num="37" type="ALPHA" length="12"/>
@@ -48,6 +49,7 @@
         <field num="48" type="LLLVAR" length="25"/>
         <field num="49" type="NUMERIC" length="3"/>
         <field num="54" type="LLLVAR" length="120"/>
+        <field num="55" type="LLLBIN"/>               <!-- ADD: EMV Data -->
         <field num="58" type="LLLVAR" length="11"/>
         <field num="111" type="LLLVAR" length="255"/>
         <field num="125" type="LLLVAR"/>

@@ -2,11 +2,9 @@ package com.eazypaytech.paymentservicecore.repository.emvService
 
 import android.content.Context
 import android.os.Build
-import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.paymentservicecore.constants.ConfigConstants
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import com.eazypaytech.paymentservicecore.listeners.requestListener.IEmvServiceRequestListener
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
@@ -31,9 +29,6 @@ import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
 import com.eazypaytech.paymentservicecore.model.error.EmvServiceException
 import com.eazypaytech.paymentservicecore.models.toEmvTransType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
-import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
-import com.eazypaytech.paymentservicecore.utils.maskPAN
-import com.eazypaytech.paymentservicecore.utils.maskPANReceiptStyle
 import com.eazypaytech.paymentservicecore.utils.toDecimalFormat
 import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
@@ -45,12 +40,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class EmvServiceRepository @Inject constructor(@ApplicationContext context: Context, var apiServiceRepository: ApiServiceRepository) :
     IEmvServiceRequestListener,
@@ -371,8 +363,9 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 Gson().toJson(transConfig),
                 com.eazypaytech.tpaymentcore.model.emv.TransConfig::class.java
             )
-
-        emvSdkRequestRepository.startPayment(context, sdkTransConfig)
+        val isTap = paymentServiceTxnDetails?.isTapEnable
+        val isChip = paymentServiceTxnDetails?.isEMVEnable
+        emvSdkRequestRepository.startPayment(context, sdkTransConfig,isTap,isChip)
     }
 
     override fun pinGeneration(

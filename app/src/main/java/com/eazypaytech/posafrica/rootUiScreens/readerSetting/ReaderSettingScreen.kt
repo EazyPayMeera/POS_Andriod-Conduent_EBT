@@ -68,7 +68,7 @@ fun ReaderSettingScreen(
                         label = "TAP",
                         description = "Enable NFC tap payments",
                         isEnabled = tapEnabled,
-                        onToggle = { viewModel.onTapToggle(it) }
+                        onToggle = { viewModel.onTapToggle(sharedViewModel,it) }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -78,13 +78,17 @@ fun ReaderSettingScreen(
                         label = "INSERT",
                         description = "Enable chip card insert payments",
                         isEnabled = insertEnabled,
-                        onToggle = { viewModel.onInsertToggle(it) }
+                        onToggle = { viewModel.onInsertToggle(sharedViewModel,it) }
                     )
 
                 }
             }
         }
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.initOnce(sharedViewModel)
+    }
 }
 
 

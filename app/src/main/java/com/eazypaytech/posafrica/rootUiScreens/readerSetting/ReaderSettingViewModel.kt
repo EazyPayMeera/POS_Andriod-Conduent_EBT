@@ -1,5 +1,6 @@
 package com.eazypaytech.posafrica.rootUiScreens.readerSetting
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,14 +20,21 @@ class ReaderSettingViewModel @Inject constructor(
 
     val isTapEnabled = mutableStateOf(false)
     val isInsertEnabled = mutableStateOf(false)
-
-    fun onTapToggle(enabled: Boolean) {
+    fun onTapToggle(sharedViewModel: SharedViewModel,enabled: Boolean) {
         isTapEnabled.value = enabled
+        sharedViewModel.objPosConfig?.apply { isTapEnable = enabled }?.saveToPrefs()
+        sharedViewModel.objRootAppPaymentDetail?.isTapEnable = enabled
     }
 
-    fun onInsertToggle(enabled: Boolean) {
+    fun onInsertToggle(sharedViewModel: SharedViewModel,enabled: Boolean) {
         isInsertEnabled.value = enabled
+        sharedViewModel.objPosConfig?.apply { isEMVEnable = enabled }?.saveToPrefs()
+        sharedViewModel.objRootAppPaymentDetail.isEMVEnable = enabled
+    }
 
+    fun initOnce(sharedViewModel: SharedViewModel?) {
+        isTapEnabled.value = sharedViewModel?.objPosConfig?.isTapEnable ?: false
+        isInsertEnabled.value = sharedViewModel?.objPosConfig?.isEMVEnable ?: false
     }
 
 

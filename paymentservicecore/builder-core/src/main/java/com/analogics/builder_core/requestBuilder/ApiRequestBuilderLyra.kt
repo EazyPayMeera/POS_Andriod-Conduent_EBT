@@ -344,8 +344,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val pinBlock = getPinBlock()
         val maskedPan = getMaskedPAN()
-        val iccData = "9F2608349D534BEB904CF19F2701809F10120110A00001220000000000000000000000FF9F34033F00019F3303E0F8C89F37049197736A9F3602000D950580009080009A032604079C01009F02060000000000035F2A020840820218008407A00000000445429F1A0208409F03060000000000005F340100"
-        //val iccData = getIccData()
+        //val iccData = "9F2608349D534BEB904CF19F2701809F10120110A00001220000000000000000000000FF9F34033F00019F3303E0F8C89F37049197736A9F3602000D950580009080009A032604079C01009F02060000000000035F2A020840820218008407A00000000445429F1A0208409F03060000000000005F340100"
+        val iccData = getIccData()
         val cardSeqNumber = getCardSeqNum()
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))

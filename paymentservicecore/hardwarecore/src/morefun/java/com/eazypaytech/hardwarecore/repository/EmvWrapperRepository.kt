@@ -163,8 +163,8 @@ class EmvWrapperRepository @Inject constructor(
             aidConfig?.terminalCountryCode?.let {
                 bundle.putByteArray(EmvTermCfgConstrants.COUNTRYCODE,it.padStart(4,'0').hexToByteArray())
             }
-            aidConfig?.terminalCountryCode?.let {
-                bundle.putByteArray(EmvTermCfgConstrants.CURRENCYCODE,it.padStart(4,'0').hexToByteArray())
+            aidConfig?.currencyCode?.let {
+                bundle.putByteArray(EmvTermCfgConstrants.CURRENCYCODE, it.padStart(4,'0').hexToByteArray())
             }
             aidConfig?.terminalType?.let {
                 bundle.putByte(EmvTermCfgConstrants.TERMTYPE,it.hexToByte())
@@ -600,7 +600,7 @@ class EmvWrapperRepository @Inject constructor(
 
     suspend fun isCardExists(context: Context?): Boolean {
         return try {
-            // ✅ Ensure service is connected first
+
             val service = getDeviceService(context)
 
             if (service == null) {
@@ -608,7 +608,6 @@ class EmvWrapperRepository @Inject constructor(
                 return false
             }
 
-            // ✅ Slot 1 = ICSlOT1 (correct per YSDK docs)
             val reader = service.getIccCardReader(1)
 
             if (reader == null) {
@@ -661,7 +660,10 @@ class EmvWrapperRepository @Inject constructor(
     fun startPayment(
         context: Context,
         transConfig: TransConfig?,
+        isTap: Boolean?,
+        isChip: Boolean?,
         iEmvSdkResponseListener: IEmvSdkResponseListener
+
     ) {
         resetTransData()
         /*thread = Thread {*/
@@ -685,6 +687,7 @@ class EmvWrapperRepository @Inject constructor(
                 }    //00-goods 01-cash 09-cashback 20-refund
                 (it.cardCheckMode ?: CardCheckMode.SWIPE_OR_INSERT_OR_TAP).let {
                     //data["checkCardMode"] = it.sdkValue
+
                     bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACT, it in listOf(CardCheckMode.INSERT, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP))
                     bundle.putBoolean(EmvTransDataConstrants.EMV_TRANS_ENABLE_CONTACTLESS, it in listOf(CardCheckMode.TAP, CardCheckMode.INSERT_OR_TAP, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP))
                     isMagSupported = it in listOf(CardCheckMode.SWIPE, CardCheckMode.SWIPE_OR_INSERT, CardCheckMode.SWIPE_OR_INSERT_OR_TAP, CardCheckMode.SWIPE_OR_TAP)
@@ -1784,9 +1787,9 @@ class EmvWrapperRepository @Inject constructor(
             if (trackData.isEmpty() && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
                 trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
             }
-            val expiryDate = getEmvTag(EmvConstants.EMV_TAG_CARD_EXPIRY_DATE)
-            val terminalType = getEmvTag(EmvConstants.EMV_TAG_TERM_TYPE)
-            val terminalCap = getEmvTag(EmvConstants.EMV_TAG_TERM_CAP)
+//            val expiryDate = getEmvTag(EmvConstants.EMV_TAG_CARD_EXPIRY_DATE)
+//            val terminalType = getEmvTag(EmvConstants.EMV_TAG_TERM_TYPE)
+//            val terminalCap = getEmvTag(EmvConstants.EMV_TAG_TERM_CAP)
 //            Log.d("EMV_TAGS", "Terminal Type: $terminalType | Terminal Cap: $terminalCap")
 //            Log.d("ENCRYPTION", "📅 EMV Expiry Date (raw): $expiryDate")
             if (trackData.isEmpty()) {

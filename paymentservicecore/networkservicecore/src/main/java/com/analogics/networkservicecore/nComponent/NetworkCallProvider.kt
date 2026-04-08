@@ -44,13 +44,13 @@ object NetworkCallProvider {
                 val plainSocket = Socket()
                 plainSocket.connect(
                     java.net.InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
-                    15_000
+                    30_000
                 )
 
                 val sslSocket = sslContext.socketFactory
                     .createSocket(plainSocket, NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT, true) as SSLSocket
 
-                sslSocket.soTimeout = 15_000
+                sslSocket.soTimeout = 30_000
                 sslSocket.startHandshake()
 
                 val output = sslSocket.outputStream

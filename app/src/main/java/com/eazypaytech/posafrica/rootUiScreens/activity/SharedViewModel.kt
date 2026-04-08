@@ -48,6 +48,8 @@ class SharedViewModel:ViewModel() {
       objRootAppPaymentDetail.stateCode = objPosConfig?.stateCode
       objRootAppPaymentDetail.countyCode = objPosConfig?.countyCode
       objRootAppPaymentDetail.postalServiceCode = objPosConfig?.postalServiceCode
+      objRootAppPaymentDetail.isEMVEnable = objPosConfig?.isEMVEnable
+      objRootAppPaymentDetail.isTapEnable = objPosConfig?.isTapEnable
 
       /* Copy Receipt Data */
       objRootAppPaymentDetail.header1 = objPosConfig?.header1
