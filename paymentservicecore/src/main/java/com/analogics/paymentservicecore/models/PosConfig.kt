@@ -10,6 +10,12 @@ import javax.inject.Inject
 
 class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
 
+
+    /* Host Info */
+    @SerializedName("baseurl") var baseUrl: String? = null
+    @SerializedName("port") var port: Int? = null
+    @SerializedName("hosttimeout") var hosttimeout: Int? = null
+
     /* Merchant & Cashier Info */
     @SerializedName("merchantId") var merchantId: String? = null
     @SerializedName("merchantCategoryCode") var merchantCategoryCode: String? = null

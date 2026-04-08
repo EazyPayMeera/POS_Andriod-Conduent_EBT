@@ -13,6 +13,25 @@ object NetworkConstants {
         const val DIGEST_ALGORITHM = "SHA-512"
 
         /* HOST Address */
-        const val HOST_ADDRESS = "posuat.services.conduent.com"
-        const val HOST_PORT = 54811
+        //const val HOST_ADDRESS = "posuat.services.conduent.com"
+        //const val HOST_PORT = 54811
+        var HOST_ADDRESS: String = ""
+        var HOST_PORT: Int = 0
+
+        fun updateHost(baseUrl: String?, port: Int?) {
+                try {
+
+                        if (baseUrl.isNullOrEmpty()) return
+
+                        val url = java.net.URL(baseUrl)
+                        var BASEURL: String = ""
+                        BASEURL = baseUrl
+                        HOST_ADDRESS = url.host
+                        HOST_PORT = port ?: url.port
+
+                } catch (e: Exception) {
+                        e.printStackTrace()
+                }
+        }
+
 }

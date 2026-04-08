@@ -1,8 +1,12 @@
 package com.eazypaytech.posafrica.rootUiScreens.splash.viewModel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
+import com.eazypaytech.posafrica.data.TmsConfigParser
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
 import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
@@ -13,15 +17,30 @@ import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.setUiLanguage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository, @ApplicationContext private val context: Context) : ViewModel() {
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig()
+            //val tmsConfig = TmsConfigParser.loadConfig(navController.context)
+            val tmsConfig = TmsConfigParser.loadFromAssets(context)
+            sharedViewModel.objPosConfig =
+                tmsConfig ?: apiServiceRepository.getPosConfig()
+
+            sharedViewModel.objPosConfig?.saveToPrefs()
+
+            Log.d("TMS_CHECK", "Config Loaded: ${sharedViewModel.objPosConfig}")
+            val config = sharedViewModel.objPosConfig
+
+            NetworkConstants.updateHost(
+                baseUrl = config?.baseUrl,
+                port = config?.port
+            )
+            //sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig()
 
             /* Apply UI Language */
             setUiLanguage(navController.context,sharedViewModel.objPosConfig?.language?.toUiLanguage()?: UiLanguage.ENGLISH)
