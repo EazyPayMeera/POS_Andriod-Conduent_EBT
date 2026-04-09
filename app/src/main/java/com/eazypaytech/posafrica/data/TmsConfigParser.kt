@@ -97,6 +97,7 @@ object TmsConfigParser {
             config.procId = procIdd
             config.merchantNameLocation = merchNameLoc
             config.merchantBankName = merchbankName
+            config.merchantType = mcc
             config.merchantCategoryCode = mcc
             config.fnsNumber = fnsNumber
             config.stateCode = stateCode

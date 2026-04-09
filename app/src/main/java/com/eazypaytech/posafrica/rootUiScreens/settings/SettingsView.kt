@@ -206,7 +206,7 @@ fun SettingsView(navHostController: NavHostController) {
                             OkButton(
                                 onClick = {
 
-                                    viewModel.onSaveMerchantConfig(
+                                    /*viewModel.onSaveMerchantConfig(
                                         navHostController,
                                         sharedViewModel,
                                         merchantNameLocation.value,
@@ -216,7 +216,7 @@ fun SettingsView(navHostController: NavHostController) {
                                         stateCode.value,
                                         countyCode.value,
                                         postalServiceCode.value
-                                    )
+                                    )*/
 
                                     configChanged.value = false
                                 },

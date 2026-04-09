@@ -31,6 +31,10 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         merchantBankName = sharedViewModel.objPosConfig?.merchantBankName ?: ""
         //merchantType = sharedViewModel.objPosConfig?.merchantId ?: ""
         merchantType = sharedViewModel.objPosConfig?.merchantCategoryCode ?: ""
+        fnsNumber = sharedViewModel.objPosConfig?.fnsNumber  ?: ""
+        stateCode = sharedViewModel.objPosConfig?.stateCode  ?: ""
+        countyCode = sharedViewModel.objPosConfig?.countyCode  ?: ""
+        postalServiceCode = sharedViewModel.objPosConfig?.postalServiceCode  ?: ""
 
         //Save to objRootAppPaymentDetail
         sharedViewModel.objRootAppPaymentDetail.merchantNameLocation = merchantName
@@ -76,7 +80,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
 
 
-    fun onSaveMerchantConfig(
+    /*fun onSaveMerchantConfig(
         navHostController: NavHostController,
         sharedViewModel: SharedViewModel,
         merchantNameLocation: String,
@@ -105,6 +109,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
             this.postalServiceCode = postalServiceCode
         }?.saveToPrefs()
         navHostController.popBackStack()
-    }
+    }*/
 
 }
