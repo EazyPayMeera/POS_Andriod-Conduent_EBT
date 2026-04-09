@@ -71,29 +71,23 @@ class EmvWrapperRepository @Inject constructor(
     private var TAG = "MOREFUN"
     private var isMagSupported = false
     val arqcTLVTags: Array<String> = arrayOf(
-        "9F26",
-        "9F27",
-        "9F10",
-        "9F37",
-        "9F36",
-        "95",
-        "9A",
-        "9C",
-        "9F02",
-        "5F2A",
-        "82",
-        "9F1A",
-        "9F33",
-        "9F34",
-        "9F35",
-        "9F1E",
-        "84",
-        "9F09",
-        "9F63",
-        "50",
-        "9F12",
-        "5F34",
-        "5F24"
+        "9F26",  // Application Cryptogram
+        "9F27",  // Cryptogram Information Data
+        "9F10",  // Issuer Application Data
+        "9F34",  // CVM Results
+        "9F33",  // Terminal Capabilities
+        "9F37",  // Unpredictable Number
+        "9F36",  // ATC
+        "95",    // TVR
+        "9A",    // Transaction Date
+        "9C",    // Transaction Type
+        "9F02",  // Amount Authorized
+        "9F03",  // Amount Other ← ADD THIS
+        "5F2A",  // Transaction Currency Code
+        "82",    // AIP
+        "84",    // Dedicated File Name
+        "9F1A",  // Terminal Country Code
+        "9F35",  // Terminal Type  keep if your acquirer needs it
     )
 
     enum class CheckCardResult(value : Int) {
@@ -474,14 +468,16 @@ class EmvWrapperRepository @Inject constructor(
                         ) {
                             Companion.pinBlock = pinBlock?.toHexString()
                             Companion.ksn = ksn
+                            Log.d("PIN", "ret=$ret")
+                            Log.d("PIN", "pinBlock=${pinBlock?.toHexString() ?: "NULL"}")
+                            Log.d("PIN", "ksn=$ksn")
 
-//                            val builder = StringBuilder().apply {
-//                                append("ON INPUT RESULT: $ret\n")
-//                                append("PIN BLOCK: ${pinBlock?.toHexString()}\n")
-//                                append("KSN: $ksn")
-//                            }
-//
-//                            Log.d("InputOnlinePin", builder.toString())
+                            if (pinBlock == null) {
+                                Log.e("PIN", "❌ PIN block is NULL — PIN entry failed!")
+                            } else {
+                                Log.d("PIN", "✅ PIN block received successfully")
+                            }
+                            //onResult(pinBlock)
                             onResult(pinBlock)
                         }
 

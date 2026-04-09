@@ -62,7 +62,11 @@ object NetworkCallProvider {
                 )
 
                 val fullRequest = lenPrefix + requestBytes
+                // Log the request in hex
+                Log.d("SOCKET", "➡️ Sending request (hex): ${fullRequest.joinToString("") { "%02X".format(it) }}")
 
+                // Optional: log as ASCII if meaningful
+                Log.d("SOCKET", "➡️ Sending request (ASCII): ${fullRequest.toString(Charsets.US_ASCII)}")
 
                 output.write(fullRequest)
                 output.flush()
