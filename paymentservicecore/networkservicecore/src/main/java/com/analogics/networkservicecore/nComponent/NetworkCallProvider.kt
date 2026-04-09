@@ -44,13 +44,13 @@ object NetworkCallProvider {
                 val plainSocket = Socket()
                 plainSocket.connect(
                     java.net.InetSocketAddress(NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT),
-                    30_000
+                    60_000
                 )
 
                 val sslSocket = sslContext.socketFactory
                     .createSocket(plainSocket, NetworkConstants.HOST_ADDRESS, NetworkConstants.HOST_PORT, true) as SSLSocket
 
-                sslSocket.soTimeout = 30_000
+                sslSocket.soTimeout = 60_000
                 sslSocket.startHandshake()
 
                 val output = sslSocket.outputStream
@@ -62,14 +62,19 @@ object NetworkCallProvider {
                 )
 
                 val fullRequest = lenPrefix + requestBytes
-                // Log the request in hex
-                Log.d("SOCKET", "➡️ Sending request (hex): ${fullRequest.joinToString("") { "%02X".format(it) }}")
 
-                // Optional: log as ASCII if meaningful
-                Log.d("SOCKET", "➡️ Sending request (ASCII): ${fullRequest.toString(Charsets.US_ASCII)}")
+                // ✅ Print EXACT bytes being sent to host
+                Log.d("EXACT_REQUEST", "============================================")
+                Log.d("EXACT_REQUEST", "LENGTH PREFIX (2 bytes): %02X%02X → declared length = %d"
+                    .format(lenPrefix[0], lenPrefix[1], requestBytes.size))
+                Log.d("EXACT_REQUEST", "FULL REQUEST HEX (length prefix + body):")
+                Log.d("EXACT_REQUEST", fullRequest.joinToString("") { "%02X".format(it) })
+                Log.d("EXACT_REQUEST", "============================================")
 
                 output.write(fullRequest)
                 output.flush()
+
+                // ✅ Print EXACT bytes received from host
                 val lenBytes = ByteArray(2)
                 input.read(lenBytes)
                 val expectedLength = ((lenBytes[0].toInt() and 0xFF) shl 8) + (lenBytes[1].toInt() and 0xFF)
@@ -86,6 +91,13 @@ object NetworkCallProvider {
                 }
 
                 val responseBytes = responseBuffer.toByteArray()
+
+                Log.d("EXACT_RESPONSE", "============================================")
+                Log.d("EXACT_RESPONSE", "RESPONSE LENGTH PREFIX: %02X%02X → declared length = %d"
+                    .format(lenBytes[0], lenBytes[1], expectedLength))
+                Log.d("EXACT_RESPONSE", "FULL RESPONSE HEX:")
+                Log.d("EXACT_RESPONSE", responseBytes.joinToString("") { "%02X".format(it) })
+                Log.d("EXACT_RESPONSE", "============================================")
 
                 sslSocket.close()
 

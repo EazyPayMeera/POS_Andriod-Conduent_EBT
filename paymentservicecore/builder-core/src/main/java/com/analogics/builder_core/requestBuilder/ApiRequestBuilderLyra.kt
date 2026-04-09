@@ -149,34 +149,82 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
     fun hexStringToByteArray(s: String): ByteArray {
-        val len = s.length
-        val data = ByteArray(len / 2)
+
+        require(s.length % 2 == 0) { "HEX length must be even" }
+
+        val data = ByteArray(s.length / 2)
         var i = 0
-        while (i < len) {
-            data[i / 2] = ((Character.digit(s[i], 16) shl 4) + Character.digit(s[i + 1], 16)).toByte()
+
+        while (i < s.length) {
+
+            val high = Character.digit(s[i], 16)
+            val low = Character.digit(s[i + 1], 16)
+
+            require(high != -1 && low != -1) { "Invalid HEX character" }
+
+            data[i / 2] = ((high shl 4) + low).toByte()
             i += 2
         }
+
         return data
+    }
+
+
+    // ================= HELPERS =================
+    fun cleanHex(input: String): String {
+        val clean = input.replace("\\s+".toRegex(), "")
+
+        require(clean.isNotEmpty()) { "Empty HEX string" }
+        require(clean.length % 2 == 0) { "HEX length must be even" }
+        require(clean.matches(Regex("[0-9A-Fa-f]+"))) { "Invalid HEX characters" }
+
+        return clean.uppercase()
+    }
+
+    fun checkTag(
+        hex: String,
+        tag: String,
+        lenHex: String,
+        expected: String,
+        label: String
+    ) {
+        val search = (tag + lenHex).uppercase()
+        val idx = hex.indexOf(search)
+
+        if (idx < 0) {
+            println("? $label not found")
+            return
+        }
+
+        val start = idx + search.length
+        val len = lenHex.toInt(16) * 2
+        val actual = hex.substring(start, start + len)
+
+        if (actual.equals(expected, true)) {
+            println("✓ $label = $actual")
+        } else {
+            println("✗ $label = $actual (expected $expected)")
+        }
     }
 
     fun rearrangeTLV(tlvHex: String): String {
         val conductOrderedTags = arrayOf(
-            "82",
-            "84",
-            "95",
-            "9A",
-            "9C",
-            "5F2A",
-            "9F02",
-            "9F03",
-            "9F10",
-            "9F1A",
-            "9F27",
-            "9F33",
-            "9F34",
-            "9F36",
-            "9F37",
-            "9F26"
+            "9F26", // Application Cryptogram (AC)
+            "9F27", // Cryptogram Information Data
+            "9F10", // Issuer Application Data (IAD)
+            "9F34", // CVM Results
+            "9F33", // Terminal Capabilities
+            "9F37", // Unpredictable Number
+            "9F36", // ATC
+            "95",   // TVR
+            "9A",   // Transaction Date
+            "9C",   // Transaction Type
+            "9F02", // Amount Authorized
+            "5F2A", // Transaction Currency Code
+            "82",   // AIP
+            "84",   // DF Name
+            "9F1A", // Terminal Country Code
+            "9F03"  // Amount Other
         )
 
         val tlvMap = mutableMapOf<String, String>()
@@ -217,8 +265,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         tlvMap["95"] = "0000000000".also {
             Log.d("TLV_OVERRIDE", "95 TVR overridden → $it")
         }
-        tlvMap["9F34"] = "020002".also {
+        tlvMap["9F34"] = "020000".also {
             Log.d("TLV_OVERRIDE", "9F34 CVM overridden → $it")
+        }
+
+        tlvMap["9F10"] = "0110A00001020000000000000000000000FF".also {
+            Log.d("TLV_OVERRIDE", "9F10 IAD overridden → $it")
+        }
+
+        tlvMap["9F33"] = "604000".also {
+            Log.d("TLV_OVERRIDE", "9F33 IAD overridden → $it")
         }
 
         Log.d("TLV_REARRANGE", "Total tags parsed: ${tlvMap.size}")
@@ -599,7 +655,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString())
         {
-            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "001", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
         }
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         if(builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString() ) {
@@ -628,24 +684,50 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
         if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
             builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
-            if (!iccData.isNullOrEmpty()) {
 
-                rearrangedIccData?.length?.let {
-                    iso.setValue(
-                        BuilderConstants.ISO_FIELD_ICC_DATA,
-                        rearrangedIccData,
-                        IsoType.LLLVAR,
-                        it
-                    )
-                }
+            if (!iccData.isNullOrEmpty() && !rearrangedIccData.isNullOrEmpty()) {
+                Log.d("DE55", "===== INPUT =====")
+                Log.d("DE55", rearrangedIccData)
+
+                val cleanHex = cleanHex(rearrangedIccData)
+
+                Log.d("DE55", "===== CLEAN HEX =====")
+                Log.d("DE55", cleanHex)
+                Log.d("DE55", "Char Length: ${cleanHex.length}")
+                Log.d("DE55", "Byte Length: ${cleanHex.length / 2}")
+
+                val byteArray = hexStringToByteArray(cleanHex)
+
+                Log.d("DE55", "===== BYTE ARRAY =====")
+                Log.d("DE55", "Length: ${byteArray.size}")
+                Log.d("DE55", byteArray.joinToString("") { "%02X".format(it) })
+
+                val lll = "%03d".format(byteArray.size)
+
+                Log.d("DE55", "===== LLLVAR =====")
+                Log.d("DE55", "Prefix: $lll")
+
+                Log.d("DE55", "===== VALIDATION =====")
+                Log.d("DE55", "LLL matches: ${lll.toInt() == byteArray.size}")
+
+                Log.d("DE55", "===== TAG CHECK =====")
+                checkTag(cleanHex, "9F34", "03", "020002", "CVM Result")
+                checkTag(cleanHex, "9F33", "03", "E0F8C8", "Terminal Capability")
+                iso.setValue(
+                    BuilderConstants.ISO_FIELD_ICC_DATA,
+                    byteArray,
+                    IsoType.LLLBIN,
+                    byteArray.size
+                )
             }
         }
+
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode , IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
         iso.setBinaryHeader(false)
-//        iso.setBinaryFields(false)
-//        iso.setForceStringEncoding(true)
+        iso.setBinaryFields(true)
+        iso.setForceStringEncoding(false)
         iso.setIsoHeader("")
         updateTransResult(this.builderServiceTxnDetails)
         val savedTxn = SavedTxnData(

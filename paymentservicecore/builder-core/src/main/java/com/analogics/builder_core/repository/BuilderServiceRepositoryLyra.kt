@@ -13,7 +13,7 @@ import javax.inject.Inject
 class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestListenerLyra{
     lateinit var iBuilderServiceResponseListener:IBuilderServiceResponseListenerLyra
 
-    @OptIn(ExperimentalStdlibApi::class)
+
     override suspend fun networkServiceRequest(
         iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra,
         requestBody: ByteArray
@@ -64,9 +64,6 @@ class BuilderServiceRepositoryLyra @Inject constructor():IBuilderServiceRequestL
     }
 
 
-
-
-    @OptIn(ExperimentalStdlibApi::class)
     override fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ByteArray>) {
         when (apiResultProvider) {
 
