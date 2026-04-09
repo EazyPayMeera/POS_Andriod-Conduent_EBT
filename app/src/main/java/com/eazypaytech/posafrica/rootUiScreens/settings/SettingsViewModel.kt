@@ -29,7 +29,8 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
         merchantName = sharedViewModel.objPosConfig?.merchantNameLocation ?: ""
         merchantBankName = sharedViewModel.objPosConfig?.merchantBankName ?: ""
-        merchantType = sharedViewModel.objPosConfig?.merchantId ?: ""
+        //merchantType = sharedViewModel.objPosConfig?.merchantId ?: ""
+        merchantType = sharedViewModel.objPosConfig?.merchantCategoryCode ?: ""
     }
 
     fun updateMerchantName(value: String) {

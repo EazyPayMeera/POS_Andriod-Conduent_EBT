@@ -48,7 +48,8 @@ fun SettingsView(navHostController: NavHostController) {
     }
 
     val merchantType = remember {
-        mutableStateOf(sharedViewModel.objPosConfig?.merchantType ?: "")
+        //mutableStateOf(sharedViewModel.objPosConfig?.merchantType ?: "")
+        mutableStateOf(sharedViewModel.objPosConfig?.merchantCategoryCode ?: "")
     }
 
     val fnsNumber = remember {

@@ -84,6 +84,9 @@ object TmsConfigParser {
             val merchbankName = doc.getElementsByTagName("MerchBankname").item(0).textContent
             val mcc = doc.getElementsByTagName("MCC").item(0).textContent
             val fnsNumber = doc.getElementsByTagName("FNSNumber").item(0).textContent
+            val stateCode = doc.getElementsByTagName("StateCode").item(0).textContent
+            val countyCode = doc.getElementsByTagName("CountyCode").item(0).textContent
+            val postalServiceCode = doc.getElementsByTagName("PostalServiceCode").item(0).textContent
 
             val config = PosConfig(context)
             config.baseUrl = baseUrl
@@ -96,6 +99,9 @@ object TmsConfigParser {
             config.merchantBankName = merchbankName
             config.merchantCategoryCode = mcc
             config.fnsNumber = fnsNumber
+            config.stateCode = stateCode
+            config.countyCode = countyCode
+            config.postalServiceCode = postalServiceCode
 
             Log.d("TMS", "Config Loaded: $config")
 

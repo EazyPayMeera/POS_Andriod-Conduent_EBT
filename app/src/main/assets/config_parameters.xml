@@ -19,6 +19,9 @@
     <MerchBankname>APPPLE 1 MINI MAR</MerchBankname>
     <MCC>5499</MCC>
     <FNSNumber>EB0070008596</FNSNumber>
+    <StateCode>39</StateCode>
+    <CountyCode>123</CountyCode>
+    <PostalServiceCode>12345</PostalServiceCode>
 </Merchant>
 
 </Configuration>

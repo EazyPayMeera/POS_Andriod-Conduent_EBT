@@ -280,5 +280,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     {
         sharedViewModel.objPosConfig?.procId?.let { procIdInput.value = it }
         sharedViewModel.objPosConfig?.merchantId?.let { midInput.value = it }
+        sharedViewModel.objPosConfig?.terminalId?.let { tidInput.value = it }
     }
 }
