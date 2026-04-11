@@ -57,8 +57,5 @@ sealed class AppNavigationItems(val route: String) {
   fun createRoute(totalAmount: String) = "approved_screen/$totalAmount"
  }
 
- object DeclineScreen : AppNavigationItems("decline_screen/{totalAmount}") {
-  fun createRoute(totalAmount: String) = "decline_screen/$totalAmount"
- }
 
 }
