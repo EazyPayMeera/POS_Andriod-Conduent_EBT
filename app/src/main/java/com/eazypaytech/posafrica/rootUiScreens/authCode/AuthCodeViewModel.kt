@@ -82,7 +82,7 @@ class AuthCodeViewModel @Inject constructor(private  var apiServiceRepository: A
 
                 })
             } catch (e: Exception) {
-                navHostController.navigate(AppNavigationItems.DeclineScreen.route)
+
             }
         }
     }

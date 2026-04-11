@@ -173,7 +173,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
             } catch (e: Exception) {
 
                 Log.e("ApiCallException", e.message ?: "Unknown error")
-                navHostController.navigate(AppNavigationItems.DeclineScreen.route)
+
             }
         }
     }

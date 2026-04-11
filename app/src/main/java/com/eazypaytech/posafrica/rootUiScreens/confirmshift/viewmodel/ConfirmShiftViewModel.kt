@@ -76,7 +76,7 @@ class ConfirmShiftViewModel @Inject constructor(private val apiServiceRepository
             } catch (e: Exception) {
 
                 Log.e("ApiCallException", e.message ?: "Unknown error")
-                navHostController.navigate(AppNavigationItems.DeclineScreen.route)
+
             }
         }
     }

@@ -196,7 +196,7 @@ class ManualCardViewModel @Inject constructor(
 
                 })
             } catch (e: Exception) {
-                
+
             }
         }
     }
