@@ -33,6 +33,24 @@ class PurchaseRequestRepository @Inject constructor(
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseIsoRespMessage123(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
+        if (response.isEmpty()) {
+            Log.e("ISO", "Empty response received from host")
+
+            return paymentServiceTxnDetails.apply {
+                txnStatus = TxnStatus.DECLINED.toString()
+                hostAuthResult = TxnStatus.DECLINED.toString()
+                hostResMessage = "No response from host"
+            }
+        }
+
+        if (response.size < 20) {
+            Log.e("ISO", "Invalid response size: ${response.size}")
+            return paymentServiceTxnDetails.apply {
+                txnStatus = TxnStatus.DECLINED.toString()
+                hostAuthResult = TxnStatus.DECLINED.toString()
+                hostResMessage = "Invalid response"
+            }
+        }
             apiRequestBuilderLyra.parsePurchaseResponse123(context,response).let {
                 paymentServiceTxnDetails.stan = it.stan
                 paymentServiceTxnDetails.hostRespCode = it.hostRespCode

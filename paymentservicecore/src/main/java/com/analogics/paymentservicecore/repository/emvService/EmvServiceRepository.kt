@@ -2,6 +2,7 @@ package com.eazypaytech.paymentservicecore.repository.emvService
 
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.eazypaytech.paymentservicecore.constants.AppConstants
@@ -34,6 +35,7 @@ import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseLis
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkException
 import com.eazypaytech.tpaymentcore.model.emv.EmvSdkResult
 import com.eazypaytech.tpaymentcore.repository.EmvSdkRequestRepository
+
 import com.eazypaytech.tpaymentcore.utils.TlvUtils
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -562,6 +564,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+
     private fun prepareHostTlvData(emvTags: HashMap<String, String>)
     {
         try {
@@ -609,6 +612,34 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             e.printStackTrace()
         }
     }
+
+//    fun getDE55(): ByteArray? {
+//        val tagList = arrayOf(
+//            "9F26", // Application Cryptogram
+//            "9F27", // Cryptogram Information Data
+//            "9F10", // Issuer Application Data
+//            "9F37", // Unpredictable Number
+//            "9F36", // ATC
+//            "95",   // TVR
+//            "9A",   // Transaction Date
+//            "9C",   // Transaction Type
+//            "9F02", // Amount Authorized
+//            "5F2A", // Transaction Currency Code
+//            "82",   // AIP
+//            "9F1A", // Terminal Country Code
+//            "9F03", // Amount Other
+//            "9F33", // Terminal Capabilities
+//            "9F34", // CVM Results
+//            "9F35", // Terminal Type
+//            "9F1E", // IFD Serial Number
+//            "84",   // DF Name
+//            "9F09"  // Application Version
+//        )
+//
+//        val bundle: Bundle? = null // or pass if required
+//
+//        return emvWrapper.getEmvDataSafe(tagList, bundle)
+//    }
 
     fun getCardBrand(aid : String?=null, pan : String?=null) : CardBrand?
     {

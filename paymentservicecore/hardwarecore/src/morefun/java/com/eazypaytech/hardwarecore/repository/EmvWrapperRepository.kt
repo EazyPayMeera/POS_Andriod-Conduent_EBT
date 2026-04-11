@@ -102,6 +102,33 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    fun getEmvDataSafe( tagList: Array<String>, bundle: Bundle?): ByteArray? {
+        val outBuffer = ByteArray(2048)
+        return try {
+            val resultCode = deviceService?.emvHandler?.readEmvData(
+                tagList,
+                outBuffer,
+                bundle
+            ) ?: return null
+
+            Log.d("EMV_READ", "Result code = $resultCode")
+            Log.d("EMV_READ", "Tags requested = ${tagList.joinToString()}")
+
+            if (resultCode != 0) {
+                Log.e("EMV_READ", "EMV read failed with code = $resultCode")
+                return null
+            }
+
+            val cleanData = outBuffer.takeWhile { it.toInt() != 0 }.toByteArray()
+            Log.d("EMV_READ", "Output size = ${cleanData.size}")
+            cleanData
+
+        } catch (e: Exception) {
+            Log.e("EMV_READ", "Failed to read EMV data", e)
+            null
+        }
+    }
+
     @OptIn(ExperimentalStdlibApi::class)
     private fun collectTlvData(tags: Array<String>): String? {
 
@@ -430,6 +457,8 @@ class EmvWrapperRepository @Inject constructor(
             Log.d(TAG, "onRupayCallback ${p0} ${p1}")
         }
     }
+
+
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun inputOnlinePin(

@@ -275,7 +275,7 @@ object BuilderConstants {
     const val ISO_FIELD_MERCHANT_NAME_LENGTH = 40
 
     const val ISO_FIELD_MERCHANT_BANK = 48
-    const val ISO_FIELD_MERCHANT_BANK_LENGTH = 17
+    const val ISO_FIELD_MERCHANT_BANK_LENGTH = 16
 
     const val ISO_FIELD_CURRENCY_CODE = 49
     const val ISO_FIELD_CURRENCY_CODE_LENGTH = 3

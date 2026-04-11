@@ -1,6 +1,7 @@
 package com.eazypaytech.tpaymentcore.repository
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import com.eazypaytech.tpaymentcore.listener.requestListener.IEmvSdkRequestListener
 import com.eazypaytech.tpaymentcore.listener.responseListener.IEmvSdkResponseListener
@@ -77,6 +78,36 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }catch (exception: Exception)
         {
             exception.printStackTrace()
+            null
+        }
+    }
+
+    fun getEmvDataSafe(
+        tagList: Array<String>,
+        bundle: Bundle?
+    ): ByteArray? {
+
+        val outBuffer = ByteArray(2048)
+
+        return try {
+
+            val resultCode = emvWrapper.getEmvDataSafe(
+                tagList,
+                bundle
+            ) ?: return null
+
+            Log.d("EMV_READ", "Result code = $resultCode")
+            Log.d("EMV_READ", "Tags requested = ${tagList.joinToString()}")
+
+            // IMPORTANT: copy only valid bytes
+            val cleanData = outBuffer.takeWhile { it.toInt() != 0 }.toByteArray()
+
+            Log.d("EMV_READ", "Output size = ${cleanData.size}")
+
+            cleanData
+
+        } catch (e: Exception) {
+            Log.e("EMV_READ", "Failed to read EMV data", e)
             null
         }
     }

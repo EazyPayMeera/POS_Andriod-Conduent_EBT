@@ -18,6 +18,7 @@ import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
 import com.solab.iso8583.parse.ConfigParser
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,6 +52,9 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         messageFactory.useBinaryMessages = true
         messageFactory.isBinaryHeader = true
     }
+
+
+
 
 
     private fun getIsoPosEntryMode(): String {
@@ -209,22 +213,22 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     fun rearrangeTLV(tlvHex: String): String {
         val conductOrderedTags = arrayOf(
-            "9F26", // Application Cryptogram (AC)
-            "9F27", // Cryptogram Information Data
-            "9F10", // Issuer Application Data (IAD)
-            "9F34", // CVM Results
-            "9F33", // Terminal Capabilities
-            "9F37", // Unpredictable Number
-            "9F36", // ATC
-            "95",   // TVR
-            "9A",   // Transaction Date
-            "9C",   // Transaction Type
-            "9F02", // Amount Authorized
-            "5F2A", // Transaction Currency Code
-            "82",   // AIP
-            "84",   // DF Name
-            "9F1A", // Terminal Country Code
-            "9F03"  // Amount Other
+            "82",   // AIP                          // 1
+            "84",   // AID (DF Name)               // 2
+            "95",   // TVR                         // 3
+            "9A",   // Transaction Date            // 4
+            "9C",   // Transaction Type            // 5
+            "5F2A", // Transaction Currency Code   // 6
+            "9F02", // Amount Authorized           // 7
+            "9F03", // Other Amount                // 8
+            "9F10", // Issuer Application Data     // 9
+            "9F1A", // Terminal Country Code       // 10
+            "9F27", // CID (Cryptogram Info Data)  // 11
+            "9F33", // Terminal Capabilities       // 12
+            "9F34", // CVM Results                // 13
+            "9F36", // ATC                        // 14
+            "9F37", // Unpredictable Number       // 15
+            "9F26"  // ARQC (LAST)                // 16
         )
 
         val tlvMap = mutableMapOf<String, String>()
@@ -381,6 +385,8 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
 
 
+
+
     fun createSignOnRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
@@ -524,6 +530,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             append(lengthFormatted)
             append(voucherNo)
         }
+
         iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA,additional_Data, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
         iso.setBinaryHeader(false)
@@ -617,19 +624,45 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         return details
     }
 
+    fun hex2byte(s: String?): ByteArray? {
+        var s = s ?: return null
+
+        s = s.trim { it <= ' ' }
+
+
+        // Pad with leading zero if odd length
+        if (s.length % 2 != 0) {
+            s = "0$s"
+        }
+
+        val result = ByteArray(s.length / 2)
+
+        for (i in result.indices) {
+            val high = s[i * 2].digitToIntOrNull(16) ?: -1
+            val low = s[i * 2 + 1].digitToIntOrNull(16) ?: -1
+
+            require(!(high == -1 || low == -1)) { "Invalid hex character at position " + (i * 2) + ": '" + s[i * 2] + "'" }
+
+            result[i] = ((high shl 4) or low).toByte()
+        }
+
+        return result
+    }
 
 
     @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-        this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+        this.builderServiceTxnDetails = builderServiceTxnDetails ?: BuilderServiceTxnDetails()
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val pinBlock = getPinBlock()
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
-        val rearrangedIccData = iccData?.let { rearrangeTLV(it) }
+        val rearrangedIccData = iccData.let { rearrangeTLV(it!!) }
         val cardSeqNumber = getCardSeqNum()
         val encryptedTrack2Data = getEncryptedTrack2Data()
+        Log.d("Track 2", "PIN BYTE ARRAY = $encryptedTrack2Data")
+
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
         builderServiceTxnDetails?.stan = getSTAN().toString()
@@ -639,10 +672,34 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         builderServiceTxnDetails?.currencyCode = getCurrencyCode()
         builderServiceTxnDetails?.processingCode = getProcessingCode(this.builderServiceTxnDetails.txnType)
         builderServiceTxnDetails?.rrn = generateRRN(this.builderServiceTxnDetails.stan!!)
-        val originalData = builderServiceTxnDetails?.dateTime?.padEnd(20,'0')
+        val originalData = builderServiceTxnDetails?.dateTime?.padEnd(20, '0')
         builderServiceTxnDetails?.posConditionCode = getNationalPosConditionCode()
+
+        // ── Prepare DE55 raw bytes BEFORE building IsoMessage ──
+        var de55RawBytes: ByteArray? = null
+        val isChipCard = builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
+                builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()
+
+        if (isChipCard && !iccData.isNullOrEmpty() && !rearrangedIccData.isNullOrEmpty()) {
+            val cleanHex = cleanHex(rearrangedIccData)
+            val iccByteArray = hexStringToByteArray(cleanHex)
+
+            Log.d("DE55", "===== CLEAN HEX =====")
+            Log.d("DE55", cleanHex)
+            Log.d("DE55", "Byte Length: ${iccByteArray.size}")
+            Log.d("DE55", iccByteArray.joinToString("") { "%02X".format(it) })
+            checkTag(cleanHex, "9F34", "03", "020002", "CVM Result")
+
+            // 3-digit ASCII length prefix + raw ICC bytes
+            val lllPrefix = "%03d".format(iccByteArray.size).toByteArray(Charsets.US_ASCII)
+            de55RawBytes = lllPrefix + iccByteArray
+
+            Log.d("DE55", "LLL Prefix: ${String(lllPrefix)}, Total bytes: ${de55RawBytes.size}")
+        }
+
         val iso = IsoMessage()
         iso.setType(BuilderConstants.MTI_FINANCIAL_REQ)
+
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, maskedPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
@@ -652,14 +709,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)                    // DE018 Merchant Type
-        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
-        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString())
-        {
+        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)
+
+        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString()) {
             iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
         }
-        iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
-        if(builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString() ) {
+
+        iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
+
+        if (builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString()) {
             iso.setValue(
                 BuilderConstants.ISO_FIELD_TRACK2_DATA,
                 encryptedTrack2Data,
@@ -667,70 +726,48 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 BuilderConstants.ISO_FIELD_TRACK2_DATA_LENGTH
             )
         }
-        iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)              // DE037 RRN
-        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)           // DE042 Merchant ID
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_NAME,
+
+        iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
+        iso.setValue(
+            BuilderConstants.ISO_FIELD_MERCHANT_NAME,
             builderServiceTxnDetails?.merchantNameLocation?.padEnd(BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH),
             IsoType.ALPHA,
             BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH
         )
-        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
-        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)                      // DE049 Currency
+        iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_PIN_BLOCK, pinBlock, IsoType.ALPHA, BuilderConstants.ISO_FIELD_PIN_BLOCK_LENGTH)
-        if(this.builderServiceTxnDetails.txnType ==  TxnType.PURCHASE_CASHBACK.toString())
-        {
+
+        if (this.builderServiceTxnDetails.txnType == TxnType.PURCHASE_CASHBACK.toString()) {
             iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, builderServiceTxnDetails?.cashback, IsoType.LLLVAR, builderServiceTxnDetails?.cashback!!.length)
         }
 
-        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
-            builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
 
-            if (!iccData.isNullOrEmpty() && !rearrangedIccData.isNullOrEmpty()) {
-                Log.d("DE55", "===== INPUT =====")
-                Log.d("DE55", rearrangedIccData)
-
-                val cleanHex = cleanHex(rearrangedIccData)
-
-                Log.d("DE55", "===== CLEAN HEX =====")
-                Log.d("DE55", cleanHex)
-                Log.d("DE55", "Char Length: ${cleanHex.length}")
-                Log.d("DE55", "Byte Length: ${cleanHex.length / 2}")
-
-                val byteArray = hexStringToByteArray(cleanHex)
-
-                Log.d("DE55", "===== BYTE ARRAY =====")
-                Log.d("DE55", "Length: ${byteArray.size}")
-                Log.d("DE55", byteArray.joinToString("") { "%02X".format(it) })
-
-                val lll = "%03d".format(byteArray.size)
-
-                Log.d("DE55", "===== LLLVAR =====")
-                Log.d("DE55", "Prefix: $lll")
-
-                Log.d("DE55", "===== VALIDATION =====")
-                Log.d("DE55", "LLL matches: ${lll.toInt() == byteArray.size}")
-
-                Log.d("DE55", "===== TAG CHECK =====")
-                checkTag(cleanHex, "9F34", "03", "020002", "CVM Result")
-                checkTag(cleanHex, "9F33", "03", "E0F8C8", "Terminal Capability")
-                iso.setValue(
-                    BuilderConstants.ISO_FIELD_ICC_DATA,
-                    byteArray,
-                    IsoType.LLLBIN,
-                    byteArray.size
-                )
-            }
+        // ── DE55: Set a PLACEHOLDER in IsoMessage so the bitmap bit is set correctly ──
+        // We will splice the real raw bytes in manually after writeData()
+        if (isChipCard && de55RawBytes != null) {
+            // Placeholder value — same byte length so bitmap is correct
+            // Use BINARY with a dummy value just to reserve the bit in the bitmap
+            iso.setValue(
+                BuilderConstants.ISO_FIELD_ICC_DATA,
+                "DE55_PLACEHOLDER",   // dummy, will be replaced
+                IsoType.LLLVAR,
+                de55RawBytes.size
+            )
         }
 
-        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode , IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
-        iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)    // DE127
+        iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)
+
         iso.setBinaryHeader(false)
-        iso.setBinaryFields(true)
-        iso.setForceStringEncoding(false)
+        iso.setForceStringEncoding(true)
         iso.setIsoHeader("")
+
         updateTransResult(this.builderServiceTxnDetails)
+
         val savedTxn = SavedTxnData(
             stan = builderServiceTxnDetails?.stan,
             rrn = builderServiceTxnDetails?.rrn,
@@ -747,7 +784,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             merchantBank = builderServiceTxnDetails?.merchantBankName,
             merchantType = builderServiceTxnDetails?.merchantType,
             currencyCode = builderServiceTxnDetails?.currencyCode,
-            pan = maskedPan,   // always store masked PAN
+            pan = maskedPan,
             track2Data = encryptedTrack2Data,
             entryMode = builderServiceTxnDetails?.posEntryMode,
             posConditionCode = builderServiceTxnDetails?.posConditionCode,
@@ -757,8 +794,55 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         )
         IsoMessageBuilder.saveTxn(savedTxn)
 
-        return iso.writeData()
+        // ── Final assembly: splice raw DE55 bytes into the ISO message ──
+        return if (isChipCard && de55RawBytes != null) {
+            val isoBytes = iso.writeData()
+            spliceDE55(isoBytes, de55RawBytes, "DE55_PLACEHOLDER")
+        } else {
+            iso.writeData()
+        }
+    }
 
+    /**
+     * Finds the placeholder string in the ISO byte array and replaces it
+     * with the real raw DE55 bytes (which already contain the LLL prefix).
+     */
+    private fun spliceDE55(isoBytes: ByteArray, de55RawBytes: ByteArray, placeholder: String): ByteArray {
+        val placeholderBytes = placeholder.toByteArray(Charsets.US_ASCII)
+
+        // Find placeholder position — search for LLL prefix of placeholder length + placeholder bytes
+        // LLLVAR writes: 3-digit length ASCII + value bytes
+        val lllOfPlaceholder = "%03d".format(placeholderBytes.size).toByteArray(Charsets.US_ASCII)
+        val searchPattern = lllOfPlaceholder + placeholderBytes
+
+        val idx = findPattern(isoBytes, searchPattern)
+        if (idx == -1) {
+            Log.e("DE55", "Placeholder not found in ISO bytes! Returning unmodified.")
+            return isoBytes
+        }
+
+        Log.d("DE55", "Placeholder found at index: $idx, replacing ${searchPattern.size} bytes with ${de55RawBytes.size} bytes")
+
+        // Replace: everything before + de55RawBytes + everything after placeholder
+        val result = ByteArrayOutputStream()
+        result.write(isoBytes, 0, idx)                          // before DE55
+        result.write(de55RawBytes)                              // real DE55 (LLL prefix already included)
+        result.write(isoBytes, idx + searchPattern.size,        // after DE55
+            isoBytes.size - idx - searchPattern.size)
+        return result.toByteArray()
+    }
+
+    /**
+     * Returns the start index of [pattern] inside [data], or -1 if not found.
+     */
+    private fun findPattern(data: ByteArray, pattern: ByteArray): Int {
+        outer@ for (i in 0..data.size - pattern.size) {
+            for (j in pattern.indices) {
+                if (data[i + j] != pattern[j]) continue@outer
+            }
+            return i
+        }
+        return -1
     }
 
 
