@@ -40,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -173,30 +174,59 @@ class ManualCardViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {  // ← IO thread for network call
             try {
-                Log.d("AuthTransaction","Going For Authenticate the transaction")
-                CustomDialogBuilder.composeProgressDialog(true)
-                apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
-                    IApiServiceResponseListener {
+                Log.d("AuthTransaction", "Going For Authenticate the transaction")
 
-                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        CustomDialogBuilder.composeProgressDialog(false)
-                        sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
-                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-                    }
+                // Show progress on Main thread
+                withContext(Dispatchers.Main) {
+                    CustomDialogBuilder.composeProgressDialog(true)
+                }
 
-                    override fun onApiServiceError(error: ApiServiceError) {
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-                    }
-                    override  fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(R.string.default_alert_title_error),message = apiServiceTimeout.message)
-                    }
+                apiServiceRepository.apiServiceRequestOnlineAuth(
+                    paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(
+                        sharedViewModel.objRootAppPaymentDetail
+                    ),
+                    object : IApiServiceResponseListener {
 
-                })
+                        override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
+                            viewModelScope.launch(Dispatchers.Main) {  // ← navigate on Main
+                                CustomDialogBuilder.composeProgressDialog(false)
+                                sharedViewModel.objRootAppPaymentDetail.hostResMessage =
+                                    BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.txnStatus =
+                                    if (response.txnStatus == TxnStatus.APPROVED.toString())
+                                        TxnStatus.APPROVED
+                                    else
+                                        TxnStatus.DECLINED
+                                navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                            }
+                        }
+
+                        override fun onApiServiceError(error: ApiServiceError) {
+                            viewModelScope.launch(Dispatchers.Main) {  // ← navigate on Main
+                                CustomDialogBuilder.composeProgressDialog(false)
+                                Log.e("AuthTransaction", "API Error: ${error}")
+                                navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                            }
+                        }
+
+                        override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
+                            viewModelScope.launch(Dispatchers.Main) {  // ← dialog on Main
+                                CustomDialogBuilder.composeProgressDialog(false)
+                                CustomDialogBuilder.composeAlertDialog(
+                                    title = navHostController.context.resources?.getString(R.string.default_alert_title_error),
+                                    message = apiServiceTimeout.message
+                                )
+                            }
+                        }
+                    }
+                )
             } catch (e: Exception) {
-
+                Log.e("AuthTransaction", "Exception: ${e.message}", e)  // ← you had empty catch!
+                withContext(Dispatchers.Main) {
+                    CustomDialogBuilder.composeProgressDialog(false)
+                }
             }
         }
     }
