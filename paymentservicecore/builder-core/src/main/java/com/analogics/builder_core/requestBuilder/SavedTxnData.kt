@@ -16,6 +16,7 @@ data class SavedTxnData(
     val merchantName: String? = null,      // DE043
     val merchantBank: String? = null,      // DE048
     val currencyCode: String? = null,      // DE049
+    val emvData: String? = null,      // DE049
     val pan: String? = null,               // DE002 (masked preferred)
     val track2Data: String? = null,        // DE035
     val entryMode: String? = null,         // DE022

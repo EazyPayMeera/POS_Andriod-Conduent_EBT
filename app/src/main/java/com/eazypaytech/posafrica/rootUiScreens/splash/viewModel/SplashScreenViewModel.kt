@@ -30,12 +30,10 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
             val tmsConfig = TmsConfigParser.loadFromAssets(context)
             sharedViewModel.objPosConfig =
                 tmsConfig ?: apiServiceRepository.getPosConfig()
-
             sharedViewModel.objPosConfig?.saveToPrefs()
-
             Log.d("TMS_CHECK", "Config Loaded: ${sharedViewModel.objPosConfig}")
             val config = sharedViewModel.objPosConfig
-
+            Log.d("TMS_CHECK", "isActivationDone: ${config?.isActivationDone}")
             NetworkConstants.updateHost(
                 baseUrl = config?.baseUrl,
                 port = config?.port

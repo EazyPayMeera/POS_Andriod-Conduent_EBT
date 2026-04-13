@@ -144,6 +144,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                             sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
+                                            updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
+                                                response.paymentServiceTxnDetails?.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
+                                            )
                                         } catch (e: Exception) {
                                             sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
                                         }

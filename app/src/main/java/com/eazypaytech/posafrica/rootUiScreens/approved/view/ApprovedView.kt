@@ -70,7 +70,10 @@ fun ApprovedView(navHostController: NavHostController) {
 
     sharedViewModel.objRootAppPaymentDetail.snapBeginBal = snapBegin
     sharedViewModel.objRootAppPaymentDetail.cashBeginBal = cashBegin
-
+    Log.d(
+        "BALANCE",
+        "Snap Begin = ${sharedViewModel.objRootAppPaymentDetail.snapBeginBal}, Cash Begin = ${sharedViewModel.objRootAppPaymentDetail.cashBeginBal}"
+    )
     Column {
         CommonTopAppBar(
             onBackButtonClick = { },

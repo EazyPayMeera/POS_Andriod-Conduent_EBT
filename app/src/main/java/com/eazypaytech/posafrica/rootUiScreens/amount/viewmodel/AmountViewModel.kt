@@ -221,6 +221,23 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
                     sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.originalDateTime
                     sharedViewModel.objRootAppPaymentDetail.hostAuthCode = it.hostAuthCode
+                    sharedViewModel.objRootAppPaymentDetail.emvData = it.emvData
+                    Log.d("TXN_DETAILS", """
+    ProcessingCode   = ${sharedViewModel.objRootAppPaymentDetail.processingCode}
+    RRN              = ${sharedViewModel.objRootAppPaymentDetail.rrn}
+    LocalTime        = ${sharedViewModel.objRootAppPaymentDetail.localTime}
+    LocalDate        = ${sharedViewModel.objRootAppPaymentDetail.localDate}
+    DateTime         = ${sharedViewModel.objRootAppPaymentDetail.dateTime}
+    SettlementDate   = ${sharedViewModel.objRootAppPaymentDetail.settlementDate}
+    POSConditionCode = ${sharedViewModel.objRootAppPaymentDetail.posConditionCode}
+    STAN             = ${sharedViewModel.objRootAppPaymentDetail.stan}
+    POSEntryMode     = ${sharedViewModel.objRootAppPaymentDetail.posEntryMode}
+    OriginalTxnType  = ${sharedViewModel.objRootAppPaymentDetail.originalTxnType}
+    CurrencyCode     = ${sharedViewModel.objRootAppPaymentDetail.currencyCode}
+    OriginalDateTime = ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}
+    HostAuthCode     = ${sharedViewModel.objRootAppPaymentDetail.hostAuthCode}
+    EMV Data         = ${sharedViewModel.objRootAppPaymentDetail.emvData}
+""".trimIndent())
                     sharedViewModel.objRootAppPaymentDetail.originalCashback =
                         it.cashback.toDecimalFormat()
                     sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =

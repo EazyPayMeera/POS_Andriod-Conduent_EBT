@@ -20,6 +20,7 @@ import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
 import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
 import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
+import com.eazypaytech.paymentservicecore.models.EBTBalance
 import com.eazypaytech.paymentservicecore.models.TxnStatus
 import com.eazypaytech.paymentservicecore.models.TxnType
 import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
@@ -194,6 +195,20 @@ class ManualCardViewModel @Inject constructor(
                                 CustomDialogBuilder.composeProgressDialog(false)
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage =
                                     BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                val rawAdditionalAmt = response.additionalAmt
+
+                                if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
+                                    try {
+                                        val balance = parseEBTBalances(rawAdditionalAmt)
+                                        sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
+                                        sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
+                                        sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
+                                    } catch (e: Exception) {
+                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                    }
+                                } else {
+                                    sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                }
                                 sharedViewModel.objRootAppPaymentDetail.txnStatus =
                                     if (response.txnStatus == TxnStatus.APPROVED.toString())
                                         TxnStatus.APPROVED
@@ -229,5 +244,25 @@ class ManualCardViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun parseEBTBalances(hexString: String): EBTBalance {
+        val bytes = hexString.chunked(2).map { it.toInt(16) }
+
+        fun extractBalance(startIndex: Int): Double {
+            val bcdBytes = bytes.subList(startIndex + 4, startIndex + 10)
+            val digits = bcdBytes.joinToString("") { byte ->
+                val high = (byte shr 4) and 0x0F
+                val low  = byte and 0x0F
+                "$high$low"
+            }
+
+            return digits.toLong() / 100.0
+        }
+
+        val cashBalance = extractBalance(0)
+        val snapBalance = extractBalance(10)
+
+        return EBTBalance(snap = snapBalance, cash = cashBalance)
     }
 }

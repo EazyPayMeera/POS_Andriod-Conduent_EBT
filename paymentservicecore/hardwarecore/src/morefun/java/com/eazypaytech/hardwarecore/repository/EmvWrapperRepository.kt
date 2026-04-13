@@ -506,7 +506,6 @@ class EmvWrapperRepository @Inject constructor(
                             } else {
                                 Log.d("PIN", "✅ PIN block received successfully")
                             }
-                            //onResult(pinBlock)
                             onResult(pinBlock)
                         }
 

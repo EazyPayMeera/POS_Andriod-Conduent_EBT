@@ -59,7 +59,7 @@
     "rdrCtlsTransLimitNoODCVM": "999999999999",
     "defaultUDOL": "9F6A04",
     "cardDataInputCapability": "60",
-    "cvmCapabilityCVMRequired": "E0",
+    "cvmCapabilityCVMRequired": "40",
     "cvmCapabilityNoCVMRequired": "08",
     "magCVMCapabilityCVMRequired" : "10",
     "magCVMCapabilityNoCVMRequired" : "00",

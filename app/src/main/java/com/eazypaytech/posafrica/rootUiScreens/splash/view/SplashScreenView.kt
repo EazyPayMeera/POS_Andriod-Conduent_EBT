@@ -3,6 +3,7 @@
 package com.eazypaytech.posafrica.rootUiScreens.splash.view
 
 
+import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -48,6 +49,8 @@ fun SplashScreenView(navController: NavController, viewModel: SplashScreenViewMo
     AppLogger.setLogLevel(BuildConfig.LOG_LEVEL)
     val scale = remember { Animatable(0f) }
     var sharedViewModel = localSharedViewModel.current
+
+    Log.d("POS_CONFIG", "objPosConfig: ${sharedViewModel.objPosConfig}")
 
     LaunchedEffect(Unit) {
         scale.animateTo(

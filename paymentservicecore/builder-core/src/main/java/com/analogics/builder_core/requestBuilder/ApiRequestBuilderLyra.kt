@@ -560,7 +560,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val lastTxn = IsoMessageBuilder.getLastTxn()
         val posConditionCode = getNationalPosConditionCode()
         val npsGeoData = getNPSGeographicData()
-        val iccData = builderServiceTxnDetails?.emvData
+        val iccData = lastTxn?.emvData
         var de55RawBytes: ByteArray? = null
         val isChipCard = builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
                 builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()
@@ -595,12 +595,16 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_STAN,builderServiceTxnDetails?.stan?.padStart(6,'0') , IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, builderServiceTxnDetails?.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_EXPIRY_DATE, "4912", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, builderServiceTxnDetails?.settlementDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)
+        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString()) {
+            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)      // Original RRN
-        iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.hostAuthCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
+        //iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.hostAuthCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_RESPONSE_CODE, BuilderConstants.ISO_RESP_CODE_APPROVED, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RESPONSE_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
@@ -763,7 +767,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_CAP_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, 4)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)
-        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString()) {
+        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() || builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
             iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
         }
 
@@ -825,6 +829,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             merchantBank = builderServiceTxnDetails?.merchantBankName,
             merchantType = builderServiceTxnDetails?.merchantType,
             currencyCode = builderServiceTxnDetails?.currencyCode,
+            emvData = builderServiceTxnDetails?.emvData,
             pan = maskedPan,
             track2Data = encryptedTrack2Data,
             entryMode = builderServiceTxnDetails?.posEntryMode,
