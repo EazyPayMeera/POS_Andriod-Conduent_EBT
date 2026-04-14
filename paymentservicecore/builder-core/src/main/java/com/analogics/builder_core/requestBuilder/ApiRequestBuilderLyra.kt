@@ -354,7 +354,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     fun getNPSGeographicData(): String {
         val stateCode = builderServiceTxnDetails.stateCode?.padStart(2, '0') ?: "00"
         val countyCode = builderServiceTxnDetails.countyCode?.padStart(3, '0') ?: "000"
-        val postalServiceCode = builderServiceTxnDetails.postalServiceCode?.padStart(5, '0') ?: "00000"
+        val postalServiceCode = builderServiceTxnDetails.postalServiceCode?.padStart(9, '0') ?: "00000"
         val countryCode = builderServiceTxnDetails.currencyCode?.padStart(3, '0') ?: "000"
         val npsGeoData = stateCode + countyCode + postalServiceCode + countryCode
         return npsGeoData
@@ -497,6 +497,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val stan = getSTAN()
         val iso = IsoMessage()
         val dateTime = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
+
         val maskedPan = getMaskedPAN()
         var localTime = BuilderUtils.getLocalTime()
         val localDate = BuilderUtils.getLocalDate()
@@ -553,10 +554,11 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
-        Log.d("VOID_REQUEST", "builderServiceTxnDetails: ${this.builderServiceTxnDetails}")
+
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
+        Log.d("VOID_REQUEST", "builderServiceTxnDetails: ${this.builderServiceTxnDetails}")
         val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
-        val dateTime = BuilderUtils.formatDateTimeToISO8583(builderServiceTxnDetails?.dateTime.toString())
+        val dateTime = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
         val lastTxn = IsoMessageBuilder.getLastTxn()
         val posConditionCode = getNationalPosConditionCode()
         val npsGeoData = getNPSGeographicData()
@@ -591,20 +593,20 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_PAN_NO, builderServiceTxnDetails?.cardMaskedPan, IsoType.LLVAR, BuilderConstants.ISO_FIELD_PAN_NO_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_PROCESSING_CODE, builderServiceTxnDetails?.processingCode?.padStart(6,'0'), IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PROCESSING_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_AMOUNT, amount, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AMOUNT_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, dateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_TRANSMISSION_DATE, builderServiceTxnDetails?.originalDateTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_TRANSMISSION_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_STAN,builderServiceTxnDetails?.stan?.padStart(6,'0') , IsoType.NUMERIC, BuilderConstants.ISO_FIELD_STAN_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_TIME, builderServiceTxnDetails?.localTime, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_TIME_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_LOC_DATE, builderServiceTxnDetails?.localDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_EXPIRY_DATE, "4912", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
+        //iso.setValue(BuilderConstants.ISO_FIELD_EXPIRY_DATE, "4912", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_SET_DATE, builderServiceTxnDetails?.settlementDate, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_LOC_DATE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)
-        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString()) {
+        if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() || builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
             iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
         }
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, builderServiceTxnDetails?.rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)      // Original RRN
-        //iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.hostAuthCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.hostAuthCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_RESPONSE_CODE, BuilderConstants.ISO_RESP_CODE_APPROVED, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RESPONSE_CODE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)
@@ -614,7 +616,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
             BuilderConstants.ISO_FIELD_MERCHANT_NAME_LENGTH
         )
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
-        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.ALPHA, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
         if (isChipCard && de55RawBytes != null) {
             iso.setValue(
                 BuilderConstants.ISO_FIELD_ICC_DATA,
@@ -629,7 +631,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         val originalData =
             "0200" +
                     builderServiceTxnDetails?.stan?.padStart(6,'0') +
-                    dateTime +
+                    builderServiceTxnDetails?.originalDateTime +
                     builderServiceTxnDetails?.procId?.padStart(11, '0') +
                     "00000000000"   // forwarding ID if not used
         iso.setValue(BuilderConstants.ISO_FIELD_ORIGINAL_DATA, originalData, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ORIGINAL_DATA_LENGTH)
@@ -719,6 +721,10 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
         builderServiceTxnDetails?.stan = getSTAN().toString()
         builderServiceTxnDetails?.dateTime = BuilderUtils.getCurrentDateTime(BuilderConstants.DEFAULT_ISO8583_TIME_FORMAT)
+        Log.d(
+            "DATE_TIME",
+            "dateTime: ${builderServiceTxnDetails?.dateTime ?: "NULL"}"
+        )
         builderServiceTxnDetails?.localTime = BuilderUtils.getLocalTime()
         builderServiceTxnDetails?.localDate = BuilderUtils.getLocalDate()
         builderServiceTxnDetails?.currencyCode = getCurrencyCode()
@@ -962,6 +968,33 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
                 posCondition   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE)
                 privateData    = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA)
                 hostResMessage  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
+
+                Log.d("ISO_RESPONSE", "cardPan        = $cardPan")
+                Log.d("ISO_RESPONSE", "processingCode = $processingCode")
+                Log.d("ISO_RESPONSE", "authAmount     = $authAmount")
+                Log.d("ISO_RESPONSE", "dateTime       = $dateTime")
+                Log.d("ISO_RESPONSE", "stan           = $stan")
+                Log.d("ISO_RESPONSE", "localTime      = $localTime")
+                Log.d("ISO_RESPONSE", "localDate      = $localDate")
+                Log.d("ISO_RESPONSE", "expiryDate     = $expiryDate")
+                Log.d("ISO_RESPONSE", "settlementDate = $settlementDate")
+                Log.d("ISO_RESPONSE", "captureDate    = $captureDate")
+                Log.d("ISO_RESPONSE", "merchantType   = $merchantType")
+                Log.d("ISO_RESPONSE", "posEntryMode   = $posEntryMode")
+                Log.d("ISO_RESPONSE", "acquirerId     = $acquirerId")
+                Log.d("ISO_RESPONSE", "track2Data     = $track2Data")
+                Log.d("ISO_RESPONSE", "rrn            = $rrn")
+                Log.d("ISO_RESPONSE", "hostAuthCode   = $hostAuthCode")
+                Log.d("ISO_RESPONSE", "hostRespCode   = $hostRespCode")
+                Log.d("ISO_RESPONSE", "terminalId     = $terminalId")
+                Log.d("ISO_RESPONSE", "merchantId     = $merchantId")
+                Log.d("ISO_RESPONSE", "merchantName   = $merchantName")
+                Log.d("ISO_RESPONSE", "merchantBank   = $merchantBank")
+                Log.d("ISO_RESPONSE", "currencyCode   = $currencyCode")
+                Log.d("ISO_RESPONSE", "additionalAmt  = $additionalAmt")
+                Log.d("ISO_RESPONSE", "posCondition   = $posCondition")
+                Log.d("ISO_RESPONSE", "privateData    = $privateData")
+                Log.d("ISO_RESPONSE", "hostResMessage = $hostResMessage")
             }
 
         } catch (e: Exception) {
@@ -996,7 +1029,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         // ✅ Set values
         txn.posEntryMode = builderServiceTxnDetails.posEntryMode
         txn.stan = builderServiceTxnDetails.stan
-        //txn.originalDateTime = builderServiceTxnDetails.dateTime
+        txn.originalDateTime = builderServiceTxnDetails.dateTime
         txn.rrn = builderServiceTxnDetails.rrn
         txn.processingCode = builderServiceTxnDetails.processingCode
         txn.localTime = builderServiceTxnDetails.localTime

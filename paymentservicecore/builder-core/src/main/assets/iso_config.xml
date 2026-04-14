@@ -50,7 +50,7 @@
         <field num="49" type="NUMERIC" length="3"/>
         <field num="54" type="LLLVAR" length="120"/>
         <field num="55" type="LLLBIN"/>               <!-- ADD: EMV Data -->
-        <field num="58" type="LLLVAR" length="11"/>
+        <field num="58" type="LLLVAR"/>
         <field num="111" type="LLLVAR" length="255"/>
         <field num="125" type="LLLVAR"/>
         <field num="127" type="LLLVAR" length="100"/>

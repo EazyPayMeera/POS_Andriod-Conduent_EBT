@@ -18,6 +18,7 @@ object AppConstants {
     const val DEFAULT_CURRENCY_CODE = "0840"    /* INR */
     const val DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
     const val UNIQUE_ID_DATE_TIME_FORMAT = "yyMMddHHmmss"
+    const val DEFAULT_ISO8583_TIME_FORMAT = "MMddHHmmss"
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L
     const val MIN_DIALOG_SHOW_TIME_MS = 500L
