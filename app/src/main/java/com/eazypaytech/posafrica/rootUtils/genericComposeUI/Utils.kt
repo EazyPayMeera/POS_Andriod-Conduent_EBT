@@ -43,6 +43,7 @@ import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
@@ -156,6 +157,47 @@ fun convertDateTime(inputDateTime: String?=null, inputFormat : String?=AppConsta
     } catch (e: Exception) {
         e.printStackTrace()
         ""
+    }
+}
+
+fun convertReceiptDateTime(
+    inputDateTime: String? = null,
+    inputFormat: String? = AppConstants.DEFAULT_DATE_TIME_FORMAT,
+    outputFormat: String? = null
+): String {
+
+    if (inputDateTime.isNullOrBlank() || outputFormat.isNullOrBlank()) {
+        return "-"
+    }
+
+    return try {
+        val calendar = Calendar.getInstance()
+
+        val idf = SimpleDateFormat("MMddHHmmss", Locale.getDefault())
+        val parsedDate = idf.parse(inputDateTime)
+
+        if (parsedDate != null) {
+            val tempCal = Calendar.getInstance()
+            tempCal.time = parsedDate
+
+            // 🔥 inject current year
+            tempCal.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
+
+            val odf = SimpleDateFormat(outputFormat, Locale.getDefault())
+            var result = odf.format(tempCal.time)
+
+            if (outputFormat.contains("a")) {
+                result = result.lowercase()
+            }
+
+            result
+        } else {
+            "-"
+        }
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        inputDateTime
     }
 }
 

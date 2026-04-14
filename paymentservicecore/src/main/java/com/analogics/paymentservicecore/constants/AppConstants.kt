@@ -77,6 +77,9 @@ object AppConstants {
     const val DEFAULT_RECEIPT_DATE_FORMAT = "yy/MM/dd"
     const val DEFAULT_RECEIPT_TIME_FORMAT = "HH:mm:ss"
 
+    const val RECEIPT_DATE_FORMAT = "MM/dd/yy"
+    const val RECEIPT_TIME_FORMAT = "hh:mm:ssa"
+
     const val DEFAULT_TIP_PERCENT_1 = 5
     const val DEFAULT_TIP_PERCENT_2 = 10
     const val DEFAULT_TIP_PERCENT_3 = 15
