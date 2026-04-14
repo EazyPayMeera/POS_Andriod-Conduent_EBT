@@ -179,6 +179,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
     ) {
 
         val lastTxn = dbRepository.fetchLastTransactionByTxnType()
+        Log.d("TXN_DEBUG", "lastTxn id = ${lastTxn?.id}")
         lastTxn?.let {
 
             if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {

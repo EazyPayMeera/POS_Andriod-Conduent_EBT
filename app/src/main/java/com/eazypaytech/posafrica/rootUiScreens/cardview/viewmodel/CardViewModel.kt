@@ -88,16 +88,64 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?,originalDateTime:String,AuthCode:String,posCondition:String)
-    {
+    fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
+
+        val txnId = sharedViewModel.objRootAppPaymentDetail.id
+
+        Log.d("UPDATE_TXN", "===== updateTransResult START =====")
+        Log.d("UPDATE_TXN", "TxnId: $txnId")
+        Log.d("UPDATE_TXN", "txnStatus: $txnStatus")
+        Log.d("UPDATE_TXN", "originalDateTime: $originalDateTime")
+        Log.d("UPDATE_TXN", "AuthCode: $AuthCode")
+        Log.d("UPDATE_TXN", "posCondition: $posCondition")
+
+        // Update ViewModel first
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
+
         viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
-                it.txnStatus = txnStatus?.toString()?:""
-                it.originalDateTime = originalDateTime
-                it.hostAuthCode = AuthCode
-                it.posConditionCode = posCondition
-                dbRepository.updateTxn(it)
+            try {
+                Log.d("UPDATE_TXN", "Fetching transaction from DB...")
+
+                val txn = dbRepository.fetchTxnById(txnId)
+
+                if (txn == null) {
+                    Log.e("UPDATE_TXN", "Transaction NOT FOUND for ID: $txnId")
+                    return@launch
+                }
+
+                Log.d("UPDATE_TXN", "Transaction fetched successfully")
+                Log.d("UPDATE_TXN", "Old txnStatus: ${txn.txnStatus}")
+                Log.d("UPDATE_TXN", "Old originalDateTime: ${txn.originalDateTime}")
+                Log.d("UPDATE_TXN", "Old hostAuthCode: ${txn.hostAuthCode}")
+                Log.d("UPDATE_TXN", "Old posConditionCode: ${txn.posConditionCode}")
+
+                // Apply updates
+                txn.txnStatus = txnStatus?.toString() ?: ""
+                txn.originalDateTime = originalDateTime
+                txn.hostAuthCode = AuthCode
+                txn.posConditionCode = posCondition
+
+                Log.d("UPDATE_TXN", "Updated txnStatus: ${txn.txnStatus}")
+                Log.d("UPDATE_TXN", "Updated originalDateTime: ${txn.originalDateTime}")
+                Log.d("UPDATE_TXN", "Updated hostAuthCode: ${txn.hostAuthCode}")
+                Log.d("UPDATE_TXN", "Updated posConditionCode: ${txn.posConditionCode}")
+
+                Log.d("UPDATE_TXN", "Updating transaction in DB...")
+
+                dbRepository.updateTxn(txn)
+
+                Log.d("UPDATE_TXN", "Update SUCCESS for TxnId: $txnId")
+
+            } catch (e: Exception) {
+                Log.e("UPDATE_TXN", "Error updating transaction", e)
+            } finally {
+                Log.d("UPDATE_TXN", "===== updateTransResult END =====")
             }
         }
     }

@@ -28,17 +28,19 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
         viewModelScope.launch {
             //val tmsConfig = TmsConfigParser.loadConfig(navController.context)
             val tmsConfig = TmsConfigParser.loadFromAssets(context)
-            sharedViewModel.objPosConfig =
-                tmsConfig ?: apiServiceRepository.getPosConfig()
-            sharedViewModel.objPosConfig?.saveToPrefs()
-            Log.d("TMS_CHECK", "Config Loaded: ${sharedViewModel.objPosConfig}")
-            val config = sharedViewModel.objPosConfig
-            Log.d("TMS_CHECK", "isActivationDone: ${config?.isActivationDone}")
+            val savedConfig = apiServiceRepository.getPosConfig()
+
+            val finalConfig = tmsConfig ?: savedConfig
+            finalConfig.isActivationDone = savedConfig.isActivationDone
+            finalConfig.isLoggedIn = savedConfig.isLoggedIn
+            finalConfig.isOnboardingComplete = savedConfig.isOnboardingComplete
+            sharedViewModel.objPosConfig = finalConfig
+            finalConfig.saveToPrefs()
+
             NetworkConstants.updateHost(
-                baseUrl = config?.baseUrl,
-                port = config?.port
+                baseUrl = finalConfig.baseUrl,
+                port = finalConfig.port
             )
-            //sharedViewModel.objPosConfig = apiServiceRepository.getPosConfig()
 
             /* Apply UI Language */
             setUiLanguage(navController.context,sharedViewModel.objPosConfig?.language?.toUiLanguage()?: UiLanguage.ENGLISH)
