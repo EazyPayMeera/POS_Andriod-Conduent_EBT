@@ -34,6 +34,14 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
             finalConfig.isActivationDone = savedConfig.isActivationDone
             finalConfig.isLoggedIn = savedConfig.isLoggedIn
             finalConfig.isOnboardingComplete = savedConfig.isOnboardingComplete
+            finalConfig.header1 = savedConfig.header1
+            finalConfig.header2 = savedConfig.header2
+            finalConfig.header3 = savedConfig.header3
+            finalConfig.header4 = savedConfig.header4
+            finalConfig.footer1 = savedConfig.footer1
+            finalConfig.footer2 = savedConfig.footer2
+            finalConfig.footer3 = savedConfig.footer3
+            finalConfig.footer4 = savedConfig.footer4
             sharedViewModel.objPosConfig = finalConfig
             finalConfig.saveToPrefs()
 
