@@ -144,9 +144,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                             sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
-                                            updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
-                                                response.paymentServiceTxnDetails?.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
-                                            )
+                                            updateBalance(sharedViewModel)
                                         } catch (e: Exception) {
                                             sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
                                         }
@@ -200,6 +198,17 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         }
                     }
                 })
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateBalance(sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
+                txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+                txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+                dbRepository.updateTxn(txn)
+            }
         }
     }
 

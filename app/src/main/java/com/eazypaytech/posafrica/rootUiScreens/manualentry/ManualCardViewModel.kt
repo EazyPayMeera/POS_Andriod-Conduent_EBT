@@ -193,8 +193,17 @@ class ManualCardViewModel @Inject constructor(
                         override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
                             viewModelScope.launch(Dispatchers.Main) {  // ← navigate on Main
                                 CustomDialogBuilder.composeProgressDialog(false)
-                                sharedViewModel.objRootAppPaymentDetail.hostResMessage =
-                                    BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
+                                sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate
+                                sharedViewModel.objRootAppPaymentDetail.expiryDate = response.expiryDate
+                                sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
+                                sharedViewModel.objRootAppPaymentDetail.currencyCode = response.currencyCode
+                                sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.dateTime
+                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
+                                sharedViewModel.objRootAppPaymentDetail.posCondition = response.posCondition
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode),
+                                    response.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString())
                                 val rawAdditionalAmt = response.additionalAmt
 
                                 if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
@@ -203,6 +212,7 @@ class ManualCardViewModel @Inject constructor(
                                         sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
                                         sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
                                         sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
+                                        updateBalance(sharedViewModel)
                                     } catch (e: Exception) {
                                         sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
                                     }
@@ -246,6 +256,21 @@ class ManualCardViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?,originalDateTime:String,AuthCode:String,posCondition:String)
+    {
+        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
+        viewModelScope.launch {
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
+                it.txnStatus = txnStatus?.toString()?:""
+                it.originalDateTime = originalDateTime
+                it.hostAuthCode = AuthCode
+                it.posConditionCode = posCondition
+                dbRepository.updateTxn(it)
+            }
+        }
+    }
+
     fun parseEBTBalances(hexString: String): EBTBalance {
         val bytes = hexString.chunked(2).map { it.toInt(16) }
 
@@ -264,5 +289,16 @@ class ManualCardViewModel @Inject constructor(
         val snapBalance = extractBalance(10)
 
         return EBTBalance(snap = snapBalance, cash = cashBalance)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateBalance(sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
+                txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+                txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+                dbRepository.updateTxn(txn)
+            }
+        }
     }
 }
