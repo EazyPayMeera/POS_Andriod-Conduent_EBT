@@ -206,8 +206,8 @@ object PrinterUtils {
                 )
 
                 /* Add Line */
-                repo.addText(context.getString(R.string.receipt_gray_line),
-                    format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+                repo.addText(context.getString(R.string.summary_dot_line),
+                    format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)
 
 
                 repo.addText(context.getString(R.string.receipt_snap_end_balance)+ " " +
@@ -219,8 +219,8 @@ object PrinterUtils {
 
             /* CASH */
             if (isCashPurchase || isCashback) {
-
-                data.cashBeginBal?.let {
+                var cshbeginBal = data.cashEndBalance?.plus(data.txnAmount!!)
+                cshbeginBal?.let {
                     repo.addText(context.getString(R.string.receipt_cash_begin_balance)+ " " + it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
                 }
 
@@ -228,7 +228,10 @@ object PrinterUtils {
                     context.getString(R.string.receipt_cash_purchase) + " " +
                     "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                 )
-
+                if(isCashPurchase)
+                    repo.addText(context.getString(R.string.summary_dot_line),
+                        format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))
+                
                 if (isCashback) {
                     repo.addText(context.getString(R.string.receipt_cash_back)+ " " + data.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
@@ -238,8 +241,8 @@ object PrinterUtils {
                             .toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                     )*/
                     /* Add Line */
-                    repo.addText(context.getString(R.string.receipt_gray_line),
-                        format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+                    repo.addText(context.getString(R.string.summary_dot_line),
+                        format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))
                 }
 
                 repo.addText(context.getString(R.string.receipt_cash_end_balance)+ " " + data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
@@ -260,8 +263,8 @@ object PrinterUtils {
                         data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
             /* Add Line */
-            repo.addText(context.getString(R.string.receipt_gray_line),
-                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+            repo.addText(context.getString(R.string.summary_dot_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)
 
             repo.addText(
                 context.getString(R.string.receipt_cash_end_balance) + " " +
