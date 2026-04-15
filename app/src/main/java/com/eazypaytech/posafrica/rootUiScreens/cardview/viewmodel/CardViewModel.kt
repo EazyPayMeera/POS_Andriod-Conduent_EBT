@@ -191,7 +191,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                             val balance = parseEBTBalances(rawAdditionalAmt)
                                             sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
                                             sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
-                                            sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
                                             updateBalance(sharedViewModel)
                                         } catch (e: Exception) {
                                             sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
@@ -261,23 +260,37 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     }
 
     fun parseEBTBalances(hexString: String): EBTBalance {
-        val bytes = hexString.chunked(2).map { it.toInt(16) }
 
-        fun extractBalance(startIndex: Int): Double {
-            val bcdBytes = bytes.subList(startIndex + 4, startIndex + 10)
+        val blocks = hexString.chunked(20)
+
+        var snapBalance = 0.0
+        var cashBalance = 0.0
+
+        blocks.forEach { block ->
+
+            val bytes = block.chunked(2).map { it.toInt(16) }
+
+            val accountType = bytes[0] // first byte
+
+            val bcdBytes = bytes.subList(4, 10)
             val digits = bcdBytes.joinToString("") { byte ->
                 val high = (byte shr 4) and 0x0F
                 val low  = byte and 0x0F
                 "$high$low"
             }
 
-            return digits.toLong() / 100.0
+            val amount = digits.toLong() / 100.0
+
+            when (accountType) {
+                0x96 -> cashBalance = amount   // CASH
+                0x98 -> snapBalance = amount   // SNAP
+            }
         }
 
-        val cashBalance = extractBalance(0)
-        val snapBalance = extractBalance(10)
-
-        return EBTBalance(snap = snapBalance, cash = cashBalance)
+        return EBTBalance(
+            snap = snapBalance,
+            cash = cashBalance
+        )
     }
 
     fun checkNetwork(context: Context)
