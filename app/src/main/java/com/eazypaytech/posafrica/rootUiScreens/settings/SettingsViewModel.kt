@@ -80,7 +80,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
 
 
-    /*fun onSaveMerchantConfig(
+    fun onSaveMerchantConfig(
         navHostController: NavHostController,
         sharedViewModel: SharedViewModel,
         merchantNameLocation: String,
@@ -109,6 +109,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
             this.postalServiceCode = postalServiceCode
         }?.saveToPrefs()
         navHostController.popBackStack()
-    }*/
+    }
 
 }

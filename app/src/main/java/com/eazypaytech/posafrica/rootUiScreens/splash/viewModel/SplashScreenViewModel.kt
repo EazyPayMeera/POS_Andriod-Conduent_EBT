@@ -42,6 +42,17 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
             finalConfig.footer2 = savedConfig.footer2
             finalConfig.footer3 = savedConfig.footer3
             finalConfig.footer4 = savedConfig.footer4
+            finalConfig.loginId = savedConfig.loginId
+            finalConfig.terminalId = savedConfig.terminalId ?: tmsConfig?.terminalId
+            finalConfig.merchantId = savedConfig.merchantId ?: tmsConfig?.merchantId
+            finalConfig.procId = savedConfig.procId ?: tmsConfig?.procId
+            finalConfig.merchantType = savedConfig.merchantType ?: tmsConfig?.merchantType
+            finalConfig.countyCode = savedConfig.countyCode ?: tmsConfig?.countyCode
+            finalConfig.fnsNumber = savedConfig.fnsNumber ?: tmsConfig?.fnsNumber
+            finalConfig.merchantNameLocation = savedConfig.merchantNameLocation ?: tmsConfig?.merchantNameLocation
+            finalConfig.merchantBankName = savedConfig.merchantBankName ?: tmsConfig?.merchantBankName
+            finalConfig.stateCode = savedConfig.stateCode ?: tmsConfig?.stateCode
+            finalConfig.postalServiceCode = savedConfig.postalServiceCode ?: tmsConfig?.postalServiceCode
             sharedViewModel.objPosConfig = finalConfig
             finalConfig.saveToPrefs()
 
