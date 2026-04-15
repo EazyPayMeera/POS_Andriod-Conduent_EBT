@@ -194,27 +194,56 @@ object PrinterUtils {
 
             /* SNAP */
             if (isSnapPurchase || isReturn) {
-                var beginBal = data.snapEndBalance?.plus(data.txnAmount!!)
-                beginBal.let {
-                    repo.addText(context.getString(R.string.receipt_snap_begin_balance) + " " +
-                        it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                if(isSnapPurchase) {
+                    var beginBal = data.snapEndBalance?.plus(data.txnAmount!!)
+                    beginBal.let {
+                        repo.addText(
+                            context.getString(R.string.receipt_snap_begin_balance) + " " +
+                                    it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                        )
+                    }
+                }else{
+                    var beginBal = data.snapEndBalance//?.plus(data.txnAmount!!)
+                    beginBal.let {
+                        repo.addText(
+                            context.getString(R.string.receipt_snap_begin_balance) + " " +
+                                    it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                        )
+                    }
                 }
 
-                repo.addText(
-                    context.getString(R.string.receipt_snap_purchase)+ " " +
-                    "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
-                )
+                if(isSnapPurchase) {
+                    repo.addText(
+                        context.getString(R.string.receipt_snap_purchase) + " " +
+                                "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                    )
+                }else{
+                    repo.addText(
+                        context.getString(R.string.receipt_snap_purchase) + " " +
+                                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                    )
+                }
 
                 /* Add Line */
                 repo.addText(context.getString(R.string.summary_dot_line),
                     format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)
 
-
-                repo.addText(context.getString(R.string.receipt_snap_end_balance)+ " " +
-                    data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
-
+                if(isSnapPurchase){
+                    repo.addText(
+                        context.getString(R.string.receipt_snap_end_balance) + " " +
+                                data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                    )
+                }else {
+                    var endBal = data.snapEndBalance?.plus(data.txnAmount!!)
+                    endBal.let {
+                        repo.addText(
+                            context.getString(R.string.receipt_snap_end_balance) + " " +
+                                    it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                        )
+                    }
+                }
                 repo.addText(context.getString(R.string.receipt_cash_balance)+ " " +
-                    data.cashBeginBal?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
             }
 
             /* CASH */
@@ -231,7 +260,7 @@ object PrinterUtils {
                 if(isCashPurchase)
                     repo.addText(context.getString(R.string.summary_dot_line),
                         format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))
-                
+
                 if (isCashback) {
                     repo.addText(context.getString(R.string.receipt_cash_back)+ " " + data.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
