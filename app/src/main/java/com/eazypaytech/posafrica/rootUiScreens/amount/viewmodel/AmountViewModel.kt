@@ -220,7 +220,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                     sharedViewModel.objRootAppPaymentDetail.posEntryMode = it.posEntryMode
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
                     sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
-                    sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.originalDateTime
+                    sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.dateTime
                     sharedViewModel.objRootAppPaymentDetail.hostAuthCode = it.hostAuthCode
                     sharedViewModel.objRootAppPaymentDetail.emvData = it.emvData
                     Log.d("TXN_DETAILS", """

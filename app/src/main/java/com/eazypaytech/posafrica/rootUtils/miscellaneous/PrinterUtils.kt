@@ -1,6 +1,7 @@
 package com.eazypaytech.posafrica.rootUtils.miscellaneous
 
 import android.content.Context
+import android.util.Log
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.paymentservicecore.listeners.responseListener.IPrinterServiceResponseListener
 import com.eazypaytech.paymentservicecore.model.emv.PrinterServiceResult
@@ -31,7 +32,7 @@ object PrinterUtils {
         data: ObjRootAppPaymentDetails,
         isCustomer: Boolean = false
     ) {
-
+        Log.d("PRINT_RECEIPT", "Receipt Data: $data")
         val repo = PrinterServiceRepository().init(context, object : IPrinterServiceResponseListener {
             override fun onPrinterServiceResponse(response: Any) {
                 when (response) {
@@ -203,7 +204,7 @@ object PrinterUtils {
                         )
                     }
                 }else{
-                    var beginBal = data.snapEndBalance//?.plus(data.txnAmount!!)
+                    var beginBal = data.snapEndBalance?.minus(data.txnAmount!!)
                     beginBal.let {
                         repo.addText(
                             context.getString(R.string.receipt_snap_begin_balance) + " " +
@@ -234,7 +235,7 @@ object PrinterUtils {
                                 data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                     )
                 }else {
-                    var endBal = data.snapEndBalance?.plus(data.txnAmount!!)
+                    var endBal = data.snapEndBalance
                     endBal.let {
                         repo.addText(
                             context.getString(R.string.receipt_snap_end_balance) + " " +

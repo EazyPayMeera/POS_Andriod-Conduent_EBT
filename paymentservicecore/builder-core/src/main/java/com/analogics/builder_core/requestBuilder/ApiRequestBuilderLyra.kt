@@ -1029,7 +1029,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         // ✅ Set values
         txn.posEntryMode = builderServiceTxnDetails.posEntryMode
         txn.stan = builderServiceTxnDetails.stan
-        txn.originalDateTime = builderServiceTxnDetails.dateTime
+        //txn.originalDateTime = builderServiceTxnDetails.dateTime
         txn.rrn = builderServiceTxnDetails.rrn
         txn.processingCode = builderServiceTxnDetails.processingCode
         txn.localTime = builderServiceTxnDetails.localTime

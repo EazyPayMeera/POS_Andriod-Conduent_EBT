@@ -179,10 +179,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 sharedViewModel.objRootAppPaymentDetail.rrn = response.paymentServiceTxnDetails?.rrn
                                 sharedViewModel.objRootAppPaymentDetail.currencyCode = response.paymentServiceTxnDetails?.currencyCode
                                 sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.paymentServiceTxnDetails?.dateTime
+                                Log.d(
+                                    "EBT",
+                                    "originalDateTime: ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}"
+                                )
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.posCondition = response.paymentServiceTxnDetails?.posCondition
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
-                                    response.paymentServiceTxnDetails?.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
+                                    sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
                                 ).let {
                                     val rawAdditionalAmt = response.paymentServiceTxnDetails?.additionalAmt
 

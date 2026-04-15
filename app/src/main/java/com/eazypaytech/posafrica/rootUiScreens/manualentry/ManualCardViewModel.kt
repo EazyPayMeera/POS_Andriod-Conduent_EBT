@@ -200,10 +200,14 @@ class ManualCardViewModel @Inject constructor(
                                 sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
                                 sharedViewModel.objRootAppPaymentDetail.currencyCode = response.currencyCode
                                 sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.dateTime
+                                Log.d(
+                                    "EBT",
+                                    "originalDateTime: ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}"
+                                )
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.posCondition = response.posCondition
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode),
-                                    response.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString())
+                                    sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString())
                                 val rawAdditionalAmt = response.additionalAmt
 
                                 if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
