@@ -375,7 +375,9 @@
     <string name="receipt_amount" translatable="false">Amount</string>
     <string name="receipt_do_not_accept_goods" translatable="false">DO NOT ACCEPT GOODS</string>
     <string name="receipt_accept_goods" translatable="false">ACCEPT GOODS</string>
-
+    <string name="receipt_cash_withdrawal" tools:ignore="MissingTranslation">Cash Withdrawal</string>
+    <string name="receipt_txntype_cash_withdrawal" translatable="false">CASH_WITHDRAWAL</string>
+    <string name="receipt_txntype_balance_inquiry_cash" translatable="false">BALANCE_ENQUIRY_CASH</string>
     <!-- Summary Report -->
     <string name="summary_report">SUMMARY REPORT</string>
     <string name="summary_dot_line">---------------</string>

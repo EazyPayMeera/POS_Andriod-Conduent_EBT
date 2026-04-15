@@ -496,6 +496,8 @@ fun getTxnTypeStringId(txnType: TxnType?): Int {
         TxnType.FOODSTAMP_RETURN -> R.string.ebt_foodstamp_return
         TxnType.E_VOUCHER -> R.string.ebt_e_voucher
         TxnType.CASH_PURCHASE -> R.string.ebt_cash_purchase
+        TxnType.CASH_WITHDRAWAL -> R.string.receipt_txntype_cash_withdrawal
+        TxnType.BALANCE_ENQUIRY_CASH -> R.string.receipt_txntype_balance_inquiry_cash
         else -> R.string.empty
     }
 }

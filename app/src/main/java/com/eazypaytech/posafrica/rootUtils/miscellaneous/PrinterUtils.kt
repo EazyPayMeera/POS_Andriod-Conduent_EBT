@@ -83,6 +83,8 @@ object PrinterUtils {
         val isCashback = txnTypeStr == context.getString(R.string.ebt_purchase_cashback)
         val isReturn = txnTypeStr == context.getString(R.string.ebt_foodstamp_return)
         val isBalanceInquiry = txnTypeStr == context.getString(R.string.ebt_bal_inquiry)
+        val isCashBalanceInquiry = txnTypeStr == context.getString(R.string.receipt_txntype_balance_inquiry_cash)
+        val isCashWithdrawal = txnTypeStr == context.getString(R.string.receipt_txntype_cash_withdrawal)
 
         val date = convertReceiptDateTime(data.dateTime, outputFormat = "MM/dd/yy")
         val time = convertReceiptDateTime(data.dateTime, outputFormat = "hh:mm:ssa")
@@ -132,6 +134,8 @@ object PrinterUtils {
             isCashback -> "EBT CASH BENEFIT PURCHASE W/ CASHBACK"
             isReturn -> "EBT SNAP BENEFIT RETURN"
             isBalanceInquiry -> "EBT BALANCE INQUIRY"
+            isCashBalanceInquiry -> "EBT BALANCE INQUIRY"
+            isCashWithdrawal -> "EBT CASH WITHDRAWAL"
             else -> txnTypeStr
         }
 
@@ -179,7 +183,7 @@ object PrinterUtils {
            🔹 BALANCE SECTION
            ========================= */
 
-        if (isBalanceInquiry) {
+        if (isBalanceInquiry || isCashBalanceInquiry) {
 
             repo.addText(context.getString(R.string.receipt_snap_balance)+ " " +
                  data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
@@ -233,6 +237,9 @@ object PrinterUtils {
                         ((data.txnAmount ?: 0.0) + (data.cashback ?: 0.0))
                             .toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                     )*/
+                    /* Add Line */
+                    repo.addText(context.getString(R.string.receipt_gray_line),
+                        format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
                 }
 
                 repo.addText(context.getString(R.string.receipt_cash_end_balance)+ " " + data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
@@ -241,7 +248,30 @@ object PrinterUtils {
                         data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
             }
         }
+        /* Cash Withdrawal */
+        if (isCashWithdrawal) {
+            var beginBal = data.cashEndBalance?.plus(data.txnAmount!!)
+            beginBal?.let {
+                repo.addText(context.getString(R.string.receipt_cash_begin_balance)+ " " + it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+            }
 
+            repo.addText(
+                context.getString(R.string.receipt_cash_withdrawal)+ " " +
+                        data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+
+            /* Add Line */
+            repo.addText(context.getString(R.string.receipt_gray_line),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+
+            repo.addText(
+                context.getString(R.string.receipt_cash_end_balance) + " " +
+                        data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+
+
+            repo.addText(context.getString(R.string.receipt_snap_balance)+ " " +
+                    data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+
+        }
         /* Add Line */
         repo.addText(context.getString(R.string.receipt_gray_line),
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
