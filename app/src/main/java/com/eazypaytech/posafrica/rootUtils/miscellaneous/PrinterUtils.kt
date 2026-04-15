@@ -86,6 +86,7 @@ object PrinterUtils {
         val isBalanceInquiry = txnTypeStr == context.getString(R.string.ebt_bal_inquiry)
         val isCashBalanceInquiry = txnTypeStr == context.getString(R.string.receipt_txntype_balance_inquiry_cash)
         val isCashWithdrawal = txnTypeStr == context.getString(R.string.receipt_txntype_cash_withdrawal)
+        val isVoid = txnTypeStr == context.getString(R.string.ebt_void_last)
 
         val date = convertReceiptDateTime(data.dateTime, outputFormat = "MM/dd/yy")
         val time = convertReceiptDateTime(data.dateTime, outputFormat = "hh:mm:ssa")
@@ -137,6 +138,7 @@ object PrinterUtils {
             isBalanceInquiry -> "EBT BALANCE INQUIRY"
             isCashBalanceInquiry -> "EBT BALANCE INQUIRY"
             isCashWithdrawal -> "EBT CASH WITHDRAWAL"
+            isVoid -> "EBT Void Last Tran"
             else -> txnTypeStr
         }
 
@@ -149,7 +151,7 @@ object PrinterUtils {
            ========================= */
 
         repo.addText(
-            context.getString(R.string.receipt_card_no),
+            context.getString(R.string.receipt_card_no) + "  " +
             data.cardMaskedPan?.replace(Regex("\\d(?=\\d{4})"), "X")
         )
 
@@ -159,6 +161,7 @@ object PrinterUtils {
                 context.getString(R.string.receipt_settlement_date) + " " + data.settlementDate,
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
+            repo.feedLine()
         }
 
         /* Balance Summary (Non-Approved, Not Return) */
@@ -173,6 +176,42 @@ object PrinterUtils {
         repo.addText(context.getString(R.string.receipt_gray_line),
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
 
+        if (isVoid) {
+
+           /* SNAP BEGIN BALANCE */
+            data.snapBeginBal?.let {
+                repo.addText(
+                    context.getString(R.string.receipt_snap_begin_balance) + " " +
+                            it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                )
+            }
+
+            /* SNAP PURCHASE (VOIDED) */
+            repo.addText(
+                context.getString(R.string.receipt_snap_purchase) + " " +
+                        "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)) +
+                        "  VOIDED"
+            )
+
+            /* DOT LINE */
+            repo.addText(context.getString(R.string.summary_dot_line),
+                format = PrintFormat().align(Align.CENTER))
+
+            /* SNAP END BALANCE */
+            val voidEndbal = data.snapBeginBal?.plus(data.txnAmount!!)
+            voidEndbal.let {
+                repo.addText(
+                    context.getString(R.string.receipt_snap_end_balance) + " " +
+                            it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                )
+            }
+            /*repo.addText(
+                context.getString(R.string.receipt_snap_end_balance) + " " +
+                        data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+            )*/
+
+            //repo.addText(context.getString(R.string.receipt_gray_line))
+        }
         if (!isBalanceInquiry && isReturn && isDeclined) {
             repo.addText(
                 context.getString(R.string.receipt_amount) + " " +
