@@ -294,8 +294,14 @@ class ManualCardViewModel @Inject constructor(
             val amount = digits.toLong() / 100.0
 
             when (accountType) {
-                0x96 -> cashBalance = amount   // CASH
-                0x98 -> snapBalance = amount   // SNAP
+                0x96 -> {
+                    cashBalance = amount
+                    Log.d("EBT", "CASH Balance: $cashBalance")
+                }
+                0x98 -> {
+                    snapBalance = amount
+                    Log.d("EBT", "SNAP Balance: $snapBalance")
+                }
             }
         }
 
@@ -308,9 +314,21 @@ class ManualCardViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateBalance(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
+
+            val cash = sharedViewModel.objRootAppPaymentDetail.cashEndBalance
+            val snap = sharedViewModel.objRootAppPaymentDetail.snapEndBalance
+
+            // ✅ Print values
+            Log.d("EBT", "Updating Balance → SNAP: $snap | CASH: $cash")
+
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
-                txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
-                txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+
+                txn.cashEndBalance = cash.toString()
+                txn.snapEndBalance = snap.toString()
+
+                // ✅ Log before saving
+                Log.d("EBT", "Saving to DB → SNAP: ${txn.snapEndBalance}, CASH: ${txn.cashEndBalance}")
+
                 dbRepository.updateTxn(txn)
             }
         }

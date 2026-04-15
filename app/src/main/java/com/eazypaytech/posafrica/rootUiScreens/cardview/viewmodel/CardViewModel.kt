@@ -282,8 +282,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             val amount = digits.toLong() / 100.0
 
             when (accountType) {
-                0x96 -> cashBalance = amount   // CASH
-                0x98 -> snapBalance = amount   // SNAP
+                0x96 -> {
+                    cashBalance = amount
+                    Log.d("EBT", "CASH Balance: $cashBalance")
+                }
+                0x98 -> {
+                    snapBalance = amount
+                    Log.d("EBT", "SNAP Balance: $snapBalance")
+                }
             }
         }
 
