@@ -352,7 +352,12 @@ object PrinterUtils {
            🔹 RESULT SECTION
            ========================= */
 
-        repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr)
+
+        if(isDeclined)
+            repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr + " - "+ data.hostRespCode)
+        else
+            repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr)
+
 
         if (!isReturn && !isBalanceInquiry) {
             repo.addText(context.getString(R.string.receipt_auth)+ " " + data.hostAuthCode)
@@ -405,6 +410,10 @@ object PrinterUtils {
             repo.addText(data.footer1,
                 format = PrintFormat().align(Align.CENTER))
             repo.addText(data.footer2,
+                format = PrintFormat().align(Align.CENTER))
+            repo.addText(data.footer3,
+                format = PrintFormat().align(Align.CENTER))
+            repo.addText(data.footer4,
                 format = PrintFormat().align(Align.CENTER))
             repo.addText(context.getString(R.string.receipt_custom_copy),
                 format = PrintFormat().align(Align.CENTER))
