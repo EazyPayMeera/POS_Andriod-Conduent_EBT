@@ -91,6 +91,7 @@ object PrinterUtils {
         val date = convertReceiptDateTime(data.dateTime, outputFormat = "MM/dd/yy")
         val time = convertReceiptDateTime(data.dateTime, outputFormat = "hh:mm:ssa")
 
+        Log.d("PRINT_RECEIPT", "ObjRootAppPaymentDetails: $data")
         /* =========================
            🔹 HEADER
            ========================= */
@@ -177,14 +178,23 @@ object PrinterUtils {
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
 
         if (isVoid) {
-
+            Log.d("VOID PRINT_RECEIPT", "Snap Begin Bal: ${data.snapBeginBal}")
+            Log.d("VOID PRINT_RECEIPT", "Snap Purchase: ${data.txnAmount}")
+            Log.d("VOID PRINT_RECEIPT", "Snap End Bal: ${data.snapEndBalance}")
            /* SNAP BEGIN BALANCE */
-            data.snapBeginBal?.let {
+            val voidBeginBal = data.snapEndBalance?.minus(data.txnAmount!!)
+            voidBeginBal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_begin_balance) + " " +
                             it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                 )
             }
+            /*data.snapBeginBal?.let {
+                repo.addText(
+                    context.getString(R.string.receipt_snap_begin_balance) + " " +
+                            it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                )
+            }*/
 
             /* SNAP PURCHASE (VOIDED) */
             repo.addText(
@@ -198,7 +208,8 @@ object PrinterUtils {
                 format = PrintFormat().align(Align.CENTER))
 
             /* SNAP END BALANCE */
-            val voidEndbal = data.snapBeginBal?.plus(data.txnAmount!!)
+            val voidEndbal = voidBeginBal?.plus(data.txnAmount!!)
+            Log.d("VOID PRINT_RECEIPT", "Void End Bal: ${voidEndbal}")
             voidEndbal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_end_balance) + " " +
