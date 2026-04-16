@@ -277,6 +277,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                         sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
                         sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                         sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.dateTime
+                        sharedViewModel.objRootAppPaymentDetail.stan = response.stan
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode),
@@ -341,6 +342,8 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 txn.txnStatus = txnStatus?.toString() ?: ""
                 txn.originalDateTime = originalDateTime
                 txn.hostAuthCode = AuthCode
+                txn.stan = sharedViewModel.objRootAppPaymentDetail.stan
+                txn.VoucherNumber = sharedViewModel.objRootAppPaymentDetail.voucherNumber
                 txn.rrn = sharedViewModel.objRootAppPaymentDetail.rrn
                 txn.settlementDate = sharedViewModel.objRootAppPaymentDetail.settlementDate
                 txn.ApprovalCode = sharedViewModel.objRootAppPaymentDetail.approvalCode
