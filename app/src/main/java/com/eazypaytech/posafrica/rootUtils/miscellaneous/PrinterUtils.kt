@@ -182,9 +182,11 @@ object PrinterUtils {
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
 
         if(isVoucherSettlement) {
+            Log.d("Voucher Settlement PRINT_RECEIPT", "Voucher Number : ${data.voucherNumber}")
             data.voucherNumber?.let {
                 repo.addText(context.getString(R.string.receipt_voucher_number) + " " + it)
             }
+            Log.d("Voucher Settlement PRINT_RECEIPT", "Approval Code : ${data.approvalCode}")
             data.approvalCode?.let {
                 repo.addText(context.getString(R.string.receipt_voucher_approval_code) + " " + it)
             }
@@ -380,9 +382,11 @@ object PrinterUtils {
 
 
         if(isDeclined)
-            data.hostRespCode?.let {
-                repo.addText(context.getString(R.string.receipt_result) + " " + txnStatusStr + " - " + it)
-            }
+            repo.addText(
+                context.getString(R.string.receipt_result) + " " +
+                        txnStatusStr +
+                        (data.hostRespCode?.let { " - $it" } ?: "")
+            )
         else
             repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr)
 
