@@ -378,6 +378,9 @@
     <string name="receipt_cash_withdrawal" tools:ignore="MissingTranslation">Cash Withdrawal</string>
     <string name="receipt_txntype_cash_withdrawal" translatable="false">CASH_WITHDRAWAL</string>
     <string name="receipt_txntype_balance_inquiry_cash" translatable="false">BALANCE_ENQUIRY_CASH</string>
+    <string name="receipt_voucher_number" translatable="false">Voucher Number</string>
+    <string name="receipt_voucher_approval_code" translatable="false">Voucher Approval Code</string>
+    <string name="receipt_voucher_amount" translatable="false">Voucher Amount</string>
     <!-- Summary Report -->
     <string name="summary_report">SUMMARY REPORT</string>
     <string name="summary_dot_line">---------------</string>

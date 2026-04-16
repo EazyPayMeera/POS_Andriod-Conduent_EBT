@@ -87,6 +87,7 @@ object PrinterUtils {
         val isCashBalanceInquiry = txnTypeStr == context.getString(R.string.receipt_txntype_balance_inquiry_cash)
         val isCashWithdrawal = txnTypeStr == context.getString(R.string.receipt_txntype_cash_withdrawal)
         val isVoid = txnTypeStr == context.getString(R.string.ebt_void_last)
+        val isVoucherSettlement = txnTypeStr == context.getString(R.string.ebt_e_voucher)
 
         val date = convertReceiptDateTime(data.dateTime, outputFormat = "MM/dd/yy")
         val time = convertReceiptDateTime(data.dateTime, outputFormat = "hh:mm:ssa")
@@ -140,6 +141,7 @@ object PrinterUtils {
             isCashBalanceInquiry -> "EBT BALANCE INQUIRY"
             isCashWithdrawal -> "EBT CASH WITHDRAWAL"
             isVoid -> "EBT Void Last Tran"
+            isVoucherSettlement -> "EBT Voucher Settlement"
             else -> txnTypeStr
         }
 
@@ -158,10 +160,12 @@ object PrinterUtils {
 
         /* Settlement Date (ONLY for Declined, NOT for Return) */
         if ( !isReturn && isApproved) {
-            repo.addText(
-                context.getString(R.string.receipt_settlement_date) + " " + data.settlementDate,
-                format = PrintFormat().fontSize(FontSize.MEDIUM)
-            )
+            data.settlementDate?.let {
+                repo.addText(
+                    context.getString(R.string.receipt_settlement_date) + " " + it,
+                    format = PrintFormat().fontSize(FontSize.MEDIUM)
+                )
+            }
             repo.feedLine()
         }
 
@@ -177,6 +181,17 @@ object PrinterUtils {
         repo.addText(context.getString(R.string.receipt_gray_line),
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
 
+        if(isVoucherSettlement) {
+            data.voucherNumber?.let {
+                repo.addText(context.getString(R.string.receipt_voucher_number) + " " + it)
+            }
+            data.approvalCode?.let {
+                repo.addText(context.getString(R.string.receipt_voucher_approval_code) + " " + it)
+            }
+            data.txnAmount?.let {
+                repo.addText(context.getString(R.string.receipt_voucher_amount) + " " + it)
+            }
+        }
         if (isVoid) {
             Log.d("VOID PRINT_RECEIPT", "Snap Begin Bal: ${data.snapBeginBal}")
             Log.d("VOID PRINT_RECEIPT", "Snap Purchase: ${data.txnAmount}")
@@ -365,7 +380,9 @@ object PrinterUtils {
 
 
         if(isDeclined)
-            repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr + " - "+ data.hostRespCode)
+            data.hostRespCode?.let {
+                repo.addText(context.getString(R.string.receipt_result) + " " + txnStatusStr + " - " + it)
+            }
         else
             repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr)
 
@@ -374,7 +391,17 @@ object PrinterUtils {
             repo.addText(context.getString(R.string.receipt_auth)+ " " + data.hostAuthCode)
         }
 
-        repo.addText(context.getString(R.string.receipt_trace_no)+ " " + "${data.stan}-${data.rrn}")
+        //repo.addText(context.getString(R.string.receipt_trace_no)+ " " + "${data.stan}-${data.rrn}")
+        val trace = when {
+            !data.stan.isNullOrEmpty() && !data.rrn.isNullOrEmpty() -> "${data.stan}-${data.rrn}"
+            !data.stan.isNullOrEmpty() -> data.stan
+            !data.rrn.isNullOrEmpty() -> data.rrn
+            else -> null
+        }
+
+        trace?.let {
+            repo.addText(context.getString(R.string.receipt_trace_no) + " $it")
+        }
 
         repo.feedLine()
 
