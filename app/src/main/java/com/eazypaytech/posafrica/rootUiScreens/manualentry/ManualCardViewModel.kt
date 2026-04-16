@@ -200,6 +200,9 @@ class ManualCardViewModel @Inject constructor(
                                 sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
                                 sharedViewModel.objRootAppPaymentDetail.currencyCode = response.currencyCode
                                 sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.dateTime
+                                Log.d("AuthTransaction", "hostRespCode: ${response.hostRespCode}")
+                                Log.d("AuthTransaction", "id: ${sharedViewModel.objRootAppPaymentDetail.id}")
+                                Log.d("AuthTransaction", "mapped status: ${emvStatusToTransStatus(response.hostRespCode)}")
                                 Log.d(
                                     "EBT",
                                     "originalDateTime: ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}"
@@ -207,7 +210,7 @@ class ManualCardViewModel @Inject constructor(
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.posCondition = response.posCondition
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode),
-                                    sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString())
+                                    sharedViewModel.objRootAppPaymentDetail.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString())
                                 val rawAdditionalAmt = response.additionalAmt
 
                                 if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
@@ -261,17 +264,30 @@ class ManualCardViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus : TxnStatus?,originalDateTime:String,AuthCode:String,posCondition:String)
-    {
+    suspend fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
+        val TAG = "UPDATE_TXN_DEBUG"
+
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
-        viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
-                it.txnStatus = txnStatus?.toString()?:""
-                it.originalDateTime = originalDateTime
-                it.hostAuthCode = AuthCode
-                it.posConditionCode = posCondition
-                dbRepository.updateTxn(it)
-            }
+
+        val txnId = sharedViewModel.objRootAppPaymentDetail.id
+
+        dbRepository.fetchTxnById(txnId)?.let { txn ->
+            txn.txnStatus = txnStatus?.toString() ?: ""
+            txn.originalDateTime = originalDateTime
+            txn.hostAuthCode = AuthCode
+            txn.posConditionCode = posCondition
+
+            dbRepository.updateTxn(txn)
+
+            Log.d(TAG, "---- DB Update Completed for txnId: $txnId ----")
+        } ?: run {
+            Log.e(TAG, "Transaction NOT FOUND for txnId: $txnId")
         }
     }
 

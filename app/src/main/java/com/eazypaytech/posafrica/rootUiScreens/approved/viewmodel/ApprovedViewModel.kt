@@ -75,6 +75,7 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         isCustomer: Boolean = false
     ) {
         viewModelScope.launch{
+            Log.d("AuthTransaction", "id: ${sharedViewModel.objRootAppPaymentDetail.id}")
             dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
                 PrinterUtils.printReceipt(context, PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails(), isCustomer)
             }

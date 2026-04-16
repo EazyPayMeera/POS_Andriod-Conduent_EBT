@@ -44,7 +44,7 @@ class AuthCodeViewModel @Inject constructor(private  var apiServiceRepository: A
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
-        sharedViewModel.objRootAppPaymentDetail.hostAuthCode = authCode
+        sharedViewModel.objRootAppPaymentDetail.approvalCode = authCode
         if (!isFormValid) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),

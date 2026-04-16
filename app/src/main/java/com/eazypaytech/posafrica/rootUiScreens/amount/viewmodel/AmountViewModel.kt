@@ -32,6 +32,7 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.transformToAmountDouble
 import com.eazypaytech.posafrica.R
+import com.eazypaytech.posafrica.rootUtils.genericComposeUI.emvStatusToTransStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -269,8 +270,13 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
                         CustomDialogBuilder.composeProgressDialog(false)
+                        sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate
+                        sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
+                        sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.dateTime
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
+                        updateTransResult(sharedViewModel, emvStatusToTransStatus(response.hostRespCode),
+                            sharedViewModel.objRootAppPaymentDetail.dateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString())
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
                     }
 
@@ -286,6 +292,66 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
                 Log.e("ApiCallException", e.message ?: "Unknown error")
 
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
+        val TAG = "UPDATE_TXN_DEBUG"
+
+        // Log incoming (NEW) values
+        Log.d(TAG, "---- Incoming Values ----")
+        Log.d(TAG, "txnStatus (new): $txnStatus")
+        Log.d(TAG, "originalDateTime (new): $originalDateTime")
+        Log.d(TAG, "AuthCode (new): $AuthCode")
+        Log.d(TAG, "posCondition (new): $posCondition")
+        Log.d(TAG, "txnId: ${sharedViewModel.objRootAppPaymentDetail.id}")
+
+        // Update ViewModel value
+        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
+
+        viewModelScope.launch {
+            val txnId = sharedViewModel.objRootAppPaymentDetail.id
+
+            dbRepository.fetchTxnById(txnId)?.let { txn ->
+
+                // Log OLD values from DB
+                Log.d(TAG, "---- Old DB Values ----")
+                Log.d(TAG, "txnStatus (old): ${txn.txnStatus}")
+                Log.d(TAG, "originalDateTime (old): ${txn.originalDateTime}")
+                Log.d(TAG, "hostAuthCode (old): ${txn.hostAuthCode}")
+                Log.d(TAG, "posConditionCode (old): ${txn.posConditionCode}")
+
+                // Apply updates
+                txn.txnStatus = txnStatus?.toString() ?: ""
+                txn.originalDateTime = originalDateTime
+                txn.hostAuthCode = AuthCode
+                txn.rrn = sharedViewModel.objRootAppPaymentDetail.rrn
+                txn.settlementDate = sharedViewModel.objRootAppPaymentDetail.settlementDate
+                txn.ApprovalCode = sharedViewModel.objRootAppPaymentDetail.approvalCode
+                txn.posConditionCode = posCondition
+
+
+                // Log UPDATED values before saving
+                Log.d(TAG, "---- Updated Values (Before Save) ----")
+                Log.d(TAG, "txnStatus (updated): ${txn.txnStatus}")
+                Log.d(TAG, "originalDateTime (updated): ${txn.originalDateTime}")
+                Log.d(TAG, "hostAuthCode (updated): ${txn.hostAuthCode}")
+                Log.d(TAG, "posConditionCode (updated): ${txn.posConditionCode}")
+
+                dbRepository.updateTxn(txn)
+
+                // Final confirmation log
+                Log.d(TAG, "---- DB Update Completed for txnId: $txnId ----")
+            } ?: run {
+                Log.e(TAG, "Transaction NOT FOUND for txnId: $txnId")
             }
         }
     }

@@ -29,6 +29,7 @@ data class PaymentServiceTxnDetails(
     /* Host Authorization */
     @SerializedName("authAmount") var authAmount: String? = null,
     @SerializedName("hostAuthCode") var hostAuthCode: String? = null,
+    @SerializedName("approvalCode") var approvalCode: String? = null,
     @SerializedName("hostRespCode") var hostRespCode: String? = null,
     @SerializedName("hostAuthResult") var hostAuthResult: String? = null,
     @SerializedName("hostTxnRef") var hostTxnRef: String? = null,

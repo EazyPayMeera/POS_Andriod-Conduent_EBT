@@ -183,8 +183,8 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                     "EBT",
                                     "originalDateTime: ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}"
                                 )
-                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
-                                sharedViewModel.objRootAppPaymentDetail.posCondition = response.paymentServiceTxnDetails?.posCondition
+//                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
+//                                sharedViewModel.objRootAppPaymentDetail.posCondition = response.paymentServiceTxnDetails?.posCondition
                                 updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
                                     sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
                                 ).let {

@@ -520,7 +520,7 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)                     // DE022 POS Entry Mode
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)              // DE032 Acquirer ID
         iso.setValue(BuilderConstants.ISO_FIELD_RRN, rrn, IsoType.ALPHA, BuilderConstants.ISO_FIELD_RRN_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.hostAuthCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
+        iso.setValue(BuilderConstants.ISO_FIELD_AUTH_ID, builderServiceTxnDetails?.approvalCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_AUTH_ID_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_TERMINAL_ID, builderServiceTxnDetails?.terminalId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_TERMINAL_ID_LENGTH)                   // DE041 Terminal ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_ID, builderServiceTxnDetails?.merchantId, IsoType.ALPHA, BuilderConstants.ISO_FIELD_MERCHANT_ID_LENGTH)           // DE042 Merchant ID
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_NAME,
@@ -705,7 +705,6 @@ class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context:
     }
 
 
-    @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createFinancial0200Request(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails ?: BuilderServiceTxnDetails()

@@ -44,6 +44,8 @@ data class TxnEntity(
     @ColumnInfo(name = "ServiceCharge") var serviceCharge: String? = null,
     @ColumnInfo(name = "TtlAmount") var ttlAmount: String? = null,
     @ColumnInfo(name = "TxnStatus") var txnStatus: String? = null,
+    @ColumnInfo(name = "VoucherNumber") var VoucherNumber: String? = null,
+    @ColumnInfo(name = "ApprovalCode") var ApprovalCode: String? = null,
 
     /* Card Details */
     @ColumnInfo(name = "CardEntryMode") var cardEntryMode: String? = null,
