@@ -270,8 +270,12 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
                         CustomDialogBuilder.composeProgressDialog(false)
+                        val settlementDate = response.settlementDate
+
+                        Log.d("EBT", "settlementDate: $settlementDate")
                         sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate
                         sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
+                        sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                         sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.dateTime
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
@@ -328,6 +332,10 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                 Log.d(TAG, "originalDateTime (old): ${txn.originalDateTime}")
                 Log.d(TAG, "hostAuthCode (old): ${txn.hostAuthCode}")
                 Log.d(TAG, "posConditionCode (old): ${txn.posConditionCode}")
+
+                Log.d(TAG, "rrn (old): ${sharedViewModel.objRootAppPaymentDetail.rrn}")
+                Log.d(TAG, "settlementDate (old): ${sharedViewModel.objRootAppPaymentDetail.settlementDate}")
+                Log.d(TAG, "approvalCode (old): ${sharedViewModel.objRootAppPaymentDetail.approvalCode}")
 
                 // Apply updates
                 txn.txnStatus = txnStatus?.toString() ?: ""
