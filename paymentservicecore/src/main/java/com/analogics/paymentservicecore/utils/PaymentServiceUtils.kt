@@ -1,15 +1,13 @@
-package com.eazypaytech.paymentservicecore.utils
+package com.analogics.paymentservicecore.utils
 
 import android.content.Context
 import android.util.Log
-import com.eazypaytech.builder_core.model.Symbol
-import com.eazypaytech.builder_core.utils.formatAmount
-import com.eazypaytech.securityframework.handler.SecureKeyHandler
-import com.eazypaytech.tpaymentcore.utils.HardwareUtils
+import com.analogics.builder_core.data.model.Symbol
+import com.analogics.builder_core.utils.formatAmount
+import com.analogics.securityframework.data.local.SecureKeyHandler
+import com.eazypaytech.hardwarecore.utils.HardwareUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.security.KeyPair
 
 object PaymentServiceUtils {

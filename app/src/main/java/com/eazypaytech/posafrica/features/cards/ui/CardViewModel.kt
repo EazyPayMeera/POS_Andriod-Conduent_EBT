@@ -1,0 +1,414 @@
+package com.eazypaytech.posafrica.features.cards.ui
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
+import com.analogics.builder_core.data.constants.BuilderConstants
+
+import com.eazypaytech.paymentservicecore.constants.AppConstants
+import com.analogics.paymentservicecore.data.listeners.responseListener.IEmvServiceResponseListener
+import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
+import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult
+import com.analogics.paymentservicecore.data.model.EBTBalance
+import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
+import com.analogics.paymentservicecore.utils.PaymentServiceUtils
+import com.eazypaytech.posafrica.R
+import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
+import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder
+import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
+import com.eazypaytech.posafrica.core.utils.emvMsgIdToStringId
+import com.eazypaytech.posafrica.core.utils.emvStatusToTransStatus
+import com.eazypaytech.posafrica.core.utils.getCurrentDateTime
+import com.eazypaytech.posafrica.core.utils.navigateAndClean
+import com.eazypaytech.posafrica.core.utils.miscellaneous.NetworkUtils
+import com.analogics.securityframework.data.repository.TxnDBRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class CardViewModel @Inject constructor(private var emvServiceRepository: EmvServiceRepository, var dbRepository: TxnDBRepository) : ViewModel() {
+
+    var emvInProgress = mutableStateOf(false)
+    var showProgressVar = mutableStateOf(false)
+    var displayInfoMsgId = mutableStateOf(EmvServiceResult.DisplayMsgId.NONE)
+    lateinit var context: Context
+    lateinit var sharedViewModel: SharedViewModel
+    lateinit var navHostController : NavHostController
+    var cardRetryCount = 0
+
+    fun navigateToApprovalScreen(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
+        }
+    }
+
+    fun navigateToManualScreen(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigate(AppNavigationItems.ManualCardScreen.route) // Navigate to the desired screen
+            emvServiceRepository.abortPayment()
+        }
+    }
+
+    fun onUpiClick(navHostController: NavHostController) {
+        navHostController.navigate(AppNavigationItems. BarcodeScreen.route)
+        viewModelScope.launch {
+            emvServiceRepository.abortPayment()
+        }
+    }
+
+    fun abortPayment(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+            emvServiceRepository.abortPayment()
+        }
+    }
+
+    fun onCancelClick(navHostController: NavHostController) {
+        CustomDialogBuilder.Companion.composeAlertDialog(
+            title = context.getString(R.string.cancel_dialogue),
+            message = context.getString(R.string.dialogue_cancel_request),
+            okBtnText = context.getString(R.string.yes),
+            onOkClick = {
+                abortPayment(navHostController)
+            },
+            cancelBtnText = context.getString(R.string.cancel_no),
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
+
+        val txnId = sharedViewModel.objRootAppPaymentDetail.id
+
+        Log.d("UPDATE_TXN", "===== updateTransResult START =====")
+        Log.d("UPDATE_TXN", "TxnId: $txnId")
+        Log.d("UPDATE_TXN", "txnStatus: $txnStatus")
+        Log.d("UPDATE_TXN", "originalDateTime: $originalDateTime")
+        Log.d("UPDATE_TXN", "AuthCode: $AuthCode")
+        Log.d("UPDATE_TXN", "posCondition: $posCondition")
+
+        // Update ViewModel first
+        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
+
+        viewModelScope.launch {
+            try {
+                Log.d("UPDATE_TXN", "Fetching transaction from DB...")
+
+                val txn = dbRepository.fetchTxnById(txnId)
+
+                if (txn == null) {
+                    Log.e("UPDATE_TXN", "Transaction NOT FOUND for ID: $txnId")
+                    return@launch
+                }
+
+                Log.d("UPDATE_TXN", "Transaction fetched successfully")
+                Log.d("UPDATE_TXN", "Old txnStatus: ${txn.txnStatus}")
+                Log.d("UPDATE_TXN", "Old originalDateTime: ${txn.originalDateTime}")
+                Log.d("UPDATE_TXN", "Old hostAuthCode: ${txn.hostAuthCode}")
+                Log.d("UPDATE_TXN", "Old posConditionCode: ${txn.posConditionCode}")
+
+                // Apply updates
+                txn.txnStatus = txnStatus?.toString() ?: ""
+                txn.originalDateTime = originalDateTime
+                txn.hostAuthCode = AuthCode
+                txn.posConditionCode = posCondition
+
+                Log.d("UPDATE_TXN", "Updated txnStatus: ${txn.txnStatus}")
+                Log.d("UPDATE_TXN", "Updated originalDateTime: ${txn.originalDateTime}")
+                Log.d("UPDATE_TXN", "Updated hostAuthCode: ${txn.hostAuthCode}")
+                Log.d("UPDATE_TXN", "Updated posConditionCode: ${txn.posConditionCode}")
+
+                Log.d("UPDATE_TXN", "Updating transaction in DB...")
+
+                dbRepository.updateTxn(txn)
+
+                Log.d("UPDATE_TXN", "Update SUCCESS for TxnId: $txnId")
+
+            } catch (e: Exception) {
+                Log.e("UPDATE_TXN", "Error updating transaction", e)
+            } finally {
+                Log.d("UPDATE_TXN", "===== updateTransResult END =====")
+            }
+        }
+    }
+
+    fun startPayment(
+        context: Context,
+        sharedViewModel: SharedViewModel,
+        navHostController: NavHostController
+    ) {
+        this.context = context
+        this.sharedViewModel = sharedViewModel
+        this.navHostController = navHostController
+        //Log.d("SHARED_VIEW_MODEL", "objRootAppPaymentDetail: ${sharedViewModel.objRootAppPaymentDetail}")
+        viewModelScope.launch {
+            checkNetwork(context)
+            sharedViewModel.objRootAppPaymentDetail.dateTime = getCurrentDateTime()
+            emvServiceRepository.startPayment(
+                context = context,
+                    paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail),
+                iEmvServiceResponseListener = object :
+                    IEmvServiceResponseListener {
+                    @RequiresApi(Build.VERSION_CODES.O)
+                    @SuppressLint("DefaultLocale")
+                    override fun onEmvServiceResponse(response: Any) {
+                        when (response) {
+                            is EmvServiceResult.TransResult -> {
+                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
+                                sharedViewModel.objRootAppPaymentDetail.settlementDate = response.paymentServiceTxnDetails?.settlementDate
+                                sharedViewModel.objRootAppPaymentDetail.expiryDate = response.paymentServiceTxnDetails?.expiryDate
+                                sharedViewModel.objRootAppPaymentDetail.rrn = response.paymentServiceTxnDetails?.rrn
+                                sharedViewModel.objRootAppPaymentDetail.currencyCode = response.paymentServiceTxnDetails?.currencyCode
+                                sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.paymentServiceTxnDetails?.dateTime
+                                Log.d(
+                                    "EBT",
+                                    "originalDateTime: ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}"
+                                )
+//                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
+//                                sharedViewModel.objRootAppPaymentDetail.posCondition = response.paymentServiceTxnDetails?.posCondition
+                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
+                                    sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
+                                ).let {
+                                    val rawAdditionalAmt = response.paymentServiceTxnDetails?.additionalAmt
+
+                                    if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
+                                        try {
+                                            val balance = parseEBTBalances(rawAdditionalAmt)
+                                            sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
+                                            sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
+                                            updateBalance(sharedViewModel)
+                                        } catch (e: Exception) {
+                                            sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                        }
+                                    } else {
+                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                    }
+                                    if(isStatusTryAnotherCard(response.status)==true) {
+                                        displayEmvError(response.displayMsgId)
+                                    }
+                                    else
+                                    {
+                                        showProgressVar.value = false
+                                        navigateToApprovalScreen(navHostController)
+                                    }
+                                }
+                            }
+
+                            is EmvServiceResult.CardCheckResult -> {
+                                emvInProgress.value = false
+                                showProgressVar.value = false
+                                if(isCardCheckStatusInProgress(response.status)) {
+                                    emvInProgress.value = true
+                                    showProgressVar.value = true
+                                    response.displayMsgId?.let {
+                                        displayInfoMsgId.value = it
+                                    }
+                                }
+                                else if(isCardNotPresent(response.status))
+                                {
+                                    navigateToManualScreen(navHostController)
+                                }
+                                else if(isCardCheckStatusError(response.status)) {
+                                    displayEmvError(response.displayMsgId)
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onEmvServiceDisplayMessage(
+                        displayMsgId: EmvServiceResult.DisplayMsgId
+                    ) {
+                        if(isDispIdNeedPopupMsg(displayMsgId)) {
+                            displayEmvError(displayMsgId, restart = false)
+                        }
+                        else {
+                            displayInfoMsgId.value = displayMsgId
+                            if(displayMsgId != EmvServiceResult.DisplayMsgId.NONE) {
+                                emvInProgress.value = false
+                                showProgressVar.value = true
+                            }
+                        }
+                    }
+                })
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateBalance(sharedViewModel: SharedViewModel) {
+        viewModelScope.launch {
+            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
+                txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+                txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+                dbRepository.updateTxn(txn)
+            }
+        }
+    }
+
+    fun parseEBTBalances(hexString: String): EBTBalance {
+
+        val blocks = hexString.chunked(20)
+
+        var snapBalance = 0.0
+        var cashBalance = 0.0
+
+        blocks.forEach { block ->
+
+            val bytes = block.chunked(2).map { it.toInt(16) }
+
+            val accountType = bytes[0] // first byte
+
+            val bcdBytes = bytes.subList(4, 10)
+            val digits = bcdBytes.joinToString("") { byte ->
+                val high = (byte shr 4) and 0x0F
+                val low  = byte and 0x0F
+                "$high$low"
+            }
+
+            val amount = digits.toLong() / 100.0
+
+            when (accountType) {
+                0x96 -> {
+                    cashBalance = amount
+                    Log.d("EBT", "CASH Balance: $cashBalance")
+                }
+                0x98 -> {
+                    snapBalance = amount
+                    Log.d("EBT", "SNAP Balance: $snapBalance")
+                }
+            }
+        }
+
+        return EBTBalance(
+            snap = snapBalance,
+            cash = cashBalance
+        )
+    }
+
+    fun checkNetwork(context: Context)
+    {
+        if(NetworkUtils().checkForInternet(context)!=true)
+        {
+            CustomDialogBuilder.Companion.composeAlertDialog(
+                title = context.getString(R.string.default_alert_title_error),
+                message = context.getString(R.string.err_no_internet_connection),
+            )
+        }
+    }
+
+
+    fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
+    {
+        var message : String? = null
+        emvMsgIdToStringId(displayMsgId)?.let {
+            message = context.getString(it)
+        }
+        CustomDialogBuilder.Companion.composeAlertDialog(
+            title = context.getString(R.string.default_alert_title_error),
+            message = message,
+            onOkClick = {
+                abort?.takeIf { it == false }?.let {
+                    if(restart==true) {
+                        if (cardRetryCount < AppConstants.CARD_RETRY_COUNT) {
+                            cardRetryCount++
+                            viewModelScope.launch {
+                                emvServiceRepository.abortPayment()
+                                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                                startPayment(context, sharedViewModel, navHostController)
+                            }
+                        }else {
+                            cardRetryCount = 0
+                            showProgressVar.value = false
+                            navigateToManualScreen(navHostController)
+                        }
+                    }
+                }?:let {
+                    abortPayment(navHostController)
+                }
+        })
+
+
+    }
+
+    fun isCardCheckStatusInProgress(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.CardCheckStatus.CARD_INSERTED,
+            EmvServiceResult.CardCheckStatus.CARD_SWIPED,
+            EmvServiceResult.CardCheckStatus.CARD_TAPPED,
+            -> true
+            else -> false
+        }
+    }
+
+
+    fun isCardNotPresent(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
+            EmvServiceResult.CardCheckStatus.TIMEOUT,
+            -> true
+            else -> false
+        }
+    }
+
+    fun isCardCheckStatusError(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.CardCheckStatus.NOT_ICC_CARD,
+            EmvServiceResult.CardCheckStatus.USE_ICC_CARD,
+            EmvServiceResult.CardCheckStatus.BAD_SWIPE,
+            EmvServiceResult.CardCheckStatus.NEED_FALLBACK,
+            EmvServiceResult.CardCheckStatus.MULTIPLE_CARDS,
+            EmvServiceResult.CardCheckStatus.DEVICE_BUSY,
+            EmvServiceResult.CardCheckStatus.ERROR,
+            -> true
+            else -> false
+        }
+    }
+
+    fun isDispIdNeedPopupMsg(displayMsgId: EmvServiceResult.DisplayMsgId?) : Boolean
+    {
+        return when(displayMsgId)
+        {
+            EmvServiceResult.DisplayMsgId.RETRY,
+            EmvServiceResult.DisplayMsgId.SEE_PHONE_AND_PRESENT_CARD_AGAIN,
+            EmvServiceResult.DisplayMsgId.TAP_CARD_AGAIN
+            -> true
+            else -> false
+        }
+    }
+
+    fun isStatusTryAnotherCard(status: Any?) : Boolean
+    {
+        return when(status)
+        {
+            EmvServiceResult.TransStatus.TRY_ANOTHER_INTERFACE,
+            EmvServiceResult.TransStatus.RETRY,
+            EmvServiceResult.TransStatus.CARD_BLOCKED,
+            EmvServiceResult.TransStatus.APP_BLOCKED,
+            EmvServiceResult.TransStatus.APP_SELECTION_FAILED,
+            EmvServiceResult.TransStatus.NO_EMV_APPS,
+            EmvServiceResult.TransStatus.INVALID_ICC_CARD,
+            -> true
+            else -> false
+        }
+    }
+}
