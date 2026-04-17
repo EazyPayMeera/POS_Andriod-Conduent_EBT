@@ -34,7 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
+
 import com.eazypaytech.posafrica.features.activation.ui.ActivationScreen
 import com.eazypaytech.posafrica.features.addClerk.ui.AddClerkScreen
 import com.eazypaytech.posafrica.features.confirmshift.ui.ConfirmShiftView
@@ -63,34 +63,7 @@ import com.eazypaytech.posafrica.features.txnSel.ui.TxnSelectionScreen
 import com.eazypaytech.posafrica.features.usermanagement.ui.UserManagementScreen
 import com.eazypaytech.posafrica.features.voucher.ui.VoucherCardScreen
 import com.eazypaytech.posafrica.navigation.AppNavigationItems
-import com.eazypaytech.posafrica.rootUiScreens.activationScreen.view.ActivationScreen
-import com.eazypaytech.posafrica.rootUiScreens.addClerk.view.AddClerkScreen
-import com.eazypaytech.posafrica.rootUiScreens.amount.view.AmountView
-import com.eazypaytech.posafrica.rootUiScreens.amount.view.CashBackView
-import com.eazypaytech.posafrica.rootUiScreens.approved.view.ApprovedView
-import com.eazypaytech.posafrica.rootUiScreens.authCode.AuthCodeView
-import com.eazypaytech.posafrica.rootUiScreens.cardview.view.CardView
-import com.eazypaytech.posafrica.rootUiScreens.changepassword.view.ChangePasswordView
-import com.eazypaytech.posafrica.rootUiScreens.confirmshift.view.ConfirmShiftView
-import com.eazypaytech.posafrica.rootUiScreens.dashboard.view.DashboardView
-import com.eazypaytech.posafrica.rootUiScreens.ebtSelection.view.EBTSelectionView
-import com.eazypaytech.posafrica.rootUiScreens.keyManagement.KeyEntryView
-import com.eazypaytech.posafrica.rootUiScreens.language.view.LanguageView
-import com.eazypaytech.posafrica.rootUiScreens.login.view.LoginScreenView
-import com.eazypaytech.posafrica.rootUiScreens.manualentry.ManualCardView
-import com.eazypaytech.posafrica.rootUiScreens.onBoarding.view.OnBoardSlideView
-import com.eazypaytech.posafrica.rootUiScreens.password.view.PasswordView
 import com.eazypaytech.posafrica.rootUiScreens.readerSetting.ReaderSettingScreen
-import com.eazypaytech.posafrica.rootUiScreens.receiptdetails.view.ReceiptDetailsView
-import com.eazypaytech.posafrica.rootUiScreens.settings.SettingsView
-import com.eazypaytech.posafrica.rootUiScreens.settings.config.ConfigurationView
-import com.eazypaytech.posafrica.rootUiScreens.splash.view.SplashScreenView
-import com.eazypaytech.posafrica.rootUiScreens.transactiondetails.TransactionDetailsView
-import com.eazypaytech.posafrica.rootUiScreens.txnList.view.TransactionListScreen
-import com.eazypaytech.posafrica.rootUiScreens.txnSel.view.TxnSelectionView
-import com.eazypaytech.posafrica.rootUiScreens.usermanagement.view.UserManagementView
-import com.eazypaytech.posafrica.rootUiScreens.voucher.VoucherCardView
-import com.eazypaytech.posafrica.ui.theme.TPaymentsAPOSTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 var localSharedViewModel= compositionLocalOf{ SharedViewModel() }

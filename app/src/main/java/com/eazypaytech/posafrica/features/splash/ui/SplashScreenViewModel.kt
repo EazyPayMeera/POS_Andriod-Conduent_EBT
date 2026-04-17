@@ -5,7 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.eazypaytech.networkservicecore.serviceutils.NetworkConstants
+import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
+
 import com.eazypaytech.posafrica.data.TmsConfigParser
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository

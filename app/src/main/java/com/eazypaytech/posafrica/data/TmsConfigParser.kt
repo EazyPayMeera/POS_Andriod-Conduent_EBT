@@ -3,7 +3,8 @@ package com.eazypaytech.posafrica.data
 
 import android.content.Context
 import android.util.Log
-import com.eazypaytech.paymentservicecore.models.PosConfig
+import com.analogics.paymentservicecore.data.model.PosConfig
+//import com.eazypaytech.paymentservicecore.models.PosConfig
 import org.w3c.dom.Document
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory

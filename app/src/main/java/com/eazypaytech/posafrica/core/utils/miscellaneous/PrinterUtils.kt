@@ -1,6 +1,7 @@
 package com.eazypaytech.posafrica.core.utils.miscellaneous
 
 import android.content.Context
+import android.util.Log
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IPrinterServiceResponseListener
 import com.analogics.paymentservicecore.data.model.printer.PrinterServiceResult
@@ -15,24 +16,25 @@ import com.eazypaytech.posafrica.domain.model.Symbol.Type
 import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.Align
 import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.FontSize
 import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.Style
+import com.eazypaytech.posafrica.core.utils.convertReceiptDateTime
 import com.eazypaytech.posafrica.core.utils.getCurrentDateTime
 import com.eazypaytech.posafrica.core.utils.getTxnStatusStringId
 import com.eazypaytech.posafrica.core.utils.getTxnTypeStringId
 import com.eazypaytech.posafrica.core.utils.toAmountFormat
 import com.eazypaytech.posafrica.core.utils.toDecimalFormat
-import com.eazypaytech.posafrica.rootModel.Symbol
-import com.eazypaytech.posafrica.rootModel.Symbol.Type
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Style
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.convertReceiptDateTime
-//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.formatReceiptDateTime
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCardEntryStringId
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusStringId
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnTypeStringId
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toDecimalFormat
+//import com.eazypaytech.posafrica.rootModel.Symbol
+//import com.eazypaytech.posafrica.rootModel.Symbol.Type
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Align
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.FontSize
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.PrinterServiceRepository.Style
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.convertReceiptDateTime
+////import com.eazypaytech.posafrica.rootUtils.genericComposeUI.formatReceiptDateTime
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCardEntryStringId
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnStatusStringId
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getTxnTypeStringId
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toAmountFormat
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.toDecimalFormat
 
 object PrinterUtils {
 

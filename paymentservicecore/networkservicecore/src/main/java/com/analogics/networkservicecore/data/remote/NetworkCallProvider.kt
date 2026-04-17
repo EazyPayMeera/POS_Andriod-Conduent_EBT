@@ -1,5 +1,6 @@
 package com.analogics.networkservicecore.data.remote
 
+import android.util.Log
 import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

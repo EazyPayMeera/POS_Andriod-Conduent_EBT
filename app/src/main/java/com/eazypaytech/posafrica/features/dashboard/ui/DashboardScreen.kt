@@ -1,7 +1,7 @@
 package com.eazypaytech.posafrica.features.dashboard.ui
 
 
-import android.util.Log
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,22 +48,21 @@ import com.eazypaytech.posafrica.core.utils.HideSoftKeyboard
 import com.eazypaytech.posafrica.core.utils.getCurrentDateTime
 import com.eazypaytech.posafrica.core.utils.removeNonDigits
 import com.eazypaytech.posafrica.core.themes.dimens
-import com.eazypaytech.posafrica.navigation.AppNavigationItems
-import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
-import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
-import com.eazypaytech.posafrica.rootUiScreens.dashboard.model.DashboardItemList
-import com.eazypaytech.posafrica.rootUiScreens.dashboard.viewModel.DashboardViewModel
-import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
-import com.eazypaytech.posafrica.rootUiScreens.password.view.PasswordUtil
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.AppHeader
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CardWithImageText
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CircularMenu
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CustomDrawerContent
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.HideSoftKeyboard
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.removeNonDigits
-import com.eazypaytech.posafrica.ui.theme.dimens
+//import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
+//import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
+//import com.eazypaytech.posafrica.rootUiScreens.dashboard.model.DashboardItemList
+//import com.eazypaytech.posafrica.rootUiScreens.dashboard.viewModel.DashboardViewModel
+//import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+//import com.eazypaytech.posafrica.rootUiScreens.password.view.PasswordUtil
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.AppHeader
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CardWithImageText
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CircularMenu
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.CustomDrawerContent
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.HideSoftKeyboard
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
+//import com.eazypaytech.posafrica.rootUtils.genericComposeUI.removeNonDigits
+//import com.eazypaytech.posafrica.ui.theme.dimens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -71,7 +70,7 @@ import kotlinx.coroutines.withContext
 
 
 @Composable
-fun DashboardView(navHostController: NavHostController) {
+fun DashboardScreen(navHostController: NavHostController) {
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
     val isPasswordPrompt = remember { mutableStateOf(false) }

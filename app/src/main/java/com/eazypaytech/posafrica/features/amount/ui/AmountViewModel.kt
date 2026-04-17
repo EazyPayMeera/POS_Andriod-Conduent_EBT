@@ -32,6 +32,7 @@ import com.eazypaytech.posafrica.core.utils.getCurrentDateTime
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
 import com.eazypaytech.posafrica.core.utils.transformToAmountDouble
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.posafrica.core.utils.emvStatusToTransStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

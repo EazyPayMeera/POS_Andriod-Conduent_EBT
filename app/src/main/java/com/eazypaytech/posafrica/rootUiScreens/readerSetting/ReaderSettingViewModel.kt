@@ -1,16 +1,10 @@
 package com.eazypaytech.posafrica.rootUiScreens.readerSetting
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
-import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.navigateAndClean
-import com.eazypaytech.posafrica.navigation.AppNavigationItems
-import com.eazypaytech.securityframework.database.dbRepository.TxnDBRepository
+import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

@@ -47,6 +47,7 @@ sealed class AppNavigationItems(val route: String) {
  object KeyEntryScreen:AppNavigationItems(ScreensRouteTypes.KeyEntryScreen.name)
  object VoucherScreen:AppNavigationItems(ScreensRouteTypes.VoucherCardScreen.name)
  object AuthCodeScreen:AppNavigationItems(ScreensRouteTypes.AuthScreen.name)
+ object ReaderSettingScreen:AppNavigationItems(ScreensRouteTypes.ReaderSettingScreen.name)
 
  object PinScreen : AppNavigationItems(ScreensRouteTypes.PinScreen.name)
 

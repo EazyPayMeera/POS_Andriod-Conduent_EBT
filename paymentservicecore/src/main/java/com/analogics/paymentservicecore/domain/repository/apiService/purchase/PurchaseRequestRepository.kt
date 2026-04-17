@@ -104,7 +104,7 @@ class PurchaseRequestRepository @Inject constructor(
                 @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
                     paymentServiceTxnDetails?.let { details ->
-
+                        details.dateTime?.let { Log.d("DateTime", it) }
                         onAPIServiceResponse(parseIsoRespMessage123(details, response))
                     } ?: run {
                         onAPIServiceResponse(ApiServiceError("paymentServiceTxnDetails is null"))

@@ -6,10 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
-import com.eazypaytech.paymentservicecore.constants.AppConstants
-import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.rootUiScreens.activity.SharedViewModel
-import com.eazypaytech.posafrica.rootUiScreens.dialogs.CustomDialogBuilder
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

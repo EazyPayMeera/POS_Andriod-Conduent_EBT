@@ -14,6 +14,7 @@ import com.analogics.builder_core.data.constants.BuilderConstants
 
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
@@ -23,18 +24,6 @@ import com.analogics.paymentservicecore.data.model.TxnType
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IApiServiceResponseListener
-import com.eazypaytech.paymentservicecore.listeners.responseListener.IEmvServiceResponseListener
-import com.eazypaytech.paymentservicecore.model.PaymentServiceTxnDetails
-import com.eazypaytech.paymentservicecore.model.emv.EmvServiceResult
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceError
-import com.eazypaytech.paymentservicecore.model.error.ApiServiceTimeout
-import com.eazypaytech.paymentservicecore.models.EBTBalance
-import com.eazypaytech.paymentservicecore.models.TxnStatus
-import com.eazypaytech.paymentservicecore.models.TxnType
-import com.eazypaytech.paymentservicecore.repository.apiService.ApiServiceRepository
-import com.eazypaytech.paymentservicecore.repository.emvService.EmvServiceRepository
-import com.eazypaytech.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.posafrica.R
 import com.eazypaytech.posafrica.core.navigation.routes.AppNavigationItems
 import com.eazypaytech.posafrica.features.activity.ui.SharedViewModel
@@ -42,6 +31,7 @@ import com.eazypaytech.posafrica.features.dialogs.ui.CustomDialogBuilder
 import com.eazypaytech.posafrica.core.utils.navigateAndClean
 import com.eazypaytech.posafrica.core.utils.miscellaneous.NetworkUtils
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.posafrica.core.utils.emvStatusToTransStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

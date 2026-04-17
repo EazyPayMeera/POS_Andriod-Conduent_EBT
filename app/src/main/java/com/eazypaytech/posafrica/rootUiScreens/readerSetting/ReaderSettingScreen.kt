@@ -24,10 +24,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.eazypaytech.posafrica.R
-import com.eazypaytech.posafrica.rootUiScreens.activity.localSharedViewModel
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.AppButton
-import com.eazypaytech.posafrica.rootUtils.genericComposeUI.AppHeader
-import com.eazypaytech.posafrica.ui.theme.dimens
+import com.eazypaytech.posafrica.core.themes.dimens
+import com.eazypaytech.posafrica.core.ui.components.inputfields.AppHeader
+import com.eazypaytech.posafrica.features.activity.ui.localSharedViewModel
 
 
 @Composable

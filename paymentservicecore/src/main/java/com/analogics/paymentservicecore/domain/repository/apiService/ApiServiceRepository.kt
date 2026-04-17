@@ -128,6 +128,7 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              this.iApiServiceResponseListener = iApiServiceResponseListener
              this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
              purchaseRequestRepository.purchaseRequest(paymentServiceTxnDetails){
+                 paymentServiceTxnDetails?.dateTime?.let { Log.d("DateTime", it) }
                  onApiServiceResponse(it)
              }
          }
@@ -270,6 +271,7 @@ package com.analogics.paymentservicecore.domain.repository.apiService
                  }
 
                  is PaymentServiceTxnDetails -> {
+
                      try {
                          CoroutineScope(Dispatchers.IO).launch {
                              PaymentServiceUtils.transformObject<TxnEntity>(response)?.let {

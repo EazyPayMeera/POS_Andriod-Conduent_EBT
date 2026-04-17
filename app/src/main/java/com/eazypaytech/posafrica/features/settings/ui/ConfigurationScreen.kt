@@ -88,9 +88,9 @@ fun ConfigurationScreen(navHostController: NavHostController, viewModel: ConfigV
             imageRes = R.drawable.settings,
             text = stringResource(id = R.string.reader_setting),
             isChecked = viewModel.isTap.value,
-            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
+            onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
-            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
+            onArrowChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
             isEnabled = isAdmin
         )
 
