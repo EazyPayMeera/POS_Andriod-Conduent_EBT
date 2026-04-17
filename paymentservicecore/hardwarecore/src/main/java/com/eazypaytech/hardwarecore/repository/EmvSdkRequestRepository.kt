@@ -64,6 +64,28 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    override fun startLogCapture(context: Context): Boolean {
+        return runBlocking {
+            try {
+                emvWrapper.startLogCapture(context)
+            } catch (e: Exception) {
+                Log.e("MOREFUN", "Error checking card: ${e.message}")
+                false
+            }
+        }
+    }
+
+    override fun stopLogCapture(context: Context): Boolean {
+        return runBlocking {
+            try {
+                emvWrapper.startLogCapture(context)
+            } catch (e: Exception) {
+                Log.e("MOREFUN", "Error checking card: ${e.message}")
+                false
+            }
+        }
+    }
+
     override fun abortPayment() {
         try {
             EmvWrapperRepository.abortPayment()

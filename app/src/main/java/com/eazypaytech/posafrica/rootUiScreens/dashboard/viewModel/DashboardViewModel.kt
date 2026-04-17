@@ -156,5 +156,9 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
         }
     }
 
+    fun startLogCapture(context: Context): Boolean {
+        return emvServiceRepository.startLogCapture(context)
+    }
+
 
 }

@@ -648,6 +648,68 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    suspend fun startLogCapture(context: Context?): Boolean {
+        return try {
+            val service = getDeviceService(context)
+
+            if (service == null) {
+                Log.w(TAG, "deviceService is null — service not connected")
+                return false
+            }
+
+            val logger = service.logRecorder
+
+            if (logger == null) {
+                Log.w(TAG, "logRecorder returned null")
+                return false
+            }
+
+            // 1. Check if recorder is ready
+            val status = logger.getStatus()
+            Log.d(TAG, "LogRecorder status: $status")
+
+            // 2. Just open — DO NOT close here
+            val openResult = logger.openRecorder(null)
+            if (openResult != 0) {
+                Log.e(TAG, "Failed to open recorder, result: $openResult")
+                return false
+            }
+
+            Log.d(TAG, "LogRecorder started, capturing logs...")
+            true
+
+        } catch (e: RemoteException) {
+            Log.e(TAG, "RemoteException in startLogCapture()", e)
+            false
+        }
+    }
+
+    // Call this only when you want to STOP and SAVE the log
+    suspend fun stopLogCapture(context: Context?): String? {
+        return try {
+            val service = getDeviceService(context)
+            val logger = service?.logRecorder ?: return null
+
+            // 1. Get file path before closing
+            val logFilePath = logger.getLogFilePath()
+            Log.d(TAG, "Log file path: $logFilePath")
+
+            // 2. Now close
+            val closeResult = logger.closeRecorder(null)
+            if (closeResult != 0) {
+                Log.e(TAG, "Failed to close recorder, result: $closeResult")
+                return null
+            }
+
+            Log.d(TAG, "LogRecorder stopped, log saved at: $logFilePath")
+            logFilePath
+
+        } catch (e: RemoteException) {
+            Log.e(TAG, "RemoteException in stopLogCapture()", e)
+            null
+        }
+    }
+
     fun getCurrentTime(format: String?): String {
         val df = SimpleDateFormat(format)
         val curDate = Date(System.currentTimeMillis())
@@ -804,7 +866,7 @@ class EmvWrapperRepository @Inject constructor(
             Log.d(TAG, "RiskManagement(9F1D): ${it.riskManagement9F1D.toHexString()}")
             Log.d(TAG, "StatusCheck: ${it.statusCheck}")
             //Log.d(TAG, "OnlinePinCap (DF18): ${it.cOnlinePinCap_b_DF18}")
-            Log.d(TAG, "AcquirerID: ${it.acquirerID.toHexString()}")
+            //Log.d(TAG, "AcquirerID: ${it.acquirerID.toHexString()}")
             Log.d(TAG, "----------------------------------------------")
         }
 
@@ -1070,7 +1132,13 @@ class EmvWrapperRepository @Inject constructor(
                 ?: config.statusCheckSupported)?.let {
                     aidPara.statusCheck = it.hexToByte()
                 }
-
+                try {
+                    val field = aidPara.javaClass.getDeclaredField("cOnlinePinCap_b_DF18")
+                    field.isAccessible = true
+                    field.set(aidPara, 0x01.toByte())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
                 aidParaList = aidParaList.plus(aidPara)
             }
 

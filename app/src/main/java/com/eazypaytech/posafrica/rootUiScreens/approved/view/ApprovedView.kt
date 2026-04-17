@@ -218,7 +218,7 @@ fun ApprovedView(navHostController: NavHostController) {
                 ) {
                     OkButton(
                         onClick = {
-                            viewModel.onDone(navHostController)
+                            viewModel.onDone(context,navHostController)
                         },
                         title = stringResource(id = R.string.done),
                     )

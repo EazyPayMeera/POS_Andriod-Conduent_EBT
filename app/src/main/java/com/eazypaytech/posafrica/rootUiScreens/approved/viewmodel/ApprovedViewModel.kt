@@ -62,8 +62,9 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         }
     }
 
-    fun onDone(navHostController: NavHostController)
+    fun onDone(context: Context,navHostController: NavHostController)
     {
+        stopLogCapture(context)
         viewModelScope.launch {
             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         }
@@ -84,6 +85,10 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
 
     fun isCardExists(context: Context): Boolean {
         return emvServiceRepository.isCardExists(context)
+    }
+
+    fun stopLogCapture(context: Context): Boolean {
+        return emvServiceRepository.stopLogCapture(context)
     }
 
 }

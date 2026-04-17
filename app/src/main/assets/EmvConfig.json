@@ -3,13 +3,13 @@
   "appSelIndicator" : "00",
   "terminalType" : "21",
   "terminalCountryCode" : "0840",
-  "terminalCapabilities" : "604000",
+  "terminalCapabilities" : "606008",
   "terminalFloorLimit" : "00000000",
   "terminalAppPriority" : "00",
   "currencyCode" : "0840",
   "tacDefault" : "0000000000",
   "tacDenial" : "0000000000",
-  "tacOnline" : "DC4004F800",
+  "tacOnline": "DC4000F800",
   "defaultDDOL" : "9F3704",
   "defaultTDOL" : "9F0206",
   "threshold" : "000000002000",
@@ -21,7 +21,7 @@
   "enableBeeper" : "1",
   "enableRefundCVM" : "1",
   "forceInputPIN" : "1",
-  "enableEmvLogs" : "0",
+  "enableEmvLogs" : "1",
   "merchantNameLocation" : "1388A TAYLOR AVE   US  PARKVILLE    MDUS",
   "merchantCategoryCode" : "5811",
   "additionalTags" : "",
@@ -31,7 +31,9 @@
       {
         "aid": "A0000000044542",
         "appVersion": "0002",
-        "tacDenial": "0010000000"
+        "tacDefault": "F45084800C",
+        "tacDenial": "0000000000",
+        "tacOnline": "DC4000F800"
       },
       {
         "aid": "A0000000032010",

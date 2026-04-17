@@ -54,8 +54,10 @@ import com.eazypaytech.posafrica.rootUtils.genericComposeUI.TextView
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.getCurrentDateTime
 import com.eazypaytech.posafrica.rootUtils.genericComposeUI.removeNonDigits
 import com.eazypaytech.posafrica.ui.theme.dimens
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -298,8 +300,15 @@ fun TrainingView(
         )
     }
 
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            dashboardViewModel.startLogCapture(context)
+        }
+    }
+
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
+
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }

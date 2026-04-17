@@ -205,7 +205,7 @@ class ManualCardViewModel @Inject constructor(
                                 Log.d("AuthTransaction", "mapped status: ${emvStatusToTransStatus(response.hostRespCode)}")
                                 Log.d(
                                     "EBT",
-                                    "originalDateTime: ${sharedViewModel.objRootAppPaymentDetail.originalDateTime}"
+                                    "originalDateTime: ${response.dateTime}"
                                 )
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.posCondition = response.posCondition
@@ -279,7 +279,7 @@ class ManualCardViewModel @Inject constructor(
 
         dbRepository.fetchTxnById(txnId)?.let { txn ->
             txn.txnStatus = txnStatus?.toString() ?: ""
-            txn.originalDateTime = originalDateTime
+            txn.originalDateTime = sharedViewModel.objRootAppPaymentDetail.originalDateTime
             txn.hostAuthCode = AuthCode
             txn.posConditionCode = posCondition
 
