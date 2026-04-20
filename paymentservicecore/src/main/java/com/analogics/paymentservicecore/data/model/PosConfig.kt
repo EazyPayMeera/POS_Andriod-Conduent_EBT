@@ -2,7 +2,6 @@ package com.analogics.paymentservicecore.data.model
 
 import android.content.Context
 import android.os.Build
-import com.analogics.paymentservicecore.utils.logger.AppLogger
 import com.analogics.securityframework.data.local.SharedPrefHandler
 import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -95,7 +94,6 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
             for (field in this.javaClass.declaredFields) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     if (field.genericType.typeName == "java.lang.Double") {
-                        /* Shared Preferences doesn't have explicit setter for Double */
                         try {
                             if(SharedPrefHandler.getConfigVal(context, field.name)!=null && SharedPrefHandler.getConfigVal(context, field.name)!="null")
                                 field.set(this,SharedPrefHandler.getConfigVal(context, field.name)?.toString()?.toDouble())
@@ -103,7 +101,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
                                 field.set(this,0.0)
                         }catch (e : Exception)
                         {
-                            AppLogger.e(AppLogger.MODULE.POS_CONFIG,e.toString())
+//                            AppLogger.e(AppLogger.MODULE.POS_CONFIG,e.toString())
                         }
                     } else if(field.genericType.typeName in listOf("java.lang.String","java.lang.Boolean","java.lang.Long","java.lang.Float","java.lang.Int")) {
                         field.set(this, SharedPrefHandler.getConfigVal(context, field.name))
@@ -116,7 +114,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
             }
         }catch (e:Exception)
         {
-            AppLogger.e(AppLogger.MODULE.POS_CONFIG,e.toString())
+//            AppLogger.e(AppLogger.MODULE.POS_CONFIG,e.toString())
         }
         return this
     }
@@ -132,7 +130,7 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
                 }
             }
         } catch (e: Exception) {
-            AppLogger.e(AppLogger.MODULE.POS_CONFIG, e.toString())
+//            AppLogger.e(AppLogger.MODULE.POS_CONFIG, e.toString())
         }
         return this
     }

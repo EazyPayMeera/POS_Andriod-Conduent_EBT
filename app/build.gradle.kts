@@ -9,11 +9,11 @@ plugins {
 val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
 
 android {
-    namespace = "com.eazypaytech.posafrica"
+    namespace = "com.eazypaytech.pos"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.eazypaytech.posafrica"
+        applicationId = "com.eazypaytech.pos"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

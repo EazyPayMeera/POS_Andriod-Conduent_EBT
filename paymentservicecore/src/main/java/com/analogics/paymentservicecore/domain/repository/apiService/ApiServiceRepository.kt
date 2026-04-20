@@ -4,7 +4,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
     import android.os.Build
     import android.util.Log
     import androidx.annotation.RequiresApi
-    import com.eazypaytech.paymentservicecore.constants.AppConstants
     import com.analogics.paymentservicecore.data.listeners.requestListener.IApiServiceRequestListener
     import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
     import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
@@ -13,34 +12,25 @@ package com.analogics.paymentservicecore.domain.repository.apiService
     import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
     import com.analogics.paymentservicecore.data.model.PosConfig
     import com.analogics.paymentservicecore.data.model.TxnType
-    //import com.eazypaytech.paymentservicecore.repository.apiService.access_token.AccessTokenRequestRepository
-    //import com.eazypaytech.paymentservicecore.repository.apiService.auth_capture.AuthCaptureRequestRepository
-    //import com.eazypaytech.paymentservicecore.repository.apiService.batch.BatchRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.login.LoginRequestRepository
-    //import com.eazypaytech.paymentservicecore.repository.apiService.preauth.PreAuthRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.voidreq.VoidRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.purchase.PurchaseRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.voucherSettlement.VoucherSettlementRequestRepository
-    //import com.eazypaytech.paymentservicecore.repository.apiService.refund.RefundRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.reversal.ReversalRequestRepository
-    import com.analogics.paymentservicecore.domain.repository.apiService.rkl.RklRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.purchaseRequest.PurchaseRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.voucherSettlementRequest.VoucherSettlementRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.reversalRequest.ReversalRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.signOnRequest.SignOnRequestRepository
+    import com.analogics.paymentservicecore.domain.repository.apiService.voidRequest.VoidRequestRepository
     import com.analogics.paymentservicecore.utils.PaymentServiceUtils
     import com.analogics.securityframework.data.repository.TxnDBRepository
     import com.analogics.securityframework.database.entity.TxnEntity
     import kotlinx.coroutines.CoroutineScope
     import kotlinx.coroutines.Dispatchers
-    import kotlinx.coroutines.delay
     import kotlinx.coroutines.launch
     import javax.inject.Inject
 
     class ApiServiceRepository @Inject constructor(
-        //private val accessTokenRequestRepository: AccessTokenRequestRepository,
         private val voucherSettlementRequestRepository: VoucherSettlementRequestRepository,
-        private val loginRequestRepository: LoginRequestRepository,
         private val reversalRequestRepository: ReversalRequestRepository,
         private val voidRequestRepository: VoidRequestRepository,
         private val purchaseRequestRepository: PurchaseRequestRepository,
-        private val rklRequestRepository: RklRequestRepository,
+        private val rklRequestRepository: SignOnRequestRepository,
         private val dbRepository: TxnDBRepository,
         private val posConfig: PosConfig
     ) : IApiServiceRequestListener
@@ -57,12 +47,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              iApiServiceResponseListener: IApiServiceResponseListener
          )
          {
-
-             /* Delay to show processing screen in demo mode */
-             if(paymentServiceTxnDetails?.isDemoMode == true)
-                 delay(AppConstants.DEMO_MODE_PROMPTS_DELAY_MS)
-
-             /* Set Transaction Status as Initiated & Insert entry into DB. Update later on response */
              paymentServiceTxnDetails?.txnStatus = TransStatus.INITIATED.toString()
              PaymentServiceUtils.transformObject<TxnEntity>(paymentServiceTxnDetails)?.let {
                  dbRepository.insertOrUpdateTxn(
@@ -85,28 +69,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
             }
          }
 
-        override suspend fun apiServiceRefund(
-            paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-            iApiServiceResponseListener: IApiServiceResponseListener
-        ) {
-            Log.d("Request_date","apiServiceRefund")
-            this.iApiServiceResponseListener = iApiServiceResponseListener
-    //        refundRequestRepository.sendRefundRequest(paymentServiceTxnDetails){
-    //            onApiServiceResponse(it)
-    //        }
-        }
-
-         @RequiresApi(Build.VERSION_CODES.O)
-         override suspend fun apiServicePreAuth(
-             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-             iApiServiceResponseListener: IApiServiceResponseListener
-         ) {
-             Log.d("Request_date","apiServiceRefund")
-             this.iApiServiceResponseListener = iApiServiceResponseListener
-    //         preAuthRequestRepository.sendPreAuthRequest(paymentServiceTxnDetails){
-    //             onApiServiceResponse(it)
-    //         }
-         }
 
         @RequiresApi(Build.VERSION_CODES.O)
         override suspend fun apiServiceVoid(
@@ -128,7 +90,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              this.iApiServiceResponseListener = iApiServiceResponseListener
              this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
              purchaseRequestRepository.purchaseRequest(paymentServiceTxnDetails){
-                 paymentServiceTxnDetails?.dateTime?.let { Log.d("DateTime", it) }
                  onApiServiceResponse(it)
              }
          }
@@ -146,18 +107,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
          }
 
 
-
-        @RequiresApi(Build.VERSION_CODES.O)
-        override suspend fun apiServiceAuthCapture(
-            paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-            iApiServiceResponseListener: IApiServiceResponseListener
-        ) {
-            this.iApiServiceResponseListener = iApiServiceResponseListener
-    //        authCaptureRequestRepository.sendAuthCapRequest(paymentServiceTxnDetails){
-    //                onApiServiceResponse(it)
-    //        }
-        }
-
         @RequiresApi(Build.VERSION_CODES.O)
         override suspend fun apiServiceReversal(
             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -169,29 +118,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
                 onApiServiceResponse(it)
             }
         }
-
-        override suspend fun apiServiceLogin(
-            paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-            iApiServiceResponseListener: IApiServiceResponseListener
-        ) {
-            this.iApiServiceResponseListener = iApiServiceResponseListener
-            this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-            loginRequestRepository.apiDeviceLogin(paymentServiceTxnDetails){
-                onApiServiceResponse(it)
-            }
-        }
-
-        override suspend fun apiServiceAccessToken(
-            paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-            iApiServiceResponseListener: IApiServiceResponseListener
-        ) {
-            this.iApiServiceResponseListener = iApiServiceResponseListener
-            this.iApiServiceResponseListener.onApiServiceDisplayProgress(true)
-            /*accessTokenRequestRepository.apiGetAccessToken(paymentServiceTxnDetails){
-                onApiServiceResponse(it)
-            }*/
-        }
-
 
          override suspend fun signOnRequest(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -226,11 +152,10 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              rklRequestRepository.handShakeRequest(paymentServiceTxnDetails) { result ->
 
                  CoroutineScope(Dispatchers.IO).launch {
-                     onApiServiceResponse(result)  // ✅ now safe
+                     onApiServiceResponse(result)
                  }
              }
          }
-
 
          override suspend fun keyExchange(
             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -257,28 +182,22 @@ package com.analogics.paymentservicecore.domain.repository.apiService
          override fun onApiServiceResponse(response: Any) {
 
              iApiServiceResponseListener.onApiServiceDisplayProgress(false)
-
              when (response) {
-
                  is ApiServiceTimeout -> {
                      iApiServiceResponseListener.onApiServiceTimeout(response)
                  }
-
                  is ApiServiceError -> {
                      iApiServiceResponseListener.onApiServiceError(
                          ApiServiceError(response.errorMessage)   // ✅ fix this too
                      )
                  }
-
                  is PaymentServiceTxnDetails -> {
-
                      try {
                          CoroutineScope(Dispatchers.IO).launch {
                              PaymentServiceUtils.transformObject<TxnEntity>(response)?.let {
                                  dbRepository.updateTxn(it)
                              }
                          }
-
                          iApiServiceResponseListener.onApiServiceSuccess(response)
 
                      } catch (e: Exception) {
@@ -288,7 +207,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
                          )
                      }
                  }
-
                  else -> {
                      iApiServiceResponseListener.onApiServiceError(
                          ApiServiceError("Unknown response type")

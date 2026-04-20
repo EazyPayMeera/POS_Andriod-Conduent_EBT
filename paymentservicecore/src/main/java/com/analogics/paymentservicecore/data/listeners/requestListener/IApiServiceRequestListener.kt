@@ -13,11 +13,6 @@ interface IApiServiceRequestListener {
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
-    suspend fun apiServiceRefund(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    )
-
     suspend fun apiServiceVoid(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
@@ -33,30 +28,11 @@ interface IApiServiceRequestListener {
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
-    suspend fun apiServiceAuthCapture(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    )
-
-    suspend fun apiServicePreAuth(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    )
-
     suspend fun apiServiceReversal(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         iApiServiceResponseListener: IApiServiceResponseListener
     )
 
-    suspend fun apiServiceLogin(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    )
-
-    suspend fun apiServiceAccessToken(
-        paymentServiceTxnDetails: PaymentServiceTxnDetails?,
-        iApiServiceResponseListener: IApiServiceResponseListener
-    )
 
     suspend fun signOnRequest(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,

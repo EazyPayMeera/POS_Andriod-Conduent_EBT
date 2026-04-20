@@ -1,7 +1,5 @@
 package com.analogics.networkservicecore.di
 
-
-import com.analogics.networkservicecore.data.remote.IAPIService
 import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
 import dagger.Module
 import dagger.Provides
@@ -34,9 +32,4 @@ class NetworkModule {
             .build()
     }
 
-    @Provides
-    @Singleton
-    fun provideApiService(retrofit: Retrofit): IAPIService {
-        return retrofit.create(IAPIService::class.java)
-    }
 }
