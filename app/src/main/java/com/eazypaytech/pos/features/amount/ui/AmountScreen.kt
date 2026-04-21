@@ -1,7 +1,6 @@
 // CashBackScreen.kt
 package com.eazypaytech.pos.features.amount.ui
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,13 +44,16 @@ import com.eazypaytech.pos.core.ui.components.inputfields.getTransTypeAmountTitl
 import com.eazypaytech.pos.core.themes.dimens
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()){
+fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewModel = hiltViewModel()) {
     val context = LocalContext.current
-    var sharedViewModel= localSharedViewModel.current
+    val sharedViewModel = localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
+
+    // Collect StateFlows as Compose state so the UI recomposes when values change
+    val origTotalAmount by viewModel.origTotalAmount.collectAsState()
+    val origDateTime by viewModel.origDateTime.collectAsState()
 
     Column {
 
@@ -70,7 +73,14 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
             ) {
                 // Title Text
                 TextView(
-                    text = if(sharedViewModel.objPosConfig?.isCashback == true) stringResource(R.string.cashback_amt) else if(sharedViewModel.objRootAppPaymentDetail.isPurchase == true) stringResource(R.string.ebt_purchase_amount) else if(sharedViewModel.objRootAppPaymentDetail.isReturn == true) stringResource(R.string.ebt_return_amount) else getTransTypeAmountTitle(),
+                    text = if (sharedViewModel.objPosConfig?.isCashback == true)
+                        stringResource(R.string.cashback_amt)
+                    else if (sharedViewModel.objRootAppPaymentDetail.isPurchase == true)
+                        stringResource(R.string.ebt_purchase_amount)
+                    else if (sharedViewModel.objRootAppPaymentDetail.isReturn == true)
+                        stringResource(R.string.ebt_return_amount)
+                    else
+                        getTransTypeAmountTitle(),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -81,7 +91,11 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
 
                 // Image View
                 ImageView(
-                    imageId = if(sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID_LAST || sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.FOODSTAMP_RETURN) R.drawable.void_amt else R.drawable.card,
+                    imageId = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST
+                        || sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.FOODSTAMP_RETURN)
+                        R.drawable.void_amt
+                    else
+                        R.drawable.card,
                     size = MaterialTheme.dimens.DP_33_CompactMedium,
                     shape = RectangleShape,
                     alignment = Alignment.Center,
@@ -90,19 +104,24 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
 
                 OutlinedTextField(
                     value = viewModel.transAmount,
-                    onValueChange = {viewModel.onAmountChange(it)},
+                    onValueChange = { viewModel.onAmountChange(it) },
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
                     placeholder = stringResource(id = R.string.auth_amt),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
+                    textStyle = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.dimens.SP_28_CompactMedium,
+                        textAlign = TextAlign.End
+                    ),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
+                    onDoneAction = { viewModel.onConfirm(navHostController, sharedViewModel) },
                     visualTransformation = createAmountTransformation(),
                     amount = false,
                     readOnly = viewModel.isReadOnly
                 )
 
-                if (sharedViewModel.objRootAppPaymentDetail.txnType==TxnType.VOID_LAST) {
+                if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
+
                     TextView(
                         text = "",
                         fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
@@ -116,8 +135,8 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ")?:""), //+ (sharedViewModel.objRootAppPaymentDetail.cardMaskedPan?:"-"),
-                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode?:"-")
+                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ") ?: ""),
+                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode ?: "-")
                     ).forEach {
                         TextView(
                             text = it,
@@ -131,12 +150,13 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                     }
                 }
 
-                if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST ) {
+                if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
+                    // Use collected state values — UI will recompose when these update after DB fetch
                     listOf(
-                        stringResource(id = R.string.original_amount) + " " + viewModel.origTotalAmount.value,
-                        stringResource(id = R.string.date) + " " + viewModel.origDateTime.value
+                        stringResource(id = R.string.original_amount) + " " + (origTotalAmount ?: ""),
+                        stringResource(id = R.string.date) + " " + (origDateTime ?: "")
                     ).forEach {
                         TextView(
                             text = it,
@@ -155,7 +175,7 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
         // Footer Buttons
         FooterButtons(
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
-            firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
+            firstButtonOnClick = { isDialogVisible = true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
             closeKeypadOnSecondButton = true
@@ -166,13 +186,13 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                 .setTitle(stringResource(id = R.string.cancel_dialogue))
                 .setSubtitle(stringResource(id = R.string.dialogue_cancel_request))
                 .setSmallText("")
-                .setShowCloseButton(false) // Can set to false if you don't want the close button
+                .setShowCloseButton(false)
                 .setCancelButtonText(stringResource(id = R.string.cancel_no))
                 .setConfirmButtonText(stringResource(id = R.string.yes))
                 .setCancelable(true)
                 .setAutoOff(false)
                 .setBackgroundColor(androidx.compose.material.MaterialTheme.colors.surface)
-                .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
+                .setProgressColor(color = MaterialTheme.colorScheme.primary)
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
                     navHostController.navigate(AppNavigationItems.AmountScreen.route)
@@ -185,19 +205,15 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                     navHostController.popBackStack()
                 }
                 .buildDialog(onClose = { isDialogVisible = false })
-
         }
     }
 
     LaunchedEffect(Unit) {
-        if(sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
+        if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
             viewModel.fetchLastTransaction(navHostController, context, sharedViewModel)
         }
-        viewModel.onLoad(navHostController,context,sharedViewModel)
+        viewModel.onLoad(sharedViewModel)
     }
 
     CustomDialogBuilder.ShowComposed()
-
 }
-
-

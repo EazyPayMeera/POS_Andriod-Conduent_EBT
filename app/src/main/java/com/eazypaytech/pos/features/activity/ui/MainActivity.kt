@@ -14,6 +14,8 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -51,7 +53,6 @@ import com.eazypaytech.pos.features.receiptdetails.ui.ReceiptDetailsScreen
 import com.eazypaytech.pos.features.settings.ui.ConfigurationScreen
 import com.eazypaytech.pos.features.settings.ui.SettingsScreen
 import com.eazypaytech.pos.features.splash.ui.SplashScreen
-import com.eazypaytech.pos.features.transactiondetails.ui.TransactionDetailsScreen
 import com.eazypaytech.pos.features.txnSel.ui.TxnSelectionScreen
 import com.eazypaytech.pos.features.usermanagement.ui.UserManagementScreen
 import com.eazypaytech.pos.features.voucher.ui.VoucherCardScreen
@@ -69,10 +70,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         var sharedViewModel: SharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
-//        window.setFlags(    // to avoid screenshot and Screen Recording
-//            WindowManager.LayoutParams.FLAG_SECURE,
-//            WindowManager.LayoutParams.FLAG_SECURE
-//        )
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
 
         if (!checkStoragePermissions(this))
             requestStoragePermissions(this)
@@ -121,7 +122,6 @@ fun checkStoragePermissions(context: Context): Boolean {
 fun requestStoragePermissions(activity: Activity) {
     try {
 
-        //Android is 11 (R) or above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 val intent = Intent()
@@ -149,8 +149,6 @@ fun requestStoragePermissions(activity: Activity) {
 }
 
 
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigationGraph(
@@ -161,7 +159,11 @@ fun AppNavigationGraph(
     NavHost(
         modifier = modifier,
         navController = navHostController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
         composable(AppNavigationItems.SplashScreen.route) {
             SplashScreen(navHostController)

@@ -29,7 +29,6 @@ import com.eazypaytech.pos.core.ui.components.inputfields.ImageView
 import com.eazypaytech.pos.core.ui.components.textview.TextView
 import com.eazypaytech.pos.core.utils.getCardBrandStringId
 import com.eazypaytech.pos.core.utils.getCardEntryStringId
-import com.eazypaytech.pos.core.utils.getIsoResponseCodeString
 import com.eazypaytech.pos.core.utils.getTxnStatusIconId
 import com.eazypaytech.pos.core.utils.getTxnStatusStringId
 import com.eazypaytech.pos.core.utils.getTxnTypeStringId
@@ -102,7 +101,7 @@ fun TransactionDetailsScreen(navHostController: NavHostController) {
                         sharedViewModel.objRootAppPaymentDetail.hostRespCode?.takeIf { it.length >= 2 }
                             ?.let {
                                 TextView(
-                                    text = "[ " + getIsoResponseCodeString(context,it) + " ]",
+                                    text = "",
                                     fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,

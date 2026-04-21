@@ -1,56 +1,64 @@
 <resources>
-    <string name="app_name">ईज़ी पेमेंट्स</string>
+    <string name="app_name">Eazy Payments</string>
     <string name="top_back">वापस</string>
+
     <!-- splash -->
     <string name="welcome">स्वागत है</string>
     <string name="empty"></string>
 
     <!-- onBoardScreen -->
-    <string name="safe_fast_txn">सुरक्षित और तेज़ लेन-देन</string>
-    <string name="safe_fast_description">एकल उपयोग पासवर्ड जो दोबारा काम नहीं करेगा, आपके विवरण को सुरक्षित रखेगा चाहे वे उजागर हो जाएं</string>
-    <string name="analysis_data">डेटा का विश्लेषण</string>
-    <string name="improving_customer">डेटा एनालिटिक्स के माध्यम से ग्राहक प्रतिधारण में सुधार, कई महत्वपूर्ण बातें ध्यान में रखनी चाहिए</string>
-    <string name="quick_and_easy_payments">तेज़ और आसान भुगतान</string>
-    <string name="creating_pay">एक सहज भुगतान अनुभव बनाना उपयोगकर्ता संतुष्टि और रूपांतरण के लिए महत्वपूर्ण है</string>
+    <string name="safe_fast_txn">मन की शांति के लिए सुरक्षित भुगतान</string>
+    <string name="safe_fast_description">भुगतान उच्चतम स्तर की सुरक्षा के साथ पूर्ण होते हैं, हर खरीद पर मन की शांति प्रदान करते हैं</string>
+    <string name="analysis_data">व्यापक लेनदेन ट्रैकिंग और प्रबंधन</string>
+    <string name="improving_customer">वित्तीय लेनदेन की विस्तृत जानकारी जो व्यवसायों को उनके लेनदेन को प्रभावी ढंग से ट्रैक और प्रबंधित करने में मदद करती है</string>
+    <string name="quick_and_easy_payments">तेज़ और सुविधाजनक भुगतान समाधान</string>
+    <string name="creating_pay">सहज और कुशल लेनदेन का अनुभव करें जो आपका समय और प्रयास बचाते हैं, भुगतान को सरल, त्वरित और परेशानी मुक्त बनाते हैं</string>
     <string name="get_started">शुरू करें</string>
     <string name="skip">छोड़ें</string>
 
     <!-- Conduent Screen -->
     <string name="procid">प्रोसेसर आईडी:</string>
-    <string name="mid">एमआईडी:</string>
-    <string name="tid">टीआईडी:</string>
+    <string name="mid">MID:</string>
+    <string name="tid">TID:</string>
     <string name="act_label_enter_ProcId">कृपया प्रोसेसर आईडी दर्ज करें</string>
     <string name="ebt_cash">नकद</string>
-    <string name="ebt_cash_amount">नकद राशि दर्ज करें</string>
-    <string name="ebt_cash_benefit">नकद खरीद</string>
+    <string name="ebt_cash_amount">नकद खरीद राशि दर्ज करें</string>
+    <string name="ebt_cash_withdrawal_amount">निकासी राशि दर्ज करें</string>
+    <string name="ebt_cash_benefit">EBT नकद लाभ खरीद</string>
+    <string name="ebt_cash_withdrawal">EBT नकद निकासी</string>
     <string name="cashback_amt">कैशबैक राशि दर्ज करें</string>
-    <string name="return_amt">वापसी राशि दर्ज करें</string>
-    <string name="food">भोजन</string>
-    <string name="bal_snap">स्नैप</string>
-    <string name="cash">नकद</string>
+    <string name="return_amt">SNAP वापसी राशि दर्ज करें</string>
+    <string name="food">EBT SNAP लाभ खरीद</string>
+    <string name="bal_snap">SNAP</string>
+    <string name="food_stamp">फूड स्टैम्प</string>
+    <string name="cash">EBT नकद लाभ खरीद</string>
+    <string name="bal_cash">नकद</string>
+    <string name="key_man">की प्रबंधन</string>
+    <string name="time_out">समय समाप्त</string>
 
-    <!-- Activation Screen -->
     <string name="act_title">अभी सक्रिय करें</string>
+    <string name="act_prompt_activate">प्रोसेसर आईडी, TID और MID दर्ज करें</string>
     <string name="act_label_enter_Proc_id">कृपया प्रोसेसर आईडी दर्ज करें</string>
-    <string name="act_prompt_activate">कृपया डिवाइस सक्रिय करने के लिए TID और MID दर्ज करें</string>
     <string name="act_label_enter_tid">कृपया TID दर्ज करें</string>
     <string name="act_label_enter_Mid">कृपया MID दर्ज करें</string>
-    <string name="act_empty_tid_mid">TID और MID खाली नहीं होना चाहिए</string>
-    <string name="act_tid_length">TID की लंबाई 8 होनी चाहिए</string>
+
+    <string name="act_empty_tid_mid">प्रोसेसर आईडी खाली नहीं होनी चाहिए</string>
+    <string name="act_empty_card_cvv">कार्ड नंबर या CVV खाली है</string>
+    <string name="act_tid_length">प्रोसेसर आईडी 11 अंकों की होनी चाहिए</string>
     <string name="act_mid_length">MID की लंबाई 15 होनी चाहिए</string>
     <string name="act_failed">सक्रियण विफल</string>
 
     <!-- Add Clerk Screen -->
-    <string name="clerk_register_title">उपयोगकर्ता पंजीकरण</string>
+    <string name="clerk_register_title">उपयोगकर्ता जोड़ें</string>
     <string name="clerk_register_clerk_prompt">कृपया उपयोगकर्ता नाम और पासवर्ड दर्ज करें</string>
-    <string name="clerk_type">प्रकार:</string>
-    <string name="clerk_type_admin">प्रशासक</string>
-    <string name="clerk_type_clerk">क्लर्क</string>
-    <string name="clerk_register_btn">पंजीकरण करें</string>
-    <string name="clerk_register_done_btn">पूर्ण</string>
+    <string name="clerk_type">उपयोगकर्ता प्रकार:</string>
+    <string name="clerk_type_admin">व्यवस्थापक</string>
+    <string name="clerk_type_clerk">क्लर्क:</string>
+    <string name="clerk_register_btn">उपयोगकर्ता जोड़ें</string>
+    <string name="clerk_register_done_btn">हो गया</string>
     <string name="clerk_registration_success">उपयोगकर्ता जोड़ा गया</string>
-    <string name="clerk_registration_failed">उपयोगकर्ता पंजीकरण असफल</string>
-    <string name="clerk_already_exists">उपयोगकर्ता मौजूद है</string>
+    <string name="clerk_registration_failed">उपयोगकर्ता जोड़ना विफल</string>
+    <string name="clerk_already_exists">उपयोगकर्ता पहले से मौजूद है</string>
     <string name="clerk_username_empty">उपयोगकर्ता नाम खाली नहीं होना चाहिए</string>
     <string name="clerk_min_password_length">पासवर्ड की लंबाई 6 होनी चाहिए</string>
     <string name="clerk_password_mismatch">पासवर्ड मेल नहीं खाता</string>
@@ -63,84 +71,89 @@
     <string name="change_password">पासवर्ड बदलें</string>
     <string name="forget_pswd">पासवर्ड भूल गए?</string>
     <string name="username">उपयोगकर्ता नाम</string>
+    <string name="supervisor_id">सुपरवाइज़र आईडी</string>
     <string name="password">पासवर्ड</string>
     <string name="confirm_password">पासवर्ड की पुष्टि करें</string>
     <string name="placehldr_username">कृपया उपयोगकर्ता नाम दर्ज करें</string>
+    <string name="supervisor_username">कृपया सुपरवाइज़र दर्ज करें</string>
     <string name="placehldr_password">कृपया पासवर्ड दर्ज करें</string>
-    <string name="placehldr_Confirm_password">कृपया पासवर्ड की पुष्टि दर्ज करें</string>
+    <string name="placehldr_Confirm_password">कृपया पासवर्ड की पुष्टि करें</string>
     <string name="prompt_new_password">कृपया नया पासवर्ड दर्ज करें</string>
-    <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होना चाहिए</string>
+    <string name="cred_not_to_be_empty">उपयोगकर्ता नाम और पासवर्ड खाली नहीं होने चाहिए</string>
     <string name="login_invalid_cred">अमान्य प्रमाण-पत्र</string>
     <string name="login_version">v</string>
 
     <!-- User Management -->
     <string name="label_user_management">उपयोगकर्ता प्रबंधन</string>
     <string name="label_add_user">उपयोगकर्ता जोड़ें</string>
-    <string name="label_view_user">उपयोगकर्ताओं को देखें</string>
+    <string name="label_view_user">उपयोगकर्ता देखें</string>
     <string name="label_remove_user">उपयोगकर्ता हटाएं</string>
     <string name="msg_user_removed">उपयोगकर्ता हटाया गया</string>
-    <string name="msg_logout_first">उपयोगकर्ता लॉग इन है\nदूसरे उपयोगकर्ता के साथ लॉग इन करें</string>
+    <string name="msg_logout_first">उपयोगकर्ता लॉग इन है\nकिसी अन्य उपयोगकर्ता से लॉगिन करें</string>
     <string name="msg_user_list_empty">उपयोगकर्ता सूची खाली है</string>
 
     <!-- Change Password -->
     <string name="label_current_pwd">वर्तमान</string>
     <string name="label_new_pwd">नया</string>
     <string name="label_confirm_pwd">पुष्टि करें</string>
-    <string name="placehldr_current_pwd">वर्तमान पासवर्ड</string>
-    <string name="placehldr_new_pwd">नया पासवर्ड</string>
+    <string name="placehldr_current_pwd">वर्तमान पासवर्ड दर्ज करें</string>
+    <string name="placehldr_new_pwd">नया पासवर्ड दर्ज करें</string>
     <string name="current_password_empty">कृपया अपना वर्तमान पासवर्ड दर्ज करें</string>
     <string name="password_change_success">पासवर्ड बदल दिया गया</string>
-    <string name="password_change_failed">पासवर्ड बदलना असफल रहा</string>
+    <string name="password_change_failed">पासवर्ड बदलना विफल</string>
     <string name="invalid_current_password">अमान्य वर्तमान पासवर्ड</string>
 
     <!-- Dashboard -->
-    <string name="net_total">कुल शुद्ध राशि</string>
-    <string name="refund_amt">रिफंड राशि दर्ज करें</string>
-    <string name="enter_invoice">इनवॉइस नंबर दर्ज करें</string>
+    <string name="net_total">कुल शुद्ध</string>
+    <string name="refund_amt">वापसी राशि दर्ज करें</string>
+    <string name="enter_invoice">चालान नंबर दर्ज करें</string>
     <string name="enter_email">ईमेल आईडी दर्ज करें</string>
-    <string name="invoice_no">इनवॉइस नंबर</string>
+    <string name="invoice_no">चालान नंबर</string>
     <string name="auth_amt">प्राधिकरण राशि दर्ज करें</string>
-    <string name="authcap_amt">प्राधिकरण की गई राशि दर्ज करें</string>
+    <string name="authcap_amt">Auth कैप्चर राशि दर्ज करें</string>
     <string name="void_pur">खरीद रद्द करें</string>
-    <string name="purchase_amt">लेन-देन राशि दर्ज करें</string>
+    <string name="purchase_amt">लेनदेन राशि दर्ज करें</string>
+    <string name="purchase_snap_amt">SNAP खरीद राशि दर्ज करें</string>
     <string name="enter_Pin">कृपया पिन दर्ज करें</string>
     <string name="pin">पिन</string>
     <string name="org_amt">मूल राशि</string>
     <string name="date_time">समय:</string>
     <string name="card">कार्ड:</string>
-    <string name="auth_code">प्रमाण कोड:</string>
+    <string name="auth_code">प्राधिकरण कोड:</string>
     <string name="ref_id">संदर्भ आईडी:</string>
     <string name="cancel_no">नहीं</string>
-    <string name="inc_no">इनवॉइस नंबर: </string>
-    <string name="pos_entry">पीओएस प्रविष्टि: </string>
+    <string name="inc_no">चालान नंबर:</string>
+    <string name="pos_entry">POS प्रविष्टि:</string>
     <string name="print">प्रिंट</string>
     <string name="cancel">रद्द करें</string>
-    <string name="tap_swipe_insert">टैप/स्वाइप/इंसर्ट करें</string>
-    <string name="chip_detect">चिप का पता चला</string>
+    <string name="tap_swipe_insert">टैप/स्वाइप/डालें</string>
+    <string name="chip_detect">चिप पहचानी गई</string>
     <string name="confirm_btn">पुष्टि करें</string>
     <string name="cancel_btn">रद्द करें</string>
+    <string name="max_card_length_err">कार्ड नंबर 16 अंकों का होना चाहिए</string>
     <string name="cancel_dialogue">रद्द करें?</string>
     <string name="yes">हाँ</string>
     <string name="add_tip">टिप जोड़ें:</string>
     <string name="add_service_charge">सेवा शुल्क:</string>
-    <string name="txn_sum">लेन-देन सारांश:</string>
+    <string name="txn_sum">लेनदेन सारांश:</string>
     <string name="total_amt">कुल राशि:</string>
-    <string name="refund_amt_data">रिफंड राशि:</string>
+    <string name="refund_amt_data">वापसी राशि:</string>
     <string name="custom">कस्टम</string>
     <string name="end_shift_title">लॉगआउट?</string>
-    <string name="end_shift_message_1">क्या आप वाकई लॉगआउट करना चाहते हैं?</string>
+    <string name="end_shift_message_1">क्या आप वाकई</string>
     <string name="end_shift_message_2">लॉगआउट करना चाहते हैं?</string>
     <string name="dialogue_cancel_request">क्या आप वाकई रद्द करना चाहते हैं?</string>
     <string name="print_shift_report">शिफ्ट रिपोर्ट प्रिंट करें</string>
     <string name="print_last_receipt">अंतिम रसीद प्रिंट करें</string>
-    <string name="decline">अस्वीकृत करें</string>
-    <string name="decline_u">अस्वीकृत</string>
-    <string name="done">समाप्त</string>
-    <string name="clear">साफ़ करें</string>
-    <string name="open">बैच खुला है</string>
+    <string name="decline">अस्वीकार</string>
+    <string name="decline_u">अस्वीकार</string>
+    <string name="done">हो गया</string>
+
+    <string name="clear">साफ करें</string>
+    <string name="open">खोलें</string>
     <string name="training">प्रशिक्षण</string>
-    <string name="printing">प्रिंटिंग</string>
-    <string name="merchant_recp">विक्रेता रसीद</string>
+    <string name="printing">प्रिंट हो रहा है</string>
+    <string name="merchant_recp">व्यापारी रसीद</string>
     <string name="e_recp">ई-रसीद</string>
     <string name="cust_recp">ग्राहक रसीद</string>
     <string name="enter_tip_amount">टिप राशि दर्ज करें</string>
@@ -149,163 +162,171 @@
     <string name="adjust">समायोजित करें</string>
     <string name="enter_the_percentage">प्रतिशत दर्ज करें</string>
     <string name="percentage">प्रतिशत</string>
-    <string name="application_name">ईज़ी पेमेंट्स</string>
+    <string name="application_name">Eazy Payments</string>
     <string name="plz_wait">कृपया प्रतीक्षा करें</string>
     <string name="enter_password">अपना पासवर्ड दर्ज करें</string>
     <string name="set_lang">भाषा सेट करें</string>
     <string name="select_lang">अपनी भाषा चुनें</string>
     <string name="hindi">हिन्दी</string>
     <string name="home">होम</string>
-    <string name="english">अंग्रेज़ी</string>
-    <string name="scan_qr">क्यूआर/बारकोड स्कैन करें</string>
+    <string name="english">English</string>
+    <string name="scan_qr">QR/बारकोड स्कैन करें</string>
     <string name="password_">पासवर्ड भूल गए?</string>
-    <string name="call_customercare">पासवर्ड के लिए ग्राहक सेवा को कॉल करें</string>
+    <string name="call_customercare">पासवर्ड के लिए कस्टमर केयर को कॉल करें</string>
     <string name="proc_id">प्रोसेसर आईडी:</string>
-    <string name="sr_no">क्रमांक:</string>
+
+    <string name="sr_no">क्र.सं:</string>
     <string name="call_center">कॉल सेंटर:</string>
     <string name="email">ईमेल</string>
-    <string name="sucess">सफलता</string>
+    <string name="success">सफलता</string>
     <string name="sent_email">ईमेल भेजा गया</string>
     <string name="ereceipt_sent">ई-रसीद सफलतापूर्वक भेजी गई</string>
     <string name="ok">ठीक है</string>
     <string name="abort">रद्द करें</string>
     <string name="ten">10%</string>
-    <string name="tax_label_service_charge">एसजीएसटी</string>
-    <string name="tax_label_vat">सीजीएसटी</string>
-    <string name="tip_percent_change_prompt">टिप प्रतिशत दर्ज करें</string>
-    <string name="service_charge_percent_change_prompt">सेवा शुल्क प्रतिशत दर्ज करें</string>
+    <string name="tax_label_service_charge">सेवा शुल्क</string>
+    <string name="tax_label_vat">VAT</string>
+    <string name="tip_percent_change_prompt">बटन के लिए टिप प्रतिशत दर्ज करें</string>
+    <string name="service_charge_percent_change_prompt">बटन के लिए सेवा शुल्क प्रतिशत दर्ज करें</string>
     <string name="tip_current_value">वर्तमान टिप</string>
     <string name="service_charge_current_value">वर्तमान सेवा शुल्क</string>
-    <string name="tax_percent_prompt_service_charge">एसजीएसटी प्रतिशत दर्ज करें</string>
-    <string name="tax_percent_prompt_vat">सीजीएसटी प्रतिशत दर्ज करें</string>
-    <string name="tax_current_value">वर्तमान कर</string>
+    <string name="tax_percent_prompt_service_charge">प्रतिशत दर्ज करें</string>
+    <string name="tax_percent_prompt_vat">VAT प्रतिशत दर्ज करें</string>
+    <string name="tax_current_value">वर्तमान VAT</string>
     <string name="fifteen">15%</string>
     <string name="twenty">20%</string>
-    <string name="upi_separator">--- यूपीआई के लिए क्लिक करें ---</string>
+    <string name="upi_separator">----- UPI के लिए क्लिक करें -----</string>
     <string name="close">बंद करें</string>
-    <string name="chip_detected">चिप का पता चला</string>
+    <string name="chip_detected">चिप पहचानी गई</string>
     <string name="approved">स्वीकृत</string>
-    <string name="original_amount">मूल राशि : </string>
-    <string name="date">लेन-देन की तारीख : </string>
-    <string name="sel_pre_auth">पूर्व-अधिकार प्रकार चुनें</string>
-    <string name="new_auth">नया-प्राधिकरण</string>
-    <string name="auth_cap">प्राधिकरण-कैप्चर</string>
-    <string name="tnx_amount">लेन-देन राशि:</string>
+    <string name="original_amount">मूल राशि:</string>
+    <string name="date">लेनदेन तिथि:</string>
+    <string name="sel_pre_auth">Pre-Auth प्रकार चुनें</string>
+    <string name="new_auth">नया प्राधिकरण</string>
+    <string name="auth_cap">Auth-कैप्चर</string>
+    <string name="tnx_amount">लेनदेन राशि:</string>
     <string name="tip_amt">टिप राशि:</string>
-    <string name="service_charge">एसजीएसटी राशि:</string>
-    <string name="vat_amt">सीजीएसटी राशि:</string>
-    <string name="igst_amt">आईजीएसटी राशि:</string>
+    <string name="service_charge">सेवा शुल्क:</string>
+    <string name="vat_amt">VAT:</string>
+    <string name="igst_amt">IGST राशि:</string>
 
     <string name="not_found">रिकॉर्ड नहीं मिला</string>
 
     <!-- Transaction Receipt Details Screen -->
-    <string name="header">हेडर</string> फूटर
-    <string name="footer">फूटर</string>
+    <string name="header">शीर्षलेख</string>
+    <string name="footer">पादलेख</string>
 
     <string name="settings">सेटिंग्स</string>
+    <string name="reader_setting">रीडर सेटिंग्स</string>
 
     <string name="Configuration">कॉन्फ़िगरेशन</string>
-    <string name="reactivate_device">डिवाइस को पुनः सक्रिय करें</string>
+    <string name="reactivate_device">डिवाइस पुनः सक्रिय करें</string>
     <string name="user_man">उपयोगकर्ता प्रबंधन</string>
     <string name="training_mode">प्रशिक्षण मोड</string>
-    <string name="auto_report_print">साइन आउट पर ऑटो प्रिंट रिपोर्ट</string>
-    <string name="prompt_invoice_no">इनवॉइस नंबर के लिए प्रॉम्प्ट</string>
-    <string name="auto_print_merchant">ऑटो प्रिंट मर्चेंट रसीद</string>
+    <string name="auto_report_print">साइन आउट पर रिपोर्ट स्वतः प्रिंट करें</string>
+    <string name="prompt_invoice_no">चालान नंबर के लिए संकेत दें</string>
+    <string name="auto_print_merchant">व्यापारी रसीद स्वतः प्रिंट करें</string>
     <string name="enable_tipping">टिपिंग सक्षम करें</string>
     <string name="enable_service_charge">सेवा शुल्क</string>
-    <string name="vat">कर</string>
-    <string name="inactivity_timeout">निष्क्रियता समय सीमा</string>
-    <string name="enter_timeout">समय सीमा (सेकंड)</string>
-    <string name="timeout">समय सीमा</string>
+    <string name="vat">VAT</string>
+    <string name="inactivity_timeout">निष्क्रियता समय-सीमा</string>
+    <string name="enter_timeout">समय-सीमा (सेकंड)</string>
+    <string name="timeout">समय-सीमा</string>
     <string name="receipt_details">रसीद विवरण</string>
     <string name="save_btn">सहेजें</string>
-    <string name="adjust_per">-------- % समायोजित करें --------</string>
-    <string name="set_timeout">समय सीमा सेट करें</string>
+    <string name="adjust_per">--------% समायोजित करें--------</string>
+    <string name="set_timeout">समय-सीमा सेट करें</string>
     <string name="batch_id">बैच आईडी</string>
     <string name="set_batch_id">बैच आईडी सेट करें</string>
 
-    <string name="confirm_reactivate_device">क्या आप सुनिश्चित हैं कि आप\nडिवाइस को पुनः सक्रिय करना चाहते हैं?</string>
+    <string name="confirm_reactivate_device">क्या आप वाकई\nडिवाइस पुनः सक्रिय करना चाहते हैं?</string>
     <string name="is_correct">क्या यह जानकारी सही है?</string>
-    <string name="for_admin">केवल प्रशासन के लिए अनुमति प्राप्त है</string>
-    <string name="restricted">प्रतिबंधित !</string>
+    <string name="for_admin">केवल व्यवस्थापक के लिए अनुमत</string>
+    <string name="restricted">प्रतिबंधित!</string>
     <string name="batch_open">बैच खुला है</string>
 
     <!-- Custom Dialogue Builder -->
     <string name="sel_app_id">एक एप्लिकेशन आईडी चुनें</string>
-    <string name="default_alert_title_error">ओह!</string>
-    <string name="default_alert_title_success">सफलता</string>
+    <string name="default_alert_title_error"></string>
+    <string name="default_alert_title_success">सफलता!</string>
     <string name="default_alert_subtitle_wrong_password">गलत पासवर्ड</string>
 
     <!-- EBT DashBoard Screen -->
-    <string name="ebt_purchase_cashback">खरीद और कैशबैक</string>
-    <string name="ebt_cash_withdraw">EBT Cash Withdrawal</string>
-    <string name="ebt_bal_inquiry">बैलेंस पूछताछ</string>
+    <string name="ebt_purchase_cashback">EBT नकद लाभ खरीद कैशबैक के साथ</string>
+    <string name="ebt_cash_withdraw">EBT नकद निकासी</string>
+    <string name="ebt_bal_inquiry">EBT शेष राशि जांच</string>
+    <string name="cash_bal_available">उपलब्ध नकद शेष</string>
+    <string name="snap_bal_available">उपलब्ध SNAP शेष</string>
     <string name="ebt_voucher_clear">वाउचर क्लियर</string>
-    <string name="ebt_voucher_return">वाउचर रिटर्न</string>
-    <string name="ebt_void_last">पिछला लेनदेन रद्द</string>
-    <string name="ebt_food_purchase">फूड स्टैम्प खरीद</string>
-    <string name="ebt_foodstamp_return">फूड स्टैम्प रिटर्न</string>
-    <string name="ebt_e_voucher">ई-वाउचर निपटान</string>
+    <string name="ebt_voucher_return">लेनदेन</string>
+    <string name="sel_return">वापसी</string>
+    <string name="ebt_void_last">EBT अंतिम रद्द</string>
+    <string name="ebt_food_purchase">EBT लाभ खरीद</string>
+    <string name="ebt_foodstamp_return">EBT SNAP लाभ वापसी</string>
+    <string name="ebt_e_voucher">EBT वाउचर निपटान</string>
+    <string name="ebt_e_voucher_amount">निपटान राशि दर्ज करें</string>
+    <string name="ebt_purchase_amount">खरीद राशि दर्ज करें</string>
+    <string name="ebt_return_amount">वापसी राशि दर्ज करें</string>
+    <string name="ebt_cash_purchase" translatable="false">EBT नकद लाभ खरीद</string>
 
     <!-- Transaction List Screen -->
-    <string name="select_date">तारीख चुनें</string>
-    <string name="filter_by_batch">बैच नंबर द्वारा फ़िल्टर करें</string>
-    <string name="empty_list">लेनदेन सूची खाली है</string>
+    <string name="select_date">तिथि चुनें</string>
+    <string name="filter_by_batch">बैच नंबर से फ़िल्टर करें</string>
+    <string name="empty_list">सूची खाली है</string>
     <string name="sel_batch_id">बैच चुनें</string>
     <string name="from_date">से</string>
     <string name="to_date">तक</string>
-    <string name="to">से</string>
+    <string name="to">तक</string>
     <string name="close_batch">बैच बंद करें</string>
-    <string name="confirmation">पुष्टिकरण</string>
+    <string name="confirmation">पुष्टि</string>
     <string name="are_you_sure">क्या आप सुनिश्चित हैं?</string>
-    <string name="want_to_close_batch">क्या आप बैच बंद करना चाहते हैं</string>
+    <string name="want_to_close_batch">आप बैच बंद करना चाहते हैं</string>
     <string name="print_dialogue">प्रिंट करें?</string>
-    <string name="which_report">आप कौन सा रिपोर्ट चाहते हैं</string>
+    <string name="which_report">आप कौन सी रिपोर्ट चाहते हैं</string>
     <string name="summary">सारांश</string>
     <string name="detail">विवरण</string>
     <string name="lbl_batch_id">बैच #</string>
 
     <!-- BatchId Screen -->
     <string name="batchScreen_BatchIdNo">बैच आईडी दर्ज करें</string>
-    <string name="batchScreen_BatchId">बैच संख्या</string>
+    <string name="batchScreen_BatchId">बैच नंबर</string>
 
     <!-- InactivityTimeout Screen -->
-    <string name="inactivity_enter_timeout">समय सीमा दर्ज करें</string>
-    <string name="inactivity_timeout_screen">निष्क्रियता समय सीमा (सेकंड)</string>
+    <string name="inactivity_enter_timeout">समय-सीमा दर्ज करें</string>
+    <string name="inactivity_timeout_screen">निष्क्रियता समय-सीमा (सेकंड)</string>
 
-
-    <!-- Success Screen -->
+    <!-- Sucess Screen -->
     <string name="payment">भुगतान</string>
     <string name="successful">सफल</string>
 
     <!-- Printer Strings -->
     <string name="printer_error_title">प्रिंटिंग त्रुटि</string>
-    <string name="printer_out_of_paper">प्रिंटर में कागज समाप्त हो गया है</string>
+    <string name="printer_out_of_paper">प्रिंटर में कागज नहीं है</string>
     <string name="printer_busy">प्रिंटर व्यस्त है</string>
-    <string name="printer_Alert">अलर्ट</string>
+    <string name="printer_Alert">प्रिंटिंग</string>
     <string name="printer_no_record">कोई रिकॉर्ड नहीं मिला</string>
-    <string name="printer_init_failed">प्रारंभिककरण विफल</string>
-    <string name="printer_printing_failed">प्रिंटिंग विफल हुई</string>
+    <string name="printer_init_failed">प्रारंभीकरण विफल</string>
+    <string name="printer_printing_failed">प्रिंटिंग विफल</string>
 
     <!-- Receipt Builder -->
     <string name="receipt_header">ग्लोबल पेमेंट्स</string>
-    <string name="receipt_address">स्टोर का पता:</string>
+    <string name="receipt_address">स्टोर पता:</string>
     <string name="receipt_merchant_id">MID:</string>
     <string name="receipt_terminal_id">TID:</string>
     <string name="receipt_gray_line">---------------------------------</string>
     <string name="receipt_card_type">कार्ड प्रकार:</string>
-    <string name="receipt_card_no">कार्ड संख्या:</string>
+    <string name="receipt_card_no">कार्ड नंबर:</string>
     <string name="receipt_trans_type">लेनदेन प्रकार:</string>
-    <string name="receipt_batch_no">बैच संख्या:</string>
-    <string name="receipt_trace_no">ट्रेस संख्या:</string>
-    <string name="receipt_date">तारीख</string>
-    <string name="receipt_time">समय</string>
-    <string name="receipt_ref_no">संदर्भ संख्या:</string>
+    <string name="receipt_batch_no">बैच नंबर:</string>
+    <string name="receipt_trace_no">ट्रेस #:</string>
+    <string name="receipt_date">तिथि:</string>
+    <string name="receipt_time">समय:</string>
+    <string name="receipt_ref_no">संदर्भ नंबर:</string>
     <string name="receipt_aap_code">ऐप कोड:</string>
-    <string name="receipt_txn_id">लेनदेन ID:</string>
+    <string name="receipt_txn_id">लेनदेन आईडी:</string>
     <string name="receipt_app">ऐप:</string>
     <string name="receipt_subtotal">राशि:</string>
-    <string name="receipt_sale_tax">बिक्री कर:</string>
+    <string name="receipt_sale_tax">VAT:</string>
     <string name="receipt_pos_terminal">POS टर्मिनल:</string>
     <string name="receipt_card_entry_mode">कार्ड प्रविष्टि मोड:</string>
     <string name="receipt_aid">AID:</string>
@@ -313,109 +334,137 @@
     <string name="receipt_total">कुल:</string>
     <string name="receipt_txn_status">स्थिति:</string>
     <string name="receipt_payment">भुगतान:</string>
-    <string name="receipt_authorization">अधिकारिता:</string>
-    <string name="receipt_invoice_no">इनवॉइस:</string>
-    <string name="receipt_auth_code">अधिकार कोड</string>
+    <string name="receipt_authorization">प्राधिकरण:</string>
+    <string name="receipt_invoice_no">चालान:</string>
+    <string name="receipt_auth_code">Auth कोड</string>
     <string name="receipt_tip">टिप</string>
-    <string name="receipt_service_charge">एसजीएसटी</string>
-    <string name="receipt_vat">सीजीएसटी</string>
+    <string name="receipt_service_charge">सेवा शुल्क</string>
+    <string name="receipt_vat">VAT</string>
     <string name="receipt_sign">x</string>
     <string name="receipt_card_holder_name">कार्डधारक का नाम</string>
-    <string name="receipt_note">लेन-देन स्वीकार किया गया और भुगतान करने के लिए कार्डधारक की जिम्मेदारी की पुष्टि की गई</string>
+    <string name="receipt_note">लेनदेन स्वीकृत और कार्डधारक की भुगतान देयता की पुष्टि की गई</string>
     <string name="receipt_custom_copy">***** ग्राहक प्रति *****</string>
     <string name="receipt_merch_copy">***** व्यापारी प्रति *****</string>
     <string name="receipt_train_mode">*** प्रशिक्षण मोड ***</string>
     <string name="receipt_printing_merchant">व्यापारी प्रति</string>
     <string name="receipt_printing_customer">ग्राहक प्रति</string>
-    <string name="receipt_printing_summary">संक्षिप्त रिपोर्ट</string>
+    <string name="receipt_printing_summary">सारांश रिपोर्ट</string>
     <string name="receipt_printing_detail">विस्तृत रिपोर्ट</string>
+    <string name="receipt_balance_summary">शेष सारांश</string>
+    <string name="receipt_result">परिणाम:</string>
+    <string name="receipt_auth">Auth:</string>
+    <string name="receipt_dispense_goods">माल वितरित करें</string>
+    <string name="receipt_dispense" translatable="false">वितरित करें</string>
+    <string name="receipt_snap_begin_balance">SNAP प्रारंभिक शेष:</string>
+    <string name="receipt_snap_purchase">SNAP खरीद</string>
+    <string name="receipt_snap_end_balance">SNAP अंतिम शेष:</string>
+    <string name="receipt_cash_balance">नकद शेष:</string>
+    <string name="receipt_txntype_food_purchase" translatable="false">FOOD_PURCHASE</string>
+    <string name="receipt_settlement_date">निपटान तिथि:</string>
+    <string name="receipt_do_not_dispense_goods" translatable="false">माल वितरित न करें</string>
+    <string name="receipt_txntype_cash_purchase" translatable="false">CASH_PURCHASE</string>
+    <string name="receipt_cash_begin_balance">नकद प्रारंभिक शेष:</string>
+    <string name="receipt_cash_purchase">नकद खरीद</string>
+    <string name="receipt_cash_end_balance">नकद अंतिम शेष:</string>
+    <string name="receipt_snap_balance">SNAP शेष:</string>
+    <string name="receipt_txntype_purchase_with_cashback" translatable="false">PURCHASE_CASHBACK</string>
+    <string name="receipt_cash_back" translatable="false">कैशबैक:</string>
+    <string name="receipt_amount" translatable="false">राशि</string>
+    <string name="receipt_do_not_accept_goods" translatable="false">माल स्वीकार न करें</string>
+    <string name="receipt_accept_goods" translatable="false">माल स्वीकार करें</string>
+    <string name="receipt_cash_withdrawal">नकद निकासी</string>
+    <string name="receipt_txntype_cash_withdrawal" translatable="false">CASH_WITHDRAWAL</string>
+    <string name="receipt_txntype_balance_inquiry_cash" translatable="false">BALANCE_ENQUIRY_CASH</string>
+    <string name="receipt_voucher_number" translatable="false">वाउचर नंबर</string>
+    <string name="receipt_voucher_approval_code" translatable="false">वाउचर अनुमोदन कोड</string>
+    <string name="receipt_voucher_amount" translatable="false">वाउचर राशि</string>
 
     <!-- Summary Report -->
     <string name="summary_report">सारांश रिपोर्ट</string>
     <string name="summary_dot_line">---------------</string>
     <string name="summary_purchase">खरीद</string>
-    <string name="summary_refund">रिफंड</string>
+    <string name="summary_refund">वापसी</string>
     <string name="summary_void">रद्द</string>
     <string name="summary_subtotal">उप-योग</string>
     <string name="summary_service_charge">सेवा शुल्क</string>
-    <string name="summary_vat">वैट</string>
+    <string name="summary_vat">VAT</string>
     <string name="summary_tip">टिप</string>
     <string name="summary_cashback">कैशबैक</string>
     <string name="summary_total">कुल</string>
-    <string name="summary_txn_breakdown">लेनदेन का विवरण:</string>
+    <string name="summary_txn_breakdown">लेनदेन विवरण:</string>
     <string name="summary_credit_txn">क्रेडिट लेनदेन:</string>
     <string name="summary_debit_txn">डेबिट लेनदेन:</string>
     <string name="summary_footer">सारांश</string>
 
     <!-- Detail Report -->
-    <string name="detail_header">विवरण लेनदेन सारांश</string>
+    <string name="detail_header">विस्तृत लेनदेन सारांश</string>
     <string name="detail_txn">लेनदेन</string>
-    <string name="detail_count">गिनती</string>
-    <string name="detail_txn_details">लेनदेन का विवरण</string>
+    <string name="detail_count">संख्या</string>
+    <string name="detail_txn_details">लेनदेन</string>
     <string name="detail_txn_Type">लेनदेन प्रकार</string>
     <string name="detail_txn_Status">स्थिति</string>
-    <string name="detail_invoice_no">चालान संख्या</string>
-    <string name="detail_txn_amt">लेनदेन राशि</string>
-    <string name="detail_total_amt">कुल राशि</string>
-    <string name="detail_txn_ref">संदर्भ</string>
+    <string name="detail_invoice_no">चालान</string>
+    <string name="detail_txn_amt">राशि</string>
+    <string name="detail_total_amt">कुल</string>
+    <string name="detail_txn_ref">लेनदेन संदर्भ</string>
     <string name="detail_tip">टिप</string>
-    <string name="detail_vat">वैट</string>
-    <string name="detail_service_charge">शुल्क</string>
-    <string name="detail_auth_code">कोड</string>
+    <string name="detail_vat">VAT</string>
+    <string name="detail_service_charge">सेवा शुल्क</string>
+    <string name="detail_auth_code">Auth कोड</string>
     <string name="detail_card">कार्ड</string>
 
-    <!-- Recent Activity -->
+    <!-- txnlist -->
     <string name="recentActivity">हाल की गतिविधि</string>
     <string name="see_all">सभी देखें</string>
 
     <!-- Payment SDK Strings -->
-    <string name="emv_sdk_init_title">आरंभिककरण</string>
-    <string name="emv_sdk_init_success">भुगतान SDK सफलतापूर्वक आरंभ किया गया!!</string>
-    <string name="emv_sdk_init_failure">भुगतान SDK आरंभिककरण विफल हुआ!!</string>
-    <string name="processing">प्रसंस्करण</string>
+    <string name="emv_sdk_init_title">प्रारंभीकरण</string>
+    <string name="emv_sdk_init_success">पेमेंट SDK प्रारंभ हो गया!!</string>
+    <string name="emv_sdk_init_failure">पेमेंट SDK प्रारंभीकरण विफल!!</string>
+    <string name="processing">प्रसंस्करण हो रहा है</string>
 
     <!-- EMV Display Messages -->
-    <string name="emv_msg_id_card_inserted">चिप कार्ड प्रोसेस हो रहा है\nकृपया न निकालें</string>
+    <string name="emv_msg_id_card_inserted">चिप कार्ड प्रसंस्करण\nन निकालें</string>
     <string name="emv_msg_id_card_swiped">कार्ड स्वाइप किया गया</string>
     <string name="emv_msg_id_card_tapped">कार्ड टैप किया गया</string>
     <string name="emv_msg_id_no_card_detected">कोई कार्ड नहीं मिला</string>
-    <string name="emv_msg_id_not_ic_card">यह IC कार्ड नहीं है</string>
-    <string name="emv_msg_id_bad_swipe">कार्ड पढ़ने में त्रुटि, फिर से स्वाइप करें</string>
+    <string name="emv_msg_id_not_ic_card">IC कार्ड नहीं है</string>
+    <string name="emv_msg_id_bad_swipe">कार्ड पढ़ने में त्रुटि, पुनः स्वाइप करें</string>
     <string name="emv_msg_id_swipe_card">अपना कार्ड स्वाइप करें</string>
     <string name="emv_msg_id_timeout">कार्ड पढ़ने का समय समाप्त</string>
-    <string name="emv_msg_id_cancelled">कार्ड पढ़ना रद्द किया गया</string>
+    <string name="emv_msg_id_cancelled">कार्ड पढ़ना रद्द</string>
     <string name="emv_msg_id_device_busy">डिवाइस व्यस्त है</string>
-    <string name="emv_msg_id_card_read_ok">कार्ड पढ़ा गया</string>
+    <string name="emv_msg_id_card_read_ok">कार्ड सफलतापूर्वक पढ़ा गया</string>
     <string name="emv_msg_id_remove_card">कृपया अपना कार्ड निकालें</string>
-    <string name="emv_msg_id_use_ic_card">संपर्क चिप कार्ड का उपयोग करें</string>
-    <string name="emv_msg_id_use_magstripe">मैगस्ट्राइप का उपयोग करें</string>
-    <string name="emv_msg_id_insert_swipe_try_another">कार्ड डालें, स्वाइप करें या दूसरा कार्ड आज़माएं</string>
-    <string name="emv_msg_id_see_phone">अपने फ़ोन को देखें और कार्ड फिर से प्रस्तुत करें</string>
-    <string name="emv_msg_id_need_signature">हस्ताक्षर की आवश्यकता है</string>
-    <string name="emv_msg_id_end_application">आवेदन समाप्त करें</string>
-    <string name="emv_msg_id_tap_again">फिर से टैप करें</string>
-    <string name="emv_msg_id_app_blocked">एप्लिकेशन ब्लॉक किया गया</string>
-    <string name="emv_msg_id_card_blocked">कार्ड ब्लॉक किया गया</string>
+    <string name="emv_msg_id_use_ic_card">संपर्क चिप कार्ड उपयोग करें</string>
+    <string name="emv_msg_id_use_magstripe">मैगस्ट्राइप उपयोग करें</string>
+    <string name="emv_msg_id_insert_swipe_try_another">डालें, स्वाइप करें या दूसरा कार्ड आज़माएं</string>
+    <string name="emv_msg_id_see_phone">अपना फ़ोन देखें और कार्ड पुनः प्रस्तुत करें</string>
+    <string name="emv_msg_id_need_signature">हस्ताक्षर आवश्यक</string>
+    <string name="emv_msg_id_end_application">एप्लिकेशन समाप्त</string>
+    <string name="emv_msg_id_tap_again">अपना कार्ड पुनः टैप करें</string>
+    <string name="emv_msg_id_app_blocked">एप्लिकेशन अवरुद्ध</string>
+    <string name="emv_msg_id_card_blocked">कार्ड अवरुद्ध</string>
     <string name="emv_msg_id_terminated">समाप्त</string>
 
     <!-- EMV Display Messages (Errors) -->
     <string name="emv_msg_id_err_card_read">कार्ड पढ़ने में त्रुटि</string>
-    <string name="emv_msg_id_err_processing">प्रोसेसिंग त्रुटि</string>
+    <string name="emv_msg_id_err_processing">प्रसंस्करण त्रुटि</string>
     <string name="emv_msg_id_err_load_callback">कॉलबैक त्रुटि</string>
-    <string name="emv_msg_id_err_ics_param_not_found">ICS पैरामीटर गायब है</string>
+    <string name="emv_msg_id_err_ics_param_not_found">ICS पैरामीटर अनुपस्थित</string>
     <string name="emv_msg_id_err_kernel">EMV कर्नेल त्रुटि</string>
     <string name="emv_msg_id_err_pin_length">PIN लंबाई त्रुटि</string>
-    <string name="emv_msg_id_err_multiple_cards">कई कार्ड प्रस्तुत किए गए</string>
+    <string name="emv_msg_id_err_multiple_cards">एकाधिक कार्ड प्रस्तुत</string>
     <string name="emv_msg_id_err_check_card">कार्ड पढ़ने में त्रुटि</string>
-    <string name="emv_msg_id_err_aid_param_not_found">AID पैरामीटर गायब है</string>
-    <string name="emv_msg_id_err_capk_param_not_found">CAP कुंजी पैरामीटर गायब है</string>
+    <string name="emv_msg_id_err_aid_param_not_found">AID पैरामीटर अनुपस्थित</string>
+    <string name="emv_msg_id_err_capk_param_not_found">CAP की पैरामीटर अनुपस्थित</string>
     <string name="emv_msg_id_err_get_kernel_data">कर्नेल डेटा त्रुटि</string>
     <string name="emv_msg_id_err_qpboc_app">QPBOC ऐप त्रुटि</string>
     <string name="emv_msg_id_err_qpboc_fdda_failed">QPBOC FDDA विफल</string>
-    <string name="emv_msg_id_err_pure_cash_card_no_online">PURE कैश कार्ड ऑनलाइन लेनदेन के लिए अनुमति नहीं है</string>
+    <string name="emv_msg_id_err_pure_cash_card_no_online">ऑनलाइन लेनदेन के लिए PURE नकद कार्ड अनुमत नहीं</string>
 
-    <!-- EMV Display Messages (Errors) -->
-    <string name="emv_msg_id_processing_online">ऑनलाइन प्रोसेस हो रहा है</string>
+    <!-- EMV Display Messages (Online Processing) -->
+    <string name="emv_msg_id_processing_online">ऑनलाइन प्रसंस्करण हो रहा है</string>
 
     <!-- EMV Display Messages (Transaction Status) -->
     <string name="emv_msg_id_approved_online">ऑनलाइन स्वीकृत</string>
@@ -424,60 +473,60 @@
     <string name="emv_msg_id_declined_offline">ऑफलाइन अस्वीकृत</string>
     <string name="emv_msg_id_no_emv_apps">कार्ड समर्थित नहीं</string>
     <string name="emv_msg_id_app_selection_failed">एप्लिकेशन चयन विफल</string>
-    <string name="emv_msg_id_try_another_interface">दूसरा इंटरफेस आज़माएं</string>
+    <string name="emv_msg_id_try_another_interface">कृपया पुनः प्रयास करें</string>
     <string name="emv_msg_id_invalid_icc_card">अमान्य ICC कार्ड</string>
     <string name="emv_msg_id_retry">कृपया पुनः प्रयास करें</string>
-    <string name="emv_msg_id_card_removed">कार्ड हटा दिया गया</string>
-    <string name="emv_msg_id_issuer_script_update_successful">इशूअर स्क्रिप्ट अपडेट सफल</string>
-    <string name="emv_msg_id_issuer_script_update_failed">इशूअर स्क्रिप्ट अपडेट विफल</string>
+    <string name="emv_msg_id_card_removed">कार्ड निकाला गया</string>
+    <string name="emv_msg_id_issuer_script_update_successful">जारीकर्ता स्क्रिप्ट अपडेट सफल</string>
+    <string name="emv_msg_id_issuer_script_update_failed">जारीकर्ता स्क्रिप्ट अपडेट विफल</string>
 
     <!-- App Errors -->
     <string name="err_no_internet_connection">कृपया अपना इंटरनेट कनेक्शन जांचें</string>
     <string name="err_txn_not_found">लेनदेन नहीं मिला</string>
-    <string name="err_only_purchase_can_be_refunded">केवल खरीदारी को ही वापस किया जा सकता है</string>
-    <string name="err_only_preauth_can_be_captured">केवल प्रीऑथ को ही कैप्चर किया जा सकता है</string>
-    <string name="err_txn_already_refunded">लेनदेन पहले ही रिफंडेड है</string>
-    <string name="err_txn_already_voided">लेनदेन पहले ही वॉइडेड है</string>
-    <string name="err_txn_already_captured">लेनदेन पहले ही कैप्चर्ड है</string>
-    <string name="err_batch_is_settled">बैच बंद हो गया है</string>
-    <string name="err_cant_mix_demo_trans">लाइव और डेमो लेनदेन को मिश्रित नहीं कर सकते</string>
-    <string name="err_zero_amt_not_allowed">कृपया मान्य राशि दर्ज करें</string>
+    <string name="err_only_purchase_can_be_refunded">केवल खरीद की वापसी हो सकती है</string>
+    <string name="err_only_preauth_can_be_captured">केवल Preauth को कैप्चर किया जा सकता है</string>
+    <string name="err_txn_already_refunded">लेनदेन पहले से वापस हो चुका है</string>
+    <string name="err_txn_already_voided">लेनदेन पहले से रद्द हो चुका है</string>
+    <string name="err_txn_already_captured">लेनदेन पहले से कैप्चर हो चुका है</string>
+    <string name="err_batch_is_settled">बैच निपट चुका है</string>
+    <string name="err_cant_mix_demo_trans">लाइव और डेमो लेनदेन मिश्रित नहीं किए जा सकते</string>
+    <string name="err_zero_amt_not_allowed">कृपया वैध राशि दर्ज करें</string>
 
     <!-- Transaction Statuses -->
-    <string name="status_initiated">आरंभित</string>
+    <string name="status_initiated">प्रारंभ</string>
     <string name="status_approved">स्वीकृत</string>
     <string name="status_declined">अस्वीकृत</string>
-    <string name="status_error">एरर</string>
-    <string name="status_terminated">टर्मिनेटेड</string>
-    <string name="status_reversed">रिवर्स्ड</string>
-    <string name="status_voided">वॉइडेड</string>
-    <string name="status_refunded">रिफंडेड</string>
-    <string name="status_captured">कैप्चर्ड</string>
+    <string name="status_error">त्रुटि</string>
+    <string name="status_terminated">समाप्त</string>
+    <string name="status_reversed">उलटा</string>
+    <string name="status_voided">रद्द</string>
+    <string name="status_refunded">वापस</string>
+    <string name="status_captured">कैप्चर</string>
 
     <!-- Card Brands -->
-    <string name="card_brand_visa">वीज़ा</string>
-    <string name="card_brand_mastercard">मास्टरकार्ड</string>
-    <string name="card_brand_amex">अमेक्स</string>
-    <string name="card_brand_discover">डिस्कवर</string>
-    <string name="card_brand_diners">डाइनर्स</string>
-    <string name="card_brand_jcb">जेसीबी</string>
-    <string name="card_brand_upi">यूपीआई</string>
-    <string name="card_brand_pure">प्योर</string>
-    <string name="card_brand_rupay">रुपे</string>
-    <string name="card_brand_mir">मीर</string>
+    <string name="card_brand_visa">VISA</string>
+    <string name="card_brand_mastercard">MASTERCARD</string>
+    <string name="card_brand_amex">AMEX</string>
+    <string name="card_brand_discover">DISCOVER</string>
+    <string name="card_brand_diners">DINERS</string>
+    <string name="card_brand_jcb">JCB</string>
+    <string name="card_brand_upi">UPI</string>
+    <string name="card_brand_pure">PURE</string>
+    <string name="card_brand_rupay">RUPAY</string>
+    <string name="card_brand_mir">MIR</string>
     <string name="card_brand_unknown">अज्ञात</string>
 
-    <!--POS Entry Modes -->
-    <string name="card_entry_mode_contact">कॉन्टैक्ट</string>
-    <string name="card_entry_mode_contactless">कॉन्टैक्टलेस</string>
-    <string name="card_entry_mode_contactless_magstripe">कॉन्टैक्टलेस मैगस्ट्राइप</string>
+    <!-- Card Entry Modes -->
+    <string name="card_entry_mode_contact">संपर्क</string>
+    <string name="card_entry_mode_contactless">संपर्करहित</string>
+    <string name="card_entry_mode_contactless_magstripe">संपर्करहित मैगस्ट्राइप</string>
     <string name="card_entry_mode_magstripe">मैगस्ट्राइप</string>
     <string name="card_entry_mode_fallback_magstripe">फॉलबैक मैगस्ट्राइप</string>
-    <string name="card_entry_mode_manual">मैनुअल</string>
-    <string name="card_entry_mode_qrcode">क्यूआरकोड</string>
-    <string name="card_entry_mode_unspecified">अविशिष्ट</string>
+    <string name="card_entry_mode_manual">मैन्युअल</string>
+    <string name="card_entry_mode_qrcode">QR कोड</string>
+    <string name="card_entry_mode_unspecified">अनिर्दिष्ट</string>
 
-    <!--Receipt Details -->
+    <!-- Receipt Details -->
     <string name="header1_placeholder">हेडर 1 दर्ज करें</string>
     <string name="header2_placeholder">हेडर 2 दर्ज करें</string>
     <string name="header3_placeholder">हेडर 3 दर्ज करें</string>
@@ -488,97 +537,7 @@
     <string name="footer4_placeholder">फुटर 4 दर्ज करें</string>
     <string name="default_placeholder">पाठ दर्ज करें</string>
 
-    <string name="sel_user">उपयोगकर्ता का चयन करें</string>
-    <string name="operation_not_allowed">क्रिया अनुमत नहीं है</string>
-    <string name="min_one_admin_required">कम से कम एक व्यवस्थापक अनिवार्य है</string>
-
-    <!-- ISO Response Codes -->
-    <string name="iso_resp_code_approved">स्वीकृत</string>
-    <string name="iso_resp_code_call_issuer">आयोजक से संपर्क करें - कार्ड जारी करने वाले से संपर्क करें</string>
-    <string name="iso_resp_code_call_issuer_special">आयोजक से संपर्क करें - कार्ड जारी करने वाले से संपर्क करें, विशेष स्थिति</string>
-    <string name="iso_resp_code_invalid_merchant">अमान्य व्यापारी - LYRA # 03 से संपर्क करें</string>
-    <string name="iso_resp_code_declined_pickup_card">कार्ड को अस्वीकृत करें - कार्ड प्राप्त करें</string>
-    <string name="iso_resp_code_do_not_honor">लेन-देन अस्वीकृत, सम्मान न करें</string>
-    <string name="iso_resp_code_error_merchant">त्रुटि/व्यापारी त्रुटि - LYRA # 06 से संपर्क करें</string>
-    <string name="iso_resp_code_pickup_special">कार्ड प्राप्त करें # 07 - विशेष स्थिति (खोया हुआ/चोरी हुआ कार्ड नहीं)</string>
-    <string name="iso_resp_code_approved_verify_id">स्वीकृत, पहचान और हस्ताक्षर सत्यापित करें - पहचान के साथ सम्मान करें</string>
-    <string name="iso_resp_code_approved_partial">आंशिक रूप से स्वीकृत - आंशिक स्वीकृति</string>
-    <string name="iso_resp_code_invalid_txn">अमान्य लेन-देन - अमान्य लेन-देन</string>
-    <string name="iso_resp_code_invalid_amount">अमान्य राशि - अमान्य राशि</string>
-    <string name="iso_resp_code_declined_invalid_card">अस्वीकृत # 14 - अमान्य कार्ड संख्या</string>
-    <string name="iso_resp_code_declined_invalid_issuer">अस्वीकृत # 15 - अमान्य जारीकर्ता</string>
-    <string name="iso_resp_code_declined_customer_cancel">अस्वीकृत # 17 - ग्राहक द्वारा रद्द</string>
-    <string name="iso_resp_code_declined_reenter_txn">अस्वीकृत # 19 - लेन-देन को पुनः दर्ज करें</string>
-    <string name="iso_resp_code_invalid_response">अमान्य प्रतिक्रिया - अमान्य प्रतिक्रिया</string>
-    <string name="iso_resp_code_retry_no_action">पुनः प्रयास # 21 - कोई कार्रवाई नहीं की गई</string>
-    <string name="iso_resp_code_retry_suspected_malfunction">पुनः प्रयास # 22 - संदेहित दोष</string>
-    <string name="iso_resp_code_retry_unable_locate_record">पुनः प्रयास # 25 - रिकॉर्ड नहीं मिल सका</string>
-    <string name="iso_resp_code_retry_file_update_field_error">पुनः प्रयास # 27 - फ़ाइल अपडेट क्षेत्र संपादन त्रुटि</string>
-    <string name="iso_resp_code_retry_record_already_exists">पुनः प्रयास # 28 - रिकॉर्ड पहले से फ़ाइल में मौजूद है</string>
-    <string name="iso_resp_code_retry_file_update_not_successful">पुनः प्रयास # 29 - फ़ाइल अपडेट सफल नहीं</string>
-    <string name="iso_resp_code_format_error">फ़ॉर्मेट त्रुटि - पैकेट / फ़ॉर्मेट त्रुटि (आवश्यक फ़ील्ड अनुपस्थित या अमान्य वर्ण)</string>
-    <string name="iso_resp_code_retry_unsupported_bank">पुनः प्रयास # 31 - बैंक स्विच द्वारा समर्थित नहीं</string>
-    <string name="iso_resp_code_retry_partial_reversal">पुनः प्रयास # 32 - आंशिक पलटाव</string>
-    <string name="iso_resp_code_expired_card">समाप्त कार्ड # 33 - समाप्त कार्ड, कैप्चर करें</string>
-    <string name="iso_resp_code_declined_suspected_fraud">अस्वीकृत # 34 - संदेहित धोखाधड़ी, कैप्चर करें</string>
-    <string name="iso_resp_code_restricted_card">सीमित कार्ड - सीमित कार्ड, कैप्चर करें</string>
-    <string name="iso_resp_code_excess_pin_tries">अधिक PIN प्रयास - अनुमत PIN प्रयास सीमा पार, कैप्चर करें</string>
-    <string name="iso_resp_code_declined_no_credit_account">अस्वीकृत # 39 - कोई क्रेडिट खाता नहीं</string>
-    <string name="iso_resp_code_declined_unsupported_function">अस्वीकृत # 40 - अनुरोधित फ़ंक्शन समर्थित नहीं</string>
-    <string name="iso_resp_code_pickup_lost_card">कार्ड प्राप्त करें # 41 - खोया हुआ कार्ड, कैप्चर करें</string>
-    <string name="iso_resp_code_declined_no_universal_account">अस्वीकृत # 42 - कोई सार्वभौमिक खाता नहीं</string>
-    <string name="iso_resp_code_pickup_stolen_card">कार्ड प्राप्त करें # 43 - चोरी हुआ कार्ड, कैप्चर करें</string>
-    <string name="iso_resp_code_declined_insufficient_funds">अस्वीकृत # 51 - अपर्याप्त निधि/अधिक क्रेडिट सीमा</string>
-    <string name="iso_resp_code_no_checking_account">कोई चेकिंग खाता नहीं - कोई चेकिंग खाता नहीं</string>
-    <string name="iso_resp_code_no_savings_account">कोई बचत खाता नहीं - कोई बचत खाता नहीं</string>
-    <string name="iso_resp_code_expired_card_check">समाप्त कार्ड - समाप्त कार्ड (यदि BIN सीमा के लिए समाप्ति तिथि जांच सक्षम है)</string>
-    <string name="iso_resp_code_incorrect_pin">गलत PIN - अमान्य PIN</string>
-    <string name="iso_resp_code_declined_not_permitted_to_cardholder">अस्वीकृत # 57 - कार्डधारक के लिए लेन-देन अनुमत नहीं</string>
-    <string name="iso_resp_code_declined_not_permitted_to_terminal">अस्वीकृत # 58 - टर्मिनल के लिए लेन-देन अनुमत नहीं</string>
-    <string name="iso_resp_code_declined_suspected_fraud_alt">अस्वीकृत # 59 - संदेहित धोखाधड़ी</string>
-    <string name="iso_resp_code_contact_acquirer_decline">अस्वीकृत # 60 - कार्ड स्वीकारकर्ता से संपर्क करें, अस्वीकृत</string>
-    <string name="iso_resp_code_exceeds_withdrawal_limit">सीमा से अधिक राशि - निकासी राशि सीमा से अधिक</string>
-    <string name="iso_resp_code_restricted_card_capture">सीमित कार्ड - सीमित कार्ड, कैप्चर करें</string>
-    <string name="iso_resp_code_security_violation">सुरक्षा त्रुटि # 63 - सुरक्षा उल्लंघन</string>
-    <string name="iso_resp_code_retry_aml_requirement">पुनः प्रयास # 64 - लेन-देन AML आवश्यकता पूरी नहीं करता (Stand-In प्रोसेसिंग)</string>
-    <string name="iso_resp_code_exceeds_withdrawal_frequency">सीमा से अधिक प्रयास - निकासी आवृत्ति सीमा से अधिक</string>
-    <string name="iso_resp_code_declined_contact_acquirer">अस्वीकृत # 66 - कार्ड स्वीकारकर्ता से संपर्क करें</string>
-    <string name="iso_resp_code_pickup_hard_capture">कार्ड प्राप्त करें # 67 - कठिन कैप्चर (ATM पर कार्ड प्राप्त करना आवश्यक)</string>
-    <string name="iso_resp_code_retry_acquirer_timeout">पुनः प्रयास # 68 - अधिग्रहणकर्ता समय-सीमा समाप्त</string>
-    <string name="iso_resp_code_retry_mobile_record_not_found">पुनः प्रयास # 69 - मोबाइल नंबर रिकॉर्ड नहीं मिला/मिलान नहीं</string>
-    <string name="iso_resp_code_retry_contact_card_issuer">पुनः प्रयास # 70 - कार्ड जारीकर्ता से संपर्क करें</string>
-    <string name="iso_resp_code_retry_deemed_acceptance">पुनः प्रयास # 71 - स्वीकृति मानी गई / PIN बदला नहीं गया</string>
-    <string name="iso_resp_code_retry_issuer_risk_decline">पुनः प्रयास # 74 - जोखिम स्कोर के आधार पर जारीकर्ता द्वारा अस्वीकृत</string>
-    <string name="iso_resp_code_exceeded_pin_tries">अधिक PIN प्रयास # 75 - अनुमत PIN प्रयासों की संख्या पार की गई</string>
-    <string name="iso_resp_code_pvt_error_to_account">PVT त्रुटि # 76 - MC: अमान्य/अस्तित्वहीन "To Account"; VISA: पुनः प्राप्ति संदर्भ संख्या पर मेल नहीं</string>
-    <string name="iso_resp_code_pvt_error_from_account">PVT त्रुटि # 77 - MC: अमान्य/अस्तित्वहीन "From Account"; VISA: असंगत पुनरावृत्ति/पलटाव डेटा</string>
-    <string name="iso_resp_code_pvt_error_general_account">PVT त्रुटि # 78 - MC: अमान्य/अस्तित्वहीन खाता; VISA: "ब्लॉक्ड, पहली बार उपयोग हुआ"</string>
-    <string name="iso_resp_code_transaction_reversed">लेन-देन पलटाव - लेन-देन पहले ही पलट चुका है</string>
-    <string name="iso_resp_code_duplicate_batch">खराब बैच संख्या # 80 - डुप्लिकेट बैच</string>
-    <string name="iso_resp_code_pvt_error_domestic_debit">PVT त्रुटि # 81 - MC: घरेलू डेबिट अनुमति नहीं; VISA: PIN क्रिप्टोग्राफिक त्रुटि (Stand-In प्रोसेसिंग)</string>
-    <string name="iso_resp_code_timeout_at_issuer">आयोजक पर समय-सीमा समाप्त - आयोजक पर समय-सीमा समाप्त</string>
-    <string name="iso_resp_code_hsm_key_error">HSM कुंजी त्रुटि - कुंजी त्रुटि। कुंजी इंजेक्शन प्रारंभ करें</string>
-    <string name="iso_resp_code_declined_invalid_auth_life_cycle">अस्वीकृत # 84 - अमान्य प्राधिकरण जीवन चक्र</string>
-    <string name="iso_resp_code_pvt_error_zero_amount">PVT त्रुटि # 85 - अस्वीकृत नहीं, सभी शून्य राशि लेन-देन के लिए वैध</string>
-    <string name="iso_resp_code_pvt_error_pin_validation">PVT त्रुटि # 86 - PIN सत्यापन संभव नहीं</string>
-    <string name="iso_resp_code_pvt_error_no_cashback">PVT त्रुटि # 87 - केवल खरीद राशि, कैश बैक की अनुमति नहीं</string>
-    <string name="iso_resp_code_cryptographic_failure">क्रिप्टोग्राफिक त्रुटि - क्रिप्टोग्राफिक त्रुटि</string>
-    <string name="iso_resp_code_pvt_error_unacceptable_pin">PVT त्रुटि # 89 - अस्वीकार्य PIN - लेन-देन अस्वीकृत पुनः प्रयास करें</string>
-    <string name="iso_resp_code_cut_off_in_process">कट-ऑफ प्रक्रिया में है - कट-ऑफ प्रक्रिया में है</string>
-    <string name="iso_resp_code_try_after_5min_auth_sys_inoperative">5 मिनट बाद प्रयास करें # 91 - प्राधिकरण प्रणाली या आयोजक प्रणाली कार्यरत नहीं</string>
-    <string name="iso_resp_code_try_after_5min_unable_route">5 मिनट बाद प्रयास करें # 92 - लेन-देन रूट करने में सक्षम नहीं</string>
-    <string name="iso_resp_code_declined_violation_of_law">अस्वीकृत # 93 - लेन-देन पूरा नहीं किया जा सकता; कानून का उल्लंघन</string>
-    <string name="iso_resp_code_pvt_error_duplicate_trans">PVT त्रुटि # 94 - डुप्लिकेट ट्रांसमिशन</string>
-    <string name="iso_resp_code_totals_mismatch">कुल मिलाकर मेल नहीं खाते - कुल मिलाकर मेल नहीं खाते (केवल निपटान के लिए); सुलह त्रुटि</string>
-    <string name="iso_resp_code_system_error">सिस्टम त्रुटि - सिस्टम दोष</string>
-    <string name="iso_resp_code_cvv2_failure">CVV2 त्रुटि - CVV2 त्रुटि के लिए अस्वीकृत</string>
-    <string name="iso_resp_code_offline_approved_1">ऑफ़लाइन स्वीकृत 1 - EMV लेन-देन ऑफलाइन स्वीकृत</string>
-    <string name="iso_resp_code_offline_approved_3">ऑफ़लाइन स्वीकृत 3 - EMV लेन-देन ऑनलाइन नहीं जा सका; टर्मिनल द्वारा ऑफलाइन स्वीकृत</string>
-    <string name="iso_resp_code_offline_declined_1">ऑफ़लाइन अस्वीकृत 1 - EMV लेन-देन टर्मिनल पर ऑफलाइन अस्वीकृत</string>
-    <string name="iso_resp_code_offline_declined_3">ऑफ़लाइन अस्वीकृत 3 - EMV लेन-देन ऑनलाइन नहीं जा सका; टर्मिनल पर ऑफलाइन अस्वीकृत</string>
-    <string name="iso_resp_code_aac_generated_by_chip">AAC चिप द्वारा उत्पन्न - AAC चिप कार्ड द्वारा उत्पन्न</string>
-    <string name="iso_resp_code_reversal_response_code">पलटाव प्रतिक्रिया कोड - टर्मिनल को चिप से अंतिम आवेदन क्रिप्टोग्राम प्राप्त नहीं हुआ</string>
-    <string name="iso_resp_code_unknown_error">अज्ञात त्रुटि</string>
-
-
+    <string name="sel_user">उपयोगकर्ता चुनें</string>
+    <string name="operation_not_allowed">कार्रवाई अनुमत नहीं</string>
+    <string name="min_one_admin_required">न्यूनतम एक व्यवस्थापक अनिवार्य है</string>
 </resources>
