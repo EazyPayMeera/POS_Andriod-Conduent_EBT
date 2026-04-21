@@ -185,6 +185,7 @@ class ManualCardViewModel @Inject constructor(
                             viewModelScope.launch(Dispatchers.Main) {  // ← navigate on Main
                                 CustomDialogBuilder.composeProgressDialog(false)
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate
                                 sharedViewModel.objRootAppPaymentDetail.expiryDate = response.expiryDate

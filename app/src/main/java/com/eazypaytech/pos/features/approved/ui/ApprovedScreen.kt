@@ -154,7 +154,7 @@ fun ApprovedScreen(navHostController: NavHostController) {
                         )
 
                         Text(
-                            text = txnRecord.hostResMessage.toString(),
+                            text = txnRecord.hostResMessage.toString() + "  " + "(" + txnRecord.hostRespCode + ")",
                             fontSize = MaterialTheme.dimens.SP_15_CompactMedium,
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Bold,

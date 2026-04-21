@@ -127,6 +127,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.settlementDate = response.paymentServiceTxnDetails?.settlementDate
                                 sharedViewModel.objRootAppPaymentDetail.expiryDate = response.paymentServiceTxnDetails?.expiryDate
