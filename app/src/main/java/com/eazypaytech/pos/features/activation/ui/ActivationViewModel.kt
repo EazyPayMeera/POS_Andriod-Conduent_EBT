@@ -16,7 +16,6 @@ import com.analogics.paymentservicecore.data.model.Acquirer
 import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
-import com.eazypaytech.pos.R
 import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
 import com.eazypaytech.pos.navigation.AppNavigationItems
@@ -24,6 +23,7 @@ import com.eazypaytech.pos.core.utils.getAcquirer
 import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.eazypaytech.pos.core.service.KeepAliveService
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.pos.R
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -182,9 +182,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
 
         viewModelScope.launch(Dispatchers.Main) {
-            Log.d("ACTIVATION", "onApiServiceSuccess called — currentStep: $currentStep")
-            Log.d("ACTIVATION", "txnStatus: ${paymentServiceTxnDetails.txnStatus}")
-            Log.d("ACTIVATION", "hostRespCode: ${paymentServiceTxnDetails.hostRespCode}")
             if (paymentServiceTxnDetails.txnStatus != TxnStatus.APPROVED.toString() ||
                 paymentServiceTxnDetails.hostRespCode != "00"
             ) {
@@ -196,25 +193,15 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             when (currentStep) {
 
                 ActivationState.SIGN_ON -> {
-                    Log.d("ACTIVATION", "✅ SIGN_ON success — but no next call made ❌ FLOW STOPS HERE")
                     sharedViewModel?.objRootAppPaymentDetail?.workKey = paymentServiceTxnDetails.workKey
                     currentStep = ActivationState.KEY_CHANGE
-
                 }
 
                 ActivationState.KEY_EXCHANGE -> {
-//                    Log.d("ACTIVATION", "✅ KEY_EXCHANGE success — calling keyChange")
-//                    currentStep = ActivationState.KEY_CHANGE
-//                    apiServiceRepository.keyChange(
-//                        PaymentServiceUtils.transformObject(
-//                            sharedViewModel?.objRootAppPaymentDetail
-//                        ),
-//                        this@ActivationViewModel
-//                    )
+//
                 }
 
                 ActivationState.KEY_CHANGE -> {
-                    Log.d("ACTIVATION", "✅ KEY_CHANGE success — calling keyChange again ❌ should be handShake")
                     currentStep = ActivationState.HAND_SHAKE
                     apiServiceRepository.keyChange(
                         PaymentServiceUtils.transformObject(
@@ -226,7 +213,6 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
                 }
 
                 ActivationState.HAND_SHAKE -> {
-                    Log.d("ACTIVATION", "✅ HAND_SHAKE success — navigating")
                     loadDefaultValues(sharedViewModel)
                     sharedViewModel?.objPosConfig?.apply {
                         isActivationDone = true

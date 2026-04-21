@@ -1,12 +1,10 @@
 package com.eazypaytech.hardwarecore.utils
 
 import android.content.Context
-//import android.device.DeviceManager
-//import android.device.SEManager
 import android.util.Log
 import com.eazypaytech.hardwarecore.BuildConfig
 import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
-//import com.urovo.sdk.pinpad.PinPadProviderImpl
+
 
 object HardwareUtils {
     fun getDeviceSN() : String
@@ -18,45 +16,12 @@ object HardwareUtils {
         // 80042414067318 = YL000002 - YLTEST000000002
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    suspend fun injectTMK(tmk: String, kcv: String, context: Context?=null) : Boolean
-    {
-        try {
-            return EmvWrapperRepository.injectTMK(tmk, kcv, context)
-        }catch (exception : Exception)
-        {
-            Log.e("HARDWARE_UTILS", exception.message.toString())
-            return false
-        }
-    }
-
     suspend fun injectTMKKey(tmk: String,kcv: String,context: Context? = null): Boolean {
         return try {
             EmvWrapperRepository.injectTMKKey(tmk, kcv, context)
         } catch (exception: Exception) {
             Log.e("HARDWARE_UTILS", exception.message.toString())
             false
-        }
-    }
-
-    suspend fun injectWorkingPinKey(workingKeyHex: String, context: Context? = null): Boolean {
-        return try {
-            EmvWrapperRepository.loadAndVerifyWorkingPinKey(workingKeyHex,context)
-        } catch (exception: Exception) {
-            Log.e("HARDWARE_UTILS", exception.message.toString())
-            false
-        }
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    suspend fun injectDukptPinKey(ipek: String, ksn: String,context: Context?=null) : Boolean
-    {
-        try {
-            return EmvWrapperRepository.injectDukptPinKey(ipek, ksn, context)
-        }catch (exception : Exception)
-        {
-            Log.e("HARDWARE_UTILS", exception.message.toString())
-            return false
         }
     }
 

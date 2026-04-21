@@ -72,7 +72,7 @@ class AmountViewModel @Inject constructor(private  var apiServiceRepository: Api
                             ?: 0.00
                     )
                     _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
-                    isReadOnly = false
+                    isReadOnly = true
                 }
                 else -> {
                     transAmount =

@@ -250,7 +250,7 @@
 
     <!-- Custom Dialogue Builder -->
     <string name="sel_app_id">Select an application id</string>
-    <string name="default_alert_title_error">OOPS!</string>
+    <string name="default_alert_title_error"></string>
     <string name="default_alert_title_success">SUCCESS!</string>
     <string name="default_alert_subtitle_wrong_password">Wrong Password</string>
 

@@ -111,16 +111,12 @@ class EmvWrapperRepository @Inject constructor(
                 bundle
             ) ?: return null
 
-            Log.d("EMV_READ", "Result code = $resultCode")
-            Log.d("EMV_READ", "Tags requested = ${tagList.joinToString()}")
-
             if (resultCode != 0) {
                 Log.e("EMV_READ", "EMV read failed with code = $resultCode")
                 return null
             }
 
             val cleanData = outBuffer.takeWhile { it.toInt() != 0 }.toByteArray()
-            Log.d("EMV_READ", "Output size = ${cleanData.size}")
             cleanData
 
         } catch (e: Exception) {
@@ -145,7 +141,6 @@ class EmvWrapperRepository @Inject constructor(
 
             return if (bytesRead > 0) {
                 val hexData = buffer.slice(0..bytesRead-1).toByteArray().toHexString().uppercase()
-                Log.d("TLV", "🔡 Hex Data Extracted: $hexData")
                 hexData
             } else {
                 Log.w("TLV", "⚠️ No data read from EMV")
@@ -684,31 +679,6 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-    // Call this only when you want to STOP and SAVE the log
-    suspend fun stopLogCapture(context: Context?): String? {
-        return try {
-            val service = getDeviceService(context)
-            val logger = service?.logRecorder ?: return null
-
-            // 1. Get file path before closing
-            val logFilePath = logger.getLogFilePath()
-            Log.d(TAG, "Log file path: $logFilePath")
-
-            // 2. Now close
-            val closeResult = logger.closeRecorder(null)
-            if (closeResult != 0) {
-                Log.e(TAG, "Failed to close recorder, result: $closeResult")
-                return null
-            }
-
-            Log.d(TAG, "LogRecorder stopped, log saved at: $logFilePath")
-            logFilePath
-
-        } catch (e: RemoteException) {
-            Log.e(TAG, "RemoteException in stopLogCapture()", e)
-            null
-        }
-    }
 
     fun getCurrentTime(format: String?): String {
         val df = SimpleDateFormat(format)
@@ -872,10 +842,8 @@ class EmvWrapperRepository @Inject constructor(
 
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun initAidConfig(aidConfig: AidConfig?): Boolean {
         var result = false
-        /* Clear Aid Config first */
         deviceService?.emvHandler?.clearAIDParam()
 
         aidConfig?.let {
@@ -1449,7 +1417,6 @@ class EmvWrapperRepository @Inject constructor(
 
         private suspend fun bindService(context: Context?=null, recreate : Boolean? = false) {
             try {
-                //Log.d(TAG, "Binding Service with context $context")
                 deviceService?.emvHandler?.endPBOC()
                 deviceService?.magCardReader?.stopSearch()
                 deviceService?.takeIf { recreate == true }?.let {
@@ -1522,134 +1489,30 @@ class EmvWrapperRepository @Inject constructor(
         }
 
         @OptIn(ExperimentalStdlibApi::class)
-        suspend fun injectTMK(tmk: String, kcv: String, context: Context?=null): Boolean {
-
-            Log.d("HARDWARE_UTILS", "injectTMK() called")
-            Log.d("HARDWARE_UTILS", "TMK: $tmk")
-            Log.d("HARDWARE_UTILS", "KCV: $kcv")
-            Log.d("HARDWARE_UTILS", "TMK Length: ${tmk.length}")
-
-            try {
-                val tmkByteArray = tmk.hexToByteArray()
-                Log.d("HARDWARE_UTILS", "Converted TMK to ByteArray: ${tmkByteArray.joinToString()}")
-
-                var result = getDeviceService(context)?.pinPad?.loadPlainDesKey(
-                    EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
-                    tmkByteArray,
-                    tmkByteArray.size
-                )
-
-                Log.d("HARDWARE_UTILS", "loadPlainMKey() result: $result")
-
-                val isSuccess = result == 0
-                Log.d("HARDWARE_UTILS", "TMK Injection Success: $isSuccess")
-
-                var checkKey = deviceService?.pinPad?.getKeyKcv(CheckKeyEnum.DES_MASTER_KEY,EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal)
-
-                Log.d("HARDWARE_UTILS", "Key KCV: ${checkKey?.kcv}")
-
-                val kcvMatches = kcv==checkKey?.kcv
-
-                Log.d("HARDWARE_UTILS", "KCV Matches : $kcvMatches")
-
-                return isSuccess && kcvMatches
-            } catch (exception: Exception) {
-                Log.e("HARDWARE_UTILS", "Exception during TMK injection: ${exception.message}")
-                exception.printStackTrace()
-                return false
-            }
-        }
-
-        @OptIn(ExperimentalStdlibApi::class)
         suspend fun injectTMKKey(tmk: String, kcv: String, context: Context? = null): Boolean {
-
             try {
-
-                Log.d("HARDWARE_UTILS", "Injecting TMK")
-                Log.d("HARDWARE_UTILS", "TMK: $tmk")
-
                 val pinPad = getDeviceService(context)?.pinPad ?: return false
                 val tmkBytes = tmk.hexToByteArray()
-
                 if (tmkBytes.size != 16) {
                     Log.e("HARDWARE_UTILS", "Invalid TMK length. Expected 24 bytes.")
                     return false
                 }
-
                 val result = pinPad.loadPlainMKey(
                     EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal,
                     tmkBytes,
                     tmkBytes.size,
                     false
                 )
-
-                Log.d("HARDWARE_UTILS", "loadPlainMKey result: $result")
-
                 if (result != 0) return false
-
                 val deviceKcv = pinPad.getKeyKcv(
                     CheckKeyEnum.DES_MASTER_KEY,
                     EncryptionConstants.KEY_INDEX_MAIN_KEY.ordinal
                 )?.kcv?.uppercase()
-
                 val expectedKcv = kcv.uppercase()
-
-                Log.d("HARDWARE_UTILS", "Expected KCV: $expectedKcv")
-                Log.d("HARDWARE_UTILS", "Device KCV: $deviceKcv")
-
                 return deviceKcv == expectedKcv
 
             } catch (e: Exception) {
                 Log.e("HARDWARE_UTILS", "TMK injection exception", e)
-                return false
-            }
-        }
-
-        suspend fun loadAndVerifyWorkingPinKey(
-            workingKeyHex: String,
-            context: Context?=null,
-            keyIndex: Int = 1,
-
-        ): Boolean {
-            try {
-                Log.d("KEY_DEBUG", "Starting loadAndVerifyWorkingPinKey()")
-                Log.d("KEY_DEBUG", "Input Working Key Hex: $workingKeyHex")
-                Log.d("KEY_DEBUG", "Key Index: $keyIndex")
-
-                // Convert hex to byte array
-                val keyBytes = workingKeyHex.chunked(2)
-                    .map { it.toInt(16).toByte() }
-                    .toByteArray()
-                Log.d("KEY_DEBUG", "Key Bytes: ${keyBytes.joinToString("") { "%02X".format(it) }}")
-
-                // Load the key
-                val loadResult = getDeviceService(context)?.pinPad?.loadWKey(1, keyIndex, keyBytes, 2)
-                Log.d("KEY_DEBUG", "loadWKey result code: $loadResult")
-                if (loadResult != 0) {
-                    Log.e("KEY_DEBUG", "Failed to load working key. loadWKey returned $loadResult")
-                    return false
-                } else {
-                    Log.d("KEY_DEBUG", "Working key loaded successfully.")
-                }
-
-                // Calculate KCV
-                val kcv = getDeviceService(context)?.pinPad?.calcWKeyKCV(1, keyIndex)
-                if (kcv == null) {
-                    Log.e("KEY_DEBUG", "calcWKeyKCV returned null")
-                    return false
-                }
-                Log.d(
-                    "KEY_DEBUG",
-                    "Calculated KCV: ${kcv.joinToString("") { "%02X".format(it) }}"
-                )
-
-
-                val result = kcv.isNotEmpty()
-                Log.d("KEY_DEBUG", "Key injection result: $result")
-                return result
-
-            } catch (e: Exception) {
-                Log.e("KEY_DEBUG", "Exception in loadAndVerifyWorkingPinKey: ${e.message}")
                 return false
             }
         }
@@ -1659,16 +1522,8 @@ class EmvWrapperRepository @Inject constructor(
 
             return try {
 
-                Log.d("KEY_INJECT", "Starting Working Key Injection")
-                Log.d("KEY_INJECT", "PIN Key (HEX): $pinKey")
-                Log.d("KEY_INJECT", "PIN Key Length: ${pinKey.length}")
-
                 val keyBytes = pinKey.hexToByteArray()
-
-                Log.d("KEY_INJECT", "Converted keyBytes size: ${keyBytes.size}")
-
                 val deviceService = getDeviceService(context)
-
                 if (deviceService == null) {
                     Log.e("KEY_INJECT", "Device service is NULL")
                     return false
@@ -1692,46 +1547,11 @@ class EmvWrapperRepository @Inject constructor(
                     Log.e("KEY_DEBUG", "getKeyKcv returned null or empty")
                     return false
                 }
-
-
                 val kcvHex = kcvObj.kcv.uppercase()
-                Log.d("KEY_DEBUG", "Calculated KCV: $kcvHex")
-
-
                 return kcvHex.isNotEmpty()
 
             } catch (e: Exception) {
                 Log.e("KEY_INJECT", "Exception during key injection: ${e.message}", e)
-                false
-            }
-        }
-
-
-        suspend fun injectDukptPinKey(ipek: String, ksn: String, context: Context?=null): Boolean {
-            Log.d("HARDWARE_UTILS", "injectDukptPinKey() called")
-            Log.d("HARDWARE_UTILS", "IPEK: $ipek")
-            Log.d("HARDWARE_UTILS", "KSN: $ksn")
-
-            return try {
-                val dukptLoadObj = DukptLoadObj(
-                    ipek,
-                    ksn,
-                    DukptLoadObj.DukptKeyTypeEnum.DUKPT_IPEK_PLAINTEXT,
-                    EncryptionConstants.KEY_LOAD_INDEX_PIN_KEY
-                )
-
-                Log.d("HARDWARE_UTILS", "DukptLoadObj created: $dukptLoadObj")
-
-                val result = getDeviceService(context)?.pinPad?.dukptLoad(dukptLoadObj)
-                Log.d("HARDWARE_UTILS", "dukptLoad() result: $result")
-
-                val isSuccess = result == 0
-                Log.d("HARDWARE_UTILS", "DUKPT PIN Key Injection Success: $isSuccess")
-
-                isSuccess
-            } catch (e: Exception) {
-                Log.e("HARDWARE_UTILS", "Exception during DUKPT key injection: ${e.message}")
-                e.printStackTrace()
                 false
             }
         }
@@ -1863,7 +1683,6 @@ class EmvWrapperRepository @Inject constructor(
         }
 
         fun initEncryption() {
-            /* Pin & Data key is same for lyra. Increase only one */
             deviceService?.pinPad?.increaseKSN(EncryptionConstants.KEY_INDEX_DATA_KEY.ordinal,true)
             pinBlock = null
             ksn = null
@@ -1878,11 +1697,6 @@ class EmvWrapperRepository @Inject constructor(
             if (trackData.isEmpty() && tlvMap.containsKey(EmvConstants.EMV_TAG_TRACK2)) {
                 trackData = tlvMap[EmvConstants.EMV_TAG_TRACK2] ?: ""
             }
-//            val expiryDate = getEmvTag(EmvConstants.EMV_TAG_CARD_EXPIRY_DATE)
-//            val terminalType = getEmvTag(EmvConstants.EMV_TAG_TERM_TYPE)
-//            val terminalCap = getEmvTag(EmvConstants.EMV_TAG_TERM_CAP)
-//            Log.d("EMV_TAGS", "Terminal Type: $terminalType | Terminal Cap: $terminalCap")
-//            Log.d("ENCRYPTION", "📅 EMV Expiry Date (raw): $expiryDate")
             if (trackData.isEmpty()) {
                 Log.w("ENCRYPTION", "⚠️ Track2 not available")
                 return hashMap
@@ -1899,8 +1713,6 @@ class EmvWrapperRepository @Inject constructor(
             // Store plain values
             hashMap[EmvConstants.EMV_TAG_TRACK2] = track2ForHost
             hashMap[EmvConstants.EMV_TAG_PAN] = plainPan
-//            Log.d("ENCRYPTION", "✅ Plain Track2 (Conduent): $track2ForHost")
-//            Log.d("ENCRYPTION", "✅ Plain PAN: $plainPan")
 
             // 3️⃣ Prepare PAN for encryption (pad to multiple of 8 for DES)
             var panForEncryption = plainPan
@@ -1932,7 +1744,6 @@ class EmvWrapperRepository @Inject constructor(
 
                     if (!ksn.isNullOrEmpty()) {
                         hashMap[EmvConstants.EMV_TAG_ENC_KSN] = ksn
-                        //Log.d("ENCRYPTION", "🔑 KSN: $ksn")
                     }
                 }
             } catch (e: RemoteException) {
@@ -1964,23 +1775,11 @@ class EmvWrapperRepository @Inject constructor(
             return when (checkCardResult) {
                     1 -> EmvSdkResult.CardCheckStatus.CARD_INSERTED
                     7 -> EmvSdkResult.CardCheckStatus.CARD_TAPPED
-//                ContantPara.CheckCardResult.MSR -> EmvSdkResult.CardCheckStatus.CARD_SWIPED
-//                ContantPara.CheckCardResult.NOT_ICC -> EmvSdkResult.CardCheckStatus.NOT_ICC_CARD
-//                ContantPara.CheckCardResult.USE_ICC_CARD -> EmvSdkResult.CardCheckStatus.USE_ICC_CARD
-//                ContantPara.CheckCardResult.BAD_SWIPE -> EmvSdkResult.CardCheckStatus.BAD_SWIPE
-//                ContantPara.CheckCardResult.NEED_FALLBACK -> EmvSdkResult.CardCheckStatus.NEED_FALLBACK
-//                ContantPara.CheckCardResult.MULT_CARD -> EmvSdkResult.CardCheckStatus.MULTIPLE_CARDS
-//                ContantPara.CheckCardResult.TIMEOUT -> EmvSdkResult.CardCheckStatus.TIMEOUT
-//                ContantPara.CheckCardResult.CANCEL -> EmvSdkResult.CardCheckStatus.CANCEL
-//                ContantPara.CheckCardResult.DEVICE_BUSY -> EmvSdkResult.CardCheckStatus.DEVICE_BUSY
-//                ContantPara.CheckCardResult.NO_CARD -> EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
                 else -> EmvSdkResult.CardCheckStatus.ERROR
 
             }
         }
     }
-
-
 
 
     private fun bcdToBinaryArray(bcdArray: ByteArray): ByteArray {
@@ -2000,11 +1799,9 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
-        // Convert the decimal string to a BigInteger, then to a byte array
         val bigInt = decimalStr.toBigInteger()
         val fullByteArray = bigInt.toByteArray()
 
-        // Ensure it's unsigned: remove leading 0x00 if present for positive values
         return if (fullByteArray[0] == 0x00.toByte()) {
             fullByteArray.drop(1).toByteArray()
         } else {

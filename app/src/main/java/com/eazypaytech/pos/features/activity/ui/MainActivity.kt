@@ -69,10 +69,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         var sharedViewModel: SharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
-        window.setFlags(    // to avoid screenshot and Screen Recording
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+//        window.setFlags(    // to avoid screenshot and Screen Recording
+//            WindowManager.LayoutParams.FLAG_SECURE,
+//            WindowManager.LayoutParams.FLAG_SECURE
+//        )
 
         if (!checkStoragePermissions(this))
             requestStoragePermissions(this)

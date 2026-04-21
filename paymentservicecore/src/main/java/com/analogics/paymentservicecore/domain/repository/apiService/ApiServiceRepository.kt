@@ -2,7 +2,6 @@ package com.analogics.paymentservicecore.domain.repository.apiService
 
 
     import android.os.Build
-    import android.util.Log
     import androidx.annotation.RequiresApi
     import com.analogics.paymentservicecore.data.listeners.requestListener.IApiServiceRequestListener
     import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
