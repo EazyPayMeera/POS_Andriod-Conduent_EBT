@@ -2,6 +2,7 @@ package com.eazypaytech.pos.features.txnSel.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,9 +45,12 @@ fun TxnSelectionScreen(navHostController: NavHostController) {
     fun setTransactionType(txnType: TxnType) {
         sharedViewModel.objRootAppPaymentDetail.id = removeNonDigits(getCurrentDateTime(AppConstants.UNIQUE_ID_DATE_TIME_FORMAT)).toLong()
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
-        //Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         CommonTopAppBar(
             title = "EBT Purchase",
             onBackButtonClick = { navHostController.popBackStack()},
@@ -75,7 +79,10 @@ fun TxnSelectionScreen(navHostController: NavHostController) {
                         OkButton(
                             onClick = {
                                 sharedViewModel.objRootAppPaymentDetail.isPurchase = true
-                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route){
+                                    popUpTo(AppNavigationItems.TxnSelScreen.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
                             },
                             title = stringResource(id = R.string.summary_purchase),
                         )
@@ -90,7 +97,10 @@ fun TxnSelectionScreen(navHostController: NavHostController) {
                         OkButton(
                             onClick = {
                                 sharedViewModel.objRootAppPaymentDetail.isReturn = true
-                                navHostController.navigate(AppNavigationItems.LoginScreen.route)
+                                navHostController.navigate(AppNavigationItems.LoginScreen.route){
+                                    popUpTo(AppNavigationItems.TxnSelScreen.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
                             },
                             title = stringResource(id = R.string.sel_return),
                         )
@@ -107,7 +117,10 @@ fun TxnSelectionScreen(navHostController: NavHostController) {
                         OkButton(
                             onClick = {
                                 setTransactionType(TxnType.FOOD_PURCHASE)
-                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route){
+                                    popUpTo(AppNavigationItems.TxnSelScreen.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
                             },
                             title = stringResource(id = R.string.food),
                         )
@@ -122,7 +135,11 @@ fun TxnSelectionScreen(navHostController: NavHostController) {
                         OkButton(
                             onClick = {
                                 setTransactionType(TxnType.CASH_PURCHASE)
-                                navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                                navHostController.navigate(AppNavigationItems.AmountScreen.route){
+                                    popUpTo(AppNavigationItems.TxnSelScreen.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
+
                             },
                             title = stringResource(id = R.string.cash),
                         )

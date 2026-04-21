@@ -67,75 +67,97 @@ fun DashboardScreen(navHostController: NavHostController) {
         sharedViewModel.objRootAppPaymentDetail.txnType = txnType
         if(sharedViewModel.objPosConfig?.isPromptInvoiceNo!=true)
             dashboardViewModel.setInvoiceNumber(sharedViewModel)
-        //Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
 
     fun handleDashboardTrigger(event: String) {
         when (event) {
+
             /* Configuration Menu Events */
-            AppConstants.BUTTON_CLICK_EVENT_SET_LANGUAGE -> navHostController.navigate(
-                AppNavigationItems.LanguageScreen.route
-            )
-            AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT -> navHostController.navigate(
-                AppNavigationItems.UserManagementScreen.route
-            )
-            AppConstants.BUTTON_CLICK_EVENT_KEY_MAN -> navHostController.navigate(
-                AppNavigationItems.KeyEntryScreen.route
-            )
-            AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION -> navHostController.navigate(
-                AppNavigationItems.ConfigurationScreen.route
-            )
-            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE -> dashboardViewModel.onReactivate(
-                navHostController,
-                sharedViewModel
-            )
-            AppConstants.BUTTON_CLICK_EVENT_LOGOUT -> navHostController.navigate(
-                AppNavigationItems.ConfirmShiftScreen.route
-            )
+            AppConstants.BUTTON_CLICK_EVENT_SET_LANGUAGE ->
+                navHostController.navigate(AppNavigationItems.LanguageScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
+
+            AppConstants.BUTTON_CLICK_EVENT_USER_MANAGEMENT ->
+                navHostController.navigate(AppNavigationItems.UserManagementScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
+
+            AppConstants.BUTTON_CLICK_EVENT_KEY_MAN ->
+                navHostController.navigate(AppNavigationItems.KeyEntryScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
+
+            AppConstants.BUTTON_CLICK_EVENT_CONFIGURATION ->
+                navHostController.navigate(AppNavigationItems.ConfigurationScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
+
+            AppConstants.BUTTON_CLICK_EVENT_RE_ACTIVATE_DEVICE ->
+                dashboardViewModel.onReactivate(navHostController, sharedViewModel)
+
+            AppConstants.BUTTON_CLICK_EVENT_LOGOUT ->
+                navHostController.navigate(AppNavigationItems.ConfirmShiftScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
 
             /* Dashboard Menu Events */
-            AppConstants.BUTTON_CLICK_EVENT_FOOD_PURCHASE -> {
-                navHostController.navigate(
-                    AppNavigationItems.TxnSelScreen.route
-                )
-            }
+            AppConstants.BUTTON_CLICK_EVENT_FOOD_PURCHASE ->
+                navHostController.navigate(AppNavigationItems.TxnSelScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
 
             AppConstants.BUTTON_CLICK_EVENT_FOODSTAMP_RETURN -> {
                 setTransactionType(TxnType.FOODSTAMP_RETURN)
-                navHostController.navigate(
-                    AppNavigationItems.AmountScreen.route
-                )
+                navHostController.navigate(AppNavigationItems.AmountScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
             }
+
             AppConstants.BUTTON_CLICK_EVENT_PURCHASE_CASHBACK -> {
                 setTransactionType(TxnType.PURCHASE_CASHBACK)
-                navHostController.navigate(
-                    AppNavigationItems.AmountScreen.route
-                )
+                navHostController.navigate(AppNavigationItems.AmountScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
             }
+
             AppConstants.BUTTON_CLICK_EVENT_CASH_WITHDRAW -> {
                 setTransactionType(TxnType.CASH_WITHDRAWAL)
-                navHostController.navigate(
-                    AppNavigationItems.AmountScreen.route
-                )
+                navHostController.navigate(AppNavigationItems.AmountScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
             }
+
             AppConstants.BUTTON_CLICK_EVENT_E_VOUCHER -> {
                 setTransactionType(TxnType.E_VOUCHER)
-                navHostController.navigate(
-                    AppNavigationItems.EBTSelScreen.route
-                )
+                navHostController.navigate(AppNavigationItems.EBTSelScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
             }
+
             AppConstants.BUTTON_CLICK_EVENT_VOID_LAST -> {
                 setTransactionType(TxnType.VOID_LAST)
-                navHostController.navigate(
-                    AppNavigationItems.AmountScreen.route
-                )
+                navHostController.navigate(AppNavigationItems.AmountScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
             }
-            AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY -> {
-                navHostController.navigate(
-                    AppNavigationItems.EBTSelScreen.route
-                )
-            }
-            else -> null
+
+            AppConstants.BUTTON_CLICK_EVENT_BALANCE_ENQUIRY ->
+                navHostController.navigate(AppNavigationItems.EBTSelScreen.route) {
+                    popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
+                    launchSingleTop = true
+                }
         }
     }
 
@@ -335,24 +357,6 @@ fun DashboardContentSurface(
 
             var visibility by remember { mutableStateOf(true) }
 
-            // Use a Box to maintain space and center the text
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth() // Make the box fill the width
-//                    //.padding(bottom = MaterialTheme.dimens.DP_5_CompactMedium)
-//                    .height(MaterialTheme.dimens.DP_33_CompactMedium) // Set a fixed height for the box
-//                    .wrapContentHeight() // Ensure the height wraps content
-//            ) {
-////                TextView(
-////                    text = if (visibility && isDemoMode == true) stringResource(id = R.string.training_mode) else "",
-////                    fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
-////                    color = MaterialTheme.colorScheme.primary,
-////                    fontWeight = FontWeight.Bold,
-////                    modifier = Modifier
-////                        .align(Alignment.Center) // Center the text in the box
-////                )
-//            }
-
             // LaunchedEffect that toggles visibility
             LaunchedEffect(isDemoMode) {
                 while (isDemoMode==true) {
@@ -415,32 +419,7 @@ fun DashboardContentSurface(
                 }
             }
 
-
             Spacer(modifier = Modifier.weight(1f)) // Pushes the button to the bottom
-            
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(end = 25.dp, bottom = 25.dp),
-//                contentAlignment = Alignment.CenterEnd
-//            ) {
-//                CircularMenu(
-//                    menuOptions = listOf(context.resources.getString((R.string.cust_recp)), context.resources.getString((R.string.merchant_recp))),
-//                    onMenuOptionClick = { option ->
-//                        when (option) {
-//                            context.resources.getString((R.string.cust_recp)) -> {
-//                                viewModel.reprintLast(context,true)
-//                                isDialogVisible = true
-//                            }
-//                            context.resources.getString((R.string.merchant_recp)) -> {
-//                                viewModel.reprintLast(context)
-//                                isDialogVisible = true
-//                            }
-//                        }
-//                    },
-//                    onPrintClick = {}
-//                )
-//            }
             CustomDialogBuilder.ShowComposed()
         }
     }

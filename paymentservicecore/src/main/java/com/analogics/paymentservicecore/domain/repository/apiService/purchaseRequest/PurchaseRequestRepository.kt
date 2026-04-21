@@ -60,8 +60,7 @@ class PurchaseRequestRepository @Inject constructor(
             paymentServiceTxnDetails.posEntryMode = it.posEntryMode
             paymentServiceTxnDetails.posCondition = it.posCondition
             paymentServiceTxnDetails.currencyCode = it.currencyCode
-            paymentServiceTxnDetails.dateTime = it.dateTime
-            paymentServiceTxnDetails.originalDateTime = it.originalDateTime
+            paymentServiceTxnDetails.originalDateTime = it.dateTime
             var tlv = TlvUtils(it.emvData)
             if (tlv.tlvMap.containsKey(EmvConstants.EMV_TAG_RESP_CODE) == false) {
                 it.hostRespCode

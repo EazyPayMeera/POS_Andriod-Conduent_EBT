@@ -89,7 +89,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             sharedViewModel.objPosConfig?.apply { isCashback = false }
         }
         if (transformToAmountDouble(transAmount) < 0.01) {
-            CustomDialogBuilder.Companion.composeAlertDialog(
+            CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
                 message = navHostController.context.getString(R.string.err_zero_amt_not_allowed)
             )
@@ -97,16 +97,29 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             calculateTotal(sharedViewModel)
             when (sharedViewModel.objRootAppPaymentDetail.txnType) {
                 TxnType.FOODSTAMP_RETURN -> {
-                    navHostController.navigate(AppNavigationItems.CardScreen.route)
+                    navHostController.navigate(AppNavigationItems.CardScreen.route) {
+                        popUpTo(AppNavigationItems.AmountScreen.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
                 TxnType.VOID_LAST, TxnType.E_VOUCHER -> {
                     authenticateTransaction(sharedViewModel, navHostController)
                 }
                 TxnType.PURCHASE_CASHBACK -> {
-                    navHostController.navigate(AppNavigationItems.CashBackScreen.route)
+                    navHostController.navigate(AppNavigationItems.CashBackScreen.route) {
+                        popUpTo(AppNavigationItems.AmountScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
                 else -> {
-                    navHostController.navigate(AppNavigationItems.CardScreen.route)
+                    navHostController.navigate(AppNavigationItems.CardScreen.route) {
+                        popUpTo(AppNavigationItems.AmountScreen.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -165,10 +178,10 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun fetchLastTransaction(navHostController: NavHostController, context: Context, sharedViewModel: SharedViewModel) {
         val lastTxn = dbRepository.fetchLastTransactionByTxnType()
-
+        Log.d("DB_DEBUG", "lastTxn: $lastTxn")
         lastTxn?.let {
             if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
-                CustomDialogBuilder.Companion.composeAlertDialog(
+                CustomDialogBuilder.composeAlertDialog(
                     title = context.getString(R.string.default_alert_title_error),
                     message = context.getString(R.string.err_txn_already_voided)
                 )
@@ -201,7 +214,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                     sharedViewModel.objRootAppPaymentDetail.posEntryMode = it.posEntryMode
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
                     sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
-                    sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.dateTime
+                    sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.originalDateTime
                     sharedViewModel.objRootAppPaymentDetail.hostAuthCode = it.hostAuthCode
                     sharedViewModel.objRootAppPaymentDetail.emvData = it.emvData
 
@@ -241,7 +254,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             sharedViewModel.objRootAppPaymentDetail.hostAuthCode =
                                 response.hostAuthCode
                             sharedViewModel.objRootAppPaymentDetail.originalDateTime =
-                                response.dateTime
+                                response.originalDateTime
                             sharedViewModel.objRootAppPaymentDetail.stan = response.stan
 
                             CustomDialogBuilder.composeProgressDialog(false)
@@ -257,7 +270,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             updateTransResult(
                                 sharedViewModel,
                                 emvStatusToTransStatus(response.hostRespCode),
-                                sharedViewModel.objRootAppPaymentDetail.dateTime.toString(),
+                                sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),
                                 sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
                             )

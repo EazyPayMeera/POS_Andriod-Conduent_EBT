@@ -49,7 +49,7 @@
         <field num="48" type="LLLVAR" length="25"/>
         <field num="49" type="NUMERIC" length="3"/>
         <field num="54" type="LLLVAR" length="120"/>
-        <field num="55" type="LLLBIN"/>               <!-- ADD: EMV Data -->
+        <field num="55" type="LLLVAR" class="org.jpos.iso.IFB_LLLBINARY"/>               <!-- ADD: EMV Data -->
         <field num="58" type="LLLVAR"/>
         <field num="111" type="LLLVAR" length="255"/>
         <field num="125" type="LLLVAR"/>

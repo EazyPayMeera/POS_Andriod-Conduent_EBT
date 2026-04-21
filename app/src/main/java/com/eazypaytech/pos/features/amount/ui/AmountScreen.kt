@@ -3,9 +3,11 @@ package com.eazypaytech.pos.features.amount.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,7 +57,11 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
     val origTotalAmount by viewModel.origTotalAmount.collectAsState()
     val origDateTime by viewModel.origDateTime.collectAsState()
 
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         // Top App Bar
         CommonTopAppBar(

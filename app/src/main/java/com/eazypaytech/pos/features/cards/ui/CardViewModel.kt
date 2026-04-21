@@ -46,13 +46,19 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
 
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.ApprovedScreen.route) // Navigate to the desired screen
+            navHostController.navigate(AppNavigationItems.ApprovedScreen.route){
+                popUpTo(AppNavigationItems.CardScreen.route) { inclusive = false }
+                launchSingleTop = true
+            }
         }
     }
 
     fun navigateToManualScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.ManualCardScreen.route) // Navigate to the desired screen
+            navHostController.navigate(AppNavigationItems.ManualCardScreen.route){
+                popUpTo(AppNavigationItems.CardScreen.route) { inclusive = false }
+                launchSingleTop = true
+            }
             emvServiceRepository.abortPayment()
         }
     }
@@ -86,7 +92,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             try {
                 val txn = dbRepository.fetchTxnById(txnId)
                 if (txn == null) {
-                    Log.e("UPDATE_TXN", "Transaction NOT FOUND for ID: $txnId")
                     return@launch
                 }
                 txn.txnStatus = txnStatus?.toString() ?: ""
@@ -96,8 +101,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 dbRepository.updateTxn(txn)
             } catch (e: Exception) {
                 Log.e("UPDATE_TXN", "Error updating transaction", e)
-            } finally {
-                Log.d("UPDATE_TXN", "===== updateTransResult END =====")
             }
         }
     }
@@ -299,7 +302,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     {
         return when(status)
         {
-            EmvServiceResult.CardCheckStatus.NO_CARD_DETECTED,
             EmvServiceResult.CardCheckStatus.TIMEOUT,
             -> true
             else -> false
