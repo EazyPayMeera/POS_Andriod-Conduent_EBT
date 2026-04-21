@@ -3,6 +3,7 @@ package com.eazypaytech.pos.features.confirmshift.ui
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +37,11 @@ import com.eazypaytech.pos.core.themes.dimens
 fun ConfirmShiftView(navHostController: NavHostController) {
     val viewModel: ConfirmShiftViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         CommonTopAppBar(
             title = stringResource(id = R.string.end_shift_title),
             onBackButtonClick = { navHostController.popBackStack() }

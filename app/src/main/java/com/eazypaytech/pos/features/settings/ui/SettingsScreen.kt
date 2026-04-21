@@ -1,8 +1,10 @@
 package com.eazypaytech.pos.features.settings.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -70,7 +72,11 @@ fun SettingsScreen(navHostController: NavHostController) {
 
     val configChanged = remember { mutableStateOf(false) }
 
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         CommonTopAppBar(
             title = "Merchant Configuration",

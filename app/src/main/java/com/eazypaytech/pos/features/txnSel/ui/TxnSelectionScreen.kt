@@ -80,7 +80,7 @@ fun TxnSelectionScreen(navHostController: NavHostController) {
                             onClick = {
                                 sharedViewModel.objRootAppPaymentDetail.isPurchase = true
                                 navHostController.navigate(AppNavigationItems.AmountScreen.route){
-                                    popUpTo(AppNavigationItems.TxnSelScreen.route) { inclusive = false }
+                                    popUpTo(AppNavigationItems.TxnSelScreen.route) { inclusive = true }
                                     launchSingleTop = true
                                 }
                             },

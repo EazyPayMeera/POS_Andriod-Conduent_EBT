@@ -2,11 +2,13 @@ package com.eazypaytech.pos.features.usermanagement.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -51,7 +53,11 @@ import com.eazypaytech.pos.core.themes.dimens
 @Composable
 fun UserManagementScreen(navHostController: NavHostController, viewModel: UserManagementViewModel = hiltViewModel()) {
     val sharedViewModel= localSharedViewModel.current
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         CommonTopAppBar(
             title = stringResource(id = R.string.label_user_management),
             onBackButtonClick = { navHostController.popBackStack() }

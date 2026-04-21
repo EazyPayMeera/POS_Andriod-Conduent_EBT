@@ -2,6 +2,7 @@ package com.eazypaytech.pos.features.ebtSelection.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,7 +48,11 @@ fun EBTSelectionView(navHostController: NavHostController) {
         //Log.d("TRANSACTION_TYPE", "Txn Type Selected: ${sharedViewModel.objRootAppPaymentDetail.txnType}")
     }
 
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack()},
         )
@@ -73,7 +78,10 @@ fun EBTSelectionView(navHostController: NavHostController) {
                     ) {
                         OkButton(
                             onClick = {
-                                navHostController.navigate(AppNavigationItems.ManualCardScreen.route)
+                                navHostController.navigate(AppNavigationItems.ManualCardScreen.route){
+                                    popUpTo(AppNavigationItems.EBTSelScreen.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
                             },
                             title = stringResource(id = R.string.food_stamp),
                         )
@@ -89,7 +97,10 @@ fun EBTSelectionView(navHostController: NavHostController) {
                     ) {
                         OkButton(
                             onClick = {
-                                navHostController.navigate(AppNavigationItems.CardScreen.route)
+                                navHostController.navigate(AppNavigationItems.CardScreen.route){
+                                    popUpTo(AppNavigationItems.EBTSelScreen.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
                                 setTransactionType(TxnType.BALANCE_ENQUIRY_SNAP)
                             },
                             title = stringResource(id = R.string.bal_snap),

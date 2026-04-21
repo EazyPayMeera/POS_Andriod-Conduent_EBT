@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +53,11 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
     val cardExists by viewModel.cardExists.collectAsState()
     var isDialogVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() }

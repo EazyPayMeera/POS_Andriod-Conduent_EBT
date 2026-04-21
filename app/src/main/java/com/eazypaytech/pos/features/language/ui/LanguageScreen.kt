@@ -1,11 +1,13 @@
 package com.eazypaytech.pos.features.language.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,7 +45,11 @@ fun LanguageScreen(navHostController: NavHostController, viewModel: LanguageView
 
     val selectedLanguage = remember { viewModel.uiLanguage }
 
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         CommonTopAppBar(
             title = stringResource(id = R.string.set_lang),
             onBackButtonClick = { navHostController.popBackStack() }

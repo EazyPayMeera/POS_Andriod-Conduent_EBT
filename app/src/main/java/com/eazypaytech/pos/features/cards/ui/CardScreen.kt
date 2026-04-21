@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,7 +61,11 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
 
     val (showQRCodeDialog, setShowQRCodeDialog) = remember { mutableStateOf(false) }
 
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         CommonTopAppBar(
             onBackButtonClick = { navHostController.popBackStack() },

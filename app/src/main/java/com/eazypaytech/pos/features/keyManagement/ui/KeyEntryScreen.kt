@@ -3,9 +3,11 @@ package com.eazypaytech.pos.features.keyManagement.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +50,11 @@ fun KeyEntryScreen(navHostController: NavHostController, viewModel: KeyEntryView
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
 
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         // Top App Bar
         CommonTopAppBar(
