@@ -24,39 +24,6 @@ import javax.crypto.spec.SecretKeySpec
 
 object BuilderUtils {
 
-    fun prepareApiRequestBody(requestObj: Any): RequestBody {
-        return Gson().toJson(requestObj).toByteArray()
-            .toRequestBody("application/json".toMediaTypeOrNull())
-    }
-
-    fun generateNonce(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val date = LocalDateTime.now()
-            date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        } else {
-            ""  //TODO : Implement whenever required
-        }
-    }
-
-
-
-    fun generateSecret(nonce: String, appKey: String): String {
-        var secret = ""
-        try {
-            var digest = MessageDigest.getInstance(NetworkConstants.DIGEST_ALGORITHM)
-                .digest(nonce.toByteArray() + appKey.toByteArray())
-            secret = printableHexString(digest)
-        } catch (e: Exception) {
-            Log.e("API_ERROR", e.toString())
-        }
-        return secret
-    }
-
-    fun printableHexString(digestedHash: ByteArray): String {
-        return digestedHash.map { Integer.toHexString(0xFF and it.toInt()) }
-            .map { if (it.length < 2) "0$it" else it }
-            .fold("", { acc, d -> acc + d })
-    }
 
     fun getSTAN(context: Context, increment: Boolean? = true): Long {
         var stan: Long = 1
@@ -95,13 +62,6 @@ object BuilderUtils {
         return currentTime.format(formatter)
     }
 
-    fun formatDateTimeToISO8583(dateTime: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val date = inputFormat.parse(dateTime) ?: return ""
-
-        val outputFormat = SimpleDateFormat("MMddHHmmss", Locale.getDefault())
-        return outputFormat.format(date)
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getLocalDate(): String {
