@@ -2,7 +2,7 @@ package com.analogics.paymentservicecore.models
 
 import android.content.Context
 import com.analogics.paymentservicecore.data.model.PosConfig
-//import com.eazypaytech.paymentservicecore.models.PosConfig
+
 
 object TmsConfigMapper {
 

@@ -33,6 +33,9 @@ import com.eazypaytech.pos.core.utils.transformToAmountDouble
 import com.analogics.securityframework.data.repository.TxnDBRepository
 import com.eazypaytech.pos.core.utils.emvStatusToTransStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -183,9 +186,15 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
                 CustomDialogBuilder.composeAlertDialog(
                     title = context.getString(R.string.default_alert_title_error),
-                    message = context.getString(R.string.err_txn_already_voided)
+                    message = context.getString(R.string.err_txn_already_voided),
+                    onOkClick = {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(500)
+                            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+                        }
+                    }
                 )
-                navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
+
             } else {
                 val transformedTxn =
                     PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
@@ -256,6 +265,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             sharedViewModel.objRootAppPaymentDetail.originalDateTime =
                                 response.originalDateTime
                             sharedViewModel.objRootAppPaymentDetail.stan = response.stan
+                            sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.hostRespCode
 
                             CustomDialogBuilder.composeProgressDialog(false)
 

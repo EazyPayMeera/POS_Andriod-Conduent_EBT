@@ -239,7 +239,7 @@
 
     <!-- Auth Code Screen -->
     <string name="enter_auth_code">Enter Authorization Code</string>
-    <string name="auth_code">Authorization Code</string>
+    <string name="authorization_code">Authorization Code</string>
     <string name="auth_code_limit">Auth Code Should be 6 Digit</string>
 
     <!-- Merchant Settings -->

@@ -87,7 +87,7 @@ fun AuthScreen(navHostController: NavHostController, viewModel: AuthViewModel = 
                     value = viewModel.authCode,
                     onValueChange = {viewModel.onCardNoChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = stringResource(R.string.auth_code),
+                    placeholder = stringResource(R.string.authorization_code),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},

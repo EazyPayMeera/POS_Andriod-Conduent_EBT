@@ -218,6 +218,7 @@
 
     <!-- Voucher Screen -->
     <string name="enter_voucher">वाउचर कोड दर्ज करें</string>
+    <string name="plz_enter_voucher">कृपया वाउचर कोड दर्ज करें</string>
 
     <!-- Reader Setting -->
     <string name="settings">सेटिंग्स</string>
@@ -234,6 +235,11 @@
 
     <!-- Key Management Screen -->
     <string name="plz_enter_key">कृपया कुंजी दर्ज करें</string>
+
+    <!-- Auth Code Screen -->
+    <string name="enter_auth_code">प्राधिकरण कोड दर्ज करें</string>
+    <string name="authorization_code">प्राधिकरण कोड</string>
+    <string name="auth_code_limit">प्राधिकरण कोड 6 अंकों का होना चाहिए</string>
 
     <!-- Merchant Settings -->
     <string name="merchant_details">व्यापारी विवरण</string>
