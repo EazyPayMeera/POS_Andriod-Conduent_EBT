@@ -1779,6 +1779,26 @@ class EmvWrapperRepository @Inject constructor(
 
             }
         }
+
+        suspend fun getDeviceSerialNumberSafe(context: Context): String {
+            return try {
+                // Bind service if not already connected
+                bindService(context)
+
+                if (serviceConnected.isActive) {
+                    serviceConnected.await()
+                }
+
+                val devInfo = deviceService?.getDevInfo()
+
+                val sn = devInfo?.getString("sn")
+
+                sn ?: ""
+            } catch (e: Exception) {
+                ""
+            }
+        }
+
     }
 
 

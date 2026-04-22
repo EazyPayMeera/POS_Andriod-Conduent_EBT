@@ -8,11 +8,18 @@ android {
     namespace = "com.eazypaytech.networkservicecore"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+	buildConfigField ("String", "TMS_ACCESS_KEY", "\"nzf9lkzh99tkfgsn\"")
+        buildConfigField ("String", "TMS_SECRET", "\"0524ee18c9fcbde830c5d2bb894cafd5\"")
+
     }
 
     buildTypes {

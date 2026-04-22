@@ -2,14 +2,17 @@ package com.eazypaytech.pos.features.splash.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
+import com.analogics.networkservicecore.tms.repository.TmsRepository
 
 import com.eazypaytech.pos.data.TmsConfigParser
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
+import com.analogics.paymentservicecore.models.TmsConfigMapper
 import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 import com.eazypaytech.pos.navigation.AppNavigationItems
 import com.eazypaytech.pos.core.utils.navigateAndClean
@@ -17,6 +20,7 @@ import com.eazypaytech.pos.core.utils.setUiLanguage
 import com.eazypaytech.pos.core.utils.language.UiLanguage
 import com.eazypaytech.pos.core.utils.language.toUiLanguage
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.posafrica.device.DeviceInfoProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -24,15 +28,46 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository, @ApplicationContext private val context: Context) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository, private val tmsRepository: TmsRepository, @ApplicationContext private val context: Context, private val deviceInfoProvider: DeviceInfoProvider) : ViewModel() {
     @SuppressLint("RestrictedApi")
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             //val tmsConfig = TmsConfigParser.loadConfig(navController.context)
-            val tmsConfig = TmsConfigParser.loadFromAssets(context)
+            //val tmsConfig = TmsConfigParser.loadFromAssets(context)
             val savedConfig = apiServiceRepository.getPosConfig()
 
-            val finalConfig = tmsConfig ?: savedConfig
+            //  STEP 1: Fetch from TMS
+            val sn = try {
+                deviceInfoProvider.getSerialNumber(context)
+                //"19250317790001"
+            } catch (e: Exception) {
+                "UNKNOWN"
+            }
+            Log.d("TMS", "Device SN: $sn")
+            delay(300)
+            val tmsMap = try {
+                tmsRepository.fetchConfig(sn)
+            } catch (e: Exception) {
+                Log.e("TMS", "Error fetching TMS config", e)
+                null
+            }
+
+            Log.d("TMS", "TMS MAP: $tmsMap")
+
+            //  STEP 2: Convert to PosConfig (if TMS available)
+            val tmsConfig = tmsMap?.let {
+                TmsConfigMapper.mapToPosConfig(context, it)
+            }
+            Log.d("TMS", "TMS CONFIG: $tmsConfig")
+            //  STEP 3: Fallback to existing config if TMS fails
+            val finalConfig = if (tmsConfig != null && tmsMap?.isNotEmpty() == true) {
+                tmsConfig
+            } else {
+                savedConfig
+            }
+
+            //  STEP 4: Preserve existing flags (DO NOT TOUCH)
+            //val finalConfig = tmsConfig ?: savedConfig
             finalConfig.isActivationDone = savedConfig.isActivationDone
             finalConfig.isLoggedIn = savedConfig.isLoggedIn
             finalConfig.isOnboardingComplete = savedConfig.isOnboardingComplete
