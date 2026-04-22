@@ -217,6 +217,9 @@
     <string name="header">Headers</string>
     <string name="footer">Footers</string>
 
+    <!-- Voucher Screen -->
+    <string name="enter_voucher">Enter Voucher Code</string>
+    <string name="plz_enter_voucher">Enter Voucher Code</string>
 
     <!-- Reader Setting -->
     <string name="settings">Settings</string>
@@ -227,6 +230,17 @@
     <string name="enable_nfc">Enable NFC Tap Payments</string>
     <string name="enable_chip">Enable Chip Card Insert Payments</string>
 
+    <!-- Manual Card Entry Screen -->
+    <string name="enter_card_no">Enter Your Card Number</string>
+    <string name="plz_enter_card">Please Enter Card Details</string>
+
+    <!-- Key Management Screen -->
+    <string name="plz_enter_key">Please Enter Keyं</string>
+
+    <!-- Auth Code Screen -->
+    <string name="enter_auth_code">Enter Authorization Code</string>
+    <string name="auth_code">Authorization Code</string>
+    <string name="auth_code_limit">Auth Code Should be 6 Digit</string>
 
     <!-- Merchant Settings -->
     <string name="merchant_details">Merchant Details</string>

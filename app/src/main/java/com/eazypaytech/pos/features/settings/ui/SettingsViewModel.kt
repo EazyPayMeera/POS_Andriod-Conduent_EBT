@@ -25,7 +25,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
         merchantName = sharedViewModel.objPosConfig?.merchantNameLocation ?: ""
         merchantBankName = sharedViewModel.objPosConfig?.merchantBankName ?: ""
-        //merchantType = sharedViewModel.objPosConfig?.merchantId ?: ""
         merchantType = sharedViewModel.objPosConfig?.merchantCategoryCode ?: ""
         fnsNumber = sharedViewModel.objPosConfig?.fnsNumber  ?: ""
         stateCode = sharedViewModel.objPosConfig?.stateCode  ?: ""
@@ -42,9 +41,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         sharedViewModel.objRootAppPaymentDetail.postalServiceCode = postalServiceCode
     }
 
-    fun updateMerchantName(value: String) {
-        merchantName = value
-    }
 
     fun updateMerchantLocation(value: String) {
         merchantLocation = value
@@ -73,8 +69,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     fun updateCountyCode(value: String) {
         countyCode = value
     }
-
-
 
     fun onSaveMerchantConfig(
         navHostController: NavHostController,

@@ -33,9 +33,12 @@ import com.eazypaytech.pos.core.themes.dimens
 
 @Composable
 fun ActivationScreen(navHostController: NavHostController, viewModel: ActivationViewModel = hiltViewModel()) {
+    // Get current Android context
     val context = LocalContext.current
+    // Shared ViewModel used across screens
     val sharedViewModel = localSharedViewModel.current
 
+    // Main screen layout with TopBar
     Scaffold(
         topBar = {
             AppHeader(
@@ -46,9 +49,11 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
             )
         },
         content = { padding ->
+            // Root container
             Surface(modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)) {
+                // Main vertical layout
                 Column(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,19 +62,20 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                         .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
                         .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
                 ) {
+                    // Decorative unlock image
                     ImageView(
                         imageId =  R.drawable.unlock, // Decorative image
                         size = MaterialTheme.dimens.DP_40_CompactMedium,
                         contentDescription = ""
                     )
-
+                    // Activation instruction text
                     TextView(
                         text = stringResource(id = R.string.act_prompt_activate),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
-
+                    // PROC ID input field
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
                         inputValue = viewModel.procIdInput.value,
@@ -80,7 +86,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                         icon = Icons.Outlined.Numbers,
                         keyboardType = KeyboardType.Ascii
                     )
-
+                    // TID input field
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
                         inputValue = viewModel.tidInput.value,
@@ -91,6 +97,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                         icon = Icons.Outlined.Numbers,
                         keyboardType = KeyboardType.Ascii
                     )
+                    // MID input field
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
                         inputValue = viewModel.midInput.value,
@@ -101,31 +108,39 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                         icon = Icons.Outlined.Numbers,
                         keyboardType = KeyboardType.Ascii
                     )
+                    // Activation button container
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {
                         LoginButton(
                             onClick = {
+                                // Validate form before proceeding
                                 if (viewModel.isFormValid) {
+                                    // Trigger activation API/process
                                     viewModel.onActivationClick(navHostController,sharedViewModel)
                                 } else {
+                                    // Show validation error message
                                     viewModel.onInvalidFormData(context)
                                 }
                             },
                             title = stringResource(id = R.string.act_title),
-                            enabled = viewModel.isActivationBtnEnabled.value
+                            enabled = viewModel.isActivationBtnEnabled.value // Button enable/disable
                         )
                     }
                 }
             }
-
+            // Custom dialog handler (loading, error, success, etc.)
             CustomDialogBuilder.ShowComposed()
         }
     )
 
+    // Runs once when screen is launched
     LaunchedEffect(Unit) {
+        // Initialize screen data
         viewModel.onLoad(sharedViewModel)
+        // Copy config file to external storage (if required)
         viewModel.copyConfigToExternal(context)
+        // Read Master KEK (Key Encryption Key)
         val master = viewModel.readMasterKEK(context,sharedViewModel)
     }
 }

@@ -216,6 +216,10 @@
     <string name="header">शीर्षलेख</string>
     <string name="footer">पादलेख</string>
 
+    <!-- Voucher Screen -->
+    <string name="enter_voucher">वाउचर कोड दर्ज करें</string>
+
+    <!-- Reader Setting -->
     <string name="settings">सेटिंग्स</string>
     <string name="reader_setting">रीडर सेटिंग्स</string>
     <string name="mer_setting">मर्चेंट सेटिंग्स</string>
@@ -223,6 +227,23 @@
     <string name="insert">इन्सर्ट</string>
     <string name="enable_nfc">एनएफसी टैप भुगतान सक्षम करें</string>
     <string name="enable_chip">चिप कार्ड इन्सर्ट भुगतान सक्षम करें</string>
+
+    <!-- Manual Card Entry Screen -->
+    <string name="enter_card_no">अपना कार्ड नंबर दर्ज करें</string>
+    <string name="plz_enter_card">कृपया कार्ड विवरण दर्ज करें</string>
+
+    <!-- Key Management Screen -->
+    <string name="plz_enter_key">कृपया कुंजी दर्ज करें</string>
+
+    <!-- Merchant Settings -->
+    <string name="merchant_details">व्यापारी विवरण</string>
+    <string name="merchant_name_loc">व्यापारी का नाम और स्थान</string>
+    <string name="merchant_bank_name">व्यापारी का बैंक नाम</string>
+    <string name="merchant_type">व्यापारी का प्रकार (MCC)</string>
+    <string name="fns_number">एफएनएस नंबर</string>
+    <string name="state_code">राज्य कोड</string>
+    <string name="county_code">काउंटी कोड</string>
+    <string name="postal_code">डाक सेवा कोड</string>
 
     <string name="Configuration">कॉन्फ़िगरेशन</string>
     <string name="reactivate_device">डिवाइस पुनः सक्रिय करें</string>

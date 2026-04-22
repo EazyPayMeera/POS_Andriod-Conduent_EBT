@@ -97,7 +97,7 @@ fun KeyEntryScreen(navHostController: NavHostController, viewModel: KeyEntryView
                     placeholder = "Enter Key",
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Uri,
-                    onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},
+                    onDoneAction = {viewModel.onConfirm(context,navHostController)},
                     amount = false,
                 )
 
@@ -123,7 +123,7 @@ fun KeyEntryScreen(navHostController: NavHostController, viewModel: KeyEntryView
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.save_btn),
-            secondButtonOnClick = { viewModel.onConfirm(context,navHostController, sharedViewModel) },
+            secondButtonOnClick = { viewModel.onConfirm(context,navHostController) },
             closeKeypadOnSecondButton = true
         )
 

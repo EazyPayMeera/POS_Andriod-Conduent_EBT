@@ -84,7 +84,7 @@ fun CashBackScreen(navHostController: NavHostController, viewModel: CashBackView
                     value = viewModel.cashBackAmount,
                     onValueChange = {viewModel.onCashBackAmountChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = stringResource(id = R.string.auth_amt),
+                    placeholder = stringResource(id = R.string.cashback_amt),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
                     onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},

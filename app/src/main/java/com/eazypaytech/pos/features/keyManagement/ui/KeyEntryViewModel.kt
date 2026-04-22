@@ -24,7 +24,7 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class KeyEntryViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private val dbRepository: TxnDBRepository) : ViewModel() {
+class KeyEntryViewModel @Inject constructor() : ViewModel() {
 
     var key by mutableStateOf("")
         private set
@@ -41,11 +41,11 @@ class KeyEntryViewModel @Inject constructor(private  var apiServiceRepository: A
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onConfirm(context: Context,navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+    fun onConfirm(context: Context,navHostController: NavHostController) {
         if(key.isEmpty()) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
-                message = "Please Enter Key"
+                message = context.getString(R.string.plz_enter_key)
             )
         }
         else if(key.length != 32)

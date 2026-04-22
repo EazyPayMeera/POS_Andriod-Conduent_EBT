@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +47,7 @@ fun VoucherCardScreen(navHostController: NavHostController, viewModel: VoucherCa
 
     var sharedViewModel= localSharedViewModel.current
     var isDialogVisible by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     Column {
 
         // Top App Bar
@@ -65,7 +66,7 @@ fun VoucherCardScreen(navHostController: NavHostController, viewModel: VoucherCa
             ) {
                 // Title Text
                 TextView(
-                    text = "Enter Voucher Code",
+                    text = stringResource(id = R.string.enter_voucher),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -87,10 +88,10 @@ fun VoucherCardScreen(navHostController: NavHostController, viewModel: VoucherCa
                     value = viewModel.VoucherNumber,
                     onValueChange = {viewModel.onCardNoChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = "Enter Voucher Code",
+                    placeholder = stringResource(id = R.string.enter_voucher),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Uri,
-                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
+                    onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},
                     amount = false,
                 )
 
@@ -116,7 +117,7 @@ fun VoucherCardScreen(navHostController: NavHostController, viewModel: VoucherCa
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
+            secondButtonOnClick = { viewModel.onConfirm(context,navHostController, sharedViewModel) },
             closeKeypadOnSecondButton = true
         )
 
@@ -146,10 +147,6 @@ fun VoucherCardScreen(navHostController: NavHostController, viewModel: VoucherCa
                 .buildDialog(onClose = { isDialogVisible = false })
 
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.onLoad(sharedViewModel)
     }
 
     CustomDialogBuilder.ShowComposed()

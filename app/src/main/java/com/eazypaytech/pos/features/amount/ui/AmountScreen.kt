@@ -141,7 +141,7 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     listOf(
-                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ") ?: ""),
+                        stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ") ?: "EBT"),
                         stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode ?: "-")
                     ).forEach {
                         TextView(

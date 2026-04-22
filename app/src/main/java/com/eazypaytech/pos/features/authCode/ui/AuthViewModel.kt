@@ -1,5 +1,6 @@
 package com.eazypaytech.pos.features.authCode.ui
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
@@ -41,12 +42,12 @@ class AuthViewModel @Inject constructor(private  var apiServiceRepository: ApiSe
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+    fun onConfirm(context: Context,navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.approvalCode = authCode
         if (!isFormValid) {
             CustomDialogBuilder.Companion.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
-                message = "Auth Code Should be 6 Digit"
+                message = context.getString(R.string.auth_code_limit)
             )
         } else {
 

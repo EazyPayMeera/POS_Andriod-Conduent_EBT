@@ -27,18 +27,6 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
     var cashBackAmount by mutableStateOf("")
         private set
 
-    var isReadOnly by mutableStateOf(true)
-        private set
-
-    private val _totalAmount = MutableStateFlow<String?>(null)
-    val totalAmount: StateFlow<String?> = _totalAmount
-    private val _origTotalAmount = MutableStateFlow<String?>(null)
-    val origTotalAmount: StateFlow<String?> = _origTotalAmount
-
-    private val _origDateTime = MutableStateFlow<String?>(null)
-    val origDateTime: StateFlow<String?> = _origDateTime
-
-
     fun onCashBackAmountChange(newValue: String) :String{
         cashBackAmount = formatAmount(newValue)
         return transformToAmountDouble(newValue).toString()
@@ -72,6 +60,5 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
             (sharedViewModel.objRootAppPaymentDetail.txnAmount ?: 0.0) +
                     transformToAmountDouble(cashBackAmount)
     }
-
 
 }

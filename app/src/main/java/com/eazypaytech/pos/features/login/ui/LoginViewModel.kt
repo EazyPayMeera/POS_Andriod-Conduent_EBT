@@ -111,7 +111,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
     }
 
     override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-        CustomDialogBuilder.Companion.composeAlertDialog(title = navHostController.context.resources?.getString(
+        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(
             R.string.default_alert_title_error),message = apiServiceTimeout.message)
     }
 
@@ -121,20 +121,19 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         subTitle: String?,
         message: String?
     ) {
-        CustomDialogBuilder.Companion.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
+        CustomDialogBuilder.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
         viewModelScope.launch {
             try {
-                Log.d("AuthTransaction","Going For Authenticate the transaction")
                 CustomDialogBuilder.Companion.composeProgressDialog(true)
                 apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        CustomDialogBuilder.Companion.composeProgressDialog(false)
+                        CustomDialogBuilder.composeProgressDialog(false)
                         sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
                         sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
                         navHostController.navigate(AppNavigationItems.ApprovedScreen.route)

@@ -663,33 +663,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
-//    fun getDE55(): ByteArray? {
-//        val tagList = arrayOf(
-//            "9F26", // Application Cryptogram
-//            "9F27", // Cryptogram Information Data
-//            "9F10", // Issuer Application Data
-//            "9F37", // Unpredictable Number
-//            "9F36", // ATC
-//            "95",   // TVR
-//            "9A",   // Transaction Date
-//            "9C",   // Transaction Type
-//            "9F02", // Amount Authorized
-//            "5F2A", // Transaction Currency Code
-//            "82",   // AIP
-//            "9F1A", // Terminal Country Code
-//            "9F03", // Amount Other
-//            "9F33", // Terminal Capabilities
-//            "9F34", // CVM Results
-//            "9F35", // Terminal Type
-//            "9F1E", // IFD Serial Number
-//            "84",   // DF Name
-//            "9F09"  // Application Version
-//        )
-//
-//        val bundle: Bundle? = null // or pass if required
-//
-//        return emvWrapper.getEmvDataSafe(tagList, bundle)
-//    }
 
     fun getCardBrand(aid : String?=null, pan : String?=null) : CardBrand?
     {
@@ -713,7 +686,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                     in 400000..499999 -> CardBrand.VISA
 
                     // Mastercard ranges: 51-55 and 2221-2720
-                    in 510000..559999, in 222100..272099 -> CardBrand.MASTERCARD
+                    in 510000..559999, in 222100..272099 -> CardBrand.EBT
 
                     // American Express: 34, 37
                     in 340000..349999, in 370000..379999 -> CardBrand.AMEX
@@ -731,7 +704,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                     in 620000..629999 -> CardBrand.UPI
 
                     // Maestro: 50, 56-69
-                    in 500000..509999, in 560000..699999 -> CardBrand.MASTERCARD
+                    in 500000..509999, in 560000..699999 -> CardBrand.EBT
 
                     else -> CardBrand.UNKNOWN
                 }

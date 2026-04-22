@@ -1,5 +1,6 @@
 package com.eazypaytech.pos.features.voucher.ui
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
@@ -24,23 +25,17 @@ class VoucherCardViewModel @Inject constructor(private  var apiServiceRepository
         private set
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun onLoad(sharedViewModel: SharedViewModel)
-    {
-
-    }
-
     fun onCardNoChange(newValue: String) {
         VoucherNumber = newValue
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+    fun onConfirm(context: Context, navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.voucherNumber = VoucherNumber
         if(VoucherNumber.isEmpty()) {
             CustomDialogBuilder.composeAlertDialog(
                 title = navHostController.context.getString(R.string.default_alert_title_error),
-                message = "Please Enter Card Details"
+                message = context.getString(R.string.plz_enter_voucher),
             )
         }
         else {

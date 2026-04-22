@@ -142,61 +142,6 @@ fun LanguageScreen(navHostController: NavHostController, viewModel: LanguageView
                     )
                 }
 
-                /*
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-
-                Divider(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    thickness = MaterialTheme.dimens.DP_1_CompactMedium,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
-
-                // Fixed-width row for "Hindi" option
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.orange_bullet),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.DP_25_CompactMedium)
-                            .padding(end = MaterialTheme.dimens.DP_10_CompactMedium)
-                    )
-
-                    // Fixed-width text for language option
-                    Box(
-                        modifier = Modifier.width(MaterialTheme.dimens.DP_100_CompactMedium) // Fixed width for the text
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.hindi),
-                            fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.padding(MaterialTheme.dimens.DP_15_CompactMedium),
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    RadioButton(
-                        selected = selectedLanguage.value == UiLanguage.HINDI,
-                        onClick = {
-                            viewModel.onLanguageChange(UiLanguage.HINDI, sharedViewModel, context)
-                        },
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = MaterialTheme.colorScheme.primary,
-                            unselectedColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    )
-                }
-                */
             }
         }
     }

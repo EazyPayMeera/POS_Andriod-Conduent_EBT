@@ -52,81 +52,6 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isBatchId.value = sharedViewModel.objPosConfig?.isBatchId == true
     }
 
-    private fun getTipPercent(button: PercentButton, sharedViewModel: SharedViewModel) : Double
-    {
-        return when(button){
-            PercentButton.PERCENT1 -> sharedViewModel.objPosConfig?.tipPercent1?:0.00
-            PercentButton.PERCENT2 -> sharedViewModel.objPosConfig?.tipPercent2?:0.00
-            PercentButton.PERCENT3 -> sharedViewModel.objPosConfig?.tipPercent3?:0.00
-            else -> 0.00
-        }
-    }
-
-    private fun getServiceChargePercent(button: PercentButton, sharedViewModel: SharedViewModel) : Double
-    {
-        return when(button){
-            PercentButton.PERCENT1 -> sharedViewModel.objPosConfig?.serviceChargePercent1?:0.00
-            PercentButton.PERCENT2 -> sharedViewModel.objPosConfig?.serviceChargePercent2?:0.00
-            PercentButton.PERCENT3 -> sharedViewModel.objPosConfig?.serviceChargePercent3?:0.00
-            else -> 0.00
-        }
-    }
-
-    fun getTipPercentLabel(button: PercentButton, sharedViewModel: SharedViewModel) : String
-    {
-        return formatAmount(
-            getTipPercent(button, sharedViewModel),
-            symbol = Symbol(
-                type = Symbol.Type.PERCENT,
-                position = Symbol.Position.END,
-                noSpace = true
-            ),
-            decimalPlaces = 0
-        )
-    }
-
-    fun getServiceChargePercentLabel(button: PercentButton, sharedViewModel: SharedViewModel) : String
-    {
-        return formatAmount(
-            getServiceChargePercent(button, sharedViewModel),
-            symbol = Symbol(
-                type = Symbol.Type.PERCENT,
-                position = Symbol.Position.END,
-                noSpace = true
-            ),
-            decimalPlaces = 2
-        )
-    }
-
-
-
-
-
-
-
-
-
-
-
-    fun onInactivityTimeoutChange(navHostController : NavHostController, timeout: Int, sharedViewModel: SharedViewModel) {
-        if (isAdmin.value != true) {
-            onShowAdminOnly(navHostController.context)
-        } else {
-            sharedViewModel.objPosConfig?.apply { this.inactivityTimeout = timeout }?.saveToPrefs()
-        }
-    }
-
-    fun onBatchIdChange(navHostController : NavHostController, batchId: Int, sharedViewModel: SharedViewModel) {
-        if (isAdmin.value != true) {
-            onShowAdminOnly(navHostController.context)
-        } else {
-            sharedViewModel.objPosConfig?.apply { this.batchId = batchId.toString() }?.saveToPrefs()
-        }
-    }
-
-
-
-
     fun onLoad(sharedViewModel: SharedViewModel)
     {
         loadPreferences(sharedViewModel)
@@ -144,15 +69,6 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         )
     }
 
-    fun onShowBatchOpen(context: Context)
-    {
-        CustomDialogBuilder.Companion.composeAlertDialog(
-            title = context.resources.getString(
-                R.string.restricted
-            ),
-            subtitle = context.resources.getString(R.string.batch_open)
-        )
-    }
 
     fun onBack(navHostController: NavHostController) {
         navHostController.popBackStack()

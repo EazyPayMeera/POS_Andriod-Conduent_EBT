@@ -73,7 +73,7 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
             ) {
 
                 TextView(
-                    text = "Enter Your Card Number",
+                    text = stringResource(R.string.enter_card_no),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -96,10 +96,10 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
                     onValueChange = {viewModel.onCardNoChange(it)
                         resetTimer = !resetTimer},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = "Enter Card Number",
+                    placeholder = stringResource(R.string.enter_card_no),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
+                    onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},
                     amount = false,
                 )
 
@@ -112,7 +112,7 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
             secondButtonOnClick = {
                 if (viewModel.isFormValid) {
-                    viewModel.onConfirm(navHostController,sharedViewModel)
+                    viewModel.onConfirm(context,navHostController,sharedViewModel)
                 } else {
                     viewModel.onInvalidFormData(context)
                 }

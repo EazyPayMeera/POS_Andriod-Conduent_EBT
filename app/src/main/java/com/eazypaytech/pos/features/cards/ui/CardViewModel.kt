@@ -259,7 +259,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         emvMsgIdToStringId(displayMsgId)?.let {
             message = context.getString(it)
         }
-        CustomDialogBuilder.Companion.composeAlertDialog(
+        CustomDialogBuilder.composeAlertDialog(
             title = context.getString(R.string.default_alert_title_error),
             message = message,
             onOkClick = {

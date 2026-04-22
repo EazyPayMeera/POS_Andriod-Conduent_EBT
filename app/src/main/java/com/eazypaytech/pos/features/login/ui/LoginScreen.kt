@@ -52,7 +52,6 @@ fun LoginScreenView(navHostController: NavHostController?, viewModel: LoginViewM
                 title = stringResource(id = R.string.login),
                 onBackButtonClick = { /* Handle back button click if needed */ },
                 isIcon1Visible = false,
-                //backgroundColor = MaterialTheme.colorScheme.onPrimary,
                 isIcon2Visible = false
             )
         },

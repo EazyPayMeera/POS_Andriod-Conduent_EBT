@@ -65,7 +65,7 @@ fun AuthScreen(navHostController: NavHostController, viewModel: AuthViewModel = 
             ) {
                 // Title Text
                 TextView(
-                    text = "Enter Authorization Code",
+                    text = stringResource(R.string.enter_auth_code),
                     fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold,
@@ -87,10 +87,10 @@ fun AuthScreen(navHostController: NavHostController, viewModel: AuthViewModel = 
                     value = viewModel.authCode,
                     onValueChange = {viewModel.onCardNoChange(it)},
                     shape = RoundedCornerShape(MaterialTheme.dimens.DP_13_CompactMedium),
-                    placeholder = "Authorization Code",
+                    placeholder = stringResource(R.string.auth_code),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
-                    onDoneAction = {viewModel.onConfirm(navHostController, sharedViewModel)},
+                    onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},
                     amount = false,
                 )
 
@@ -102,7 +102,7 @@ fun AuthScreen(navHostController: NavHostController, viewModel: AuthViewModel = 
             firstButtonTitle = stringResource(id = R.string.cancel_btn),
             firstButtonOnClick = { /*viewModel.onCancel(navHostController)*/isDialogVisible=true },
             secondButtonTitle = stringResource(id = R.string.confirm_btn),
-            secondButtonOnClick = { viewModel.onConfirm(navHostController, sharedViewModel) },
+            secondButtonOnClick = { viewModel.onConfirm(context,navHostController, sharedViewModel) },
             closeKeypadOnSecondButton = true
         )
 

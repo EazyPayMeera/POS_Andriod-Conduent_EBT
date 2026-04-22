@@ -64,6 +64,7 @@ class ManualCardViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(
+        context: Context,
         navHostController: NavHostController,
         sharedViewModel: SharedViewModel
     ) {
@@ -74,7 +75,7 @@ class ManualCardViewModel @Inject constructor(
             cardNumber.isEmpty() -> {
                 showError(
                     navHostController,
-                    "Please Enter Card Details"
+                    context.getString(R.string.plz_enter_card),
                 )
             }
 
