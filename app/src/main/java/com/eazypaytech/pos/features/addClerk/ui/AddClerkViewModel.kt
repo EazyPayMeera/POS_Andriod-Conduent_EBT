@@ -49,9 +49,9 @@ class AddClerkViewModel @Inject constructor(
         cnfPwdCredentials.value = newPassword
     }
 
-   private fun setRegisterBtnState(enabled: Boolean) {
-        isRegisterBtnEnabled.value = enabled
-    }
+//   private fun setRegisterBtnState(enabled: Boolean) {
+//        isRegisterBtnEnabled.value = enabled
+//    }
 
     private fun setDoneBtnState(enabled: Boolean) {
         isDoneBtnEnabled.value = enabled

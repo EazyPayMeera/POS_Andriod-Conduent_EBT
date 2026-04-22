@@ -2,22 +2,19 @@ package com.eazypaytech.pos.features.readerSetting.ui
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.analogics.securityframework.data.repository.TxnDBRepository
 import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ReaderSettingViewModel @Inject constructor(
-    private var dbRepository: TxnDBRepository
-) : ViewModel() {
+class ReaderSettingViewModel @Inject constructor() : ViewModel() {
 
     val isTapEnabled = mutableStateOf(false)
     val isInsertEnabled = mutableStateOf(false)
     fun onTapToggle(sharedViewModel: SharedViewModel,enabled: Boolean) {
         isTapEnabled.value = enabled
         sharedViewModel.objPosConfig?.apply { isTapEnable = enabled }?.saveToPrefs()
-        sharedViewModel.objRootAppPaymentDetail?.isTapEnable = enabled
+        sharedViewModel.objRootAppPaymentDetail.isTapEnable = enabled
     }
 
     fun onInsertToggle(sharedViewModel: SharedViewModel,enabled: Boolean) {
@@ -30,6 +27,4 @@ class ReaderSettingViewModel @Inject constructor(
         isTapEnabled.value = sharedViewModel?.objPosConfig?.isTapEnable ?: false
         isInsertEnabled.value = sharedViewModel?.objPosConfig?.isEMVEnable ?: false
     }
-
-
 }

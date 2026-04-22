@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -50,7 +49,7 @@ import com.eazypaytech.pos.features.language.ui.LanguageScreen
 import com.eazypaytech.pos.features.manualentry.ui.ManualCardScreen
 import com.eazypaytech.pos.features.password.ui.PasswordScreen
 import com.eazypaytech.pos.features.receiptdetails.ui.ReceiptDetailsScreen
-import com.eazypaytech.pos.features.settings.ui.ConfigurationScreen
+import com.eazypaytech.pos.features.configuration.ui.ConfigurationScreen
 import com.eazypaytech.pos.features.settings.ui.SettingsScreen
 import com.eazypaytech.pos.features.splash.ui.SplashScreen
 import com.eazypaytech.pos.features.txnSel.ui.TxnSelectionScreen
@@ -70,10 +69,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         var sharedViewModel: SharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_SECURE,
+//            WindowManager.LayoutParams.FLAG_SECURE
+//        )
 
         if (!checkStoragePermissions(this))
             requestStoragePermissions(this)

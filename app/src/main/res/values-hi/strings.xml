@@ -218,6 +218,11 @@
 
     <string name="settings">सेटिंग्स</string>
     <string name="reader_setting">रीडर सेटिंग्स</string>
+    <string name="mer_setting">मर्चेंट सेटिंग्स</string>
+    <string name="tap">टैप</string>
+    <string name="insert">इन्सर्ट</string>
+    <string name="enable_nfc">एनएफसी टैप भुगतान सक्षम करें</string>
+    <string name="enable_chip">चिप कार्ड इन्सर्ट भुगतान सक्षम करें</string>
 
     <string name="Configuration">कॉन्फ़िगरेशन</string>
     <string name="reactivate_device">डिवाइस पुनः सक्रिय करें</string>

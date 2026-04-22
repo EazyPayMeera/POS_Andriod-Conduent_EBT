@@ -2,8 +2,6 @@
 
 package com.eazypaytech.pos.features.splash.ui
 
-
-import android.util.Log
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -24,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.eazypaytech.pos.BuildConfig
 import com.eazypaytech.pos.R
 import com.eazypaytech.pos.features.activity.ui.localSharedViewModel
 import com.eazypaytech.pos.core.ui.components.textview.GenericCard
@@ -36,19 +33,8 @@ import com.eazypaytech.pos.core.themes.dimens
 
 @Composable
 fun SplashScreen(navController: NavController, viewModel: SplashScreenViewModel = hiltViewModel()) {
-/*
-*
-* AppLogger.d(TAG, "onCreate: Activity started")
-   AppLogger.i(TAG, "onCreate: Initializing UI components")
-        AppLogger.w(TAG, "onCreate: Potential configuration issue detected")
-        AppLogger.e(TAG, "onCreate: Error initializing app", Throwable("Simulated error"))
-*
-* */
-    //AppLogger.setLogLevel(BuildConfig.LOG_LEVEL)
     val scale = remember { Animatable(0f) }
     var sharedViewModel = localSharedViewModel.current
-
-    Log.d("POS_CONFIG", "objPosConfig: ${sharedViewModel.objPosConfig}")
 
     LaunchedEffect(Unit) {
         scale.animateTo(

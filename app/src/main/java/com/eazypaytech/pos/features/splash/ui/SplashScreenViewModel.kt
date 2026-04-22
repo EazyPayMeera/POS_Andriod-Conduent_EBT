@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import com.analogics.networkservicecore.data.serviceutils.NetworkConstants
 import com.analogics.networkservicecore.tms.repository.TmsRepository
 
-import com.eazypaytech.pos.data.TmsConfigParser
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.models.TmsConfigMapper
@@ -32,14 +31,11 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
     @SuppressLint("RestrictedApi")
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
-            //val tmsConfig = TmsConfigParser.loadConfig(navController.context)
-            //val tmsConfig = TmsConfigParser.loadFromAssets(context)
             val savedConfig = apiServiceRepository.getPosConfig()
 
             //  STEP 1: Fetch from TMS
             val sn = try {
                 deviceInfoProvider.getSerialNumber(context)
-                //"19250317790001"
             } catch (e: Exception) {
                 "UNKNOWN"
             }
@@ -89,6 +85,8 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
             finalConfig.merchantNameLocation = savedConfig.merchantNameLocation ?: tmsConfig?.merchantNameLocation
             finalConfig.merchantBankName = savedConfig.merchantBankName ?: tmsConfig?.merchantBankName
             finalConfig.stateCode = savedConfig.stateCode ?: tmsConfig?.stateCode
+            finalConfig.isTapEnable = savedConfig.isTapEnable
+            finalConfig.isEMVEnable = savedConfig.isEMVEnable
             finalConfig.postalServiceCode = savedConfig.postalServiceCode ?: tmsConfig?.postalServiceCode
             sharedViewModel.objPosConfig = finalConfig
             finalConfig.saveToPrefs()

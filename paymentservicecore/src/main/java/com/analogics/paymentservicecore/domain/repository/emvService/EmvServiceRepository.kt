@@ -428,14 +428,27 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         emvSdkRequestRepository.abortPayment()
     }
 
+    private fun resolveCardCheckMode(isEMVEnable: Boolean?, isTapEnable: Boolean?): CardCheckMode {
+        val emv = isEMVEnable == true
+        val tap = isTapEnable == true
+        return when {
+            emv && tap -> CardCheckMode.SWIPE_OR_INSERT_OR_TAP
+            emv && !tap -> CardCheckMode.SWIPE_OR_INSERT
+            !emv && tap -> CardCheckMode.SWIPE_OR_TAP
+            else -> CardCheckMode.SWIPE // fallback (only swipe allowed)
+        }
+    }
+
     private fun getTransConfig(paymentServiceTxnDetails: PaymentServiceTxnDetails?) : TransConfig
     {
+        val isEMVEnable = paymentServiceTxnDetails?.isEMVEnable
+        val isTapEnable = paymentServiceTxnDetails?.isTapEnable
         return TransConfig(
             amount = (paymentServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             cashbackAmount = (paymentServiceTxnDetails?.cashback?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             currencyCode = paymentServiceTxnDetails?.currencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
-            cardCheckMode = CardCheckMode.SWIPE_OR_INSERT_OR_TAP,
+            cardCheckMode = resolveCardCheckMode(isEMVEnable, isTapEnable),
             cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
             forceOnlinePin = true,
             supportDRL = false

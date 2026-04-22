@@ -33,6 +33,7 @@ import com.eazypaytech.pos.core.ui.components.textview.GenericCard
 import com.eazypaytech.pos.core.ui.components.inputfields.OkButton
 import com.eazypaytech.pos.core.ui.components.textview.TextView
 import com.eazypaytech.pos.core.themes.dimens
+import com.eazypaytech.pos.core.ui.components.inputfields.ConfigRow
 
 @Composable
 fun SettingsScreen(navHostController: NavHostController) {
@@ -50,7 +51,6 @@ fun SettingsScreen(navHostController: NavHostController) {
     }
 
     val merchantType = remember {
-        //mutableStateOf(sharedViewModel.objPosConfig?.merchantType ?: "")
         mutableStateOf(sharedViewModel.objPosConfig?.merchantType ?: "")
     }
 
@@ -99,7 +99,7 @@ fun SettingsScreen(navHostController: NavHostController) {
                     item {
 
                         TextView(
-                            text = "Merchant Details",
+                            text = stringResource(id = R.string.merchant_details),
                             fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
@@ -114,7 +114,7 @@ fun SettingsScreen(navHostController: NavHostController) {
                     item {
 
                         ConfigRow(
-                            label = "Merchant Name and Location",
+                            label = stringResource(id = R.string.merchant_name_loc),
                             value = merchantNameLocation.value,
                             onValueChange = {
                                 merchantNameLocation.value = it
@@ -127,7 +127,7 @@ fun SettingsScreen(navHostController: NavHostController) {
                     item {
 
                         ConfigRow(
-                            label = "Merchant Bank Name",
+                            label = stringResource(id = R.string.merchant_bank_name),
                             value = merchantBankName.value,
                             onValueChange = {
                                 merchantBankName.value = it
@@ -140,7 +140,7 @@ fun SettingsScreen(navHostController: NavHostController) {
                     item {
 
                         ConfigRow(
-                            label = "Merchant Type (MCC)",
+                            label = stringResource(id = R.string.merchant_type),
                             value = merchantType.value,
                             onValueChange = {
                                 merchantType.value = it
@@ -154,7 +154,7 @@ fun SettingsScreen(navHostController: NavHostController) {
                     item {
 
                         ConfigRow(
-                            label = "FNS Number",
+                            label = stringResource(id = R.string.fns_number),
                             value = fnsNumber.value,
                             onValueChange = {
                                 fnsNumber.value = it
@@ -166,7 +166,7 @@ fun SettingsScreen(navHostController: NavHostController) {
 
                     item {
                         ConfigRow(
-                            label = "State Code",
+                            label = stringResource(id = R.string.state_code),
                             value = stateCode.value,
                             onValueChange = {
                                 stateCode.value = it
@@ -178,7 +178,7 @@ fun SettingsScreen(navHostController: NavHostController) {
 
                     item {
                         ConfigRow(
-                            label = "County Code",
+                            label = stringResource(id = R.string.county_code),
                             value = countyCode.value,
                             onValueChange = {
                                 countyCode.value = it
@@ -190,7 +190,7 @@ fun SettingsScreen(navHostController: NavHostController) {
 
                     item {
                         ConfigRow(
-                            label = "Postal Service Code",
+                            label = stringResource(id = R.string.postal_code),
                             value = postalServiceCode.value,
                             onValueChange = {
                                 postalServiceCode.value = it
@@ -241,41 +241,6 @@ fun SettingsScreen(navHostController: NavHostController) {
     }
 }
 
-@Composable
-fun ConfigRow(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    keyboardType: KeyboardType = KeyboardType.Text
-) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
-    ) {
-
-        Text(
-            text = label,
-            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
-            fontWeight = FontWeight.Medium
-        )
-
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            textStyle = LocalTextStyle.current.copy(
-                textAlign = TextAlign.Start
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.tertiary
-            ),
-            singleLine = true
-        )
-    }
-}
 
 

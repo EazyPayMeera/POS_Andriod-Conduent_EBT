@@ -218,9 +218,25 @@
     <string name="footer">Footers</string>
 
 
-
+    <!-- Reader Setting -->
     <string name="settings">Settings</string>
     <string name="reader_setting">Reader Settings</string>
+    <string name="mer_setting">Merchant Settings</string>
+    <string name="tap">TAP</string>
+    <string name="insert">INSERT</string>
+    <string name="enable_nfc">Enable NFC Tap Payments</string>
+    <string name="enable_chip">Enable Chip Card Insert Payments</string>
+
+
+    <!-- Merchant Settings -->
+    <string name="merchant_details">Merchant Details</string>
+    <string name="merchant_name_loc">Merchant Name and Location</string>
+    <string name="merchant_bank_name">Merchant Bank Name</string>
+    <string name="merchant_type">Merchant Type (MCC)</string>
+    <string name="fns_number">FNS Number</string>
+    <string name="state_code">State Code</string>
+    <string name="county_code">County Code</string>
+    <string name="postal_code">Postal Service Code</string>
 
     <string name="Configuration">Configuration</string>
     <string name="reactivate_device">Reactivate Device</string>

@@ -5,6 +5,7 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
@@ -32,6 +33,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -50,6 +53,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -961,6 +965,127 @@ fun OutlinedTextField(
     }
 }
 
+@Composable
+fun ReaderToggleRow(
+    label: String,
+    description: String,
+    isEnabled: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(MaterialTheme.dimens.DP_24_CompactMedium))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+            .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium, vertical = MaterialTheme.dimens.DP_35_CompactMedium),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = description,
+                fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
+                modifier = Modifier.padding(top = MaterialTheme.dimens.DP_4_CompactMedium)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.DP_24_CompactMedium))
+
+        SliderToggle(
+            checked = isEnabled,
+            onCheckedChange = onToggle
+        )
+    }
+}
+
+
+@Composable
+fun SliderToggle(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    val trackWidth = MaterialTheme.dimens.DP_50_CompactMedium
+    val trackHeight = MaterialTheme.dimens.DP_33_CompactMedium
+    val thumbSize = MaterialTheme.dimens.DP_23_CompactMedium
+    val thumbPadding = MaterialTheme.dimens.DP_3_CompactMedium
+
+    val thumbOffset by animateDpAsState(
+        targetValue = if (checked) trackWidth - thumbSize - thumbPadding else thumbPadding,
+        animationSpec = tween(durationMillis = 200),
+        label = "thumbOffset"
+    )
+
+    val trackColor by remember(checked) {
+        derivedStateOf {
+            if (checked) Color(0xFFF7931E) else Color(0xFFBDBDBD)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .width(trackWidth)
+            .height(trackHeight)
+            .clip(CircleShape)
+            .background(trackColor)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onCheckedChange(!checked) },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(start = thumbOffset)
+                .size(thumbSize)
+                .clip(CircleShape)
+                .background(Color.White)
+        )
+    }
+}
+
+@Composable
+fun ConfigRow(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(MaterialTheme.dimens.DP_20_CompactMedium)
+    ) {
+
+        Text(
+            text = label,
+            fontSize = MaterialTheme.dimens.SP_16_CompactMedium,
+            fontWeight = FontWeight.Medium
+        )
+
+        androidx.compose.material.OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.Start
+            ),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.tertiary
+            ),
+            singleLine = true
+        )
+    }
+}
 
 @Composable
 fun CircularMenu(

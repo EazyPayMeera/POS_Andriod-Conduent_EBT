@@ -1,16 +1,14 @@
-package com.eazypaytech.pos.features.settings.ui
+package com.eazypaytech.pos.features.configuration.ui
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.eazypaytech.pos.R
 import com.eazypaytech.pos.domain.model.Symbol
 import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
-import com.eazypaytech.pos.navigation.AppNavigationItems
 import com.eazypaytech.pos.core.utils.formatAmount
 import com.analogics.securityframework.data.repository.TxnDBRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

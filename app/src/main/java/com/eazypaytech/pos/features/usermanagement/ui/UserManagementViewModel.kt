@@ -33,12 +33,10 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
         try {
             val uiList = mutableListOf<String>()
 
-            // Iterate through the fetched user list and add user info to startDates
             userList.forEach {
-                uiList.add(it.userId.toString())  // Adjust based on actual user object properties (e.g., user.id, user.name)
+                uiList.add(it.userId.toString())
             }
 
-            // Update the user list in the state flow
             _userList.value = uiList
         } catch (e: Exception) {
             Log.e("FetchUserDetails", "Error fetching user details: ${e.message}")
@@ -65,7 +63,7 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
                             if(it>1)
                             {
                                 dbRepository.removeUser(user).let {
-                                    CustomDialogBuilder.Companion.composeAlertDialog(title = navHostController.context.getString(
+                                    CustomDialogBuilder.composeAlertDialog(title = navHostController.context.getString(
                                         R.string.label_remove_user),
                                         subtitle = navHostController.context.getString(R.string.msg_user_removed)
                                     )
@@ -74,7 +72,7 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
                             }
                             else
                             {
-                                CustomDialogBuilder.Companion.composeAlertDialog(
+                                CustomDialogBuilder.composeAlertDialog(
                                     title = navHostController.context.getString(R.string.label_remove_user),
                                     subtitle = navHostController.context.getString(R.string.min_one_admin_required)
                                 )
@@ -84,7 +82,7 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
                     else
                     {
                         dbRepository.removeUser(user).let {
-                            CustomDialogBuilder.Companion.composeAlertDialog(title = navHostController.context.getString(
+                            CustomDialogBuilder.composeAlertDialog(title = navHostController.context.getString(
                                 R.string.label_remove_user),
                                 subtitle = navHostController.context.getString(R.string.msg_user_removed)
                             )
@@ -127,7 +125,7 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
 
     fun onShowAdminOnly(context: Context)
     {
-        CustomDialogBuilder.Companion.composeAlertDialog(
+        CustomDialogBuilder.composeAlertDialog(
             title = context.resources.getString(
                 R.string.restricted
             ),

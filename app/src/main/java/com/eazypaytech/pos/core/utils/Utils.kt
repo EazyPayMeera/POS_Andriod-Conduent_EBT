@@ -125,11 +125,6 @@ fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails
     return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
 }
 
-fun convertBatchToBatchEntity(batchEntity: BatchEntity): BatchEntity {
-    val json = Gson().toJson(batchEntity) // Convert ObjRootAppPaymentDetails to JSON
-    return Gson().fromJson(json, BatchEntity::class.java) // Convert JSON to TxnEntity
-}
-
 fun convertObjRootToUserManagementEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): UserManagementEntity {
     val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
     return Gson().fromJson(json, UserManagementEntity::class.java) // Convert JSON to TxnEntity
@@ -208,31 +203,6 @@ fun NavHostController.navigateAndClean(route: String) {
     graph.setStartDestination(route)
 }
 
-fun navigateToDashboard(navHostController: NavHostController) {
-    navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-}
-
-
-
-fun getBitmapBytes(bitmap: Bitmap): ByteArray? {
-    var imageData: ByteArray? = null
-    try {
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        imageData = baos.toByteArray()
-    } catch (e: Exception) {
-        // TODO: handle exception
-        e.printStackTrace()
-        return null
-    }
-    return imageData
-}
-
-fun getLogoBitmap(context: Context, id: Int): Bitmap {
-    val draw = context.resources.getDrawable(id) as BitmapDrawable
-    val bitmap = draw.bitmap
-    return bitmap
-}
 
 fun emvStatusToTransStatus(responseCode: String?) : TxnStatus
 {
@@ -313,29 +283,6 @@ fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails?) : Acquirer
     return Acquirer.valueOf(objRootAppPaymentDetail?.acquirerName?:"")
 }
 
-fun String.splitByIntervals(intervals: List<Int>, charSequence : CharSequence = "-"): String {
-    val result = mutableListOf<String>()
-    var currentIndex = 0
-
-    // Iterate through the defined intervals
-    for (interval in intervals) {
-        if (currentIndex >= this.length) break
-
-        // Extract substring based on the current interval
-        val part = this.substring(currentIndex, (currentIndex + interval).coerceAtMost(this.length))
-        result.add(part)
-
-        // Move the index forward by the current interval
-        currentIndex += interval
-    }
-
-    // Add any remaining part of the string
-    if (currentIndex < this.length) {
-        result.add(this.substring(currentIndex))
-    }
-
-    return result.joinToString(charSequence)
-}
 
 
 @Composable
@@ -346,10 +293,6 @@ fun HideSoftKeyboard() {
     }
 }
 
-@Composable
-fun LoadingBar() {
-    LinearProgressIndicator()
-}
 
 @Composable
 fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : Int

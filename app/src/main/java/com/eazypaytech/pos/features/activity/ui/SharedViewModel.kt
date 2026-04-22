@@ -2,7 +2,7 @@ package com.eazypaytech.pos.features.activity.ui
 
 import androidx.lifecycle.ViewModel
 import com.analogics.paymentservicecore.data.model.PosConfig
-import com.eazypaytech.pos.features.settings.ui.PercentButton
+import com.eazypaytech.pos.features.configuration.ui.PercentButton
 import com.eazypaytech.pos.domain.model.ObjRootAppPaymentDetails
 import com.analogics.securityframework.database.entity.BatchEntity
 

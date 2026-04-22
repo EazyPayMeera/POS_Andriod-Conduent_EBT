@@ -1,4 +1,4 @@
-package com.eazypaytech.pos.features.settings.ui
+package com.eazypaytech.pos.features.configuration.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,7 +54,7 @@ fun ConfigurationScreen(navHostController: NavHostController, viewModel: ConfigV
     val settingsItems = listOf(
 
         SettingsItem(
-            imageRes = R.drawable.config_auto_print_report,
+            imageRes = R.drawable.receipt_setting,
             text = stringResource(id = R.string.receipt_details),
             isChecked = viewModel.isAutoPrintReport.value,
             onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. ReceiptDetailsScreen.route) else viewModel.onShowAdminOnly(context)},
@@ -63,8 +63,8 @@ fun ConfigurationScreen(navHostController: NavHostController, viewModel: ConfigV
             isEnabled = isAdmin
         ),
         SettingsItem(
-            imageRes = R.drawable.settings,
-            text = stringResource(id = R.string.settings),
+            imageRes = R.drawable.merchant_setting,
+            text = stringResource(id = R.string.mer_setting),
             isChecked = viewModel.isSettings.value,
             onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems. SettingsScreen.route) else viewModel.onShowAdminOnly(context)},
             isArrow = true,
@@ -72,7 +72,7 @@ fun ConfigurationScreen(navHostController: NavHostController, viewModel: ConfigV
             isEnabled = isAdmin
         ),
         SettingsItem(
-            imageRes = R.drawable.settings,
+            imageRes = R.drawable.reader_setting,
             text = stringResource(id = R.string.reader_setting),
             isChecked = viewModel.isTap.value,
             onCheckedChange = { if(isAdmin) navHostController.navigate(AppNavigationItems.ReaderSettingScreen.route) else viewModel.onShowAdminOnly(context)},
