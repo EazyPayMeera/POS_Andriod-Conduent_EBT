@@ -1,39 +1,30 @@
 package com.eazypaytech.pos.core.utils
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.util.Log
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.analogics.builder_core.data.constants.BuilderConstants
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.model.emv.CardBrand
 import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult
-import com.analogics.paymentservicecore.data.model.Acquirer
 import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.analogics.paymentservicecore.data.model.TxnType
-import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
 import com.eazypaytech.pos.R
-import com.eazypaytech.pos.navigation.AppNavigationItems
 import com.eazypaytech.pos.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.pos.domain.model.Symbol
 import com.eazypaytech.pos.core.utils.language.UiLanguage
 import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 import com.google.gson.Gson
-import java.io.ByteArrayOutputStream
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -278,10 +269,6 @@ fun setUiLanguage(context: Context, language: UiLanguage) {
 
 }
 
-fun getAcquirer(objRootAppPaymentDetail : ObjRootAppPaymentDetails?) : Acquirer
-{
-    return Acquirer.valueOf(objRootAppPaymentDetail?.acquirerName?:"")
-}
 
 
 

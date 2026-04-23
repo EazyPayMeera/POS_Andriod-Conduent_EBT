@@ -25,7 +25,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-class ApiRequestBuilderLyra @Inject constructor(@ApplicationContext val context: Context,var dbRepository: TxnDBRepository) {
+class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Context, var dbRepository: TxnDBRepository) {
     val messageFactory = MessageFactory<IsoMessage>()
     var builderServiceTxnDetails = BuilderServiceTxnDetails()
     lateinit var message : IsoMessage

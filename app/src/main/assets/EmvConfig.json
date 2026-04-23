@@ -5,6 +5,7 @@
   "terminalCountryCode" : "0840",
   "terminalCapabilities" : "606008",
   "terminalFloorLimit" : "00000000",
+  "onlinePinSupport": "01",
   "terminalAppPriority" : "00",
   "currencyCode" : "0840",
   "tacDefault" : "0000000000",

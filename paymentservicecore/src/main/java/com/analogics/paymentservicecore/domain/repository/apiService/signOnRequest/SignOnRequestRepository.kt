@@ -1,16 +1,15 @@
 package com.analogics.paymentservicecore.domain.repository.apiService.signOnRequest
 
 import android.content.Context
-import android.util.Log
 import com.analogics.builder_core.data.constants.BuilderConstants
-import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.data.model.BuilderServiceTxnDetails
-import com.analogics.builder_core.domain.repository.BuilderServiceRepositoryLyra
+import com.analogics.builder_core.domain.repository.BuilderServiceRepository
 import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.TxnStatus
-import com.analogics.builder_core.builder.ApiRequestBuilderLyra
+import com.analogics.builder_core.builder.ApiRequestBuilder
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -21,8 +20,8 @@ import javax.inject.Inject
 
 class SignOnRequestRepository@Inject constructor(
     @ApplicationContext val context: Context,
-    var apiRequestBuilder: ApiRequestBuilderLyra,
-    private var builderServiceRepository: BuilderServiceRepositoryLyra
+    var apiRequestBuilder: ApiRequestBuilder,
+    private var builderServiceRepository: BuilderServiceRepository
 )  {
     suspend fun signOnRequest(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -31,7 +30,7 @@ class SignOnRequestRepository@Inject constructor(
         val masterKey = paymentServiceTxnDetails?.masterKey
 
         builderServiceRepository.networkServiceRequest(
-            object : IBuilderServiceResponseListenerLyra {
+            object : IBuilderServiceResponseListener {
                 override fun onBuilderSuccess(response: ByteArray) {
                     val isoStr = String(response, Charsets.US_ASCII)
                     val mti = isoStr.take(4)
@@ -85,7 +84,7 @@ class SignOnRequestRepository@Inject constructor(
 
     suspend fun keyExchangeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceRequest(
-            object : IBuilderServiceResponseListenerLyra{
+            object : IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: ByteArray) {
                     CoroutineScope(Dispatchers.Default).launch {
                         var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
@@ -116,7 +115,7 @@ class SignOnRequestRepository@Inject constructor(
         onAPIServiceResponse: (Any) -> Unit
     ) {
         builderServiceRepository.networkServiceResponse(
-            object : IBuilderServiceResponseListenerLyra {
+            object : IBuilderServiceResponseListener {
                 override fun onBuilderSuccess(response: ByteArray) {
 
                 }
@@ -139,7 +138,7 @@ class SignOnRequestRepository@Inject constructor(
 
     suspend fun handShakeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.handShakeRequest(
-            object : IBuilderServiceResponseListenerLyra{
+            object : IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: ByteArray) {
                     CoroutineScope(Dispatchers.Default).launch {
                         var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)
@@ -165,7 +164,7 @@ class SignOnRequestRepository@Inject constructor(
 
     suspend fun signOff(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceRequest(
-            object : IBuilderServiceResponseListenerLyra{
+            object : IBuilderServiceResponseListener{
                 override fun onBuilderSuccess(response: ByteArray) {
                     CoroutineScope(Dispatchers.Default).launch {
                         var resPaymentServiceTxnDetails = apiRequestBuilder.parseNetworkManResponse(context,response)

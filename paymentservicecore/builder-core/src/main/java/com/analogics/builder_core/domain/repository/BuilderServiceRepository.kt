@@ -1,20 +1,18 @@
 package com.analogics.builder_core.domain.repository
 
 import android.util.Log
-import com.analogics.builder_core.domain.listener.requestListener.IBuilderServiceRequestListenerLyra
-import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.builder_core.domain.listener.requestListener.IBuilderServiceRequestListener
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.networkservicecore.data.remote.NetworkCallProvider
 import com.analogics.networkservicecore.data.remote.ResultProvider
-import kotlinx.coroutines.TimeoutCancellationException
-import java.net.SocketTimeoutException
 import javax.inject.Inject
 
-class BuilderServiceRepositoryLyra @Inject constructor(): IBuilderServiceRequestListenerLyra {
-    lateinit var iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra
+class BuilderServiceRepository @Inject constructor(): IBuilderServiceRequestListener {
+    lateinit var iBuilderServiceResponseListener: IBuilderServiceResponseListener
 
 
     override suspend fun networkServiceRequest(
-        iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra,
+        iBuilderServiceResponseListener: IBuilderServiceResponseListener,
         requestBody: ByteArray
     ) {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
@@ -31,7 +29,7 @@ class BuilderServiceRepositoryLyra @Inject constructor(): IBuilderServiceRequest
     }
 
 
-    override suspend fun handShakeRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
+    override suspend fun handShakeRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: ByteArray)
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")
@@ -41,7 +39,7 @@ class BuilderServiceRepositoryLyra @Inject constructor(): IBuilderServiceRequest
     }
 
     fun networkServiceResponse(
-        iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra,
+        iBuilderServiceResponseListener: IBuilderServiceResponseListener,
         requestBody: ByteArray
     ) {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
@@ -50,7 +48,7 @@ class BuilderServiceRepositoryLyra @Inject constructor(): IBuilderServiceRequest
 
     }
 
-    override suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListenerLyra, requestBody: ByteArray)
+    override suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: ByteArray)
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
         Log.d("NETWORK", "REQUEST_ASCII: ${String(requestBody, Charsets.US_ASCII)}")

@@ -5,14 +5,14 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.analogics.builder_core.data.constants.BuilderConstants
-import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.data.model.BuilderServiceTxnDetails
-import com.analogics.builder_core.domain.repository.BuilderServiceRepositoryLyra
+import com.analogics.builder_core.domain.repository.BuilderServiceRepository
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.TxnStatus
-import com.analogics.builder_core.builder.ApiRequestBuilderLyra
+import com.analogics.builder_core.builder.ApiRequestBuilder
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.hardwarecore.utils.TlvUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,13 +20,13 @@ import javax.inject.Inject
 
 class VoidRequestRepository @Inject constructor (
     @ApplicationContext val context: Context,
-    var apiRequestBuilderLyra: ApiRequestBuilderLyra,
-    private var builderServiceRepositoryLyra: BuilderServiceRepositoryLyra
+    var apiRequestBuilder: ApiRequestBuilder,
+    private var builderServiceRepository: BuilderServiceRepository
 ) {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseVoidResponse(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-        apiRequestBuilderLyra.parseISOMessage(context,response).let {
+        apiRequestBuilder.parseISOMessage(context,response).let {
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
@@ -54,8 +54,8 @@ class VoidRequestRepository @Inject constructor (
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun voidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-        builderServiceRepositoryLyra.networkServiceFinancialRequest(
-            object : IBuilderServiceResponseListenerLyra{
+        builderServiceRepository.networkServiceFinancialRequest(
+            object : IBuilderServiceResponseListener{
                 @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
                     paymentServiceTxnDetails?.let { details ->
@@ -69,7 +69,7 @@ class VoidRequestRepository @Inject constructor (
                     onAPIServiceResponse(ApiServiceError(error.toString()))
                 }
             },
-            apiRequestBuilderLyra.createVoidRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+            apiRequestBuilder.createVoidRequest(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
 }

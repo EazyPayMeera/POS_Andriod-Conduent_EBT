@@ -1100,13 +1100,12 @@ class EmvWrapperRepository @Inject constructor(
                 ?: config.statusCheckSupported)?.let {
                     aidPara.statusCheck = it.hexToByte()
                 }
-                try {
-                    val field = aidPara.javaClass.getDeclaredField("cOnlinePinCap_b_DF18")
-                    field.isAccessible = true
-                    field.set(aidPara, 0x01.toByte())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                (aid.onlinePinSupport
+                    ?: config.contact?.onlinePinSupport
+                    ?: config.onlinePinSupport
+                        )?.let {
+                        aidPara.setcOnlinePinCap_b_DF18(it.hexToByte())
+                    }
                 aidParaList = aidParaList.plus(aidPara)
             }
 

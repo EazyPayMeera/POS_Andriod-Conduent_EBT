@@ -12,14 +12,12 @@ import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServ
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
-import com.analogics.paymentservicecore.data.model.Acquirer
 import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
 import com.eazypaytech.pos.navigation.AppNavigationItems
-import com.eazypaytech.pos.core.utils.getAcquirer
 import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.eazypaytech.pos.core.service.KeepAliveService
 import com.analogics.securityframework.data.repository.TxnDBRepository
@@ -172,11 +170,8 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.footer2 = AppConstants.DEFAULT_FOOTER_2
         sharedViewModel?.objPosConfig?.footer3 = AppConstants.DEFAULT_FOOTER_3
         sharedViewModel?.objPosConfig?.footer4 = AppConstants.DEFAULT_FOOTER_4
-
         sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
-        if(getAcquirer(sharedViewModel?.objRootAppPaymentDetail) == Acquirer.LYRA) {
-            sharedViewModel?.objPosConfig?.customerCareNumber = AppConstants.LYRA_CUSTOMER_CARE
-        }
+
     }
 
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {

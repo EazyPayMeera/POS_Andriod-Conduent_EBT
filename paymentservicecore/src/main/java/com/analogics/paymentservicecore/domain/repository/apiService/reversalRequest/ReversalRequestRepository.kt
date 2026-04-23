@@ -3,32 +3,28 @@ package com.analogics.paymentservicecore.domain.repository.apiService.reversalRe
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.analogics.builder_core.data.constants.BuilderConstants
 //import com.eazypaytech.builder_core.listener.responseListener.IBuilderServiceResponseListener
-import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.data.model.BuilderServiceTxnDetails
 //import com.eazypaytech.builder_core.repository.BuilderServiceRepository
-import com.analogics.builder_core.domain.repository.BuilderServiceRepositoryLyra
+import com.analogics.builder_core.domain.repository.BuilderServiceRepository
 //import com.eazypaytech.builder_core.requestBuilder.ApiRequestBuilder
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.TxnStatus
-import com.analogics.builder_core.builder.ApiRequestBuilderLyra
+import com.analogics.builder_core.builder.ApiRequestBuilder
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.hardwarecore.utils.TlvUtils
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ReversalRequestRepository @Inject constructor(
     @ApplicationContext val context: Context,
-    var apiRequestBuilder: ApiRequestBuilderLyra,
-    private var builderServiceRepository: BuilderServiceRepositoryLyra
+    var apiRequestBuilder: ApiRequestBuilder,
+    private var builderServiceRepository: BuilderServiceRepository
 ) {
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -62,7 +58,7 @@ class ReversalRequestRepository @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun sendReversal(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceFinancialRequest(
-            object : IBuilderServiceResponseListenerLyra{
+            object : IBuilderServiceResponseListener{
                 @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
                     paymentServiceTxnDetails?.let { details ->

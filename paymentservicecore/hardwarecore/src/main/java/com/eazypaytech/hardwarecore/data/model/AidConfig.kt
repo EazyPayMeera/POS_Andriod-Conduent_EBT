@@ -19,6 +19,7 @@ data class AidConfig(
     @SerializedName("currencyExponent")     val currencyExponent : String? = null,
     @SerializedName("terminalCountryCode")  val terminalCountryCode : String? = null,
     @SerializedName("terminalType")         val terminalType : String? = null,
+    @SerializedName("onlinePinSupport")     val onlinePinSupport : String? = null,
     @SerializedName("terminalCapabilities") val terminalCapabilities : String? = null,
     @SerializedName("addlTerminalCapabilities") val addlTerminalCapabilities : String? = null,
     @SerializedName("terminalFloorLimit")   val terminalFloorLimit : String? = null,

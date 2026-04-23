@@ -3,7 +3,7 @@ package com.eazypaytech.paymentservicecore.constants
 object AppConstants {
 
     /* Acquirers Supported */
-    const val ACQUIRER_LYRA = "LYRA"
+    const val ACQUIRER_CONDUENT = "CONDUENT"
 
 
     /* Value constants */
@@ -68,5 +68,5 @@ object AppConstants {
     const val EMV_CAP_KEY_ARRAY_FIELD_NAME = "CAPKeys"
 
     /* Acquirer Specific Constants */
-    const val LYRA_CUSTOMER_CARE = "(020) 123 456 7890"
+    const val CONDUENT_CUSTOMER_CARE = "(020) 123 456 7890"
 }

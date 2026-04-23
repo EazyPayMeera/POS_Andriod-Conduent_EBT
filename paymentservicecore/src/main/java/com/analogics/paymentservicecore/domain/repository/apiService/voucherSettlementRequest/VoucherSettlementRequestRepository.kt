@@ -5,16 +5,16 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.analogics.builder_core.data.constants.BuilderConstants
-import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListenerLyra
+import com.analogics.builder_core.domain.listener.responseListener.IBuilderServiceResponseListener
 import com.analogics.builder_core.data.model.BuilderServiceTxnDetails
 //import com.eazypaytech.builder_core.repository.BuilderServiceRepository
-import com.analogics.builder_core.domain.repository.BuilderServiceRepositoryLyra
+import com.analogics.builder_core.domain.repository.BuilderServiceRepository
 import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
 import com.analogics.paymentservicecore.data.model.TxnStatus
-import com.analogics.builder_core.builder.ApiRequestBuilderLyra
+import com.analogics.builder_core.builder.ApiRequestBuilder
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.hardwarecore.utils.TlvUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,15 +24,13 @@ import javax.inject.Inject
 
 class VoucherSettlementRequestRepository @Inject constructor(
     @ApplicationContext val context: Context,
-    var apiRequestBuilder: ApiRequestBuilderLyra,
-    //private var builderServiceRepository: BuilderServiceRepository,
-    var apiRequestBuilderLyra: ApiRequestBuilderLyra,
-    private var builderServiceRepositoryLyra: BuilderServiceRepositoryLyra
+    var apiRequestBuilder: ApiRequestBuilder,
+    private var builderServiceRepository: BuilderServiceRepository
 ) {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun parseSettlementResponse(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
-        apiRequestBuilderLyra.parseISOMessage(context,response).let {
+        apiRequestBuilder.parseISOMessage(context,response).let {
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
@@ -69,8 +67,8 @@ class VoucherSettlementRequestRepository @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun voucherSettlementRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
-        builderServiceRepositoryLyra.networkServiceFinancialRequest(
-            object : IBuilderServiceResponseListenerLyra{
+        builderServiceRepository.networkServiceFinancialRequest(
+            object : IBuilderServiceResponseListener{
                 @SuppressLint("NewApi")
                 override fun onBuilderSuccess(response: ByteArray) {
                     paymentServiceTxnDetails?.let { details ->
@@ -98,7 +96,7 @@ class VoucherSettlementRequestRepository @Inject constructor(
                 }
 
             },
-            apiRequestBuilderLyra.voucherSettlement(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
+            apiRequestBuilder.voucherSettlement(PaymentServiceUtils.transformObject<BuilderServiceTxnDetails>(paymentServiceTxnDetails))
         )
     }
 }
