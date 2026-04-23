@@ -28,6 +28,18 @@ class TlvUtils {
         parseTlv(tlvString)
     }
 
+    /**
+     * Adds a TLV entry where the value is treated as ASCII data.
+     *
+     * The value is padded to minimum length if required, converted to bytes,
+     * then represented as a hex string and truncated to max length.
+     *
+     * @param tag TLV tag identifier.
+     * @param value ASCII value to encode.
+     * @param minLen Minimum expected length (used for padding).
+     * @param maxLen Maximum allowed length.
+     * @return Updated instance of [TlvUtils] for chaining.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun addTagValAscii(tag: String, value: String?, minLen: Int=0, maxLen: Int=255) : TlvUtils {
         try {
@@ -39,6 +51,18 @@ class TlvUtils {
         return this
     }
 
+    /**
+     * Adds a TLV entry where the value is provided in HEX format.
+     *
+     * If the hex string length is odd, it is padded with 'F'.
+     * The value is normalized, padded to minimum length, and limited by max length.
+     *
+     * @param tag TLV tag identifier.
+     * @param value Hex string value.
+     * @param minLen Minimum byte length.
+     * @param maxLen Maximum byte length.
+     * @return Updated instance of [TlvUtils] for chaining.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun addTagValHex(tag: String, value: String?, minLen: Int=0, maxLen: Int=255) : TlvUtils {
         try {
@@ -54,6 +78,17 @@ class TlvUtils {
         return this
     }
 
+    /**
+     * Adds a TLV entry for boolean values.
+     *
+     * Encodes boolean as:
+     * - true  -> "01"
+     * - false -> "00"
+     *
+     * @param tag TLV tag identifier.
+     * @param value Boolean value to encode.
+     * @return Updated instance of [TlvUtils] for chaining.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun addTagValBoolean(tag: String, value: Boolean?) : TlvUtils {
         try {
@@ -68,6 +103,19 @@ class TlvUtils {
         return this
     }
 
+    /**
+     * Parses a raw TLV hex string into internal TLV map.
+     *
+     * This method extracts:
+     * - Tag
+     * - Length
+     * - Value
+     *
+     * and stores them in [tlvMap].
+     *
+     * @param tlv Raw TLV hex string.
+     * @return Updated instance of [TlvUtils].
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun parseTlv(tlv : String?): TlvUtils {
         try {
@@ -97,6 +145,18 @@ class TlvUtils {
         return this
     }
 
+    /**
+     * Encodes length into TLV length field format.
+     *
+     * Supports:
+     * - 1-byte length (0x00 - 0x7F)
+     * - 2-byte length (0x81)
+     * - 3-byte length (0x82)
+     * - 4-byte length (0x83)
+     *
+     * @param len Value length in bytes.
+     * @return Encoded TLV length string in HEX.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun toTlvLen(len : Int) : String
     {
@@ -108,6 +168,15 @@ class TlvUtils {
         }.uppercase()
     }
 
+    /**
+     * Builds final TLV string from stored tag-value map.
+     *
+     * If tags list is provided, only those tags are included.
+     * Otherwise, all stored TLVs are converted.
+     *
+     * @param tags Optional list of tags to include.
+     * @return Final encoded TLV string.
+     */
     fun toTlvString(tags : List<String>?=null): String {
         var result = ""
         try {
@@ -133,6 +202,14 @@ class TlvUtils {
         return result
     }
 
+    /**
+     * Determines tag length in a TLV byte array.
+     *
+     * Supports multi-byte tags (e.g., 0x1F continuation format).
+     *
+     * @param tlv Byte array containing TLV data.
+     * @return Tag length in bytes.
+     */
     fun getTagLen(tlv : ByteArray) : Int
     {
         var result = 1
@@ -149,6 +226,12 @@ class TlvUtils {
         return result
     }
 
+    /**
+     * Determines length field size in TLV structure.
+     *
+     * @param lv Byte array containing length + value bytes.
+     * @return Length field size in bytes.
+     */
     fun getLenLen(lv : ByteArray) : Int
     {
         var result = 1
@@ -162,6 +245,14 @@ class TlvUtils {
         return result
     }
 
+    /**
+     * Extracts value length from TLV length-value bytes.
+     *
+     * Handles both short and extended length encoding.
+     *
+     * @param lv Byte array containing length and value.
+     * @return Value length in bytes.
+     */
     fun getValLen(lv : ByteArray) : Int
     {
         var result = 0

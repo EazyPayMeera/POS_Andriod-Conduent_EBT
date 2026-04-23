@@ -58,10 +58,28 @@ class ManualCardViewModel @Inject constructor(
         get() = cardNumber.isNotBlank() &&
                 cardNumber.length == AppConstants.MAX_LENGTH_CARD_NO
 
+    /**
+     * Updates card number when user inputs or modifies it.
+     *
+     * @param newValue Entered card number
+     */
     fun onCardNoChange(newValue: String) {
         cardNumber = newValue
     }
 
+    /**
+     * Handles confirm action for manual card entry.
+     *
+     * Behavior:
+     * - Sets card details into transaction object
+     * - Validates card input
+     * - Navigates based on transaction type
+     * - Initiates PIN generation if required
+     *
+     * @param context Application context
+     * @param navHostController Navigation controller
+     * @param sharedViewModel Shared ViewModel containing transaction data
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(
         context: Context,
@@ -89,10 +107,26 @@ class ManualCardViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Handles cancel action and navigates back to dashboard.
+     *
+     * @param navHostController Navigation controller
+     */
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
+    /**
+     * Generates PIN block and proceeds with transaction.
+     *
+     * Behavior:
+     * - Calls EMV service for PIN generation
+     * - Stores PIN block in transaction
+     * - Navigates based on transaction type
+     *
+     * @param navHostController Navigation controller
+     * @param sharedViewModel Shared ViewModel containing transaction data
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun generatePinAndProceed(
         navHostController: NavHostController,
@@ -125,24 +159,22 @@ class ManualCardViewModel @Inject constructor(
         }
     }
 
-
+    /**
+     * Checks whether a card is physically present in the device.
+     *
+     * @param context Application context
+     * @return true if card exists, false otherwise
+     */
     fun isCardExists(context: Context): Boolean {
         return emvServiceRepository.isCardExists(context)
     }
 
-
-    fun checkNetwork(context: Context)
-    {
-        if(NetworkUtils().checkForInternet(context)!=true)
-        {
-            CustomDialogBuilder.composeAlertDialog(
-                title = context.getString(R.string.default_alert_title_error),
-                message = context.getString(R.string.err_no_internet_connection),
-            )
-        }
-    }
-
-
+    /**
+     * Displays an error dialog with provided message.
+     *
+     * @param navHostController Navigation controller
+     * @param message Error message to display
+     */
     private fun showError(
         navHostController: NavHostController,
         message: String
@@ -153,6 +185,11 @@ class ManualCardViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Handles invalid form data scenarios and shows appropriate error message.
+     *
+     * @param context Application context
+     */
     fun onInvalidFormData(context: Context) {
         var message = if(cardNumber.length != AppConstants.MAX_LENGTH_CARD_NO)
             context.resources.getString(R.string.max_card_length_err)
@@ -164,10 +201,27 @@ class ManualCardViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Converts ByteArray  to hexadecimal string.
+     *
+     * @return Hex string representation
+     */
     private fun ByteArray.toHexString(): String {
         return joinToString("") { "%02X".format(it) }
     }
 
+    /**
+     * Performs online transaction authentication via API.
+     *
+     * Behavior:
+     * - Calls authentication API
+     * - Updates transaction details from response
+     * - Handles success, error, and timeout cases
+     * - Navigates to result screen
+     *
+     * @param sharedViewModel Shared ViewModel containing transaction data
+     * @param navHostController Navigation controller
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
         viewModelScope.launch(Dispatchers.IO) {  // ← IO thread for network call
@@ -249,6 +303,15 @@ class ManualCardViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Updates transaction result in local database.
+     *
+     * @param sharedViewModel Shared ViewModel
+     * @param txnStatus Transaction status
+     * @param originalDateTime Original transaction timestamp
+     * @param AuthCode Authorization code
+     * @param posCondition POS condition code
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateTransResult(
         sharedViewModel: SharedViewModel,
@@ -270,6 +333,16 @@ class ManualCardViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Parses EBT balance data from hex string.
+     *
+     * Behavior:
+     * - Extracts SNAP and Cash balances
+     * - Processes only "Available Balance" entries
+     *
+     * @param hexString Raw hex string containing balance data
+     * @return Parsed EBT balance object
+     */
     fun parseEBTBalances(hexString: String): EBTBalance {
         val blocks = hexString.chunked(20)
         var snapBalance = 0.0
@@ -300,6 +373,11 @@ class ManualCardViewModel @Inject constructor(
         return EBTBalance(snap = snapBalance, cash = cashBalance)
     }
 
+    /**
+     * Updates EBT balance values in local database.
+     *
+     * @param sharedViewModel Shared ViewModel containing updated balances
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateBalance(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {

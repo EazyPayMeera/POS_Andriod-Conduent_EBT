@@ -46,21 +46,38 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
 
 
 
-
+    /**
+     * Updates Processor ID input value.
+     */
     fun onProcIdChange(tid: String) {
         procIdInput.value = tid
     }
+    /**
+     * Updates Terminal ID input value.
+     */
 
     fun onTidChange(tid: String) {
         tidInput.value = tid
     }
+    /**
+     * Updates Merchant ID input value.
+     */
 
     fun onMidChange(mid: String) {
         midInput.value = mid
     }
+    /**
+     * Enables or disables activation button.
+     */
 
     fun setActivationButtonState(enabled: Boolean)  { isActivationBtnEnabled.value = enabled }
-
+    /**
+     * Handles activation button click.
+     *
+     * Flow:
+     * - Stores navigation and sharedViewModel references
+     * - Starts activation process asynchronously
+     */
     fun onActivationClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel
@@ -73,6 +90,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             }
         }
     }
+    /**
+     * Validates input fields and shows error dialog if invalid.
+     */
 
     fun onInvalidFormData(context: Context) {
         var message = if(tidInput.value.length != AppConstants.MAX_LENGTH_TID)
@@ -88,7 +108,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             message = message
         )
     }
-
+    /**
+     * Collects activation input data and stores it in sharedViewModel and config.
+     */
     fun collectActivationData()
     {
         sharedViewModel?.objRootAppPaymentDetail?.procId = procIdInput.value
@@ -101,7 +123,14 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }?.saveToPrefs()
     }
 
-
+    /**
+     * Initiates activation process starting with SIGN_ON step.
+     *
+     * Flow:
+     * - Disables button
+     * - Collects data
+     * - Triggers SIGN_ON API call
+     */
     suspend fun startActivateProcess() {
         setActivationButtonState(false)
         collectActivationData()
@@ -114,7 +143,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         )
     }
 
-
+    /**
+     * Copies default Config.json from assets to external storage if not present.
+     */
     fun copyConfigToExternal(context: Context) {                                             // TODO TO COPY CONFIGURATION FILE TO EXTERNAL STORAGE
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
         if (!configFile.exists()) {
@@ -132,6 +163,10 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             Log.d("ConfigCopy", "Config file already exists. No copy needed.")
         }
     }
+
+    /**
+     * Reads master KEK from config file and stores it in sharedViewModel.
+     */
 
     fun readMasterKEK(context: Context, sharedViewModel: SharedViewModel): String? {
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
@@ -157,6 +192,9 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
             null
         }
     }
+    /**
+     * Loads default header and footer values into POS configuration.
+     */
 
     fun loadDefaultValues(sharedViewModel: SharedViewModel?)
     {
@@ -173,7 +211,14 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         //sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
 
     }
-
+    /**
+     * Handles API success response for activation flow.
+     *
+     * Flow:
+     * - Validates response
+     * - Executes next step based on current activation state
+     * - Completes activation and navigates accordingly
+     */
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -233,15 +278,24 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         }
     }
 
+    /**
+     * Handles API error during activation.
+     */
 
     override fun onApiServiceError(apiServiceError: ApiServiceError) {
         setActivationButtonState(true)
     }
+    /**
+     * Handles API timeout and shows alert dialog.
+     */
 
     override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-        CustomDialogBuilder.Companion.composeAlertDialog(title = navHostController.context.resources?.getString(
+        CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(
             R.string.default_alert_title_error),message = apiServiceTimeout.message)
     }
+    /**
+     * Displays or hides progress dialog during API calls.
+     */
 
     override fun onApiServiceDisplayProgress(
         show: Boolean,
@@ -249,8 +303,11 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         subTitle: String?,
         message: String?
     ) {
-        CustomDialogBuilder.Companion.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
+        CustomDialogBuilder.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
     }
+    /**
+     * Loads saved configuration values into input fields.
+     */
 
     fun onLoad(sharedViewModel : SharedViewModel)
     {

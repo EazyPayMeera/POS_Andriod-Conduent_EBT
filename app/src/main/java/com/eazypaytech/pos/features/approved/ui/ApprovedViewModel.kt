@@ -34,7 +34,14 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
     lateinit var navHostController : NavHostController
 
 
-
+    /**
+     * Initializes screen by loading transaction data from DB.
+     *
+     * Flow:
+     * - Fetches transaction using ID
+     * - Updates sharedViewModel if record exists
+     * - Triggers auto-print of merchant receipt if enabled
+     */
     fun onLoad(context: Context, sharedViewModel: SharedViewModel)
     {
         this.context = context
@@ -51,12 +58,26 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         }
     }
 
+    /**
+     * Handles Done action and navigates to Dashboard screen.
+     */
     fun onDone(navHostController: NavHostController)
     {
         viewModelScope.launch {
             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
         }
     }
+
+    /**
+     * Prints transaction receipt.
+     *
+     * @param isCustomer → true for customer copy, false for merchant copy
+     *
+     * Flow:
+     * - Fetches transaction from DB
+     * - Transforms data
+     * - Sends to printer utility
+     */
 
     fun printReceipt(
         context: Context,
@@ -70,6 +91,9 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         }
     }
 
+    /**
+     * Checks if a card is currently present on the device.
+     */
     fun isCardExists(context: Context): Boolean {
         return emvServiceRepository.isCardExists(context)
     }

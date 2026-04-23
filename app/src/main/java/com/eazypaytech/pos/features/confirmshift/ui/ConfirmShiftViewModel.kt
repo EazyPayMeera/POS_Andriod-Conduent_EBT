@@ -25,6 +25,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ConfirmShiftViewModel @Inject constructor(private val apiServiceRepository: ApiServiceRepository) : ViewModel() {
 
+    /**
+     * Handles cancel action.
+     *
+     * Safely navigates back in the stack.
+     */
     fun onCancel(navController: NavController) {
         try {
             navController.popBackStack()
@@ -34,6 +39,11 @@ class ConfirmShiftViewModel @Inject constructor(private val apiServiceRepository
         }
     }
 
+    /**
+     * Handles shift end action.
+     *
+     * Initiates sign-off process with server.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onShiftEnd(navController: NavController, sharedViewModel: SharedViewModel) {
         try {
@@ -44,6 +54,16 @@ class ConfirmShiftViewModel @Inject constructor(private val apiServiceRepository
         }
     }
 
+    /**
+     * Performs sign-off API call.
+     *
+     * Flow:
+     * - Sends sign-on/off request to server
+     * - On success:
+     *    - If approved → navigate to Activation screen
+     *    - Else → navigate back
+     * - Handles timeout with alert dialog
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun signOff(sharedViewModel: SharedViewModel, navHostController: NavController) {
         viewModelScope.launch {

@@ -83,6 +83,16 @@ class CustomDialogBuilder private constructor() {
     fun setConfirmButtonText(text: String) = apply { this.confirmButtonText = text }
     fun onItemSelected(onItemSelected: ((String)) -> Unit) = apply { this.onItemSelected = onItemSelected }
     fun setListItem(listItem:List<String>)=apply { this.listItem= listItem}
+
+    /**
+     * Builds and displays dialog UI based on current configuration.
+     *
+     * Supports:
+     * - List dialog (if items are present)
+     * - Standard alert dialog (title, message, buttons)
+     * - Progress indicator dialog
+     * - Auto-dismiss/navigation after delay
+     */
     @Composable
     fun buildDialog(onClose: () -> Unit,onItemSelected:((String)->Unit)?=null) {
         if (showDialog.value) {
@@ -247,6 +257,15 @@ class CustomDialogBuilder private constructor() {
         }
     }
 
+
+    /**
+     * Companion object acting as a centralized dialog manager.
+     *
+     * Responsibilities:
+     * - Maintains dialog state (alert, progress, printing)
+     * - Stores dialog content (title, message, buttons)
+     * - Provides helper methods to trigger dialogs globally
+     */
     companion object {
         private var instance: CustomDialogBuilder? = null
         private var _title: String? = null
@@ -290,6 +309,14 @@ class CustomDialogBuilder private constructor() {
             }
         }
 
+        /**
+         * Displays a standard alert dialog.
+         *
+         * Features:
+         * - Title, subtitle, and message
+         * - Optional OK and Cancel buttons
+         * - Uses builder pattern for configuration
+         */
         fun composeAlertDialog(show: Boolean?= true, title: String? = null, subtitle: String? = null, message: String? = null, okBtnText: String? = null, onOkClick: (() -> Unit)? = null, cancelBtnText: String? = null, onCancelClick: (() -> Unit)? = null) {
             showProgress.value = false
             showPrinting.value = false
@@ -303,6 +330,12 @@ class CustomDialogBuilder private constructor() {
             onCancel = onCancelClick
         }
 
+        /**
+         * Prepares alert dialog state and configuration.
+         *
+         * Sets dialog content and callbacks,
+         * actual rendering is handled by ShowAlertDialog().
+         */
         @Composable
         fun ShowProgressDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null) {
             show?.let { showProgress.value = it }
@@ -321,6 +354,14 @@ class CustomDialogBuilder private constructor() {
             }
         }
 
+        /**
+         * Displays a progress/loading dialog.
+         *
+         * Used for:
+         * - API calls
+         * - Processing states
+         * - Blocking user interaction
+         */
         fun composeProgressDialog(show: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null) {
             showAlert.value = false
             showPrinting.value = false
@@ -330,6 +371,11 @@ class CustomDialogBuilder private constructor() {
             _message = message
         }
 
+        /**
+         * Prepares progress dialog state.
+         *
+         * Disables other dialogs and enables progress UI.
+         */
         @Composable
         fun ShowPrintingDialog(show: Boolean? = null, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null) {
             show?.let { showPrinting.value = it }
@@ -356,6 +402,11 @@ class CustomDialogBuilder private constructor() {
             }
         }
 
+        /**
+         * Displays printing dialog with progress and action button.
+         *
+         * Used during receipt printing flow with optional abort action.
+         */
         fun composePrintingDialog(show: Boolean? = true, title: String? = null, subtitle: String? = null, message: String? = null, buttonText: String? = null,onClose: (() -> Unit)? = null) {
             showProgress.value = false
             showPrinting.value = show != false
@@ -366,6 +417,11 @@ class CustomDialogBuilder private constructor() {
             onOk = onClose
         }
 
+        /**
+         * Entry point to render all dialog types.
+         *
+         * Ensures only one dialog is shown based on state flags.
+         */
         @Composable
         fun ShowComposed()
         {
@@ -374,12 +430,19 @@ class CustomDialogBuilder private constructor() {
             ShowPrintingDialog()
         }
 
+        /**
+         * Clears stored dialog text values.
+         */
         fun clearText() {
             _title = null
             _subtitle = null
             _message = null
         }
 
+        /**
+         * Hides progress/printing dialogs
+         * and resets dialog state.
+         */
         fun hideProgress() {
             showProgress.value = false
             showPrinting.value = false
@@ -388,7 +451,14 @@ class CustomDialogBuilder private constructor() {
         }
     }
 
-
+    /**
+     * Displays a selectable list dialog.
+     *
+     * Features:
+     * - Dynamic list rendering
+     * - Item selection callback
+     * - Styled using Material components
+     */
     @Composable
     fun CustomListDialog(
         onClose: () -> Unit,
@@ -454,6 +524,9 @@ class CustomDialogBuilder private constructor() {
         }
     }
 
+    /**
+     * Wrapper composable for each list item surface.
+     */
     @Composable
     fun BatchSurface(
         item: String,
@@ -468,6 +541,11 @@ class CustomDialogBuilder private constructor() {
         }
     }
 
+    /**
+     * Displays individual list item content.
+     *
+     * Handles layout and click interaction.
+     */
     @Composable
     fun BatchContent(
         item: String

@@ -45,7 +45,9 @@ import com.eazypaytech.pos.core.themes.dimens
 fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkViewModel = hiltViewModel()) {
     val sharedViewModel = localSharedViewModel.current
     val focusRequester = remember { FocusRequester() }
-
+    /**
+     * Composable to display user type selection (Admin / Clerk)
+     */
     @Composable
     fun displayUserType()
     {
@@ -58,12 +60,14 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Label for user type
             Text(
                 text =stringResource(id = R.string.clerk_type),
                 fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
                 color = MaterialTheme.colorScheme.tertiary,
                 textAlign = TextAlign.Left,
             )
+            // Iterate over Admin / Clerk options
             radioOptions.forEach { (type, text) ->
                 Column(
                     Modifier
@@ -77,11 +81,13 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically)
                     {
+                        // Radio button for selection
                         RadioButton(
                             selected = viewModel.userType.value == type,
                             onClick = { viewModel.userType.value  = type },
                             enabled = !(type == UserType.CLERK && viewModel.allowClerks.value != true)
                         )
+                        // Label for each option
                         Text(
                             text = text,
                             fontSize = MaterialTheme.dimens.SP_21_CompactMedium,
@@ -93,7 +99,7 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
             }
         }
     }
-
+    // Top header bar
     Scaffold(
         topBar = {
             AppHeader(
@@ -115,19 +121,20 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                         .padding(horizontal = MaterialTheme.dimens.DP_30_CompactMedium)
                         .padding(top = MaterialTheme.dimens.DP_40_CompactMedium)
                 ) {
+                    // Lock image at top
                     ImageView(
                         imageId =  R.drawable.unlock, // Decorative image
                         size = MaterialTheme.dimens.DP_40_CompactMedium,
                         contentDescription = ""
                     )
-
+                    // Instruction text
                     TextView(
                         text = stringResource(id = R.string.clerk_register_clerk_prompt),
                         fontSize = MaterialTheme.dimens.SP_17_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.padding(MaterialTheme.dimens.DP_20_CompactMedium)
                     )
-
+                    // Username input field
                     InputTextField(
                         enabled = viewModel.isRegisterBtnEnabled.value,
                         inputValue = viewModel.userCredentials.value,
@@ -138,7 +145,7 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                         icon = Icons.Outlined.Person,
                         keyboardType = KeyboardType.Uri
                     )
-
+                    // Password input field
                     InputTextField(
                         enabled = viewModel.isRegisterBtnEnabled.value,
                         inputValue = viewModel.pwdCredentials.value,
@@ -154,6 +161,7 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                             viewModel.onRegisterClick(navHostController,sharedViewModel)
                         }
                     )
+                    // Confirm password input field
                     InputTextField(
                         enabled = viewModel.isRegisterBtnEnabled.value,
                         inputValue = viewModel.cnfPwdCredentials.value,
@@ -169,9 +177,9 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                             viewModel.onRegisterClick(navHostController,sharedViewModel)
                         }
                     )
-
+                    // User type selection (Admin / Clerk)
                     displayUserType()
-
+                    // Register button
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {
@@ -183,7 +191,7 @@ fun AddClerkScreen(navHostController: NavHostController, viewModel: AddClerkView
                             enabled = viewModel.isRegisterBtnEnabled.value
                         )
                     }
-
+                    // Done button
                     Box(
                         modifier = Modifier.padding(top = MaterialTheme.dimens.DP_17_CompactMedium)
                     ) {

@@ -1,5 +1,20 @@
 package com.eazypaytech.pos.navigation
 
+
+/**
+ * Defines all navigation routes used in the application.
+ *
+ * Behavior:
+ * - Represents each screen as a sealed class object
+ * - Uses enum-based route names for consistency
+ * - Ensures type-safe navigation across the app
+ *
+ * Usage:
+ * - Use these objects with NavController for navigation
+ * - Example: navController.navigate(AppNavigationItems.LoginScreen.route)
+ *
+ * @property route Unique route string for each screen
+ */
 sealed class AppNavigationItems(val route: String) {
  object SplashScreen : AppNavigationItems(NavScreensEnum.SplashScreen.name)
  object DashBoardScreen : AppNavigationItems(NavScreensEnum.DashBoardScreen.name)

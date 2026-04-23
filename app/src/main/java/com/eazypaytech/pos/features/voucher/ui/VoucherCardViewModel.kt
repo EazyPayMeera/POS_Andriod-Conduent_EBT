@@ -24,11 +24,28 @@ class VoucherCardViewModel @Inject constructor(private  var apiServiceRepository
     var VoucherNumber by mutableStateOf("")
         private set
 
-
+    /**
+     * Updates voucher number input.
+     *
+     * @param newValue Entered voucher number
+     */
     fun onCardNoChange(newValue: String) {
         VoucherNumber = newValue
     }
 
+    /**
+     * Handles confirmation of voucher entry.
+     *
+     * Behavior:
+     * - Stores voucher number in transaction object
+     * - Validates if voucher number is entered
+     * - Shows error dialog if empty
+     * - Navigates to Auth Code screen if valid
+     *
+     * @param context Application context for resource access
+     * @param navHostController Navigation controller for screen transitions
+     * @param sharedViewModel Shared ViewModel containing transaction data
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(context: Context, navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.voucherNumber = VoucherNumber
@@ -44,6 +61,15 @@ class VoucherCardViewModel @Inject constructor(private  var apiServiceRepository
         }
     }
 
+    /**
+     * Handles cancel action.
+     *
+     * Behavior:
+     * - Navigates user back to Dashboard
+     * - Clears navigation stack
+     *
+     * @param navHostController Navigation controller for screen transitions
+     */
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }

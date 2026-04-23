@@ -62,93 +62,6 @@ class ListDialogueBuilder private constructor() {
         fun create(): ListDialogueBuilder = ListDialogueBuilder()
     }
 
-    @Composable
-    fun BatchListDialog(
-        onClose: () -> Unit,
-        batchList: List<BatchEntity>?, // List of batch IDs
-        onItemSelected: (String) -> Unit // Callback for item selection
-    ) {
-        Dialog(onDismissRequest = { onClose() }) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
-            ) {
-                GenericCard(
-                    modifier = Modifier
-                        .wrapContentHeight() // Wraps content height
-                        .fillMaxWidth()
-                        .align(Alignment.Center),
-                    shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_18_CompactMedium),
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        GenericCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(androidx.compose.material3.MaterialTheme.dimens.DP_0_CompactMedium),
-                            elevation = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium,
-                            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_24_CompactMedium)
-                                    .fillMaxWidth()
-                            ) {
-                                // Header text
-                                Text(
-                                    text = title, // Change title if needed
-                                    style = MaterialTheme.typography.h6,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .padding(bottom = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
-                                        .align(Alignment.CenterHorizontally)
-                                )
-                            }
-                        }
-                        // Check if batchIds is empty
-                        if (batchList?.isEmpty()==true) {
-                            // Display "Batch list Empty" message
-                            Text(
-                                text = stringResource(id = R.string.empty_list),
-                                style = MaterialTheme.typography.body1,
-                                modifier = Modifier
-                                    .padding(androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium)
-                                    .align(Alignment.CenterHorizontally)
-                            )
-                        } else {
-                            LazyColumn {
-                                itemsIndexed(batchList?: emptyList()) { index, item ->
-
-                                    BatchListItemSurface(
-                                        isBatchOpen = item.batchStatus?.toString()?.lowercase()=="open",
-                                        batchId = stringResource(id = R.string.lbl_batch_id)+(item.batchId?.toIntOrNull()?.toString()?:""), // Pass the combined String to DrawersSurface
-                                        cashierId = item.cashierId?:"",
-                                        startDate = item.openedDateTime?.toString()?:"",
-                                        endDate = item.closedDateTime?.toString()?:"",
-                                        onItemSelected = {
-                                            onItemSelected(item.batchId.toString()) // Pass only batchId for selection
-                                            onClose()
-                                        }
-                                    )
-
-                                    // Divider between items, but not after the last item
-                                    if (index < (batchList?.size?:0) - 1) {
-                                        Divider(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            thickness = androidx.compose.material3.MaterialTheme.dimens.DP_1_CompactMedium,
-                                            color = Color.Gray
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     @Composable
     fun UserListDialog(
@@ -252,24 +165,7 @@ class ListDialogueBuilder private constructor() {
 
 
 
-    @Composable
-    fun BatchListItemSurface(
-        isBatchOpen: Boolean,
-        batchId: String, // Change to String
-        cashierId : String,
-        startDate: String, // Change to String
-        endDate: String, // Change to String4
-        onItemSelected: () -> Unit // Keep the click handler as before
-    ) {
-        Surface(
-            modifier = Modifier
-                .height(androidx.compose.material3.MaterialTheme.dimens.DP_60_CompactMedium)
-                .clickable { onItemSelected() }, // Call the onItemSelected when clicked
-            color = MaterialTheme.colors.surface
-        ) {
-            BatchListItemSurfaceContent(isBatchOpen,batchId, cashierId, startDate, endDate)
-        }
-    }
+
 
     @Composable
     fun UserSurface(
@@ -288,96 +184,7 @@ class ListDialogueBuilder private constructor() {
         }
     }
 
-    @Composable
-    fun BatchListItemSurfaceContent(
-        isBatchOpen: Boolean,
-        batchId: String, // Changed to String
-        cashierId: String, // Changed to String
-        startDate: String, // Changed to String
-        endDate: String // Changed to String
-    ) {
-        Column {
-            // Row to align two columns horizontally
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = androidx.compose.material3.MaterialTheme.dimens.DP_10_CompactMedium,
-                        vertical = androidx.compose.material3.MaterialTheme.dimens.DP_20_CompactMedium
-                    ), // Padding around the content
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Left column for batchId and "Open"
-                Column(modifier = Modifier.weight(1f)) {
-                    // Batch ID Text
-                    Text(
-                        text = batchId,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = Roboto,
-                        modifier = Modifier.padding(start = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium),
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_21_CompactMedium
-                    )
 
-
-                    Text(
-                        text = cashierId,
-                        color =  Color.Gray,
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(
-                                start = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium,
-                                top = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium
-                            )
-                            .align( Alignment.Start) // Padding between dates
-                    )
-                }
-
-                // Right column for startDate and endDate
-                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
-                    // Start Date
-                    Text(
-                        text = startDate,
-                        color = Color.Gray,
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(end = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium)
-                            .align(Alignment.End) // Right padding
-                    )
-
-                    Text(
-                        text = if (isBatchOpen) "" else stringResource(id = R.string.to),
-                        color = Color.Gray,
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
-                        fontWeight = FontWeight.Normal,
-                        fontStyle = FontStyle.Italic,
-                        modifier = Modifier
-                            .padding(
-                                end = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium
-                            )
-                            .align(Alignment.CenterHorizontally) // Padding between dates
-                    )
-
-                    // End Date
-                    // End Date, show "-" if status is "open"
-                    Text(
-                        text = if (isBatchOpen) stringResource(id = R.string.open) else endDate,
-                        color = if(isBatchOpen) Color(0xFF4CAF50) else Color.Gray,
-                        fontSize = androidx.compose.material3.MaterialTheme.dimens.SP_16_CompactMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(
-                                end = androidx.compose.material3.MaterialTheme.dimens.DP_11_CompactMedium
-                            )
-                            .align(if (isBatchOpen) Alignment.CenterHorizontally else Alignment.End) // Padding between dates
-                    )
-                }
-            }
-        }
-
-    }
 
     @Composable
     fun UsersContent(

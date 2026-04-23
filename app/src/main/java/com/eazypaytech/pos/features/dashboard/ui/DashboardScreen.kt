@@ -313,12 +313,6 @@ fun TrainingView(
         )
     }
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            dashboardViewModel.startLogCapture(context)
-        }
-    }
-
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
 

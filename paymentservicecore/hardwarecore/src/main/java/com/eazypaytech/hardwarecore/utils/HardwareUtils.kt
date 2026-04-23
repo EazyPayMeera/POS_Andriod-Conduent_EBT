@@ -7,15 +7,14 @@ import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
 
 
 object HardwareUtils {
-//    fun getDeviceSN() : String
-//    {
-//        //return DeviceManager().deviceId
-//        return if(BuildConfig.HW_TYPE == "MOREFUN") "80042414067304" else "80042414067318"
-//        // TODO:Hardcoded as of now for testing with
-//        // 80042414067304 = EP000101 - EPTEST000000101
-//        // 80042414067318 = YL000002 - YLTEST000000002
-//    }
-
+    /**
+     * Injects Terminal Master Key (TMK) into the EMV device.
+     *
+     * @param tmk The Terminal Master Key in encrypted/hex format.
+     * @param kcv Key Check Value used to verify TMK integrity.
+     * @param context Optional Android context required by underlying hardware layer.
+     * @return true if TMK injection is successful, false otherwise.
+     */
     suspend fun injectTMKKey(tmk: String,kcv: String,context: Context? = null): Boolean {
         return try {
             EmvWrapperRepository.injectTMKKey(tmk, kcv, context)
@@ -25,6 +24,15 @@ object HardwareUtils {
         }
     }
 
+    /**
+     * Injects working (PIN) key into the EMV device.
+     *
+     * This key is used for PIN encryption/decryption during transaction processing.
+     *
+     * @param pinKey The working PIN key in encrypted/hex format.
+     * @param context Optional Android context required by underlying hardware layer.
+     * @return true if working key injection is successful, false otherwise.
+     */
     suspend fun injectWorkingKey(pinKey: String, context: Context? = null) : Boolean
     {
         try {

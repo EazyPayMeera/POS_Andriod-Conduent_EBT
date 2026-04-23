@@ -28,6 +28,27 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository, private var dbRepository: TxnDBRepository, private val tmsRepository: TmsRepository, @ApplicationContext private val context: Context, private val deviceInfoProvider: DeviceInfoProvider) : ViewModel() {
+
+    /**
+     * Handles splash screen completion and app initialization flow.
+     *
+     * Behavior:
+     * - Fetches existing POS configuration from local storage
+     * - Retrieves device serial number and attempts to fetch TMS configuration
+     * - Maps TMS response to POS config (if available)
+     * - Merges TMS config with saved config while preserving critical flags
+     * - Saves final configuration and updates network host settings
+     * - Applies selected UI language
+     * - Navigates user based on app state:
+     *   - Onboarding (if not completed)
+     *   - Activation (if not done)
+     *   - Clerk creation (if no users exist)
+     *   - Login (if not logged in)
+     *   - Dashboard (if all conditions satisfied)
+     *
+     * @param navController Navigation controller for screen transitions
+     * @param sharedViewModel Shared ViewModel holding POS configuration and app state
+     */
     @SuppressLint("RestrictedApi")
     fun onSplashScreenFinished(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {

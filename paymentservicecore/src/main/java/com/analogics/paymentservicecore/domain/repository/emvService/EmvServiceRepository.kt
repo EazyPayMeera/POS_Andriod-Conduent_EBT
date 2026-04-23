@@ -413,24 +413,6 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         return emvSdkRequestRepository.isCardExists(context)
     }
 
-    override fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus {
-        return try {
-            emvSdkRequestRepository.isCardDetected(context)
-        } catch (e: Exception) {
-            Log.e("MOREFUN", "Wrapper error: ${e.message}")
-            EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
-        }
-    }
-
-    override fun startLogCapture(context: Context): Boolean {
-        return emvSdkRequestRepository.startLogCapture(context)
-    }
-
-    override fun stopLogCapture(context: Context): Boolean {
-        return emvSdkRequestRepository.stopLogCapture(context)
-    }
-
-
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
     }

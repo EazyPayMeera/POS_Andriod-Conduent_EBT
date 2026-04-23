@@ -16,7 +16,4 @@ interface IEmvSdkRequestListener {
     fun getEmvTag(tag : String?) : String?
     fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
     fun isCardExists(context: Context): Boolean
-    fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus
-    fun startLogCapture(context: Context): Boolean
-    fun stopLogCapture(context: Context): Boolean
 }

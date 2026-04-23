@@ -39,6 +39,13 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     var isTap = mutableStateOf(false)
     var isInsert = mutableStateOf(false)
 
+
+    /**
+     * Loads POS configuration flags into local UI state.
+     *
+     * Maps values like training mode, printing options,
+     * tipping, tax, and other feature toggles.
+     */
     private fun loadPreferences(sharedViewModel: SharedViewModel)
     {
         isTrainingMode.value = sharedViewModel.objPosConfig?.isDemoMode == true
@@ -52,6 +59,14 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         isBatchId.value = sharedViewModel.objPosConfig?.isBatchId == true
     }
 
+    /**
+     * Initializes screen data.
+     *
+     * Flow:
+     * - Loads preferences
+     * - Checks admin privileges
+     * - Checks batch status
+     */
     fun onLoad(sharedViewModel: SharedViewModel)
     {
         loadPreferences(sharedViewModel)
@@ -59,6 +74,9 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         checkBatchStatus()
     }
 
+    /**
+     * Displays restricted access dialog for non-admin users.
+     */
     fun onShowAdminOnly(context: Context)
     {
         CustomDialogBuilder.Companion.composeAlertDialog(
@@ -70,10 +88,17 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
     }
 
 
+    /**
+     * Handles back navigation.
+     */
     fun onBack(navHostController: NavHostController) {
         navHostController.popBackStack()
     }
 
+    /**
+     * Checks whether a batch is currently open
+     * and updates UI state accordingly.
+     */
     fun checkBatchStatus() {
         viewModelScope.launch {
             dbRepository.isBatchOpen().let {
@@ -82,6 +107,10 @@ class ConfigViewModel @Inject constructor(private val dbRepository: TxnDBReposit
         }
     }
 
+    /**
+     * Verifies if the current user has admin privileges
+     * based on login ID and updates UI state.
+     */
     fun checkIfAdmin(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             sharedViewModel.objPosConfig?.loginId?.let {

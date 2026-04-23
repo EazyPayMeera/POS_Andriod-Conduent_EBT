@@ -59,6 +59,16 @@ class ReceiptDetailsViewModel(
         sharedViewModel.objPosConfig?.footer4?.let { footer4.value = it  }
     }
 
+    /**
+     * Saves header and footer configuration values.
+     *
+     * Behavior:
+     * - Updates header (1–4) and footer (1–4) fields from UI state flows
+     * - Persists updated configuration to shared preferences
+     *
+     * @param navHostController Navigation controller (currently unused)
+     * @param sharedViewModel Shared ViewModel containing POS configuration
+     */
     fun onSave(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objPosConfig?.apply {
             header1 = headerStateFlows[0].value

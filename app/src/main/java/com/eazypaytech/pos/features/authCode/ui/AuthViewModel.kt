@@ -36,11 +36,21 @@ class AuthViewModel @Inject constructor(private  var apiServiceRepository: ApiSe
     val isFormValid: Boolean
         get() = authCode.isNotBlank() &&
                 authCode.length == AppConstants.MAX_LENGTH_AUTH_CODE
-
+    /**
+     * Updates authorization code input value.
+     */
     fun onCardNoChange(newValue: String) {
         authCode = newValue
     }
-
+    /**
+     * Handles confirm action for authorization input.
+     *
+     * Flow:
+     * - Stores auth code in sharedViewModel
+     * - Validates input
+     * - Shows error dialog if invalid
+     * - Navigates to transaction selection screen if valid
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(context: Context,navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.approvalCode = authCode
@@ -55,36 +65,12 @@ class AuthViewModel @Inject constructor(private  var apiServiceRepository: ApiSe
 
         }
     }
-
+    /**
+     * Handles cancel action and navigates back to Dashboard.
+     */
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
-        viewModelScope.launch {
-            try {
-                apiServiceRepository.apiServiceRequestOnlineAuth(paymentServiceTxnDetails = PaymentServiceUtils.transformObject<PaymentServiceTxnDetails>(sharedViewModel.objRootAppPaymentDetail), object :
-                    IApiServiceResponseListener {
-
-                    override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-                    }
-
-                    override fun onApiServiceError(error: ApiServiceError) {
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
-                    }
-                    override  fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
-                        CustomDialogBuilder.Companion.composeAlertDialog(title = navHostController.context.resources?.getString(
-                            R.string.default_alert_title_error),message = apiServiceTimeout.message)
-                    }
-
-                })
-            } catch (e: Exception) {
-
-            }
-        }
-    }
 
 }

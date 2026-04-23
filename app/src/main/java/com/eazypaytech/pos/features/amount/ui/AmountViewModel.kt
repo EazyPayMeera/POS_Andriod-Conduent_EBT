@@ -53,7 +53,14 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
     val origTotalAmount: StateFlow<String?> = _origTotalAmount
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
-
+    /**
+     * Initializes amount screen data based on transaction type.
+     *
+     * Flow:
+     * - If amount is empty:
+     *      - For VOID_LAST → load original transaction values and set read-only mode
+     *      - For others → load current txn amount and allow editing
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(sharedViewModel: SharedViewModel) {
         transAmount.ifEmpty {
@@ -79,12 +86,30 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             }
         }
     }
-
+    /**
+     * Handles amount input change.
+     *
+     * Flow:
+     * - Formats and stores input amount
+     * - Returns numeric value as string for further processing
+     */
     fun onAmountChange(newValue: String): String {
         transAmount = formatAmount(newValue)
         return transformToAmountDouble(newValue).toString()
     }
 
+    /**
+     * Handles confirm action for amount entry.
+     *
+     * Flow:
+     * - Validates amount (must be > 0)
+     * - Calculates total transaction amount
+     * - Navigates or triggers API based on transaction type:
+     *      - FOODSTAMP_RETURN → go to Card screen
+     *      - VOID_LAST / E_VOUCHER → perform online authentication
+     *      - PURCHASE_CASHBACK → navigate to Cashback screen
+     *      - Others → go to Card screen
+     */
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
@@ -127,15 +152,40 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             }
         }
     }
+    /**
+     * Handles cancel action.
+     *
+     * Flow:
+     * - Navigates user back to Dashboard screen
+     * - Clears previous navigation stack
+     */
 
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
+    /**
+     * Calculates tax amount based on given percentage.
+     *
+     * Formula:
+     * - tax = (txnAmount * percent) / 100
+     */
 
     private fun calculateTax(txnAmount: Double, percent: Double): Double {
         return txnAmount * percent / 100.00
     }
-
+    /**
+     * Calculates transaction amount and total amount based on transaction type.
+     *
+     * Flow:
+     * - For FOODSTAMP_RETURN & VOID_LAST:
+     *      - Total amount is taken from input
+     *      - Transaction amount is derived by subtracting charges (tip, service, VAT)
+     * - For other transactions:
+     *      - Transaction amount is taken from input
+     *      - VAT is calculated if tax is enabled
+     *      - Total amount = txnAmount + VAT + serviceCharge
+     * - Also updates dateTime for VOID transactions
+     */
     @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel) {
         when (sharedViewModel.objRootAppPaymentDetail.txnType) {
@@ -177,7 +227,16 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             }
         }
     }
-
+    /**
+     * Fetches the last transaction from DB and prepares it for further processing (e.g., void/reversal).
+     *
+     * Flow:
+     * - Retrieve last transaction from database
+     * - If already voided → show error and navigate back to dashboard
+     * - Else → transform DB entity into sharedViewModel object
+     * - Copy required fields and enrich with POS config data
+     * - If no transaction found → show error dialog
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun fetchLastTransaction(navHostController: NavHostController, context: Context, sharedViewModel: SharedViewModel) {
         val lastTxn = dbRepository.fetchLastTransactionByTxnType()
@@ -244,6 +303,40 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
         }
     }
 
+    /**
+     * This function handles the complete online transaction authentication flow.
+     *
+     * Flow:
+     * - Initiates API call to perform online authorization using transaction details
+     * - Shows a progress dialog while the API request is in progress
+     * - Transforms local transaction data into API request format
+     *
+     * On Success:
+     * - Hides progress dialog
+     * - Updates sharedViewModel with response data received from host:
+     *      - settlementDate (for batch settlement)
+     *      - rrn (Retrieval Reference Number)
+     *      - hostAuthCode (authorization code)
+     *      - originalDateTime (host transaction timestamp)
+     *      - stan (System Trace Audit Number)
+     *      - hostRespCode (response code from host)
+     * - Maps host response code to a readable message
+     * - Determines final transaction status (APPROVED / DECLINED)
+     * - Calls updateTransResult() to persist updated transaction in local database
+     * - Navigates to Approved screen (used for both success/failure result display)
+     *
+     * On Error:
+     * - Navigates to Approved screen (fallback handling)
+     *
+     * On Timeout:
+     * - Displays an alert dialog with timeout message
+     *
+     * Notes:
+     * - Uses viewModelScope coroutine to perform async API operation
+     * - Ensures UI responsiveness by avoiding blocking main thread
+     * - Handles exceptions safely using try-catch
+     */
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
         viewModelScope.launch {
@@ -306,7 +399,31 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             }
         }
     }
-
+    /**
+     * This function updates the transaction result both in:
+     * 1. SharedViewModel (in-memory state for UI usage)
+     * 2. Local database (persistent storage)
+     *
+     * Flow:
+     * - Update txnStatus in sharedViewModel for immediate UI reflection
+     * - Fetch the existing transaction from DB using txnId
+     * - Update important transaction fields such as:
+     *      - txnStatus (approved/declined)
+     *      - originalDateTime (host/original txn time)
+     *      - hostAuthCode (authorization code from server)
+     *      - stan (System Trace Audit Number)
+     *      - voucherNumber (receipt reference)
+     *      - rrn (Retrieval Reference Number)
+     *      - settlementDate (used for batch settlement)
+     *      - approvalCode (final approval reference)
+     *      - posConditionCode (transaction type indicator)
+     * - Save the updated transaction back into the database
+     *
+     * Notes:
+     * - Runs inside viewModelScope to avoid blocking UI thread
+     * - Handles null txnStatus safely
+     * - Logs error if transaction is not found in DB
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus: TxnStatus?, originalDateTime: String, AuthCode: String, posCondition: String) {
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus

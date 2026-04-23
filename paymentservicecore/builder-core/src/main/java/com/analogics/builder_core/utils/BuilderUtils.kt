@@ -24,7 +24,20 @@ import javax.crypto.spec.SecretKeySpec
 
 object BuilderUtils {
 
-
+    /**
+     * Generates or retrieves the System Trace Audit Number (STAN).
+     *
+     * STAN is a unique 6-digit number used to identify transactions (ISO8583 DE11).
+     *
+     * Features:
+     * - Persists STAN in secured shared preferences
+     * - Auto-increments within defined range
+     * - Prevents overflow beyond MAX_STAN_VAL
+     *
+     * @param context Application context
+     * @param increment Whether to increment STAN or just fetch current value
+     * @return STAN as Long
+     */
     fun getSTAN(context: Context, increment: Boolean? = true): Long {
         var stan: Long = 1
 
@@ -50,11 +63,28 @@ object BuilderUtils {
         return stan
     }
 
+    /**
+     * Returns current date-time formatted for ISO8583 fields.
+     *
+     * Default format: MMddHHmmss (Transmission Date & Time - DE7)
+     *
+     * @param format Optional custom date format
+     * @return Formatted date-time string
+     */
     fun getCurrentDateTime(format : String?=BuilderConstants.DEFAULT_ISO8583_DATE_TIME_FORMAT): String {
         val sdf = SimpleDateFormat(format, Locale.getDefault())
         return sdf.format(Date())
     }
 
+    /**
+     * Returns local device time formatted for ISO8583.
+     *
+     * Format: HHmmss (Local Transaction Time - DE12)
+     *
+     * Requires API level 26+
+     *
+     * @return Local time as string
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun getLocalTime(): String {
         val currentTime = LocalTime.now()  // device local time
@@ -62,7 +92,15 @@ object BuilderUtils {
         return currentTime.format(formatter)
     }
 
-
+    /**
+     * Returns local device date formatted for ISO8583.
+     *
+     * Format: MMdd (Local Transaction Date - DE13)
+     *
+     * Requires API level 26+
+     *
+     * @return Local date as string
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun getLocalDate(): String {
         val currentDate = LocalDate.now()  // device local date
@@ -70,6 +108,23 @@ object BuilderUtils {
         return currentDate.format(formatter)
     }
 
+    /**
+     * Calculates Key Check Value (KCV) for a given encryption key.
+     *
+     * KCV is used to verify integrity of cryptographic keys.
+     *
+     * Logic:
+     * - Encrypts 8-byte zero block using provided key
+     * - Returns first 3 bytes of encrypted output (6 hex characters)
+     *
+     * Supported Keys:
+     * - 8 bytes  → DES
+     * - 16/24 bytes → 3DES (DESede)
+     *
+     * @param keyHex HEX string of key (e.g., "0123456789ABCDEF")
+     * @return 6-character KCV string
+     * @throws IllegalArgumentException if key length is invalid
+     */
     fun calculateKCV(keyHex: String?): String {
         // Convert HEX string to bytes
         val keyBytes = keyHex?.chunked(2)?.map { it.toInt(16).toByte() }?.toByteArray()

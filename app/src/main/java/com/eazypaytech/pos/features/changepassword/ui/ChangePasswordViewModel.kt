@@ -28,18 +28,37 @@ class ChangePasswordViewModel @Inject constructor(
     val isFormValid: Boolean
         get() = currentPassword.value.isNotBlank() && newPassword.value.isNotBlank() && newPassword.value.length>= AppConstants.MIN_LENGTH_PASSWORD && confirmPassword.value.isNotBlank() && (newPassword.value == confirmPassword.value)
 
+    /**
+     * Updates current password input value.
+     */
     fun onCurrentChange(password: String) {
         currentPassword.value = password
     }
 
+    /**
+     * Updates new password input value.
+     */
     fun onNewChange(password: String) {
         newPassword.value = password
     }
 
+    /**
+     * Updates confirm password input value.
+     */
     fun onConfirmChange(password: String) {
         confirmPassword.value = password
     }
 
+    /**
+     * Handles change password action.
+     *
+     * Flow:
+     * - Validates form inputs
+     * - Fetches user from DB
+     * - Verifies current password or master password
+     * - Updates password if valid
+     * - Shows success or error dialogs
+     */
     fun onChangePasswordClick(navHost: NavHostController?, sharedViewModel: SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel

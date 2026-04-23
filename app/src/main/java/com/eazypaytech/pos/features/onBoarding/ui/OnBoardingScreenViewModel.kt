@@ -15,18 +15,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingScreenViewModel @Inject constructor(private  var apiServiceRepository: ApiServiceRepository) : ViewModel() {
-    @OptIn(ExperimentalPagerApi::class)
-    fun autoScrollPager(pagerState: PagerState) {
-        viewModelScope.launch {
-            while (true) {
-                delay(3000)
-                pagerState.animateScrollToPage(
-                    page = (pagerState.currentPage + 1) % pagerState.pageCount
-                )
-            }
-        }
-    }
 
+    /**
+     * Handles completion of onboarding flow.
+     *
+     * Behavior:
+     * - Navigates user to Activation screen
+     * - Updates onboarding completion flag in POS config
+     * - Persists configuration to local storage
+     *
+     * @param navController Navigation controller for screen transition
+     * @param sharedViewModel Shared ViewModel containing POS configuration
+     */
     fun onOnboardingCompleted(navController: NavController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             navController.navigate(AppNavigationItems.ActivationScreen.route)

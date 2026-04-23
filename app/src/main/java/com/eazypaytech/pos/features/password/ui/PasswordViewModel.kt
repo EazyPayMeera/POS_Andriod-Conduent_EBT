@@ -26,11 +26,30 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
     val password: StateFlow<String> = _password
     val event = MutableSharedFlow<PasswordValidation>()
 
+    /**
+     * Updates password input state.
+     *
+     * @param newValue Entered password string
+     * @return Updated password value
+     */
     fun updatePassword(newValue: String):String {
         _password.value = newValue
         return _password.value
     }
 
+    /**
+     * Verifies entered password against stored credentials.
+     *
+     * Behavior:
+     * - Fetches saved password from database
+     * - Validates against entered password or master password
+     * - Shows error dialog if invalid
+     * - Emits success event if valid
+     *
+     * @param sharedViewModel Shared ViewModel containing login details
+     * @param context Application context for accessing resources
+     * @param enteredPassword Password entered by user
+     */
     fun onVerifyPassword(sharedViewModel: SharedViewModel, context: Context, enteredPassword:String)
     {
         viewModelScope.launch {
@@ -57,6 +76,13 @@ class PasswordViewModel @Inject constructor(private val dbRepository: TxnDBRepos
         }
     }
 
+    /**
+     * Handles cancel action during password verification.
+     *
+     * Behavior:
+     * - Clears password input
+     * - Emits failure result event
+     */
     fun onCancel()
     {
         viewModelScope.launch {

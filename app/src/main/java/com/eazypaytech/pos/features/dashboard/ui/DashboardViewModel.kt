@@ -33,11 +33,24 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
     private val _isAdmin = MutableStateFlow<Boolean>(false)
     val isAdmin : StateFlow<Boolean> = _isAdmin
     var sharedViewModel : SharedViewModel? = null
+
+    /**
+     * Clears current transaction data
+     * and refreshes admin status.
+     */
     fun clearTransData(sharedViewModel: SharedViewModel) {
         sharedViewModel.clearTransData()
         checkIfAdmin(sharedViewModel)
     }
 
+    /**
+     * Reprints the last transaction receipt.
+     *
+     * Flow:
+     * - Fetch last transaction from DB
+     * - Print receipt if found
+     * - Show error dialog if no record exists
+     */
     fun reprintLast(
         context: Context,
         isCustomer: Boolean = false
@@ -54,6 +67,10 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
         }
     }
 
+    /**
+     * Generates and sets next invoice number
+     * based on last stored invoice.
+     */
     fun setInvoiceNumber(sharedViewModel: SharedViewModel)
     {
         viewModelScope.launch{
@@ -63,6 +80,15 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
         }
     }
 
+    /**
+     * Initializes Payment SDK if not already initialized.
+     *
+     * Flow:
+     * - Checks initialization flag
+     * - Loads EMV configs and CAP keys
+     * - Calls SDK init API
+     * - Updates config based on success/failure
+     */
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             viewModelScope.launch {
@@ -104,6 +130,15 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
         }
     }
 
+    /**
+     * Handles device reactivation flow.
+     *
+     * Flow:
+     * - Blocks if batch is open
+     * - Restricts non-admin users
+     * - Shows confirmation dialog
+     * - Resets activation flags and navigates to activation screen
+     */
     fun onReactivate(navHostController : NavHostController, sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             if (txnDBRepository.isBatchOpen()) {
@@ -138,6 +173,10 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
         }
     }
 
+    /**
+     * Checks if current user is admin
+     * and updates admin state.
+     */
     fun checkIfAdmin(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             sharedViewModel.objPosConfig?.loginId?.let {
@@ -146,10 +185,6 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
                 }
             }
         }
-    }
-
-    fun startLogCapture(context: Context): Boolean {
-        return emvServiceRepository.startLogCapture(context)
     }
 
 

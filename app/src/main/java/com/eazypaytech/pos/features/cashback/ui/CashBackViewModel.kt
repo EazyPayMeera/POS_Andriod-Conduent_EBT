@@ -27,11 +27,30 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
     var cashBackAmount by mutableStateOf("")
         private set
 
+    /**
+     * Handles cashback amount input change.
+     *
+     * Flow:
+     * - Formats entered amount
+     * - Updates internal cashback state
+     * - Returns numeric value as string
+     */
     fun onCashBackAmountChange(newValue: String) :String{
         cashBackAmount = formatAmount(newValue)
         return transformToAmountDouble(newValue).toString()
     }
 
+
+    /**
+     * Handles confirm action for cashback.
+     *
+     * Flow:
+     * - Saves cashback amount to transaction
+     * - Disables cashback flag for PURCHASE_CASHBACK flow
+     * - Validates minimum amount (> 0.01)
+     * - Calculates total amount
+     * - Navigates to Card screen
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.cashback = transformToAmountDouble(cashBackAmount)
@@ -50,10 +69,19 @@ class CashBackViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * Handles cancel action and navigates back to Dashboard.
+     */
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
+    /**
+     * Calculates total transaction amount.
+     *
+     * Formula:
+     * total = txnAmount + cashback
+     */
     @SuppressLint("SuspiciousIndentation")
     private fun calculateTotal(sharedViewModel: SharedViewModel) {
         sharedViewModel.objRootAppPaymentDetail.ttlAmount =

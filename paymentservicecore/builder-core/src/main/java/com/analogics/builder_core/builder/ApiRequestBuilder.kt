@@ -30,11 +30,17 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     var builderServiceTxnDetails = BuilderServiceTxnDetails()
     lateinit var message : IsoMessage
 
-
+    /**
+     * Initializes ISO configuration when class is created.
+     */
     init {
         setIsoConfig()
     }
 
+    /**
+     * Sets ISO8583 configuration like config path and message format.
+     * Enables binary messages and headers.
+     */
     fun setIsoConfig()
     {
         messageFactory.setConfigPath(BuilderConstants.ISO_CONFIG_PATH)
@@ -42,6 +48,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         messageFactory.isBinaryHeader = true
     }
 
+    /**
+     * Returns POS Entry Mode (DE22) based on transaction and card type.
+     */
     private fun getIsoPosEntryMode(): String {
         return when {
             builderServiceTxnDetails.txnType == TxnType.E_VOUCHER.toString() &&
@@ -57,6 +66,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         }
     }
 
+    /**
+     * Builds cashback amount field in ISO format (used in EBT).
+     */
     fun cashbackAmount(cashbackAmt: Long): String {
         Log.d("EBT", "cashbackAmount() input: $cashbackAmt")
         val accountType = BuilderConstants.DEFAULT_ACCOUNT_TYPE
@@ -69,7 +81,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return accountType + amountType + currency + sign + amt
     }
 
-
+    /**
+     * Returns masked PAN (Primary Account Number).
+     */
     fun getMaskedPAN() : String?
     {
         var pan : String? =null
@@ -79,6 +93,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return pan
     }
 
+    /**
+     * Returns encrypted Track2 data.
+     */
     fun getEncryptedTrack2Data() : String?
     {
         var trackData : String? =null
@@ -89,7 +106,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     }
 
 
-
+    /**
+     * Returns formatted currency code (DE49).
+     */
     fun getCurrencyCode() : String?
     {
         var currencyCode: String? =
@@ -100,6 +119,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return currencyCode
     }
 
+    /**
+     * Returns processing code (DE3) based on transaction type.
+     */
     fun getProcessingCode(txnType: String?): String {
         return when {
             builderServiceTxnDetails.txnType == TxnType.E_VOUCHER.toString()
@@ -117,7 +139,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         }
     }
 
-
+    /**
+     * Returns PIN block padded as per ISO format.
+     */
     fun getPinBlock() : String?
     {
         var pinBlock: String? =
@@ -128,6 +152,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return pinBlock
     }
 
+    /**
+     * Returns card sequence number (DE23).
+     */
     fun getCardSeqNum() : String?
     {
         var cardSeqNumber: String? =
@@ -138,6 +165,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return cardSeqNumber
     }
 
+    /**
+     * Converts HEX string to ByteArray.
+     */
     fun hexStringToByteArray(s: String): ByteArray {
 
         require(s.length % 2 == 0) { "HEX length must be even" }
@@ -153,7 +183,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return data
     }
 
-
+    /**
+     * Cleans HEX string by removing invalid characters and fixing length.
+     */
     fun cleanHex(input: String): String {
         val clean = input
             .replace("\\s+".toRegex(), "")
@@ -168,6 +200,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return padded.uppercase()
     }
 
+    /**
+     * Validates a TLV tag value inside HEX data.
+     */
     fun checkTag(hex: String, tag: String, lenHex: String, expected: String, label: String) {
         val search = (tag + lenHex).uppercase()
         val idx = hex.indexOf(search)
@@ -186,6 +221,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         }
     }
 
+    /**
+     * Returns ICC (EMV) data (DE55).
+     */
     fun getIccData() : String?
     {
         //Log.d("ICC_DATA", "emvData raw: ${builderServiceTxnDetails.emvData}")
@@ -196,6 +234,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iccData
     }
 
+    /**
+     * Generates or reuses STAN (DE11).
+     */
     fun getSTAN() : Long
     {
         var stan : Long = 0
@@ -208,7 +249,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return stan%(BuilderConstants.ISO_FIELD_STAN_MAX_VAL+1)
     }
 
-
+    /**
+     * Returns National POS Condition Code.
+     */
     fun getNationalPosConditionCode(): String {
         val terminalClass = "000"      // Attended, customer-operated, on-premise
         val presentationType = "0000"  // Customer present + card present
@@ -228,7 +271,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
                 terminalCapability
     }
 
-
+    /**
+     * Builds NPS Geographic Data string.
+     */
     fun getNPSGeographicData(): String {
         val stateCode = builderServiceTxnDetails.stateCode?.padStart(2, '0') ?: "00"
         val countyCode = builderServiceTxnDetails.countyCode?.padStart(3, '0') ?: "000"
@@ -238,7 +283,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return npsGeoData
     }
 
-
+    /**
+     * Generates Retrieval Reference Number (RRN - DE37).
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun generateRRN(stan: String): String {
         val now = LocalDateTime.now()
@@ -251,6 +298,25 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return "$yearLastDigit$dayOfYear$hour$minute$stanPart" // 1 + 3 + 2 + 2 + 4 = 12 digits
     }
 
+    /**
+     * Creates and configures an ISO8583 MessageFactory instance.
+     *
+     * Responsibilities:
+     * - Loads ISO configuration from `iso_config.xml` in assets
+     * - Applies field definitions using ConfigParser
+     * - Sets message format and encoding options
+     *
+     * Configuration Details:
+     * - Bitmap: ASCII (not binary)
+     * - Character Encoding: ASCII
+     *
+     * @param context Used to access assets folder for ISO config file
+     * @return Configured MessageFactory instance for ISO message creation
+     *
+     * Note:
+     * - Ensure `iso_config.xml` is present in assets directory
+     * - This factory is used for parsing and building ISO8583 messages
+     */
     fun createMessageFactory(context: Context): MessageFactory<IsoMessage> {
 
         val mf = MessageFactory<IsoMessage>()
@@ -267,6 +333,19 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return mf
     }
 
+    /**
+     * Creates ISO8583 Sign-On request message (MTI 0800).
+     *
+     * Fields Used:
+     * - DE7  : Transmission Date & Time
+     * - DE11 : STAN
+     * - DE32 : Acquirer ID
+     * - DE70 : Network Management Code (Sign-On)
+     * - DE96 : Key Management Data (optional)
+     *
+     * @param builderServiceTxnDetails Transaction details containing procId
+     * @return ByteArray ISO message ready for transmission
+     */
     fun createSignOnRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
@@ -285,6 +364,19 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iso.writeData()
     }
 
+    /**
+     * Creates ISO8583 Sign-Off request message (MTI 0800).
+     *
+     * Fields Used:
+     * - DE7  : Transmission Date & Time
+     * - DE11 : STAN
+     * - DE32 : Acquirer ID
+     * - DE70 : Network Management Code (Sign-Off)
+     * - DE96 : Key Management Data (optional)
+     *
+     * @param builderServiceTxnDetails Transaction details containing procId
+     * @return ByteArray ISO message
+     */
     fun createSignOffRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val msg_sec_code = builderServiceTxnDetails?.procId?.drop(3)
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
@@ -303,6 +395,21 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iso.writeData()
     }
 
+    /**
+     * Creates ISO8583 Handshake request message (MTI 0800).
+     *
+     * Used to establish communication with host before transactions.
+     *
+     * Fields Used:
+     * - DE7  : Transmission Date & Time
+     * - DE11 : STAN
+     * - DE32 : Acquirer ID
+     * - DE70 : Network Management Code (Handshake)
+     * - DE96 : Key Management Data
+     *
+     * @param builderServiceTxnDetails Transaction details
+     * @return ByteArray ISO message
+     */
     fun createHandShakeRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val stan = getSTAN().toString().padStart(6, '0')
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
@@ -321,6 +428,22 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iso.writeData()
     }
 
+    /**
+     * Creates ISO8583 Key Request message.
+     *
+     * Used for requesting encryption keys from host.
+     *
+     * Fields Used:
+     * - DE7  : Transmission Date & Time
+     * - DE11 : STAN
+     * - DE32 : Acquirer ID
+     * - DE39 : Response Code (default "00")
+     * - DE70 : Network Management Code (Key Change)
+     * - DE96 : Key Management Data
+     *
+     * @param builderServiceTxnDetails Transaction details
+     * @return ByteArray ISO message
+     */
     fun createKeyRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
         val stan = getSTAN().toString().padStart(6, '0')
@@ -340,6 +463,21 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iso.writeData()
     }
 
+    /**
+     * Creates ISO8583 Key Change request message.
+     *
+     * Used to trigger key rotation/update with host.
+     *
+     * Fields Used:
+     * - DE7  : Transmission Date & Time
+     * - DE11 : STAN
+     * - DE32 : Acquirer ID
+     * - DE70 : Network Management Code (Key Change Request)
+     * - DE96 : Key Management Data
+     *
+     * @param builderServiceTxnDetails Transaction details
+     * @return ByteArray ISO message
+     */
     fun createKeyChangeRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         val stan = getSTAN().toString().padStart(6, '0')
         val time = BuilderUtils.getCurrentDateTime(BuilderConstants.ISO_DATE_FORMAT)
@@ -358,6 +496,42 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iso.writeData()
     }
 
+    /**
+     * Creates ISO8583 Voucher Settlement (Financial Transaction) request.
+     *
+     * MTI: 0200 (Financial Request)
+     *
+     * Fields Used:
+     * - DE2   : PAN (masked)
+     * - DE3   : Processing Code
+     * - DE4   : Transaction Amount
+     * - DE7   : Transmission Date & Time
+     * - DE11  : STAN
+     * - DE12  : Local Time
+     * - DE13  : Local Date
+     * - DE15  : Settlement Date
+     * - DE17  : Capture Date
+     * - DE18  : Merchant Type
+     * - DE22  : POS Entry Mode
+     * - DE32  : Acquirer ID
+     * - DE37  : Retrieval Reference Number (RRN)
+     * - DE38  : Authorization Code
+     * - DE41  : Terminal ID
+     * - DE42  : Merchant ID
+     * - DE43  : Merchant Name & Location
+     * - DE48  : Merchant Bank Info
+     * - DE49  : Currency Code
+     * - DE58  : Additional Data (Voucher Info)
+     * - DE127 : Acquirer Trace Data
+     *
+     * Special Logic:
+     * - Builds voucher-specific additional data (FNS + Voucher Number)
+     * - Generates RRN dynamically using STAN + timestamp
+     * - Handles padding and ISO formatting
+     *
+     * @param builderServiceTxnDetails Transaction details (voucher, merchant, etc.)
+     * @return ByteArray ISO financial message
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun voucherSettlement(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
@@ -421,7 +595,48 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return iso.writeData()
     }
 
-
+    /**
+     * Creates ISO8583 Reversal/Void request message.
+     *
+     * MTI: 0420 (Reversal Request)
+     *
+     * Purpose:
+     * - Reverses a previous transaction using original transaction details
+     *
+     * Fields Used:
+     * - DE2   : PAN
+     * - DE3   : Processing Code
+     * - DE4   : Amount
+     * - DE7   : Original Transmission DateTime
+     * - DE11  : Original STAN
+     * - DE12  : Local Time
+     * - DE13  : Local Date
+     * - DE15  : Settlement Date
+     * - DE18  : Merchant Type
+     * - DE22  : POS Entry Mode
+     * - DE23  : Card Sequence Number (for chip)
+     * - DE32  : Acquirer ID
+     * - DE37  : Original RRN
+     * - DE38  : Authorization Code
+     * - DE39  : Response Code
+     * - DE41  : Terminal ID
+     * - DE42  : Merchant ID
+     * - DE43  : Merchant Name
+     * - DE48  : Merchant Bank Info
+     * - DE49  : Currency Code
+     * - DE55  : ICC Data (for chip cards)
+     * - DE59  : NPS Geographic Data
+     * - DE90  : Original Data Elements
+     * - DE58  : Additional Data
+     *
+     * Special Handling:
+     * - Includes EMV data (DE55) for chip/contactless cards
+     * - Reuses original transaction data
+     * - Dynamically replaces DE55 placeholder with raw TLV bytes
+     *
+     * @param builderServiceTxnDetails Original transaction details
+     * @return ByteArray ISO reversal message
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
@@ -501,7 +716,25 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         }
     }
 
-
+    /**
+     * Parses Echo/Network response from host into transaction details.
+     *
+     * Extracted Fields:
+     * - DE7   : Transmission DateTime
+     * - DE11  : STAN
+     * - DE41  : Terminal ID
+     * - DE70  : Network Management Info Code
+     * - DE96  : Device Serial Number
+     * - DE125 : Work Key (Encryption Key)
+     *
+     * @param context Required for ISO message parsing
+     * @param response Raw ISO response in ByteArray
+     * @return Parsed BuilderServiceTxnDetails object
+     *
+     * Note:
+     * - Handles parsing exceptions safely
+     * - Used for sign-on / handshake / key exchange responses
+     */
     fun parseEcoResponse(context: Context, response: ByteArray): BuilderServiceTxnDetails {
         val details = BuilderServiceTxnDetails()
         try {
@@ -526,6 +759,52 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return details
     }
 
+    /**
+     * Creates ISO8583 Financial Transaction request message.
+     *
+     * MTI: 0200 (Financial Request)
+     *
+     * Supported Transactions:
+     * - Purchase
+     * - Cashback
+     * - EBT (Cash / SNAP)
+     *
+     * Fields Used:
+     * - DE2   : PAN
+     * - DE3   : Processing Code
+     * - DE4   : Amount
+     * - DE7   : Transmission DateTime
+     * - DE11  : STAN
+     * - DE12  : Local Time
+     * - DE13  : Local Date
+     * - DE15  : Settlement Date
+     * - DE17  : Capture Date
+     * - DE18  : Merchant Type
+     * - DE22  : POS Entry Mode
+     * - DE23  : Card Sequence Number (chip cards)
+     * - DE32  : Acquirer ID
+     * - DE35  : Track 2 Data
+     * - DE37  : RRN
+     * - DE41  : Terminal ID
+     * - DE42  : Merchant ID
+     * - DE43  : Merchant Name
+     * - DE48  : Merchant Bank Info
+     * - DE49  : Currency Code
+     * - DE52  : PIN Block
+     * - DE54  : Additional Amount (Cashback)
+     * - DE55  : ICC Data (EMV)
+     * - DE58  : Additional Data
+     * - DE127 : Acquirer Trace Data
+     *
+     * Special Handling:
+     * - Dynamically generates STAN and RRN
+     * - Supports chip, magstripe, manual, contactless modes
+     * - Injects DE55 (EMV TLV data) using placeholder replacement
+     * - Saves transaction locally for reversal/void
+     *
+     * @param builderServiceTxnDetails Transaction input data
+     * @return ByteArray ISO financial request message
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createFinancialRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails ?: BuilderServiceTxnDetails()
@@ -652,6 +931,21 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         }
     }
 
+    /**
+     * Replaces placeholder DE55 data in ISO message with actual EMV TLV bytes.
+     *
+     * Logic:
+     * - Finds placeholder pattern in ISO byte array
+     * - Replaces it with correctly formatted DE55 (LLLVAR + TLV)
+     *
+     * @param isoBytes Original ISO message bytes
+     * @param de55RawBytes Actual DE55 data (with LLL prefix)
+     * @param placeholder Placeholder string to replace
+     * @return Updated ISO message with correct DE55
+     *
+     * Note:
+     * - Required because ISO library does not handle raw TLV properly
+     */
     private fun spliceDE55(isoBytes: ByteArray, de55RawBytes: ByteArray, placeholder: String): ByteArray {
         val placeholderBytes = placeholder.toByteArray(Charsets.US_ASCII)
         val lllOfPlaceholder = "%03d".format(placeholderBytes.size).toByteArray(Charsets.US_ASCII)
@@ -672,6 +966,16 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return result.toByteArray()
     }
 
+    /**
+     * Finds the index of a byte pattern inside a byte array.
+     *
+     * @param data Source byte array
+     * @param pattern Pattern to search
+     * @return Starting index of pattern, or -1 if not found
+     *
+     * Used in:
+     * - Locating DE55 placeholder inside ISO message
+     */
     private fun findPattern(data: ByteArray, pattern: ByteArray): Int {
         outer@ for (i in 0..data.size - pattern.size) {
             for (j in pattern.indices) {
@@ -682,7 +986,15 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return -1
     }
 
-
+    /**
+     * Parses Network Management ISO response (e.g., Echo, Key Exchange).
+     *
+     * Extracts key device and host-related fields from ISO message.
+     *
+     * @param context Application context (used to load ISO config)
+     * @param response Raw ISO8583 response in ByteArray
+     * @return Parsed transaction details object
+     */
     fun parseNetworkManResponse(context: Context, response: ByteArray): BuilderServiceTxnDetails {
         val details = BuilderServiceTxnDetails()
         try {
@@ -709,7 +1021,15 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return details
     }
 
-
+    /**
+     * Parses a generic ISO8583 response message.
+     *
+     * Handles multiple field types and safely formats date/time fields.
+     *
+     * @param context Application context
+     * @param response Raw ISO8583 response
+     * @return Parsed transaction details
+     */
     fun parseISOMessage(context: Context, response: ByteArray): BuilderServiceTxnDetails {
         val details = BuilderServiceTxnDetails()
 
@@ -761,7 +1081,13 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return details
     }
 
-
+    /**
+     * Updates transaction record in local database after ISO request creation.
+     *
+     * Only updates minimal required fields such as STAN, RRN, and timestamps.
+     *
+     * @param builderServiceTxnDetails Transaction details to update
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?) {
 

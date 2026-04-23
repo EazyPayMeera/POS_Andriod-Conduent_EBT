@@ -107,7 +107,7 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                     alignment = Alignment.Center,
                     contentDescription = "",
                 )
-
+                // Amount input field
                 OutlinedTextField(
                     value = viewModel.transAmount,
                     onValueChange = { viewModel.onAmountChange(it) },

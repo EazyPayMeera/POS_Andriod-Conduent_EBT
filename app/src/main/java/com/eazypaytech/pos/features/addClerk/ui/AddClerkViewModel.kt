@@ -36,27 +36,40 @@ class AddClerkViewModel @Inject constructor(
     var userType = mutableStateOf(UserType.CLERK)
     val allowClerks = mutableStateOf(false)
     lateinit var focusRequester : FocusRequester
-
+    /**
+     * Updates user email/username input value.
+     */
     fun onEmailChange(newEmail: String) {
         userCredentials.value = newEmail
     }
 
+    /**
+     * Updates password input value.
+     */
     fun onPasswordChange(newPassword: String) {
         pwdCredentials.value = newPassword
     }
-
+    /**
+     * Updates confirm password input value.
+     */
     fun onCnfPasswordChange(newPassword: String) {
         cnfPwdCredentials.value = newPassword
     }
 
-//   private fun setRegisterBtnState(enabled: Boolean) {
-//        isRegisterBtnEnabled.value = enabled
-//    }
-
+    /**
+     * Enables or disables Done button.
+     */
     private fun setDoneBtnState(enabled: Boolean) {
         isDoneBtnEnabled.value = enabled
     }
 
+    /**
+     * Handles Done button click.
+     *
+     * Flow:
+     * - If user already logged in → navigate to Dashboard
+     * - Else → navigate to Login screen
+     */
     fun onDoneClick(navHost: NavHostController?, sharedViewModel: SharedViewModel)
     {
         if(sharedViewModel.objPosConfig?.isLoggedIn == true)
@@ -65,6 +78,15 @@ class AddClerkViewModel @Inject constructor(
             navHost?.navigateAndClean(AppNavigationItems.LoginScreen.route)
     }
 
+    /**
+     * Handles Register button click.
+     *
+     * Flow:
+     * - Validates form inputs
+     * - Checks if user already exists
+     * - Inserts new user into DB if valid
+     * - Shows appropriate success/error dialogs
+     */
     fun onRegisterClick(navHost: NavHostController?, sharedViewModel: SharedViewModel) {
         this.navHostController = navHost!!
         this.sharedViewModel = sharedViewModel
@@ -109,6 +131,17 @@ class AddClerkViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     * Initializes screen state on load.
+     *
+     * Flow:
+     * - Checks if users already exist
+     *   → If yes: allow clerk creation
+     *   → If no: enforce admin creation
+     * - Resets input fields
+     * - Requests focus on first input field
+     */
 
     fun onLoad(focusRequester: FocusRequester)
     {

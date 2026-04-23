@@ -106,29 +106,15 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-    fun getEmvDataSafe( tagList: Array<String>, bundle: Bundle?): ByteArray? {
-        val outBuffer = ByteArray(2048)
-        return try {
-            val resultCode = deviceService?.emvHandler?.readEmvData(
-                tagList,
-                outBuffer,
-                bundle
-            ) ?: return null
-
-            if (resultCode != 0) {
-                Log.e("EMV_READ", "EMV read failed with code = $resultCode")
-                return null
-            }
-
-            val cleanData = outBuffer.takeWhile { it.toInt() != 0 }.toByteArray()
-            cleanData
-
-        } catch (e: Exception) {
-            Log.e("EMV_READ", "Failed to read EMV data", e)
-            null
-        }
-    }
-
+    /**
+     * Reads TLV data for the given EMV tags from the device.
+     *
+     * This method communicates with the EMV handler to fetch raw TLV data
+     * for the requested tags and returns it as a hex string.
+     *
+     * @param tags Array of EMV tags to read.
+     * @return Hex string of TLV data if available, otherwise null.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     private fun collectTlvData(tags: Array<String>): String? {
 
@@ -156,6 +142,15 @@ class EmvWrapperRepository @Inject constructor(
         return null
     }
 
+    /**
+     * Initializes EMV terminal configuration parameters.
+     *
+     * This includes merchant, terminal, currency, and capability settings
+     * required for EMV transaction processing.
+     *
+     * @param aidConfig Configuration containing terminal and merchant data.
+     * @return true if initialization succeeds, false otherwise.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun initTermConfig(aidConfig: AidConfig?): Boolean {
         var result = true
@@ -198,6 +193,19 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
+    /**
+     * Initializes EMV SDK with AID configuration and CAP keys.
+     *
+     * This includes:
+     * - AID configuration setup
+     * - Terminal configuration setup
+     * - CAP key injection
+     *
+     * Executes asynchronously on IO dispatcher after service connection.
+     *
+     * @param aidConfig Terminal and merchant configuration.
+     * @param capKeys List of CAP keys for cryptographic operations.
+     */
     override fun initializeSdk(aidConfig: AidConfig?, capKeys: List<CAPKey>?) {
         CoroutineScope(Dispatchers.Default).launch {
             serviceConnected.await()
@@ -221,6 +229,12 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Listener for magnetic stripe card processing.
+     *
+     * Handles card swipe results, validates track data,
+     * and triggers online PIN + encryption flow.
+     */
     val magCardListener = object : OnSearchMagCardListener.Stub() {
 
         override fun onSearchResult(
@@ -277,6 +291,15 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * EMV transaction process listener.
+     *
+     * Handles complete EMV lifecycle events including:
+     * - Application selection
+     * - PIN entry
+     * - Online processing
+     * - Transaction completion
+     */
     val emvListener = object : OnEmvProcessListener.Stub() {
         override fun onSelApp(
             p0: List<String?>?,
@@ -457,8 +480,21 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-
-
+    /**
+     * Captures online PIN from the cardholder using the secure PIN pad.
+     *
+     * This method triggers encrypted PIN entry using the device's pin pad,
+     * and returns the generated PIN block via callback.
+     *
+     * Flow:
+     * - Validates PAN
+     * - Configures PIN pad UI and behavior
+     * - Starts secure PIN entry (ISO9564 Format 1)
+     * - Returns encrypted PIN block or null on cancel/failure
+     *
+     * @param pan Primary Account Number used for PIN block generation.
+     * @param onResult Callback returning encrypted PIN block or null if cancelled/failed.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     private fun inputOnlinePin(
         pan: String?,
@@ -520,6 +556,15 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Captures online PIN with transaction
+     *
+     * In case of manual card entry
+     *
+     * @param pan Primary Account Number.
+     * @param amount Transaction amount displayed on PIN entry screen.
+     * @param onResult Callback returning encrypted PIN block or null if cancelled.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun inputManualPin(
         pan: String?,
@@ -529,16 +574,13 @@ class EmvWrapperRepository @Inject constructor(
         //Log.d("PIN_DEBUG", "PAN (masked): $pan")
         val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         val bundle = Bundle().apply {
-            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
+            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, true)
             if (getDeviceModel().contains("MF960") ||
                 getDeviceModel().contains("H9PRO")
             ) {
                 putBoolean(PinPadConstrants.COMMON_IS_PHYSICAL_KEYBOARD, true)
             }
-            putString(
-                PinPadConstrants.TITLE_HEAD_CONTENT,
-                "Please input the online pin \nAmount: $amount"
-            )
+
         }
         loginDevice()
         try {
@@ -579,6 +621,15 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Captures offline PIN from the cardholder using device keypad.
+     *
+     * This is used for offline PIN verification scenarios where PIN block
+     * is not encrypted using online PIN algorithms.
+     *
+     * @param pan Primary Account Number (currently unused but kept for future compatibility).
+     * @param onResult Callback returning entered PIN block or null if cancelled.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     private fun inputOfflinePin(pan: String?, onResult: (pinBlock: ByteArray?) -> Unit) {
 
@@ -620,6 +671,14 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Checks whether a card is present in the ICC reader slot.
+     *
+     * Uses the device ICC card reader to detect card presence.
+     *
+     * @param context Android context used to resolve device service connection.
+     * @return true if card is present, false otherwise or on error.
+     */
     suspend fun isCardExists(context: Context?): Boolean {
         return try {
 
@@ -646,131 +705,33 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
-    suspend fun detectCard(context: Context?): EmvSdkResult.CardCheckStatus {
-        return try {
-            val service = getDeviceService(context)
-                ?: return EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
-
-            suspendCancellableCoroutine { cont ->
-
-                val bundle = Bundle().apply {
-                    putInt("cardType", 0x07) // MAG + CHIP + NFC
-                    putInt("timeout", 5)    // seconds (if supported)
-                }
-
-                val listener = object : ICheckCardListener.Stub() {
-
-                    override fun onFindICCard() {
-                        Log.d("CARD", "CHIP DETECTED")
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.CARD_INSERTED) {}
-                    }
-
-                    override fun onFindRFCard() {
-                        Log.d("CARD", "NFC DETECTED")
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.CARD_TAPPED) {}
-                    }
-
-                    override fun onFindMagCard(card: MagCardInfoEntity?) {
-                        Log.d("CARD", "MAG DETECTED")
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.CARD_SWIPED) {}
-                    }
-
-                    override fun onTimeout() {
-                        Log.d("CARD", "TIMEOUT")
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.TIMEOUT) {}
-                    }
-
-                    override fun onCanceled() {
-                        Log.d("CARD", "CANCELLED")
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED) {}
-                    }
-
-                    override fun onError(code: Int) {
-                        Log.e("CARD", "ERROR: $code")
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.ERROR) {}
-                    }
-
-                    override fun onSwipeCardFail() {
-                        if (cont.isActive)
-                            cont.resume(EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED) {}
-                    }
-                }
-
-                try {
-                    Log.d("CARD", "Starting searchCard...")
-
-                    service.emvHandler.searchCard(bundle, listener)
-
-                } catch (e: Exception) {
-                    Log.e("CARD", "searchCard error", e)
-                    cont.resume(EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED) {}
-                }
-
-                // Cancel if coroutine is cancelled
-                cont.invokeOnCancellation {
-                    try {
-                        service.emvHandler.cancelCheckCard()
-                    } catch (e: Exception) {
-                        Log.e("CARD", "cancel error", e)
-                    }
-                }
-            }
-
-        } catch (e: Exception) {
-            Log.e("CARD", "detectCard error", e)
-            EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
-        }
-    }
-
-    suspend fun startLogCapture(context: Context?): Boolean {
-        return try {
-            val service = getDeviceService(context)
-
-            if (service == null) {
-                Log.w(TAG, "deviceService is null — service not connected")
-                return false
-            }
-
-            val logger = service.logRecorder
-
-            if (logger == null) {
-                Log.w(TAG, "logRecorder returned null")
-                return false
-            }
-
-            // 1. Check if recorder is ready
-            val status = logger.getStatus()
-            Log.d(TAG, "LogRecorder status: $status")
-
-            // 2. Just open — DO NOT close here
-            val openResult = logger.openRecorder(null)
-            if (openResult != 0) {
-                Log.e(TAG, "Failed to open recorder, result: $openResult")
-                return false
-            }
-
-            Log.d(TAG, "LogRecorder started, capturing logs...")
-            true
-
-        } catch (e: RemoteException) {
-            Log.e(TAG, "RemoteException in startLogCapture()", e)
-            false
-        }
-    }
-
-
+    /**
+     * Returns current system time formatted as a string.
+     *
+     * Uses [SimpleDateFormat] to format the current timestamp.
+     *
+     * ⚠️ Note: Caller must ensure valid date format string.
+     *
+     * @param format Date format pattern (e.g., "yyMMddHHmmss").
+     * @return Formatted current date/time string.
+     */
     fun getCurrentTime(format: String?): String {
         val df = SimpleDateFormat(format)
         val curDate = Date(System.currentTimeMillis())
         return df.format(curDate)
     }
 
+    /**
+     * Logs into the payment device before EMV operations.
+     *
+     * This is required to initialize secure communication with the terminal.
+     * Uses default password "00000000".
+     *
+     * Result codes:
+     * - 0 → Success (EMV ready)
+     * - 1 → Failure
+     * - 2 → Success but EMV files missing
+     */
     fun loginDevice() {
         val bundle = Bundle() // reserved, keep empty
 
@@ -787,6 +748,13 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Retrieves the connected payment device model name.
+     *
+     * Reads device information from the service layer.
+     *
+     * @return Device model string or empty if unavailable/error.
+     */
     fun getDeviceModel(): String {
         return try {
             val devInfo = deviceService?.getDevInfo()
@@ -797,6 +765,22 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Starts an EMV payment transaction flow.
+     *
+     * This is the core entry point for transaction processing.
+     *
+     * Flow includes:
+     * - Reset transaction state
+     * - Initialize EMV transaction parameters
+     * - Configure card reading modes (MSR / ICC / NFC)
+     * - Start EMV kernel transaction
+     * - Start magnetic card fallback reader (if enabled)
+     *
+     * @param context Application context for device service access.
+     * @param transConfig Transaction configuration (amount, mode, timeout, etc.).
+     * @param iEmvSdkResponseListener Callback listener for EMV lifecycle events.
+     */
     fun startPayment(
         context: Context,
         transConfig: TransConfig?,
@@ -876,6 +860,13 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Logs all configured AID parameters currently loaded in the EMV handler.
+     *
+     * This is used for debugging and verifying AID configuration after initialization.
+     *
+     * ⚠️ Should only be used in debug builds due to sensitive data exposure.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun printAidInfo() {
         for (it in deviceService?.emvHandler?.getAidParaList() ?: listOf<EmvAidPara>()) {
@@ -925,6 +916,17 @@ class EmvWrapperRepository @Inject constructor(
 
     }
 
+    /**
+     * Initializes AID configuration in the EMV kernel.
+     *
+     * Steps:
+     * - Clears existing AID parameters
+     * - Adds contact AIDs
+     * - Adds contactless AIDs
+     *
+     * @param aidConfig Configuration containing AID and terminal parameters.
+     * @return true if AID configuration is successfully applied.
+     */
     fun initAidConfig(aidConfig: AidConfig?): Boolean {
         var result = false
         deviceService?.emvHandler?.clearAIDParam()
@@ -936,6 +938,17 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
+    /**
+     * Initializes CAPK (Certificate Authority Public Keys) in EMV kernel.
+     *
+     * Steps:
+     * - Clears existing CAPK list
+     * - Converts CAPKey models into EmvCapk format
+     * - Loads CAPKs into device EMV handler
+     *
+     * @param capKeys List of CAP keys used for EMV offline authentication.
+     * @return true if CAPK loading succeeds.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun initCAPKeys(capKeys: List<CAPKey>?): Boolean {
         var result = true
@@ -982,6 +995,24 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
+    /**
+     * Adds and configures CONTACT AID parameters into EMV kernel.
+     *
+     * This method builds a full EmvAidPara structure including:
+     * - AID parameters
+     * - Floor limits
+     * - TAC values
+     * - CVM limits
+     * - Terminal capabilities
+     * - Risk parameters
+     *
+     * Supports fallback from:
+     * - Per-AID config
+     * - Global config
+     *
+     * @param config AID configuration source.
+     * @return true if configuration is successfully applied.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun addContactAid(config: AidConfig): Boolean {
         var result = true
@@ -1198,6 +1229,27 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
+    /**
+     * Adds CONTACTLESS AID parameters into the EMV kernel.
+     *
+     * This method configures EMV parameters specific to NFC/contactless flow,
+     * including:
+     * - AID configuration
+     * - Floor limits (contactless-specific)
+     * - TAC values
+     * - CVM limits
+     * - Terminal capabilities
+     * - Risk management parameters
+     * - TTQ (Terminal Transaction Qualifiers)
+     *
+     * Configuration priority:
+     * 1. Per-AID config
+     * 2. Contactless config
+     * 3. Global config
+     *
+     * @param config AID configuration source.
+     * @return true if contactless AID setup succeeds.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun addContactlessAid(config: AidConfig): Boolean {
         var result = true
@@ -1421,6 +1473,17 @@ class EmvWrapperRepository @Inject constructor(
         return result
     }
 
+    /**
+     * Reads PAN (Primary Account Number) from EMV kernel.
+     *
+     * Priority:
+     * 1. EMV TAG (9F6B / PAN equivalent)
+     * 2. Track2 fallback
+     *
+     * Removes trailing 'F' padding if present.
+     *
+     * @return Clean PAN string or null if not available.
+     */
     private fun readPan(): String? {
         val pan = getPbocData(EmvConstants.EMV_TAG_PAN)
         if (pan.isNullOrEmpty()) {
@@ -1433,6 +1496,21 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Reads EMV tag data from device kernel or card.
+     *
+     * This method attempts to fetch tag data in order:
+     * 1. Kernel data (cached EMV response)
+     * 2. Card data (live ICC/NFC read)
+     *
+     * Supports return formats:
+     * - HEX string
+     * - ASCII decoded string
+     *
+     * @param tagName EMV tag identifier.
+     * @param isHex If true returns HEX string, else ASCII string.
+     * @return Tag value or null if not available.
+     */
     @OptIn(ExperimentalStdlibApi::class)
     private fun getPbocData(tagName: String, isHex: Boolean?=true): String? {
         return try {
@@ -1456,6 +1534,13 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Reads Track2 data from EMV kernel.
+     *
+     * Removes trailing 'F' padding if present.
+     *
+     * @return Track2 string or null if unavailable.
+     */
     private fun readTrack2(): String? {
         val track2 = getPbocData(EmvDataSource.GET_TRACK2_TAG_6B)
         return if (!track2.isNullOrEmpty() && track2.endsWith("F")) {
@@ -1465,6 +1550,16 @@ class EmvWrapperRepository @Inject constructor(
         }
     }
 
+    /**
+     * Extracts PAN from Track2 data.
+     *
+     * Logic:
+     * - Reads Track2 string
+     * - Finds separator '=' or 'D'
+     * - Extracts PAN portion (max 19 digits)
+     *
+     * @return PAN extracted from Track2 or null if invalid.
+     */
     private fun getPanFromTrack2(): String? {
         val track2 = readTrack2()
         if (track2 != null) {
@@ -1478,6 +1573,17 @@ class EmvWrapperRepository @Inject constructor(
         return null
     }
 
+    /**
+     * Core EMV device service connection layer.
+     *
+     * This companion object manages:
+     * - Android service binding/unbinding
+     * - EMV device lifecycle
+     * - Transaction state
+     * - Key injection (TMK / working keys)
+     * - PIN handling
+     * - EMV online processing
+     */
     companion object  : ServiceConnection{
         private var iEmvSdkResponseListener: IEmvSdkResponseListener? = null
         private var job: Job? = null
@@ -1494,6 +1600,17 @@ class EmvWrapperRepository @Inject constructor(
         private var serviceConnected = CompletableDeferred<Boolean>()
         private var TAG = "MOREFUN"
 
+        /**
+         * Binds to the EMV device service.
+         *
+         * Handles:
+         * - Service connection setup
+         * - Optional service recreation
+         * - Cleanup of previous EMV session
+         *
+         * @param context Android context used for binding.
+         * @param recreate If true, forces rebind by resetting existing service.
+         */
         private suspend fun bindService(context: Context?=null, recreate : Boolean? = false) {
             try {
                 deviceService?.emvHandler?.endPBOC()
@@ -1524,6 +1641,11 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Called when EMV service is successfully connected.
+         *
+         * Initializes DeviceServiceEngine and performs login handshake.
+         */
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             deviceService = DeviceServiceEngine.Stub.asInterface(binder)
 
@@ -1538,12 +1660,28 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Called when EMV service is unexpectedly disconnected.
+         *
+         * Clears cached service reference and marks connection as invalid.
+         */
         override fun onServiceDisconnected(name: ComponentName?) {
             deviceService = null
             serviceConnected.complete(false)
             Log.d(TAG, "Service Disconnected")
         }
 
+        /**
+         * Resets all transaction-level state.
+         *
+         * Clears:
+         * - Amounts
+         * - PIN block
+         * - KSN
+         * - NFC data
+         * - Card check state
+         * - Active coroutine job
+         */
         fun resetTransData() {
             /* Interrupt existing thread if any */
             job?.cancel()
@@ -1559,6 +1697,14 @@ class EmvWrapperRepository @Inject constructor(
             checkCardResult = null
         }
 
+        /**
+         * Returns active DeviceServiceEngine instance.
+         *
+         * Ensures service is bound before returning instance.
+         *
+         * @param context Optional context for binding service if required.
+         * @return DeviceServiceEngine instance or null if unavailable.
+         */
         suspend fun getDeviceService(context: Context?=null) : DeviceServiceEngine?
         {
             bindService(context)
@@ -1567,6 +1713,19 @@ class EmvWrapperRepository @Inject constructor(
             return deviceService
         }
 
+        /**
+         * Injects Terminal Master Key (TMK) into secure PIN pad.
+         *
+         * Steps:
+         * - Converts TMK from HEX
+         * - Loads key into device
+         * - Validates using KCV comparison
+         *
+         * @param tmk TMK in HEX format.
+         * @param kcv Expected Key Check Value.
+         * @param context Optional context for service binding.
+         * @return true if key injection and validation succeed.
+         */
         @OptIn(ExperimentalStdlibApi::class)
         suspend fun injectTMKKey(tmk: String, kcv: String, context: Context? = null): Boolean {
             try {
@@ -1596,6 +1755,15 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Injects working PIN key into secure PIN pad.
+         *
+         * Used for PIN encryption during online/offline transactions.
+         *
+         * @param pinKey Working key in HEX format.
+         * @param context Optional context for service binding.
+         * @return true if key injection succeeds and KCV is valid.
+         */
         @OptIn(ExperimentalStdlibApi::class)
         suspend fun injectWorkingKey(pinKey: String, context: Context? = null): Boolean {
 
@@ -1635,6 +1803,16 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Reads EMV tag value from kernel or card.
+         *
+         * Attempts:
+         * 1. Kernel cache (preferred)
+         * 2. Card direct read fallback
+         *
+         * @param tag EMV tag in HEX format.
+         * @return Tag value in HEX string or null if not found.
+         */
         @OptIn(ExperimentalStdlibApi::class)
         fun getEmvTag(tag: String?): String? {
             return try {
@@ -1668,6 +1846,14 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Aborts current EMV transaction safely.
+         *
+         * Stops:
+         * - EMV kernel processing
+         * - Magnetic card search
+         * - Active coroutine job
+         */
         fun abortPayment() {
             job?.cancel()
             job = null
@@ -1676,6 +1862,18 @@ class EmvWrapperRepository @Inject constructor(
 
         }
 
+        /**
+         * Encrypts transaction data and triggers online host request.
+         *
+         * Flow:
+         * - Builds TLV map
+         * - Applies encryption (PAN, PIN, KSN)
+         * - Sends request to host via callback
+         * - Handles approval/decline response
+         *
+         * @param p0 EMV TLV input data.
+         * @param p1 Optional additional payload.
+         */
         @OptIn(ExperimentalStdlibApi::class)
         fun encryptThenRequestOnline(p0: String? = null, p1: String? = null) {
             try {
@@ -1761,12 +1959,33 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Initializes encryption state for a new transaction.
+         *
+         * Increments DUKPT KSN counter and clears:
+         * - PIN block
+         * - KSN
+         */
         fun initEncryption() {
             deviceService?.pinPad?.increaseKSN(EncryptionConstants.KEY_INDEX_DATA_KEY.ordinal,true)
             pinBlock = null
             ksn = null
         }
 
+        /**
+         * Encrypts sensitive EMV data using DUKPT.
+         *
+         * Encrypts:
+         * - PAN (Primary Account Number)
+         * - PIN block (if available)
+         *
+         * Also prepares:
+         * - Track2 formatted data
+         * - Host-ready fields
+         *
+         * @param tlvMap Raw EMV TLV map.
+         * @return Map containing encrypted values.
+         */
         @OptIn(ExperimentalStdlibApi::class)
         fun getEncryptedData(tlvMap: HashMap<String, String>): HashMap<String, String> {
             val hashMap = HashMap<String, String>()
@@ -1837,6 +2056,12 @@ class EmvWrapperRepository @Inject constructor(
             return hashMap
         }
 
+        /**
+         * Maps EMV transaction result codes to SDK-level status.
+         *
+         * @param result Raw EMV result code.
+         * @return Normalized transaction status.
+         */
         fun ysdkToEmvTransResult(result : Int): TransStatus? {
             return when (result) {
                 EmvConstants.MF_EMV_RET_SUCCESS -> TransStatus.APPROVED_ONLINE
@@ -1850,6 +2075,12 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Maps card detection result to SDK card status.
+         *
+         * @param checkCardResult Raw hardware result code.
+         * @return Normalized card status.
+         */
         fun ysdkToCheckCardStatus(checkCardResult : Int): EmvSdkResult.CardCheckStatus? {
             return when (checkCardResult) {
                     1 -> EmvSdkResult.CardCheckStatus.CARD_INSERTED
@@ -1859,6 +2090,14 @@ class EmvWrapperRepository @Inject constructor(
             }
         }
 
+        /**
+         * Safely retrieves device serial number from EMV service.
+         *
+         * Ensures service is connected before access.
+         *
+         * @param context Android context for service binding.
+         * @return Serial number or empty string if unavailable.
+         */
         suspend fun getDeviceSerialNumberSafe(context: Context): String {
             return try {
                 // Bind service if not already connected
@@ -1880,7 +2119,16 @@ class EmvWrapperRepository @Inject constructor(
 
     }
 
-
+    /**
+     * Converts BCD encoded bytes into binary byte array.
+     *
+     * Example:
+     * - BCD: 0x12 0x34 → "1234" → BigInteger → ByteArray
+     *
+     * @param bcdArray Input BCD encoded data.
+     * @return Converted binary byte array.
+     * @throws IllegalArgumentException if invalid BCD byte detected.
+     */
     private fun bcdToBinaryArray(bcdArray: ByteArray): ByteArray {
         val decimalStr = buildString {
             for (bcd in bcdArray) {

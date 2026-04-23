@@ -20,7 +20,16 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     private var countyCode: String = ""
     private var merchantType: String = ""
 
-
+    /**
+     * Loads merchant configuration from POS config.
+     *
+     * Behavior:
+     * - Reads merchant details from stored configuration
+     * - Updates local UI state variables
+     * - Syncs values to transaction object for further processing
+     *
+     * @param sharedViewModel Shared ViewModel containing POS config and txn data
+     */
     fun onLoad(sharedViewModel: SharedViewModel) {
 
         merchantName = sharedViewModel.objPosConfig?.merchantNameLocation ?: ""
@@ -41,35 +50,87 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         sharedViewModel.objRootAppPaymentDetail.postalServiceCode = postalServiceCode
     }
 
-
+    /**
+     * Updates merchant location value.
+     *
+     * @param value Merchant location string
+     */
     fun updateMerchantLocation(value: String) {
         merchantLocation = value
     }
 
+    /**
+     * Updates merchant bank name.
+     *
+     * @param value Merchant bank name
+     */
     fun updateMerchantBankName(value: String) {
         merchantBankName = value
     }
 
+    /**
+     * Updates merchant type/category.
+     *
+     * @param value Merchant category code
+     */
     fun updateMerchantType(value: String) {
         merchantType = value
     }
 
+    /**
+     * Updates FNS (Food and Nutrition Service) number.
+     *
+     * @param value FNS number
+     */
     fun updateFNSNumber(value: String) {
         fnsNumber = value
     }
 
+    /**
+     * Updates postal service code.
+     *
+     * @param value Postal service code
+     */
     fun updatePostalServiceCode(value: String) {
         postalServiceCode = value
     }
 
+    /**
+     * Updates state code.
+     *
+     * @param value State code
+     */
     fun updateStateCode(value: String) {
         stateCode = value
     }
 
+    /**
+     * Updates county code.
+     *
+     * @param value County code
+     */
     fun updateCountyCode(value: String) {
         countyCode = value
     }
 
+    /**
+     * Saves merchant configuration.
+     *
+     * Behavior:
+     * - Updates transaction object with latest merchant details
+     * - Persists updated configuration to shared preferences
+     * - Navigates back to previous screen
+     *
+     * @param navHostController Navigation controller for back navigation
+     * @param sharedViewModel Shared ViewModel containing config and txn data
+     * @param merchantNameLocation Merchant name/location
+     * @param merchantBankName Merchant bank name
+     * @param merchantType Merchant category/type
+     * @param fnsNumber FNS number
+     * @param stateCode State code
+     * @param countyCode County code
+     * @param postalServiceCode Postal service code
+     */
     fun onSaveMerchantConfig(
         navHostController: NavHostController,
         sharedViewModel: SharedViewModel,

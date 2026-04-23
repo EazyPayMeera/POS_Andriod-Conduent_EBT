@@ -28,6 +28,14 @@ import com.eazypaytech.pos.core.ui.components.textview.GenericCard
 import com.eazypaytech.pos.core.themes.dimens
 
 class AlertDialogBuilder {
+    /**
+     * Builder class for creating customizable alert dialogs.
+     *
+     * Provides a fluent API to configure dialog properties like
+     * title, subtitle, button visibility, and callbacks,
+     * and finally builds a Compose dialog.
+     */
+
     var showCloseButton: Boolean = true
     var title: String = ""
     var subtitle: String = ""
@@ -41,7 +49,10 @@ class AlertDialogBuilder {
     fun setShowCloseButton(show: Boolean) = apply { this.showCloseButton = show }
     fun setOnClose(onClose: () -> Unit) = apply { this.onClose = onClose }
     fun setOnDismissRequest(onDismissRequest: () -> Unit) = apply { this.onDismissRequest = onDismissRequest }
-    // Build the dialog
+
+    /**
+     * Builds and displays the alert dialog using provided configurations.
+     */
     @Composable
     fun build(
         cancelButtonText: String = stringResource(id = R.string.cancel_btn), // Default text for Cancel button
@@ -61,6 +72,15 @@ class AlertDialogBuilder {
     }
 }
 
+/**
+ * Composable UI for displaying a customizable alert dialog.
+ *
+ * Features:
+ * - Title, subtitle, and optional small text
+ * - Cancel and OK buttons
+ * - Dismiss and close callbacks
+ * - Fully styled using MaterialTheme and custom components
+ */
 @Composable
 fun CustomAlertDialog(
     title: String,
@@ -146,6 +166,13 @@ fun CustomAlertDialog(
     }
 }
 
+/**
+ * Example usage of AlertDialogBuilder.
+ *
+ * Demonstrates how to configure and display
+ * a custom alert dialog with actions.
+ */
+
 @Composable
 fun AlertDialogExample() {
     val builder = AlertDialogBuilder()
@@ -167,6 +194,9 @@ fun AlertDialogExample() {
     )
 }
 
+/**
+ * Preview function for visualizing the alert dialog in Compose preview.
+ */
 @Composable
 @Preview
 fun PreviewAlertDialogExample() {

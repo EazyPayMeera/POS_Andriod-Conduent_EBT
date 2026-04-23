@@ -19,6 +19,17 @@ import kotlin.toString
 class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: Context, override var iEmvSdkResponseListener: IEmvSdkResponseListener) : IEmvSdkRequestListener {
     private var emvWrapper = EmvWrapperRepository(context, iEmvSdkResponseListener)
 
+    /**
+     * Initializes EMV Payment SDK.
+     *
+     * Features:
+     * - Loads AID configuration
+     * - Injects CAP keys
+     * - Handles SDK initialization errors
+     *
+     * @param aidConfig AID configuration data
+     * @param capKeys List of CAP keys
+     */
     override fun initPaymentSDK(
         aidConfig: AidConfig?,
         capKeys: List<CAPKey>?
@@ -30,6 +41,17 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    /**
+     * Starts EMV payment transaction.
+     *
+     * Features:
+     * - Initiates transaction flow
+     * - Passes transaction configuration
+     * - Provides callback for SDK responses
+     *
+     * @param context Android context
+     * @param transConfig Transaction configuration
+     */
     override fun startPayment(
         context: Context,
         transConfig: TransConfig?,
@@ -41,6 +63,18 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    /**
+     * Generates PIN block for transaction.
+     *
+     * Features:
+     * - Accepts PAN and amount
+     * - Triggers manual PIN entry
+     * - Returns encrypted PIN block via callback
+     *
+     * @param pan Card PAN (Primary Account Number)
+     * @param amount Transaction amount
+     * @param nResult Callback returning PIN block
+     */
     override fun pinGeneration(
         pan: String?,
         amount: String,
@@ -53,6 +87,16 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    /**
+     * Checks if card exists in reader.
+     *
+     * Features:
+     * - Performs synchronous card presence check
+     * - Handles SDK errors safely
+     *
+     * @param context Android context
+     * @return true if card exists, false otherwise
+     */
     override fun isCardExists(context: Context): Boolean {
         return runBlocking {
             try {
@@ -64,40 +108,13 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
-    override fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus {
-        return runBlocking {
-            try {
-                emvWrapper.detectCard(context)
-            } catch (e: Exception) {
-                Log.e("MOREFUN", "Error checking card: ${e.message}")
-                EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
-            }
-        }
-    }
-
-
-    override fun startLogCapture(context: Context): Boolean {
-        return runBlocking {
-            try {
-                emvWrapper.startLogCapture(context)
-            } catch (e: Exception) {
-                Log.e("MOREFUN", "Error checking card: ${e.message}")
-                false
-            }
-        }
-    }
-
-    override fun stopLogCapture(context: Context): Boolean {
-        return runBlocking {
-            try {
-                emvWrapper.startLogCapture(context)
-            } catch (e: Exception) {
-                Log.e("MOREFUN", "Error checking card: ${e.message}")
-                false
-            }
-        }
-    }
-
+    /**
+     * Aborts ongoing EMV payment transaction.
+     *
+     * Features:
+     * - Cancels active transaction
+     * - Notifies SDK listener on failure
+     */
     override fun abortPayment() {
         try {
             EmvWrapperRepository.Companion.abortPayment()
@@ -106,9 +123,19 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
+    /**
+     * Retrieves EMV tag value.
+     *
+     * Features:
+     * - Fetches tag data from EMV kernel
+     * - Handles errors safely
+     *
+     * @param tag EMV tag identifier
+     * @return Tag value or null if unavailable
+     */
     override fun getEmvTag(tag: String?): String? {
         return try {
-            EmvWrapperRepository.Companion.getEmvTag(tag)
+            EmvWrapperRepository.getEmvTag(tag)
         }catch (exception: Exception)
         {
             exception.printStackTrace()
@@ -116,33 +143,5 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
         }
     }
 
-    fun getEmvDataSafe(
-        tagList: Array<String>,
-        bundle: Bundle?
-    ): ByteArray? {
 
-        val outBuffer = ByteArray(2048)
-
-        return try {
-
-            val resultCode = emvWrapper.getEmvDataSafe(
-                tagList,
-                bundle
-            ) ?: return null
-
-            Log.d("EMV_READ", "Result code = $resultCode")
-            Log.d("EMV_READ", "Tags requested = ${tagList.joinToString()}")
-
-            // IMPORTANT: copy only valid bytes
-            val cleanData = outBuffer.takeWhile { it.toInt() != 0 }.toByteArray()
-
-            Log.d("EMV_READ", "Output size = ${cleanData.size}")
-
-            cleanData
-
-        } catch (e: Exception) {
-            Log.e("EMV_READ", "Failed to read EMV data", e)
-            null
-        }
-    }
 }

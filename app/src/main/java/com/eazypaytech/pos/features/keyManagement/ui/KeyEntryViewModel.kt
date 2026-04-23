@@ -29,17 +29,37 @@ class KeyEntryViewModel @Inject constructor() : ViewModel() {
     var key by mutableStateOf("")
         private set
 
-
+    /**
+     * Initializes the screen by loading the Master KEK from local storage.
+     *
+     * @param context Application context used to access file storage
+     * @param sharedViewModel Shared ViewModel containing app state
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(context: Context,sharedViewModel: SharedViewModel)
     {
         key = readMasterKEK(context,sharedViewModel).toString()
     }
 
+    /**
+     * Updates the key value when user input changes.
+     *
+     * @param newValue Newly entered key string
+     */
     fun onCardNoChange(newValue: String) {
         key = newValue
     }
 
+    /**
+     * Validates the entered key and triggers save operation if valid.
+     *
+     * Validation Rules:
+     * - Key must not be empty
+     * - Key must be exactly 32 characters long
+     *
+     * @param context Application context
+     * @param navHostController Navigation controller for screen transitions
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onConfirm(context: Context,navHostController: NavHostController) {
         if(key.isEmpty()) {
@@ -61,10 +81,27 @@ class KeyEntryViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * Handles cancel action and navigates user back to dashboard.
+     *
+     * @param navHostController Navigation controller
+     */
     fun onCancel(navHostController: NavHostController) {
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
+    /**
+     * Reads the Master KEK value from Config.json file.
+     *
+     * Behavior:
+     * - Returns null if file does not exist
+     * - Returns null if key is missing or empty
+     * - Logs errors if parsing fails
+     *
+     * @param context Application context
+     * @param sharedViewModel Shared ViewModel (reserved for future use)
+     * @return Master KEK string or null
+     */
     fun readMasterKEK(context: Context, sharedViewModel: SharedViewModel): String? {
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
 
@@ -91,6 +128,18 @@ class KeyEntryViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * Saves the Master KEK into Config.json file.
+     *
+     * Behavior:
+     * - Creates file if it does not exist
+     * - Updates existing JSON if present
+     * - Shows success dialog on completion
+     *
+     * @param navHostController Navigation controller for redirection
+     * @param context Application context
+     * @return true if save successful, false otherwise
+     */
     fun saveMasterKEK(navHostController: NavHostController,context: Context): Boolean {
         val configFile = File(context.getExternalFilesDir(null), "Config.json")
 

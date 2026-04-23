@@ -42,16 +42,43 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
     val isFormValid: Boolean
         get() = emailCredentials.value.isNotBlank() && pwdCredentials.value.isNotBlank()
 
+    /**
+     * Updates email input state when user modifies email field.
+     *
+     * @param newEmail Entered email string
+     */
     fun onEmailChange(newEmail: String) {
         emailCredentials.value = newEmail
     }
 
+    /**
+     * Updates password input state when user modifies password field.
+     *
+     * @param newPassword Entered password string
+     */
     fun onPasswordChange(newPassword: String) {
         pwdCredentials.value = newPassword
     }
 
+    /**
+     * Enables or disables the login button.
+     *
+     * @param enabled Flag to control button state
+     */
     fun setLoginButtonState(enabled: Boolean)  { isLoginEnabled.value = enabled }
 
+    /**
+     * Handles login button click event.
+     *
+     * Behavior:
+     * - Validates user credentials from local DB
+     * - Supports master password authentication
+     * - Navigates based on transaction type
+     * - Updates login state in POS config
+     *
+     * @param navHost Navigation controller
+     * @param sharedViewModel Shared ViewModel containing app state
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun onLoginClick(navHost: NavHostController?, sharedViewModel : SharedViewModel) {
         this.navHostController = navHost!!
@@ -96,25 +123,57 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         }
     }
 
-
-
-
+    /**
+     * Callback triggered when API call succeeds.
+     *
+     * Behavior:
+     * - Marks user as logged in
+     * - Navigates to dashboard screen
+     *
+     * @param paymentServiceTxnDetails API response data
+     */
     override fun onApiServiceSuccess(paymentServiceTxnDetails: PaymentServiceTxnDetails) {
         sharedViewModel?.objPosConfig?.apply { isLoggedIn = true }?.saveToPrefs()
         navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
     }
 
+    /**
+     * Callback triggered when API returns an error.
+     *
+     * Behavior:
+     * - Logs error message
+     * - Updates error state for UI handling
+     * - Re-enables login button
+     *
+     * @param apiServiceError Error response object
+     */
     override fun onApiServiceError(apiServiceError: ApiServiceError) {
         Log.e("API Response", apiServiceError.errorMessage)
         userApiServiceErrorHolder.value = apiServiceError
         setLoginButtonState(true)
     }
 
+    /**
+     * Callback triggered when API request times out.
+     *
+     * Behavior:
+     * - Displays error dialog with timeout message
+     *
+     * @param apiServiceTimeout Timeout response data
+     */
     override fun onApiServiceTimeout(apiServiceTimeout: ApiServiceTimeout) {
         CustomDialogBuilder.composeAlertDialog(title = navHostController.context.resources?.getString(
             R.string.default_alert_title_error),message = apiServiceTimeout.message)
     }
 
+    /**
+     * Controls display of API progress dialog.
+     *
+     * @param show Flag to show/hide dialog
+     * @param title Optional title text
+     * @param subTitle Optional subtitle text
+     * @param message Optional message text
+     */
     override fun onApiServiceDisplayProgress(
         show: Boolean,
         title: String?,
@@ -124,6 +183,17 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         CustomDialogBuilder.composeProgressDialog(show = show,title = title, subtitle = subTitle, message = message)
     }
 
+    /**
+     * Performs online authentication for cash withdrawal transactions.
+     *
+     * Behavior:
+     * - Calls API for transaction authentication
+     * - Updates transaction status based on response
+     * - Navigates to result screen
+     *
+     * @param sharedViewModel Shared ViewModel containing transaction data
+     * @param navHostController Navigation controller
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun authenticateTransaction(sharedViewModel: SharedViewModel, navHostController: NavHostController) {
         viewModelScope.launch {

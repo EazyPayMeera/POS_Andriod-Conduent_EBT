@@ -45,6 +45,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     lateinit var navHostController : NavHostController
     var cardRetryCount = 0
 
+
+    /**
+     * Navigates to Approval screen.
+     *
+     * Flow:
+     * - Keeps CardScreen in back stack
+     * - Avoids duplicate instances using launchSingleTop
+     */
+
     fun navigateToApprovalScreen(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigate(AppNavigationItems.ApprovedScreen.route){
@@ -54,6 +63,13 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Navigates to Manual Card entry screen.
+     *
+     * Flow:
+     * - Stops ongoing EMV transaction
+     * - Redirects user to manual input flow
+     */
     fun navigateToManualScreen(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigate(AppNavigationItems.ManualCardScreen.route){
@@ -64,7 +80,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
-
+    /**
+     * Aborts current payment and navigates to Dashboard.
+     */
     fun abortPayment(navHostController: NavHostController) {
         viewModelScope.launch {
             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
@@ -72,6 +90,13 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Shows confirmation dialog for cancel action.
+     *
+     * Flow:
+     * - If user confirms → abort payment
+     * - Else → dismiss dialog
+     */
     fun onCancelClick(navHostController: NavHostController) {
         CustomDialogBuilder.Companion.composeAlertDialog(
             title = context.getString(R.string.cancel_dialogue),
@@ -83,6 +108,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             cancelBtnText = context.getString(R.string.cancel_no),
         )
     }
+
+    /**
+     * Updates transaction result in database.
+     *
+     * Flow:
+     * - Updates status, auth code, datetime, and POS condition
+     * - Persists updated transaction in DB
+     */
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus: TxnStatus?, originalDateTime: String, AuthCode: String, posCondition: String) {
@@ -106,6 +139,18 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Initiates EMV payment process.
+     *
+     * Flow:
+     * - Checks network availability
+     * - Sets transaction datetime
+     * - Starts EMV payment
+     * - Handles EMV callbacks:
+     *      → Transaction result
+     *      → Card detection states
+     *      → Display messages
+     */
     fun startPayment(
         context: Context,
         sharedViewModel: SharedViewModel,
@@ -202,6 +247,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Updates EBT balance (cash & SNAP) in database.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateBalance(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
@@ -213,6 +261,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Parses EBT balance from hex string.
+     *
+     * Extracts:
+     * - Cash balance (accountType 0x96)
+     * - SNAP balance (accountType 0x98)
+     *
+     * Only processes Available Balance (amountType 0x02)
+     */
     fun parseEBTBalances(hexString: String): EBTBalance {
         val blocks = hexString.chunked(20)
         var snapBalance = 0.0
@@ -243,6 +300,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         return EBTBalance(snap = snapBalance, cash = cashBalance)
     }
 
+    /**
+     * Checks internet connectivity.
+     * Shows error dialog if no network available.
+     */
     fun checkNetwork(context: Context)
     {
         if(NetworkUtils().checkForInternet(context)!=true)
@@ -254,7 +315,14 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
-
+    /**
+     * Displays EMV error dialog and handles retry logic.
+     *
+     * Flow:
+     * - Shows error message
+     * - If retry allowed → restarts payment (limited attempts)
+     * - Else → navigates to manual or aborts
+     */
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
         var message : String? = null
@@ -288,6 +356,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
 
     }
 
+    /**
+     * Checks if card interaction is in progress.
+     */
     fun isCardCheckStatusInProgress(status: Any?) : Boolean
     {
         return when(status)
@@ -301,6 +372,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     }
 
 
+    /**
+     * Checks if no card is present (timeout).
+     */
     fun isCardNotPresent(status: Any?) : Boolean
     {
         return when(status)
@@ -311,6 +385,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Checks if card detection resulted in an error.
+     */
     fun isCardCheckStatusError(status: Any?) : Boolean
     {
         return when(status)
@@ -327,6 +404,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Determines if display message requires popup dialog.
+     */
     fun isDispIdNeedPopupMsg(displayMsgId: EmvServiceResult.DisplayMsgId?) : Boolean
     {
         return when(displayMsgId)
@@ -339,6 +419,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         }
     }
 
+    /**
+     * Checks if transaction requires another card attempt.
+     */
     fun isStatusTryAnotherCard(status: Any?) : Boolean
     {
         return when(status)

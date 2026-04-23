@@ -96,11 +96,28 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
         }
     }
 
+    /**
+     * Initializes screen data on load.
+     *
+     * Behavior:
+     * - Fetches and refreshes user list
+     * - Checks whether current user has admin privileges
+     *
+     * @param sharedViewModel Shared ViewModel containing login details
+     */
     fun onLoad(sharedViewModel: SharedViewModel) {
         refreshUserList()
         checkIfAdmin(sharedViewModel)
     }
 
+    /**
+     * Fetches all user details from database.
+     *
+     * Behavior:
+     * - Retrieves user list asynchronously
+     * - Updates UI state with latest data
+     * - Handles exceptions and logs errors
+     */
     fun refreshUserList() {
         viewModelScope.launch {
             try {
@@ -113,6 +130,16 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
         }
     }
 
+    /**
+     * Checks if the currently logged-in user is an admin.
+     *
+     * Behavior:
+     * - Fetches login ID from POS config
+     * - Queries database for admin status
+     * - Updates admin state flag
+     *
+     * @param sharedViewModel Shared ViewModel containing POS configuration
+     */
     fun checkIfAdmin(sharedViewModel: SharedViewModel) {
         viewModelScope.launch {
             sharedViewModel.objPosConfig?.loginId?.let {
@@ -123,6 +150,15 @@ class UserManagementViewModel @Inject constructor(private val dbRepository: TxnD
         }
     }
 
+    /**
+     * Displays a dialog indicating restricted access.
+     *
+     * Behavior:
+     * - Shows alert dialog for non-admin users
+     * - Used when accessing admin-only features
+     *
+     * @param context Application context for resource access
+     */
     fun onShowAdminOnly(context: Context)
     {
         CustomDialogBuilder.composeAlertDialog(

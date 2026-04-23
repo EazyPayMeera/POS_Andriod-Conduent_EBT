@@ -10,7 +10,12 @@ import javax.inject.Inject
 class BuilderServiceRepository @Inject constructor(): IBuilderServiceRequestListener {
     lateinit var iBuilderServiceResponseListener: IBuilderServiceResponseListener
 
-
+    /**
+     * Sends a generic network request (ISO message) and listens for response using Flow.
+     *
+     * @param iBuilderServiceResponseListener Callback listener for success/failure
+     * @param requestBody ISO request in ByteArray format
+     */
     override suspend fun networkServiceRequest(
         iBuilderServiceResponseListener: IBuilderServiceResponseListener,
         requestBody: ByteArray
@@ -28,7 +33,14 @@ class BuilderServiceRepository @Inject constructor(): IBuilderServiceRequestList
         }
     }
 
-
+    /**
+     * Sends handshake request (e.g., Echo / Key Exchange).
+     *
+     * Uses a single API call instead of Flow.
+     *
+     * @param iBuilderServiceResponseListener Callback listener
+     * @param requestBody ISO request
+     */
     override suspend fun handShakeRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: ByteArray)
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
@@ -38,6 +50,14 @@ class BuilderServiceRepository @Inject constructor(): IBuilderServiceRequestList
         }
     }
 
+    /**
+     * Sends request without collecting or handling response immediately.
+     *
+     * ⚠️ Fire-and-forget type call (no response handling here)
+     *
+     * @param iBuilderServiceResponseListener Callback listener
+     * @param requestBody ISO request
+     */
     fun networkServiceResponse(
         iBuilderServiceResponseListener: IBuilderServiceResponseListener,
         requestBody: ByteArray
@@ -48,6 +68,14 @@ class BuilderServiceRepository @Inject constructor(): IBuilderServiceRequestList
 
     }
 
+    /**
+     * Sends financial transaction request (e.g., purchase, cashback).
+     *
+     * Similar to handshake but used for transaction processing.
+     *
+     * @param iBuilderServiceResponseListener Callback listener
+     * @param requestBody ISO request
+     */
     override suspend fun networkServiceFinancialRequest(iBuilderServiceResponseListener: IBuilderServiceResponseListener, requestBody: ByteArray)
     {
         this.iBuilderServiceResponseListener = iBuilderServiceResponseListener
@@ -57,7 +85,16 @@ class BuilderServiceRepository @Inject constructor(): IBuilderServiceRequestList
         }
     }
 
-
+    /**
+     * Centralized handler for all network responses.
+     *
+     * Handles:
+     * - Success responses
+     * - Timeout errors
+     * - Generic failures
+     *
+     * @param apiResultProvider Result wrapper containing response or error
+     */
     override fun onNetworkServiceResponse(apiResultProvider: ResultProvider<ByteArray>) {
         when (apiResultProvider) {
 
