@@ -451,7 +451,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         val isEMVEnable = paymentServiceTxnDetails?.isEMVEnable
         val isTapEnable = paymentServiceTxnDetails?.isTapEnable
         return TransConfig(
-            amount = (paymentServiceTxnDetails?.ttlAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(),
+            amount = (paymentServiceTxnDetails?.txnAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             cashbackAmount = (paymentServiceTxnDetails?.cashback?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             currencyCode = paymentServiceTxnDetails?.currencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
