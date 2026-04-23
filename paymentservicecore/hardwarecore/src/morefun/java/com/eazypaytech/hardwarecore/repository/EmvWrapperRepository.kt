@@ -40,6 +40,7 @@ import com.morefun.yapi.emv.EmvDataSource
 import com.morefun.yapi.emv.EmvOnlineResult
 import com.morefun.yapi.emv.EmvTermCfgConstrants
 import com.morefun.yapi.emv.EmvTransDataConstrants
+import com.morefun.yapi.emv.ICheckCardListener
 import com.morefun.yapi.emv.OnEmvProcessListener
 import com.morefun.yapi.engine.DeviceInfoConstrants
 import com.morefun.yapi.engine.DeviceServiceEngine
@@ -47,8 +48,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Hashtable
@@ -625,7 +629,6 @@ class EmvWrapperRepository @Inject constructor(
                 Log.w(TAG, "deviceService is null — service not connected")
                 return false
             }
-
             val reader = service.getIccCardReader(1)
 
             if (reader == null) {
@@ -640,6 +643,87 @@ class EmvWrapperRepository @Inject constructor(
         } catch (e: RemoteException) {
             Log.e(TAG, "RemoteException in isCardExists()", e)
             false
+        }
+    }
+
+    suspend fun detectCard(context: Context?): EmvSdkResult.CardCheckStatus {
+        return try {
+            val service = getDeviceService(context)
+                ?: return EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
+
+            suspendCancellableCoroutine { cont ->
+
+                val bundle = Bundle().apply {
+                    putInt("cardType", 0x07) // MAG + CHIP + NFC
+                    putInt("timeout", 15)    // seconds (if supported)
+                }
+
+                val listener = object : ICheckCardListener.Stub() {
+
+                    override fun onFindICCard() {
+                        Log.d("CARD", "CHIP DETECTED")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.CARD_INSERTED) {}
+                    }
+
+                    override fun onFindRFCard() {
+                        Log.d("CARD", "NFC DETECTED")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.CARD_TAPPED) {}
+                    }
+
+                    override fun onFindMagCard(card: MagCardInfoEntity?) {
+                        Log.d("CARD", "MAG DETECTED")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.CARD_SWIPED) {}
+                    }
+
+                    override fun onTimeout() {
+                        Log.d("CARD", "TIMEOUT")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.TIMEOUT) {}
+                    }
+
+                    override fun onCanceled() {
+                        Log.d("CARD", "CANCELLED")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED) {}
+                    }
+
+                    override fun onError(code: Int) {
+                        Log.e("CARD", "ERROR: $code")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.ERROR) {}
+                    }
+
+                    override fun onSwipeCardFail() {
+                        Log.e("CARD", "SWIPE FAILED")
+                    }
+                }
+
+                try {
+                    Log.d("CARD", "Starting searchCard...")
+
+                    service.emvHandler.searchCard(bundle, listener)
+
+                } catch (e: Exception) {
+                    Log.e("CARD", "searchCard error", e)
+                    cont.resume(EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED) {}
+                }
+
+                // Cancel if coroutine is cancelled
+                cont.invokeOnCancellation {
+                    try {
+                        service.emvHandler.cancelCheckCard()
+                    } catch (e: Exception) {
+                        Log.e("CARD", "cancel error", e)
+                    }
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e("CARD", "detectCard error", e)
+            EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
         }
     }
 
@@ -1100,12 +1184,9 @@ class EmvWrapperRepository @Inject constructor(
                 ?: config.statusCheckSupported)?.let {
                     aidPara.statusCheck = it.hexToByte()
                 }
-                (aid.onlinePinSupport
-                    ?: config.contact?.onlinePinSupport
-                    ?: config.onlinePinSupport
-                        )?.let {
-                        aidPara.setcOnlinePinCap_b_DF18(it.hexToByte())
-                    }
+                (aid.onlinePinSupport ?: config.contact?.onlinePinSupport
+                    ?: config.onlinePinSupport)?.let {
+                        aidPara.setcOnlinePinCap_b_DF18(it.hexToByte()) }
                 aidParaList = aidParaList.plus(aidPara)
             }
 

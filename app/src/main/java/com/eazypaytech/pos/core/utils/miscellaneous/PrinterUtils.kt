@@ -314,7 +314,11 @@ object PrinterUtils {
 
             /* CASH */
             if (isCashPurchase || isCashback) {
-                var cshbeginBal = data.cashEndBalance?.plus(data.txnAmount!!)
+                val cshbeginBal = if (!isCashback) {
+                    data.cashEndBalance?.plus(data.txnAmount!!)
+                } else {
+                    data.cashEndBalance?.plus(data.txnAmount!!)?.plus(data.cashback!!)
+                }
                 cshbeginBal?.let {
                     repo.addText(context.getString(R.string.receipt_cash_begin_balance)+ " " + it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
                 }

@@ -6,6 +6,7 @@ import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.emv.AidConfig
 import com.analogics.paymentservicecore.data.model.emv.CAPKey
 import com.analogics.paymentservicecore.data.model.emv.TermConfig
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 
 interface IEmvServiceRequestListener {
     fun initPaymentSDK(termConfig: TermConfig?=null, aidConfig: String?=null, capKeys: String?=null, iEmvServiceResponseListener: IEmvServiceResponseListener)
@@ -18,6 +19,7 @@ interface IEmvServiceRequestListener {
     fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
     fun abortPayment()
     fun isCardExists(context: Context):Boolean
+    fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus
     fun startLogCapture(context: Context):Boolean
     fun stopLogCapture(context: Context):Boolean
 }

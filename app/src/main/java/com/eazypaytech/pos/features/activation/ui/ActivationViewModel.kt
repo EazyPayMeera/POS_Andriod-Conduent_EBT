@@ -170,7 +170,7 @@ class ActivationViewModel@Inject constructor(private var apiServiceRepository: A
         sharedViewModel?.objPosConfig?.footer2 = AppConstants.DEFAULT_FOOTER_2
         sharedViewModel?.objPosConfig?.footer3 = AppConstants.DEFAULT_FOOTER_3
         sharedViewModel?.objPosConfig?.footer4 = AppConstants.DEFAULT_FOOTER_4
-        sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
+        //sharedViewModel?.objPosConfig?.deviceSN = PaymentServiceUtils.getDeviceSN()
 
     }
 

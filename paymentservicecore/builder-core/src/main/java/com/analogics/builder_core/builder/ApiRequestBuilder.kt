@@ -58,11 +58,12 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     }
 
     fun cashbackAmount(cashbackAmt: Long): String {
-        val accountType = BuilderConstants.DEFAULT_ACCOUNT_TYPE   // EBT account
-        val amountType = BuilderConstants.DEFAULT_AMOUNT_TYPE    // Cash Benefit
+        Log.d("EBT", "cashbackAmount() input: $cashbackAmt")
+        val accountType = BuilderConstants.DEFAULT_ACCOUNT_TYPE
+        val amountType = "02"  // Fix: Available Balance (was DEFAULT_AMOUNT_TYPE = "40")
         val currency = BuilderConstants.DEFAULT_ISO8583_CURRENCY_CODE
-        val sign = BuilderConstants.DEFAULT_AMOUNT_SIGN           // Credit
-        val amt = (cashbackAmt * 100).toLong()
+        val sign = BuilderConstants.DEFAULT_AMOUNT_SIGN
+        val amt = cashbackAmt
             .toString()
             .padStart(12, '0')
         return accountType + amountType + currency + sign + amt

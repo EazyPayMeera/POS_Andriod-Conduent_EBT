@@ -4,6 +4,7 @@ import android.content.Context
 import com.eazypaytech.hardwarecore.domain.listener.responseListener.IEmvSdkResponseListener
 import com.eazypaytech.hardwarecore.data.model.AidConfig
 import com.eazypaytech.hardwarecore.data.model.CAPKey
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 import com.eazypaytech.hardwarecore.data.model.TransConfig
 
 interface IEmvSdkRequestListener {
@@ -15,6 +16,7 @@ interface IEmvSdkRequestListener {
     fun getEmvTag(tag : String?) : String?
     fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
     fun isCardExists(context: Context): Boolean
+    fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus
     fun startLogCapture(context: Context): Boolean
     fun stopLogCapture(context: Context): Boolean
 }

@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.analogics.paymentservicecore.data.model.TxnType
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 import com.eazypaytech.pos.R
 import com.eazypaytech.pos.features.activity.ui.localSharedViewModel
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
@@ -223,17 +224,15 @@ fun ApprovedScreen(navHostController: NavHostController) {
     }
 
     LaunchedEffect(Unit) {
-        viewModel.onLoad(context,sharedViewModel)
-        while (true) {
-            if (viewModel.isCardExists(context)) {
-                CustomDialogBuilder.composeAlertDialog(
-                    title = context.resources.getString(R.string.default_alert_title_error),
-                    subtitle = context.resources.getString(R.string.emv_msg_id_remove_card)
-                )
-            } else {
-                break
-            }
-            delay(500)
+        viewModel.onLoad(context, sharedViewModel)
+        val status = viewModel.isCardDetected(context) // suspend call
+        if (status == EmvSdkResult.CardCheckStatus.CARD_TAPPED ||
+            status == EmvSdkResult.CardCheckStatus.CARD_INSERTED
+        ) {
+            CustomDialogBuilder.composeAlertDialog(
+                title = context.resources.getString(R.string.default_alert_title_error),
+                subtitle = context.resources.getString(R.string.emv_msg_id_remove_card)
+            )
         }
     }
 }

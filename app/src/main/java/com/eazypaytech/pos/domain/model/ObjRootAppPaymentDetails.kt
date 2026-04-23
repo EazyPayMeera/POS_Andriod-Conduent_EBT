@@ -131,7 +131,7 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("ttlAmount") var ttlAmount: Double? = 0.00,
     @SerializedName("refundableAmount") var refundableAmount: String? = null,
     @SerializedName("txnStatus") var txnStatus: TxnStatus? = null,
-    @SerializedName("acquirerName") var acquirerName:String?= BuildConfig.ACQUIRER_NAME,
+    @SerializedName("acquirerName") var acquirerName:String?= "",
     @SerializedName("signatureData")    var signatureData: String? = null,
 
     /* Original Txn data for Void Refund Capture */

@@ -15,6 +15,7 @@ import com.analogics.paymentservicecore.domain.repository.printerService.Printer
 import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.eazypaytech.pos.core.utils.miscellaneous.PrinterUtils
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,6 +73,12 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
     fun isCardExists(context: Context): Boolean {
         return emvServiceRepository.isCardExists(context)
     }
+
+    fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus {
+        return emvServiceRepository.isCardDetected(context)
+    }
+
+
 
 }
 

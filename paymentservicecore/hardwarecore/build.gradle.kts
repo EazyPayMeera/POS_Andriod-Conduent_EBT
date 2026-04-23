@@ -5,7 +5,7 @@ plugins {
 }
 
 
-val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
+//val hwType: String = project.findProperty("HW_TYPE") as? String ?: "UNKNOWN"
 
 android {
     namespace = "com.eazypaytech.hardwarecore"
@@ -17,24 +17,24 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField ("String", "HW_TYPE", "\"$hwType\"")
+        //buildConfigField ("String", "HW_TYPE", "\"$hwType\"")
     }
 
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/java")
-
+            java.srcDir("src/morefun/java")
+            manifest.srcFile("src/morefun/AndroidManifest.xml")
             // Add platform-specific dirs based on HW_TYPE
-            when (hwType) {
-                "MOREFUN" -> {
-                    java.srcDir("src/morefun/java")
-                    manifest.srcFile("src/morefun/AndroidManifest.xml")
-                }
-                else -> {
-                    java.srcDir("src/urovo/java")
-                    manifest.srcFile("src/urovo/AndroidManifest.xml")
-                }
-            }
+//            when (hwType) {
+//                "MOREFUN" -> {
+//
+//                }
+//                else -> {
+//                    java.srcDir("src/urovo/java")
+//                    manifest.srcFile("src/urovo/AndroidManifest.xml")
+//                }
+//            }
         }
     }
 
@@ -60,15 +60,17 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    when (hwType) {
-        "UROVO" -> {
-            implementation("urovo-sdk:urovo-sdk:1.0.12")
-        }
-        "MOREFUN" -> {
-            implementation(files("libs/ysdk_6.03.2729e7f_25041014.jar"))
-            implementation("urovo-sdk:urovo-sdk:1.0.12") /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
-        }
-    }
+    implementation(files("libs/ysdk_6.03.2729e7f_25041014.jar"))
+    //implementation("urovo-sdk:urovo-sdk:1.0.12") /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
+//    when (hwType) {
+//        "UROVO" -> {
+//            implementation("urovo-sdk:urovo-sdk:1.0.12")
+//        }
+//        "MOREFUN" -> {
+//            implementation(files("libs/ysdk_6.03.2729e7f_25041014.jar"))
+//            implementation("urovo-sdk:urovo-sdk:1.0.12") /* There are dependencies on UROVO lib. TODO: Remove these dependencies */
+//        }
+//    }
 
     implementation("com.google.dagger:hilt-android:2.51")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")

@@ -8,6 +8,7 @@ import com.eazypaytech.hardwarecore.domain.listener.responseListener.IEmvSdkResp
 import com.eazypaytech.hardwarecore.data.model.AidConfig
 import com.eazypaytech.hardwarecore.data.model.CAPKey
 import com.eazypaytech.hardwarecore.data.model.EmvSdkException
+import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 import com.eazypaytech.hardwarecore.data.model.TransConfig
 import com.eazypaytech.tpaymentcore.repository.EmvWrapperRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -64,6 +65,18 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
             }
         }
     }
+
+    override fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus {
+        return runBlocking {
+            try {
+                emvWrapper.detectCard(context)
+            } catch (e: Exception) {
+                Log.e("MOREFUN", "Error checking card: ${e.message}")
+                EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
+            }
+        }
+    }
+
 
     override fun startLogCapture(context: Context): Boolean {
         return runBlocking {

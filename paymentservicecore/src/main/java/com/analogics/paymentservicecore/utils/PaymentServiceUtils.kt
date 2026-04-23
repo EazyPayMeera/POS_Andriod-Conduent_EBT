@@ -25,9 +25,9 @@ object PaymentServiceUtils {
         return Gson().fromJson(Gson().toJson(input), object : TypeToken<T>() {}.type)
     }
 
-    fun getDeviceSN(): String {
-        return HardwareUtils.getDeviceSN()
-    }
+//    fun getDeviceSN(): String {
+//        return HardwareUtils.getDeviceSN()
+//    }
 
     suspend fun injectKeys(tmk: String, pinKey: String, kcv: String, context: Context? = null): Boolean {
         val pin = pinKey.take(32)

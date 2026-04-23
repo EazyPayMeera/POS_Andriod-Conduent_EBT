@@ -274,9 +274,15 @@ class ManualCardViewModel @Inject constructor(
         val blocks = hexString.chunked(20)
         var snapBalance = 0.0
         var cashBalance = 0.0
+
         blocks.forEach { block ->
             val bytes = block.chunked(2).map { it.toInt(16) }
-            val accountType = bytes[0] // first byte
+            val accountType = bytes[0]  // positions 1-2: account type
+            val amountType = bytes[1]   // positions 3-4: amount type
+
+            // Only process Available Balance (0x02)
+            if (amountType != 0x02) return@forEach
+
             val bcdBytes = bytes.subList(4, 10)
             val digits = bcdBytes.joinToString("") { byte ->
                 val high = (byte shr 4) and 0x0F
@@ -284,19 +290,14 @@ class ManualCardViewModel @Inject constructor(
                 "$high$low"
             }
             val amount = digits.toLong() / 100.0
+
             when (accountType) {
-                0x96 -> {
-                    cashBalance = amount
-                }
-                0x98 -> {
-                    snapBalance = amount
-                }
+                0x96 -> cashBalance = amount   // Cash Benefit
+                0x98 -> snapBalance = amount   // Food Stamp Benefit
             }
         }
-        return EBTBalance(
-            snap = snapBalance,
-            cash = cashBalance
-        )
+
+        return EBTBalance(snap = snapBalance, cash = cashBalance)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
