@@ -142,8 +142,8 @@ data class BuilderServiceTxnDetails(
     @SerializedName("originalTtlAmount") var originalTtlAmount: String? = null,
     @SerializedName("acquirerName") var acquirerName:String?=null,
 
-    @SerializedName("isTapEnable") var isTapEnable: Boolean? = false,
-    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = false,
+    @SerializedName("isTapEnable") var isTapEnable: Boolean? = true,
+    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = true,
 
     /* Other flags */
     @SerializedName("isFallback")       var isFallback: Boolean? = false,

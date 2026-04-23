@@ -9,8 +9,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ReaderSettingViewModel @Inject constructor() : ViewModel() {
 
-    val isTapEnabled = mutableStateOf(false)
-    val isInsertEnabled = mutableStateOf(false)
+    val isTapEnabled = mutableStateOf(true)
+    val isInsertEnabled = mutableStateOf(true)
     fun onTapToggle(sharedViewModel: SharedViewModel,enabled: Boolean) {
         isTapEnabled.value = enabled
         sharedViewModel.objPosConfig?.apply { isTapEnable = enabled }?.saveToPrefs()
@@ -24,7 +24,7 @@ class ReaderSettingViewModel @Inject constructor() : ViewModel() {
     }
 
     fun initOnce(sharedViewModel: SharedViewModel?) {
-        isTapEnabled.value = sharedViewModel?.objPosConfig?.isTapEnable ?: false
-        isInsertEnabled.value = sharedViewModel?.objPosConfig?.isEMVEnable ?: false
+        isTapEnabled.value = sharedViewModel?.objPosConfig?.isTapEnable ?: true
+        isInsertEnabled.value = sharedViewModel?.objPosConfig?.isEMVEnable ?: true
     }
 }

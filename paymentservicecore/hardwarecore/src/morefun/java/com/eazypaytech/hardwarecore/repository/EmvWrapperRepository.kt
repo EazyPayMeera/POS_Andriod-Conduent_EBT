@@ -655,7 +655,7 @@ class EmvWrapperRepository @Inject constructor(
 
                 val bundle = Bundle().apply {
                     putInt("cardType", 0x07) // MAG + CHIP + NFC
-                    putInt("timeout", 15)    // seconds (if supported)
+                    putInt("timeout", 5)    // seconds (if supported)
                 }
 
                 val listener = object : ICheckCardListener.Stub() {
@@ -697,7 +697,8 @@ class EmvWrapperRepository @Inject constructor(
                     }
 
                     override fun onSwipeCardFail() {
-                        Log.e("CARD", "SWIPE FAILED")
+                        if (cont.isActive)
+                            cont.resume(EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED) {}
                     }
                 }
 
@@ -799,8 +800,6 @@ class EmvWrapperRepository @Inject constructor(
     fun startPayment(
         context: Context,
         transConfig: TransConfig?,
-        isTap: Boolean?,
-        isChip: Boolean?,
         iEmvSdkResponseListener: IEmvSdkResponseListener
 
     ) {

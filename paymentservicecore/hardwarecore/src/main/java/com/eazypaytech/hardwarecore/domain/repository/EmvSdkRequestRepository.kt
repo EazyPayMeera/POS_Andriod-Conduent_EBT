@@ -33,11 +33,9 @@ class EmvSdkRequestRepository @Inject constructor(@ApplicationContext context: C
     override fun startPayment(
         context: Context,
         transConfig: TransConfig?,
-        isTap: Boolean?,
-        isChip: Boolean?
     ) {
         try {
-            emvWrapper.startPayment(context, transConfig,isTap,isChip, iEmvSdkResponseListener);
+            emvWrapper.startPayment(context, transConfig, iEmvSdkResponseListener);
         } catch (exception: Exception) {
             iEmvSdkResponseListener.onEmvSdkResponse(EmvSdkException(exception.message.toString()))
         }

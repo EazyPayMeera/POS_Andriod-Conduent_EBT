@@ -394,9 +394,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 Gson().toJson(transConfig),
                 com.eazypaytech.hardwarecore.data.model.TransConfig::class.java
             )
-        val isTap = paymentServiceTxnDetails?.isTapEnable
-        val isChip = paymentServiceTxnDetails?.isEMVEnable
-        emvSdkRequestRepository.startPayment(context, sdkTransConfig,isTap,isChip)
+        emvSdkRequestRepository.startPayment(context, sdkTransConfig)
     }
 
     override fun pinGeneration(

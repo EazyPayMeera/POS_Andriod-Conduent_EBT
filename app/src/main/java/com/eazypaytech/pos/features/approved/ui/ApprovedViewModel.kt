@@ -74,11 +74,5 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         return emvServiceRepository.isCardExists(context)
     }
 
-    fun isCardDetected(context: Context): EmvSdkResult.CardCheckStatus {
-        return emvServiceRepository.isCardDetected(context)
-    }
-
-
-
 }
 

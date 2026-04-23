@@ -155,8 +155,8 @@ data class ObjRootAppPaymentDetails(
     @SerializedName("isPurchase")       var isPurchase: Boolean? = false,
     @SerializedName("isReturn")       var isReturn: Boolean? = false,
 
-    @SerializedName("isTapEnable") var isTapEnable: Boolean? = false,
-    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = false,
+    @SerializedName("isTapEnable") var isTapEnable: Boolean? = true,
+    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = true,
 
     /* Receipt Specific Config */
     @SerializedName("header1") var header1: String? = null,

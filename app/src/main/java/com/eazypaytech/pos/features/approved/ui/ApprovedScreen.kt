@@ -92,7 +92,10 @@ fun ApprovedScreen(navHostController: NavHostController) {
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(top = MaterialTheme.dimens.DP_190_CompactMedium, bottom = MaterialTheme.dimens.DP_20_CompactMedium)
+                            .padding(
+                                top = MaterialTheme.dimens.DP_190_CompactMedium,
+                                bottom = MaterialTheme.dimens.DP_20_CompactMedium
+                            )
                             .align(Alignment.CenterHorizontally)
                     )
 
@@ -225,14 +228,16 @@ fun ApprovedScreen(navHostController: NavHostController) {
 
     LaunchedEffect(Unit) {
         viewModel.onLoad(context, sharedViewModel)
-        val status = viewModel.isCardDetected(context) // suspend call
-        if (status == EmvSdkResult.CardCheckStatus.CARD_TAPPED ||
-            status == EmvSdkResult.CardCheckStatus.CARD_INSERTED
-        ) {
-            CustomDialogBuilder.composeAlertDialog(
-                title = context.resources.getString(R.string.default_alert_title_error),
-                subtitle = context.resources.getString(R.string.emv_msg_id_remove_card)
-            )
+        while (true) {
+            if (viewModel.isCardExists(context)) {
+                CustomDialogBuilder.composeAlertDialog(
+                    title = context.resources.getString(R.string.default_alert_title_error),
+                    subtitle = context.resources.getString(R.string.emv_msg_id_remove_card)
+                )
+            } else {
+                break
+            }
+            delay(500)
         }
     }
 }

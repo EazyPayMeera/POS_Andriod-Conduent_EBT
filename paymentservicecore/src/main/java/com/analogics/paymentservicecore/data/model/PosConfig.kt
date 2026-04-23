@@ -84,8 +84,8 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
 
     /* Reader Setting */
 
-    @SerializedName("isTapEnable") var isTapEnable: Boolean? = false
-    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = false
+    @SerializedName("isTapEnable") var isTapEnable: Boolean? = true
+    @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = true
 
 
     fun loadFromPrefs() : PosConfig

@@ -11,7 +11,7 @@ interface IEmvSdkRequestListener {
     var iEmvSdkResponseListener : IEmvSdkResponseListener
 
     fun initPaymentSDK(aidConfig : AidConfig?,capKeys: List<CAPKey>?)
-    fun startPayment(context: Context, transConfig: TransConfig?, isTap: Boolean?, isChip: Boolean?)
+    fun startPayment(context: Context, transConfig: TransConfig?)
     fun abortPayment()
     fun getEmvTag(tag : String?) : String?
     fun pinGeneration(pan: String?, amount: String, nResult: (pinBlock: ByteArray?) -> Unit)
