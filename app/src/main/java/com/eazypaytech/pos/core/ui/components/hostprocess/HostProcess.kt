@@ -28,7 +28,17 @@ import com.eazypaytech.pos.core.ui.components.textview.TextView
 import com.eazypaytech.pos.features.login.ui.LoginViewModel
 import com.eazypaytech.pos.core.themes.dimens
 
-
+/**
+ * Full-screen blocking UI shown during host processing (e.g. online auth, reversal, settlement).
+ *
+ * Responsibilities:
+ * 1. Prevent user interaction during critical network operations
+ * 2. Display processing state with loader
+ * 3. Block system back navigation
+ * 4. Optionally dismiss on outside tap (based on implementation)
+ *
+ * ⚠️ This is a modal blocking UI — should only be used for short-lived operations.
+ */
 @Composable
 fun HostProcessingDialog(
     navHostController: NavHostController?,
@@ -54,6 +64,20 @@ fun HostProcessingDialog(
     }
 }
 
+
+/**
+ * UI content for host processing screen.
+ *
+ * Layout:
+ * - Title: "Processing"
+ * - Subtitle: "Please wait"
+ * - Circular progress indicator
+ *
+ * Designed for:
+ * - Payment authorization
+ * - Reversal processing
+ * - Host communication delays
+ */
 @Composable
 fun HostProcessingContent(navHostController: NavHostController?) {
 

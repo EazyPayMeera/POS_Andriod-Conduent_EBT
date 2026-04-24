@@ -107,7 +107,32 @@ import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.sin
 
-
+/**
+ * Custom reusable input field based on Material 3 OutlinedTextField.
+ *
+ * Features:
+ * - Leading icon support
+ * - Optional password masking with toggle visibility
+ * - Custom keyboard actions (Done/Next)
+ * - Placeholder + label support
+ * - Themed styling using app dimens and color system
+ *
+ * Designed for POS applications where consistent input UI is required
+ * across login, forms, and configuration screens.
+ *
+ * @param enabled Enables/disables input interaction
+ * @param inputValue Current text value
+ * @param onChange Callback when text changes
+ * @param modifier Compose modifier
+ * @param label Field label text
+ * @param placeHolder Placeholder text inside field
+ * @param icon Leading icon
+ * @param keyboardType Keyboard type (text, number, password, etc.)
+ * @param keyboardActions Optional custom keyboard actions override
+ * @param isPasswordField Enables password masking and toggle visibility icon
+ * @param placeholderColor Placeholder text color
+ * @param onActionDone Callback when IME Done is pressed
+ */
 @Composable
 fun InputTextField(
     enabled : Boolean ?= true,
@@ -179,6 +204,20 @@ fun InputTextField(
     )
 }
 
+/**
+ * Primary application button used across POS flows.
+ *
+ * Features:
+ * - Optional icon support
+ * - Fixed standard dimensions (design system based)
+ * - Material 3 styling
+ * - Disabled state support
+ *
+ * Used for:
+ * - Login
+ * - Payment actions
+ * - Navigation confirmations
+ */
 @Composable
 fun AppButton(
     onClick: () -> Unit,
@@ -217,6 +256,16 @@ fun AppButton(
     }
 }
 
+/**
+ * Login screen primary action button.
+ *
+ * Special behavior:
+ * - Moves based on keyboard visibility
+ * - Prevents overlap with IME
+ * - Automatically shifts alignment (top/bottom)
+ *
+ * Used only in login/auth flows.
+ */
 @Composable
 fun LoginButton(
     onClick: () -> Unit,
@@ -279,7 +328,12 @@ fun LoginButton(
     }
 }
 
-
+/**
+ * Returns transaction type display label based on current payment flow.
+ *
+ * NOTE:
+ * Uses sharedViewModel state (global transaction context).
+ */
 @Composable
 fun getTransTypeString(): String {
     val sharedViewModel = localSharedViewModel.current
@@ -299,7 +353,9 @@ fun getTransTypeString(): String {
     }
 }
 
-
+/**
+ * Returns label for transaction amount field based on transaction type.
+ */
 @Composable
 fun getTransTypeAmountTitle(): String {
     val sharedViewModel = localSharedViewModel.current
@@ -322,7 +378,14 @@ fun getTransTypeAmountTitle(): String {
 
 
 
-
+/**
+ * Custom Top App Bar used across POS screens.
+ *
+ * Features:
+ * - Dynamic title (or transaction-based fallback)
+ * - Optional back button
+ * - Optional keyboard dismissal on back
+ */
 @Composable
 fun CommonTopAppBar(
     title: String? = null,
@@ -372,7 +435,13 @@ fun CommonTopAppBar(
 }
 
 
-
+/**
+ * Simple OK confirmation button.
+ *
+ * Features:
+ * - Two size variants (standard / compact)
+ * - Disabled state support via color change
+ */
 @Composable
 fun OkButton(
     onClick: () -> Unit,
@@ -408,81 +477,25 @@ fun OkButton(
     }
 }
 
-
-
-@Composable
-fun SettingsUpperSurface(
-    modifier: Modifier = Modifier,
-    elevation: Dp = MaterialTheme.dimens.DP_0_CompactMedium,
-    color: Color = MaterialTheme.colorScheme.background,
-    height: Dp, // Added customizable height parameter
-    content: @Composable () -> Unit
-) {
-    Surface(
-        modifier = modifier
-            .height(height) // Applying customizable height
-            .shadow(
-                elevation = elevation,
-                shape = RoundedCornerShape(
-                    topStart = MaterialTheme.dimens.DP_24_CompactMedium,
-                    topEnd = MaterialTheme.dimens.DP_24_CompactMedium
-                )
-            ),
-        shape = RoundedCornerShape(topStart = MaterialTheme.dimens.DP_24_CompactMedium, topEnd = MaterialTheme.dimens.DP_24_CompactMedium),
-        color = color
-    ) {
-        content()
-    }
-}
-
-@Composable
-fun SettingsMiddleSurface(
-    modifier: Modifier = Modifier,
-    elevation: Dp = MaterialTheme.dimens.DP_0_CompactMedium,
-    color: Color = MaterialTheme.colorScheme.background,
-    content: @Composable () -> Unit
-) {
-    Surface(
-        modifier = modifier
-            .shadow(
-                elevation = elevation,
-            ),
-        color = color
-    ) {
-        content()
-    }
-}
-
-@Composable
-fun SettingsLowerSurface(
-    modifier: Modifier = Modifier,
-    elevation: Dp = MaterialTheme.dimens.DP_0_CompactMedium,
-    color: Color = MaterialTheme.colorScheme.background,
-    height: Dp, // Customizable height parameter
-    bottomStartRadius: Dp = MaterialTheme.dimens.DP_24_CompactMedium,
-    bottomEndRadius: Dp = MaterialTheme.dimens.DP_24_CompactMedium,
-    content: @Composable () -> Unit
-) {
-    Surface(
-        modifier = modifier
-            .height(height) // Applying customizable height
-            .shadow(
-                elevation = elevation,
-                shape = RoundedCornerShape(
-                    bottomStart = bottomStartRadius,
-                    bottomEnd = bottomEndRadius
-                )
-            ),
-        shape = RoundedCornerShape(
-            bottomStart = bottomStartRadius,
-            bottomEnd = bottomEndRadius
-        ),
-        color = color
-    ) {
-        content()
-    }
-}
-
+/**
+ * A reusable footer button component with one or two action buttons.
+ *
+ * Features:
+ * - Supports up to two buttons (primary + secondary)
+ * - Automatically adjusts position when keyboard is visible
+ * - Optional keyboard dismissal on button click
+ * - Click animation effect
+ * - Customizable labels and click actions
+ *
+ * @param firstButtonTitle Label for first button (nullable)
+ * @param firstButtonOnClick Click callback for first button
+ * @param secondButtonTitle Label for second button (nullable)
+ * @param secondButtonOnClick Click callback for second button
+ * @param alignment Button alignment when keyboard is hidden
+ * @param enabled Enables/disables both buttons
+ * @param closeKeypadOnFirstButton Whether to hide keyboard on first button click
+ * @param closeKeypadOnSecondButton Whether to hide keyboard on second button click
+ */
 @Composable
 fun FooterButtons(
     firstButtonTitle: String?=null,
@@ -630,40 +643,19 @@ fun FooterButtons(
 }
 
 
-@Composable
-fun ScannerButton(
-    text: String,
-    onClick: () -> Unit,
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        colors = buttonColors(
-            containerColor = backgroundColor,
-            contentColor = contentColor
-        ),
-        shape = RoundedCornerShape(MaterialTheme.dimens.DP_12_CompactMedium),
-        modifier = modifier
-            .padding(MaterialTheme.dimens.DP_2_CompactMedium)
-            .width(MaterialTheme.dimens.DP_180_CompactMedium)
-            .height(MaterialTheme.dimens.DP_70_CompactMedium)
-    ) {
-        Text(
-            text = text,
-            fontSize = MaterialTheme.dimens.SP_27_CompactMedium,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
 
-fun getFormattedDateTime(): String {
-    val calendar = Calendar.getInstance()
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy @ HH:mm:ss", Locale.getDefault())
-    return dateFormat.format(calendar.time)
-}
-
+/**
+ * A clickable card UI component displaying centered text.
+ *
+ * Features:
+ * - Card with border selection effect
+ * - Click animation state handling
+ * - Custom styling via GenericCard
+ *
+ * @param text Text displayed inside the card
+ * @param onClick Callback triggered when card is clicked
+ * @param modifier Modifier for external customization
+ */
 @Composable
 fun CardWithImageText(
     text: String,
@@ -720,7 +712,26 @@ fun CardWithImageText(
 }
 
 
-
+/**
+ * Top app bar component with title and optional action icons.
+ *
+ * Features:
+ * - Title display with bold styling
+ * - Optional left and right icons
+ * - Click actions for both icons
+ * - Custom background color support
+ *
+ * @param title Header title text
+ * @param backgroundColor Background color of the app bar
+ * @param icon1 Left icon resource (navigation icon)
+ * @param icon2 Right icon resource (action icon)
+ * @param onIcon1Click Callback for left icon click
+ * @param onIcon2Click Callback for right icon click
+ * @param isIcon1Visible Controls visibility of left icon
+ * @param isIcon2Visible Controls visibility of right icon
+ * @param modifier Modifier for styling
+ * @param onBackButtonClick Back navigation callback
+ */
 @Composable
 fun AppHeader(
     title: String,
@@ -791,7 +802,16 @@ fun AppHeader(
 }
 
 
-
+/**
+ * A reusable background container screen that provides a styled card layout.
+ *
+ * This component:
+ * - Adds padding and shadowed background surface
+ * - Wraps content inside a styled Material Card
+ * - Provides consistent screen layout structure for forms and pages
+ *
+ * @param componentView Composable content to render inside the screen
+ */
 @Composable
 fun BackgroundScreen(componentView :@Composable () -> Unit) {
     Box(
@@ -826,6 +846,18 @@ fun BackgroundScreen(componentView :@Composable () -> Unit) {
     }
 }
 
+/**
+ * A dialog-style surface container with elevated background styling.
+ *
+ * Features:
+ * - Full-screen overlay layout
+ * - Shadowed and rounded background surface
+ * - Inner card container for dialog content
+ *
+ * Typically used for modal/dialog UI screens.
+ *
+ * @param componentView Composable content displayed inside the dialog surface
+ */
 @Composable
 fun DialogueSurface(componentView :@Composable () -> Unit) {
     Box(
@@ -858,7 +890,22 @@ fun DialogueSurface(componentView :@Composable () -> Unit) {
     }
 }
 
-
+/**
+ * A reusable image component with configurable size, shape, and alignment.
+ *
+ * Features:
+ * - Loads image from drawable resource
+ * - Supports clipping with custom shape
+ * - Flexible alignment inside container
+ * - Customizable size and modifiers
+ *
+ * @param imageId Drawable resource ID
+ * @param size Image size (default: 70dp)
+ * @param shape Shape used to clip the image
+ * @param alignment Alignment inside parent box
+ * @param modifier External modifier for styling
+ * @param contentDescription Accessibility description for the image
+ */
 @Composable
 fun ImageView(
     imageId: Int,
@@ -885,7 +932,12 @@ fun ImageView(
 }
 
 
-
+/**
+ * Custom password transformation that replaces masking bullets with '*' character.
+ *
+ * Overrides default Android password bullet (•) with asterisk (*)
+ * for UI consistency across the application.
+ */
 val passwordTransform = object : PasswordTransformationMethod() {
     override fun getTransformation(source: CharSequence, view: View?): CharSequence {
         val transformed = super.getTransformation(source, view)
@@ -894,6 +946,35 @@ val passwordTransform = object : PasswordTransformationMethod() {
     }
 }
 
+/**
+ * Custom OutlinedTextField with enhanced formatting and input control.
+ *
+ * Features:
+ * - Supports amount formatting with auto-separator logic
+ * - Optional password masking
+ * - Custom visual transformation support
+ * - Auto focus handling
+ * - Trailing icon support
+ * - Keyboard action handling (Done action)
+ *
+ * Special behavior:
+ * - Limits numeric input to 12 digits when amount mode is enabled
+ * - Automatically formats input using formatAmount()
+ *
+ * @param value Current text value
+ * @param onValueChange Callback when text changes
+ * @param placeholder Placeholder text
+ * @param shape Shape of the text field
+ * @param textStyle Styling for input text
+ * @param keyboardType Keyboard type configuration
+ * @param onDoneAction Callback when keyboard "Done" is pressed
+ * @param isPassword Enables password masking
+ * @param visualTransformation Custom visual transformation
+ * @param modifier Modifier for styling
+ * @param amount Enables currency formatting behavior
+ * @param trailingIcon Optional trailing icon composable
+ * @param readOnly If true, disables editing
+ */
 @Composable
 fun OutlinedTextField(
     value: String,
@@ -965,6 +1046,19 @@ fun OutlinedTextField(
     }
 }
 
+/**
+ * A row component that displays a label, description, and toggle switch.
+ *
+ * Features:
+ * - Left-aligned label and description
+ * - Right-aligned toggle switch
+ * - Styled background container
+ *
+ * @param label Main title text
+ * @param description Supporting description text
+ * @param isEnabled Current toggle state
+ * @param onToggle Callback when toggle state changes
+ */
 @Composable
 fun ReaderToggleRow(
     label: String,
@@ -1005,7 +1099,18 @@ fun ReaderToggleRow(
     }
 }
 
-
+/**
+ * Custom animated slider toggle switch component.
+ *
+ * Features:
+ * - Smooth thumb animation
+ * - Custom track and thumb styling
+ * - Click-to-toggle behavior
+ * - No ripple effect for clean UI
+ *
+ * @param checked Current toggle state
+ * @param onCheckedChange Callback when toggle is changed
+ */
 @Composable
 fun SliderToggle(
     checked: Boolean,
@@ -1050,6 +1155,20 @@ fun SliderToggle(
     }
 }
 
+/**
+ * A simple labeled input row for configuration settings.
+ *
+ * Features:
+ * - Label displayed above input field
+ * - Outlined text field input
+ * - Single-line input support
+ * - Keyboard type customization
+ *
+ * @param label Field label text
+ * @param value Current input value
+ * @param onValueChange Callback when value changes
+ * @param keyboardType Keyboard type configuration
+ */
 @Composable
 fun ConfigRow(
     label: String,
@@ -1087,6 +1206,24 @@ fun ConfigRow(
     }
 }
 
+/**
+ * A circular animated floating menu with expandable action buttons.
+ *
+ * Features:
+ * - Central main action button (print button)
+ * - Animated radial menu expansion
+ * - Multiple menu options arranged in circular layout
+ * - Click animations and state handling
+ *
+ * Behavior:
+ * - Clicking main button toggles menu expansion
+ * - Menu items collapse automatically after selection
+ * - Supports custom menu actions per item
+ *
+ * @param menuOptions List of menu option labels
+ * @param onMenuOptionClick Callback when a menu option is selected
+ * @param onPrintClick Callback for main print button click
+ */
 @Composable
 fun CircularMenu(
     menuOptions: List<String>, // Accept the list of menu options

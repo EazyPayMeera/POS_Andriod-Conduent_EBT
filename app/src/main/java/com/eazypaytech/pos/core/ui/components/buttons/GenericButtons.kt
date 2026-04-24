@@ -19,6 +19,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.eazypaytech.pos.core.themes.dimens
 
+/**
+ * Custom image-based switch component.
+ *
+ * This switch behaves like a toggle button but uses images instead of
+ * Material Switch UI.
+ *
+ * Features:
+ * - Custom checked / unchecked images
+ * - Optional tint support for both states
+ * - Click toggles state (no ripple by default)
+ * - Configurable size and styling
+ *
+ * Usage:
+ * Useful for POS UI where native switches are not preferred and
+ * branded icons are required.
+ *
+ * @param checked Current switch state
+ * @param onCheckedChange Callback triggered when user toggles switch
+ * @param checkedImage Drawable resource for ON state
+ * @param uncheckedImage Drawable resource for OFF state
+ * @param checkedTintColor Tint applied when checked (default = primary color)
+ * @param uncheckedTintColor Tint applied when unchecked (default = onSecondary)
+ * @param modifier Compose modifier for external styling
+ * @param imageSize Size of switch icon
+ */
 @Composable
 fun CustomSwitch(
     checked: Boolean,

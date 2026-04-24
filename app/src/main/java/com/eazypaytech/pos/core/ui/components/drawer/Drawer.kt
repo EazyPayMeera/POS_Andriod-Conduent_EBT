@@ -44,6 +44,18 @@ import com.eazypaytech.pos.core.ui.components.buttons.CustomSwitch
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
 import com.eazypaytech.pos.core.themes.dimens
 
+/**
+ * Custom navigation drawer UI for POS application.
+ *
+ * Responsibilities:
+ * 1. Displays app branding + close action
+ * 2. Shows list of navigation/menu items
+ * 3. Handles role-based access (admin restrictions)
+ * 4. Provides version info at bottom
+ *
+ * Each menu item can trigger navigation or toggle actions
+ * based on business rules defined via callback.
+ */
 @Composable
 fun CustomDrawerContent(
     onCloseDrawer: () -> Unit,
@@ -91,6 +103,15 @@ fun CustomDrawerContent(
 
         Divider(color = MaterialTheme.colorScheme.onSecondary, thickness = MaterialTheme.dimens.DP_1_CompactMedium)
 
+        /**
+         * MENU ITEMS CONFIGURATION
+         *
+         * Each item defines:
+         * - icon
+         * - label
+         * - enabled state (role-based)
+         * - click behavior
+         */
         val drawersItems = listOf(
             DrawerItem(
                 imageRes = Icons.Default.Chat,
@@ -183,6 +204,15 @@ fun CustomDrawerContent(
 
 }
 
+/**
+ * Data model representing a drawer menu item.
+ *
+ * @param imageRes Icon for the item
+ * @param text Label text
+ * @param isChecked Toggle state (if applicable)
+ * @param onCheckedChange Callback when item is clicked/toggled
+ * @param isEnabled Controls access (used for admin restrictions)
+ */
 data class DrawerItem(
     val imageRes: ImageVector,
     val text: String,
@@ -191,6 +221,14 @@ data class DrawerItem(
     var isEnabled: Boolean?=true
 )
 
+
+/**
+ * Wrapper surface for drawer item row.
+ *
+ * Handles:
+ * - Disabled state UI (alpha + click blocking)
+ * - Click delegation
+ */
 @Composable
 fun DrawersSurface(
     item: DrawerItem
@@ -207,6 +245,14 @@ fun DrawersSurface(
     }
 }
 
+/**
+ * Content UI for a single drawer item.
+ *
+ * UI Layout:
+ * [Icon]  [Text] ------------------ [Switch]
+ *
+ * Switch represents optional toggle/action state.
+ */
 @Composable
 fun DrawersContent(
     item: DrawerItem

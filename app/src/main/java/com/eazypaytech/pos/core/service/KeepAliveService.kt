@@ -30,6 +30,57 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+/**
+ * Foreground service responsible for maintaining backend connectivity
+ * and performing periodic network health checks for the POS system.
+ *
+ * This service ensures system reliability by:
+ *
+ * 🔹 Running a periodic "keep-alive" handshake request every 5 minutes
+ * 🔹 Performing a scheduled sign-on request every 12 hours
+ * 🔹 Triggering key exchange after successful sign-on
+ * 🔹 Handling retry logic on repeated failures or timeouts
+ * 🔹 Running as a foreground service to avoid system kill
+ *
+ * ### Core Responsibilities:
+ * - Maintain active session with backend API
+ * - Detect network or service failures using timeout counter
+ * - Trigger recovery flow after 3 consecutive failures:
+ *   → Cancel keep-alive loop
+ *   → Perform sign-off
+ *   → Reset connection state
+ *
+ * ### Lifecycle Behavior:
+ * - Started using ACTION_START with merchant/session data
+ * - Runs continuously using coroutines (IO scope)
+ * - Can be stopped via ACTION_STOP or system destruction
+ * - Uses START_STICKY to auto-restart if killed
+ *
+ * ### Background Jobs:
+ * 1. KeepAlive Job:
+ *    - Starts after 30 seconds delay
+ *    - Runs every 5 minutes
+ *    - Executes handshake API call
+ *
+ * 2. 12-Hour Job:
+ *    - Runs sign-on request every 12 hours
+ *    - Triggers key exchange after success
+ *
+ * ### Failure Handling:
+ * - Tracks consecutive handshake timeouts
+ * - After MAX_TIMEOUT (3):
+ *   → Triggers resetTimer()
+ *   → Executes sign-off
+ *   → Restarts session lifecycle
+ *
+ * ### Foreground Notification:
+ * - Displays persistent "POS Active" notification
+ * - Prevents system from killing service
+ *
+ * @see ApiServiceRepository
+ * @see PaymentServiceUtils
+ */
 @AndroidEntryPoint
 class KeepAliveService : Service() {
 

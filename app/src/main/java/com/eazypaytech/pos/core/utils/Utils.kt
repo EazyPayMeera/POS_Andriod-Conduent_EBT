@@ -32,18 +32,61 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.pow
 
+/**
+ * Calculates the final transaction amount by adding all charge components.
+ *
+ * @param transactionAmount Base transaction amount
+ * @param tipAmount Tip amount added to transaction
+ * @param vat VAT/tax applied to transaction
+ * @param serviceCharge Additional service charge
+ * @return Total computed amount (sum of all inputs)
+ */
 fun calculateTotalAmount(transactionAmount: Double, tipAmount: Double, vat: Double, serviceCharge: Double): Double {
     return transactionAmount + tipAmount + vat + serviceCharge
 }
 
+/**
+ * Converts a formatted amount string into a Double value.
+ *
+ * The input string is cleaned and formatted before conversion.
+ * If parsing fails, returns 0.00 as fallback.
+ *
+ * @param amount Input amount string (may contain symbols/formatting)
+ * @param decimalPlaces Number of decimal places to consider
+ * @return Parsed Double value or 0.00 if invalid
+ */
 fun transformToAmountDouble(amount: String, decimalPlaces: Int = 2): Double {
     return formatAmount(amount,decimalPlaces, Symbol(type = Symbol.Type.NONE),withSeparator=false).toDoubleOrNull()?:0.00
 }
 
+/**
+ * Formats a Double amount into a string representation.
+ *
+ * Applies decimal precision, optional currency symbol,
+ * and thousand separators based on configuration.
+ *
+ * @param amount Numeric amount to format
+ * @param decimalPlaces Number of decimal places
+ * @param symbol Optional currency symbol configuration
+ * @param withSeparator Whether to include thousand separators
+ * @return Formatted amount string
+ */
 fun formatAmount(amount: Double, decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String {
     return formatAmount("%.${decimalPlaces}f".format(amount),decimalPlaces,symbol,withSeparator)
 }
 
+/**
+ * Formats a Double amount into a string representation.
+ *
+ * Applies decimal precision, optional currency symbol,
+ * and thousand separators based on configuration.
+ *
+ * @param amount Numeric amount to format
+ * @param decimalPlaces Number of decimal places
+ * @param symbol Optional currency symbol configuration
+ * @param withSeparator Whether to include thousand separators
+ * @return Formatted amount string
+ */
 fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String {
     try {
         val amount  = removeNonDigits(input).take(12)
@@ -62,36 +105,101 @@ fun formatAmount(input: String, decimalPlaces: Int = 2, symbol: Symbol?=Symbol()
     return ""
 }
 
+/**
+ * Extension function to format a Double into a decimal string.
+ *
+ * Applies symbol formatting and decimal precision.
+ * Uses default value 0.00 if null.
+ *
+ * @param decimalPlaces Number of decimal places
+ * @param symbol Optional currency symbol configuration
+ * @param withSeparator Whether to include thousand separators
+ * @return Formatted string representation of amount
+ */
 fun Double?.toDecimalFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(type = Symbol.Type.NONE), withSeparator: Boolean = false): String
 {
     return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }
 
+/**
+ * Extension function to format a Double into currency-style string.
+ *
+ * Includes optional currency symbol and separators.
+ *
+ * @param decimalPlaces Number of decimal places
+ * @param symbol Optional currency symbol configuration
+ * @param withSeparator Whether to include thousand separators
+ * @return Formatted amount string
+ */
 fun Double?.toAmountFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String
 {
     return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }
 
+/**
+ * Extension function to format a String amount into currency format.
+ *
+ * Converts string to numeric format internally before formatting.
+ *
+ * @param decimalPlaces Number of decimal places
+ * @param symbol Optional currency symbol configuration
+ * @param withSeparator Whether to include thousand separators
+ * @return Formatted amount string
+ */
 fun String?.toAmountFormat(decimalPlaces: Int = 2, symbol: Symbol?=Symbol(), withSeparator: Boolean = true): String
 {
     return formatAmount(this?:"0.00",decimalPlaces,symbol,withSeparator)
 }
 
+/**
+ * Formats a Double value as percentage string.
+ *
+ * Appends percent symbol and applies formatting rules.
+ *
+ * @param decimalPlaces Number of decimal places
+ * @param noSpace Whether to remove space before symbol
+ * @param withSeparator Whether to include thousand separators
+ * @return Percentage formatted string
+ */
 fun Double?.toPercentFormat(decimalPlaces: Int = 2, noSpace: Boolean = true, withSeparator: Boolean = true): String
 {
     var symbol: Symbol?=Symbol(type = Symbol.Type.PERCENT, noSpace = noSpace, position = Symbol.Position.END)
     return formatAmount(this?:0.00,decimalPlaces,symbol,withSeparator)
 }
 
+/**
+ * Multiplies two numeric values.
+ *
+ * @param amount Base amount
+ * @param tip Multiplier value (e.g., tip percentage)
+ * @return Result of multiplication
+ */
 fun multiplyValues(amount: Double, tip: Double): Double {
     return amount * tip
 }
 
+/**
+ * Removes all non-numeric characters from a string.
+ *
+ * Useful for cleaning formatted currency inputs.
+ *
+ * @param input Raw string input
+ * @return String containing only digits
+ */
 fun removeNonDigits(input: String): String {
     val re = Regex("[^0-9]")
     return re.replace(input, "")
 }
 
+/**
+ * Creates a VisualTransformation for formatted amount input fields.
+ *
+ * Automatically formats input text using currency rules while typing.
+ *
+ * @param symbol Optional currency symbol configuration
+ * @param decimalPlaces Decimal precision
+ * @return VisualTransformation for Compose TextField
+ */
 fun createAmountTransformation(symbol: Symbol?=Symbol(),decimalPlaces: Int=2): VisualTransformation {
     return object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
@@ -110,23 +218,51 @@ fun createAmountTransformation(symbol: Symbol?=Symbol(),decimalPlaces: Int=2): V
     }
 }
 
-
+/**
+ * Converts ObjRootAppPaymentDetails model to TxnEntity.
+ *
+ * Uses JSON serialization as an intermediate transformation layer.
+ *
+ * @param objRootAppPaymentDetails Source object
+ * @return Converted TxnEntity object
+ */
 fun convertObjRootToTxnEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): TxnEntity {
     val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
     return Gson().fromJson(json, TxnEntity::class.java) // Convert JSON to TxnEntity
 }
 
+/**
+ * Converts ObjRootAppPaymentDetails model to UserManagementEntity.
+ *
+ * Uses Gson-based serialization mapping.
+ *
+ * @param objRootAppPaymentDetails Source object
+ * @return Converted UserManagementEntity object
+ */
 fun convertObjRootToUserManagementEntity(objRootAppPaymentDetails: ObjRootAppPaymentDetails): UserManagementEntity {
     val json = Gson().toJson(objRootAppPaymentDetails) // Convert ObjRootAppPaymentDetails to JSON
     return Gson().fromJson(json, UserManagementEntity::class.java) // Convert JSON to TxnEntity
 }
 
-
+/**
+ * Returns current system date and time in specified format.
+ *
+ * @param format Desired output date format
+ * @return Formatted current date-time string
+ */
 fun getCurrentDateTime(format : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT): String {
     val sdf = SimpleDateFormat(format, Locale.getDefault())
     return sdf.format(Date())
 }
 
+/**
+ * Converts a date-time string from one format to another.
+ *
+ * @param inputDateTime Input date-time string
+ * @param inputFormat Format of input string
+ * @param outputFormat Desired output format
+ * @return Converted formatted date string or empty if error
+ */
 fun convertDateTime(inputDateTime: String?=null, inputFormat : String?=AppConstants.DEFAULT_DATE_TIME_FORMAT, outputFormat : String?=null): String {
     val idf = SimpleDateFormat(inputFormat, Locale.getDefault())
     val odf = SimpleDateFormat(outputFormat, Locale.getDefault())
@@ -139,6 +275,16 @@ fun convertDateTime(inputDateTime: String?=null, inputFormat : String?=AppConsta
     }
 }
 
+/**
+ * Converts receipt-specific timestamp into readable format.
+ *
+ * Injects current year and supports AM/PM formatting adjustments.
+ *
+ * @param inputDateTime Raw receipt timestamp
+ * @param inputFormat Input format (default EMV format)
+ * @param outputFormat Output format
+ * @return Formatted receipt date-time string or "-"
+ */
 fun convertReceiptDateTime(
     inputDateTime: String? = null,
     inputFormat: String? = AppConstants.DEFAULT_DATE_TIME_FORMAT,
@@ -180,6 +326,11 @@ fun convertReceiptDateTime(
     }
 }
 
+/**
+ * Navigates to a route and clears back stack up to start destination.
+ *
+ * @param route Destination route
+ */
 fun NavController.navigateAndClean(route: String) {
     navigate(route = route) {
         popUpTo(graph.startDestinationId) { inclusive = true }
@@ -187,6 +338,11 @@ fun NavController.navigateAndClean(route: String) {
     graph.setStartDestination(route)
 }
 
+/**
+ * Navigates to a route and clears navigation back stack.
+ *
+ * @param route Destination route
+ */
 fun NavHostController.navigateAndClean(route: String) {
     navigate(route = route) {
         popUpTo(graph.startDestinationId) { inclusive = true }
@@ -194,7 +350,12 @@ fun NavHostController.navigateAndClean(route: String) {
     graph.setStartDestination(route)
 }
 
-
+/**
+ * Maps EMV response code to internal transaction status.
+ *
+ * @param responseCode EMV response code
+ * @return Corresponding TxnStatus
+ */
 fun emvStatusToTransStatus(responseCode: String?) : TxnStatus
 {
     return when(responseCode) {
@@ -203,6 +364,12 @@ fun emvStatusToTransStatus(responseCode: String?) : TxnStatus
     }
 }
 
+/**
+ * Converts EMV display message ID to string resource ID.
+ *
+ * @param displayMsgId EMV display message identifier
+ * @return String resource ID or null if unmapped
+ */
 fun emvMsgIdToStringId(displayMsgId: EmvServiceResult.DisplayMsgId?) : Int?
 {
     val id : Int? =
@@ -259,7 +426,12 @@ fun emvMsgIdToStringId(displayMsgId: EmvServiceResult.DisplayMsgId?) : Int?
     return id
 }
 
-
+/**
+ * Updates application locale at runtime.
+ *
+ * @param context Application context
+ * @param language Target UI language
+ */
 fun setUiLanguage(context: Context, language: UiLanguage) {
     val config = context.resources.configuration
     val locale = Locale(language.languageCode)
@@ -271,7 +443,11 @@ fun setUiLanguage(context: Context, language: UiLanguage) {
 
 
 
-
+/**
+ * Hides the software keyboard when invoked.
+ *
+ * Typically used in Compose side effects.
+ */
 @Composable
 fun HideSoftKeyboard() {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -280,7 +456,14 @@ fun HideSoftKeyboard() {
     }
 }
 
-
+/**
+ * Returns icon resource based on transaction status and flags.
+ *
+ * Handles void, refund, capture, approved, declined states.
+ *
+ * @param objRootAppPaymentDetails Transaction object
+ * @return Drawable resource ID
+ */
 @Composable
 fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : Int
 {
@@ -301,6 +484,12 @@ fun getTxnStatusIconId(objRootAppPaymentDetails : ObjRootAppPaymentDetails) : In
         R.drawable.error
 }
 
+/**
+ * Maps transaction type to string resource ID.
+ *
+ * @param txnType Transaction type
+ * @return String resource ID
+ */
 fun getTxnTypeStringId(txnType: TxnType?): Int {
     return when (txnType) {
         TxnType.PURCHASE_CASHBACK -> R.string.ebt_purchase_cashback
@@ -318,7 +507,12 @@ fun getTxnTypeStringId(txnType: TxnType?): Int {
     }
 }
 
-
+/**
+ * Maps transaction status to string resource ID.
+ *
+ * @param txnStatus Transaction status
+ * @return String resource ID
+ */
 fun getTxnStatusStringId(txnStatus: TxnStatus?) : Int
 {
     return when(txnStatus) {
@@ -335,7 +529,12 @@ fun getTxnStatusStringId(txnStatus: TxnStatus?) : Int
     }
 }
 
-
+/**
+ * Returns string resource for balance inquiry type.
+ *
+ * @param txnType Transaction type
+ * @return String resource ID
+ */
 fun getBalInquiryStringId(txnType: TxnType?): Int {
     return when (txnType) {
         TxnType.BALANCE_ENQUIRY_SNAP -> R.string.snap_bal_available
@@ -345,38 +544,11 @@ fun getBalInquiryStringId(txnType: TxnType?): Int {
 }
 
 
-
-fun getCardBrandStringId(cardBrand: CardBrand?) : Int
-{
-    return when(cardBrand) {
-        CardBrand.VISA -> R.string.card_brand_visa
-        CardBrand.MASTERCARD -> R.string.card_brand_mastercard
-        CardBrand.AMEX -> R.string.card_brand_amex
-        CardBrand.DISCOVER -> R.string.card_brand_discover
-        CardBrand.DINERS -> R.string.card_brand_diners
-        CardBrand.JCB -> R.string.card_brand_jcb
-        CardBrand.UPI -> R.string.card_brand_upi
-        CardBrand.PURE -> R.string.card_brand_pure
-        CardBrand.RUPAY -> R.string.card_brand_rupay
-        CardBrand.MIR -> R.string.card_brand_mir
-        else -> R.string.card_brand_unknown
-    }
-}
-
-fun getCardEntryStringId(cardEntryMode: CardEntryMode?) : Int
-{
-    return when(cardEntryMode) {
-        CardEntryMode.CONTACT -> R.string.card_entry_mode_contact
-        CardEntryMode.CONTACLESS -> R.string.card_entry_mode_contactless
-        CardEntryMode.CONTACLESS_MAGSTRIPE -> R.string.card_entry_mode_contactless_magstripe
-        CardEntryMode.MAGSTRIPE -> R.string.card_entry_mode_magstripe
-        CardEntryMode.FALLBACK_MAGSTRIPE -> R.string.card_entry_mode_fallback_magstripe
-        CardEntryMode.MANUAL -> R.string.card_entry_mode_manual
-        CardEntryMode.QRCODE -> R.string.card_entry_mode_qrcode
-        else -> R.string.card_entry_mode_unspecified
-    }
-}
-
+/**
+ * Converts string representation of card brand into enum.
+ *
+ * @return CardBrand enum value
+ */
 fun String.toCardBrand() : CardBrand
 {
     return when(this)
@@ -395,6 +567,15 @@ fun String.toCardBrand() : CardBrand
     }
 }
 
+/**
+ * Generates a pseudo master password based on user + device + date.
+ *
+ * Uses hashing and digit extraction to generate 6-digit OTP-like value.
+ *
+ * @param user Username or identifier
+ * @param sharedViewModel Shared configuration source
+ * @return Generated 6-digit password string
+ */
 fun generateMasterPassword(user : String?, sharedViewModel: SharedViewModel) : String
 {
     val tid = sharedViewModel.objPosConfig?.procId?:""
@@ -419,7 +600,14 @@ fun generateMasterPassword(user : String?, sharedViewModel: SharedViewModel) : S
     return password  // Pads with '0' if needed
 }
 
-// **Simple Hash Function (Alternative to SHA-256)**
+/**
+ * Generates a custom non-cryptographic hash from input string.
+ *
+ * Used internally for lightweight fingerprint generation.
+ *
+ * @param input Input string
+ * @return Hex encoded hash string
+ */
 fun simpleHash(input: String): String {
     val hashParts = LongArray(10) { 0L }
     val prime1 = 0x01000193L
@@ -439,6 +627,12 @@ fun simpleHash(input: String): String {
     return hashParts.joinToString("") { "%08x".format(it) }
 }
 
+/**
+ * Generates SHA-256 hash of input string.
+ *
+ * @param input Input string
+ * @return Hex encoded SHA-256 hash
+ */
 fun sha256(input: String): String {
     val bytes = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
     return bytes.joinToString("") { "%02x".format(it) } // Convert bytes to hex string
