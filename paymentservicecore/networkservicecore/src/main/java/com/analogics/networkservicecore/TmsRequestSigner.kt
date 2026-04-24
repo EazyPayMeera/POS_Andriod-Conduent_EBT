@@ -4,10 +4,33 @@ import android.util.Log
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * Utility object responsible for generating HMAC-SHA256 signatures
+ * for TMS API request authentication.
+ *
+ * This ensures:
+ * - Request integrity
+ * - Server-side validation
+ * - Tamper-proof API communication
+ */
 object TmsRequestSigner {
 
     private const val HMAC_SHA256 = "HmacSHA256"
 
+    /**
+     * Generates HMAC-SHA256 signature from request parameters.
+     *
+     * Steps:
+     * 1. Filter empty/null values
+     * 2. Sort parameters lexicographically (ASCII order)
+     * 3. Build query string (key=value&key=value...)
+     * 4. Generate HMAC-SHA256 hash using secret key
+     * 5. Convert result to uppercase HEX string
+     *
+     * @param params Request parameters map
+     * @param secret Shared secret key for HMAC generation
+     * @return Uppercase hexadecimal signature string
+     */
     fun generateSignature(
         params: Map<String, String>,
         secret: String

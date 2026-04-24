@@ -5,12 +5,44 @@ import com.analogics.securityframework.listener.ISharedPrefReqListener
 import javax.inject.Singleton
 import kotlin.collections.iterator
 
+/**
+ * Singleton wrapper over SharedPreferences operations.
+ *
+ * Acts as a centralized access layer for:
+ * - Reading config values
+ * - Writing config values
+ *
+ * ⚠️ NOTE:
+ * This object bypasses dependency injection and creates
+ * SecuredSharedPrefManager manually each time.
+ */
 @Singleton
 object SharedPrefHandler : ISharedPrefReqListener {
+
+    /**
+     * Shared preferences file name used across app
+     */
     val appPrefName = "AppPrefs"
 
+    /**
+     * Late-initialized reference (currently unused in logic)
+     * ⚠️ WARNING: This is never initialized or used safely.
+     */
    lateinit var pref :SecuredSharedPrefManager
 
+    /**
+     * Retrieves a value from SharedPreferences by key.
+     *
+     * Logic:
+     * - Loads all preferences
+     * - Iterates manually to find matching key
+     *
+     * ⚠️ Inefficient: avoids direct getX methods
+     *
+     * @param context Application/Activity context
+     * @param key preference key
+     * @return stored value or null if not found
+     */
     override fun getConfigVal(context: Context, key: String): Any? {
         try {
             val prefs = SecuredSharedPrefManager(context, appPrefName)
@@ -28,6 +60,18 @@ object SharedPrefHandler : ISharedPrefReqListener {
         return null
     }
 
+    /**
+     * Stores a value into SharedPreferences based on its type.
+     *
+     * Supports:
+     * - String
+     * - Int
+     * - Long
+     * - Float
+     * - Boolean
+     * - fallback (toString)
+     * - null → remove key
+     */
     override fun setConfigVal(context: Context, key: String, value: Any?) {
         try {
             val prefs = SecuredSharedPrefManager(context, appPrefName)

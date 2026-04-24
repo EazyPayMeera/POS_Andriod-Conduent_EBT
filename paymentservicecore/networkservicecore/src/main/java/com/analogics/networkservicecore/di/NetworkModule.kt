@@ -12,10 +12,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+/**
+ * Hilt DI module responsible for providing network-related dependencies
+ * such as Retrofit and OkHttpClient.
+ *
+ * Installed in SingletonComponent → meaning single instance across the app.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
+    /**
+     * Provides a singleton Retrofit instance configured with:
+     * - Base URL
+     * - OkHttp client
+     * - Gson converter
+     * - Logging interceptor (for debugging API calls)
+     */
     @Provides
     @Singleton
     fun provideRetrofitAPIService(): Retrofit {

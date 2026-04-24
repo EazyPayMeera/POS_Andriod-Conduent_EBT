@@ -17,12 +17,30 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+/**
+ * Handles terminal security lifecycle:
+ *
+ * - Sign On
+ * - Key Exchange
+ * - Key Change
+ * - Handshake
+ * - Sign Off
+ *
+ * This module is responsible for secure communication with host for:
+ * - Master key injection
+ * - Work key setup
+ * - Terminal activation/deactivation
+ */
 class SignOnRequestRepository@Inject constructor(
     @ApplicationContext val context: Context,
     var apiRequestBuilder: ApiRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository
 )  {
+    /**
+     * SIGN ON REQUEST
+     * ----------------
+     * Establishes terminal session and fetches keys (work keys / config).
+     */
     suspend fun signOnRequest(
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
         onAPIServiceResponse: (Any) -> Unit
@@ -82,6 +100,11 @@ class SignOnRequestRepository@Inject constructor(
         )
     }
 
+    /**
+     * KEY EXCHANGE REQUEST
+     * --------------------
+     * Exchanges terminal keys with host.
+     */
     suspend fun keyExchangeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceRequest(
             object : IBuilderServiceResponseListener{
@@ -136,6 +159,11 @@ class SignOnRequestRepository@Inject constructor(
         onAPIServiceResponse(dummyResponse)
     }
 
+    /**
+     * HANDSHAKE REQUEST
+     * ------------------
+     * Used to validate terminal connectivity with host.
+     */
     suspend fun handShakeRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.handShakeRequest(
             object : IBuilderServiceResponseListener{
@@ -162,6 +190,11 @@ class SignOnRequestRepository@Inject constructor(
         )
     }
 
+    /**
+     * SIGN OFF REQUEST
+     * ----------------
+     * Ends terminal session securely.
+     */
     suspend fun signOff(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceRequest(
             object : IBuilderServiceResponseListener{

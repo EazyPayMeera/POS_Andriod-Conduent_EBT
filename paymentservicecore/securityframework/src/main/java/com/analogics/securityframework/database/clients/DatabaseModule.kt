@@ -13,11 +13,26 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
+/**
+ * Hilt module responsible for providing Room database and DAO dependencies.
+ *
+ * Scope:
+ * - Singleton database instance across the application
+ * - Centralized access for DAOs (Batch, Transaction, User)
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+
+    /**
+     * Provides singleton Room database instance.
+     *
+     * Configuration:
+     * - Database name from constants
+     * - Migration support enabled
+     * - ⚠ fallbackToDestructiveMigration enabled (DANGEROUS in production)
+     */
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): AppDatabaseClient {
@@ -31,15 +46,25 @@ object DatabaseModule {
             .build()
     }
 
+    /**
+     * Provides Batch DAO for batch lifecycle operations.
+     */
     @Provides
     fun provideBatchDao(database: AppDatabaseClient): IBatchDao {
         return database.getBatchDao()
     }
 
+    /**
+     * Provides Transaction DAO for transaction processing.
+     */
     @Provides
     fun provideTxnDao(database: AppDatabaseClient): ITxnDao {
         return database.getTxnDao()
     }
+
+    /**
+     * Provides User Management DAO for clerk/admin operations.
+     */
     @Provides
     fun provideUserManagement(database: AppDatabaseClient): IUserManagementDao {
         return database.getUserManagement()

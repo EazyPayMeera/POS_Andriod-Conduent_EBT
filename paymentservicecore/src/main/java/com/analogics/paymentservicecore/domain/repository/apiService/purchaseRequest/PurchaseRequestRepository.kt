@@ -28,6 +28,13 @@ class PurchaseRequestRepository @Inject constructor(
     private var builderServiceRepository: BuilderServiceRepository
 ) {
 
+    /**
+     * Handles purchase transaction request lifecycle:
+     * - Builds request
+     * - Sends to host via BuilderService
+     * - Parses ISO response
+     * - Converts into PaymentServiceTxnDetails
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun parseFinancialMessage(paymentServiceTxnDetails: PaymentServiceTxnDetails, response: ByteArray): PaymentServiceTxnDetails {
 
@@ -45,6 +52,14 @@ class PurchaseRequestRepository @Inject constructor(
                 hostResMessage = "Invalid response"
             }
         }
+        /**
+         * Parses ISO financial response into PaymentServiceTxnDetails.
+         *
+         * Responsibilities:
+         * - Extract ISO fields
+         * - Convert EMV TLV data
+         * - Set transaction status
+         */
         apiRequestBuilder.parseISOMessage(context, response).let { it ->
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
@@ -85,7 +100,14 @@ class PurchaseRequestRepository @Inject constructor(
         return paymentServiceTxnDetails
     }
 
-
+    /**
+     * Sends purchase request to host via BuilderService.
+     *
+     * Flow:
+     * 1. Build ISO request
+     * 2. Send via BuilderService
+     * 3. Handle success/failure callbacks
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun purchaseRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceFinancialRequest(

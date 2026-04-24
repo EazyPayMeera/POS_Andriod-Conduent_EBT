@@ -22,7 +22,17 @@ import javax.net.ssl.X509TrustManager
 
 
 object NetworkCallProvider {
-
+    /**
+     * Performs a blocking SSL socket request on IO dispatcher and returns full response bytes.
+     *
+     * Features:
+     * - Manual TLS 1.2 socket connection
+     * - Length-prefixed ISO-style request/response handling
+     * - Full request/response HEX logging for debugging
+     *
+     * @param requestBytes Raw request payload
+     * @return ResultProvider.Success with response bytes or ResultProvider.Error on failure
+     */
     suspend fun safeApiCall(requestBytes: ByteArray): ResultProvider<ByteArray> {
         return try {
             withContext(Dispatchers.IO) {
@@ -111,6 +121,14 @@ object NetworkCallProvider {
         }
     }
 
+    /**
+     * Fire-and-forget API call using coroutine.
+     *
+     * - Opens SSL socket
+     * - Sends request bytes with length prefix
+     * - Does NOT read response
+     * - Always closes socket in finally block
+     */
     fun safeApiResponse(requestBytes: ByteArray) {
         CoroutineScope(Dispatchers.IO).launch {
             var sslSocket: SSLSocket? = null
@@ -149,7 +167,15 @@ object NetworkCallProvider {
     }
 
 
-
+    /**
+     * Reactive socket communication using Kotlin Flow.
+     *
+     * Features:
+     * - Continuous reading of ISO-style messages
+     * - Deduplicates MTI responses (0800 / 0810)
+     * - Emits only unique valid responses
+     * - Auto-closes on completion condition
+     */
     fun safeApiNetworkCall(requestBytes: ByteArray): Flow<ByteArray> = callbackFlow {
         var intentionallyClosed = false  // 👈 add this flag
 

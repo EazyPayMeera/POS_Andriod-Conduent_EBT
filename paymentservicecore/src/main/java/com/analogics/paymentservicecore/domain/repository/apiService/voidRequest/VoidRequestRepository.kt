@@ -24,6 +24,14 @@ class VoidRequestRepository @Inject constructor (
     private var builderServiceRepository: BuilderServiceRepository
 ) {
 
+    /**
+     * Parses ISO 8583 VOID response and maps it to PaymentServiceTxnDetails.
+     *
+     * Responsibilities:
+     * - Extract ISO fields (STAN, RRN, Response Code, etc.)
+     * - Decode EMV TLV data
+     * - Determine transaction status (APPROVED / DECLINED)
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun parseVoidResponse(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
         apiRequestBuilder.parseISOMessage(context,response).let {
@@ -52,6 +60,14 @@ class VoidRequestRepository @Inject constructor (
         return paymentServiceTxnDetails
     }
 
+    /**
+     * Sends VOID request to host system and handles async response.
+     *
+     * Steps:
+     * - Build VOID ISO request
+     * - Send via BuilderServiceRepository
+     * - Parse response and return mapped result
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun voidRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceFinancialRequest(

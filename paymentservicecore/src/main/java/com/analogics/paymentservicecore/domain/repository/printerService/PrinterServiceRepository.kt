@@ -16,6 +16,20 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * PrinterServiceRepository
+ *
+ * Acts as a bridge between:
+ * - Application Printer Service Layer
+ * - Hardware SDK Printer Layer
+ *
+ * Responsibilities:
+ * 1. Initialize printer SDK
+ * 2. Build print job (text, formatting, line spacing)
+ * 3. Trigger print execution
+ * 4. Map SDK responses → application-level responses
+ * 5. Handle printer status updates and errors
+ */
 class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestListener,
     IPrinterSdkResponseListener {
     private val printerSdkRequestRepository = PrinterSdkRequestRepository(this)
@@ -23,27 +37,54 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
     private lateinit var context : Context
     private var job: Job?=null
 
+    /**
+     * PrintFormat builder
+     *
+     * Bitmask-based formatting system used to define:
+     * - Font size
+     * - Alignment
+     * - Line spacing
+     * - Style (bold, reverse, etc.)
+     * - Font type
+     *
+     * Each option is OR-ed into a single integer flag.
+     */
     class PrintFormat(private var format: Int?=0x00000000) {
+        /**
+         * Font size options for printing
+         */
         fun fontSize(size: FontSize): PrintFormat {
             format = format?.or(size.value)
             return this
         }
 
+        /**
+         * Text alignment options
+         */
         fun align(align: Align): PrintFormat {
             format = format?.or(align.value)
             return this
         }
 
+        /**
+         * Line spacing options for receipt formatting
+         */
         fun lineSpacing(spacing: LineSpacing): PrintFormat {
             format = format?.or(spacing.value)
             return this
         }
 
+        /**
+         * Text styling options
+         */
         fun style(style: Style): PrintFormat {
             format = format?.or(style.value)
             return this
         }
 
+        /**
+         * Font family selection
+         */
         fun font(name: FontName): PrintFormat {
             format = format?.or(name.value)
             return this
@@ -87,6 +128,12 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         SIMSUN(0x01000000);
     }
 
+    /**
+     * Initializes printer SDK
+     *
+     * @param context Android context
+     * @param iPrinterServiceResponseListener callback for printer events
+     */
     override fun init(
         context: Context,
         iPrinterServiceResponseListener: IPrinterServiceResponseListener
@@ -97,6 +144,17 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         return this
     }
 
+    /**
+     * Adds text line to print buffer
+     *
+     * Supports 3-column layout (receipt style printing)
+     *
+     * @param col1 Left column text
+     * @param col2 Center column text
+     * @param col3 Right column text
+     * @param format Print formatting options (font, align, style, etc.)
+     * @param condition If false → skip adding text
+     */
     override fun addText(col1 : String?, col2: String?, col3 : String?, format : PrintFormat?, condition: Boolean?) : PrinterServiceRepository {
         condition?.takeIf { it == true }?.let {
             printerSdkRequestRepository.addText(col1, col2, col3, format?.getVal())
@@ -104,6 +162,12 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         return this
     }
 
+    /**
+     * Adds blank line spacing to print buffer
+     *
+     * @param lines number of empty lines
+     * @param condition if false → skip operation
+     */
     override fun feedLine(lines : Int?, condition: Boolean?) : PrinterServiceRepository {
         condition?.takeIf { it == true }?.let {
             printerSdkRequestRepository.feedLine(lines)
@@ -111,6 +175,13 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         return this
     }
 
+    /**
+     * Executes print job asynchronously
+     *
+     * Ensures:
+     * - Only one print job runs at a time
+     * - Previous job is cancelled before new execution
+     */
     override fun print( ): PrinterServiceRepository {
         job?.cancel()
         job = CoroutineScope(Dispatchers.Default).launch {
@@ -121,6 +192,9 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         return this
     }
 
+    /**
+     * Maps SDK printer status → application printer status
+     */
     private fun sdkToPrinterStatus(value: PrinterSdkResult.Status) : Status {
         return when (value) {
             PrinterSdkResult.Status.INIT_SUCCESS -> Status.INIT_SUCCESS
@@ -136,6 +210,9 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         }
     }
 
+    /**
+     * Converts SDK response → application-level printer response
+     */
     private fun sdkToPrinterService(response: Any) : Any
     {
         return when(response) {
@@ -153,6 +230,9 @@ class PrinterServiceRepository @Inject constructor() : IPrinterServiceRequestLis
         }
     }
 
+    /**
+     * SDK callback entry point for printer events
+     */
     override fun onPrinterSdkResponse(response: Any) {
         iPrinterServiceResponseListener?.onPrinterServiceResponse(sdkToPrinterService(response))
     }

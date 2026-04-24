@@ -82,7 +82,9 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     lateinit var iEmvServiceResponseListener: IEmvServiceResponseListener
     lateinit var paymentServiceTxnDetails : PaymentServiceTxnDetails
 
-
+    /**
+     * Maps SDK InitStatus → App InitStatus
+     */
     fun sdkToEmvInitStatus(value: EmvSdkResult.InitStatus) : InitStatus {
         return when (value) {
             EmvSdkResult.InitStatus.SUCCESS -> InitStatus.SUCCESS
@@ -90,6 +92,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Maps SDK CardCheckStatus → App CardCheckStatus
+     *
+     * Used during card detection flow (insert / tap / swipe / errors)
+     */
     fun sdkToEmvCardCheckStatus(value: EmvSdkResult.CardCheckStatus) : CardCheckStatus {
         return when (value) {
             EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED -> CardCheckStatus.NO_CARD_DETECTED
@@ -108,6 +115,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Maps SDK TransStatus → App TransStatus
+     *
+     * Represents final transaction outcome (online/offline, approvals, failures)
+     */
     fun sdkToEmvTransStatus(value: EmvSdkResult.TransStatus) :TransStatus {
         return when (value) {
             EmvSdkResult.TransStatus.APPROVED_ONLINE -> TransStatus.APPROVED_ONLINE
@@ -133,6 +145,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Maps SDK DisplayMsgId → App DisplayMsgId
+     *
+     * Used for UI messaging during EMV flow (insert card, error, processing, etc.)
+     */
     fun sdkToEmvDisplayMsgId(value: EmvSdkResult.DisplayMsgId) : DisplayMsgId
     {
         return when (value) {
@@ -172,6 +189,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Converts CardCheckStatus → DisplayMsgId
+     *
+     * Used to directly show UI messages during card detection phase
+     */
     fun emvCardCheckStatusToDisplayMsgId(status: CardCheckStatus) : DisplayMsgId
     {
         return when (status) {
@@ -192,6 +214,12 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Adjusts TransStatus based on DisplayMsgId context.
+     *
+     * Used mainly for TERMINATED flows where UI message
+     * defines the actual reason of termination.
+     */
     fun adjustTransStatusFromDisplayMsgId(status: TransStatus, displayMsgId: DisplayMsgId?) : TransStatus
     {
         var transStatus = when (status) {
@@ -212,6 +240,9 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         return transStatus
     }
 
+    /**
+     * Maps TransStatus → DisplayMsgId (for UI rendering)
+     */
     fun emvTransStatusToDisplayMsgId(status: TransStatus) : DisplayMsgId?
     {
         return when (status) {
@@ -236,6 +267,17 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Central SDK → App response mapper.
+     *
+     * Converts raw SDK result objects into unified app-level response models:
+     * - InitResult
+     * - CardCheckResult
+     * - TransResult
+     * - Exceptions
+     *
+     * Acts as a single translation layer between SDK and business logic.
+     */
     fun sdkToEmvService(response: Any) : Any
     {
         return when(response) {
@@ -278,6 +320,17 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Handles all EMV SDK response events (generic dispatcher).
+     *
+     * Responsibilities:
+     * 1. Converts SDK response → app-level response using mapping layer
+     * 2. Updates transaction metadata (card entry mode)
+     * 3. Aborts payment after transaction completion event
+     *
+     * Flow:
+     * SDK → onEmvSdkResponse → mapped response → UI/business layer
+     */
     override fun onEmvSdkResponse(response: Any) {
         iEmvServiceResponseListener.onEmvServiceResponse(sdkToEmvService(response))
         if (response is EmvSdkResult.CardCheckResult) {
@@ -296,6 +349,14 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         iEmvServiceResponseListener.onEmvServiceDisplayMessage(sdkToEmvDisplayMsgId(displayMsgId))
     }
 
+    /**
+     * Handles EMV Online Authorization request.
+     *
+     * Triggered when EMV kernel requires host authorization.
+     *
+     * Flow:
+     * EMV Kernel → Online Request → Host API → Response → EMV continuation
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onEmvSdkOnlineRequest(emvTags : HashMap<String,String>, onResponse : (HashMap<String,String>)->Unit) {
         try {
@@ -309,6 +370,20 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Initializes EMV Payment SDK with configuration payloads.
+     *
+     * Responsibilities:
+     * 1. Parse JSON-based AID and CAP key configuration
+     * 2. Convert them into SDK-compatible models
+     * 3. Apply terminal overrides (merchant, timeout, etc.)
+     * 4. Initialize SDK repository
+     *
+     * Inputs:
+     * - termConfig: Terminal-level overrides
+     * - aidConfig: AID configuration JSON
+     * - capKeys: CAP keys JSON array string
+     */
     override fun initPaymentSDK(
         termConfig: TermConfig?,
         aidConfig: String?,
@@ -345,6 +420,23 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Initializes the EMV Payment SDK with terminal, AID, and CAP key configurations.
+     *
+     * Responsibilities:
+     * 1. Converts external models (aidConfig, capKeys) into SDK-compatible models
+     * 2. Overrides terminal-specific configuration parameters (if provided)
+     * 3. Initializes the EMV SDK via repository
+     *
+     * Notes:
+     * - Uses Gson-based mapping between app layer and SDK layer models
+     * - Terminal config overrides take precedence over AID config defaults
+     *
+     * @param termConfig Terminal-specific configuration overrides (merchant, terminal ID, etc.)
+     * @param aidConfig EMV AID configuration for card processing rules
+     * @param capKeys List of CAP keys used for EMV cryptographic operations
+     * @param iEmvServiceResponseListener Callback listener for SDK events/responses
+     */
     override fun initPaymentSDK(
         termConfig: TermConfig?,
         aidConfig: AidConfig?,
@@ -379,6 +471,19 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Starts an EMV payment transaction.
+     *
+     * Responsibilities:
+     * 1. Prepares transaction configuration (amount, currency, type, card modes)
+     * 2. Converts app-level transaction model → SDK-level model
+     * 3. Triggers EMV SDK payment flow
+     * 4. Displays initial UI state (NONE)
+     *
+     * @param context Android context required by EMV SDK
+     * @param paymentServiceTxnDetails Transaction details (amount, type, card flags, etc.)
+     * @param iEmvServiceResponseListener Callback listener for EMV events
+     */
     override fun startPayment(
         context: Context,
         paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -397,6 +502,18 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         emvSdkRequestRepository.startPayment(context, sdkTransConfig)
     }
 
+
+    /**
+     * Generates PIN block using PAN and transaction amount.
+     *
+     * Typically used for:
+     * - Online PIN entry flow
+     * - Host PIN encryption process
+     *
+     * @param pan Primary Account Number (can be null for some card flows)
+     * @param amount Transaction amount used in PIN block generation
+     * @param nResult Callback returning encrypted PIN block
+     */
     override fun pinGeneration(
         pan: String?,
         amount: String,
@@ -408,15 +525,37 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     }
 
 
-
+    /**
+     * Checks whether a card is currently inserted/tapped/detected.
+     *
+     * @return true if card is present in reader, false otherwise
+     */
     override fun isCardExists(context: Context): Boolean {
         return emvSdkRequestRepository.isCardExists(context)
     }
 
+    /**
+     * Aborts the current EMV transaction flow immediately.
+     *
+     * Used when:
+     * - User cancels transaction
+     * - Timeout handling
+     * - UI/navigation interruption
+     */
     override fun abortPayment() {
         emvSdkRequestRepository.abortPayment()
     }
 
+    /**
+     * Resolves card interaction mode based on terminal capabilities.
+     *
+     * Examples:
+     * - EMV + NFC → Insert / Tap / Swipe
+     * - EMV only → Insert / Swipe
+     * - NFC only → Tap / Swipe
+     *
+     * Default fallback: Swipe only
+     */
     private fun resolveCardCheckMode(isEMVEnable: Boolean?, isTapEnable: Boolean?): CardCheckMode {
         val emv = isEMVEnable == true
         val tap = isTapEnable == true
@@ -428,6 +567,16 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    /**
+     * Builds EMV transaction configuration object.
+     *
+     * Includes:
+     * - Amount & cashback formatting
+     * - Currency handling
+     * - Transaction type mapping
+     * - Card interaction mode resolution
+     * - Default EMV constraints (PIN, DRL, timeout)
+     */
     private fun getTransConfig(paymentServiceTxnDetails: PaymentServiceTxnDetails?) : TransConfig
     {
         val isEMVEnable = paymentServiceTxnDetails?.isEMVEnable
@@ -444,6 +593,26 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         )
     }
 
+    /**
+     * Handles EMV "Go Online" request flow.
+     *
+     * This function is responsible for:
+     * 1. Extracting EMV receipt and transaction info from tags
+     * 2. Preparing TLV data for host communication
+     * 3. Initiating online authorization request
+     * 4. Handling success, timeout, and failure scenarios
+     * 5. Performing reversal attempts (up to 3 retries) if needed
+     * 6. Returning final EMV response tags via callback
+     *
+     * Flow Summary:
+     * EMV Tags → Extract Info → Build TLV → Online Auth →
+     *     ├── Success → return response TLV
+     *     ├── Error → attempt reversal (max 3 tries)
+     *     └── Timeout → attempt reversal (max 3 tries)
+     *
+     * @param emvTags Raw EMV tag map received from terminal/card
+     * @param onResponse Callback returning final EMV response tags to EMV kernel
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun onEmvServiceRequestOnline(
         emvTags: HashMap<String, String>,
@@ -603,7 +772,10 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
-
+    /**
+     * Prepares TLV data required for host communication.
+     * Extracts sensitive fields separately and builds TLV for remaining tags.
+     */
     private fun prepareHostTlvData(emvTags: HashMap<String, String>)
     {
         try {
@@ -652,7 +824,11 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
-
+    /**
+     * Determines card brand using:
+     * 1. AID (preferred, EMV standard)
+     * 2. PAN (fallback BIN range)
+     */
     fun getCardBrand(aid : String?=null, pan : String?=null) : CardBrand?
     {
         var cardBrand : CardBrand? = CardBrand.UNKNOWN

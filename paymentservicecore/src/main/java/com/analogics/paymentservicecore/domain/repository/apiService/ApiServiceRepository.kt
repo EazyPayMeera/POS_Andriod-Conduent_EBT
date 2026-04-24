@@ -35,11 +35,21 @@ package com.analogics.paymentservicecore.domain.repository.apiService
     ) : IApiServiceRequestListener
      {
         lateinit var iApiServiceResponseListener: IApiServiceResponseListener
-
+         /**
+          * Returns POS config from persisted storage
+          */
         override fun getPosConfig(): PosConfig {
             return posConfig.loadFromPrefs()
         }
 
+         /**
+          * Entry point for online financial authorization request.
+          *
+          * Flow:
+          * 1. Mark txn as INITIATED
+          * 2. Save to DB
+          * 3. Route based on TxnType
+          */
          @RequiresApi(Build.VERSION_CODES.O)
          override suspend fun apiServiceRequestOnlineAuth(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -68,7 +78,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
             }
          }
 
-
+         /**
+          * VOID transaction
+          */
         @RequiresApi(Build.VERSION_CODES.O)
         override suspend fun apiServiceVoid(
             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -81,6 +93,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
             }
         }
 
+         /**
+          * PURCHASE transaction
+          */
          @RequiresApi(Build.VERSION_CODES.O)
          override suspend fun apiServicePurchase(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -93,6 +108,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              }
          }
 
+         /**
+          * VOUCHER settlement transaction
+          */
          @RequiresApi(Build.VERSION_CODES.O)
          override suspend fun voucherSettlement(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -105,7 +123,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              }
          }
 
-
+         /**
+          * REVERSAL transaction
+          */
         @RequiresApi(Build.VERSION_CODES.O)
         override suspend fun apiServiceReversal(
             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
@@ -118,6 +138,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
             }
         }
 
+         /**
+          * SIGN ON request
+          */
          override suspend fun signOnRequest(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
              iApiServiceResponseListener: IApiServiceResponseListener
@@ -130,6 +153,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
 
          }
 
+         /**
+          * SIGN OFF request
+          */
          override suspend fun signOnOff(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
              iApiServiceResponseListener: IApiServiceResponseListener
@@ -142,6 +168,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
 
          }
 
+         /**
+          * HANDSHAKE request
+          */
          override suspend fun handShakeRequest(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
              iApiServiceResponseListener: IApiServiceResponseListener
@@ -156,6 +185,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              }
          }
 
+         /**
+          * KEY EXCHANGE
+          */
          override suspend fun keyExchange(
             paymentServiceTxnDetails: PaymentServiceTxnDetails?,
             iApiServiceResponseListener: IApiServiceResponseListener
@@ -167,6 +199,9 @@ package com.analogics.paymentservicecore.domain.repository.apiService
             }
         }
 
+         /**
+          * KEY CHANGE
+          */
          override suspend fun keyChange(
              paymentServiceTxnDetails: PaymentServiceTxnDetails?,
              iApiServiceResponseListener: IApiServiceResponseListener
@@ -178,6 +213,14 @@ package com.analogics.paymentservicecore.domain.repository.apiService
              }
          }
 
+         /**
+          * CENTRAL RESPONSE HANDLER
+          *
+          * Responsibilities:
+          * - Hide progress
+          * - Route success/error/timeout
+          * - Update DB on success
+          */
          override fun onApiServiceResponse(response: Any) {
 
              iApiServiceResponseListener.onApiServiceDisplayProgress(false)

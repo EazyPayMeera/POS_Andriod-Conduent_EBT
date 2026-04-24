@@ -21,12 +21,29 @@ import com.eazypaytech.paymentservicecore.constants.EmvConstants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * Handles REVERSAL / VOID transaction flow.
+ *
+ * Responsibilities:
+ * - Build reversal request
+ * - Send to host via BuilderService
+ * - Parse ISO reversal response
+ * - Map status into PaymentServiceTxnDetails
+ */
 class ReversalRequestRepository @Inject constructor(
     @ApplicationContext val context: Context,
     var apiRequestBuilder: ApiRequestBuilder,
     private var builderServiceRepository: BuilderServiceRepository
 ) {
 
+    /**
+     * Parses reversal ISO response into domain model.
+     *
+     * Handles:
+     * - ISO fields extraction
+     * - EMV TLV injection
+     * - Transaction status mapping
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun parseReversalResponse(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
         apiRequestBuilder.parseISOMessage(context,response).let {
@@ -55,6 +72,14 @@ class ReversalRequestRepository @Inject constructor(
         return paymentServiceTxnDetails
     }
 
+    /**
+     * Sends reversal request to host.
+     *
+     * Flow:
+     * 1. Build VOID/Reversal ISO request
+     * 2. Send via BuilderService
+     * 3. Handle success/failure callbacks
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun sendReversal(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceFinancialRequest(

@@ -1,5 +1,10 @@
 package com.analogics.paymentservicecore.data.model
 
+/**
+ * Represents all supported transaction types in the system.
+ *
+ * These map business-level transactions to EMV/acquirer transaction types.
+ */
 enum class TxnType {
     PURCHASE_CASHBACK,
     CASH_PURCHASE,
@@ -15,7 +20,13 @@ enum class TxnType {
 }
 
 
-
+/**
+ * Maps internal transaction types to EMV transaction codes.
+ *
+ * ⚠ IMPORTANT:
+ * These values are typically ISO8583 / EMV processing codes
+ * and must match host/acquirer specifications exactly.
+ */
 fun TxnType.toEmvTransType(): String {  // Change as per Conduent
     return when (this) {
         TxnType.CASH_PURCHASE -> "00"          // EMV purchase

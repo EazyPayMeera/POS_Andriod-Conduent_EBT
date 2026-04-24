@@ -27,6 +27,12 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
     private var printer: Printer? = null
     private val printerPixelWidth = 384
 
+    /**
+     * Initializes the printer device asynchronously.
+     *
+     * @param context Application context used to access device services.
+     * @return 0 if initialization is successful, -1 otherwise.
+     */
     fun init(context: Context): Int {
         var printerInit = CountDownLatch(1);
         var printerStatus: Int? = -1
@@ -52,6 +58,11 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         }
     }
 
+    /**
+     * Notifies the SDK about printer initialization status.
+     *
+     * @param status Printer return status code.
+     */
     private fun notifyInitStatus(status: Int?) {
         iPrinterSdkResponseListener.onPrinterSdkResponse(
             PrinterSdkResult.Result(
@@ -65,6 +76,11 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         )
     }
 
+    /**
+     * Notifies the SDK about printing result status.
+     *
+     * @param status Printer return status code.
+     */
     private fun notifyPrintStatus(status: Int?) {
         iPrinterSdkResponseListener.onPrinterSdkResponse(
             PrinterSdkResult.Result(
@@ -78,6 +94,12 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         )
     }
 
+    /**
+     * Converts internal format flags into printer font family.
+     *
+     * @param format Bitwise format flags.
+     * @return Printer font constant.
+     */
     private fun toYSDKFont(format: Int): Int {
         /* Font Size */
         return if (format.and(FontSize.LARGE.value) == FontSize.LARGE.value)
@@ -88,6 +110,12 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
             FontFamily.MIDDLE
     }
 
+    /**
+     * Converts internal format flags into alignment (gravity).
+     *
+     * @param format Bitwise format flags.
+     * @return Gravity alignment value.
+     */
     private fun toYSDKAlign(format: Int): Int {
         /* Font Size */
         return if (format.and(Align.RIGHT.value) == Align.RIGHT.value)
@@ -98,6 +126,19 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
             Gravity.LEFT
     }
 
+    /**
+     * Adds formatted text to printer buffer with optional columns.
+     *
+     * Supports:
+     * - Single column
+     * - Two-column layout
+     * - Three-column layout
+     *
+     * @param col1 First column text
+     * @param col2 Second column text (optional)
+     * @param col3 Third column text (optional)
+     * @param format Formatting flags (font, style, alignment)
+     */
     fun addText(col1: String? = null, col2: String? = null, col3: String? = null, format: Int) {
         try {
             if (col2 != null && col3 != null) {
@@ -139,6 +180,11 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         }
     }
 
+    /**
+     * Feeds blank paper lines to printer.
+     *
+     * @param lines Number of blank lines to feed.
+     */
     fun feedLine(lines: Int? = 1) {
         try {
             printer?.feedPaper(lines ?: 1, FeedUnit.LINE)
@@ -147,6 +193,10 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         }
     }
 
+    /**
+     * Starts the actual printing process.
+     * Notifies listener about printing state and result.
+     */
     fun print() {
         try {
             /* Notify that printing has started */
@@ -185,6 +235,7 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         }
     }
 
+
     private fun makeItem(format: Int, item: String?): TextItem {
         var textItem = TextItem(item ?: "")
 
@@ -197,6 +248,15 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         return textItem
     }
 
+    /**
+     * Converts raw text into structured printable line with alignment and wrapping.
+     *
+     * Handles:
+     * - Multi-column layout
+     * - Word wrapping
+     * - Character-level splitting
+     * - Alignment per column
+     */
     private fun makeLine(
         format: Int,
         columnPercents: List<Float>,
@@ -264,6 +324,9 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         return resultLines.joinToString("\n")
     }
 
+    /**
+     * Measures space width based on font size.
+     */
     private fun getSpaceWidth(font: Int): Float {
         val paint = Paint()
         paint.textSize = when (font) {
@@ -274,6 +337,9 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         return paint.measureText(" ")  // Measure width of space character dynamically
     }
 
+    /**
+     * Wraps text into multiple lines based on pixel width constraints.
+     */
     private fun wrapText(
         text: String,
         font: Int,
@@ -346,6 +412,9 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         return lines
     }
 
+    /**
+     * Measures pixel width of text for given font.
+     */
     private fun measureTextPX(text: String, font: Int): Float {
         val paint = Paint()
         paint.textSize = when (font) {
@@ -356,6 +425,9 @@ class PrinterWrapperRepository @Inject constructor(var iPrinterSdkResponseListen
         return paint.measureText(text)
     }
 
+    /**
+     * Data holder for a printable text column item.
+     */
     class TextItem(var originalText: String) {
         var font: Int = FontFamily.MIDDLE
             private set

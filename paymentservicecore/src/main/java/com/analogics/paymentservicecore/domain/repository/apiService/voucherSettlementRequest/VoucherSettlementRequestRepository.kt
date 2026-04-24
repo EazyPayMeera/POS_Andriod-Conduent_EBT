@@ -28,6 +28,15 @@ class VoucherSettlementRequestRepository @Inject constructor(
     private var builderServiceRepository: BuilderServiceRepository
 ) {
 
+    /**
+     * Parses settlement ISO response and maps it into PaymentServiceTxnDetails.
+     *
+     * Responsibilities:
+     * - Extract ISO fields (STAN, RRN, Settlement Date, etc.)
+     * - Decode EMV TLV data
+     * - Set transaction status (APPROVED / DECLINED)
+     * - Attach host response message
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun parseSettlementResponse(paymentServiceTxnDetails : PaymentServiceTxnDetails, response: ByteArray) : PaymentServiceTxnDetails {
         apiRequestBuilder.parseISOMessage(context,response).let {
@@ -64,7 +73,13 @@ class VoucherSettlementRequestRepository @Inject constructor(
         return paymentServiceTxnDetails
     }
 
-
+    /**
+     * Sends voucher settlement request to host system.
+     *
+     * Handles:
+     * - Success response → parse & return mapped object
+     * - Failure → timeout or generic error mapping
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun voucherSettlementRequest(paymentServiceTxnDetails: PaymentServiceTxnDetails?, onAPIServiceResponse:(Any)->Unit) {
         builderServiceRepository.networkServiceFinancialRequest(

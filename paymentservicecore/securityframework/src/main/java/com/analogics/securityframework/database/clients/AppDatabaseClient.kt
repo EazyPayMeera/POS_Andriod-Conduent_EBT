@@ -11,6 +11,16 @@ import com.analogics.securityframework.database.entity.BatchEntity
 import com.analogics.securityframework.database.entity.TxnEntity
 import com.analogics.securityframework.database.entity.UserManagementEntity
 
+/**
+ * Main Room database for the application.
+ *
+ * Responsibilities:
+ * - Stores Batch information
+ * - Stores Transaction records
+ * - Stores User management data
+ *
+ * Acts as the single database entry point.
+ */
 @Database(entities = [BatchEntity::class,TxnEntity::class, UserManagementEntity::class], version = 2.toInt())
 abstract class AppDatabaseClient : RoomDatabase() {
     abstract fun getBatchDao(): IBatchDao
@@ -18,6 +28,11 @@ abstract class AppDatabaseClient : RoomDatabase() {
     abstract  fun getUserManagement():IUserManagementDao
 }
 
+/**
+ * Migration from version 1 → 2
+ *
+ * Adds header/footer fields to TxnTable for receipt formatting.
+ */
 val MIGRATION_1_2 = object : Migration(1.1.toInt(), 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE TxnTable ADD COLUMN Header1 TEXT DEFAULT ''")
