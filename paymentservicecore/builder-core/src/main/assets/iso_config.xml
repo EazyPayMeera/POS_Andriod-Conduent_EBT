@@ -52,6 +52,7 @@
         <field num="55" type="LLLVAR" class="org.jpos.iso.IFB_LLLBINARY"/>               <!-- ADD: EMV Data -->
         <field num="58" type="LLLVAR"/>
         <field num="111" type="LLLVAR" length="255"/>
+        <field num="121" type="LLLVAR"  length="11"/>   <!-- ADDED: Authorizing Agent Institution ID -->
         <field num="125" type="LLLVAR"/>
         <field num="127" type="LLLVAR" length="100"/>
     </parse>

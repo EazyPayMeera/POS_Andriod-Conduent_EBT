@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.pos.R
@@ -352,21 +353,16 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     abortPayment(navHostController)
                 }
         })
-
-
     }
 
     /**
      * Checks if card interaction is in progress.
      */
-    fun isCardCheckStatusInProgress(status: Any?) : Boolean
-    {
-        return when(status)
-        {
+    fun isCardCheckStatusInProgress(status: Any?): Boolean {
+        return when (status) {
             EmvServiceResult.CardCheckStatus.CARD_INSERTED,
             EmvServiceResult.CardCheckStatus.CARD_SWIPED,
-            EmvServiceResult.CardCheckStatus.CARD_TAPPED,
-            -> true
+            EmvServiceResult.CardCheckStatus.CARD_TAPPED -> true
             else -> false
         }
     }
@@ -437,6 +433,5 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             else -> false
         }
     }
-
 
 }
