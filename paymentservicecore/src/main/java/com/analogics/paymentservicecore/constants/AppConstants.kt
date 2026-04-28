@@ -14,7 +14,7 @@ object AppConstants {
     const val SPLASH_SCREEN_TIMEOUT_MS = 3000L
     const val TRAINING_MODE_BLINK_DELAY_MS = 1000L
     const val CARD_CHECK_TIMEOUT_S = 30L
-    const val CARD_CHECK_TIMEOUT_SWIPE = 5L
+    const val CARD_CHECK_TIMEOUT_SWIPE = 15L
     const val CARD_CHECK_RESTART_DELAY_MS = 1000L
     const val AUTO_PRINT_RECEIPT_DELAY_MS = 1000L
 
