@@ -16,7 +16,6 @@ import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.TxnStatus
-import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.pos.R
@@ -29,7 +28,6 @@ import com.eazypaytech.pos.core.utils.getCurrentDateTime
 import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.eazypaytech.pos.core.utils.miscellaneous.NetworkUtils
 import com.analogics.securityframework.data.repository.TxnDBRepository
-import com.eazypaytech.hardwarecore.data.model.EmvSdkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -71,13 +69,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
      * - Stops ongoing EMV transaction
      * - Redirects user to manual input flow
      */
+    fun navigateToCardScreen(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigateAndClean(AppNavigationItems.CardScreen.route)
+        }
+    }
+
     fun navigateToManualScreen(navHostController: NavHostController) {
         viewModelScope.launch {
-            navHostController.navigate(AppNavigationItems.ManualCardScreen.route){
-                popUpTo(AppNavigationItems.CardScreen.route) { inclusive = false }
-                launchSingleTop = true
-            }
-            emvServiceRepository.abortPayment()
+            navHostController.navigateAndClean(AppNavigationItems.ManualCardScreen.route)
         }
     }
 
@@ -198,14 +198,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     @RequiresApi(Build.VERSION_CODES.O)
                     @SuppressLint("DefaultLocale")
                     override fun onEmvServiceResponse(response: Any) {
+                        Log.d("EMV", "Response = $response")
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-                                val isFallback = response.paymentServiceTxnDetails?.cardEntryMode == CardEntryMode.MAGSTRIPE.toString()
-                                        && cardRetryCount > 0
-
-                                if (isFallback) {
-
-                                }
+//                                val isFallback = response.paymentServiceTxnDetails?.cardEntryMode == CardEntryMode.MAGSTRIPE.toString()
+//                                        && cardRetryCount > 0
+//
+//                                if (isFallback) {
+//
+//                                }
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
@@ -360,7 +361,12 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
         var message : String? = null
-        emvMsgIdToStringId(displayMsgId)?.let {
+        val resolvedMsgId = if (cardRetryCount == 2) {
+            EmvServiceResult.DisplayMsgId.MAX_CHIP_RETRY
+        } else {
+            displayMsgId
+        }
+        emvMsgIdToStringId(resolvedMsgId)?.let {
             message = context.getString(it)
         }
         CustomDialogBuilder.composeAlertDialog(
@@ -379,11 +385,13 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         }else {
                             cardRetryCount = 0
                             showProgressVar.value = false
+                            sharedViewModel.objRootAppPaymentDetail.isFallback = true
+                            navigateToCardScreen(navHostController)
 //                            viewModelScope.launch {
-//                                delay(300)  // allow current dialog to dismiss
-//                                cardRetry(navHostController)
+//                                emvServiceRepository.abortPayment()
+//                                delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+//                                startPayment(context, sharedViewModel, navHostController)
 //                            }
-                            navigateToManualScreen(navHostController)
                         }
                     }
                 }?:let {

@@ -55,6 +55,7 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return when {
             builderServiceTxnDetails.txnType == TxnType.E_VOUCHER.toString() &&
                     builderServiceTxnDetails.cardEntryMode == CardEntryMode.MANUAL.toString() -> "012"
+            builderServiceTxnDetails.isFallback == true -> "801"
             else -> when (builderServiceTxnDetails.cardEntryMode) {
                 CardEntryMode.MAGSTRIPE.toString() -> "021"
                 CardEntryMode.CONTACT.toString() -> "051"
@@ -706,7 +707,14 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
                     builderServiceTxnDetails?.procId?.padStart(11, '0') +
                     "00000000000"   // forwarding ID if not used
         iso.setValue(BuilderConstants.ISO_FIELD_ORIGINAL_DATA, originalData, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ORIGINAL_DATA_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)// DE058
+        if(builderServiceTxnDetails?.originalTxnType != TxnType.CASH_PURCHASE.toString() && builderServiceTxnDetails?.originalTxnType != TxnType.CASH_WITHDRAWAL.toString() && builderServiceTxnDetails?.originalTxnType != TxnType.PURCHASE_CASHBACK.toString()) {
+            iso.setValue(
+                BuilderConstants.ISO_FIELD_ADDITIONAL_DATA,
+                builderServiceTxnDetails?.fnsNumber,
+                IsoType.LLLVAR,
+                BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH
+            )
+        }
         iso.setBinaryHeader(false)
         iso.setBinaryFields(false)
         iso.setForceStringEncoding(true)
@@ -817,7 +825,7 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
         val cardSeqNumber = getCardSeqNum()
-        Log.d("TxnDebug", "cardSeqNumber = $cardSeqNumber")
+        Log.d("FALLBACK", "isFallback = ${this.builderServiceTxnDetails.isFallback}")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
@@ -859,7 +867,6 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() || builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
             iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, cardSeqNumber, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
         }
-
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
 
         if (builderServiceTxnDetails?.cardEntryMode != CardEntryMode.MANUAL.toString()) {

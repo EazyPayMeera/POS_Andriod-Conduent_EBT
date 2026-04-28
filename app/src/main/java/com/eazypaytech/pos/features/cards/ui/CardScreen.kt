@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.analogics.paymentservicecore.data.model.TxnType
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.eazypaytech.pos.R
 import com.eazypaytech.pos.features.activity.ui.localSharedViewModel
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
@@ -142,7 +143,7 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     TextView(
-                        text = stringResource(id = R.string.tap_swipe_insert),
+                        text = if(sharedViewModel.objRootAppPaymentDetail.isFallback == true) "Swipe" else stringResource(id = R.string.tap_swipe_insert),
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold

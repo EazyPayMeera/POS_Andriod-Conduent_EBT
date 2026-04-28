@@ -556,15 +556,21 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
      *
      * Default fallback: Swipe only
      */
-    private fun resolveCardCheckMode(isEMVEnable: Boolean?, isTapEnable: Boolean?): CardCheckMode {
+    private fun resolveCardCheckMode(isEMVEnable: Boolean?, isTapEnable: Boolean?, isFallback: Boolean?): CardCheckMode {
         val emv = isEMVEnable == true
         val tap = isTapEnable == true
-        return when {
+        val fallBack = isFallback == true
+
+        val result = when {
+            fallBack -> CardCheckMode.SWIPE
             emv && tap -> CardCheckMode.SWIPE_OR_INSERT_OR_TAP
             emv && !tap -> CardCheckMode.SWIPE_OR_INSERT
             !emv && tap -> CardCheckMode.SWIPE_OR_TAP
-            else -> CardCheckMode.SWIPE // fallback (only swipe allowed)
+            else -> CardCheckMode.SWIPE
         }
+
+        Log.d("CardCheckMode", "========> resolveCardCheckMode = $result")
+        return result
     }
 
     /**
@@ -581,13 +587,15 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     {
         val isEMVEnable = paymentServiceTxnDetails?.isEMVEnable
         val isTapEnable = paymentServiceTxnDetails?.isTapEnable
+        val isFallback = paymentServiceTxnDetails?.isFallback
+        val timeout = if(paymentServiceTxnDetails?.isFallback == true) AppConstants.CARD_CHECK_TIMEOUT_SWIPE.toString() else AppConstants.CARD_CHECK_TIMEOUT_S.toString()
         return TransConfig(
             amount = (paymentServiceTxnDetails?.txnAmount?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             cashbackAmount = (paymentServiceTxnDetails?.cashback?.toDoubleOrNull()?:0.00).toDecimalFormat(),
             currencyCode = paymentServiceTxnDetails?.currencyCode?: AppConstants.DEFAULT_CURRENCY_CODE,
             transactionType = paymentServiceTxnDetails?.txnType?.toEmvTransType(),
-            cardCheckMode = resolveCardCheckMode(isEMVEnable, isTapEnable),
-            cardCheckTimeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString(),
+            cardCheckMode = resolveCardCheckMode(isEMVEnable, isTapEnable, isFallback),
+            cardCheckTimeout = timeout,
             forceOnlinePin = true,
             supportDRL = false
         )

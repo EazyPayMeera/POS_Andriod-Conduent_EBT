@@ -68,6 +68,8 @@ sealed class EmvServiceResult(
         APP_BLOCKED,
         TERMINATED,
 
+        MAX_CHIP_RETRY,
+
         /* Error Messages */
         ERR_CARD_READ,
         ERR_PROCESSING,

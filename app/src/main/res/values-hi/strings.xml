@@ -508,6 +508,7 @@
     <string name="emv_msg_id_try_another_interface">कृपया पुनः प्रयास करें</string>
     <string name="emv_msg_id_invalid_icc_card">अमान्य ICC कार्ड</string>
     <string name="emv_msg_id_retry">कृपया पुनः प्रयास करें</string>
+    <string name="emv_msg_id_max_retry">चिप रीड विफल। कृपया कार्ड स्वाइप करें</string>
     <string name="emv_msg_id_card_removed">कार्ड निकाला गया</string>
     <string name="emv_msg_id_issuer_script_update_successful">जारीकर्ता स्क्रिप्ट अपडेट सफल</string>
     <string name="emv_msg_id_issuer_script_update_failed">जारीकर्ता स्क्रिप्ट अपडेट विफल</string>

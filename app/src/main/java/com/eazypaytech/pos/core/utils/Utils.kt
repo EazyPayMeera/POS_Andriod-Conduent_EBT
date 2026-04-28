@@ -419,6 +419,7 @@ fun emvMsgIdToStringId(displayMsgId: EmvServiceResult.DisplayMsgId?) : Int?
             EmvServiceResult.DisplayMsgId.CARD_REMOVED -> R.string.emv_msg_id_card_removed
             EmvServiceResult.DisplayMsgId.ISSUER_SCRIPT_UPDATE_SUCCESSFUL -> R.string.emv_msg_id_issuer_script_update_successful
             EmvServiceResult.DisplayMsgId.ISSUER_SCRIPT_UPDATE_FAILED -> R.string.emv_msg_id_issuer_script_update_failed
+            EmvServiceResult.DisplayMsgId.MAX_CHIP_RETRY -> R.string.emv_msg_id_max_retry
 
             else -> null
         }
