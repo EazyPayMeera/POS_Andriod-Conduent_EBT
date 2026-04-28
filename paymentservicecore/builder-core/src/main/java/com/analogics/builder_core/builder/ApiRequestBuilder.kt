@@ -130,8 +130,8 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
             txnType == TxnType.FOOD_PURCHASE.toString() -> "009800"
             txnType == TxnType.PURCHASE_CASHBACK.toString() -> "099600"
             txnType == TxnType.FOODSTAMP_RETURN.toString() -> "200098"
-            txnType == TxnType.BALANCE_ENQUIRY_CASH.toString() -> "319600"
-            txnType == TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "319800"
+            txnType == TxnType.BALANCE_ENQUIRY_CASH.toString() -> "310000"
+            txnType == TxnType.BALANCE_ENQUIRY_SNAP.toString() -> "310000"
             txnType == TxnType.VOID_LAST.toString() -> "0000"
             txnType == TxnType.E_VOUCHER.toString() -> "009800"
             txnType == TxnType.CASH_WITHDRAWAL.toString() -> "019600"
@@ -155,14 +155,16 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     /**
      * Returns card sequence number (DE23).
      */
-    fun getCardSeqNum() : String?
-    {
-        var cardSeqNumber: String? =
-            builderServiceTxnDetails.cardSeqNum?.toInt()?.toString()
-        cardSeqNumber?.padStart(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, '0')?.let {
-            cardSeqNumber = it
+    fun getCardSeqNum(): String {
+        val seq = builderServiceTxnDetails.cardSeqNum
+        val result = if (seq.isNullOrBlank()) {
+            "000"
+        } else {
+            seq.toIntOrNull()?.toString()
+                ?.padStart(BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH, '0')
+                ?: "000"
         }
-        return cardSeqNumber
+        return result
     }
 
     /**
@@ -253,17 +255,19 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
      * Returns National POS Condition Code.
      */
     fun getNationalPosConditionCode(): String {
-        val terminalClass = "000"      // Attended, customer-operated, on-premise
-        val presentationType = "0000"  // Customer present + card present
-        val securityCondition = "0"    // No security concern
-        val terminalType = "01"        // POS terminal
+        val terminalClass = "000"      // as per your current config
+        val presentationType = "0000"  // customer + card present
+        val securityCondition = "0"
+        val terminalType = "01"        // fixed as per spec
+
         val terminalCapability = when (builderServiceTxnDetails.cardEntryMode) {
             CardEntryMode.CONTACT.toString() -> "5"        // Chip
             CardEntryMode.MAGSTRIPE.toString() -> "2"      // Magstripe
             CardEntryMode.MANUAL.toString() -> "6"         // Manual entry
-            CardEntryMode.CONTACLESS.toString() -> "7"     // Contactless
+            CardEntryMode.CONTACLESS.toString() -> "5"     // Contactless
             else -> "0"
         }
+
         return terminalClass +
                 presentationType +
                 securityCondition +
@@ -813,6 +817,7 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
         val cardSeqNumber = getCardSeqNum()
+        Log.d("TxnDebug", "cardSeqNumber = $cardSeqNumber")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
@@ -852,7 +857,7 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_TYPE, builderServiceTxnDetails?.merchantType, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_MERCHANT_TYPE_LENGTH)
         iso.setValue(BuilderConstants.ISO_FIELD_ENTRY_MODE, builderServiceTxnDetails?.posEntryMode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_ENTRY_MODE_LENGTH)
         if (builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() || builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()) {
-            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, "000", IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
+            iso.setValue(BuilderConstants.ISO_FIELD_PAN_SEQ_NO, cardSeqNumber, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_PAN_SEQ_NO_LENGTH)
         }
 
         iso.setValue(BuilderConstants.ISO_FIELD_ACQUIRER_ID, builderServiceTxnDetails?.procId, IsoType.LLVAR, BuilderConstants.ISO_FIELD_ACQUIRER_ID_LENGTH)
@@ -891,7 +896,14 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
             )
         }
         iso.setValue(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE, builderServiceTxnDetails?.posConditionCode, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_POS_CONDITION_CODE_LENGTH)
-        iso.setValue(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA, builderServiceTxnDetails?.fnsNumber, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH)
+        if(builderServiceTxnDetails?.txnType != TxnType.CASH_PURCHASE.toString() && builderServiceTxnDetails?.txnType != TxnType.CASH_WITHDRAWAL.toString() && builderServiceTxnDetails?.txnType != TxnType.PURCHASE_CASHBACK.toString()) {
+            iso.setValue(
+                BuilderConstants.ISO_FIELD_ADDITIONAL_DATA,
+                builderServiceTxnDetails?.fnsNumber,
+                IsoType.LLLVAR,
+                BuilderConstants.ISO_FIELD_ADDITIONAL_DATA_LENGTH
+            )
+        }
         iso.setValue(BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA, originalData, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_ACQ_TRACE_DATA_LENGTH)
         iso.setBinaryHeader(false)
         iso.setForceStringEncoding(true)

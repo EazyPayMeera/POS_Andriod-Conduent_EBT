@@ -110,6 +110,33 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         )
     }
 
+//    fun cardRetry(navHostController: NavHostController) {
+//        CustomDialogBuilder.composeAlertDialog(
+//            title = "Chip Error",
+//            message = "How would you like to proceed?",
+//            okBtnText = "Swipe",        // → Fallback
+//            onOkClick = {
+//                // ✅ Set fallback flag and restart payment
+//                sharedViewModel.objRootAppPaymentDetail.isFallback = true
+//                sharedViewModel.objRootAppPaymentDetail.cardEntryMode = CardEntryMode.FALLBACK_MAGSTRIPE
+//                viewModelScope.launch {
+//                    emvServiceRepository.abortPayment()
+//                    delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+//                    startPayment(context, sharedViewModel, navHostController)
+//                }
+//            },
+//            cancelBtnText = "Manual",  // → Manual
+//            onCancelClick = {
+//                // ✅ Clear fallback flag and go to manual
+//                sharedViewModel.objRootAppPaymentDetail.isFallback = false
+//                sharedViewModel.objRootAppPaymentDetail.cardEntryMode = CardEntryMode.MANUAL
+//                showProgressVar.value = false
+//
+//                navigateToManualScreen(navHostController)
+//            }
+//        )
+//    }
+
     /**
      * Updates transaction result in database.
      *
@@ -173,6 +200,12 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                     override fun onEmvServiceResponse(response: Any) {
                         when (response) {
                             is EmvServiceResult.TransResult -> {
+                                val isFallback = response.paymentServiceTxnDetails?.cardEntryMode == CardEntryMode.MAGSTRIPE.toString()
+                                        && cardRetryCount > 0
+
+                                if (isFallback) {
+
+                                }
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
@@ -346,6 +379,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         }else {
                             cardRetryCount = 0
                             showProgressVar.value = false
+//                            viewModelScope.launch {
+//                                delay(300)  // allow current dialog to dismiss
+//                                cardRetry(navHostController)
+//                            }
                             navigateToManualScreen(navHostController)
                         }
                     }
@@ -359,6 +396,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
      * Checks if card interaction is in progress.
      */
     fun isCardCheckStatusInProgress(status: Any?): Boolean {
+
         return when (status) {
             EmvServiceResult.CardCheckStatus.CARD_INSERTED,
             EmvServiceResult.CardCheckStatus.CARD_SWIPED,
