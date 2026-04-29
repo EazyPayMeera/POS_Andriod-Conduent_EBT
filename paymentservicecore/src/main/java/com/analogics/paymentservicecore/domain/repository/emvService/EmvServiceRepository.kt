@@ -287,7 +287,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
                 )
             }
             is EmvSdkResult.CardCheckResult -> {
-                //Log.d("EMV_CARD_CHECK", Gson().toJson(response))
+                Log.d("EMV_CARD_CHECK", Gson().toJson(response))
                 var status = sdkToEmvCardCheckStatus(response.status as EmvSdkResult.CardCheckStatus)
                 CardCheckResult(
                     status = status,
