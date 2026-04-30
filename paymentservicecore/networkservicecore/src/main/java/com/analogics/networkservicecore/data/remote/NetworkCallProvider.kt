@@ -71,12 +71,12 @@ object NetworkCallProvider {
                 val fullRequest = lenPrefix + requestBytes
 
                 // ✅ Print EXACT bytes being sent to host
-                Log.d("EXACT_REQUEST", "============================================")
-                Log.d("EXACT_REQUEST", "LENGTH PREFIX (2 bytes): %02X%02X → declared length = %d"
-                    .format(lenPrefix[0], lenPrefix[1], requestBytes.size))
-                Log.d("EXACT_REQUEST", "FULL REQUEST HEX (length prefix + body):")
-                Log.d("EXACT_REQUEST", fullRequest.joinToString("") { "%02X".format(it) })
-                Log.d("EXACT_REQUEST", "============================================")
+//                Log.d("EXACT_REQUEST", "============================================")
+//                Log.d("EXACT_REQUEST", "LENGTH PREFIX (2 bytes): %02X%02X → declared length = %d"
+//                    .format(lenPrefix[0], lenPrefix[1], requestBytes.size))
+//                Log.d("EXACT_REQUEST", "FULL REQUEST HEX (length prefix + body):")
+                Log.d("REQUEST_HEX", fullRequest.joinToString("") { "%02X".format(it) })
+//                Log.d("EXACT_REQUEST", "============================================")
 
                 output.write(fullRequest)
                 output.flush()
@@ -99,12 +99,12 @@ object NetworkCallProvider {
 
                 val responseBytes = responseBuffer.toByteArray()
 
-                Log.d("EXACT_RESPONSE", "============================================")
-                Log.d("EXACT_RESPONSE", "RESPONSE LENGTH PREFIX: %02X%02X → declared length = %d"
-                    .format(lenBytes[0], lenBytes[1], expectedLength))
-                Log.d("EXACT_RESPONSE", "FULL RESPONSE HEX:")
-                Log.d("EXACT_RESPONSE", responseBytes.joinToString("") { "%02X".format(it) })
-                Log.d("EXACT_RESPONSE", "============================================")
+//                Log.d("EXACT_RESPONSE", "============================================")
+//                Log.d("EXACT_RESPONSE", "RESPONSE LENGTH PREFIX: %02X%02X → declared length = %d"
+//                    .format(lenBytes[0], lenBytes[1], expectedLength))
+//                Log.d("EXACT_RESPONSE", "FULL RESPONSE HEX:")
+                Log.d("RESPONSE_HEX", responseBytes.joinToString("") { "%02X".format(it) })
+//                Log.d("EXACT_RESPONSE", "============================================")
 
                 sslSocket.close()
 

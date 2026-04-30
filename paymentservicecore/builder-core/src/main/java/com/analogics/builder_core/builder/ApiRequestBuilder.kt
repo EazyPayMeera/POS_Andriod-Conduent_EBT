@@ -1111,20 +1111,17 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     suspend fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?) {
 
         if (builderServiceTxnDetails == null) {
-            Log.e("TXN_DEBUG", "builderServiceTxnDetails is NULL")
             return
         }
         val id = builderServiceTxnDetails.id
 
         if (id == null) {
-            Log.e("TXN_DEBUG", "Txn ID is NULL")
             return
         }
 
         val txn = dbRepository.fetchTxnById(id)
 
         if (txn == null) {
-            Log.e("TXN_DEBUG", "No txn found for ID: $id")
             return
         }
         txn.posEntryMode = builderServiceTxnDetails.posEntryMode
