@@ -298,7 +298,7 @@ fun convertReceiptDateTime(
     return try {
         val calendar = Calendar.getInstance()
 
-        val idf = SimpleDateFormat("MMddHHmmss", Locale.getDefault())
+        val idf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val parsedDate = idf.parse(inputDateTime)
 
         if (parsedDate != null) {
