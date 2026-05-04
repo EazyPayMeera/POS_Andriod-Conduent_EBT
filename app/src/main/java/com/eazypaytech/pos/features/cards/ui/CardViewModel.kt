@@ -161,6 +161,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 txn.originalDateTime = originalDateTime
                 txn.hostAuthCode = AuthCode
                 txn.posConditionCode = posCondition
+                Log.d("DATABASE","Txn Update from CardViewModel")
                 dbRepository.updateTxn(txn)
             } catch (e: Exception) {
                 Log.e("UPDATE_TXN", "Error updating transaction", e)
@@ -302,6 +303,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             }
             txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
             txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+            Log.d("DATABASE","Txn Update from cardviewModel Balance")
             dbRepository.updateTxn(txn)
             Log.d("UPDATE_BALANCE", "Success — cash=${txn.cashEndBalance}, snap=${txn.snapEndBalance}")
         } catch (e: Exception) {

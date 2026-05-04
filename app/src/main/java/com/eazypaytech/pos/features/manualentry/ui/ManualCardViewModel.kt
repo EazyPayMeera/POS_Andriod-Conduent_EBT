@@ -328,7 +328,7 @@ class ManualCardViewModel @Inject constructor(
             txn.originalDateTime = sharedViewModel.objRootAppPaymentDetail.originalDateTime
             txn.hostAuthCode = AuthCode
             txn.posConditionCode = posCondition
-
+            Log.d("DATABASE","Txn Update ManualCardViewModel")
             dbRepository.updateTxn(txn)
 
         }
@@ -389,6 +389,7 @@ class ManualCardViewModel @Inject constructor(
             }
             txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
             txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+            Log.d("DATABASE","Txn Update Manual Card ViewModel Balance")
             dbRepository.updateTxn(txn)
             Log.d("UPDATE_BALANCE", "Success — cash=${txn.cashEndBalance}, snap=${txn.snapEndBalance}")
         } catch (e: Exception) {
