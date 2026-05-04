@@ -35,6 +35,7 @@ class PrinterRequest (
     @SerializedName("CardCountryCode")  var cardCountryCode: String? = "",
     @SerializedName("CardLanguagePref") var cardLanguagePref: String? = "",
     @SerializedName("EmvData")          var emvData: String? = null,
+    @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("OriginalTxnType")  var originalTxnType: String? = "",

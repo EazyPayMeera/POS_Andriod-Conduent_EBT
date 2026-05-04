@@ -111,6 +111,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
     @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
     @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
+    @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
 
     /* Transaction Details */
     @SerializedName("batchId") var batchId: String? = null,

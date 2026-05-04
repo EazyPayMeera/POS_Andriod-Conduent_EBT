@@ -35,6 +35,7 @@ data class ReversalReqeust (
     @SerializedName("CardCountryCode")  var cardCountryCode: String? = null,
     @SerializedName("CardLanguagePref") var cardLanguagePref: String? = null,
     @SerializedName("EmvData")          var emvData: String? = null,
+    @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
 
     /* Original Txn data for Void Refund Capture */
 @SerializedName("OriginalTxnType")  var originalTxnType: String? = null,

@@ -649,7 +649,7 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val lastTxn = IsoMessageBuilder.getLastTxn()
         val posConditionCode = getNationalPosConditionCode()
         val npsGeoData = getNPSGeographicData()
-        val iccData = lastTxn?.emvData
+        val iccData = builderServiceTxnDetails?.receiptEmvData
         var de55RawBytes: ByteArray? = null
         val isChipCard = builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
                 builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()
@@ -825,7 +825,6 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
         val cardSeqNumber = getCardSeqNum()
-        Log.d("FALLBACK", "isFallback = ${this.builderServiceTxnDetails.isFallback}")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
