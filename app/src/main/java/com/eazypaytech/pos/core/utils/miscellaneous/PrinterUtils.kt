@@ -157,7 +157,7 @@ object PrinterUtils {
           🔹 Reference Number
           ========================= */
         repo.addText("",
-            context.getString(R.string.receipt_ref_no) + data.stan,
+            context.getString(R.string.receipt_ref_no) + data.stan?.padStart(6,'0'),
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
         )
 
@@ -177,7 +177,7 @@ object PrinterUtils {
         }
 
         /* Trace */
-        repo.addText(context.getString(R.string.receipt_trace_no) + data.stan,
+        repo.addText(context.getString(R.string.receipt_trace_no) + data.stan?.padStart(6,'0'),
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
         )
 
