@@ -31,6 +31,10 @@ interface ITxnDao {
     @Update
     suspend fun update(vararg txnEntity: TxnEntity)
 
+    // DAO
+    @Query("UPDATE TxnTable SET cashEndBalance = :cash, snapEndBalance = :snap WHERE id = :id")
+    suspend fun updateBalancesOnly(id: Long, cash: Double, snap: Double): Int
+
     /**
      * Fetch transaction by primary ID.
      */

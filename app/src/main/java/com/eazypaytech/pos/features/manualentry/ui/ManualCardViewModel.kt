@@ -382,18 +382,26 @@ class ManualCardViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateBalance(sharedViewModel: SharedViewModel) {
         try {
-            val txn = dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)
-            if (txn == null) {
-                Log.e("UPDATE_BALANCE", "Txn not found")
+            val id = sharedViewModel.objRootAppPaymentDetail.id ?: run {
+                Log.e("UPDATE_BALANCE", "❌ id is null")
                 return
             }
-            txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
-            txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
-            Log.d("DATABASE","Txn Update Manual Card ViewModel Balance")
-            dbRepository.updateTxn(txn)
-            Log.d("UPDATE_BALANCE", "Success — cash=${txn.cashEndBalance}, snap=${txn.snapEndBalance}")
+            val newCash = sharedViewModel.objRootAppPaymentDetail.cashEndBalance ?: 0.0
+            val newSnap = sharedViewModel.objRootAppPaymentDetail.snapEndBalance ?: 0.0
+
+            Log.d("UPDATE_BALANCE", "▶ START — id=$id, cash=$newCash, snap=$newSnap")
+
+            if (newCash == 0.0 && newSnap == 0.0) {
+                Log.e("UPDATE_BALANCE", "❌ ABORTED — both balances are 0.0, skipping update")
+                return
+            }
+
+            dbRepository.updateBalancesOnly(id, newCash, newSnap)
+
+            Log.d("UPDATE_BALANCE", "✅ SUCCESS — cash=$newCash, snap=$newSnap")
+
         } catch (e: Exception) {
-            Log.e("UPDATE_BALANCE", "Error updating balance", e)
+            Log.e("UPDATE_BALANCE", "❌ Error updating balance: ${e.message}")
         }
     }
 }

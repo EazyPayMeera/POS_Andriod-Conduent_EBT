@@ -218,18 +218,44 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
      */
     suspend fun updateTxn(txnEntity: TxnEntity) {
         try {
-            // ✅ Preserve existing receiptEmvData if current value is null
+            val existing = iTxnDao.fetchTxnDetails(txnEntity.id)
+
+            // ✅ Preserve receiptEmvData if null
             if (txnEntity.receiptEmvData == null) {
-                val existing = iTxnDao.fetchTxnDetails(txnEntity.id)
                 txnEntity.receiptEmvData = existing?.receiptEmvData
             }
 
-            Log.d("DATABASE", "updateTxn called — id: ${txnEntity.id}, receiptEmvData: ${txnEntity.receiptEmvData}")
+            // ✅ Preserve balances — String? comparison
+            val existingCash = existing?.cashEndBalance
+            val existingSnap = existing?.snapEndBalance
+
+            if ((txnEntity.cashEndBalance == null || txnEntity.cashEndBalance == "0.0")
+                && (existingCash != null && existingCash != "0.0")) {
+                txnEntity.cashEndBalance = existingCash
+                Log.w("DATABASE", "⚠ Preserved cashEndBalance=$existingCash")
+            }
+
+            if ((txnEntity.snapEndBalance == null || txnEntity.snapEndBalance == "0.0")
+                && (existingSnap != null && existingSnap != "0.0")) {
+                txnEntity.snapEndBalance = existingSnap
+                Log.w("DATABASE", "⚠ Preserved snapEndBalance=$existingSnap")
+            }
+
+            Log.d("DATABASE", "▶ updateTxn — id=${txnEntity.id}, cash=${txnEntity.cashEndBalance}, snap=${txnEntity.snapEndBalance}")
             iTxnDao.update(txnEntity)
-            Log.d("DATABASE", "updateTxn success")
+            Log.d("DATABASE", "✅ updateTxn success")
+
         } catch (e: Exception) {
-            Log.e("DATABASE", "updateTxn FAILED: ${e.message}")
-            Log.e("DATABASE", "updateTxn STACK: ${e.stackTraceToString()}")
+            Log.e("DATABASE", "❌ updateTxn FAILED: ${e.message}")
+        }
+    }
+
+    suspend fun updateBalancesOnly(id: Long, cash: Double, snap: Double) {
+        try {
+            val rows = iTxnDao.updateBalancesOnly(id, cash, snap)
+            Log.d("DATABASE", "✅ updateBalancesOnly — id=$id, cash=$cash, snap=$snap, rows=$rows")
+        } catch (e: Exception) {
+            Log.e("DATABASE", "❌ updateBalancesOnly FAILED: ${e.message}")
         }
     }
 
