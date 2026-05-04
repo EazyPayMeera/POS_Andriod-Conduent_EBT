@@ -531,9 +531,9 @@ class EmvWrapperRepository @Inject constructor(
                         ) {
                             Companion.pinBlock = pinBlock?.toHexString()
                             Companion.ksn = ksn
-                            Log.d("PIN", "ret=$ret")
-                            Log.d("PIN", "pinBlock=${pinBlock?.toHexString() ?: "NULL"}")
-                            Log.d("PIN", "ksn=$ksn")
+//                            Log.d("PIN", "ret=$ret")
+//                            Log.d("PIN", "pinBlock=${pinBlock?.toHexString() ?: "NULL"}")
+//                            Log.d("PIN", "ksn=$ksn")
 
                             if (pinBlock == null) {
                                 Log.e("PIN", "❌ PIN block is NULL — PIN entry failed!")

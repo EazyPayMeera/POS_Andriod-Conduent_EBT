@@ -29,6 +29,7 @@ import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.eazypaytech.pos.core.utils.miscellaneous.NetworkUtils
 import com.analogics.securityframework.data.repository.TxnDBRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     lateinit var sharedViewModel: SharedViewModel
     lateinit var navHostController : NavHostController
     var cardRetryCount = 0
-
+    private var isCardDetected = false
 
     /**
      * Navigates to Approval screen.
@@ -146,7 +147,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
      */
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus: TxnStatus?, originalDateTime: String, AuthCode: String, posCondition: String) {
+    suspend fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus: TxnStatus?, originalDateTime: String, AuthCode: String, posCondition: String) {
 
         val txnId = sharedViewModel.objRootAppPaymentDetail.id
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
@@ -160,6 +161,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 txn.originalDateTime = originalDateTime
                 txn.hostAuthCode = AuthCode
                 txn.posConditionCode = posCondition
+                Log.d("DATABASE","Txn Update from CardViewModel")
                 dbRepository.updateTxn(txn)
             } catch (e: Exception) {
                 Log.e("UPDATE_TXN", "Error updating transaction", e)
@@ -201,12 +203,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         Log.d("EMV", "Response = $response")
                         when (response) {
                             is EmvServiceResult.TransResult -> {
-//                                val isFallback = response.paymentServiceTxnDetails?.cardEntryMode == CardEntryMode.MAGSTRIPE.toString()
-//                                        && cardRetryCount > 0
-//
-//                                if (isFallback) {
-//
-//                                }
+                                viewModelScope.launch(Dispatchers.Main) {
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
@@ -215,30 +212,38 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 sharedViewModel.objRootAppPaymentDetail.rrn = response.paymentServiceTxnDetails?.rrn
                                 sharedViewModel.objRootAppPaymentDetail.currencyCode = response.paymentServiceTxnDetails?.currencyCode
                                 sharedViewModel.objRootAppPaymentDetail.originalDateTime = response.paymentServiceTxnDetails?.originalDateTime
-                                updateTransResult(sharedViewModel, emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
-                                    sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
-                                ).let {
-                                    val rawAdditionalAmt = response.paymentServiceTxnDetails?.additionalAmt
+                                    updateTransResult(
+                                        sharedViewModel,
+                                        emvStatusToTransStatus(response.paymentServiceTxnDetails?.hostRespCode),
+                                        sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),
+                                        sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),
+                                        sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
+                                    ).let {
+                                        val rawAdditionalAmt =
+                                            response.paymentServiceTxnDetails?.additionalAmt
 
-                                    if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
-                                        try {
-                                            val balance = parseEBTBalances(rawAdditionalAmt)
-                                            sharedViewModel.objRootAppPaymentDetail.snapEndBalance = balance.snap
-                                            sharedViewModel.objRootAppPaymentDetail.cashEndBalance = balance.cash
-                                            updateBalance(sharedViewModel)
-                                        } catch (e: Exception) {
-                                            sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                        if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
+                                            try {
+                                                val balance = parseEBTBalances(rawAdditionalAmt)
+                                                sharedViewModel.objRootAppPaymentDetail.snapEndBalance =
+                                                    balance.snap
+                                                sharedViewModel.objRootAppPaymentDetail.cashEndBalance =
+                                                    balance.cash
+                                                updateBalance(sharedViewModel)
+                                            } catch (e: Exception) {
+                                                sharedViewModel.objRootAppPaymentDetail.additionalAmt =
+                                                    "0.0"
+                                            }
+                                        } else {
+                                            sharedViewModel.objRootAppPaymentDetail.additionalAmt =
+                                                "0.0"
                                         }
-                                    } else {
-                                        sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
-                                    }
-                                    if(isStatusTryAnotherCard(response.status)==true) {
-                                        displayEmvError(response.displayMsgId)
-                                    }
-                                    else
-                                    {
-                                        showProgressVar.value = false
-                                        navigateToApprovalScreen(navHostController)
+                                        if (isStatusTryAnotherCard(response.status) == true) {
+                                            displayEmvError(response.displayMsgId)
+                                        } else {
+                                            showProgressVar.value = false
+                                            navigateToApprovalScreen(navHostController)
+                                        }
                                     }
                                 }
                             }
@@ -247,6 +252,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 emvInProgress.value = false
                                 showProgressVar.value = false
                                 if(isCardCheckStatusInProgress(response.status)) {
+                                    isCardDetected = true
                                     emvInProgress.value = true
                                     showProgressVar.value = true
                                     response.displayMsgId?.let {
@@ -255,7 +261,9 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 }
                                 else if(isCardNotPresent(response.status))
                                 {
-                                    navigateToManualScreen(navHostController)
+                                    if (!isCardDetected) {  // ← Only navigate if card was never detected
+                                        navigateToManualScreen(navHostController)
+                                    }
                                 }
                                 else if(isCardCheckStatusError(response.status)) {
                                     displayEmvError(response.displayMsgId)
@@ -286,13 +294,20 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
      * Updates EBT balance (cash & SNAP) in database.
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateBalance(sharedViewModel: SharedViewModel) {
-        viewModelScope.launch {
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
-                txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
-                txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
-                dbRepository.updateTxn(txn)
+    suspend fun updateBalance(sharedViewModel: SharedViewModel) {
+        try {
+            val txn = dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)
+            if (txn == null) {
+                Log.e("UPDATE_BALANCE", "Txn not found")
+                return
             }
+            txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+            txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+            Log.d("DATABASE","Txn Update from cardviewModel Balance")
+            dbRepository.updateTxn(txn)
+            Log.d("UPDATE_BALANCE", "Success — cash=${txn.cashEndBalance}, snap=${txn.snapEndBalance}")
+        } catch (e: Exception) {
+            Log.e("UPDATE_BALANCE", "Error updating balance", e)
         }
     }
 
@@ -417,12 +432,11 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     /**
      * Checks if no card is present (timeout).
      */
-    fun isCardNotPresent(status: Any?) : Boolean
-    {
-        return when(status)
-        {
-            EmvServiceResult.CardCheckStatus.TIMEOUT,
-            -> true
+    fun isCardNotPresent(status: Any?): Boolean {
+        Log.d("EMV_STATUS", "Status = $status")
+
+        return when (status) {
+            EmvServiceResult.CardCheckStatus.TIMEOUT -> !isCardDetected
             else -> false
         }
     }

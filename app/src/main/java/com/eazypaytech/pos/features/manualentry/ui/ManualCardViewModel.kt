@@ -33,6 +33,7 @@ import com.eazypaytech.pos.core.utils.emvStatusToTransStatus
 import com.eazypaytech.pos.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -327,7 +328,7 @@ class ManualCardViewModel @Inject constructor(
             txn.originalDateTime = sharedViewModel.objRootAppPaymentDetail.originalDateTime
             txn.hostAuthCode = AuthCode
             txn.posConditionCode = posCondition
-
+            Log.d("DATABASE","Txn Update ManualCardViewModel")
             dbRepository.updateTxn(txn)
 
         }
@@ -379,15 +380,20 @@ class ManualCardViewModel @Inject constructor(
      * @param sharedViewModel Shared ViewModel containing updated balances
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateBalance(sharedViewModel: SharedViewModel) {
-        viewModelScope.launch {
-            val cash = sharedViewModel.objRootAppPaymentDetail.cashEndBalance
-            val snap = sharedViewModel.objRootAppPaymentDetail.snapEndBalance
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let { txn ->
-                txn.cashEndBalance = cash.toString()
-                txn.snapEndBalance = snap.toString()
-                dbRepository.updateTxn(txn)
+    suspend fun updateBalance(sharedViewModel: SharedViewModel) {
+        try {
+            val txn = dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)
+            if (txn == null) {
+                Log.e("UPDATE_BALANCE", "Txn not found")
+                return
             }
+            txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+            txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+            Log.d("DATABASE","Txn Update Manual Card ViewModel Balance")
+            dbRepository.updateTxn(txn)
+            Log.d("UPDATE_BALANCE", "Success — cash=${txn.cashEndBalance}, snap=${txn.snapEndBalance}")
+        } catch (e: Exception) {
+            Log.e("UPDATE_BALANCE", "Error updating balance", e)
         }
     }
 }

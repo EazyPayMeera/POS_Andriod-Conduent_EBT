@@ -2,6 +2,7 @@ package com.analogics.paymentservicecore.domain.repository.apiService
 
 
     import android.os.Build
+    import android.util.Log
     import androidx.annotation.RequiresApi
     import com.analogics.paymentservicecore.data.listeners.requestListener.IApiServiceRequestListener
     import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
@@ -237,6 +238,7 @@ package com.analogics.paymentservicecore.domain.repository.apiService
                      try {
                          CoroutineScope(Dispatchers.IO).launch {
                              PaymentServiceUtils.transformObject<TxnEntity>(response)?.let {
+                                 Log.d("DATABASE","Txn Update ApiService Repository")
                                  dbRepository.updateTxn(it)
                              }
                          }

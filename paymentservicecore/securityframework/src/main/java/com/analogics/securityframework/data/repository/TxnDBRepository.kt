@@ -216,12 +216,20 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
     /**
      * Updates existing transaction.
      */
-    suspend fun updateTxn(txnEntity: TxnEntity){
+    suspend fun updateTxn(txnEntity: TxnEntity) {
         try {
+            // ✅ Preserve existing receiptEmvData if current value is null
+            if (txnEntity.receiptEmvData == null) {
+                val existing = iTxnDao.fetchTxnDetails(txnEntity.id)
+                txnEntity.receiptEmvData = existing?.receiptEmvData
+            }
+
+            Log.d("DATABASE", "updateTxn called — id: ${txnEntity.id}, receiptEmvData: ${txnEntity.receiptEmvData}")
             iTxnDao.update(txnEntity)
-        }catch ( e : Exception)
-        {
-            Log.e("DATABASE",e.message.toString())
+            Log.d("DATABASE", "updateTxn success")
+        } catch (e: Exception) {
+            Log.e("DATABASE", "updateTxn FAILED: ${e.message}")
+            Log.e("DATABASE", "updateTxn STACK: ${e.stackTraceToString()}")
         }
     }
 

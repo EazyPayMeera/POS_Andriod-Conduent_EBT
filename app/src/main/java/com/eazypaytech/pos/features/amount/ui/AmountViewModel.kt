@@ -440,6 +440,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                 txn.settlementDate = sharedViewModel.objRootAppPaymentDetail.settlementDate
                 txn.ApprovalCode = sharedViewModel.objRootAppPaymentDetail.approvalCode
                 txn.posConditionCode = posCondition
+                Log.d("DATABASE","Txn Update Amount Viewmodel")
                 dbRepository.updateTxn(txn)
             } ?: run {
                 Log.e("AmountView", "Transaction NOT FOUND for txnId: $txnId")
