@@ -350,11 +350,11 @@
     <string name="receipt_card_type">CARD TYPE:</string>
     <string name="receipt_card_no">Card Num:</string>
     <string name="receipt_trans_type">TRANS TYPE:</string>
-    <string name="receipt_batch_no">BATCH NO:</string>
+    <string name="receipt_batch_no">Batch#:</string>
     <string name="receipt_trace_no">Trace#:</string>
     <string name="receipt_date">DATE:</string>
     <string name="receipt_time">TIME:</string>
-    <string name="receipt_ref_no">REF NO:</string>
+    <string name="receipt_ref_no">REF#:</string>
     <string name="receipt_aap_code">APP CODE:</string>
     <string name="receipt_txn_id">Txn ID:</string>
     <string name="receipt_app">APP:</string>
@@ -402,7 +402,7 @@
     <string name="receipt_snap_balance" tools:ignore="MissingTranslation">SNAP Balance:</string>
     <string name="receipt_txntype_purchase_with_cashback" translatable="false">PURCHASE_CASHBACK</string>
     <string name="receipt_cash_back" translatable="false">Cash Back: </string>
-    <string name="receipt_amount" translatable="false">Amount</string>
+    <string name="receipt_amount" translatable="false">AMOUNT</string>
     <string name="receipt_do_not_accept_goods" translatable="false">DO NOT ACCEPT GOODS</string>
     <string name="receipt_accept_goods" translatable="false">ACCEPT GOODS</string>
     <string name="receipt_cash_withdrawal" tools:ignore="MissingTranslation">Cash Withdrawal</string>
@@ -411,6 +411,12 @@
     <string name="receipt_voucher_number" translatable="false">Voucher Number</string>
     <string name="receipt_voucher_approval_code" translatable="false">Voucher Approval Code</string>
     <string name="receipt_voucher_amount" translatable="false">Voucher Amount</string>
+    <string name="receipt_rrn" translatable="false">RRN: </string>
+    <string name="receipt_ebt" translatable="false">EBT </string>
+    <string name="receipt_appr_code" translatable="false">APPR CODE: </string>
+    <string name="receipt_tvr" translatable="false">TVR: </string>
+
+
     <!-- Summary Report -->
     <string name="summary_report">SUMMARY REPORT</string>
     <string name="summary_dot_line">---------------</string>
