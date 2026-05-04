@@ -105,10 +105,10 @@ object PrinterUtils {
         val isCashWithdrawal = txnTypeStr == context.getString(R.string.receipt_txntype_cash_withdrawal)
         val isVoid = txnTypeStr == context.getString(R.string.ebt_void_last)
         val isVoucherSettlement = txnTypeStr == context.getString(R.string.ebt_e_voucher)
-
+        Log.d("DATETIME", "data.dateTime = ${data.dateTime}")
         val date = convertReceiptDateTime(data.dateTime, outputFormat = "MM/dd/yy")
         val time = convertReceiptDateTime(data.dateTime, outputFormat = "hh:mm:ssa")
-
+        Log.d("DATETIME", "date = $date  |  time = $time")
         Log.d("PRINT_RECEIPT", "ObjRootAppPaymentDetails: $data")
         /* =========================
            🔹 HEADER

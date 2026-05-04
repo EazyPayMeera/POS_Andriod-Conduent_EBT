@@ -1111,19 +1111,37 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     suspend fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?) {
 
         if (builderServiceTxnDetails == null) {
+            Log.d("TXN_UPDATE", "❌ builderServiceTxnDetails is null, returning early")
             return
         }
+
         val id = builderServiceTxnDetails.id
+        Log.d("TXN_UPDATE", "🔍 Transaction ID: $id")
 
         if (id == null) {
+            Log.d("TXN_UPDATE", "❌ ID is null, returning early")
             return
         }
 
         val txn = dbRepository.fetchTxnById(id)
+        Log.d("TXN_UPDATE", "🔍 Fetched txn from DB: $txn")
 
         if (txn == null) {
+            Log.d("TXN_UPDATE", "❌ No txn found in DB for id: $id, returning early")
             return
         }
+
+        Log.d("TXN_UPDATE", "📋 Values from builderServiceTxnDetails:" +
+                "\n  emvData      = ${builderServiceTxnDetails.emvData}" +
+                "\n  posEntryMode = ${builderServiceTxnDetails.posEntryMode}" +
+                "\n  stan         = ${builderServiceTxnDetails.stan}" +
+                "\n  rrn          = ${builderServiceTxnDetails.rrn}" +
+                "\n  processingCode = ${builderServiceTxnDetails.processingCode}" +
+                "\n  localTime    = ${builderServiceTxnDetails.localTime}" +
+                "\n  localDate    = ${builderServiceTxnDetails.localDate}" +
+                "\n  currencyCode = ${builderServiceTxnDetails.currencyCode}"
+        )
+
         txn.posEntryMode = builderServiceTxnDetails.posEntryMode
         txn.stan = builderServiceTxnDetails.stan
         txn.rrn = builderServiceTxnDetails.rrn
@@ -1131,7 +1149,30 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         txn.localTime = builderServiceTxnDetails.localTime
         txn.localDate = builderServiceTxnDetails.localDate
         txn.currencyCode = builderServiceTxnDetails.currencyCode
+        txn.receiptEmvData = builderServiceTxnDetails.emvData
+
+        Log.d("TXN_UPDATE", "📋 Values on txn BEFORE update:" +
+                "\n  receiptEmvData = ${txn.receiptEmvData}" +
+                "\n  posEntryMode   = ${txn.posEntryMode}" +
+                "\n  stan           = ${txn.stan}" +
+                "\n  rrn            = ${txn.rrn}" +
+                "\n  processingCode = ${txn.processingCode}" +
+                "\n  localTime      = ${txn.localTime}" +
+                "\n  localDate      = ${txn.localDate}" +
+                "\n  currencyCode   = ${txn.currencyCode}"
+        )
+
         dbRepository.updateTxn(txn)
+        Log.d("TXN_UPDATE", "✅ updateTxn() called")
+
+        // Re-fetch to confirm DB write
+        val updatedTxn = dbRepository.fetchTxnById(id)
+        Log.d("TXN_UPDATE", "🔍 Re-fetched txn AFTER update:" +
+                "\n  receiptEmvData = ${updatedTxn?.receiptEmvData}" +
+                "\n  posEntryMode   = ${updatedTxn?.posEntryMode}" +
+                "\n  stan           = ${updatedTxn?.stan}" +
+                "\n  rrn            = ${updatedTxn?.rrn}"
+        )
     }
 
 }

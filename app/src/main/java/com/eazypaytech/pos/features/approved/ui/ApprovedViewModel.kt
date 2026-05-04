@@ -84,13 +84,22 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
         sharedViewModel: SharedViewModel,
         isCustomer: Boolean = false
     ) {
-        viewModelScope.launch{
-            dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)?.let {
-                PrinterUtils.printReceipt(context, PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails(), isCustomer)
+        viewModelScope.launch {
+            val idBeingFetched = sharedViewModel.objRootAppPaymentDetail.id
+            Log.d("PRINT", "Fetching txn with ID: $idBeingFetched") // ✅ Is this 260504110334?
+
+            dbRepository.fetchTxnById(idBeingFetched)?.let {
+                Log.d("PRINT", "TxnEntity.receiptEmvData = ${it.receiptEmvData}")
+
+                val receiptObj = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
+                    ?: ObjRootAppPaymentDetails()
+
+                Log.d("PRINT", "ObjRootAppPaymentDetails.receiptEmvData = ${receiptObj.receiptEmvData}")
+
+                PrinterUtils.printReceipt(context, receiptObj, isCustomer)
             }
         }
     }
-
     /**
      * Checks if a card is currently present on the device.
      */

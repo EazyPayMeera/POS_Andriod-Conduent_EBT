@@ -301,21 +301,11 @@ fun convertReceiptDateTime(
     }
 
     return try {
-        val calendar = Calendar.getInstance()
-
-        val idf = SimpleDateFormat("MMddHHmmss", Locale.getDefault())
+        val idf = SimpleDateFormat(inputFormat ?: "yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val parsedDate = idf.parse(inputDateTime)
-
         if (parsedDate != null) {
-            val tempCal = Calendar.getInstance()
-            tempCal.time = parsedDate
-
-            // 🔥 inject current year
-            tempCal.set(Calendar.YEAR, calendar.get(Calendar.YEAR))
-
             val odf = SimpleDateFormat(outputFormat, Locale.getDefault())
-            var result = odf.format(tempCal.time)
-
+            var result = odf.format(parsedDate)
             if (outputFormat.contains("a")) {
                 result = result.lowercase()
             }
@@ -327,8 +317,9 @@ fun convertReceiptDateTime(
 
     } catch (e: Exception) {
         e.printStackTrace()
-        inputDateTime
+        inputDateTime ?: "-"
     }
+
 }
 
 /**
