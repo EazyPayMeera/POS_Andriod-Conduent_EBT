@@ -53,6 +53,7 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
     val cardExists by viewModel.cardExists.collectAsState()
     var isDialogVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    sharedViewModel.objRootAppPaymentDetail.isFallback = false
     Column(
         modifier = Modifier
             .fillMaxSize()

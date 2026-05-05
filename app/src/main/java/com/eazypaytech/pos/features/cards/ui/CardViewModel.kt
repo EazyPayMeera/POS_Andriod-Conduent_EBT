@@ -16,6 +16,7 @@ import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.pos.R

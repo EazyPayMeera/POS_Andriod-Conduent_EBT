@@ -18,6 +18,7 @@ import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
 import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.analogics.paymentservicecore.data.model.TxnType
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.paymentservicecore.utils.toDecimalFormat
@@ -271,6 +272,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                         countyCode = sharedViewModel.objPosConfig?.countyCode,
                         postalServiceCode = sharedViewModel.objPosConfig?.postalServiceCode
                     )
+                    sharedViewModel.objRootAppPaymentDetail.isFallback = it.isFallback
                     sharedViewModel.objRootAppPaymentDetail.processingCode = it.processingCode
                     sharedViewModel.objRootAppPaymentDetail.rrn = it.rrn
                     sharedViewModel.objRootAppPaymentDetail.localTime = it.localTime
@@ -280,6 +282,11 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                     sharedViewModel.objRootAppPaymentDetail.posConditionCode = it.posConditionCode
                     sharedViewModel.objRootAppPaymentDetail.stan = it.stan
                     sharedViewModel.objRootAppPaymentDetail.posEntryMode = it.posEntryMode
+                    sharedViewModel.objRootAppPaymentDetail.cardEntryMode =
+                        if (sharedViewModel.objRootAppPaymentDetail.isFallback == true)
+                            CardEntryMode.FALLBACK_MAGSTRIPE
+                        else
+                            it.cardEntryMode
                     sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
                     sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
                     sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.originalDateTime
