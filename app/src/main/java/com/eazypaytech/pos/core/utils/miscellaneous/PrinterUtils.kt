@@ -248,11 +248,9 @@ object PrinterUtils {
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)*/
 
         if(isVoucherSettlement) {
-            Log.d("Voucher Settlement PRINT_RECEIPT", "Voucher Number : ${data.voucherNumber}")
             data.voucherNumber?.let {
                 repo.addText(context.getString(R.string.receipt_voucher_number) + " " + it)
             }
-            Log.d("Voucher Settlement PRINT_RECEIPT", "Approval Code : ${data.approvalCode}")
             data.approvalCode?.let {
                 repo.addText(context.getString(R.string.receipt_voucher_approval_code) + " " + it)
             }
@@ -261,9 +259,6 @@ object PrinterUtils {
             }
         }
         if (isVoid) {
-            Log.d("VOID PRINT_RECEIPT", "Snap Begin Bal: ${data.snapBeginBal}")
-            Log.d("VOID PRINT_RECEIPT", "Snap Purchase: ${data.txnAmount}")
-            Log.d("VOID PRINT_RECEIPT", "Snap End Bal: ${data.snapEndBalance}")
             /* SNAP BEGIN BALANCE */
             val voidBeginBal = data.snapEndBalance?.minus(data.txnAmount!!)
             voidBeginBal.let {
@@ -292,7 +287,6 @@ object PrinterUtils {
 
             /* SNAP END BALANCE */
             val voidEndbal = voidBeginBal?.plus(data.txnAmount!!)
-            Log.d("VOID PRINT_RECEIPT", "Void End Bal: ${voidEndbal}")
             voidEndbal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_end_balance) + " " +
@@ -358,8 +352,9 @@ object PrinterUtils {
                     )
                 }else{
                     repo.addText(
-                        context.getString(R.string.receipt_snap_purchase) + " " +
-                                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                        context.getString(R.string.receipt_amount) + " " +
+                                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
                     )
                 }
 
@@ -536,8 +531,16 @@ object PrinterUtils {
         repo.addText(context.getString(R.string.receipt_ebt),
             format = PrintFormat().fontSize(FontSize.MEDIUM)
         )
-        repo.addText(context.getString(R.string.receipt_aid)+ aid , format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT))
-        repo.addText(context.getString(R.string.receipt_tvr)+ tvr , format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT))
+        if(data.cardEntryMode == CardEntryMode.CONTACT || data.cardEntryMode == CardEntryMode.CONTACLESS) {
+            repo.addText(
+                context.getString(R.string.receipt_aid) + aid,
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
+            )
+            repo.addText(
+                context.getString(R.string.receipt_tvr) + tvr,
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
+            )
+        }
 
         if (isCustomer) {
             repo.addText(data.footer1,

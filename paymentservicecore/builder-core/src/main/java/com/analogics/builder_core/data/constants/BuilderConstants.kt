@@ -235,7 +235,7 @@ object BuilderConstants {
             ISO_RESP_CODE_UNMATCHED_VOUCHER_INFO -> "UNMATCHED VOUCHER INFORMATION"
             ISO_RESP_CODE_INVALID_HIP_AMOUNT -> "INVALID HIP AMOUNT"
 
-            else -> "UNKNOWN RESPONSE CODE ($code)"
+            else -> "UNKNOWN RESPONSE CODE"
         }
     }
 }
