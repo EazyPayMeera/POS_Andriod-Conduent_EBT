@@ -104,7 +104,6 @@
     <string name="invalid_current_password">Invalid current password</string>
 
     <!-- Dashboard -->
-
     <string name="net_total">Net Total</string>
     <string name="refund_amt">Enter the Refund Amount</string>
     <string name="enter_invoice">Enter the Invoice Number</string>
@@ -342,6 +341,14 @@
     <string name="printer_printing_failed">Printing Failed</string>
 
     <!-- Receipt Builder -->
+    <string name="print_snap_purchase">EBT SNAP BENEFIT PURCHASE</string>
+    <string name="print_cash_purchase">EBT CASH BENEFIT PURCHASE</string>
+    <string name="print_cash_purchase_with_cashback">EBT CASH BENEFIT PURCHASE W/ CASHBACK</string>
+    <string name="print_snap_return">EBT SNAP BENEFIT RETURN</string>
+    <string name="print_balance_inquiry">EBT BALANCE INQUIRY</string>
+    <string name="print_cash_withdrawal">EBT CASH WITHDRAWAL</string>
+    <string name="print_void_last_transaction">EBT Void Last Transaction</string>
+    <string name="print_voucher_settlement">EBT Voucher Settlement</string>
     <string name="receipt_header">GLOBAL PAYMENTS</string>
     <string name="receipt_address">STORE ADDRESS:</string>
     <string name="receipt_merchant_id">MID:</string>

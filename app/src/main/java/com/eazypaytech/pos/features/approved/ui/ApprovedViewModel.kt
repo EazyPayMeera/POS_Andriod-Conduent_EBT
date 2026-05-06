@@ -96,7 +96,7 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
 
                 Log.d("PRINT", "ObjRootAppPaymentDetails.receiptEmvData = ${receiptObj.receiptEmvData}")
 
-                PrinterUtils.printReceipt(context, receiptObj, isCustomer)
+                PrinterUtils.printReceipt(context, sharedViewModel, receiptObj, isCustomer)
             }
         }
     }

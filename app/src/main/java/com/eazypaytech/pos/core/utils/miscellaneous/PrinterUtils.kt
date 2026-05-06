@@ -24,6 +24,7 @@ import com.eazypaytech.pos.core.utils.getTxnStatusStringId
 import com.eazypaytech.pos.core.utils.getTxnTypeStringId
 import com.eazypaytech.pos.core.utils.toAmountFormat
 import com.eazypaytech.pos.core.utils.toDecimalFormat
+import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 
 object PrinterUtils {
 
@@ -48,6 +49,7 @@ object PrinterUtils {
      */
     fun printReceipt(
         context: Context,
+        sharedViewModel: SharedViewModel,
         data: ObjRootAppPaymentDetails,
         isCustomer: Boolean = false
     ) {
@@ -120,14 +122,14 @@ object PrinterUtils {
            🔹 HEADER
            ========================= */
 
-        repo.addText(data.header1,
+        repo.addText(sharedViewModel.objPosConfig?.merchantBankName,
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
-        repo.addText(data.header2,
+        repo.addText(sharedViewModel.objPosConfig?.merchantNameLocation,
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
-        repo.addText(data.header3,
-            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
-        repo.addText(data.header4,
-            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+//        repo.addText(data.header3,
+//            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+//        repo.addText(data.header4,
+//            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
 
         repo.feedLine()
 
@@ -137,15 +139,15 @@ object PrinterUtils {
            ========================= */
 
         val title = when {
-            isSnapPurchase -> "EBT SNAP BENEFIT PURCHASE"
-            isCashPurchase -> "EBT CASH BENEFIT PURCHASE"
-            isCashback -> "EBT CASH BENEFIT PURCHASE W/ CASHBACK"
-            isReturn -> "EBT SNAP BENEFIT RETURN"
-            isBalanceInquiry -> "EBT BALANCE INQUIRY"
-            isCashBalanceInquiry -> "EBT BALANCE INQUIRY"
-            isCashWithdrawal -> "EBT CASH WITHDRAWAL"
-            isVoid -> "EBT Void Last Tran"
-            isVoucherSettlement -> "EBT Voucher Settlement"
+            isSnapPurchase -> context.getString(R.string.print_snap_purchase)
+            isCashPurchase -> context.getString(R.string.print_cash_purchase)
+            isCashback -> context.getString(R.string.print_cash_purchase_with_cashback)
+            isReturn -> context.getString(R.string.print_snap_return)
+            isBalanceInquiry -> context.getString(R.string.print_balance_inquiry)
+            isCashBalanceInquiry -> context.getString(R.string.print_balance_inquiry)
+            isCashWithdrawal -> context.getString(R.string.print_cash_withdrawal)
+            isVoid -> context.getString(R.string.print_void_last_transaction)
+            isVoucherSettlement -> context.getString(R.string.print_voucher_settlement)
             else -> txnTypeStr
         }
 
@@ -183,7 +185,7 @@ object PrinterUtils {
 
         /* EBT , POS Entry Mode*/
         repo.addText(context.getString(R.string.receipt_ebt),
-            data.cardEntryMode.toDisplay(),
+            data.cardEntryMode.toDisplay(context),
             format = PrintFormat().fontSize(FontSize.MEDIUM)
         )
         /* Card numb, Expiry Date*/
@@ -562,13 +564,13 @@ object PrinterUtils {
         repo.print()
     }
 
-    fun CardEntryMode?.toDisplay(): String {
+    fun CardEntryMode?.toDisplay(context: Context): String {
         return when (this) {
-            CardEntryMode.CONTACT -> "Chip"
-            CardEntryMode.CONTACLESS -> "Contactless"
-            CardEntryMode.MAGSTRIPE -> "Swipe"
-            CardEntryMode.FALLBACK_MAGSTRIPE -> "Fallback Swipe"
-            CardEntryMode.MANUAL -> "Manual"
+            CardEntryMode.CONTACT -> context.getString(R.string.card_entry_mode_contact)
+            CardEntryMode.CONTACLESS -> context.getString(R.string.card_entry_mode_contactless)
+            CardEntryMode.MAGSTRIPE -> context.getString(R.string.card_entry_mode_magstripe)
+            CardEntryMode.FALLBACK_MAGSTRIPE -> context.getString(R.string.card_entry_mode_fallback_magstripe)
+            CardEntryMode.MANUAL -> context.getString(R.string.card_entry_mode_manual)
             else -> "-"
         }
     }

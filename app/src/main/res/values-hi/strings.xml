@@ -341,6 +341,14 @@
     <string name="printer_printing_failed">प्रिंटिंग विफल</string>
 
     <!-- Receipt Builder -->
+    <string name="print_snap_purchase">ईबीटी स्नैप लाभ खरीद</string>
+    <string name="print_cash_purchase">ईबीटी कैश लाभ खरीद</string>
+    <string name="print_cash_purchase_with_cashback">ईबीटी कैश लाभ खरीद (कैशबैक सहित)</string>
+    <string name="print_snap_return">ईबीटी स्नैप लाभ वापसी</string>
+    <string name="print_balance_inquiry">ईबीटी बैलेंस पूछताछ</string>
+    <string name="print_cash_withdrawal">ईबीटी कैश निकासी</string>
+    <string name="print_void_last_transaction">ईबीटी अंतिम लेन-देन रद्द</string>
+    <string name="print_voucher_settlement">ईबीटी वाउचर सेटलमेंट</string>
     <string name="receipt_header">ग्लोबल पेमेंट्स</string>
     <string name="receipt_address">स्टोर पता:</string>
     <string name="receipt_merchant_id">MID:</string>

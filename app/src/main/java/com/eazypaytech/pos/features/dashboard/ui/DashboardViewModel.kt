@@ -53,11 +53,12 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
      */
     fun reprintLast(
         context: Context,
+        sharedViewModel: SharedViewModel,
         isCustomer: Boolean = false
     ) {
         viewModelScope.launch {
             txnDBRepository.fetchLastTransaction()?.let {
-                PrinterUtils.printReceipt(context, PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails(),isCustomer)
+                PrinterUtils.printReceipt(context, sharedViewModel, PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)?: ObjRootAppPaymentDetails(),isCustomer)
             }?:let {
                 CustomDialogBuilder.Companion.composeAlertDialog(
                     title = context.resources.getString(R.string.printer_Alert),
