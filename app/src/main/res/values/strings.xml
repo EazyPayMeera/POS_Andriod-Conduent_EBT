@@ -527,6 +527,7 @@
     <string name="err_only_preauth_can_be_captured">Only Preauth Can Be Captured</string>
     <string name="err_txn_already_refunded">Transaction Already Refunded</string>
     <string name="err_txn_already_voided">Transaction Already Voided</string>
+    <string name="err_txn_cannot_voided">Transaction Cannot be Voided</string>
     <string name="err_txn_already_captured">Transaction Already Captured</string>
     <string name="err_batch_is_settled">Batch is settled</string>
     <string name="err_cant_mix_demo_trans">Cannot Mix Live and Demo Transactions</string>

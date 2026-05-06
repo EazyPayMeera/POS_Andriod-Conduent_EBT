@@ -520,6 +520,7 @@
     <string name="err_only_preauth_can_be_captured">केवल Preauth को कैप्चर किया जा सकता है</string>
     <string name="err_txn_already_refunded">लेनदेन पहले से वापस हो चुका है</string>
     <string name="err_txn_already_voided">लेनदेन पहले से रद्द हो चुका है</string>
+    <string name="err_txn_cannot_voided">लेन-देन रद्द नहीं किया जा सकता</string>
     <string name="err_txn_already_captured">लेनदेन पहले से कैप्चर हो चुका है</string>
     <string name="err_batch_is_settled">बैच निपट चुका है</string>
     <string name="err_cant_mix_demo_trans">लाइव और डेमो लेनदेन मिश्रित नहीं किए जा सकते</string>

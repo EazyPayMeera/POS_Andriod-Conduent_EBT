@@ -49,6 +49,7 @@ import com.eazypaytech.pos.core.utils.getTxnStatusIconId
 import com.eazypaytech.pos.core.utils.getTxnStatusStringId
 import com.eazypaytech.pos.core.utils.toAmountFormat
 import com.eazypaytech.pos.core.themes.dimens
+import com.eazypaytech.pos.core.ui.components.textview.AutoResizeText
 import kotlinx.coroutines.delay
 
 
@@ -126,11 +127,8 @@ fun ApprovedScreen(navHostController: NavHostController) {
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
-                    Text(
+                    AutoResizeText(
                         text = if (isBalanceInquiry) { "" } else { txnRecord.ttlAmount.toAmountFormat() },
-                        fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .height(MaterialTheme.dimens.DP_33_CompactMedium)

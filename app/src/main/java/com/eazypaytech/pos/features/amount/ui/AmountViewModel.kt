@@ -249,7 +249,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                     message = context.getString(R.string.err_txn_already_voided),
                     onOkClick = {
                         CoroutineScope(Dispatchers.Main).launch {
-                            delay(500)
+                            //delay(500)
                             navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
                         }
                     }
