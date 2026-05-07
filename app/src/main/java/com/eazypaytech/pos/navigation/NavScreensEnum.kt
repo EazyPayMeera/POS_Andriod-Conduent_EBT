@@ -18,5 +18,5 @@
  */
 enum class NavScreensEnum {
     SplashScreen,DashBoardScreen,OnBoardingScreen,LoginScreen,ForgetPasswordView,PleaseWaitView,AmountScreen,InvoiceView,ConfirmationView,TipView,ServiceChargeView,CardScreen,CardDetectView,PinView,ApprovedScreen,PasswordScreen,EmailView,RefundAmtView,SettingsScreen,LanguageScreen,ConfigurationScreen,ConfirmShiftScreen,TaxPercentageView,TipPercentageView,ServiceChargePercentageView,PreauthView,EnterEmailView,DeclineView,Drawer,TxnListView,InfoConfirmView,SucessView,ChangePasswordScreen,BarcodeView,TransactionDetailsView,ReceiptDetailsScreen,UserManagementScreen,BatchIdView,InactivityTimeoutView,SignatureView,EBTSelectionScreen,TxnSelectionScreen,KeyEntryScreen,VoucherCardScreen,AuthCodeScreen
-    ,AddClerkScreen,ActivationScreen,CashBackScreen,ManualCardScreen,ReaderSettingScreen
+    ,AddClerkScreen,ActivationScreen,CashBackScreen,ManualCardScreen,ReaderSettingScreen,VoidSelScreen
 }

@@ -35,6 +35,8 @@
     <string name="bal_cash">नकद</string>
     <string name="key_man">की प्रबंधन</string>
     <string name="time_out">समय समाप्त</string>
+    <string name="select_transaction_to_void">रद्द करने के लिए लेनदेन चुनें</string>
+    <string name="no_transactions_available">कोई रद्द करने योग्य लेनदेन उपलब्ध नहीं है</string>
 
     <string name="act_title">अभी सक्रिय करें</string>
     <string name="act_prompt_activate">प्रोसेसर आईडी, TID और MID दर्ज करें</string>

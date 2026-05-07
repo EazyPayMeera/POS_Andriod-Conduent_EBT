@@ -147,7 +147,7 @@ fun DashboardScreen(navHostController: NavHostController) {
 
             AppConstants.BUTTON_CLICK_EVENT_VOID_LAST -> {
                 setTransactionType(TxnType.VOID_LAST)
-                navHostController.navigate(AppNavigationItems.AmountScreen.route) {
+                navHostController.navigate(AppNavigationItems.VoidSelScreen.route) {
                     popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
                     launchSingleTop = true
                 }

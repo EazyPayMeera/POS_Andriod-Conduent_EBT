@@ -479,17 +479,12 @@ fun HideSoftKeyboard() {
 @Composable
 fun getTxnStatusIconId(objRootAppPaymentDetails: ObjRootAppPaymentDetails): Int {
     return try {
-        if (objRootAppPaymentDetails.isVoided == true)
-            R.drawable.approved
-        else if (objRootAppPaymentDetails.isRefunded == true)
+        if (objRootAppPaymentDetails.isRefunded == true)
             R.drawable.refunded
         else if (objRootAppPaymentDetails.isCaptured == true)
             R.drawable.captured
         else if (objRootAppPaymentDetails.txnStatus == TxnStatus.APPROVED)
-            when (objRootAppPaymentDetails.txnType) {
-                TxnType.PURCHASE_CASHBACK -> R.drawable.approved
-                else -> R.drawable.approved
-            }
+             R.drawable.approved
         else if (objRootAppPaymentDetails.txnStatus == TxnStatus.DECLINED)
             R.drawable.declined
         else

@@ -103,6 +103,7 @@ data class PaymentServiceTxnDetails(
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
+    @SerializedName("originalId")  var originalId: Long? = null,
     @SerializedName("originalDateTime") var originalDateTime: String? = null,
     @SerializedName("originalTxnRef") var originalTxnRef: String? = null,
     @SerializedName("originalTxnType") var originalTxnType: String? = null,

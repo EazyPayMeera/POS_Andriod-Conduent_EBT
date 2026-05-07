@@ -53,6 +53,9 @@ interface ITxnDao {
     @Query("SELECT * FROM TxnTable WHERE substr(dateTime, 1, 16) <= :date")
      suspend fun getTransactionDetailsTxnBeforeTime(date: String): List<TxnEntity>
 
+    @Query("""SELECT * FROM TxnTable WHERE TxnType NOT IN ('BALANCE_ENQUIRY_CASH','BALANCE_ENQUIRY_SNAP','CASH_WITHDRAWAL','PURCHASE_CASHBACK','VOID_LAST','E_VOUCHER') AND TxnStatus = 'APPROVED'AND isVoided = 0 ORDER BY id DESC """)
+    suspend fun fetchAllVoidableTransactions(): List<TxnEntity>
+
     /**
      * Returns most recent transaction.
      */

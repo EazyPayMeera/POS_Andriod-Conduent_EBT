@@ -164,7 +164,7 @@ object PrinterUtils {
         )
 
         /* Batch #*/
-        repo.addText(context.getString(R.string.receipt_batch_no) + data.batchId,
+        repo.addText(context.getString(R.string.empty) + "",
             context.getString(R.string.receipt_rrn) + data.rrn,
             format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
         )
@@ -559,7 +559,37 @@ object PrinterUtils {
             repo.addText(context.getString(R.string.receipt_merch_copy),
                 format = PrintFormat().align(Align.CENTER))
         }
+        val receiptLog = """
+        ${sharedViewModel.objPosConfig?.merchantBankName}
+        ${sharedViewModel.objPosConfig?.merchantNameLocation}
+        
+        $title
+        
+        Ref No : ${data.stan?.padStart(6, '0')}
+        Batch   : ${data.batchId}
+        RRN     : ${data.rrn}
+        
+        Date    : $date
+        Time    : $time
+        
+        AuthCode: ${data.hostAuthCode ?: "-"}
+        
+        Trace No: ${data.stan?.padStart(6, '0')}
+        
+        EBT     : ${data.cardEntryMode.toDisplay(context)}
+        Card    : ${data.cardMaskedPan?.replace(Regex("\\d(?=\\d{4})"), "*")}  **/**
+        
+        Amount  : ${data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
+        
+        SNAP Bal: ${data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
+        Cash Bal: ${data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
+        
+        Result  : $txnStatusStr
+        
+        ${if (isCustomer) "CUSTOMER COPY" else "MERCHANT COPY"}
+        """.trimIndent()
 
+        Log.d("RECEIPT_LOG", receiptLog)
         repo.feedLine()
         repo.print()
     }
@@ -574,4 +604,6 @@ object PrinterUtils {
             else -> "-"
         }
     }
+
+
 }

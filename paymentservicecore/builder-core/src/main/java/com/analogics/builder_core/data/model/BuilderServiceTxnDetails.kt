@@ -133,6 +133,7 @@ data class BuilderServiceTxnDetails(
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
+    @SerializedName("originalId")  var originalId: Long? = null,
     @SerializedName("originalTxnRef") var originalTxnRef: String? = null,
     @SerializedName("originalTxnType") var originalTxnType: String? = null,
     @SerializedName("originalTxnAmount") var originalTxnAmount: String? = null,

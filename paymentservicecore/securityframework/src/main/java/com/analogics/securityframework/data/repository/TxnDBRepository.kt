@@ -45,6 +45,10 @@ class TxnDBRepository @Inject constructor(private val iBatchDao: IBatchDao, priv
         iBatchDao.update(batchEntity)
     }
 
+    suspend fun fetchAllVoidableTransactions(): List<TxnEntity> {
+        return iTxnDao.fetchAllVoidableTransactions()
+    }
+
     /**
      * Checks whether any batch exists in DB.
      */

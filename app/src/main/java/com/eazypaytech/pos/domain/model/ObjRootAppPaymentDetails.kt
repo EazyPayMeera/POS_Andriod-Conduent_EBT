@@ -136,6 +136,7 @@ data class ObjRootAppPaymentDetails(
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef")  var originalHostTxnRef: String? = null,
+    @SerializedName("originalId")  var originalId: Long? = null,
     @SerializedName("originalTxnType")  var originalTxnType: TxnType? = null,
     @SerializedName("originalTxnAmount")    var originalTxnAmount: String? = null,
     @SerializedName("originalTip")      var originalTip: String? = null,

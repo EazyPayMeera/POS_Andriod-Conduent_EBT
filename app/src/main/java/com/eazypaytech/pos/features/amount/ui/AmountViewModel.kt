@@ -360,6 +360,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             val settlementDate = response.settlementDate
                             sharedViewModel.objRootAppPaymentDetail.settlementDate =
                                 response.settlementDate
+                            sharedViewModel.objRootAppPaymentDetail.isVoided = true
                             sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
                             sharedViewModel.objRootAppPaymentDetail.hostAuthCode =
                                 response.hostAuthCode
@@ -433,21 +434,38 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
      * - Logs error if transaction is not found in DB
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus: TxnStatus?, originalDateTime: String, AuthCode: String, posCondition: String) {
+    fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
         viewModelScope.launch {
             val txnId = sharedViewModel.objRootAppPaymentDetail.id
+            val originalId = sharedViewModel.objRootAppPaymentDetail.originalId
+
+            // Only mark original transaction as voided if void was APPROVED
+            dbRepository.fetchTxnById(originalId)?.let { txn ->
+                txn.isVoided = if (txnStatus == TxnStatus.APPROVED) true else false
+                dbRepository.updateTxn(txn)
+            } ?: run {
+                Log.e("AmountView", "Transaction NOT FOUND for originalId: $originalId")
+            }
+
+            // Always update the void transaction record with response details
             dbRepository.fetchTxnById(txnId)?.let { txn ->
-                txn.txnStatus = txnStatus?.toString() ?: ""
+                txn.txnStatus        = txnStatus?.toString() ?: ""
                 txn.originalDateTime = originalDateTime
-                txn.hostAuthCode = AuthCode
-                txn.stan = sharedViewModel.objRootAppPaymentDetail.stan
-                txn.VoucherNumber = sharedViewModel.objRootAppPaymentDetail.voucherNumber
-                txn.rrn = sharedViewModel.objRootAppPaymentDetail.rrn
-                txn.settlementDate = sharedViewModel.objRootAppPaymentDetail.settlementDate
-                txn.ApprovalCode = sharedViewModel.objRootAppPaymentDetail.approvalCode
+                txn.hostAuthCode     = AuthCode
+                txn.stan             = sharedViewModel.objRootAppPaymentDetail.stan
+                txn.VoucherNumber    = sharedViewModel.objRootAppPaymentDetail.voucherNumber
+                txn.rrn              = sharedViewModel.objRootAppPaymentDetail.rrn
+                txn.settlementDate   = sharedViewModel.objRootAppPaymentDetail.settlementDate
+                txn.ApprovalCode     = sharedViewModel.objRootAppPaymentDetail.approvalCode
                 txn.posConditionCode = posCondition
-                Log.d("DATABASE","Txn Update Amount Viewmodel")
+                Log.d("DATABASE", "Txn Update Amount Viewmodel")
                 dbRepository.updateTxn(txn)
             } ?: run {
                 Log.e("AmountView", "Transaction NOT FOUND for txnId: $txnId")
