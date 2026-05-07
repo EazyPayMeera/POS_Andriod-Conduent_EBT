@@ -39,6 +39,7 @@
     <string name="approval_code">Approval Code: </string>
     <string name="select_transaction_to_void">Select Transaction To Void</string>
     <string name="no_transactions_available">No Void Transaction Available</string>
+    <string name="search_filter">Search By RRN, Approval Code</string>
 
     <string name="act_title">Activate Now</string>
     <string name="act_prompt_activate">Enter PROCESSOR ID, TID , AND MID</string>

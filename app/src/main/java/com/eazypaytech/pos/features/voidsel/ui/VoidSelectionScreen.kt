@@ -103,8 +103,8 @@ fun VoidSelectionScreen(navHostController: NavHostController) {
                         .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium),
                     placeholder = {
                         Text(
-                            text = "Search",
-                            style = MaterialTheme.typography.bodyMedium,
+                            text = stringResource(R.string.search_filter),
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },

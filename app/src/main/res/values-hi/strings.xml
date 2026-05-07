@@ -39,6 +39,7 @@
     <string name="approval_code">अनुमोदन कोड: </string>
     <string name="select_transaction_to_void">रद्द करने के लिए लेनदेन चुनें</string>
     <string name="no_transactions_available">कोई रद्द करने योग्य लेनदेन उपलब्ध नहीं है</string>
+    <string name="search_filter">आरआरएन, अप्रूवल कोड द्वारा खोजें</string>
 
     <string name="act_title">अभी सक्रिय करें</string>
     <string name="act_prompt_activate">प्रोसेसर आईडी, TID और MID दर्ज करें</string>
