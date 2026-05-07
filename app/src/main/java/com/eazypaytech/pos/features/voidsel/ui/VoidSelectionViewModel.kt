@@ -54,8 +54,8 @@ class VoidSelectionViewModel @Inject constructor(
         else transactions.filter {
             it.displayName.contains(query, ignoreCase = true) ||
                     it.amount?.contains(query) == true ||
-                    it.dateTime?.contains(query) == true ||
-                    it.rrn?.contains(query) == true ||
+//                    it.dateTime?.contains(query) == true ||
+//                    it.rrn?.contains(query) == true ||
                     it.authCode?.contains(query) == true
         }
     }.stateIn(
