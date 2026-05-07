@@ -89,16 +89,53 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
      * - Calls SDK init API
      * - Updates config based on success/failure
      */
+
     fun initPaymentSDK(context: Context, sharedViewModel: SharedViewModel) {
         if(sharedViewModel.objPosConfig?.isPaymentSDKInit!=true) {
             viewModelScope.launch {
+                //  STEP 1: Get config from TMS
+                val posConfig = sharedViewModel.objPosConfig
+
+                //  STEP 2: Extract EMV + CAPK JSON
+                val emvJson = posConfig?.emvConfigJson
+                val capkJson = posConfig?.capKeysJson
+
+                //  STEP 3: Decide source (TMS OR fallback)
+                val finalAidConfig = try {
+                    if (!emvJson.isNullOrEmpty()) {
+                        // Validate JSON
+                        org.json.JSONObject(emvJson)
+                        emvJson   // valid JSON → use TMS
+                    } else {
+                        readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH)
+                    }
+                } catch (e: Exception) {
+                    Log.e("TMS", "Invalid EMV JSON → falling back to asset", e)
+                    readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH)
+                }
+
+                val finalCapKeys = try {
+                    if (!capkJson.isNullOrEmpty()) {
+                        org.json.JSONObject(capkJson)
+                        capkJson
+                    } else {
+                        readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH)
+                    }
+                } catch (e: Exception) {
+                    Log.e("TMS", "Invalid CAPK JSON → falling back", e)
+                    readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH)
+                }
+                Log.d("TMS_FINAL", "AID CONFIG: $finalAidConfig")
+                Log.d("TMS_FINAL", "CAP KEYS: $finalCapKeys")
                 emvServiceRepository.initPaymentSDK(
                     termConfig = TermConfig(
                         terminalIdentifier = sharedViewModel.objPosConfig?.procId,
                         merchantIdentifier = sharedViewModel.objPosConfig?.merchantId,
                     ),
-                    aidConfig = readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH),
-                    capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),
+                    //aidConfig = readAsset(context, AppConstants.DEFAULT_EMV_CONFIG_FILE_PATH),
+                    //capKeys = readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH),
+                    aidConfig = finalAidConfig,
+                    capKeys = finalCapKeys,
                     iEmvServiceResponseListener =  object :
                         IEmvServiceResponseListener {
                     override fun onEmvServiceResponse(response: Any) {
