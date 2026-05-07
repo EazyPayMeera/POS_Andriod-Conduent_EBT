@@ -54,6 +54,10 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
     val origTotalAmount: StateFlow<String?> = _origTotalAmount
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
+    private val _rrn = MutableStateFlow<String?>(null)
+    val rrn: StateFlow<String?> = _origDateTime
+    private val _stan = MutableStateFlow<String?>(null)
+    val stan: StateFlow<String?> = _origDateTime
     /**
      * Initializes amount screen data based on transaction type.
      *
@@ -76,6 +80,8 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             ?.toDoubleOrNull() ?: 0.00
                     )
                     _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
+                    _rrn.value = sharedViewModel.objRootAppPaymentDetail.rrn
+                    _stan.value = sharedViewModel.objRootAppPaymentDetail.stan
                     isReadOnly = true
                 }
                 else -> {

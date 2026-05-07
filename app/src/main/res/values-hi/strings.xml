@@ -34,7 +34,9 @@
     <string name="cash">EBT नकद लाभ खरीद</string>
     <string name="bal_cash">नकद</string>
     <string name="key_man">की प्रबंधन</string>
+    <string name="stan">स्टेन:</string>
     <string name="time_out">समय समाप्त</string>
+    <string name="approval_code">अनुमोदन कोड: </string>
     <string name="select_transaction_to_void">रद्द करने के लिए लेनदेन चुनें</string>
     <string name="no_transactions_available">कोई रद्द करने योग्य लेनदेन उपलब्ध नहीं है</string>
 

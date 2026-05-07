@@ -34,7 +34,9 @@
     <string name="cash">EBT CASH Benefit Purchase</string>
     <string name="bal_cash">CASH</string>
     <string name="key_man">Key Management</string>
+    <string name="stan">Stan:</string>
     <string name="time_out">Timeout</string>
+    <string name="approval_code">Approval Code: </string>
     <string name="select_transaction_to_void">Select Transaction To Void</string>
     <string name="no_transactions_available">No Void Transaction Available</string>
 
@@ -160,7 +162,7 @@
     <string name="cust_recp">Customer Receipt</string>
     <string name="enter_tip_amount">Enter the Tip Amount</string>
     <string name="enter_service_charge">Enter the Service Charge</string>
-    <string name="amount">Amount</string>
+    <string name="amount">Amount: </string>
     <string name="adjust">Adjust</string>
     <string name="enter_the_percentage">Enter the Percentage</string>
     <string name="percentage">Percentage</string>

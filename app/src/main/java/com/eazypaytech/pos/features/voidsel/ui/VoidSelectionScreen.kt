@@ -18,8 +18,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +60,8 @@ fun VoidSelectionScreen(navHostController: NavHostController) {
     val viewModel: VoidSelectionViewModel = hiltViewModel()
     val sharedViewModel = localSharedViewModel.current
 
-    val availableTransactions by viewModel.availableTransactions.collectAsStateWithLifecycle()
+    val filteredTransactions by viewModel.filteredTransactions.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -76,10 +82,10 @@ fun VoidSelectionScreen(navHostController: NavHostController) {
             ) {
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_24_CompactMedium))
 
+                // Title
                 TextView(
                     text = stringResource(R.string.select_transaction_to_void),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onTertiary,
                     fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -88,8 +94,48 @@ fun VoidSelectionScreen(navHostController: NavHostController) {
                     textAlign = TextAlign.Center
                 )
 
+                // Search Bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.onSearchQueryChanged(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = MaterialTheme.dimens.DP_24_CompactMedium),
+                    placeholder = {
+                        Text(
+                            text = "Search",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onSearchQueryChanged("") }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.small,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+
                 when {
-                    availableTransactions.isEmpty() -> {
+                    filteredTransactions.isEmpty() -> {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -110,17 +156,17 @@ fun VoidSelectionScreen(navHostController: NavHostController) {
                             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.DP_12_CompactMedium)
                         ) {
                             items(
-                                items = availableTransactions,
+                                items = filteredTransactions,
                                 key = { it.id }
                             ) { transaction ->
                                 TransactionVoidItem(
                                     transaction = transaction,
                                     onClick = {
                                         viewModel.onTransactionSelectedForVoid(
-                                            selected         = transaction,
+                                            selected          = transaction,
                                             navHostController = navHostController,
-                                            sharedViewModel  = sharedViewModel,
-                                            context          = context
+                                            sharedViewModel   = sharedViewModel,
+                                            context           = context
                                         )
                                     }
                                 )
@@ -153,10 +199,14 @@ fun TransactionVoidItem(
             .clickable { onClick() },
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceVariant,
-        tonalElevation = MaterialTheme.dimens.DP_2_CompactMedium
+        tonalElevation = MaterialTheme.dimens.DP_2_CompactMedium,
+        shadowElevation = MaterialTheme.dimens.DP_4_CompactMedium
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium, vertical = MaterialTheme.dimens.DP_13_CompactMedium),
+            modifier = Modifier.padding(
+                horizontal = MaterialTheme.dimens.DP_24_CompactMedium,
+                vertical = MaterialTheme.dimens.DP_13_CompactMedium
+            ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -169,22 +219,27 @@ fun TransactionVoidItem(
                 if (transaction.amount != null) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_2_CompactMedium))
                     Text(
-                        text = formatAmount(
-                            input = transaction.amount ?: "",
-                            symbol = Symbol(type = Symbol.Type.CURRENCY, currency = Symbol.Currency.USD, position = Symbol.Position.START)
+                        text = stringResource(id = R.string.amount) + formatAmount(
+                            input = transaction.amount,
+                            symbol = Symbol(
+                                type = Symbol.Type.CURRENCY,
+                                currency = Symbol.Currency.USD,
+                                position = Symbol.Position.START
+                            )
                         ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                if (transaction.dateTime != null) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_2_CompactMedium))
-                    Text(
-                        text = transaction.dateTime,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+                if (transaction.authCode != null) {
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_2_CompactMedium))
+                    Text(
+                        text = stringResource(id = R.string.approval_code) + transaction.authCode,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
             }
 
             Icon(
@@ -205,5 +260,7 @@ data class TransactionItem(
     val txnType: TxnType,
     val displayName: String,
     val amount: String? = null,
-    val dateTime: String? = null
+    val dateTime: String? = null,
+    val rrn: String? = null,
+    val authCode: String? = null
 )

@@ -56,7 +56,8 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
     // Collect StateFlows as Compose state so the UI recomposes when values change
     val origTotalAmount by viewModel.origTotalAmount.collectAsState()
     val origDateTime by viewModel.origDateTime.collectAsState()
-
+    val rrn by viewModel.rrn.collectAsState()
+    val stan by viewModel.stan.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -142,7 +143,10 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
 
                     listOf(
                         stringResource(id = R.string.card) + " " + (sharedViewModel.objRootAppPaymentDetail.cardBrand?.plus(" ") ?: "EBT"),
-                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode ?: "-")
+                        stringResource(id = R.string.pos_entry) + " " + (sharedViewModel.objRootAppPaymentDetail.cardEntryMode ?: "-"),
+                        stringResource(id = R.string.receipt_rrn) + " " + (sharedViewModel.objRootAppPaymentDetail.rrn ?: "-"),
+                        stringResource(id = R.string.stan) + " " + (sharedViewModel.objRootAppPaymentDetail.stan?.padStart(6,'0') ?: "-"),
+                        stringResource(id = R.string.approval_code) + " " + (sharedViewModel.objRootAppPaymentDetail.hostAuthCode?.padStart(6,'0') ?: "-")
                     ).forEach {
                         TextView(
                             text = it,
@@ -157,7 +161,7 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
                 }
 
                 if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
+//                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_15_CompactMedium))
 
                     // Use collected state values — UI will recompose when these update after DB fetch
                     listOf(

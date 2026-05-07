@@ -23,8 +23,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +42,31 @@ class VoidSelectionViewModel @Inject constructor(
 
     // Backing store of raw DB records — used when user taps a transaction
     private val _rawTransactions = MutableStateFlow<List<Any>>(emptyList())
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    val filteredTransactions: StateFlow<List<TransactionItem>> = combine(
+        _availableTransactions,
+        _searchQuery
+    ) { transactions, query ->
+        if (query.isEmpty()) transactions
+        else transactions.filter {
+            it.displayName.contains(query, ignoreCase = true) ||
+                    it.amount?.contains(query) == true ||
+                    it.dateTime?.contains(query) == true ||
+                    it.rrn?.contains(query) == true ||
+                    it.authCode?.contains(query) == true
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onLoad(context: Context, sharedViewModel: SharedViewModel) {
@@ -78,7 +106,9 @@ class VoidSelectionViewModel @Inject constructor(
                     txnType     = TxnType.valueOf(it.txnType?.toString() ?: return@mapNotNull null),
                     displayName = it.txnType?.toString() ?: "",
                     amount      = it.ttlAmount.toDecimalFormat(),
-                    dateTime    = it.dateTime
+                    dateTime    = it.dateTime,
+                    rrn         = it.rrn,
+                    authCode    = it.hostAuthCode
                 )
             }
         }
