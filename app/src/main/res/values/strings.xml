@@ -34,7 +34,7 @@
     <string name="cash">EBT CASH Benefit Purchase</string>
     <string name="bal_cash">CASH</string>
     <string name="key_man">Key Management</string>
-    <string name="stan">Stan:</string>
+    <string name="stan">STAN:</string>
     <string name="time_out">Timeout</string>
     <string name="approval_code">Approval Code: </string>
     <string name="select_transaction_to_void">Select Transaction To Void</string>

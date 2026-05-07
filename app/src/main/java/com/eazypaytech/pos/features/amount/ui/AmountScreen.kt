@@ -219,9 +219,6 @@ fun AmountScreen(navHostController: NavHostController, viewModel: AmountViewMode
     }
 
     LaunchedEffect(Unit) {
-//        if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.VOID_LAST) {
-//            viewModel.fetchLastTransaction(navHostController, context, sharedViewModel)
-//        }
         viewModel.onLoad(sharedViewModel)
     }
 
