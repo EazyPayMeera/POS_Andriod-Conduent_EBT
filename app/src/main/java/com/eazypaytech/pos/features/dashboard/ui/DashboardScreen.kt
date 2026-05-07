@@ -315,7 +315,7 @@ fun TrainingView(
 
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
-
+        dashboardViewModel.deleteOldTransactions()
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }

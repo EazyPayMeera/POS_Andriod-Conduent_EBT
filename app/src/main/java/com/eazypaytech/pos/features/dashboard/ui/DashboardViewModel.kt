@@ -188,5 +188,14 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
         }
     }
 
-
+    fun deleteOldTransactions() {
+        viewModelScope.launch {
+            try {
+                txnDBRepository.deleteOldTransactions()
+                Log.d("DB_DEBUG", "Old transactions deleted successfully")
+            } catch (e: Exception) {
+                Log.e("DB_DEBUG", "Failed to delete old transactions: ${e.message}")
+            }
+        }
+    }
 }
