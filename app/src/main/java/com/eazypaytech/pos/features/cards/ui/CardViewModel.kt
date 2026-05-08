@@ -112,6 +112,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         )
     }
 
+    fun toManualEntry(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigate(AppNavigationItems.ManualCardScreen.route){
+                popUpTo(AppNavigationItems.CardScreen.route) { inclusive = false }
+                launchSingleTop = true
+            }
+        }
+    }
+
 //    fun cardRetry(navHostController: NavHostController) {
 //        CustomDialogBuilder.composeAlertDialog(
 //            title = "Chip Error",

@@ -103,9 +103,9 @@ fun ApprovedScreen(navHostController: NavHostController) {
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                     Text(
                         text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
-                            txnRecord.snapEndBalance.toAmountFormat()
+                            ""
                         else
-                            txnRecord.cashEndBalance.toAmountFormat(),
+                            "",
                         fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Bold,
@@ -170,7 +170,7 @@ fun ApprovedScreen(navHostController: NavHostController) {
                                 .alpha(alpha)
                         )
                     }
-                    if (hasDbRecord && !isBalanceInquiry) {
+                    if (hasDbRecord) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()

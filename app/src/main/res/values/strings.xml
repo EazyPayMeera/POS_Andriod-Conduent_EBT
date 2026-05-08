@@ -40,6 +40,7 @@
     <string name="select_transaction_to_void">Select Transaction To Void</string>
     <string name="no_transactions_available">No Void Transaction Available</string>
     <string name="search_filter">Search By RRN, Approval Code</string>
+    <string name="manual_card">Manual</string>
 
     <string name="act_title">Activate Now</string>
     <string name="act_prompt_activate">Enter PROCESSOR ID, TID , AND MID</string>
@@ -410,7 +411,7 @@
     <string name="receipt_txntype_cash_purchase" translatable="false">CASH_PURCHASE</string>
     <string name="receipt_cash_begin_balance" tools:ignore="MissingTranslation">Cash Begin Bal:</string>
     <string name="receipt_cash_purchase" tools:ignore="MissingTranslation">Cash Purchase</string>
-    <string name="receipt_cash_end_balance" tools:ignore="MissingTranslation">Cash End Bal:</string>
+    <string name="receipt_cash_end_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_snap_balance" tools:ignore="MissingTranslation">SNAP Balance:</string>
     <string name="receipt_txntype_purchase_with_cashback" translatable="false">PURCHASE_CASHBACK</string>
     <string name="receipt_cash_back" translatable="false">Cash Back: </string>
@@ -574,7 +575,7 @@
     <string name="card_entry_mode_contactless">CONTACTLESS</string>
     <string name="card_entry_mode_contactless_magstripe">CONTACTLESS MAGSTRIPE</string>
     <string name="card_entry_mode_magstripe">MAGSTRIPE</string>
-    <string name="card_entry_mode_fallback_magstripe">FALLBACK MAGSTRIPE</string>
+    <string name="card_entry_mode_fallback_magstripe">CHIP/SWIPE</string>
     <string name="card_entry_mode_manual">MANUAL</string>
     <string name="card_entry_mode_qrcode">QRCODE</string>
     <string name="card_entry_mode_unspecified">UNSPECIFIED</string>

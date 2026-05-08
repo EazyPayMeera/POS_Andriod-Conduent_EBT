@@ -173,7 +173,13 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
 
         }
     }
-
+    if(sharedViewModel.objRootAppPaymentDetail.isFallback == true) {
+        FooterButtons(
+            stringResource(id = R.string.manual_card),
+            { viewModel.toManualEntry(navHostController) },
+            enabled = viewModel.emvInProgress.value == false
+        )
+    }
     FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
 
     LaunchedEffect(Unit) {
