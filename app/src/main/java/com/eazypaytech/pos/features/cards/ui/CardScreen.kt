@@ -174,34 +174,21 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
 
         }
     }
-    if (sharedViewModel.objRootAppPaymentDetail.isFallback == true) {
 
-        FooterButtons(
-            firstButtonTitle = stringResource(id = R.string.manual_card),
-            firstButtonOnClick = {
-                viewModel.toManualEntry(navHostController)
-            },
+    FooterButtons(
+        firstButtonTitle = stringResource(id = R.string.manual_card),
+        firstButtonOnClick = {
+            viewModel.toManualEntry(navHostController)
+        },
 
-            secondButtonTitle = stringResource(id = R.string.cancel),
-            secondButtonOnClick = {
-                viewModel.onCancelClick(navHostController)
-            },
+        secondButtonTitle = stringResource(id = R.string.cancel),
+        secondButtonOnClick = {
+            viewModel.onCancelClick(navHostController)
+        },
 
-            enabled = !viewModel.emvInProgress.value
-        )
-
-    } else {
-
-        FooterButtons(
-            firstButtonTitle = stringResource(id = R.string.cancel),
-            firstButtonOnClick = {
-                viewModel.onCancelClick(navHostController)
-            },
-
-            enabled = !viewModel.emvInProgress.value
-        )
-    }
-
+        enabled = !viewModel.emvInProgress.value
+    )
+    
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, sharedViewModel, navHostController)
     }
