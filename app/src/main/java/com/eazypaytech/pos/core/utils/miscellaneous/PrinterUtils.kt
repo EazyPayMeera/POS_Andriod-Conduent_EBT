@@ -126,6 +126,8 @@ object PrinterUtils {
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
         repo.addText(sharedViewModel.objPosConfig?.merchantNameLocation,
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+        repo.addText(context.getString(R.string.receipt_zip_code)+ " " + sharedViewModel.objPosConfig?.postalServiceCode,
+            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
 //        repo.addText(data.header3,
 //            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
 //        repo.addText(data.header4,

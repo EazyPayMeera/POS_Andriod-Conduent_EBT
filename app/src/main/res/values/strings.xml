@@ -427,6 +427,7 @@
     <string name="receipt_rrn" translatable="false">RRN: </string>
     <string name="receipt_ebt" translatable="false">EBT </string>
     <string name="receipt_appr_code" translatable="false">APPR CODE: </string>
+    <string name="receipt_zip_code" translatable="false">ZIP CODE: </string>
     <string name="receipt_tvr" translatable="false">TVR: </string>
 
 

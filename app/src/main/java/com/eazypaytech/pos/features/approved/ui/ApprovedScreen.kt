@@ -88,30 +88,25 @@ fun ApprovedScreen(navHostController: NavHostController) {
                 if(isBalanceInquiry && txnRecord.txnStatus == TxnStatus.APPROVED)
                 {
                     TextView(
-                        text = stringResource(id = getBalInquiryStringId(txnRecord.txnType)),
-                        fontSize = MaterialTheme.dimens.SP_18_CompactMedium,
+                        text = stringResource(id = getTxnStatusStringId(txnRecord.txnStatus)),
+                        fontSize = MaterialTheme.dimens.SP_29_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(
-                                top = MaterialTheme.dimens.DP_190_CompactMedium,
-                                bottom = MaterialTheme.dimens.DP_20_CompactMedium
-                            )
+                            .padding(bottom = MaterialTheme.dimens.DP_20_CompactMedium)
                             .align(Alignment.CenterHorizontally)
                     )
 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_21_CompactMedium))
                     Text(
-                        text = if (sharedViewModel.objRootAppPaymentDetail.txnType == TxnType.BALANCE_ENQUIRY_SNAP)
-                            ""
-                        else
-                            "",
-                        fontSize = MaterialTheme.dimens.SP_31_CompactMedium,
+                        text = "SNAP: ${txnRecord.snapEndBalance.toAmountFormat()}\n\n" +
+                                "CASH: ${txnRecord.cashEndBalance.toAmountFormat()}",
+                        fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
+                            .padding(top = MaterialTheme.dimens.DP_55_CompactMedium)
                             .align(Alignment.CenterHorizontally)
-                            .height(MaterialTheme.dimens.DP_33_CompactMedium)
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_100_CompactMedium))
                 }
@@ -170,45 +165,45 @@ fun ApprovedScreen(navHostController: NavHostController) {
                                 .alpha(alpha)
                         )
                     }
-                    if (hasDbRecord) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularMenu(
-                                menuOptions = listOf(
-                                    context.resources.getString((R.string.cust_recp)),
-                                    context.resources.getString((R.string.merchant_recp))
-                                ),
-                                onMenuOptionClick = { option ->
-                                    when (option) {
-                                        context.resources.getString((R.string.cust_recp)) -> {
-                                            viewModel.printReceipt(
-                                                context,
-                                                sharedViewModel,
-                                                true
-                                            )
-                                        }
 
-                                        context.resources.getString((R.string.merchant_recp)) -> {
-                                            viewModel.printReceipt(
-                                                context,
-                                                sharedViewModel,
-                                                false
-                                            )
-                                        }
-                                    }
-                                },
-                                onPrintClick = {}
-                            )
-                        }
-                    } else {
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_70_CompactMedium))
-                    }
                 }
+                if (hasDbRecord) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = MaterialTheme.dimens.DP_24_CompactMedium),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularMenu(
+                            menuOptions = listOf(
+                                context.resources.getString((R.string.cust_recp)),
+                                context.resources.getString((R.string.merchant_recp))
+                            ),
+                            onMenuOptionClick = { option ->
+                                when (option) {
+                                    context.resources.getString((R.string.cust_recp)) -> {
+                                        viewModel.printReceipt(
+                                            context,
+                                            sharedViewModel,
+                                            true
+                                        )
+                                    }
 
+                                    context.resources.getString((R.string.merchant_recp)) -> {
+                                        viewModel.printReceipt(
+                                            context,
+                                            sharedViewModel,
+                                            false
+                                        )
+                                    }
+                                }
+                            },
+                            onPrintClick = {}
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_70_CompactMedium))
+                }
                 Box(
                     modifier = Modifier
                         .padding(top = MaterialTheme.dimens.DP_50_CompactMedium)

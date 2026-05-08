@@ -505,7 +505,7 @@ class EmvWrapperRepository @Inject constructor(
         //Log.d("PIN_DEBUG", "PAN (masked): $pan")
         val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         val bundle = Bundle().apply {
-//            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, true)
+            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
             if (getDeviceModel().contains("MF960") ||
                 getDeviceModel().contains("H9PRO")
             ) {
@@ -574,7 +574,7 @@ class EmvWrapperRepository @Inject constructor(
         //Log.d("PIN_DEBUG", "PAN (masked): $pan")
         val panBlock = requireNotNull(pan) { "PAN cannot be null" }.toByteArray()
         val bundle = Bundle().apply {
-//            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, true)
+            putBoolean(PinPadConstrants.COMMON_IS_RANDOM, false)
             if (getDeviceModel().contains("MF960") ||
                 getDeviceModel().contains("H9PRO")
             ) {
