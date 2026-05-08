@@ -264,13 +264,13 @@ object PrinterUtils {
         }
         if (isVoid) {
             /* SNAP BEGIN BALANCE */
-            val voidBeginBal = data.snapEndBalance?.minus(data.txnAmount!!)
+            /*val voidBeginBal = data.snapEndBalance?.minus(data.txnAmount!!)
             voidBeginBal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_begin_balance) + " " +
                             it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                 )
-            }
+            }*/
             /*data.snapBeginBal?.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_begin_balance) + " " +
@@ -279,29 +279,33 @@ object PrinterUtils {
             }*/
 
             /* SNAP PURCHASE (VOIDED) */
-            repo.addText(
+           /* repo.addText(
                 context.getString(R.string.receipt_snap_purchase) + " " +
                         "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)) +
                         "  VOIDED"
-            )
+            )*/
 
             /* DOT LINE */
-            repo.addText(context.getString(R.string.summary_dot_line),
-                format = PrintFormat().align(Align.CENTER))
+            /*repo.addText(context.getString(R.string.summary_dot_line),
+                format = PrintFormat().align(Align.CENTER))*/
 
             /* SNAP END BALANCE */
-            val voidEndbal = voidBeginBal?.plus(data.txnAmount!!)
+            /*val voidEndbal = voidBeginBal?.plus(data.txnAmount!!)
             voidEndbal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_end_balance) + " " +
                             it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                 )
-            }
+            }*/
             /*repo.addText(
                 context.getString(R.string.receipt_snap_end_balance) + " " +
                         data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
             )*/
-
+            repo.addText(
+                context.getString(R.string.receipt_amount) ,
+                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
+            )
             //repo.addText(context.getString(R.string.receipt_gray_line))
         }
         if (!isBalanceInquiry && isReturn && isDeclined) {
@@ -459,11 +463,11 @@ object PrinterUtils {
            🔹 RESULT SECTION
            ========================= */
 
-
+        repo.feedLine()
         if(isDeclined)
             repo.addText(
                 //context.getString(R.string.receipt_result) + " " +
-                txnStatusStr,
+                txnStatusStr + " - " + data.hostResMessage,
                 //(data.hostRespCode?.let { " - $it" } ?: "")
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )

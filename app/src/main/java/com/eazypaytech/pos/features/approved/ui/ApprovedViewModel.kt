@@ -90,11 +90,12 @@ class ApprovedViewModel @Inject constructor(private val emvServiceRepository: Em
 
             dbRepository.fetchTxnById(idBeingFetched)?.let {
                 Log.d("PRINT", "TxnEntity.receiptEmvData = ${it.receiptEmvData}")
-
+                Log.d("PRINT", "TxnEntity.hostrespmessage = ${it.HostRespMessage}")
                 val receiptObj = PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
                     ?: ObjRootAppPaymentDetails()
-
+                receiptObj.hostResMessage = it.HostRespMessage
                 Log.d("PRINT", "ObjRootAppPaymentDetails.receiptEmvData = ${receiptObj.receiptEmvData}")
+                Log.d("PRINT", "ObjRootAppPaymentDetails.hostrespmessage = ${receiptObj.hostResMessage}")
 
                 PrinterUtils.printReceipt(context, sharedViewModel, receiptObj, isCustomer)
             }
