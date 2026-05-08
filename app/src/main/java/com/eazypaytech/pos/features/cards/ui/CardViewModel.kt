@@ -47,7 +47,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     lateinit var navHostController : NavHostController
     var cardRetryCount = 0
     private var isCardDetected = false
-
+    var isChipCardSwiped = mutableStateOf(false)
     /**
      * Navigates to Approval screen.
      *
@@ -218,6 +218,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 viewModelScope.launch(Dispatchers.Main) {
+                                    sharedViewModel.objRootAppPaymentDetail.isChipSwiped = false
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
@@ -271,17 +272,20 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                     when {
                                         response.status == EmvServiceResult.CardCheckStatus.CHIP_CARD_SWIPED
                                                 && sharedViewModel.objRootAppPaymentDetail.isFallback != true -> {
-                                            CustomDialogBuilder.composeAlertDialog(
-                                                title = context.getString(R.string.default_alert_title_error),
-                                                message = context.getString(R.string.emv_msg_id_chip_detected),  // ✅ use context.getString
-                                                onOkClick = {
-                                                    viewModelScope.launch {
-                                                        emvServiceRepository.abortPayment()
-                                                        delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
-                                                        startPayment(context, sharedViewModel, navHostController)
+                                            sharedViewModel.objRootAppPaymentDetail.isChipSwiped = true
+                                            emvServiceRepository.abortPayment()
+                                            viewModelScope.launch(Dispatchers.Main) {
+                                                delay(100) // ✅ let recomposition settle before showing dialog
+                                                CustomDialogBuilder.composeAlertDialog(
+                                                    title = context.getString(R.string.default_alert_title_error),
+                                                    message = context.getString(R.string.emv_msg_id_chip_detected),
+                                                    onOkClick = {
+                                                        viewModelScope.launch {
+                                                            navigateToCardScreen(navHostController)
+                                                        }
                                                     }
-                                                }
-                                            )
+                                                )
+                                            }
                                         }
 
                                         isCardCheckStatusInProgress(response.status) -> {

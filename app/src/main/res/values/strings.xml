@@ -133,6 +133,8 @@
     <string name="print">PRINT</string>
     <string name="cancel">CANCEL</string>
     <string name="tap_swipe_insert">Tap/Swipe/Insert</string>
+    <string name="swipe">Swipe</string>
+    <string name="tap_insert">Tap/Insert</string>
     <string name="chip_detect">Chip Detected</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
@@ -403,13 +405,13 @@
     <string name="receipt_dispense" translatable="false">DISPENSE </string>
     <string name="receipt_snap_begin_balance" tools:ignore="MissingTranslation">SNAP Begin Bal:</string>
     <string name="receipt_snap_purchase" tools:ignore="MissingTranslation">SNAP Purchase</string>
-    <string name="receipt_snap_end_balance" tools:ignore="MissingTranslation">SNAP End Bal:</string>
+    <string name="receipt_snap_end_balance" tools:ignore="MissingTranslation">SNAP Balance:</string>
     <string name="receipt_cash_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_txntype_food_purchase" translatable="false">FOOD_PURCHASE</string>
     <string name="receipt_settlement_date" tools:ignore="MissingTranslation">Settlement Date:</string>
     <string name="receipt_do_not_dispense_goods" translatable="false">DO NOT DISPENSE GOODS</string>
     <string name="receipt_txntype_cash_purchase" translatable="false">CASH_PURCHASE</string>
-    <string name="receipt_cash_begin_balance" tools:ignore="MissingTranslation">Cash Begin Bal:</string>
+    <string name="receipt_cash_begin_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_cash_purchase" tools:ignore="MissingTranslation">Cash Purchase</string>
     <string name="receipt_cash_end_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_snap_balance" tools:ignore="MissingTranslation">SNAP Balance:</string>
@@ -442,7 +444,7 @@
     <string name="summary_vat">VAT</string>
     <string name="summary_tip">Tip</string>
     <string name="summary_cashback">CashBack</string>
-    <string name="summary_total">Total</string>
+    <string name="summary_total">Total:</string>
     <string name="summary_txn_breakdown">Transaction Breakdown:</string>
     <string name="summary_credit_txn">Credit Transactions:</string>
     <string name="summary_debit_txn">Debit Transactions:</string>

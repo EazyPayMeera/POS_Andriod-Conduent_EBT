@@ -149,6 +149,7 @@ data class BuilderServiceTxnDetails(
 
     /* Other flags */
     @SerializedName("isFallback")       var isFallback: Boolean? = false,
+    @SerializedName("isChipSwiped")       var isChipSwiped: Boolean? = false,
     @SerializedName("isCaptured")       var isCaptured: Boolean? = false,
     @SerializedName("isVoided")         var isVoided: Boolean? = false,
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,

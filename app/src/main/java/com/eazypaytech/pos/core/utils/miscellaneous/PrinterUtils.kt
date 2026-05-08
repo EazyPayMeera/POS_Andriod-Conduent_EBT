@@ -301,6 +301,7 @@ object PrinterUtils {
                 context.getString(R.string.receipt_snap_end_balance) + " " +
                         data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
             )*/
+
             repo.addText(
                 context.getString(R.string.receipt_amount) ,
                 data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
@@ -310,7 +311,7 @@ object PrinterUtils {
         }
         if (!isBalanceInquiry && isReturn && isDeclined) {
             repo.addText(
-                context.getString(R.string.receipt_amount) + " " +
+                context.getString(R.string.receipt_amount),
                         data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
             )
         }
@@ -360,7 +361,7 @@ object PrinterUtils {
                     )
                 }else{
                     repo.addText(
-                        context.getString(R.string.receipt_amount) + " " +
+                        context.getString(R.string.receipt_amount),
                                 data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
                                 format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
                     )
@@ -393,7 +394,7 @@ object PrinterUtils {
                 val cshbeginBal = if (!isCashback) {
                     data.cashEndBalance?.plus(data.txnAmount!!)
                 } else {
-                    data.cashEndBalance?.plus(data.txnAmount!!)?.plus(data.cashback!!)
+                    (data.txnAmount!!).plus(data.cashback!!)
                 }
                 /*cshbeginBal?.let {
                     repo.addText(context.getString(R.string.receipt_cash_begin_balance)+ " " + it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
@@ -413,7 +414,8 @@ object PrinterUtils {
                         format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))*/
 
                 if (isCashback) {
-                    repo.addText(context.getString(R.string.receipt_cash_back)+ " " + data.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    repo.addText(context.getString(R.string.receipt_cash_back), data.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    repo.addText(context.getString(R.string.summary_total), cshbeginBal?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
                     /*repo.addText(
                         "Total Deduction",
@@ -536,9 +538,9 @@ object PrinterUtils {
         }*/
 
         /* EBT */
-        repo.addText(context.getString(R.string.receipt_ebt),
-            format = PrintFormat().fontSize(FontSize.MEDIUM)
-        )
+//        repo.addText(context.getString(R.string.receipt_ebt),
+//            format = PrintFormat().fontSize(FontSize.MEDIUM)
+//        )
         if(data.cardEntryMode == CardEntryMode.CONTACT || data.cardEntryMode == CardEntryMode.CONTACLESS) {
             repo.addText(
                 context.getString(R.string.receipt_aid) + aid,

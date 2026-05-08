@@ -588,6 +588,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
     {
         val isEMVEnable = paymentServiceTxnDetails?.isEMVEnable
         val isTapEnable = paymentServiceTxnDetails?.isTapEnable
+        val isChipSwipe = paymentServiceTxnDetails?.isChipSwiped
         val isFallback = paymentServiceTxnDetails?.isFallback
         val timeout = AppConstants.CARD_CHECK_TIMEOUT_S.toString()
         return TransConfig(

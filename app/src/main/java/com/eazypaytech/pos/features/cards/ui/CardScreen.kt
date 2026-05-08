@@ -144,7 +144,11 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     TextView(
-                        text = if(sharedViewModel.objRootAppPaymentDetail.isFallback == true) "Swipe" else stringResource(id = R.string.tap_swipe_insert),
+                        text = when {
+                            sharedViewModel.objRootAppPaymentDetail.isChipSwiped == true -> stringResource(R.string.tap_insert)
+                            sharedViewModel.objRootAppPaymentDetail.isFallback == true -> stringResource(R.string.swipe)
+                            else -> stringResource(id = R.string.tap_swipe_insert)
+                        },
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold
