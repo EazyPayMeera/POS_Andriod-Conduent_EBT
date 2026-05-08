@@ -529,7 +529,7 @@
     <string name="emv_msg_id_try_another_interface">Please Try Again</string>
     <string name="emv_msg_id_invalid_icc_card">Invalid ICC Card</string>
     <string name="emv_msg_id_retry">Please Retry</string>
-    <string name="emv_msg_id_chip_detected">Chip card detected. Please insert or Tap card.</string>
+    <string name="emv_msg_id_chip_detected">Chip card detected. Please Insert or Tap card.</string>
     <string name="emv_msg_id_max_retry">Chip Read Failed. Please Swipe The Card</string>
     <string name="emv_msg_id_card_removed">Card Removed</string>
     <string name="emv_msg_id_issuer_script_update_successful">Issuer Script Update Successful</string>

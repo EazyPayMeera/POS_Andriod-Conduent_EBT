@@ -187,7 +187,7 @@ object PrinterUtils {
 
         /* EBT , POS Entry Mode*/
         repo.addText(context.getString(R.string.receipt_ebt),
-            data.cardEntryMode.toDisplay(context),
+            data.cardEntryMode.toDisplay(context,data.isFallback),
             format = PrintFormat().fontSize(FontSize.MEDIUM)
         )
         /* Card numb, Expiry Date*/
@@ -591,6 +591,7 @@ object PrinterUtils {
         Cash Bal: ${data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
         
         Result  : $txnStatusStr
+        Response Message : ${data.hostResMessage}
         
         ${if (isCustomer) "CUSTOMER COPY" else "MERCHANT COPY"}
         """.trimIndent()
@@ -600,7 +601,11 @@ object PrinterUtils {
         repo.print()
     }
 
-    fun CardEntryMode?.toDisplay(context: Context): String {
+    fun CardEntryMode?.toDisplay(context: Context, isFallback: Boolean? = false): String {
+        // ✅ If fallback swipe, override display regardless of CardEntryMode value
+        if (isFallback == true) {
+            return context.getString(R.string.card_entry_mode_fallback_magstripe)
+        }
         return when (this) {
             CardEntryMode.CONTACT -> context.getString(R.string.card_entry_mode_contact)
             CardEntryMode.CONTACLESS -> context.getString(R.string.card_entry_mode_contactless)

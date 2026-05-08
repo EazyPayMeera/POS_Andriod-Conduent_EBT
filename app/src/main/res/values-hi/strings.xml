@@ -40,6 +40,7 @@
     <string name="select_transaction_to_void">रद्द करने के लिए लेनदेन चुनें</string>
     <string name="no_transactions_available">कोई रद्द करने योग्य लेनदेन उपलब्ध नहीं है</string>
     <string name="search_filter">आरआरएन, अप्रूवल कोड द्वारा खोजें</string>
+    <string name="manual_card">मैन्युअल</string>
 
     <string name="act_title">अभी सक्रिय करें</string>
     <string name="act_prompt_activate">प्रोसेसर आईडी, TID और MID दर्ज करें</string>
@@ -521,6 +522,7 @@
     <string name="emv_msg_id_try_another_interface">कृपया पुनः प्रयास करें</string>
     <string name="emv_msg_id_invalid_icc_card">अमान्य ICC कार्ड</string>
     <string name="emv_msg_id_retry">कृपया पुनः प्रयास करें</string>
+    <string name="emv_msg_id_chip_detected">चिप कार्ड पहचाना गया। कृपया कार्ड डालें या टैप करें।</string>
     <string name="emv_msg_id_max_retry">चिप रीड विफल। कृपया कार्ड स्वाइप करें</string>
     <string name="emv_msg_id_card_removed">कार्ड निकाला गया</string>
     <string name="emv_msg_id_issuer_script_update_successful">जारीकर्ता स्क्रिप्ट अपडेट सफल</string>

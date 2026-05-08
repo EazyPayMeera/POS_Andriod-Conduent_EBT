@@ -176,14 +176,14 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
     }
 
     FooterButtons(
-        firstButtonTitle = stringResource(id = R.string.manual_card),
+        firstButtonTitle = stringResource(id = R.string.cancel),
         firstButtonOnClick = {
-            viewModel.toManualEntry(navHostController)
+            viewModel.onCancelClick(navHostController)
         },
 
-        secondButtonTitle = stringResource(id = R.string.cancel),
+        secondButtonTitle = stringResource(id = R.string.manual_card),
         secondButtonOnClick = {
-            viewModel.onCancelClick(navHostController)
+            viewModel.toManualEntry(navHostController)
         },
 
         enabled = !viewModel.emvInProgress.value
