@@ -275,7 +275,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                 else if(isCardNotPresent(response.status))
                                 {
                                     if (!isCardDetected) {  // ← Only navigate if card was never detected
-                                        navigateToManualScreen(navHostController)
+                                        abortPayment(navHostController)
                                     }
                                 }
                                 else if(isCardCheckStatusError(response.status)) {

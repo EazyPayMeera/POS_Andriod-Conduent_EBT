@@ -188,7 +188,7 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
 
         enabled = !viewModel.emvInProgress.value
     )
-    
+
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, sharedViewModel, navHostController)
     }
