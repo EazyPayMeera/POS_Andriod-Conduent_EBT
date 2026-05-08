@@ -284,15 +284,6 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                                             )
                                         }
 
-                                        // ✅ FIX: Chip card swiped again during fallback — treat as normal swipe
-                                        response.status == EmvServiceResult.CardCheckStatus.CHIP_CARD_SWIPED
-                                                && sharedViewModel.objRootAppPaymentDetail.isFallback == true -> {
-                                            isCardDetected = true
-                                            emvInProgress.value = true
-                                            showProgressVar.value = true
-                                            displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.CARD_SWIPED
-                                        }
-
                                         isCardCheckStatusInProgress(response.status) -> {
                                             isCardDetected = true
                                             emvInProgress.value = true
