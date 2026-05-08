@@ -87,7 +87,8 @@ class PosConfig @Inject constructor(@ApplicationContext val context: Context) {
     @SerializedName("isTapEnable") var isTapEnable: Boolean? = true
     @SerializedName("isEMVEnable") var isEMVEnable: Boolean? = true
 
-
+    @SerializedName("emvConfigJson") var emvConfigJson: String? = null
+    @SerializedName("capKeysJson") var capKeysJson: String? = null
     fun loadFromPrefs() : PosConfig
     {
         try {
