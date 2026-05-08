@@ -171,6 +171,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 txn.originalDateTime = originalDateTime
                 txn.hostAuthCode = AuthCode
                 txn.posConditionCode = posCondition
+                txn.HostRespMessage = sharedViewModel.objRootAppPaymentDetail.hostResMessage
                 txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
                 txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
                 Log.d("DATABASE","Txn Update from CardViewModel")

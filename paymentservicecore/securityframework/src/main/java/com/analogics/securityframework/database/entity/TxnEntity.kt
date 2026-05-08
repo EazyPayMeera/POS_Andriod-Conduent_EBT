@@ -65,6 +65,7 @@ data class TxnEntity(
     /* Host Response */
     @ColumnInfo(name = "HostAuthCode") var hostAuthCode: String? = null,
     @ColumnInfo(name = "HostRespCode") var hostRespCode: String? = null,
+    @ColumnInfo(name = "HostRespMessage") var HostRespMessage: String? = null,
     @ColumnInfo(name = "HostAuthResult") var hostAuthResult: String? = null,
     @ColumnInfo(name = "HostTxnRef") var hostTxnRef: String? = null,
 

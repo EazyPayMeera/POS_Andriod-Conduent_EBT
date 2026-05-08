@@ -328,6 +328,7 @@ class ManualCardViewModel @Inject constructor(
             txn.originalDateTime = sharedViewModel.objRootAppPaymentDetail.originalDateTime
             txn.hostAuthCode = AuthCode
             txn.posConditionCode = posCondition
+            txn.HostRespMessage = sharedViewModel.objRootAppPaymentDetail.hostResMessage
             txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
             txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
             Log.d("DATABASE","Txn Update ManualCardViewModel")
