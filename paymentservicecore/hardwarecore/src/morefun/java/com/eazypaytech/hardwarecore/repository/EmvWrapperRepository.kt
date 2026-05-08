@@ -74,6 +74,7 @@ class EmvWrapperRepository @Inject constructor(
     IEmvWrapperRequestListener {
     private var TAG = "MOREFUN"
     private var isMagSupported = false
+    private var isFallback = false
     val arqcTLVTags: Array<String> = arrayOf(
         "9F26",  // Application Cryptogram
         "9F27",  // Cryptogram Information Data
@@ -236,50 +237,42 @@ class EmvWrapperRepository @Inject constructor(
      * and triggers online PIN + encryption flow.
      */
     val magCardListener = object : OnSearchMagCardListener.Stub() {
+        override fun onSearchResult(p0: Int, p1: MagCardInfoEntity?) {
 
-        override fun onSearchResult(
-            p0: Int,
-            p1: MagCardInfoEntity?
-        ) {
-//            Log.d(TAG, "Card Swiped......: $p0")
-//            Log.d(TAG, "Card No..........: ${p1?.cardNo}")
-//            Log.d(TAG, "Card Holder Name.: ${p1?.cardholderName}")
-//            Log.d(TAG, "Expiry Date......: ${p1?.expDate}")
-//            Log.d(TAG, "Service Code.....: ${p1?.serviceCode}")
-//            Log.d(TAG, "Track2 Raw.......: ${p1?.tk2}")
+            // ✅ Add this log FIRST before anything else
+            Log.d(TAG, "=== magCardListener onSearchResult ===")
+            Log.d(TAG, "p0 = $p0, serviceCode = ${p1?.serviceCode}, isFallback = $isFallback")
+            Log.d(TAG, "tk2ValidResult = ${p1?.tk2ValidResult}")
 
             p0.takeIf {
                 it == ServiceResult.Success &&
                         p1?.tk2ValidResult == ServiceResult.Success
             }?.let {
-                checkCardResult = CheckCardResult.CARD_SWIPED
+                val serviceCode = p1?.serviceCode ?: ""
 
-                iEmvSdkResponseListener?.onEmvSdkResponse(
-                    EmvSdkResult.CardCheckResult(
-                        status = EmvSdkResult.CardCheckStatus.CARD_SWIPED
-                    )
-                )
+                when {
+                    serviceCode == "120" -> processMagstripeSwipe(p1)
 
-                val trackData = p1?.tk2
-                    ?.uppercase()
-                    ?.replace('=', 'D')
-                    ?.trimEnd('F') ?: ""
+                    (serviceCode.startsWith("2") || serviceCode.startsWith("6")) && isFallback -> {
+                        Log.d(TAG, "✅ Fallback swipe allowed")
+                        processMagstripeSwipe(p1)
+                    }
 
-                val pan = p1?.cardNo ?: ""
-                inputOnlinePin(pan) { pinBlock ->
-                    val msrTlv = TlvUtils()
-                    msrTlv.addTagValHex(
-                        EmvConstants.EMV_TAG_TRACK2,
-                        trackData,
-                        0,
-                        trackData.length
-                    )
+                    serviceCode.startsWith("2") || serviceCode.startsWith("6") -> {
+                        Log.d(TAG, "❌ Chip card rejected - not in fallback")
+                        iEmvSdkResponseListener.onEmvSdkResponse(
+                            EmvSdkResult.CardCheckResult(
+                                status = EmvSdkResult.CardCheckStatus.CHIP_CARD_SWIPED
+                            )
+                        )
+                    }
 
-                    val finalTlv = msrTlv.toTlvString()
-                    encryptThenRequestOnline(finalTlv)
+                    else -> processMagstripeSwipe(p1)
                 }
 
             } ?: let {
+                // ✅ Add log here too
+                Log.d(TAG, "❌ Card read failed — p0=$p0, tk2ValidResult=${p1?.tk2ValidResult}")
                 iEmvSdkResponseListener?.onEmvSdkResponse(
                     EmvSdkResult.CardCheckResult(
                         status = EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED
@@ -288,6 +281,36 @@ class EmvWrapperRepository @Inject constructor(
                 deviceService?.magCardReader?.searchCard(this, 30, Bundle())
                 deviceService?.magCardReader?.setIsCheckLrc(true)
             }
+        }
+    }
+
+    // ✅ Add this helper function in the same class
+    private fun processMagstripeSwipe(p1: MagCardInfoEntity?) {
+        checkCardResult = CheckCardResult.CARD_SWIPED
+
+        iEmvSdkResponseListener?.onEmvSdkResponse(
+            EmvSdkResult.CardCheckResult(
+                status = EmvSdkResult.CardCheckStatus.CARD_SWIPED
+            )
+        )
+
+        val trackData = p1?.tk2
+            ?.uppercase()
+            ?.replace('=', 'D')
+            ?.trimEnd('F') ?: ""
+
+        val pan = p1?.cardNo ?: ""
+
+        inputOnlinePin(pan) { pinBlock ->
+            val msrTlv = TlvUtils()
+            msrTlv.addTagValHex(
+                EmvConstants.EMV_TAG_TRACK2,
+                trackData,
+                0,
+                trackData.length
+            )
+            val finalTlv = msrTlv.toTlvString()
+            encryptThenRequestOnline(finalTlv)
         }
     }
 
@@ -788,6 +811,7 @@ class EmvWrapperRepository @Inject constructor(
 
     ) {
         resetTransData()
+        isFallback = transConfig?.isFallback == true  // ✅ Set instance variable
         /*thread = Thread {*/
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener
@@ -1599,6 +1623,7 @@ class EmvWrapperRepository @Inject constructor(
         private var deviceService: DeviceServiceEngine? = null
         private var serviceConnected = CompletableDeferred<Boolean>()
         private var TAG = "MOREFUN"
+
 
         /**
          * Binds to the EMV device service.

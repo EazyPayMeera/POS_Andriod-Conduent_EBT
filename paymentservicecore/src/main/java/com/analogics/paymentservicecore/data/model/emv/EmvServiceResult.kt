@@ -36,6 +36,7 @@ sealed class EmvServiceResult(
     enum class CardCheckStatus {
             NO_CARD_DETECTED,
             CARD_INSERTED,
+            CHIP_CARD_SWIPED,
             CARD_TAPPED,
             CARD_SWIPED,
             NOT_ICC_CARD,
@@ -55,6 +56,7 @@ sealed class EmvServiceResult(
         CARD_INSERTED,
         CARD_TAPPED,
         CARD_SWIPED,
+        CHIP_CARD_SWIPED,
         CARD_READ_OK,
         REMOVE_CARD,
         USE_CONTACT_IC_CARD,

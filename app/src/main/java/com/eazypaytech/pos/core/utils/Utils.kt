@@ -416,6 +416,7 @@ fun emvMsgIdToStringId(displayMsgId: EmvServiceResult.DisplayMsgId?): Int? {
                 EmvServiceResult.DisplayMsgId.TRY_ANOTHER_INTERFACE -> R.string.emv_msg_id_try_another_interface
                 EmvServiceResult.DisplayMsgId.INVALID_ICC_CARD -> R.string.emv_msg_id_invalid_icc_card
                 EmvServiceResult.DisplayMsgId.RETRY -> R.string.emv_msg_id_retry
+                EmvServiceResult.DisplayMsgId.CHIP_CARD_SWIPED -> R.string.emv_msg_id_chip_detected
                 EmvServiceResult.DisplayMsgId.CARD_REMOVED -> R.string.emv_msg_id_card_removed
                 EmvServiceResult.DisplayMsgId.ISSUER_SCRIPT_UPDATE_SUCCESSFUL -> R.string.emv_msg_id_issuer_script_update_successful
                 EmvServiceResult.DisplayMsgId.ISSUER_SCRIPT_UPDATE_FAILED -> R.string.emv_msg_id_issuer_script_update_failed

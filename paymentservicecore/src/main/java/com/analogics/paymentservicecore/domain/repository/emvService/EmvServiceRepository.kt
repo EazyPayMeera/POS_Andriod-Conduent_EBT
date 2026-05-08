@@ -101,6 +101,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
         return when (value) {
             EmvSdkResult.CardCheckStatus.NO_CARD_DETECTED -> CardCheckStatus.NO_CARD_DETECTED
             EmvSdkResult.CardCheckStatus.CARD_INSERTED -> CardCheckStatus.CARD_INSERTED
+            EmvSdkResult.CardCheckStatus.CHIP_CARD_SWIPED -> CardCheckStatus.CHIP_CARD_SWIPED
             EmvSdkResult.CardCheckStatus.CARD_TAPPED -> CardCheckStatus.CARD_TAPPED
             EmvSdkResult.CardCheckStatus.CARD_SWIPED -> CardCheckStatus.CARD_SWIPED
             EmvSdkResult.CardCheckStatus.NOT_ICC_CARD -> CardCheckStatus.NOT_ICC_CARD
@@ -184,7 +185,7 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             EmvSdkResult.DisplayMsgId.ERR_QPBOC_APPLICATION -> DisplayMsgId.ERR_QPBOC_APPLICATION
             EmvSdkResult.DisplayMsgId.ERR_QPBOC_FDDA_FAILED -> DisplayMsgId.ERR_QPBOC_FDDA_FAILED
             EmvSdkResult.DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS -> DisplayMsgId.ERR_PURE_ELE_CASH_CARD_NOT_ALLOW_ONLINE_TRANS
-
+            EmvSdkResult.DisplayMsgId.INSERT_OR_TAP_CARD -> DisplayMsgId.CHIP_CARD_SWIPED
             EmvSdkResult.DisplayMsgId.PROCESSING_ONLINE -> DisplayMsgId.PROCESSING_ONLINE
         }
     }
@@ -597,7 +598,9 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             cardCheckMode = resolveCardCheckMode(isEMVEnable, isTapEnable, isFallback),
             cardCheckTimeout = timeout,
             forceOnlinePin = true,
-            supportDRL = false
+            supportDRL = false,
+            isFallback = paymentServiceTxnDetails?.isFallback
+
         )
     }
 

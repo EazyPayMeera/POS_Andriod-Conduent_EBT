@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -262,25 +263,56 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             }
 
                             is EmvServiceResult.CardCheckResult -> {
-                                emvInProgress.value = false
-                                showProgressVar.value = false
-                                if(isCardCheckStatusInProgress(response.status)) {
-                                    isCardDetected = true
-                                    emvInProgress.value = true
-                                    showProgressVar.value = true
-                                    response.displayMsgId?.let {
-                                        displayInfoMsgId.value = it
+                                viewModelScope.launch(Dispatchers.Main) {  // ✅ add this
+                                    emvInProgress.value = false
+                                    showProgressVar.value = false
+                                    Log.d("EMV", "CardCheckResult → status: ${response.status} | displayMsgId: ${response.displayMsgId} | isFallback: ${sharedViewModel.objRootAppPaymentDetail.isFallback}")
+
+                                    when {
+                                        response.status == EmvServiceResult.CardCheckStatus.CHIP_CARD_SWIPED
+                                                && sharedViewModel.objRootAppPaymentDetail.isFallback != true -> {
+                                            CustomDialogBuilder.composeAlertDialog(
+                                                title = context.getString(R.string.default_alert_title_error),
+                                                message = context.getString(R.string.emv_msg_id_chip_detected),  // ✅ use context.getString
+                                                onOkClick = {
+                                                    viewModelScope.launch {
+                                                        emvServiceRepository.abortPayment()
+                                                        delay(AppConstants.CARD_CHECK_RESTART_DELAY_MS)
+                                                        startPayment(context, sharedViewModel, navHostController)
+                                                    }
+                                                }
+                                            )
+                                        }
+
+                                        // ✅ FIX: Chip card swiped again during fallback — treat as normal swipe
+                                        response.status == EmvServiceResult.CardCheckStatus.CHIP_CARD_SWIPED
+                                                && sharedViewModel.objRootAppPaymentDetail.isFallback == true -> {
+                                            isCardDetected = true
+                                            emvInProgress.value = true
+                                            showProgressVar.value = true
+                                            displayInfoMsgId.value = EmvServiceResult.DisplayMsgId.CARD_SWIPED
+                                        }
+
+                                        isCardCheckStatusInProgress(response.status) -> {
+                                            isCardDetected = true
+                                            emvInProgress.value = true
+                                            showProgressVar.value = true
+                                            response.displayMsgId?.let {
+                                                displayInfoMsgId.value = it
+                                            }
+                                        }
+
+                                        isCardNotPresent(response.status) -> {
+                                            if (!isCardDetected) {
+                                                abortPayment(navHostController)
+                                            }
+                                        }
+
+                                        isCardCheckStatusError(response.status) -> {
+                                            displayEmvError(response.displayMsgId)
+                                        }
                                     }
-                                }
-                                else if(isCardNotPresent(response.status))
-                                {
-                                    if (!isCardDetected) {  // ← Only navigate if card was never detected
-                                        abortPayment(navHostController)
-                                    }
-                                }
-                                else if(isCardCheckStatusError(response.status)) {
-                                    displayEmvError(response.displayMsgId)
-                                }
+                                }  // ✅ close launch
                             }
                         }
                     }
@@ -396,6 +428,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
      */
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
+
         var message : String? = null
         val resolvedMsgId = if (cardRetryCount == 2) {
             EmvServiceResult.DisplayMsgId.MAX_CHIP_RETRY
@@ -448,6 +481,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             else -> false
         }
     }
+
 
 
     /**
