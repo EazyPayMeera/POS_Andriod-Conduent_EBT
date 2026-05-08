@@ -4,6 +4,7 @@ package com.eazypaytech.pos.features.cards.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -173,14 +174,33 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
 
         }
     }
-    if(sharedViewModel.objRootAppPaymentDetail.isFallback == true) {
+    if (sharedViewModel.objRootAppPaymentDetail.isFallback == true) {
+
         FooterButtons(
-            stringResource(id = R.string.manual_card),
-            { viewModel.toManualEntry(navHostController) },
-            enabled = viewModel.emvInProgress.value == false
+            firstButtonTitle = stringResource(id = R.string.manual_card),
+            firstButtonOnClick = {
+                viewModel.toManualEntry(navHostController)
+            },
+
+            secondButtonTitle = stringResource(id = R.string.cancel),
+            secondButtonOnClick = {
+                viewModel.onCancelClick(navHostController)
+            },
+
+            enabled = !viewModel.emvInProgress.value
+        )
+
+    } else {
+
+        FooterButtons(
+            firstButtonTitle = stringResource(id = R.string.cancel),
+            firstButtonOnClick = {
+                viewModel.onCancelClick(navHostController)
+            },
+
+            enabled = !viewModel.emvInProgress.value
         )
     }
-    FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
 
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, sharedViewModel, navHostController)
