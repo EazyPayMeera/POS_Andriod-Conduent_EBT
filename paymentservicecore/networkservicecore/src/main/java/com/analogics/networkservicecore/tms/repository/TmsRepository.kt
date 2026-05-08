@@ -44,7 +44,7 @@ class TmsRepository @Inject constructor(
             val finalMap = mutableMapOf<String, String>()
 
             // PRIMARY: new structure
-            val setupConfig = terminalParam?.ebt_device_setup
+            val setupConfig = terminalParam?.ebt_device_config
 
             // 1) Base device/host config
             val baseConfig = setupConfig?.get("")
