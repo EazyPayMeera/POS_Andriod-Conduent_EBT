@@ -75,6 +75,8 @@ class EmvWrapperRepository @Inject constructor(
     private var TAG = "MOREFUN"
     private var isMagSupported = false
     private var isFallback = false
+    private var isInsert = false
+    private var isTap = false
     val arqcTLVTags: Array<String> = arrayOf(
         "9F26",  // Application Cryptogram
         "9F27",  // Cryptogram Information Data
@@ -241,7 +243,7 @@ class EmvWrapperRepository @Inject constructor(
 
             // ✅ Add this log FIRST before anything else
             Log.d(TAG, "=== magCardListener onSearchResult ===")
-            Log.d(TAG, "p0 = $p0, serviceCode = ${p1?.serviceCode}, isFallback = $isFallback")
+            Log.d(TAG, "p0 = $p0, serviceCode = ${p1?.serviceCode}, isFallback = $isFallback , isTap = $isTap, isInsert = $isInsert")
             Log.d(TAG, "tk2ValidResult = ${p1?.tk2ValidResult}")
 
             p0.takeIf {
@@ -255,6 +257,11 @@ class EmvWrapperRepository @Inject constructor(
 
                     (serviceCode.startsWith("2") || serviceCode.startsWith("6")) && isFallback -> {
                         Log.d(TAG, "✅ Fallback swipe allowed")
+                        processMagstripeSwipe(p1)
+                    }
+
+                    (serviceCode.startsWith("2") || serviceCode.startsWith("6")) && !isTap && !isInsert -> {
+                        Log.d(TAG, "✅ Fallback swipe allowed when both reader is disabled")
                         processMagstripeSwipe(p1)
                     }
 
@@ -812,6 +819,8 @@ class EmvWrapperRepository @Inject constructor(
     ) {
         resetTransData()
         isFallback = transConfig?.isFallback == true  // ✅ Set instance variable
+        isTap = transConfig?.isTap == true
+        isInsert = transConfig?.isInsert == true
         /*thread = Thread {*/
         try {
             this.iEmvSdkResponseListener = iEmvSdkResponseListener

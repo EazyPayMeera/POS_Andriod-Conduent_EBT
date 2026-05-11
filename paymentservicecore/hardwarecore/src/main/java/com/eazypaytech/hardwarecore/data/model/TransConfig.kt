@@ -14,5 +14,7 @@ data class TransConfig(
     @SerializedName("supportDRL")           val supportDRL : Boolean? = null,
     @SerializedName("forceOnline")          val forceOnline : Boolean? = null,
     @SerializedName("forceOnlinePin")       val forceOnlinePin : Boolean? = null,
-    @SerializedName("isFallback")           val isFallback : Boolean? = null
+    @SerializedName("isFallback")           val isFallback : Boolean? = null,
+    @SerializedName("isTap")                val isTap : Boolean? = null,
+    @SerializedName("isInsert")             val isInsert : Boolean? = null,
 )
