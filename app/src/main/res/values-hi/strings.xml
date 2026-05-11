@@ -135,6 +135,8 @@
     <string name="tap_swipe_insert">टैप/स्वाइप/डालें</string>
     <string name="swipe">स्वाइप करें</string>
     <string name="tap_insert">टैप/डालें</string>
+    <string name="insert_swipe">कार्ड डालें / स्वाइप करें</string>
+    <string name="tap_swipe">टैप करें / स्वाइप करें</string>
     <string name="chip_detect">चिप पहचानी गई</string>
     <string name="confirm_btn">पुष्टि करें</string>
     <string name="cancel_btn">रद्द करें</string>

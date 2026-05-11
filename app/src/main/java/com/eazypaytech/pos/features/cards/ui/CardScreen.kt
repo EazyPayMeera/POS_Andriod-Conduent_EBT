@@ -145,9 +145,37 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
 
                     TextView(
                         text = when {
-                            sharedViewModel.objRootAppPaymentDetail.isChipSwiped == true -> stringResource(R.string.tap_insert)
-                            sharedViewModel.objRootAppPaymentDetail.isFallback == true -> stringResource(R.string.swipe)
-                            else -> stringResource(id = R.string.tap_swipe_insert)
+
+                            // Chip card already swiped
+                            sharedViewModel.objRootAppPaymentDetail.isChipSwiped == true -> {
+                                stringResource(R.string.tap_insert)
+                            }
+
+                            // Fallback flow
+                            sharedViewModel.objRootAppPaymentDetail.isFallback == true -> {
+                                stringResource(R.string.swipe)
+                            }
+
+                            // Both Tap and EMV disabled → only Swipe
+                            sharedViewModel.objRootAppPaymentDetail.isTapEnable == false &&
+                                    sharedViewModel.objRootAppPaymentDetail.isEMVEnable == false -> {
+                                stringResource(R.string.swipe)
+                            }
+
+                            // Tap disabled → Insert + Swipe
+                            sharedViewModel.objRootAppPaymentDetail.isTapEnable == false -> {
+                                stringResource(R.string.insert_swipe)
+                            }
+
+                            // EMV disabled → Tap + Swipe
+                            sharedViewModel.objRootAppPaymentDetail.isEMVEnable == false -> {
+                                stringResource(R.string.tap_swipe)
+                            }
+
+                            // Default
+                            else -> {
+                                stringResource(R.string.tap_swipe_insert)
+                            }
                         },
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,

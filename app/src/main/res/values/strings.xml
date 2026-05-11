@@ -135,6 +135,8 @@
     <string name="tap_swipe_insert">Tap/Swipe/Insert</string>
     <string name="swipe">Swipe</string>
     <string name="tap_insert">Tap/Insert</string>
+    <string name="insert_swipe">Insert/Swipe</string>
+    <string name="tap_swipe">Tap/Swipe</string>
     <string name="chip_detect">Chip Detected</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
