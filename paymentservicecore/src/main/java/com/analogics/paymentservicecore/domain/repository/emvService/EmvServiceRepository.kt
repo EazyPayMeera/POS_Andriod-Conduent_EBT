@@ -586,6 +586,8 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
      */
     private fun getTransConfig(paymentServiceTxnDetails: PaymentServiceTxnDetails?) : TransConfig
     {
+        Log.d("TAG", "isTapEnable = ${paymentServiceTxnDetails?.isTapEnable}")
+        Log.d("TAG", "isEMVEnable = ${paymentServiceTxnDetails?.isEMVEnable}")
         val isEMVEnable = paymentServiceTxnDetails?.isEMVEnable
         val isTapEnable = paymentServiceTxnDetails?.isTapEnable
         val isChipSwipe = paymentServiceTxnDetails?.isChipSwiped
@@ -600,8 +602,9 @@ class EmvServiceRepository @Inject constructor(@ApplicationContext context: Cont
             cardCheckTimeout = timeout,
             forceOnlinePin = true,
             supportDRL = false,
-            isFallback = paymentServiceTxnDetails?.isFallback
-
+            isFallback = paymentServiceTxnDetails?.isFallback,
+            isTap = paymentServiceTxnDetails?.isTapEnable,
+            isInsert = paymentServiceTxnDetails?.isEMVEnable
         )
     }
 
