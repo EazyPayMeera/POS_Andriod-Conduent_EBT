@@ -355,7 +355,8 @@ fun getVoidTransTypeString(txnType: String?): String {
         TxnType.CASH_PURCHASE.toString() -> stringResource(id = R.string.ebt_cash_benefit)
         TxnType.FOOD_PURCHASE.toString() -> stringResource(id = R.string.ebt_snap_purchase)
         TxnType.FOODSTAMP_RETURN.toString() -> stringResource(id = R.string.ebt_foodstamp_return)
-        else -> stringResource(id = R.string.ebt_bal_inquiry)
+        TxnType.PURCHASE_CASHBACK.toString() -> stringResource(id = R.string.ebt_purchase_cashback)
+        else -> ""
     }
 }
 

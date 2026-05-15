@@ -645,10 +645,11 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     @RequiresApi(Build.VERSION_CODES.O)
     fun createVoidRequest(builderServiceTxnDetails: BuilderServiceTxnDetails?): ByteArray {
         this.builderServiceTxnDetails = builderServiceTxnDetails?: BuilderServiceTxnDetails()
-        val amount = this.builderServiceTxnDetails.ttlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
+        val amount = this.builderServiceTxnDetails.originalTtlAmount?.toDoubleOrNull()?.toCurrencyLong() ?: 0
         val lastTxn = IsoMessageBuilder.getLastTxn()
         val posConditionCode = getNationalPosConditionCode()
         val npsGeoData = getNPSGeographicData()
+        val cashbackAmt = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         val iccData = builderServiceTxnDetails?.receiptEmvData
         var de55RawBytes: ByteArray? = null
         val isChipCard = builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
@@ -689,6 +690,9 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         )
         iso.setValue(BuilderConstants.ISO_FIELD_MERCHANT_BANK, builderServiceTxnDetails?.merchantBankName, IsoType.LLLVAR, BuilderConstants.ISO_FIELD_MERCHANT_BANK_LENGTH)         // DE048
         iso.setValue(BuilderConstants.ISO_FIELD_CURRENCY_CODE, builderServiceTxnDetails?.currencyCode, IsoType.NUMERIC, BuilderConstants.ISO_FIELD_CURRENCY_CODE_LENGTH)
+        if (this.builderServiceTxnDetails.originalTxnType == TxnType.PURCHASE_CASHBACK.toString()) {
+            iso.setValue(BuilderConstants.ISO_FIELD_ADD_AMOUNT, cashbackAmt, IsoType.LLLVAR, builderServiceTxnDetails?.cashback!!.length)
+        }
         if (isChipCard && de55RawBytes != null) {
             iso.setValue(
                 BuilderConstants.ISO_FIELD_ICC_DATA,

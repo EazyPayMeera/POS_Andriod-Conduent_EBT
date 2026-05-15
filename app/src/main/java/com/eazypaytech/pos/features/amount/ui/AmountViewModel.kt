@@ -72,7 +72,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             when (sharedViewModel.objRootAppPaymentDetail.txnType) {
                 TxnType.VOID_LAST -> {
                     transAmount = formatAmount(
-                        sharedViewModel.objRootAppPaymentDetail.originalTxnAmount
+                        sharedViewModel.objRootAppPaymentDetail.originalTtlAmount
                             ?.toDoubleOrNull() ?: 0.00
                     )
                     _origTotalAmount.value = formatAmount(
