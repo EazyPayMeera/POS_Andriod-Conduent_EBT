@@ -436,13 +436,14 @@ object PrinterUtils {
         /* Cash Withdrawal */
         if (isCashWithdrawal) {
             var beginBal = data.cashEndBalance?.plus(data.txnAmount!!)
-            beginBal?.let {
-                repo.addText(context.getString(R.string.receipt_cash_begin_balance), it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
-            }
 
             repo.addText(
                 context.getString(R.string.receipt_cash_withdrawal),
                 data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+
+            beginBal?.let {
+                repo.addText(context.getString(R.string.receipt_cash_begin_balance), it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+            }
 
             /* Add Line */
             repo.addText(context.getString(R.string.summary_dot_line),
