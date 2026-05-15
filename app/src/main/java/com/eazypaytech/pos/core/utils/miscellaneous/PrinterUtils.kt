@@ -441,10 +441,6 @@ object PrinterUtils {
                 context.getString(R.string.receipt_cash_withdrawal),
                 data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
-            beginBal?.let {
-                repo.addText(context.getString(R.string.receipt_cash_begin_balance), it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
-            }
-
             /* Add Line */
             repo.addText(context.getString(R.string.summary_dot_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)
