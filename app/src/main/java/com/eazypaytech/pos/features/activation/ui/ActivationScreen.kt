@@ -78,6 +78,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                     // PROC ID input field
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
+                        readOnly = true,
                         inputValue = viewModel.procIdInput.value,
                         onChange = { viewModel.onProcIdChange(it) },
                         modifier = Modifier.fillMaxWidth(),
@@ -89,6 +90,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                     // TID input field
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
+                        readOnly = true,
                         inputValue = viewModel.tidInput.value,
                         onChange = { viewModel.onTidChange(it) },
                         modifier = Modifier.fillMaxWidth(),
@@ -100,6 +102,7 @@ fun ActivationScreen(navHostController: NavHostController, viewModel: Activation
                     // MID input field
                     InputTextField(
                         enabled = viewModel.isActivationBtnEnabled.value,
+                        readOnly = true,
                         inputValue = viewModel.midInput.value,
                         onChange = { viewModel.onMidChange(it) },
                         modifier = Modifier.fillMaxWidth(),

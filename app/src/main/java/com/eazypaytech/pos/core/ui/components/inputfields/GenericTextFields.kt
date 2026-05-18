@@ -132,6 +132,7 @@ import kotlin.math.sin
 @Composable
 fun InputTextField(
     enabled : Boolean ?= true,
+    readOnly: Boolean = false,
     inputValue: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -184,6 +185,7 @@ fun InputTextField(
             Text(text = placeHolder, color = placeholderColor)
         },
         label = { Text(label) },
+        readOnly = readOnly,
         singleLine = true,
         visualTransformation = if (isPasswordField && !isPasswordVisible) {
             PasswordVisualTransformation()
