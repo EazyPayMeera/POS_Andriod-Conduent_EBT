@@ -34,7 +34,13 @@
     <string name="cash">EBT नकद लाभ खरीद</string>
     <string name="bal_cash">नकद</string>
     <string name="key_man">की प्रबंधन</string>
+    <string name="stan">स्टेन:</string>
     <string name="time_out">समय समाप्त</string>
+    <string name="approval_code">अनुमोदन कोड: </string>
+    <string name="select_transaction_to_void">रद्द करने के लिए लेनदेन चुनें</string>
+    <string name="no_transactions_available">कोई रद्द करने योग्य लेनदेन उपलब्ध नहीं है</string>
+    <string name="search_filter">आरआरएन, अप्रूवल कोड द्वारा खोजें</string>
+    <string name="manual_card">मैन्युअल</string>
 
     <string name="act_title">अभी सक्रिय करें</string>
     <string name="act_prompt_activate">प्रोसेसर आईडी, TID और MID दर्ज करें</string>
@@ -127,6 +133,8 @@
     <string name="print">प्रिंट</string>
     <string name="cancel">रद्द करें</string>
     <string name="tap_swipe_insert">टैप/स्वाइप/डालें</string>
+    <string name="swipe">स्वाइप करें</string>
+    <string name="tap_insert">टैप/डालें</string>
     <string name="chip_detect">चिप पहचानी गई</string>
     <string name="confirm_btn">पुष्टि करें</string>
     <string name="cancel_btn">रद्द करें</string>
@@ -341,6 +349,14 @@
     <string name="printer_printing_failed">प्रिंटिंग विफल</string>
 
     <!-- Receipt Builder -->
+    <string name="print_snap_purchase">ईबीटी स्नैप लाभ खरीद</string>
+    <string name="print_cash_purchase">ईबीटी कैश लाभ खरीद</string>
+    <string name="print_cash_purchase_with_cashback">ईबीटी कैश लाभ खरीद (कैशबैक सहित)</string>
+    <string name="print_snap_return">ईबीटी स्नैप लाभ वापसी</string>
+    <string name="print_balance_inquiry">ईबीटी बैलेंस पूछताछ</string>
+    <string name="print_cash_withdrawal">ईबीटी कैश निकासी</string>
+    <string name="print_void_last_transaction">ईबीटी अंतिम लेन-देन रद्द</string>
+    <string name="print_voucher_settlement">ईबीटी वाउचर सेटलमेंट</string>
     <string name="receipt_header">ग्लोबल पेमेंट्स</string>
     <string name="receipt_address">स्टोर पता:</string>
     <string name="receipt_merchant_id">MID:</string>
@@ -508,6 +524,7 @@
     <string name="emv_msg_id_try_another_interface">कृपया पुनः प्रयास करें</string>
     <string name="emv_msg_id_invalid_icc_card">अमान्य ICC कार्ड</string>
     <string name="emv_msg_id_retry">कृपया पुनः प्रयास करें</string>
+    <string name="emv_msg_id_chip_detected">चिप कार्ड पहचाना गया। कृपया कार्ड डालें या टैप करें।</string>
     <string name="emv_msg_id_max_retry">चिप रीड विफल। कृपया कार्ड स्वाइप करें</string>
     <string name="emv_msg_id_card_removed">कार्ड निकाला गया</string>
     <string name="emv_msg_id_issuer_script_update_successful">जारीकर्ता स्क्रिप्ट अपडेट सफल</string>
@@ -520,6 +537,7 @@
     <string name="err_only_preauth_can_be_captured">केवल Preauth को कैप्चर किया जा सकता है</string>
     <string name="err_txn_already_refunded">लेनदेन पहले से वापस हो चुका है</string>
     <string name="err_txn_already_voided">लेनदेन पहले से रद्द हो चुका है</string>
+    <string name="err_txn_cannot_voided">लेन-देन रद्द नहीं किया जा सकता</string>
     <string name="err_txn_already_captured">लेनदेन पहले से कैप्चर हो चुका है</string>
     <string name="err_batch_is_settled">बैच निपट चुका है</string>
     <string name="err_cant_mix_demo_trans">लाइव और डेमो लेनदेन मिश्रित नहीं किए जा सकते</string>

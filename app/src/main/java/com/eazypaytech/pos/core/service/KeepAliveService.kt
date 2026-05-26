@@ -51,32 +51,49 @@ import javax.inject.Inject
  *   → Perform sign-off
  *   → Reset connection state
  *
+ * ### When This Service Runs:
+ * - Started after successful merchant login / POS activation
+ * - Runs continuously while POS session is active
+ * - Stopped on logout, session expiry, or app termination
+ *
+ * ### Why Foreground Service (instead of WorkManager):
+ * - Requires near real-time connectivity monitoring
+ * - Needs immediate retry handling on failures (no batching/delay)
+ * - Backend (ISO host) expects persistent session connectivity
+ * - Avoids OS background restrictions for critical payment operations
+ *
  * ### Lifecycle Behavior:
  * - Started using ACTION_START with merchant/session data
  * - Runs continuously using coroutines (IO scope)
  * - Can be stopped via ACTION_STOP or system destruction
- * - Uses START_STICKY to auto-restart if killed
+ * - Uses START_STICKY to auto-restart if killed by system
  *
  * ### Background Jobs:
  * 1. KeepAlive Job:
  *    - Starts after 30 seconds delay
  *    - Runs every 5 minutes
- *    - Executes handshake API call
+ *    - Executes handshake API call (only if no request is running)
  *
  * 2. 12-Hour Job:
  *    - Runs sign-on request every 12 hours
- *    - Triggers key exchange after success
+ *    - Triggers key exchange after successful sign-on
  *
  * ### Failure Handling:
  * - Tracks consecutive handshake timeouts
  * - After MAX_TIMEOUT (3):
- *   → Triggers resetTimer()
- *   → Executes sign-off
- *   → Restarts session lifecycle
+ *   → Cancels keep-alive loop
+ *   → Performs sign-off
+ *   → Resets connection state
+ *   → Allows reconnection cycle to restart
  *
  * ### Foreground Notification:
  * - Displays persistent "POS Active" notification
- * - Prevents system from killing service
+ * - Prevents system from killing service under memory pressure
+ *
+ * ### Notes:
+ * - Ensure network availability is checked before triggering API calls
+ * - Avoid overlapping requests using `isRequestRunning` flag
+ * - Service is critical for maintaining transaction readiness in POS systems
  *
  * @see ApiServiceRepository
  * @see PaymentServiceUtils

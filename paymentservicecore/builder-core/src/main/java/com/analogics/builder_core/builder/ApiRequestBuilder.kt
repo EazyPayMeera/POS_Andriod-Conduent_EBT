@@ -649,7 +649,7 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val lastTxn = IsoMessageBuilder.getLastTxn()
         val posConditionCode = getNationalPosConditionCode()
         val npsGeoData = getNPSGeographicData()
-        val iccData = lastTxn?.emvData
+        val iccData = builderServiceTxnDetails?.receiptEmvData
         var de55RawBytes: ByteArray? = null
         val isChipCard = builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACT.toString() ||
                 builderServiceTxnDetails?.cardEntryMode == CardEntryMode.CONTACLESS.toString()
@@ -825,7 +825,6 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val maskedPan = getMaskedPAN()
         val iccData = getIccData()
         val cardSeqNumber = getCardSeqNum()
-        Log.d("FALLBACK", "isFallback = ${this.builderServiceTxnDetails.isFallback}")
         val encryptedTrack2Data = getEncryptedTrack2Data()
         builderServiceTxnDetails?.cashback = cashbackAmount((this.builderServiceTxnDetails.cashback?.toDoubleOrNull()?.toCurrencyLong() ?: 0))
         builderServiceTxnDetails?.posEntryMode = getIsoPosEntryMode()
@@ -1111,20 +1110,17 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
     suspend fun updateTransResult(builderServiceTxnDetails: BuilderServiceTxnDetails?) {
 
         if (builderServiceTxnDetails == null) {
-            Log.e("TXN_DEBUG", "builderServiceTxnDetails is NULL")
             return
         }
         val id = builderServiceTxnDetails.id
 
         if (id == null) {
-            Log.e("TXN_DEBUG", "Txn ID is NULL")
             return
         }
 
         val txn = dbRepository.fetchTxnById(id)
 
         if (txn == null) {
-            Log.e("TXN_DEBUG", "No txn found for ID: $id")
             return
         }
         txn.posEntryMode = builderServiceTxnDetails.posEntryMode
@@ -1134,6 +1130,10 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         txn.localTime = builderServiceTxnDetails.localTime
         txn.localDate = builderServiceTxnDetails.localDate
         txn.currencyCode = builderServiceTxnDetails.currencyCode
+        txn.receiptEmvData = builderServiceTxnDetails.emvData
+        Log.d("EMV_DATA", "builderServiceTxnDetails.emvData = ${builderServiceTxnDetails.emvData}")
+        Log.d("EMV_DATA", "txn.receiptEmvData (before assign) = ${txn.receiptEmvData}")
+        Log.d("DATABASE","Txn Update Api request Repository")
         dbRepository.updateTxn(txn)
     }
 

@@ -136,6 +136,7 @@ data class ObjRootAppPaymentDetails(
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef")  var originalHostTxnRef: String? = null,
+    @SerializedName("originalId")  var originalId: Long? = null,
     @SerializedName("originalTxnType")  var originalTxnType: TxnType? = null,
     @SerializedName("originalTxnAmount")    var originalTxnAmount: String? = null,
     @SerializedName("originalTip")      var originalTip: String? = null,
@@ -147,6 +148,7 @@ data class ObjRootAppPaymentDetails(
 
     /* Other flags */
     @SerializedName("isFallback")       var isFallback: Boolean? = false,
+    @SerializedName("isChipSwiped")       var isChipSwiped: Boolean? = false,
     @SerializedName("isCaptured")       var isCaptured: Boolean? = false,
     @SerializedName("isVoided")         var isVoided: Boolean? = false,
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,

@@ -55,6 +55,19 @@ object TmsConfigMapper {
         config.countyCode = map["CountyCode"]
         config.postalServiceCode = map["PostalServiceCode"]
 
+        // ---------------------------
+        //  EMV CONFIG
+        // ---------------------------
+        map["EMV_CONFIG"]?.let {
+            config.emvConfigJson = it
+        }
+        // ---------------------------
+        //  CAP KEYS
+        // ---------------------------
+        map["CAP_KEYS"]?.let {
+            config.capKeysJson = it
+        }
+
         return config
     }
 }

@@ -48,7 +48,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -101,9 +100,6 @@ import com.eazypaytech.pos.features.activity.ui.localSharedViewModel
 import com.eazypaytech.pos.core.themes.dimens
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -350,6 +346,16 @@ fun getTransTypeString(): String {
         TxnType.FOODSTAMP_RETURN -> stringResource(id = R.string.ebt_foodstamp_return)
         TxnType.E_VOUCHER -> stringResource(id = R.string.ebt_e_voucher)
         null -> stringResource(id = R.string.ebt_bal_inquiry)
+    }
+}
+
+@Composable
+fun getVoidTransTypeString(txnType: String?): String {
+    return when (txnType) {
+        TxnType.CASH_PURCHASE.toString() -> stringResource(id = R.string.ebt_cash_benefit)
+        TxnType.FOOD_PURCHASE.toString() -> stringResource(id = R.string.ebt_food_purchase)
+        TxnType.FOODSTAMP_RETURN.toString() -> stringResource(id = R.string.ebt_foodstamp_return)
+        else -> stringResource(id = R.string.ebt_bal_inquiry)
     }
 }
 

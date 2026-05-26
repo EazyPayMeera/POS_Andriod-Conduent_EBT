@@ -73,6 +73,7 @@ data class PaymentServiceTxnDetails(
     @SerializedName("cardAuthResult") var cardAuthResult: String? = null,
     @SerializedName("cardCountryCode") var cardCountryCode: String? = null,
     @SerializedName("cardLanguagePref") var cardLanguagePref: String? = null,
+    @SerializedName("receiptEmvData")   var receiptEmvData: String? = null,
 
     /* Transaction Details */
     @SerializedName("batchId") var batchId: String? = null,
@@ -102,6 +103,7 @@ data class PaymentServiceTxnDetails(
 
     /* Original Txn data for Void Refund Capture */
     @SerializedName("originalHostTxnRef") var originalHostTxnRef: String? = null,
+    @SerializedName("originalId")  var originalId: Long? = null,
     @SerializedName("originalDateTime") var originalDateTime: String? = null,
     @SerializedName("originalTxnRef") var originalTxnRef: String? = null,
     @SerializedName("originalTxnType") var originalTxnType: String? = null,
@@ -115,6 +117,7 @@ data class PaymentServiceTxnDetails(
 
     /* Other flags */
     @SerializedName("isFallback")       var isFallback: Boolean? = false,
+    @SerializedName("isChipSwiped")       var isChipSwiped: Boolean? = false,
     @SerializedName("isCaptured")       var isCaptured: Boolean? = false,
     @SerializedName("isVoided")         var isVoided: Boolean? = false,
     @SerializedName("isRefunded")       var isRefunded: Boolean? = false,

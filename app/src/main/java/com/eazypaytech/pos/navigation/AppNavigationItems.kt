@@ -41,5 +41,6 @@ sealed class AppNavigationItems(val route: String) {
  object AuthCodeScreen:AppNavigationItems(NavScreensEnum.AuthCodeScreen.name)
  object ReaderSettingScreen:AppNavigationItems(NavScreensEnum.ReaderSettingScreen.name)
  object ApprovedScreen:AppNavigationItems(NavScreensEnum.ApprovedScreen.name)
+ object VoidSelScreen:AppNavigationItems(NavScreensEnum.VoidSelScreen.name)
 
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IPrinterServiceResponseListener
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.data.model.printer.PrinterServiceResult
 import com.eazypaytech.pos.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.pos.features.dialogs.ui.CustomDialogBuilder
@@ -16,12 +17,14 @@ import com.eazypaytech.pos.domain.model.Symbol.Type
 import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.Align
 import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.FontSize
 import com.analogics.paymentservicecore.domain.repository.printerService.PrinterServiceRepository.Style
+import com.eazypaytech.hardwarecore.utils.TlvUtils
 import com.eazypaytech.pos.core.utils.convertReceiptDateTime
 import com.eazypaytech.pos.core.utils.getCurrentDateTime
 import com.eazypaytech.pos.core.utils.getTxnStatusStringId
 import com.eazypaytech.pos.core.utils.getTxnTypeStringId
 import com.eazypaytech.pos.core.utils.toAmountFormat
 import com.eazypaytech.pos.core.utils.toDecimalFormat
+import com.eazypaytech.pos.features.activity.ui.SharedViewModel
 
 object PrinterUtils {
 
@@ -46,10 +49,12 @@ object PrinterUtils {
      */
     fun printReceipt(
         context: Context,
+        sharedViewModel: SharedViewModel,
         data: ObjRootAppPaymentDetails,
         isCustomer: Boolean = false
     ) {
         Log.d("PRINT_RECEIPT", "Receipt Data: $data")
+
         val repo = PrinterServiceRepository().init(context, object : IPrinterServiceResponseListener {
             override fun onPrinterServiceResponse(response: Any) {
                 when (response) {
@@ -108,75 +113,123 @@ object PrinterUtils {
 
         val date = convertReceiptDateTime(data.dateTime, outputFormat = "MM/dd/yy")
         val time = convertReceiptDateTime(data.dateTime, outputFormat = "hh:mm:ssa")
-
+        val tlv = TlvUtils(data.receiptEmvData)
+        val aid = tlv.tlvMap["84"]
+        val tvr = tlv.tlvMap["95"]
         Log.d("PRINT_RECEIPT", "ObjRootAppPaymentDetails: $data")
+
         /* =========================
            🔹 HEADER
            ========================= */
 
-
-        repo.addText(data.header1,
+        repo.addText(sharedViewModel.objPosConfig?.merchantBankName,
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
-        repo.addText(data.header2,
+        repo.addText(sharedViewModel.objPosConfig?.merchantNameLocation,
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
-        repo.addText(data.header3,
+        repo.addText(context.getString(R.string.receipt_zip_code)+ " " + sharedViewModel.objPosConfig?.postalServiceCode,
             format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
-        repo.addText(data.header4,
-            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+//        repo.addText(data.header3,
+//            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
+//        repo.addText(data.header4,
+//            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
 
         repo.feedLine()
 
         repo.feedLine()
-
-        /* Date / Time / TID */
-        repo.addText(
-            context.getString(R.string.receipt_terminal_id) + data.terminalId,
-            date,
-            format = PrintFormat().fontSize(FontSize.MEDIUM)
-        )
-
-        repo.addText(
-            context.getString(R.string.clerk_type_clerk) + data.loginId,
-            time,
-            format = PrintFormat().fontSize(FontSize.MEDIUM)
-        )
-
-        /* Add Line */
-        repo.addText(context.getString(R.string.receipt_gray_line),
-            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
-
         /* =========================
            🔹 TITLE (SPEC COMPLIANT)
            ========================= */
 
         val title = when {
-            isSnapPurchase -> "EBT SNAP BENEFIT PURCHASE"
-            isCashPurchase -> "EBT CASH BENEFIT PURCHASE"
-            isCashback -> "EBT CASH BENEFIT PURCHASE W/ CASHBACK"
-            isReturn -> "EBT SNAP BENEFIT RETURN"
-            isBalanceInquiry -> "EBT BALANCE INQUIRY"
-            isCashBalanceInquiry -> "EBT BALANCE INQUIRY"
-            isCashWithdrawal -> "EBT CASH WITHDRAWAL"
-            isVoid -> "EBT Void Last Tran"
-            isVoucherSettlement -> "EBT Voucher Settlement"
+            isSnapPurchase -> context.getString(R.string.print_snap_purchase)
+            isCashPurchase -> context.getString(R.string.print_cash_purchase)
+            isCashback -> context.getString(R.string.print_cash_purchase_with_cashback)
+            isReturn -> context.getString(R.string.print_snap_return)
+            isBalanceInquiry -> context.getString(R.string.print_balance_inquiry)
+            isCashBalanceInquiry -> context.getString(R.string.print_balance_inquiry)
+            isCashWithdrawal -> context.getString(R.string.print_cash_withdrawal)
+            isVoid -> context.getString(R.string.print_void_last_transaction)
+            isVoucherSettlement -> context.getString(R.string.print_voucher_settlement)
             else -> txnTypeStr
         }
 
         repo.addText(title,
-            format = PrintFormat().align(Align.LEFT).style(Style.BOLD))
+            format = PrintFormat().align(Align.CENTER).style(Style.BOLD))
         repo.feedLine()
+
+        /* =========================
+          🔹 Reference Number
+          ========================= */
+        repo.addText("",
+            context.getString(R.string.receipt_ref_no) + data.stan?.padStart(6,'0'),
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
+        )
+
+        /* Batch #*/
+        repo.addText(context.getString(R.string.empty) + "",
+            context.getString(R.string.receipt_rrn) + data.rrn,
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.RIGHT)
+        )
+        /* Date / Time / TID */
+        repo.addText(date,time,
+            format = PrintFormat().fontSize(FontSize.MEDIUM)
+        )
+
+        /*Approval/Auth Code */
+        if (!isReturn && !isBalanceInquiry) {
+            repo.addText(context.getString(R.string.receipt_appr_code)+ " " + data.hostAuthCode)
+        }
+
+        /* Trace */
+        repo.addText(context.getString(R.string.receipt_trace_no) + data.stan?.padStart(6,'0'),
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
+        )
+
+        /* EBT , POS Entry Mode*/
+        repo.addText(context.getString(R.string.receipt_ebt),
+            data.cardEntryMode.toDisplay(context,data.isFallback),
+            format = PrintFormat().fontSize(FontSize.MEDIUM)
+        )
+        /* Card numb, Expiry Date*/
+        repo.addText(
+            data.cardMaskedPan?.replace(Regex("\\d(?=\\d{4})"), "*"),
+            "**/**",
+            format = PrintFormat().fontSize(FontSize.MEDIUM)
+        )
+
+        /* Amount */
+        if (!isBalanceInquiry && isReturn && isDeclined) {
+            repo.addText(
+                context.getString(R.string.receipt_amount) ,
+                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
+            )
+        }
+        repo.feedLine()
+
+        /*repo.addText(
+            context.getString(R.string.clerk_type_clerk) + data.loginId,
+            time,
+            format = PrintFormat().fontSize(FontSize.MEDIUM)
+        )*/
+
+        /* Add Line */
+        /*repo.addText(context.getString(R.string.receipt_gray_line),
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)*/
+
+
 
         /* =========================
            🔹 CARD + AMOUNT
            ========================= */
 
-        repo.addText(
+        /*repo.addText(
             context.getString(R.string.receipt_card_no) + "  " +
             data.cardMaskedPan?.replace(Regex("\\d(?=\\d{4})"), "X")
-        )
+        )*/
 
         /* Settlement Date (ONLY for Declined, NOT for Return) */
-        if ( !isReturn && isApproved) {
+        /*if ( !isReturn && isApproved) {
             data.settlementDate?.let {
                 repo.addText(
                     context.getString(R.string.receipt_settlement_date) + " " + it,
@@ -184,26 +237,24 @@ object PrinterUtils {
                 )
             }
             repo.feedLine()
-        }
+        }*/
 
         /* Balance Summary (Non-Approved, Not Return) */
-        if (isApproved ) {
+        /*if (isApproved ) {
             repo.addText(
                 context.getString(R.string.receipt_balance_summary),
                 format = PrintFormat().fontSize(FontSize.MEDIUM)
             )
-        }
+        }*/
 
         /* Add Line */
-        repo.addText(context.getString(R.string.receipt_gray_line),
-            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+        /*repo.addText(context.getString(R.string.receipt_gray_line),
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)*/
 
         if(isVoucherSettlement) {
-            Log.d("Voucher Settlement PRINT_RECEIPT", "Voucher Number : ${data.voucherNumber}")
             data.voucherNumber?.let {
                 repo.addText(context.getString(R.string.receipt_voucher_number) + " " + it)
             }
-            Log.d("Voucher Settlement PRINT_RECEIPT", "Approval Code : ${data.approvalCode}")
             data.approvalCode?.let {
                 repo.addText(context.getString(R.string.receipt_voucher_approval_code) + " " + it)
             }
@@ -212,17 +263,14 @@ object PrinterUtils {
             }
         }
         if (isVoid) {
-            Log.d("VOID PRINT_RECEIPT", "Snap Begin Bal: ${data.snapBeginBal}")
-            Log.d("VOID PRINT_RECEIPT", "Snap Purchase: ${data.txnAmount}")
-            Log.d("VOID PRINT_RECEIPT", "Snap End Bal: ${data.snapEndBalance}")
-           /* SNAP BEGIN BALANCE */
-            val voidBeginBal = data.snapEndBalance?.minus(data.txnAmount!!)
+            /* SNAP BEGIN BALANCE */
+            /*val voidBeginBal = data.snapEndBalance?.minus(data.txnAmount!!)
             voidBeginBal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_begin_balance) + " " +
                             it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                 )
-            }
+            }*/
             /*data.snapBeginBal?.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_begin_balance) + " " +
@@ -231,36 +279,40 @@ object PrinterUtils {
             }*/
 
             /* SNAP PURCHASE (VOIDED) */
-            repo.addText(
+           /* repo.addText(
                 context.getString(R.string.receipt_snap_purchase) + " " +
                         "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)) +
                         "  VOIDED"
-            )
+            )*/
 
             /* DOT LINE */
-            repo.addText(context.getString(R.string.summary_dot_line),
-                format = PrintFormat().align(Align.CENTER))
+            /*repo.addText(context.getString(R.string.summary_dot_line),
+                format = PrintFormat().align(Align.CENTER))*/
 
             /* SNAP END BALANCE */
-            val voidEndbal = voidBeginBal?.plus(data.txnAmount!!)
-            Log.d("VOID PRINT_RECEIPT", "Void End Bal: ${voidEndbal}")
+            /*val voidEndbal = voidBeginBal?.plus(data.txnAmount!!)
             voidEndbal.let {
                 repo.addText(
                     context.getString(R.string.receipt_snap_end_balance) + " " +
                             it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                 )
-            }
+            }*/
             /*repo.addText(
                 context.getString(R.string.receipt_snap_end_balance) + " " +
                         data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
             )*/
 
+            repo.addText(
+                context.getString(R.string.receipt_amount) ,
+                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
+            )
             //repo.addText(context.getString(R.string.receipt_gray_line))
         }
         if (!isBalanceInquiry && isReturn && isDeclined) {
             repo.addText(
-                context.getString(R.string.receipt_amount) + " " +
-                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                context.getString(R.string.receipt_amount),
+                        data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
             )
         }
 
@@ -271,15 +323,15 @@ object PrinterUtils {
         if (isBalanceInquiry || isCashBalanceInquiry) {
 
             repo.addText(context.getString(R.string.receipt_snap_balance)+ " " +
-                 data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
             repo.addText(context.getString(R.string.receipt_cash_balance)+ " " +
-                data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
         } else {
 
             /* SNAP */
             if (isSnapPurchase || isReturn) {
-                if(isSnapPurchase) {
+                /*if(isSnapPurchase) {
                     var beginBal = data.snapEndBalance?.plus(data.txnAmount!!)
                     beginBal.let {
                         repo.addText(
@@ -295,39 +347,45 @@ object PrinterUtils {
                                     it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                         )
                     }
-                }
+                }*/
 
                 if(isSnapPurchase) {
-                    repo.addText(
+                    /*repo.addText(
                         context.getString(R.string.receipt_snap_purchase) + " " +
                                 "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                    )*/
+                    repo.addText(
+                        context.getString(R.string.receipt_amount) ,
+                        data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                        format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
                     )
                 }else{
                     repo.addText(
-                        context.getString(R.string.receipt_snap_purchase) + " " +
-                                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                        context.getString(R.string.receipt_amount),
+                                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
                     )
                 }
 
                 /* Add Line */
-                repo.addText(context.getString(R.string.summary_dot_line),
-                    format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)
+                /*repo.addText(context.getString(R.string.summary_dot_line),
+                    format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)*/
 
                 if(isSnapPurchase){
                     repo.addText(
-                        context.getString(R.string.receipt_snap_end_balance) + " " +
-                                data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                        context.getString(R.string.receipt_snap_end_balance) ,
+                        data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                     )
                 }else {
                     var endBal = data.snapEndBalance
                     endBal.let {
                         repo.addText(
-                            context.getString(R.string.receipt_snap_end_balance) + " " +
-                                    it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                            context.getString(R.string.receipt_snap_end_balance) ,
+                            it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
                         )
                     }
                 }
-                repo.addText(context.getString(R.string.receipt_cash_balance)+ " " +
+                repo.addText(context.getString(R.string.receipt_cash_balance),
                     data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
             }
 
@@ -336,22 +394,28 @@ object PrinterUtils {
                 val cshbeginBal = if (!isCashback) {
                     data.cashEndBalance?.plus(data.txnAmount!!)
                 } else {
-                    data.cashEndBalance?.plus(data.txnAmount!!)?.plus(data.cashback!!)
+                    (data.txnAmount!!).plus(data.cashback!!)
                 }
-                cshbeginBal?.let {
+                /*cshbeginBal?.let {
                     repo.addText(context.getString(R.string.receipt_cash_begin_balance)+ " " + it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
-                }
+                }*/
 
-                repo.addText(
+                /*repo.addText(
                     context.getString(R.string.receipt_cash_purchase) + " " +
                     "-" + data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+                )*/
+                repo.addText(
+                    context.getString(R.string.receipt_amount) ,
+                    data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+                    format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
                 )
-                if(isCashPurchase)
+                /*if(isCashPurchase)
                     repo.addText(context.getString(R.string.summary_dot_line),
-                        format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))
+                        format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))*/
 
                 if (isCashback) {
-                    repo.addText(context.getString(R.string.receipt_cash_back)+ " " + data.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    repo.addText(context.getString(R.string.receipt_cash_back), data.cashback?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                    repo.addText(context.getString(R.string.summary_total), cshbeginBal?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
                     /*repo.addText(
                         "Total Deduction",
@@ -363,56 +427,60 @@ object PrinterUtils {
                         format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER))
                 }
 
-                repo.addText(context.getString(R.string.receipt_cash_end_balance)+ " " + data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                repo.addText(context.getString(R.string.receipt_cash_end_balance), data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
-                repo.addText(context.getString(R.string.receipt_snap_balance)+ " " +
-                        data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                repo.addText(context.getString(R.string.receipt_snap_balance),
+                    data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
             }
         }
         /* Cash Withdrawal */
         if (isCashWithdrawal) {
             var beginBal = data.cashEndBalance?.plus(data.txnAmount!!)
             beginBal?.let {
-                repo.addText(context.getString(R.string.receipt_cash_begin_balance)+ " " + it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                repo.addText(context.getString(R.string.receipt_cash_begin_balance), it.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
             }
 
             repo.addText(
-                context.getString(R.string.receipt_cash_withdrawal)+ " " +
-                        data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                context.getString(R.string.receipt_cash_withdrawal),
+                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
             /* Add Line */
             repo.addText(context.getString(R.string.summary_dot_line),
                 format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER),)
 
             repo.addText(
-                context.getString(R.string.receipt_cash_end_balance) + " " +
-                        data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+                context.getString(R.string.receipt_cash_end_balance) ,
+                data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
 
-            repo.addText(context.getString(R.string.receipt_snap_balance)+ " " +
-                    data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
+            repo.addText(context.getString(R.string.receipt_snap_balance),
+                data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
         }
         /* Add Line */
-        repo.addText(context.getString(R.string.receipt_gray_line),
-            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+        /*repo.addText(context.getString(R.string.receipt_gray_line),
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)*/
 
         /* =========================
            🔹 RESULT SECTION
            ========================= */
 
-
+        repo.feedLine()
         if(isDeclined)
             repo.addText(
-                context.getString(R.string.receipt_result) + " " +
-                        txnStatusStr +
-                        (data.hostRespCode?.let { " - $it" } ?: "")
+                //context.getString(R.string.receipt_result) + " " +
+                txnStatusStr + " - " + data.hostResMessage,
+                //(data.hostRespCode?.let { " - $it" } ?: "")
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
             )
         else
-            repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr)
+        //repo.addText(context.getString(R.string.receipt_result)+ " " + txnStatusStr)
+            repo.addText( txnStatusStr,
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.CENTER)
+            )
 
 
-        if (!isReturn && !isBalanceInquiry) {
+        /*if (!isReturn && !isBalanceInquiry) {
             repo.addText(context.getString(R.string.receipt_auth)+ " " + data.hostAuthCode)
         }
 
@@ -426,7 +494,7 @@ object PrinterUtils {
 
         trace?.let {
             repo.addText(context.getString(R.string.receipt_trace_no) + " $it")
-        }
+        }*/
 
         repo.feedLine()
 
@@ -434,39 +502,54 @@ object PrinterUtils {
            🔹 ACTION TEXT (CRITICAL)
            ========================= */
 
-        when {
-            isReturn && isApproved ->
-                repo.addText(context.getString(R.string.receipt_accept_goods),
-                    format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
-                )
+        /* when {
+             isReturn && isApproved ->
+                 repo.addText(context.getString(R.string.receipt_accept_goods),
+                     format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
+                 )
 
-            isReturn && isDeclined ->
-                repo.addText(context.getString(R.string.receipt_do_not_accept_goods),
-                    format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
-                )
+             isReturn && isDeclined ->
+                 repo.addText(context.getString(R.string.receipt_do_not_accept_goods),
+                     format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
+                 )
 
-            isApproved && !isBalanceInquiry ->
-                repo.addText(context.getString(R.string.receipt_dispense_goods),
-                    format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
-                )
+             isApproved && !isBalanceInquiry ->
+                 repo.addText(context.getString(R.string.receipt_dispense_goods),
+                     format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
+                 )
 
-            isDeclined && !isBalanceInquiry ->
-                repo.addText(context.getString(R.string.receipt_do_not_accept_goods),
-                    format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
-                )
-        }
+             isDeclined && !isBalanceInquiry ->
+                 repo.addText(context.getString(R.string.receipt_do_not_accept_goods),
+                     format = PrintFormat().style(Style.REVERSE).align(Align.LEFT)
+                 )
+         }*/
 
         /* Add Line */
-        repo.addText(context.getString(R.string.receipt_gray_line),
-            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)
+        /*repo.addText(context.getString(R.string.receipt_gray_line),
+            format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT),)*/
 
         /* =========================
            🔹 FOOTER
            ========================= */
 
-        if (data.isDemoMode == true) {
+        /*if (data.isDemoMode == true) {
             repo.addText(context.getString(R.string.receipt_train_mode),
                 format =  PrintFormat().align(Align.CENTER))
+        }*/
+
+        /* EBT */
+//        repo.addText(context.getString(R.string.receipt_ebt),
+//            format = PrintFormat().fontSize(FontSize.MEDIUM)
+//        )
+        if(data.cardEntryMode == CardEntryMode.CONTACT || data.cardEntryMode == CardEntryMode.CONTACLESS) {
+            repo.addText(
+                context.getString(R.string.receipt_aid) + aid,
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
+            )
+            repo.addText(
+                context.getString(R.string.receipt_tvr) + tvr,
+                format = PrintFormat().fontSize(FontSize.MEDIUM).align(Align.LEFT)
+            )
         }
 
         if (isCustomer) {
@@ -484,9 +567,56 @@ object PrinterUtils {
             repo.addText(context.getString(R.string.receipt_merch_copy),
                 format = PrintFormat().align(Align.CENTER))
         }
+        val receiptLog = """
+        ${sharedViewModel.objPosConfig?.merchantBankName}
+        ${sharedViewModel.objPosConfig?.merchantNameLocation}
+        
+        $title
+        
+        Ref No : ${data.stan?.padStart(6, '0')}
+        Batch   : ${data.batchId}
+        RRN     : ${data.rrn}
+        
+        Date    : $date
+        Time    : $time
+        
+        AuthCode: ${data.hostAuthCode ?: "-"}
+        
+        Trace No: ${data.stan?.padStart(6, '0')}
+        
+        EBT     : ${data.cardEntryMode.toDisplay(context)}
+        Card    : ${data.cardMaskedPan?.replace(Regex("\\d(?=\\d{4})"), "*")}  **/**
+        
+        Amount  : ${data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
+        
+        SNAP Bal: ${data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
+        Cash Bal: ${data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))}
+        
+        Result  : $txnStatusStr
+        Response Message : ${data.hostResMessage}
+        
+        ${if (isCustomer) "CUSTOMER COPY" else "MERCHANT COPY"}
+        """.trimIndent()
 
+        Log.d("RECEIPT_LOG", receiptLog)
         repo.feedLine()
         repo.print()
     }
+
+    fun CardEntryMode?.toDisplay(context: Context, isFallback: Boolean? = false): String {
+        // ✅ If fallback swipe, override display regardless of CardEntryMode value
+        if (isFallback == true) {
+            return context.getString(R.string.card_entry_mode_fallback_magstripe)
+        }
+        return when (this) {
+            CardEntryMode.CONTACT -> context.getString(R.string.card_entry_mode_contact)
+            CardEntryMode.CONTACLESS -> context.getString(R.string.card_entry_mode_contactless)
+            CardEntryMode.MAGSTRIPE -> context.getString(R.string.card_entry_mode_magstripe)
+            CardEntryMode.FALLBACK_MAGSTRIPE -> context.getString(R.string.card_entry_mode_fallback_magstripe)
+            CardEntryMode.MANUAL -> context.getString(R.string.card_entry_mode_manual)
+            else -> "-"
+        }
+    }
+
 
 }

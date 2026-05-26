@@ -7,12 +7,17 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import com.eazypaytech.pos.core.themes.fonts.Roboto
@@ -94,5 +99,31 @@ fun GenericCard(
     }
 }
 
+
+@Composable
+fun AutoResizeText(
+    text: String,
+    modifier: Modifier = Modifier,
+    maxFontSize: TextUnit = androidx.compose.material3.MaterialTheme.dimens.SP_31_CompactMedium,
+    minFontSize: TextUnit = androidx.compose.material3.MaterialTheme.dimens.SP_17_CompactMedium
+) {
+    var fontSize by remember { mutableStateOf(maxFontSize) }
+
+    Text(
+        text = text,
+        fontSize = fontSize,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Clip,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        onTextLayout = { result ->
+            if (result.hasVisualOverflow && fontSize > minFontSize) {
+                fontSize *= 0.9
+            }
+        },
+        modifier = modifier
+    )
+}
 
 

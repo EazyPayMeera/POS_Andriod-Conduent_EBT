@@ -26,4 +26,5 @@ data class VoidRequest (
     @SerializedName("OriginalServiceCharge")     var originalServiceCharge: String? = null,
     @SerializedName("OriginalTtlAmount")    var originalTtlAmount: String? = null,
     @SerializedName("OriginalTxnRef")   var originalTxnRef: String? = null,
-    @SerializedName("OriginalHostTxnRef")   var originalHostTxnRef: String? = null)
+    @SerializedName("OriginalHostTxnRef")   var originalHostTxnRef: String? = null,
+    @SerializedName("originalId")  var originalId: Long? = null)

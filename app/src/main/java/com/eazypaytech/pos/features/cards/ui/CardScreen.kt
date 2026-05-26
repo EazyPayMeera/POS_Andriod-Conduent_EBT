@@ -4,6 +4,7 @@ package com.eazypaytech.pos.features.cards.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -143,7 +144,11 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
                     Spacer(modifier = Modifier.height(MaterialTheme.dimens.DP_11_CompactMedium))
 
                     TextView(
-                        text = if(sharedViewModel.objRootAppPaymentDetail.isFallback == true) "Swipe" else stringResource(id = R.string.tap_swipe_insert),
+                        text = when {
+                            sharedViewModel.objRootAppPaymentDetail.isChipSwiped == true -> stringResource(R.string.tap_insert)
+                            sharedViewModel.objRootAppPaymentDetail.isFallback == true -> stringResource(R.string.swipe)
+                            else -> stringResource(id = R.string.tap_swipe_insert)
+                        },
                         fontSize = MaterialTheme.dimens.SP_23_CompactMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Bold
@@ -174,7 +179,19 @@ fun CardScreen(navHostController: NavHostController, viewModel: CardViewModel = 
         }
     }
 
-    FooterButtons(stringResource(id = R.string.cancel),{viewModel.onCancelClick(navHostController)}, enabled = viewModel.emvInProgress.value==false)
+    FooterButtons(
+        firstButtonTitle = stringResource(id = R.string.cancel),
+        firstButtonOnClick = {
+            viewModel.onCancelClick(navHostController)
+        },
+
+        secondButtonTitle = stringResource(id = R.string.manual_card),
+        secondButtonOnClick = {
+            viewModel.toManualEntry(navHostController)
+        },
+
+        enabled = !viewModel.emvInProgress.value
+    )
 
     LaunchedEffect(Unit) {
         viewModel.startPayment(context, sharedViewModel, navHostController)

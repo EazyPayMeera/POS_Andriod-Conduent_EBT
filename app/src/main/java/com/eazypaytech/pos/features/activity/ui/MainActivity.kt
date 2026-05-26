@@ -57,6 +57,7 @@ import com.eazypaytech.pos.features.usermanagement.ui.UserManagementScreen
 import com.eazypaytech.pos.features.voucher.ui.VoucherCardScreen
 import com.eazypaytech.pos.navigation.AppNavigationItems
 import com.eazypaytech.pos.features.readerSetting.ui.ReaderSettingScreen
+import com.eazypaytech.pos.features.voidsel.ui.VoidSelectionScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 var localSharedViewModel= compositionLocalOf{ SharedViewModel() }
@@ -238,6 +239,9 @@ fun AppNavigationGraph(
         }
         composable(AppNavigationItems.ReaderSettingScreen.route) {
             ReaderSettingScreen(navHostController)
+        }
+        composable(AppNavigationItems.VoidSelScreen.route) {
+            VoidSelectionScreen(navHostController)
         }
     }
 }

@@ -48,19 +48,9 @@ sealed class AppNavigationItems(val route: String) {
  object VoucherScreen:AppNavigationItems(ScreensRouteTypes.VoucherCardScreen.name)
  object AuthCodeScreen:AppNavigationItems(ScreensRouteTypes.AuthScreen.name)
  object ReaderSettingScreen:AppNavigationItems(ScreensRouteTypes.ReaderSettingScreen.name)
+ object ApprovedScreen:AppNavigationItems(ScreensRouteTypes.ApprovedScreen.name)
 
  object PinScreen : AppNavigationItems(ScreensRouteTypes.PinScreen.name)
 
- object EmailScreen : AppNavigationItems("email_screen/{email}") {
-  fun createRoute(email: String) = "email_screen/$email"
- }
-
- object ApprovedScreen : AppNavigationItems("approved_screen/{totalAmount}") {
-  fun createRoute(totalAmount: String) = "approved_screen/$totalAmount"
- }
-
- object DeclineScreen : AppNavigationItems("decline_screen/{totalAmount}") {
-  fun createRoute(totalAmount: String) = "decline_screen/$totalAmount"
- }
 
 }

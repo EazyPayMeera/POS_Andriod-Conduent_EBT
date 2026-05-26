@@ -18,6 +18,7 @@ import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
 import com.analogics.paymentservicecore.data.model.TxnStatus
 import com.analogics.paymentservicecore.data.model.TxnType
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.domain.repository.apiService.ApiServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.analogics.paymentservicecore.utils.toDecimalFormat
@@ -53,6 +54,10 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
     val origTotalAmount: StateFlow<String?> = _origTotalAmount
     private val _origDateTime = MutableStateFlow<String?>(null)
     val origDateTime: StateFlow<String?> = _origDateTime
+    private val _rrn = MutableStateFlow<String?>(null)
+    val rrn: StateFlow<String?> = _origDateTime
+    private val _stan = MutableStateFlow<String?>(null)
+    val stan: StateFlow<String?> = _origDateTime
     /**
      * Initializes amount screen data based on transaction type.
      *
@@ -75,6 +80,8 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             ?.toDoubleOrNull() ?: 0.00
                     )
                     _origDateTime.value = sharedViewModel.objRootAppPaymentDetail.dateTime
+                    _rrn.value = sharedViewModel.objRootAppPaymentDetail.rrn
+                    _stan.value = sharedViewModel.objRootAppPaymentDetail.stan
                     isReadOnly = true
                 }
                 else -> {
@@ -227,82 +234,6 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
             }
         }
     }
-    /**
-     * Fetches the last transaction from DB and prepares it for further processing (e.g., void/reversal).
-     *
-     * Flow:
-     * - Retrieve last transaction from database
-     * - If already voided → show error and navigate back to dashboard
-     * - Else → transform DB entity into sharedViewModel object
-     * - Copy required fields and enrich with POS config data
-     * - If no transaction found → show error dialog
-     */
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun fetchLastTransaction(navHostController: NavHostController, context: Context, sharedViewModel: SharedViewModel) {
-        val lastTxn = dbRepository.fetchLastTransactionByTxnType()
-        Log.d("DB_DEBUG", "lastTxn: $lastTxn")
-        lastTxn?.let {
-            if (it.isVoided == true || it.txnType == TxnType.VOID_LAST.toString()) {
-                CustomDialogBuilder.composeAlertDialog(
-                    title = context.getString(R.string.default_alert_title_error),
-                    message = context.getString(R.string.err_txn_already_voided),
-                    onOkClick = {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            delay(500)
-                            navHostController.navigateAndClean(AppNavigationItems.DashBoardScreen.route)
-                        }
-                    }
-                )
-
-            } else {
-                val transformedTxn =
-                    PaymentServiceUtils.transformObject<ObjRootAppPaymentDetails>(it)
-
-                transformedTxn?.let {
-                    sharedViewModel.objRootAppPaymentDetail = it.copy(
-                        id = sharedViewModel.objRootAppPaymentDetail.id,
-                        txnType = sharedViewModel.objRootAppPaymentDetail.txnType,
-                        fnsNumber = sharedViewModel.objPosConfig?.fnsNumber,
-                        merchantNameLocation = sharedViewModel.objPosConfig?.merchantNameLocation,
-                        merchantBankName = sharedViewModel.objPosConfig?.merchantBankName,
-                        merchantType = sharedViewModel.objPosConfig?.merchantType,
-                        procId = sharedViewModel.objPosConfig?.procId,
-                        stateCode = sharedViewModel.objPosConfig?.stateCode,
-                        countyCode = sharedViewModel.objPosConfig?.countyCode,
-                        postalServiceCode = sharedViewModel.objPosConfig?.postalServiceCode
-                    )
-                    sharedViewModel.objRootAppPaymentDetail.processingCode = it.processingCode
-                    sharedViewModel.objRootAppPaymentDetail.rrn = it.rrn
-                    sharedViewModel.objRootAppPaymentDetail.localTime = it.localTime
-                    sharedViewModel.objRootAppPaymentDetail.localDate = it.localDate
-                    sharedViewModel.objRootAppPaymentDetail.dateTime = it.dateTime
-                    sharedViewModel.objRootAppPaymentDetail.settlementDate = it.settlementDate
-                    sharedViewModel.objRootAppPaymentDetail.posConditionCode = it.posConditionCode
-                    sharedViewModel.objRootAppPaymentDetail.stan = it.stan
-                    sharedViewModel.objRootAppPaymentDetail.posEntryMode = it.posEntryMode
-                    sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
-                    sharedViewModel.objRootAppPaymentDetail.currencyCode = it.currencyCode
-                    sharedViewModel.objRootAppPaymentDetail.originalDateTime = it.originalDateTime
-                    sharedViewModel.objRootAppPaymentDetail.hostAuthCode = it.hostAuthCode
-                    sharedViewModel.objRootAppPaymentDetail.emvData = it.emvData
-                    sharedViewModel.objRootAppPaymentDetail.originalTxnType = it.txnType
-
-                    sharedViewModel.objRootAppPaymentDetail.originalCashback =
-                        it.cashback.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalTtlAmount =
-                        it.ttlAmount.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalTxnAmount =
-                        it.txnAmount.toDecimalFormat()
-                    sharedViewModel.objRootAppPaymentDetail.originalHostTxnRef = it.hostTxnRef
-                }
-            }
-        } ?: run {
-            CustomDialogBuilder.composeAlertDialog(
-                title = context.getString(R.string.default_alert_title_error),
-                message = context.getString(R.string.err_txn_not_found)
-            )
-        }
-    }
 
     /**
      * This function handles the complete online transaction authentication flow.
@@ -353,6 +284,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                             val settlementDate = response.settlementDate
                             sharedViewModel.objRootAppPaymentDetail.settlementDate =
                                 response.settlementDate
+                            sharedViewModel.objRootAppPaymentDetail.isVoided = true
                             sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
                             sharedViewModel.objRootAppPaymentDetail.hostAuthCode =
                                 response.hostAuthCode
@@ -426,20 +358,38 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
      * - Logs error if transaction is not found in DB
      */
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateTransResult(sharedViewModel: SharedViewModel, txnStatus: TxnStatus?, originalDateTime: String, AuthCode: String, posCondition: String) {
+    fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
         sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
         viewModelScope.launch {
             val txnId = sharedViewModel.objRootAppPaymentDetail.id
+            val originalId = sharedViewModel.objRootAppPaymentDetail.originalId
+
+            // Only mark original transaction as voided if void was APPROVED
+            dbRepository.fetchTxnById(originalId)?.let { txn ->
+                txn.isVoided = if (txnStatus == TxnStatus.APPROVED) true else false
+                dbRepository.updateTxn(txn)
+            } ?: run {
+                Log.e("AmountView", "Transaction NOT FOUND for originalId: $originalId")
+            }
+
+            // Always update the void transaction record with response details
             dbRepository.fetchTxnById(txnId)?.let { txn ->
-                txn.txnStatus = txnStatus?.toString() ?: ""
+                txn.txnStatus        = txnStatus?.toString() ?: ""
                 txn.originalDateTime = originalDateTime
-                txn.hostAuthCode = AuthCode
-                txn.stan = sharedViewModel.objRootAppPaymentDetail.stan
-                txn.VoucherNumber = sharedViewModel.objRootAppPaymentDetail.voucherNumber
-                txn.rrn = sharedViewModel.objRootAppPaymentDetail.rrn
-                txn.settlementDate = sharedViewModel.objRootAppPaymentDetail.settlementDate
-                txn.ApprovalCode = sharedViewModel.objRootAppPaymentDetail.approvalCode
+                txn.hostAuthCode     = AuthCode
+                txn.stan             = sharedViewModel.objRootAppPaymentDetail.stan
+                txn.VoucherNumber    = sharedViewModel.objRootAppPaymentDetail.voucherNumber
+                txn.rrn              = sharedViewModel.objRootAppPaymentDetail.rrn
+                txn.settlementDate   = sharedViewModel.objRootAppPaymentDetail.settlementDate
+                txn.ApprovalCode     = sharedViewModel.objRootAppPaymentDetail.approvalCode
                 txn.posConditionCode = posCondition
+                Log.d("DATABASE", "Txn Update Amount Viewmodel")
                 dbRepository.updateTxn(txn)
             } ?: run {
                 Log.e("AmountView", "Transaction NOT FOUND for txnId: $txnId")

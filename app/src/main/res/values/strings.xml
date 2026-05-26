@@ -34,7 +34,13 @@
     <string name="cash">EBT CASH Benefit Purchase</string>
     <string name="bal_cash">CASH</string>
     <string name="key_man">Key Management</string>
+    <string name="stan">STAN:</string>
     <string name="time_out">Timeout</string>
+    <string name="approval_code">Approval Code: </string>
+    <string name="select_transaction_to_void">Select Transaction To Void</string>
+    <string name="no_transactions_available">No Void Transaction Available</string>
+    <string name="search_filter">Search By RRN, Approval Code</string>
+    <string name="manual_card">Manual</string>
 
     <string name="act_title">Activate Now</string>
     <string name="act_prompt_activate">Enter PROCESSOR ID, TID , AND MID</string>
@@ -104,7 +110,6 @@
     <string name="invalid_current_password">Invalid current password</string>
 
     <!-- Dashboard -->
-
     <string name="net_total">Net Total</string>
     <string name="refund_amt">Enter the Refund Amount</string>
     <string name="enter_invoice">Enter the Invoice Number</string>
@@ -128,6 +133,8 @@
     <string name="print">PRINT</string>
     <string name="cancel">CANCEL</string>
     <string name="tap_swipe_insert">Tap/Swipe/Insert</string>
+    <string name="swipe">Swipe</string>
+    <string name="tap_insert">Tap/Insert</string>
     <string name="chip_detect">Chip Detected</string>
     <string name="confirm_btn">Confirm</string>
     <string name="cancel_btn">Cancel</string>
@@ -159,7 +166,7 @@
     <string name="cust_recp">Customer Receipt</string>
     <string name="enter_tip_amount">Enter the Tip Amount</string>
     <string name="enter_service_charge">Enter the Service Charge</string>
-    <string name="amount">Amount</string>
+    <string name="amount">Amount: </string>
     <string name="adjust">Adjust</string>
     <string name="enter_the_percentage">Enter the Percentage</string>
     <string name="percentage">Percentage</string>
@@ -342,6 +349,14 @@
     <string name="printer_printing_failed">Printing Failed</string>
 
     <!-- Receipt Builder -->
+    <string name="print_snap_purchase">EBT SNAP BENEFIT PURCHASE</string>
+    <string name="print_cash_purchase">EBT CASH BENEFIT PURCHASE</string>
+    <string name="print_cash_purchase_with_cashback">EBT CASH BENEFIT PURCHASE W/ CASHBACK</string>
+    <string name="print_snap_return">EBT SNAP BENEFIT RETURN</string>
+    <string name="print_balance_inquiry">EBT BALANCE INQUIRY</string>
+    <string name="print_cash_withdrawal">EBT CASH WITHDRAWAL</string>
+    <string name="print_void_last_transaction">EBT Void Last Transaction</string>
+    <string name="print_voucher_settlement">EBT Voucher Settlement</string>
     <string name="receipt_header">GLOBAL PAYMENTS</string>
     <string name="receipt_address">STORE ADDRESS:</string>
     <string name="receipt_merchant_id">MID:</string>
@@ -350,11 +365,11 @@
     <string name="receipt_card_type">CARD TYPE:</string>
     <string name="receipt_card_no">Card Num:</string>
     <string name="receipt_trans_type">TRANS TYPE:</string>
-    <string name="receipt_batch_no">BATCH NO:</string>
+    <string name="receipt_batch_no">Batch#:</string>
     <string name="receipt_trace_no">Trace#:</string>
     <string name="receipt_date">DATE:</string>
     <string name="receipt_time">TIME:</string>
-    <string name="receipt_ref_no">REF NO:</string>
+    <string name="receipt_ref_no">REF#:</string>
     <string name="receipt_aap_code">APP CODE:</string>
     <string name="receipt_txn_id">Txn ID:</string>
     <string name="receipt_app">APP:</string>
@@ -390,19 +405,19 @@
     <string name="receipt_dispense" translatable="false">DISPENSE </string>
     <string name="receipt_snap_begin_balance" tools:ignore="MissingTranslation">SNAP Begin Bal:</string>
     <string name="receipt_snap_purchase" tools:ignore="MissingTranslation">SNAP Purchase</string>
-    <string name="receipt_snap_end_balance" tools:ignore="MissingTranslation">SNAP End Bal:</string>
+    <string name="receipt_snap_end_balance" tools:ignore="MissingTranslation">SNAP Balance:</string>
     <string name="receipt_cash_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_txntype_food_purchase" translatable="false">FOOD_PURCHASE</string>
     <string name="receipt_settlement_date" tools:ignore="MissingTranslation">Settlement Date:</string>
     <string name="receipt_do_not_dispense_goods" translatable="false">DO NOT DISPENSE GOODS</string>
     <string name="receipt_txntype_cash_purchase" translatable="false">CASH_PURCHASE</string>
-    <string name="receipt_cash_begin_balance" tools:ignore="MissingTranslation">Cash Begin Bal:</string>
+    <string name="receipt_cash_begin_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_cash_purchase" tools:ignore="MissingTranslation">Cash Purchase</string>
-    <string name="receipt_cash_end_balance" tools:ignore="MissingTranslation">Cash End Bal:</string>
+    <string name="receipt_cash_end_balance" tools:ignore="MissingTranslation">Cash Balance:</string>
     <string name="receipt_snap_balance" tools:ignore="MissingTranslation">SNAP Balance:</string>
     <string name="receipt_txntype_purchase_with_cashback" translatable="false">PURCHASE_CASHBACK</string>
     <string name="receipt_cash_back" translatable="false">Cash Back: </string>
-    <string name="receipt_amount" translatable="false">Amount</string>
+    <string name="receipt_amount" translatable="false">AMOUNT</string>
     <string name="receipt_do_not_accept_goods" translatable="false">DO NOT ACCEPT GOODS</string>
     <string name="receipt_accept_goods" translatable="false">ACCEPT GOODS</string>
     <string name="receipt_cash_withdrawal" tools:ignore="MissingTranslation">Cash Withdrawal</string>
@@ -411,6 +426,13 @@
     <string name="receipt_voucher_number" translatable="false">Voucher Number</string>
     <string name="receipt_voucher_approval_code" translatable="false">Voucher Approval Code</string>
     <string name="receipt_voucher_amount" translatable="false">Voucher Amount</string>
+    <string name="receipt_rrn" translatable="false">RRN: </string>
+    <string name="receipt_ebt" translatable="false">EBT </string>
+    <string name="receipt_appr_code" translatable="false">APPR CODE: </string>
+    <string name="receipt_zip_code" translatable="false">ZIP CODE: </string>
+    <string name="receipt_tvr" translatable="false">TVR: </string>
+
+
     <!-- Summary Report -->
     <string name="summary_report">SUMMARY REPORT</string>
     <string name="summary_dot_line">---------------</string>
@@ -422,7 +444,7 @@
     <string name="summary_vat">VAT</string>
     <string name="summary_tip">Tip</string>
     <string name="summary_cashback">CashBack</string>
-    <string name="summary_total">Total</string>
+    <string name="summary_total">Total:</string>
     <string name="summary_txn_breakdown">Transaction Breakdown:</string>
     <string name="summary_credit_txn">Credit Transactions:</string>
     <string name="summary_debit_txn">Debit Transactions:</string>
@@ -509,6 +531,7 @@
     <string name="emv_msg_id_try_another_interface">Please Try Again</string>
     <string name="emv_msg_id_invalid_icc_card">Invalid ICC Card</string>
     <string name="emv_msg_id_retry">Please Retry</string>
+    <string name="emv_msg_id_chip_detected">Chip card detected. Please Insert or Tap card.</string>
     <string name="emv_msg_id_max_retry">Chip Read Failed. Please Swipe The Card</string>
     <string name="emv_msg_id_card_removed">Card Removed</string>
     <string name="emv_msg_id_issuer_script_update_successful">Issuer Script Update Successful</string>
@@ -521,6 +544,7 @@
     <string name="err_only_preauth_can_be_captured">Only Preauth Can Be Captured</string>
     <string name="err_txn_already_refunded">Transaction Already Refunded</string>
     <string name="err_txn_already_voided">Transaction Already Voided</string>
+    <string name="err_txn_cannot_voided">Transaction Cannot be Voided</string>
     <string name="err_txn_already_captured">Transaction Already Captured</string>
     <string name="err_batch_is_settled">Batch is settled</string>
     <string name="err_cant_mix_demo_trans">Cannot Mix Live and Demo Transactions</string>
@@ -555,7 +579,7 @@
     <string name="card_entry_mode_contactless">CONTACTLESS</string>
     <string name="card_entry_mode_contactless_magstripe">CONTACTLESS MAGSTRIPE</string>
     <string name="card_entry_mode_magstripe">MAGSTRIPE</string>
-    <string name="card_entry_mode_fallback_magstripe">FALLBACK MAGSTRIPE</string>
+    <string name="card_entry_mode_fallback_magstripe">CHIP/SWIPE</string>
     <string name="card_entry_mode_manual">MANUAL</string>
     <string name="card_entry_mode_qrcode">QRCODE</string>
     <string name="card_entry_mode_unspecified">UNSPECIFIED</string>

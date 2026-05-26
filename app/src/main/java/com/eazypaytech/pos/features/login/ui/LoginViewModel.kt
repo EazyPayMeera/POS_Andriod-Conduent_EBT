@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.data.constants.BuilderConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
+import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
 import com.analogics.paymentservicecore.data.model.error.ApiServiceTimeout
@@ -24,7 +25,9 @@ import com.eazypaytech.pos.domain.model.ObjRootAppPaymentDetails
 import com.eazypaytech.pos.core.utils.generateMasterPassword
 import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.eazypaytech.pos.core.utils.emvStatusToTransStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -203,10 +206,55 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
                     IApiServiceResponseListener {
 
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
-                        CustomDialogBuilder.composeProgressDialog(false)
-                        sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
-                        sharedViewModel.objRootAppPaymentDetail.txnStatus = if(response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
-                        navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                        viewModelScope.launch(Dispatchers.Main) {
+                            CustomDialogBuilder.composeProgressDialog(false)
+                            sharedViewModel.objRootAppPaymentDetail.hostResMessage =
+                                BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                            sharedViewModel.objRootAppPaymentDetail.hostRespCode =
+                                response.hostRespCode
+                            sharedViewModel.objRootAppPaymentDetail.hostAuthCode =
+                                response.hostAuthCode
+                            sharedViewModel.objRootAppPaymentDetail.settlementDate =
+                                response.settlementDate
+                            sharedViewModel.objRootAppPaymentDetail.expiryDate = response.expiryDate
+                            sharedViewModel.objRootAppPaymentDetail.rrn = response.rrn
+                            sharedViewModel.objRootAppPaymentDetail.currencyCode =
+                                response.currencyCode
+                            sharedViewModel.objRootAppPaymentDetail.originalDateTime =
+                                response.originalDateTime
+                            sharedViewModel.objRootAppPaymentDetail.hostAuthCode =
+                                response.hostAuthCode
+                            sharedViewModel.objRootAppPaymentDetail.posCondition =
+                                response.posCondition
+                            updateTransResult(
+                                sharedViewModel,
+                                emvStatusToTransStatus(response.hostRespCode),
+                                sharedViewModel.objRootAppPaymentDetail.originalDateTime.toString(),
+                                sharedViewModel.objRootAppPaymentDetail.hostAuthCode.toString(),
+                                sharedViewModel.objRootAppPaymentDetail.posCondition.toString()
+                            )
+                            val rawAdditionalAmt = response.additionalAmt
+
+                            if (!rawAdditionalAmt.isNullOrBlank() && rawAdditionalAmt != "null") {
+                                try {
+                                    val balance = parseEBTBalances(rawAdditionalAmt)
+                                    sharedViewModel.objRootAppPaymentDetail.snapEndBalance =
+                                        balance.snap
+                                    sharedViewModel.objRootAppPaymentDetail.cashEndBalance =
+                                        balance.cash
+                                    sharedViewModel.objRootAppPaymentDetail.cashEndBalance =
+                                        balance.cash
+                                    updateBalance(sharedViewModel)
+                                } catch (e: Exception) {
+                                    sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                                }
+                            } else {
+                                sharedViewModel.objRootAppPaymentDetail.additionalAmt = "0.0"
+                            }
+                            sharedViewModel.objRootAppPaymentDetail.txnStatus =
+                                if (response.txnStatus == TxnStatus.APPROVED.toString()) TxnStatus.APPROVED else TxnStatus.DECLINED
+                            navHostController.navigate(AppNavigationItems.ApprovedScreen.route)
+                        }
                     }
 
                     override fun onApiServiceError(error: ApiServiceError) {
@@ -223,6 +271,85 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
                 Log.e("ApiCallException", e.message ?: "Unknown error")
 
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun updateTransResult(
+        sharedViewModel: SharedViewModel,
+        txnStatus: TxnStatus?,
+        originalDateTime: String,
+        AuthCode: String,
+        posCondition: String
+    ) {
+        sharedViewModel.objRootAppPaymentDetail.txnStatus = txnStatus
+        val txnId = sharedViewModel.objRootAppPaymentDetail.id
+        dbRepository.fetchTxnById(txnId)?.let { txn ->
+            txn.txnStatus = txnStatus?.toString() ?: ""
+            txn.originalDateTime = sharedViewModel.objRootAppPaymentDetail.originalDateTime
+            txn.hostAuthCode = AuthCode
+            txn.posConditionCode = posCondition
+            txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+            txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+            Log.d("DATABASE","Txn Update ManualCardViewModel")
+            dbRepository.updateTxn(txn)
+
+        }
+    }
+
+    fun parseEBTBalances(hexString: String): EBTBalance {
+        val blocks = hexString.chunked(20)
+        var snapBalance = 0.0
+        var cashBalance = 0.0
+
+        blocks.forEach { block ->
+            val bytes = block.chunked(2).map { it.toInt(16) }
+            val accountType = bytes[0]  // positions 1-2: account type
+            val amountType = bytes[1]   // positions 3-4: amount type
+
+            // Only process Available Balance (0x02)
+            if (amountType != 0x02) return@forEach
+
+            val bcdBytes = bytes.subList(4, 10)
+            val digits = bcdBytes.joinToString("") { byte ->
+                val high = (byte shr 4) and 0x0F
+                val low  = byte and 0x0F
+                "$high$low"
+            }
+            val amount = digits.toLong() / 100.0
+
+            when (accountType) {
+                0x96 -> cashBalance = amount   // Cash Benefit
+                0x98 -> snapBalance = amount   // Food Stamp Benefit
+            }
+        }
+
+        return EBTBalance(snap = snapBalance, cash = cashBalance)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun updateBalance(sharedViewModel: SharedViewModel) {
+        try {
+            val id = sharedViewModel.objRootAppPaymentDetail.id ?: run {
+                Log.e("UPDATE_BALANCE", "❌ id is null")
+                return
+            }
+            val newCash = sharedViewModel.objRootAppPaymentDetail.cashEndBalance ?: 0.0
+            val newSnap = sharedViewModel.objRootAppPaymentDetail.snapEndBalance ?: 0.0
+
+            Log.d("UPDATE_BALANCE", "▶ START — id=$id, cash=$newCash, snap=$newSnap")
+
+            if (newCash == 0.0 && newSnap == 0.0) {
+                Log.e("UPDATE_BALANCE", "❌ ABORTED — both balances are 0.0, skipping update")
+                return
+            }
+
+            dbRepository.updateBalancesOnly(id, newCash, newSnap)
+
+            Log.d("UPDATE_BALANCE", "✅ SUCCESS — cash=$newCash, snap=$newSnap")
+
+        } catch (e: Exception) {
+            Log.e("UPDATE_BALANCE", "❌ Error updating balance: ${e.message}")
         }
     }
 }

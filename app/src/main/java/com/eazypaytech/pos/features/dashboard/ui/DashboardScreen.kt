@@ -147,7 +147,7 @@ fun DashboardScreen(navHostController: NavHostController) {
 
             AppConstants.BUTTON_CLICK_EVENT_VOID_LAST -> {
                 setTransactionType(TxnType.VOID_LAST)
-                navHostController.navigate(AppNavigationItems.AmountScreen.route) {
+                navHostController.navigate(AppNavigationItems.VoidSelScreen.route) {
                     popUpTo(AppNavigationItems.DashBoardScreen.route) { inclusive = false }
                     launchSingleTop = true
                 }
@@ -315,7 +315,7 @@ fun TrainingView(
 
     /* Initialize Payment SDK */
     LaunchedEffect(Unit) {
-
+        dashboardViewModel.deleteOldTransactions()
         dashboardViewModel.clearTransData(sharedViewModel)
         dashboardViewModel.initPaymentSDK(context, sharedViewModel)
     }
@@ -397,11 +397,11 @@ fun DashboardContentSurface(
                                 onMenuOptionClick = { option ->
                                     when (option) {
                                         context.resources.getString(R.string.cust_recp) -> {
-                                            viewModel.reprintLast(context, true)
+                                            viewModel.reprintLast(context, sharedViewModel, true)
                                             isDialogVisible = true
                                         }
                                         context.resources.getString(R.string.merchant_recp) -> {
-                                            viewModel.reprintLast(context)
+                                            viewModel.reprintLast(context,sharedViewModel)
                                             isDialogVisible = true
                                         }
                                     }

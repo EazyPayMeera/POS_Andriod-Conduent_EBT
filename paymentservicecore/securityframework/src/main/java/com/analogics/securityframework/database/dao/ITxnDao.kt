@@ -31,6 +31,10 @@ interface ITxnDao {
     @Update
     suspend fun update(vararg txnEntity: TxnEntity)
 
+    // DAO
+    @Query("UPDATE TxnTable SET cashEndBalance = :cash, snapEndBalance = :snap WHERE id = :id")
+    suspend fun updateBalancesOnly(id: Long, cash: Double, snap: Double): Int
+
     /**
      * Fetch transaction by primary ID.
      */
@@ -48,6 +52,13 @@ interface ITxnDao {
 
     @Query("SELECT * FROM TxnTable WHERE substr(dateTime, 1, 16) <= :date")
      suspend fun getTransactionDetailsTxnBeforeTime(date: String): List<TxnEntity>
+
+    @Query("""SELECT * FROM TxnTable WHERE TxnType NOT IN ('BALANCE_ENQUIRY_CASH','BALANCE_ENQUIRY_SNAP','CASH_WITHDRAWAL','PURCHASE_CASHBACK','VOID_LAST','E_VOUCHER') AND TxnStatus = 'APPROVED'AND isVoided = 0 ORDER BY id DESC """)
+    suspend fun fetchAllVoidableTransactions(): List<TxnEntity>
+
+
+    @Query("DELETE FROM TxnTable WHERE DateTime < datetime('now', '-90 days')")
+    suspend fun deleteOldTransactions()
 
     /**
      * Returns most recent transaction.

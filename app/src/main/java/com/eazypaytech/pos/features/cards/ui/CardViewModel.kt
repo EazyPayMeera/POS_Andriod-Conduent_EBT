@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -16,6 +17,7 @@ import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.emv.EmvServiceResult
 import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.TxnStatus
+import com.analogics.paymentservicecore.data.model.emv.CardEntryMode
 import com.analogics.paymentservicecore.domain.repository.emvService.EmvServiceRepository
 import com.analogics.paymentservicecore.utils.PaymentServiceUtils
 import com.eazypaytech.pos.R
@@ -45,7 +47,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     lateinit var navHostController : NavHostController
     var cardRetryCount = 0
     private var isCardDetected = false
-
+    var isChipCardSwiped = mutableStateOf(false)
     /**
      * Navigates to Approval screen.
      *
@@ -111,6 +113,15 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
         )
     }
 
+    fun toManualEntry(navHostController: NavHostController) {
+        viewModelScope.launch {
+            navHostController.navigate(AppNavigationItems.ManualCardScreen.route){
+                popUpTo(AppNavigationItems.CardScreen.route) { inclusive = false }
+                launchSingleTop = true
+            }
+        }
+    }
+
 //    fun cardRetry(navHostController: NavHostController) {
 //        CustomDialogBuilder.composeAlertDialog(
 //            title = "Chip Error",
@@ -161,6 +172,10 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 txn.originalDateTime = originalDateTime
                 txn.hostAuthCode = AuthCode
                 txn.posConditionCode = posCondition
+                txn.hostResMessage = sharedViewModel.objRootAppPaymentDetail.hostResMessage
+                txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
+                txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
+                Log.d("DATABASE","Txn Update from CardViewModel")
                 dbRepository.updateTxn(txn)
             } catch (e: Exception) {
                 Log.e("UPDATE_TXN", "Error updating transaction", e)
@@ -203,6 +218,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 viewModelScope.launch(Dispatchers.Main) {
+                                    sharedViewModel.objRootAppPaymentDetail.isChipSwiped = false
                                 sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
@@ -248,25 +264,50 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                             }
 
                             is EmvServiceResult.CardCheckResult -> {
-                                emvInProgress.value = false
-                                showProgressVar.value = false
-                                if(isCardCheckStatusInProgress(response.status)) {
-                                    isCardDetected = true
-                                    emvInProgress.value = true
-                                    showProgressVar.value = true
-                                    response.displayMsgId?.let {
-                                        displayInfoMsgId.value = it
+                                viewModelScope.launch(Dispatchers.Main) {  // ✅ add this
+                                    emvInProgress.value = false
+                                    showProgressVar.value = false
+                                    Log.d("EMV", "CardCheckResult → status: ${response.status} | displayMsgId: ${response.displayMsgId} | isFallback: ${sharedViewModel.objRootAppPaymentDetail.isFallback}")
+
+                                    when {
+                                        response.status == EmvServiceResult.CardCheckStatus.CHIP_CARD_SWIPED
+                                                && sharedViewModel.objRootAppPaymentDetail.isFallback != true -> {
+                                            sharedViewModel.objRootAppPaymentDetail.isChipSwiped = true
+                                            emvServiceRepository.abortPayment()
+                                            viewModelScope.launch(Dispatchers.Main) {
+                                                delay(100) // ✅ let recomposition settle before showing dialog
+                                                CustomDialogBuilder.composeAlertDialog(
+                                                    title = context.getString(R.string.default_alert_title_error),
+                                                    message = context.getString(R.string.emv_msg_id_chip_detected),
+                                                    onOkClick = {
+                                                        viewModelScope.launch {
+                                                            navigateToCardScreen(navHostController)
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+
+                                        isCardCheckStatusInProgress(response.status) -> {
+                                            isCardDetected = true
+                                            emvInProgress.value = true
+                                            showProgressVar.value = true
+                                            response.displayMsgId?.let {
+                                                displayInfoMsgId.value = it
+                                            }
+                                        }
+
+                                        isCardNotPresent(response.status) -> {
+                                            if (!isCardDetected) {
+                                                abortPayment(navHostController)
+                                            }
+                                        }
+
+                                        isCardCheckStatusError(response.status) -> {
+                                            displayEmvError(response.displayMsgId)
+                                        }
                                     }
-                                }
-                                else if(isCardNotPresent(response.status))
-                                {
-                                    if (!isCardDetected) {  // ← Only navigate if card was never detected
-                                        navigateToManualScreen(navHostController)
-                                    }
-                                }
-                                else if(isCardCheckStatusError(response.status)) {
-                                    displayEmvError(response.displayMsgId)
-                                }
+                                }  // ✅ close launch
                             }
                         }
                     }
@@ -295,17 +336,26 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun updateBalance(sharedViewModel: SharedViewModel) {
         try {
-            val txn = dbRepository.fetchTxnById(sharedViewModel.objRootAppPaymentDetail.id)
-            if (txn == null) {
-                Log.e("UPDATE_BALANCE", "Txn not found")
+            val id = sharedViewModel.objRootAppPaymentDetail.id ?: run {
+                Log.e("UPDATE_BALANCE", "❌ id is null")
                 return
             }
-            txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
-            txn.snapEndBalance = sharedViewModel.objRootAppPaymentDetail.snapEndBalance.toString()
-            dbRepository.updateTxn(txn)
-            Log.d("UPDATE_BALANCE", "Success — cash=${txn.cashEndBalance}, snap=${txn.snapEndBalance}")
+            val newCash = sharedViewModel.objRootAppPaymentDetail.cashEndBalance ?: 0.0
+            val newSnap = sharedViewModel.objRootAppPaymentDetail.snapEndBalance ?: 0.0
+
+            Log.d("UPDATE_BALANCE", "▶ START — id=$id, cash=$newCash, snap=$newSnap")
+
+            if (newCash == 0.0 && newSnap == 0.0) {
+                Log.e("UPDATE_BALANCE", "❌ ABORTED — both balances are 0.0, skipping update")
+                return
+            }
+
+            dbRepository.updateBalancesOnly(id, newCash, newSnap)
+
+            Log.d("UPDATE_BALANCE", "✅ SUCCESS — cash=$newCash, snap=$newSnap")
+
         } catch (e: Exception) {
-            Log.e("UPDATE_BALANCE", "Error updating balance", e)
+            Log.e("UPDATE_BALANCE", "❌ Error updating balance: ${e.message}")
         }
     }
 
@@ -373,6 +423,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
      */
     fun displayEmvError(displayMsgId: EmvServiceResult.DisplayMsgId?, abort : Boolean?=false, restart : Boolean?=true)
     {
+
         var message : String? = null
         val resolvedMsgId = if (cardRetryCount == 2) {
             EmvServiceResult.DisplayMsgId.MAX_CHIP_RETRY
@@ -425,6 +476,7 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
             else -> false
         }
     }
+
 
 
     /**
