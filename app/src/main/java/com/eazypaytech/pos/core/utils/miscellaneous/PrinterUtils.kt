@@ -198,13 +198,13 @@ object PrinterUtils {
         )
 
         /* Amount */
-        if (!isBalanceInquiry && isReturn && isDeclined) {
-            repo.addText(
-                context.getString(R.string.receipt_amount) ,
-                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
-                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
-            )
-        }
+//        if (!isBalanceInquiry && isReturn && isDeclined) {
+//            repo.addText(
+//                context.getString(R.string.receipt_amount) ,
+//                data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)),
+//                format = PrintFormat().fontSize(FontSize.MEDIUM).style(Style.BOLD)
+//            )
+//        }
         repo.feedLine()
 
         /*repo.addText(
@@ -309,12 +309,12 @@ object PrinterUtils {
             )
             //repo.addText(context.getString(R.string.receipt_gray_line))
         }
-        if (!isBalanceInquiry && isReturn && isDeclined) {
-            repo.addText(
-                context.getString(R.string.receipt_amount),
-                        data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
-            )
-        }
+//        if (!isBalanceInquiry && isReturn && isDeclined) {
+//            repo.addText(
+//                context.getString(R.string.receipt_amount),
+//                        data.txnAmount?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY))
+//            )
+//        }
 
         /* =========================
            🔹 BALANCE SECTION
@@ -322,9 +322,9 @@ object PrinterUtils {
 
         if (isBalanceInquiry || isCashBalanceInquiry) {
 
-            repo.addText(context.getString(R.string.receipt_snap_balance)+ " " +
+            repo.addText(context.getString(R.string.receipt_snap_balance),
                     data.snapEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
-            repo.addText(context.getString(R.string.receipt_cash_balance)+ " " +
+            repo.addText(context.getString(R.string.receipt_cash_balance),
                     data.cashEndBalance?.toDecimalFormat(symbol = Symbol(type = Type.CURRENCY)))
 
         } else {
