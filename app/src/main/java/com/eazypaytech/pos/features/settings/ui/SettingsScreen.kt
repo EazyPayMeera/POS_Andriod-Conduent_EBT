@@ -172,7 +172,8 @@ fun SettingsScreen(navHostController: NavHostController) {
                                 stateCode.value = it
                                 configChanged.value = true
                                 viewModel.updateStateCode(it)
-                            }
+                            },
+                            keyboardType = KeyboardType.Number
                         )
                     }
 
@@ -184,7 +185,8 @@ fun SettingsScreen(navHostController: NavHostController) {
                                 countyCode.value = it
                                 configChanged.value = true
                                 viewModel.updateCountyCode(it)
-                            }
+                            },
+                            keyboardType = KeyboardType.Number
                         )
                     }
 
