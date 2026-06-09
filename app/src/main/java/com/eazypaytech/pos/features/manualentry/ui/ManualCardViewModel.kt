@@ -290,7 +290,10 @@ class ManualCardViewModel @Inject constructor(
                                 CustomDialogBuilder.composeProgressDialog(false)
                                 CustomDialogBuilder.composeAlertDialog(
                                     title = navHostController.context.resources?.getString(R.string.default_alert_title_error),
-                                    message = apiServiceTimeout.message
+                                    message = apiServiceTimeout.message,
+                                    onOkClick = {
+                                        navHostController.navigate(AppNavigationItems.ManualCardScreen.route)
+                                    }
                                 )
                             }
                         }

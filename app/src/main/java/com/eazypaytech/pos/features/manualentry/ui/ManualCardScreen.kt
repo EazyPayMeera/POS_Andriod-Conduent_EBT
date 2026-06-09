@@ -100,6 +100,7 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
                     placeholder = stringResource(R.string.enter_card_no),
                     textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium,textAlign = TextAlign.End),
                     keyboardType = KeyboardType.Number,
+                    maxLength = 19,
                     onDoneAction = {viewModel.onConfirm(context,navHostController, sharedViewModel)},
                     amount = false,
                 )
@@ -135,7 +136,7 @@ fun ManualCardScreen(navHostController: NavHostController, viewModel: ManualCard
                 .setProgressColor(color = MaterialTheme.colorScheme.primary) // Orange color
                 .setShowProgressIndicator(false)
                 .setOnCancelAction {
-                    navHostController.navigate(AppNavigationItems.AmountScreen.route)
+                    navHostController.navigate(AppNavigationItems.ManualCardScreen.route)
                 }
                 .setOnConfirmAction {
                     navHostController.navigate(AppNavigationItems.DashBoardScreen.route)

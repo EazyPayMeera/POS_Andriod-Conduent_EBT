@@ -49,7 +49,7 @@
     <string name="act_label_enter_Mid">Please Enter MID</string>
 
     <string name="act_empty_tid_mid">Processor ID should not be empty</string>
-    <string name="act_empty_card_cvv">Empty Card No OR CVV</string>
+    <string name="act_empty_card_cvv">Empty Card No</string>
     <string name="act_tid_length">Processor ID should be 11</string>
     <string name="act_mid_length">MID length should be 15</string>
     <string name="act_failed">Activation Failed</string>

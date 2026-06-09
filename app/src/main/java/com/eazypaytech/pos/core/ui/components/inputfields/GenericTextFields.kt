@@ -990,13 +990,20 @@ fun OutlinedTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     shape: Shape = OutlinedTextFieldDefaults.shape,
-    textStyle: TextStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = MaterialTheme.dimens.SP_28_CompactMedium),
+    textStyle: TextStyle = TextStyle(
+        fontWeight = FontWeight.Bold,
+        fontSize = MaterialTheme.dimens.SP_28_CompactMedium
+    ),
     keyboardType: KeyboardType = KeyboardType.Text,
     onDoneAction: () -> Unit = {},
     isPassword: Boolean = false,
-    visualTransformation: VisualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+    visualTransformation: VisualTransformation = if (isPassword)
+        PasswordVisualTransformation()
+    else
+        VisualTransformation.None,
     modifier: Modifier = Modifier,
     amount: Boolean = false,
+    maxLength: Int = Int.MAX_VALUE,
     trailingIcon: @Composable (() -> Unit)? = null,
     readOnly: Boolean = false,
 ) {
@@ -1007,34 +1014,60 @@ fun OutlinedTextField(
         mutableStateOf(TextFieldValue(value, selection = TextRange(value.length)))
     }
 
-    // Sync external value changes
     LaunchedEffect(value) {
-        textFieldValue = TextFieldValue(value, selection = TextRange(value.length))
+        textFieldValue = TextFieldValue(
+            value,
+            selection = TextRange(value.length)
+        )
     }
 
     val handleValueChange: (String) -> Unit = { newText ->
-        val formattedText = if (amount) formatAmount(newText) else newText
+
+        val processedText = if (keyboardType == KeyboardType.Number) {
+            newText.filter { it.isDigit() }.take(maxLength)
+        } else {
+            newText.take(maxLength)
+        }
+
+        val formattedText =
+            if (amount) formatAmount(processedText) else processedText
+
         if (!amount || removeNonDigits(formattedText).length <= 12) {
-            textFieldValue = TextFieldValue(formattedText, selection = TextRange(formattedText.length))
+            textFieldValue = TextFieldValue(
+                formattedText,
+                selection = TextRange(formattedText.length)
+            )
             onValueChange(formattedText)
         }
     }
 
-    OutlinedTextField(
+    androidx.compose.material3.OutlinedTextField(
         value = textFieldValue,
         onValueChange = { handleValueChange(it.text) },
         shape = shape,
-        label = null,
-        placeholder = { Text(placeholder, fontSize = MaterialTheme.dimens.SP_23_CompactMedium) },
+        placeholder = {
+            Text(
+                placeholder,
+                fontSize = MaterialTheme.dimens.SP_23_CompactMedium
+            )
+        },
         textStyle = textStyle,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { onDoneAction() }),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDoneAction() }
+        ),
         visualTransformation = visualTransformation,
         readOnly = readOnly,
         trailingIcon = trailingIcon,
         singleLine = true,
         modifier = modifier
-            .clickable(interactionSource = interactionSource, indication = null) {
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
                 focusRequester.requestFocus()
             }
             .focusRequester(focusRequester)

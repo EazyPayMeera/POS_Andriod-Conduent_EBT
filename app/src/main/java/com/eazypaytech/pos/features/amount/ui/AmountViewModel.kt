@@ -384,6 +384,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
                 txn.originalDateTime = originalDateTime
                 txn.hostAuthCode     = AuthCode
                 txn.stan             = sharedViewModel.objRootAppPaymentDetail.stan
+                txn.hostResMessage   = sharedViewModel.objRootAppPaymentDetail.hostResMessage
                 txn.VoucherNumber    = sharedViewModel.objRootAppPaymentDetail.voucherNumber
                 txn.rrn              = sharedViewModel.objRootAppPaymentDetail.rrn
                 txn.settlementDate   = sharedViewModel.objRootAppPaymentDetail.settlementDate

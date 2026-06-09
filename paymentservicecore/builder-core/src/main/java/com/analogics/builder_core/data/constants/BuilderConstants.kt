@@ -240,10 +240,6 @@ object BuilderConstants {
     }
 
     fun extractHostMessage(input: String): String {
-        return if (input.matches(Regex("^\\d+\\s+.*"))) {
-            input.substringAfter(" ").trim()
-        } else {
-            input
-        }
+        return input.replace(Regex("^\\d+\\s+"), "")
     }
 }

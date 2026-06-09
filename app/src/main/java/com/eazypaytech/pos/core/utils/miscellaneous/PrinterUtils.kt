@@ -176,7 +176,7 @@ object PrinterUtils {
         )
 
         /*Approval/Auth Code */
-        if (!isReturn && !isBalanceInquiry && !isDeclined) {
+        if (!isReturn && !isBalanceInquiry) {
             repo.addText(context.getString(R.string.receipt_appr_code)+ " " + data.hostAuthCode)
         }
 
@@ -463,6 +463,7 @@ object PrinterUtils {
            ========================= */
 
         repo.feedLine()
+
         if(isDeclined)
             repo.addText(
                 //context.getString(R.string.receipt_result) + " " +

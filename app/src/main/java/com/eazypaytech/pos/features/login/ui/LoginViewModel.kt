@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.data.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants.extractHostMessage
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.data.model.EBTBalance
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
@@ -208,8 +209,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
                     override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
                         viewModelScope.launch(Dispatchers.Main) {
                             CustomDialogBuilder.composeProgressDialog(false)
-                            sharedViewModel.objRootAppPaymentDetail.hostResMessage =
-                                BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                            sharedViewModel.objRootAppPaymentDetail.hostResMessage = extractHostMessage(response.hostResMessage.toString())
                             sharedViewModel.objRootAppPaymentDetail.hostRespCode =
                                 response.hostRespCode
                             sharedViewModel.objRootAppPaymentDetail.hostAuthCode =
@@ -287,6 +287,7 @@ class LoginViewModel @Inject constructor(private var apiServiceRepository: ApiSe
         dbRepository.fetchTxnById(txnId)?.let { txn ->
             txn.txnStatus = txnStatus?.toString() ?: ""
             txn.originalDateTime = sharedViewModel.objRootAppPaymentDetail.originalDateTime
+            txn.hostResMessage = sharedViewModel.objRootAppPaymentDetail.hostResMessage
             txn.hostAuthCode = AuthCode
             txn.posConditionCode = posCondition
             txn.cashEndBalance = sharedViewModel.objRootAppPaymentDetail.cashEndBalance.toString()
