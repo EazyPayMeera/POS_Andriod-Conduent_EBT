@@ -64,6 +64,11 @@ class PurchaseRequestRepository @Inject constructor(
         apiRequestBuilder.parseISOMessage(context, response).let { it ->
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
+            paymentServiceTxnDetails.hostResMessage = it.hostResMessage
+            Log.d(
+                "HostResMessage",
+                "hostResMessage = ${paymentServiceTxnDetails.hostResMessage}"
+            )
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
             paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
             paymentServiceTxnDetails.additionalAmt = it.additionalAmt
@@ -95,8 +100,6 @@ class PurchaseRequestRepository @Inject constructor(
                 paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
             }
 
-            paymentServiceTxnDetails.hostResMessage =
-                BuilderConstants.getIsoResponseMessage(it.hostRespCode!!)
         }
         return paymentServiceTxnDetails
     }

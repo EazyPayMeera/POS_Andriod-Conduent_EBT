@@ -238,4 +238,12 @@ object BuilderConstants {
             else -> "UNKNOWN RESPONSE CODE"
         }
     }
+
+    fun extractHostMessage(input: String): String {
+        return if (input.matches(Regex("^\\d+\\s+.*"))) {
+            input.substringAfter(" ").trim()
+        } else {
+            input
+        }
+    }
 }

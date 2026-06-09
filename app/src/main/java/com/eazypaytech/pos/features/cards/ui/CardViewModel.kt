@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.data.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants.extractHostMessage
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IEmvServiceResponseListener
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
@@ -212,14 +213,16 @@ class CardViewModel @Inject constructor(private var emvServiceRepository: EmvSer
                 iEmvServiceResponseListener = object :
                     IEmvServiceResponseListener {
                     @RequiresApi(Build.VERSION_CODES.O)
-                    @SuppressLint("DefaultLocale")
+                    @SuppressLint("DefaultLocale", "SuspiciousIndentation")
                     override fun onEmvServiceResponse(response: Any) {
                         Log.d("EMV", "Response = $response")
                         when (response) {
                             is EmvServiceResult.TransResult -> {
                                 viewModelScope.launch(Dispatchers.Main) {
                                     sharedViewModel.objRootAppPaymentDetail.isChipSwiped = false
-                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.paymentServiceTxnDetails?.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = extractHostMessage(
+                                    response.paymentServiceTxnDetails?.hostResMessage.toString()
+                                )
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.paymentServiceTxnDetails?.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.paymentServiceTxnDetails?.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.settlementDate = response.paymentServiceTxnDetails?.settlementDate

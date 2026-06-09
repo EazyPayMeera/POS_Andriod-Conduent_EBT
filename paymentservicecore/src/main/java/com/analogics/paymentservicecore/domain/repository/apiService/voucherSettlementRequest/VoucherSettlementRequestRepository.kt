@@ -42,6 +42,8 @@ class VoucherSettlementRequestRepository @Inject constructor(
         apiRequestBuilder.parseISOMessage(context,response).let {
             paymentServiceTxnDetails.stan = it.stan
             paymentServiceTxnDetails.hostRespCode = it.hostRespCode
+            paymentServiceTxnDetails.hostResMessage = it.hostResMessage
+            paymentServiceTxnDetails.hostResMessage = it.hostResMessage
             paymentServiceTxnDetails.hostAuthCode = it.hostAuthCode
             paymentServiceTxnDetails.hostTxnRef = it.hostTxnRef
             paymentServiceTxnDetails.settlementDate = it.settlementDate
@@ -57,16 +59,10 @@ class VoucherSettlementRequestRepository @Inject constructor(
             if (it.hostRespCode == BuilderConstants.ISO_RESP_CODE_APPROVED) {
                 paymentServiceTxnDetails.hostAuthResult = TxnStatus.APPROVED.toString()
                 paymentServiceTxnDetails.txnStatus = TxnStatus.APPROVED.toString()
-                paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
-                    it.hostRespCode!!
-                )
             }
             else {
                 paymentServiceTxnDetails.hostAuthResult = TxnStatus.DECLINED.toString()
                 paymentServiceTxnDetails.txnStatus = TxnStatus.DECLINED.toString()
-                paymentServiceTxnDetails.hostResMessage = BuilderConstants.getIsoResponseMessage(
-                    it.hostRespCode!!
-                )
 
             }
         }

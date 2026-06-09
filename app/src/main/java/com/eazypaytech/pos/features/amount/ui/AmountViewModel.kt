@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.data.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants.extractHostMessage
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.data.model.PaymentServiceTxnDetails
 import com.analogics.paymentservicecore.data.model.error.ApiServiceError
@@ -295,8 +296,7 @@ class AmountViewModel @Inject constructor(private var apiServiceRepository: ApiS
 
                             CustomDialogBuilder.composeProgressDialog(false)
 
-                            sharedViewModel.objRootAppPaymentDetail.hostResMessage =
-                                BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                            sharedViewModel.objRootAppPaymentDetail.hostResMessage = extractHostMessage(response.hostResMessage.toString())
                             sharedViewModel.objRootAppPaymentDetail.txnStatus =
                                 if (response.txnStatus == TxnStatus.APPROVED.toString())
                                     TxnStatus.APPROVED

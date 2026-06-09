@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.analogics.builder_core.data.constants.BuilderConstants
+import com.analogics.builder_core.data.constants.BuilderConstants.extractHostMessage
 import com.eazypaytech.paymentservicecore.constants.AppConstants
 import com.analogics.paymentservicecore.data.listeners.responseListener.IApiServiceResponseListener
 import com.analogics.paymentservicecore.data.model.EBTBalance
@@ -240,7 +241,7 @@ class ManualCardViewModel @Inject constructor(
                         override fun onApiServiceSuccess(response: PaymentServiceTxnDetails) {
                             viewModelScope.launch(Dispatchers.Main) {  // ← navigate on Main
                                 CustomDialogBuilder.composeProgressDialog(false)
-                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = BuilderConstants.getIsoResponseMessage(response.hostRespCode.toString())
+                                sharedViewModel.objRootAppPaymentDetail.hostResMessage = extractHostMessage(response.hostResMessage.toString())
                                 sharedViewModel.objRootAppPaymentDetail.hostRespCode = response.hostRespCode
                                 sharedViewModel.objRootAppPaymentDetail.hostAuthCode = response.hostAuthCode
                                 sharedViewModel.objRootAppPaymentDetail.settlementDate = response.settlementDate

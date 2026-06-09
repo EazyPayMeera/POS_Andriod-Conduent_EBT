@@ -1095,6 +1095,10 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
                 posCondition   = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_POS_CONDITION_CODE)
                 privateData    = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_ADDITIONAL_DATA)
                 hostResMessage  = isoMsg.getObjectValue<String>(BuilderConstants.ISO_FIELD_RESPONSE_TEXT)
+                Log.d(
+                    "ISO_RESPONSE_TEXT",
+                    "hostResMessage = $hostResMessage"
+                )
             }
 
         } catch (e: Exception) {
