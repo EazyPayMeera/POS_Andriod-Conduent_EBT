@@ -75,14 +75,18 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
             val tmsConfig = tmsMap?.let {
                 TmsConfigMapper.mapToPosConfig(context, it)
             }
-            Log.d("TMS", "TMS CONFIG: $tmsConfig")
+            Log.d("TMS_DEBUG", "TMS CONFIG: $tmsConfig")
+            Log.d("TMS_DEBUG", "EMV JSON: ${tmsConfig?.emvConfigJson}")
+            Log.d("TMS_DEBUG", "CAP KEYS: ${tmsConfig?.capKeysJson}")
             //  STEP 3: Fallback to existing config if TMS fails
             val finalConfig = if (tmsConfig != null && tmsMap?.isNotEmpty() == true) {
                 tmsConfig
             } else {
                 savedConfig
             }
-
+            Log.d("TMS_DEBUG", "FINAL CONFIG USED: $finalConfig")
+            Log.d("TMS_DEBUG", "FINAL EMV JSON: ${finalConfig.emvConfigJson}")
+            Log.d("TMS_DEBUG", "FINAL CAP KEYS: ${finalConfig.capKeysJson}")
             //  STEP 4: Preserve existing flags (DO NOT TOUCH)
             //val finalConfig = tmsConfig ?: savedConfig
             finalConfig.isActivationDone = savedConfig.isActivationDone
@@ -109,6 +113,26 @@ class SplashScreenViewModel @Inject constructor(private  var apiServiceRepositor
             finalConfig.isTapEnable = savedConfig.isTapEnable
             finalConfig.isEMVEnable = savedConfig.isEMVEnable
             finalConfig.postalServiceCode = savedConfig.postalServiceCode ?: tmsConfig?.postalServiceCode
+            // EMV AIDConfig
+            finalConfig.emvConfigJson = tmsConfig?.emvConfigJson ?: savedConfig.emvConfigJson
+            try {
+                finalConfig.emvConfigJson?.let {
+                    org.json.JSONObject(it)
+                    Log.d("TMS_DEBUG", "EMV JSON VALID ")
+                }
+            } catch (e: Exception) {
+                Log.e("TMS_DEBUG", "EMV JSON INVALID ", e)
+            }
+            // EMV CAPKeys
+            finalConfig.capKeysJson = tmsConfig?.capKeysJson ?: savedConfig.capKeysJson
+            try {
+                finalConfig.capKeysJson?.let {
+                    org.json.JSONObject(it)
+                    Log.d("TMS_DEBUG", "EMV CAP Keys JSON VALID ")
+                }
+            } catch (e: Exception) {
+                Log.e("TMS_DEBUG", "EMV CAP Keys JSON INVALID ", e)
+            }
             sharedViewModel.objPosConfig = finalConfig
             finalConfig.saveToPrefs()
 

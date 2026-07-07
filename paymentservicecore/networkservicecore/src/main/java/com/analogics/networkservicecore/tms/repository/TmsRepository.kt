@@ -40,15 +40,41 @@ class TmsRepository @Inject constructor(
 
             Log.d("TMS", "Full Response: $response")
 
-            val configMap = response.data
-                ?.terminal_param
-                ?.ebt_device_config
-                ?.values
-                ?.firstOrNull()
+            val terminalParam = response.data?.terminal_param
+            val finalMap = mutableMapOf<String, String>()
 
-            if (response.result == 20000) {
-                configMap
-            } else null
+            // PRIMARY: new structure
+            val setupConfig = terminalParam?.ebt_device_setup
+
+            // 1) Base device/host config
+            val baseConfig = setupConfig?.get("")
+                ?: terminalParam?.config_xml?.get("")
+                ?: terminalParam?.ebt_device_config?.values?.firstOrNull()
+
+            baseConfig?.let { finalMap.putAll(it) }
+
+            // 2) EMV config
+            val emvJson = setupConfig
+                ?.get("EMV_AIDs")
+                ?.get("AID Config")
+                ?: terminalParam?.config_xml?.get("EMV_AIDs")?.get("AID Config")
+                ?: terminalParam?.config_xml?.get("EMV")?.get("EMV Config")
+
+            if (!emvJson.isNullOrEmpty()) {
+                finalMap["EMV_CONFIG"] = emvJson
+            }
+
+            // 3) CAP keys
+            val capkJson = setupConfig
+                ?.get("EMV_CAPKeys")
+                ?.get("CAPKeys")
+                ?: terminalParam?.config_xml?.get("EMV_CAPKeys")?.get("CAPKeys")
+
+            if (!capkJson.isNullOrEmpty()) {
+                finalMap["CAP_KEYS"] = capkJson
+            }
+
+            return finalMap
 
         } catch (e: Exception) {
             Log.e("TMS", "API FAILED", e)
