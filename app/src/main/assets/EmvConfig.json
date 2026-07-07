@@ -1,7 +1,10 @@
 {
   "acquirerId" : "112233",
   "appSelIndicator" : "00",
-  "terminalType" : "21",
+  "terminalType" : "01",
+  "securityCondition" : "0",
+  "presentationType" : "0000",
+  "terminalClass" : "000",
   "terminalCountryCode" : "0840",
   "terminalCapabilities" : "606008",
   "terminalFloorLimit" : "00000000",

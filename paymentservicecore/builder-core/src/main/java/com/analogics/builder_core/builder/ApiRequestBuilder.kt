@@ -283,25 +283,13 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
             builderServiceTxnDetails.emvConfigJson,
             AidConfig::class.java
         )
-
-        val terminalClass = "000"              // POS configuration
-        val presentationType = "0000"          // Transaction context
-        val securityCondition = "0"            // Transaction context
+        val terminalClass = aidConfig.terminalClass             // POS configuration
+        val presentationType = aidConfig.presentationType          // Transaction context
+        val securityCondition = aidConfig.securityCondition            // Transaction context
         val terminalType = aidConfig.terminalType ?: "01"
 
         val terminalCapability =
             getTerminalCapability(aidConfig.terminalCapabilities)
-        Log.d(
-            "NATIONAL_POS_CODE",
-            """
-            terminalClass=$terminalClass
-            presentationType=$presentationType
-            securityCondition=$securityCondition
-            terminalType=$terminalType
-            terminalCapability=$terminalCapability
-            Result=${terminalClass + presentationType + securityCondition + terminalType + terminalCapability}
-            """.trimIndent()
-        )
         return terminalClass +
                 presentationType +
                 securityCondition +
