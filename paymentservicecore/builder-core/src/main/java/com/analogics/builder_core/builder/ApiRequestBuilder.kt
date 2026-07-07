@@ -261,7 +261,13 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         val securityCondition = "0"
         val terminalType = "01"        // fixed as per spec
 
-        val terminalCapability = "5"
+        val terminalCapability = when (builderServiceTxnDetails.cardEntryMode) {
+            CardEntryMode.CONTACT.toString() -> "5"        // Chip
+            CardEntryMode.MAGSTRIPE.toString() -> "5"      // Magstripe
+            CardEntryMode.MANUAL.toString() -> "5"         // Manual entry
+            CardEntryMode.CONTACLESS.toString() -> "5"     // Contactless
+            else -> "0"
+        }
 
         return terminalClass +
                 presentationType +
