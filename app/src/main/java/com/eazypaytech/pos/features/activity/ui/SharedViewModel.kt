@@ -44,6 +44,7 @@ class SharedViewModel: ViewModel() {
       objRootAppPaymentDetail.merchantType = objPosConfig?.merchantType
       objRootAppPaymentDetail.fnsNumber = objPosConfig?.fnsNumber
       objRootAppPaymentDetail.stateCode = objPosConfig?.stateCode
+      objRootAppPaymentDetail.emvConfigJson = objPosConfig?.emvConfigJson
       objRootAppPaymentDetail.countyCode = objPosConfig?.countyCode
       objRootAppPaymentDetail.postalServiceCode = objPosConfig?.postalServiceCode
       objRootAppPaymentDetail.isEMVEnable = objPosConfig?.isEMVEnable

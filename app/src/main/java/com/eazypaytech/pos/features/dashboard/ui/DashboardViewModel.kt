@@ -21,6 +21,7 @@ import com.eazypaytech.pos.core.utils.navigateAndClean
 import com.eazypaytech.pos.core.utils.miscellaneous.PrinterUtils
 import com.eazypaytech.pos.core.utils.miscellaneous.readAsset
 import com.analogics.securityframework.data.repository.TxnDBRepository
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -126,6 +127,10 @@ class DashboardViewModel @Inject constructor(private var apiServiceRepository: A
                     Log.e("TMS", "Invalid CAPK JSON → falling back", e)
                     readAsset(context, AppConstants.DEFAULT_EMV_CAP_KEY_FILE_PATH)
                 }
+                sharedViewModel.objPosConfig?.apply {
+                    emvConfigJson = finalAidConfig
+                    Log.d("EMV_CONFIG_JSON", emvConfigJson ?: "NULL")
+                }?.saveToPrefs()
                 Log.d("TMS_FINAL", "AID CONFIG: $finalAidConfig")
                 Log.d("TMS_FINAL", "CAP KEYS: $finalCapKeys")
                 emvServiceRepository.initPaymentSDK(

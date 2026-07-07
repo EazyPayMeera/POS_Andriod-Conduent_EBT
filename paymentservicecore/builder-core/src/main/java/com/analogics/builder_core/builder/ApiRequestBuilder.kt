@@ -12,6 +12,8 @@ import com.analogics.builder_core.utils.BuilderUtils
 import com.analogics.builder_core.utils.toCurrencyLong
 import com.analogics.securityframework.data.repository.TxnDBRepository
 import com.analogics.securityframework.data.model.TxnType
+import com.eazypaytech.hardwarecore.data.model.AidConfig
+import com.google.gson.Gson
 import com.solab.iso8583.IsoMessage
 import com.solab.iso8583.IsoType
 import com.solab.iso8583.MessageFactory
@@ -252,23 +254,54 @@ class ApiRequestBuilder@Inject constructor(@ApplicationContext val context: Cont
         return stan%(BuilderConstants.ISO_FIELD_STAN_MAX_VAL+1)
     }
 
+    private fun getTerminalCapability(terminalCapabilities: String?): String {
+
+        if (terminalCapabilities.isNullOrBlank() || terminalCapabilities.length < 2) {
+            return "0"
+        }
+
+        val byte1 = terminalCapabilities.substring(0, 2).toInt(16)
+
+        val supportsMagstripe = (byte1 and 0x80) != 0
+        val supportsManual = (byte1 and 0x40) != 0
+        val supportsICC = (byte1 and 0x20) != 0
+
+        return when {
+            supportsICC -> "5"          // Contact chip (or Contact + Contactless)
+            supportsMagstripe -> "2"    // Magstripe only
+            supportsManual -> "6"       // Manual entry only
+            else -> "0"
+        }
+    }
+
     /**
      * Returns National POS Condition Code.
      */
     fun getNationalPosConditionCode(): String {
-        val terminalClass = "000"      // as per your current config
-        val presentationType = "0000"  // customer + card present
-        val securityCondition = "0"
-        val terminalType = "01"        // fixed as per spec
 
-        val terminalCapability = when (builderServiceTxnDetails.cardEntryMode) {
-            CardEntryMode.CONTACT.toString() -> "5"        // Chip
-            CardEntryMode.MAGSTRIPE.toString() -> "5"      // Magstripe
-            CardEntryMode.MANUAL.toString() -> "5"         // Manual entry
-            CardEntryMode.CONTACLESS.toString() -> "5"     // Contactless
-            else -> "0"
-        }
+        val aidConfig = Gson().fromJson(
+            builderServiceTxnDetails.emvConfigJson,
+            AidConfig::class.java
+        )
 
+        val terminalClass = "000"              // POS configuration
+        val presentationType = "0000"          // Transaction context
+        val securityCondition = "0"            // Transaction context
+        val terminalType = aidConfig.terminalType ?: "01"
+
+        val terminalCapability =
+            getTerminalCapability(aidConfig.terminalCapabilities)
+        Log.d(
+            "NATIONAL_POS_CODE",
+            """
+            terminalClass=$terminalClass
+            presentationType=$presentationType
+            securityCondition=$securityCondition
+            terminalType=$terminalType
+            terminalCapability=$terminalCapability
+            Result=${terminalClass + presentationType + securityCondition + terminalType + terminalCapability}
+            """.trimIndent()
+        )
         return terminalClass +
                 presentationType +
                 securityCondition +

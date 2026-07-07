@@ -66,6 +66,7 @@ data class BuilderServiceTxnDetails(
     @SerializedName("responseCode") var responseCode: String? = null,
     @SerializedName("merchantId") var merchantId: String? = null,
     @SerializedName("terminalId") var terminalId: String? = null,
+    @SerializedName("emvConfigJson") var emvConfigJson: String? = null,
     @SerializedName("merchantName") var merchantName: String? = null,
     @SerializedName("merchantBank") var merchantBank: String? = null,
     @SerializedName("currencyCode") var currencyCode: String? = null,
